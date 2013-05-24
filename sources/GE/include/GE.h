@@ -148,6 +148,7 @@ DBstatus GEmktf_mirr(DBVector *p1, DBVector *p2, DBVector *p3, DBTmat *ptm);
 DBstatus GEmktf_6p(DBVector *p1, DBVector *p2, DBVector *p3, DBVector *p4,
                    DBVector *p5, DBVector *p6, DBTmat *ptm);
 
+
 /* Generic entity evaluation */
 DBstatus GEposition(DBAny *gmstrp, char *datpek, DBfloat u,
                     DBfloat v, DBVector *vecptr);
@@ -158,9 +159,20 @@ DBstatus GEarclength(DBAny *gmstrp, DBSeg *segmnt, DBfloat *length);
 DBstatus GEcurvature(DBAny *gmstrp, DBSeg *segmnt, DBfloat t, DBfloat *pkappa);
 DBstatus GEnormal(DBAny *gmstrp, char *datpek, DBfloat u,
                   DBfloat v, DBVector *vecptr);
+DBstatus GEpos_in_cone(DBVector *p1, DBVector *p2, DBfloat r1, DBfloat r2, DBint npos,
+             DBVector *pos, DBint *pst, bool *any);
+
+DBstatus GEcur_cre_gra (DBCurve *p_cur, DBSeg   *p_seg, DBSeg  **pp_graseg );
+
 
 /* NURBS curves */
 DBstatus GEevalnc(DBCurve *curptr,DBSeg *segptr,EVALC *evlptr);
+DBstatus GEevaluvnc(DBCurve *curptr,DBSeg *segptr,EVALC *evlptr);
+
+/* genurbs.c */
+DBstatus GEsegcpts(DBSeg *p_seg, DBHvector *p_cpts, DBfloat *knots);
+
+
 
 /* ge100-routines */
 

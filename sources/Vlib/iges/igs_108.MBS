@@ -1,0 +1,186 @@
+!**************************************************************************
+ LOCAL GEOMETRY MODULE igs_108(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ds_ptr;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Read data from Parameter Section
+!*      and create a Plane.
+!*
+!*      In: infile  = File to read from.
+!*          logfile = Logfile.
+!*          dl1     = 1st row of Directory Entry Section.
+!*          dl2     = 2nd row of Directory Entry Section.
+!*          ps_ptr  = Pointer to Parameter Section.
+!*          rowlgt  = Row length used.
+!*
+!*      Out: status = 0 => Ok
+!*                   -1 => Error
+!*          id_ent  = Identity of created entity.
+!*     
+!*      2006-09-27, Mohamed Rahayem, Örebro university.
+!*
+!*************************************************************************
+
+   CONSTANT INT IMAX=9,MIN_SIZE=10;
+   FLOAT x_min,x_max,y_min,y_max;
+   INT     ptr,form,i,rownumber,number,font,n_seg,n_gra;
+   STRING  row*132,row1*132,row2*132;
+   FLOAT   x(IMAX),dl;
+   FLOAT   a,b,c,d,size,norml,z,rotx,roty,rotz;
+   VECTOR  p1,p2,p3,p4,p;  
+   REF     cur_id,csysid;          
+ 
+ BEGINMODULE
+
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   rownumber:=ival(substr(dl1,9,8));
+   form:=ival(substr(dl2,33,8));                  ! form=0 unbounded / form=1 and -1 bounded plane.
+   number:=ival(substr(dl1,73,8));                ! sequence number.  
+   seek(infile,ps_ptr+(rownumber-1)*rowlgt);
+!*
+!***Read 1:st line and strip "108,".
+!*
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
+!*
+!***Read coordinates A,B,C,D, PTR , X, Y, Z, SIZE.
+!*
+   for i:=1 to IMAX do
+     part(#1,igs_gflt(infile,row,x(i),status):SAVE=0);
+   endfor;  
+!*
+!**Create local coordinate system for transformation matrix.
+!*    
+     csys_1p(#2,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
+     csysid:=#2;     
+!*
+!***Check status from igs_gflt()
+!*
+   if status < 0 then
+     outstr(logfile,"igs_108, Error reading float in parameter section !");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     status:=-1;
+     id_ent:=##0;
+     exit();
+   endif;
+      
+   a:=x(1);
+   b:=x(2);
+   c:=x(3);
+   d:=x(4);
+   ptr:=round(x(5));
+   z:=x(8);
+   size:=x(9);
+   norml:=sqrt(a*a+b*b+c*c);
+!*
+!**To remove after implement trimmed surface.!!!!
+!*   
+   x_min:= 99999999;
+   x_max:= 0;
+   y_min:= 99999999;
+   y_max:= 0;   
+!*
+!***Check ptr to DE section. 
+!* 
+  if (form = 1  or form = -1) and ptr = 0 then 
+    outstr(logfile,"igs_108, pointer to DE equal to 0 !");
+    outlin(logfile);
+    outstr(logfile,dl1);
+    outlin(logfile);
+    outstr(logfile,dl2);
+    outlin(logfile);
+    outlin(logfile);
+    status:=-1;
+    id_ent:=##0;
+    exit();
+   endif;  
+!*
+!***Calculate the origin and orientation angles.
+!*
+     p1:=vec(x(6),x(7),z);
+     if size <= 0 then
+       size:=MIN_SIZE;
+     endif;
+     
+     rotx:=arccos(a/norml);
+     roty:=arccos(b/norml);
+     rotx:=arccos(c/norml);
+!*
+!**Check the type of plane.
+!*     
+   IF form = 0 THEN
+    csys_1p(#3,"csys_"+str(number), p1, rotx, roty, rotz);
+    id_ent:=global_ref(#3);   
+!*
+!**To write to log file the data of cordinate system(unbounded plane)-- remove in future !!!!!!.    
+!*
+    outstr(logfile,"igs_108, unbounded plan = "+"csys_"+str(number));   
+    outlin(logfile);
+    outlin(logfile);
+    outstr(logfile,"igs_108, unbounded plan origin = "+"("+str(p1.x)+","+str(p1.y)+","+str(p1.z)+")");   
+    outlin(logfile);
+    outlin(logfile);
+!*
+!**To improve after implement trimmed surface  !!!!!!!!!!!.
+!*               
+   elif form = 1 or form = -1 then
+     seek(infile,ds_ptr+(ptr-1)*rowlgt);  
+     row1:=inlin(infile);
+     row2:=inlin(infile);  
+     part(#4,igs_106(infile,logfile,row1,row2,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1);
+     getcurh(id_ent,font,dl,n_seg,n_gra);
+     if n_seg = 4 then
+        b_plane(#5, on(id_ent,0),on(id_ent,1), on(id_ent,2), on(id_ent,3));
+        id_ent:=global_ref(#5);   
+     elif n_seg = 3 then
+        b_plane(#6, on(id_ent,0),on(id_ent,1), on(id_ent,1), on(id_ent,3));
+        id_ent:=global_ref(#6);  
+     elif n_seg > 4 then
+        for i:=1 to  n_seg do 
+          p:=on(id_ent,i);
+          if p.x <= x_min then
+            x_min := p.x;
+          else
+            x_max := p.x ;
+          endif;
+          if p.y <= y_min then
+            y_min := p.y;
+          else
+            y_max := p.y ;
+          endif;
+       endfor;
+       b_plane(#7,vec(x_min,y_min),vec(x_max,y_min),vec(x_max,y_max),vec(x_min,y_max));       
+       id_ent:=global_ref(#7); 
+     endif;
+    ELSE
+        outstr(logfile,"igs_108, plane type - form number not used !");
+        outlin(logfile);
+        outstr(logfile,dl1);
+        outlin(logfile);
+        outstr(logfile,dl2);
+        outlin(logfile);
+        outlin(logfile);
+        status:=-1;
+        id_ent:=##0;
+        exit();
+    ENDIF;   
+!*
+!***End   
+!*   
+   status:=0;
+
+ ENDMODULE
+
+!****************************************************************************************

@@ -10,11 +10,15 @@
 *       DBread_curve();      Reads a curve entity
 *       DBupdate_curve();    Updates a curve entity
 *       DBdelete_curve();    Deletes a curve entity
-*      *DBcreate_segments(); Allocates memory for curve segments
-*      *DBadd_segments();    Increases allocated memory for curve segments
-*       DBfree_segments();   Free's memory allocated for curve segments
+*
+*      *DBcreate_segments(); Allocates C-memory for curve segments
+*      *DBadd_segments();    Increases C-allocated memory for curve segments
+*       DBfree_segments();   Free's C-memory allocated for curve segments
+*
 *       DBwrite_nurbs();     Stores NURBS-curve data in DB
-*       DBread_nurbs();      Reads NURBS curve data from DB
+*       DBread_nurbs();      Reads NURBS-curve data from DB
+*       DBfree_nurbs();      Free's C-memory allocated for NURBS-data
+*       DBdelete_nurbs();    Deletes NURBS-data from DB
 *
 *    This file is part of the VARKON Database Library.
 *    URL:  http://www.varkon.com
@@ -35,87 +39,67 @@
 *
 *    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
 *    
-*    2004-09-02 DBread_nurbs static->public, Sören Larsson, Örebro University
+*    2004-09-02 DBread_nurbs static->public, S. Larsson, Örebro university
+*    2006-10-20 Added free/delete NURBS, J. Kjellander, Örebro university
 *
 ***********************************************************************/
 
 #include "../include/DB.h"
 #include "../include/DBintern.h"
 
-static DBstatus gmrdoc(GMCUR *, GMSEG **, DBptr, DBint);
-static DBstatus gmrdos(DBptr, GMSEG *, DBint);
-static DBstatus gmupoc(GMCUR *, GMSEG *, DBptr, DBint);
-static DBstatus gmdloc(DBptr, DBint);
-/*static DBstatus DBread_nurbs(DBHvector *cpts, DBint ncpts, DBfloat *knots,
-                             DBint nknots, DBptr cpts_la, DBptr knots_la);*/
 
 /*
-***I samband med V1.11 infördes nya kurvor.
-***Den nya kurvan lagras inte i GM genom att bara skriva ut
-***GMCUR-posten som den är. För att slippa lagra koordinat-
-***system för kurvor som inte är plana, används här en egen
-***interface-struktur. Detta innebär visserligen kopiering
-***vid varje accsess men sparar mycket utrymme. Den gamla
-***kurv-posten GMCUR0 finns i olddefs.h.
+***The DB internal representation of a curve is currently
+***GMCUR3 introduced 1997-12-27. Older versions are defined
+***in olddefs.h and are kept only for backward compatibility.
 */
-
-/*
-***I samband med V1.12 infördes kurvor på ytor, GMPOSTV2.
-***GMCUR1 flyttades då till olddefs.h och ersattes med 
-***GMCUR2. En ny GMSEG infördes och den gamla blev GMSEG1.
-*/
-
-/***1997-12-27, linjebredd. GMCUR2 flyttad till olddefs.h */
 
 typedef struct gmcur3       /* GMCUR version 3 */
 {
 GMRECH  hed_nc;             /* Header */
 DBshort fnt_nc;             /* Font */
-DBfloat lgt_nc;             /* Streck-längd */
-DBfloat al_nc;              /* geo-segmentens sammanlagda båglängd */
-DBshort nges_nc;            /* Antal geo-segment */
-DBptr   pges_nc;            /* Pekare till 1:a geo-segmentet */
-DBptr   cptr_nc;            /* Pekare till kurvplan */
-DBptr   pcsy_nc;            /* Pekare till aktivt koordinatsystem */
-DBshort ngrs_nc;            /* Antal grafiska segment */
-DBptr   pgrs_nc;            /* Pekare till 1:a grafiska segmentet */
-DBfloat wdt_nc;             /* Bredd */
+DBfloat lgt_nc;             /* Dash length */
+DBfloat al_nc;              /* Curve arc length */
+DBshort nges_nc;            /* Number of geo segments */
+DBptr   pges_nc;            /* Ptr to 1:st geo segment */
+DBptr   cptr_nc;            /* Ptr to curve plane */
+DBptr   pcsy_nc;            /* Ptr to coordinate system */
+DBshort ngrs_nc;            /* Number of graphical segments */
+DBptr   pgrs_nc;            /* Ptr to 1:st graph segment */
+DBfloat wdt_nc;             /* Width */
 } GMCUR3;
+
+static DBstatus gmrdoc(GMCUR *, GMSEG **, DBptr, DBint);
+static DBstatus gmrdos(DBptr, GMSEG *, DBint);
+static DBstatus gmupoc(GMCUR *, GMSEG *, DBptr, DBint);
+static DBstatus gmdloc(DBptr, DBint);
 
 /*!******************************************************/
 
         DBstatus DBinsert_curve(
-        GMCUR   *curpek,
-        GMSEG   *grsegp,
-        GMSEG   *gesegp,
+        DBCurve *curpek,
+        DBSeg   *grsegp,
+        DBSeg   *gesegp,
         DBId    *idpek,
         DBptr   *lapek)
 
-/*      Huvudrutin för lagring av curve. Först lagras
- *      själva curve-posten och därefter segmenten i
- *      2 länkade listor där första pekaren finns i 
- *      curve-posten och sista pekaren == DBNULL. 
- *      Om grsegp == gesegp lagras bara en uppsättning
- *      segment. Under alla omständigheter får båda pekarna
- *      i kurv-posten värden, ev. samma värde.
+/*      Main entry for curve insert. Stores curve data and 
+ *      associated segments as 2 linked lists. If grsegp ==
+ *      gesegp only one list of segments is stored.
  *
- *      Observera att både grsegp och gesegp alltid måste
- *      ha vettiga värden vid anropet även om kurvan har
- *      samma grafiska som geometriska representation.
+ *      In:  curpek => Ptr to curve.
+ *           grsegp => Ptr to array of graphical segments.
+ *           gesegp => Ptr to array of geometric segments.
+ *           idpek  => Ptr to curve ID.
+ *           lapek  => Ptr to output.
  *
- *      In: curpek => Pekare till en curve-structure.
- *          grsegp => Pekare till array med grafiska segment.
- *          gesegp => Pekare till array med geometriska segment.
- *          idpek  => Pekare till identitet-structure.
- *          lapek  => Pekare till DBptr-variabel.
+ *      Out: *lapek => Curve DB adress.
  *
- *      Ut: *la    => Logisk adress till curve-data i GM.
- *
- *      FV:  0  => Ok.
- *          -1  => ID utanför virtuellt område.
- *          -2  => IDTAB full.
- *          -3  => Data får inte plats.
- *          -4  => Storhet med detta ID finns redan.
+ *      Return:  0  => Ok.
+ *              -1  => Invalid ID
+ *              -2  => IDTAB full.
+ *              -3  => No space in DB.
+ *              -4  => Entity already exists.
  *
  *      (C)microform ab 29/12/84 J. Kjellander
  *
@@ -123,6 +107,7 @@ DBfloat wdt_nc;             /* Bredd */
  *      18/3/92  GMCUR1, J. Kjellander
  *      5/3/93   GMCUR2, J. Kjellander
  *      1997-12-27 GMCUR3, J.Kjellander
+ *      2006-10-20 English, J.Kjellander, Örebro university
  *
  ******************************************************!*/
 
@@ -131,19 +116,19 @@ DBfloat wdt_nc;             /* Bredd */
     GMCUR3 cur3;
 
 /*
-***Lagra geo-segmenten, det sista först. Länken i sista
-***segmentet = 0.
+***Save geometrical segments, the last segment first. Last segment
+***link = DBNULL.
 */
-    *lapek = 0;
+    *lapek = DBNULL;
     for ( i=curpek->ns_cu-1; i >= 0; --i)
       {
       (gesegp+i)->nxt_seg = *lapek;
-      if ( wrdat1((char *)&gesegp[i],lapek,sizeof(GMSEG)) < 0 ) return(-3);
+      if ( wrdat1((char *)&gesegp[i],lapek,sizeof(DBSeg)) < 0 ) return(-3);
       }
     cur3.nges_nc =  curpek->ns_cu;
     cur3.pges_nc = *lapek;
 /*
-***Lagra eventuella gr-segment.
+***Save graphical segments, if they exist.
 */
     if ( grsegp == gesegp )
       {
@@ -152,31 +137,31 @@ DBfloat wdt_nc;             /* Bredd */
       }
     else
       {
-      *lapek = 0;
+      *lapek = DBNULL;
       for ( i=curpek->nsgr_cu-1; i >= 0; --i)
         {
         (grsegp+i)->nxt_seg = *lapek;
-        if ( wrdat1((char *)&grsegp[i],lapek,sizeof(GMSEG)) < 0 ) return(-3);
+        if ( wrdat1((char *)&grsegp[i],lapek,sizeof(DBSeg)) < 0 ) return(-3);
         }
       cur3.ngrs_nc =  curpek->nsgr_cu;
       cur3.pgrs_nc = *lapek;
       }
 /*
-***Typ-specifika data.
+***Type specific data.
 */
-    curpek->hed_cu.type = CURTYP;   /* Typ = curve */
+    curpek->hed_cu.type = CURTYP;   /* Type = curve */
     curpek->hed_cu.vers = GMPOSTV3; /* Version */
 /*
-***Skapa en GMCUR3.
+***Copy curve data to internal GMCUR3.
 */
-    V3MOME(&curpek->hed_cu,&cur3.hed_nc,sizeof(GMRECH));
+    V3MOME(&curpek->hed_cu,&cur3.hed_nc,sizeof(DBHeader));
     cur3.fnt_nc  = curpek->fnt_cu;
     cur3.lgt_nc  = curpek->lgt_cu;
     cur3.al_nc   = curpek->al_cu;
     cur3.pcsy_nc = curpek->pcsy_cu;
     cur3.wdt_nc  = curpek->wdt_cu;
 /*
-***Om det är en plan kurva skall även koordinatsystemet lagras.
+***Save curve plane data if supplied.
 */
     if ( curpek->plank_cu )
       {
@@ -186,33 +171,34 @@ DBfloat wdt_nc;             /* Bredd */
       }
     else cur3.cptr_nc = DBNULL;
 /*
-***Lagra själva curve-posten. 
+***Save the Curve data.
 */
-    return(inpost((GMUNON *)&cur3,idpek,lapek,sizeof(GMCUR3)));
+    return(inpost((DBAny *)&cur3,idpek,lapek,sizeof(GMCUR3)));
   }
 
 /********************************************************/
 /*!******************************************************/
 
         DBstatus DBread_curve(
-        GMCUR   *curpek,
-        GMSEG  **graseg,
-        GMSEG  **geoseg,
+        DBCurve *curpek,
+        DBSeg  **graseg,
+        DBSeg  **geoseg,
         DBptr    la)
 
-/*      Huvudrutin för läsning av en kurva. Returnerar
- *      kurvpost + segment om gra/geo-seg <> NULL.
+/*      Main entry for curve read. Returns curve data 
+ *      and segments if gra/geo-seg <> NULL.
  *
- *      In: curpek => Pekare till en curve-structure.
- *          graseg => Pekare till GMSEG-pekare.
- *          geoseg => Pekare till GMSEG-pekare.
- *          la     => Kurvans adress i GM.
+ *      In: curpek => Ptr to curve.
+ *          graseg => Ptr to ptr for graphical segments.
+ *          geoseg => Ptr to ptr for geometrical segments.
+ *          la     => Curve address in DB.
  *
- *      Ut: *curpek => Curve-post.
- *          *graseg => Pekare till array med segment.
- *          *geoseg => Pekare till array med segment.
+ *      Out: *curpek => Curve data.
+ *           *graseg => Ptr to graphical segments.
+ *           *geoseg => Ptr to geometrical segments.
  *
- *      FV: Inget.
+ *      Return:  0 = Ok.
+ *              <0 = Can't allocate C memory.
  *
  *      (C)microform ab 29/12/84 J. Kjellander
  *
@@ -224,6 +210,7 @@ DBfloat wdt_nc;             /* Bredd */
  *      18/4/94  Läsning av både gr och ge, J. Kjellander
  *      1997-12-27 GMCUR3, J.Kjellander
  *      2002-05-23 NURBS, Johan Kjellander, Örebro University
+ *      2006-10-20 English, J.Kjellander, Örebro university
  *
  ******************************************************!*/
 
@@ -240,12 +227,12 @@ DBfloat wdt_nc;             /* Bredd */
     DBfloat   *last_knots_c;
 
 /*
-***C-pekare till kurv-posten och version.
+***C-ptr to curve and version number.
 */
-    hedpek = (GMRECH *)gmgadr(la);
+    hedpek = (DBHeader *)gmgadr(la);
     vers   =  GMVERS(hedpek);
 /*
-***Börja med att läsa kurvposten.
+***Read main curve data.
 */
     switch ( vers )
       {
@@ -258,11 +245,8 @@ DBfloat wdt_nc;             /* Bredd */
       cur3.wdt_nc = 0.0;
       break;
       }
-
 /*
-***Om läsning av både grafiska och geometriska segment
-***begärts kan de vara samma och då skall vi bara allokera
-***en area. Dessutom räcker det att läsa segmenten en gång !
+***Allocate C-memory for zero, one or two lists.
 */
     switch ( vers )
       {
@@ -293,8 +277,8 @@ DBfloat wdt_nc;             /* Bredd */
         else geoflg = FALSE;
         }
 /*
-***Allokera minne och läs ev. gra-segment.
-***graseg = NULL => inga segment skall läsas.
+***Read graphical segments.
+***graseg = NULL => no segments read.
 */
       if ( graflg )
         {
@@ -302,13 +286,14 @@ DBfloat wdt_nc;             /* Bredd */
         la_seg = cur3.pgrs_nc;
         for ( i=0; i < cur3.ngrs_nc; ++i)
           {
-          rddat1((char *)segptr,la_seg,sizeof(GMSEG));
+          rddat1((char *)segptr,la_seg,sizeof(DBSeg));
           la_seg = segptr->nxt_seg;
           ++segptr;
           }
         }
 /*
-***Läs ev. geo-segment. geoseg = NULL => inga segment skall läsas.
+***Read geometrical segments.
+***geoseg = NULL => no segments read.
 */
       if ( geoflg )
         {
@@ -316,14 +301,14 @@ DBfloat wdt_nc;             /* Bredd */
         la_seg = cur3.pges_nc;
         for ( i=0; i < cur3.nges_nc; ++i)
           {
-          rddat1((char *)segptr,la_seg,sizeof(GMSEG));
+          rddat1((char *)segptr,la_seg,sizeof(DBSeg));
           la_seg = segptr->nxt_seg;
 /*
 ***If the segment is a NURBS span, read the array of controlpoints
 ***and the corresponding knot vector. If these already exist, just
 ***update their C-pointers.
 */
-          if ( segptr->typ == NURB_SEG )
+          if ( segptr->typ == NURB_SEG || segptr->typ == UV_NURB_SEG )
             {
              if ( segptr->cpts_db == last_cpts_db )
                {
@@ -354,7 +339,7 @@ DBfloat wdt_nc;             /* Bredd */
           }
         }
 /*
-***Läs ev. koordinatsystem.
+***Read curve plane data if existent.
 */
       if ( cur3.cptr_nc != DBNULL )
         {
@@ -363,9 +348,9 @@ DBfloat wdt_nc;             /* Bredd */
         }
       else curpek->plank_cu = FALSE;
 /*
-***Övriga data.
+***Main curve data.
 */
-      V3MOME(&cur3.hed_nc,&curpek->hed_cu,sizeof(GMRECH));
+      V3MOME(&cur3.hed_nc,&curpek->hed_cu,sizeof(DBHeader));
       curpek->fnt_cu  = cur3.fnt_nc;
       curpek->lgt_cu  = cur3.lgt_nc;
       curpek->al_cu   = cur3.al_nc;
@@ -375,10 +360,7 @@ DBfloat wdt_nc;             /* Bredd */
       curpek->wdt_cu  = cur3.wdt_nc;
       break;
 /*
-***Äldre versioner, dvs. GMCUR0/GMSEG0 och GMCUR1/GMSEG1.
-***Dessa kurvor har alltid grafisk = geometrisk representation.
-***Observera att denna rutin kan anropas med geoseg OCH graseg
-***lika med NULL.
+***Older versions for compatibility.
 */
       default:
       if ( geoseg != NULL ) gmrdoc(curpek,geoseg,la,vers);
@@ -393,20 +375,35 @@ DBfloat wdt_nc;             /* Bredd */
 /*!******************************************************/
 
         DBstatus DBupdate_curve(
-        GMCUR   *curpek,
-        GMSEG   *segmnt,
+        DBCurve *curpek,
+        DBSeg   *segmnt,
         DBptr    la)
 
-/*      Uppdaterar en curve-post. Uppdatering av kurv-plan
- *      är inte implementerat i denna version.
+/*      Main entry for curve update. Updates main
+ *      curve and geometrical segment data but does
+ *      NOT update graphical segments, curve plane or
+ *      NURBS data. Note also that this routine can
+ *      only update a curve whith the same number of
+ *      segments as the original curve.
+ *      
+ *      Curve update is  used by Varkon in explicit
+ *      mode interactive 2D editing (move and rotate)
+ *      and in all modes during editing of curve
+ *      attributes CFONT, CDASHL and WIDTH. In both
+ *      cases the number of segments does not change.
  *
- *      In: curpek => Pekare till en curve-structure.
- *          segmnt => Array med segment.
- *          la     => Kurvans adress i GM.
+ *      Support for graphical segments or NURBS data is
+ *      not implemented. This is a bug if NURBS or UV-curves
+ *      are moved or rotated in 2D explicit mode (not likely
+ *      to happen though).
+ *      
+ *      In: curpek => Ptr to curve.
+ *          segmnt => Ptr to array of geometrical segments.
+ *          la     => Curve address in DB.
  *
- *      Ut: Inget.
+ *      Out: Nothing.
  *
- *      FV: Inget.
+ *      Return: Always 0.
  *
  *      (C)microform ab 27/4/85 J. Kjellander
  *
@@ -414,23 +411,25 @@ DBfloat wdt_nc;             /* Bredd */
  *      18/3/92  GMCUR1, J. Kjellander
  *      18/2/93  GMCUR2, J. Kjellander
  *      1997-12-27 GMCUR3, J.Kjellander
+ *      2006-10-20 English, J.Kjellander, Örebro university
  *
  ******************************************************!*/
 
   {
-     DBptr   la_seg;
-     DBint   i,vers;
-     GMCUR3  cur3;
-     GMSEG   seg;
-     GMRECH *hedpek;
+     DBptr     la_seg;
+     DBint     i,vers;
+     GMCUR3    cur3;
+     DBSeg     seg;
+     DBHeader *hedpek;
+
 
 /*
-***Vilken version av kurva är det ?
+***C-ptr to curve and version number.
 */
-    hedpek = (GMRECH *)gmgadr(la);
+    hedpek = (DBHeader *)gmgadr(la);
     vers   =  GMVERS(hedpek);
 /*
-***Läs kurvposten utan segment.
+***Read main curve data for old curve.
 */
     switch ( vers )
       {
@@ -444,35 +443,34 @@ DBfloat wdt_nc;             /* Bredd */
       break;
       }
 /*
-***Uppdatera.
+***Update.
 */
     switch ( vers )
       {
       case GMPOSTV3:
       case GMPOSTV2:
 /*
-***Ev. uppdatering av geo-segment.
+***Update geometrical segments.
 */
       if ( segmnt != NULL && cur3.nges_nc > 0 )
         {
         la_seg = cur3.pges_nc;
         for ( i=0; i<cur3.nges_nc; ++i )
           {
-          rddat1((char *)&seg,la_seg,sizeof(GMSEG));
-          updata((char *)&segmnt[i],la_seg,sizeof(GMSEG));
+          rddat1((char *)&seg,la_seg,sizeof(DBSeg));
+          updata((char *)&segmnt[i],la_seg,sizeof(DBSeg));
           la_seg = seg.nxt_seg;
           }
         }
       }
 /*
-***Uppdatering av cur-posten. Vad som kan uppdateras (i denna version)
-***är header, bredd, font och strecklängd.
-***Detta utnyttjas av några ige-rutiner.
+***Update main curve data CFONT, CDASHL and WIDTH. The
+***rest is unchanged.
 */
     switch ( vers )
       {
       case GMPOSTV3:
-      V3MOME(&curpek->hed_cu,&cur3.hed_nc,sizeof(GMRECH));
+      V3MOME(&curpek->hed_cu,&cur3.hed_nc,sizeof(DBHeader));
       cur3.fnt_nc  = curpek->fnt_cu;
       cur3.lgt_nc  = curpek->lgt_cu;
       cur3.wdt_nc  = curpek->wdt_cu;
@@ -480,13 +478,13 @@ DBfloat wdt_nc;             /* Bredd */
       break;
 
       case GMPOSTV2:
-      V3MOME(&curpek->hed_cu,&cur3.hed_nc,sizeof(GMRECH));
+      V3MOME(&curpek->hed_cu,&cur3.hed_nc,sizeof(DBHeader));
       cur3.fnt_nc  = curpek->fnt_cu;
       cur3.lgt_nc  = curpek->lgt_cu;
       updata((char *)&cur3, la, sizeof(GMCUR2));
       break;
 /*
-***Äldre kurvor.
+***Older curves.
 */
       default:
       gmupoc(curpek,segmnt,la,vers);
@@ -501,14 +499,13 @@ DBfloat wdt_nc;             /* Bredd */
 
         DBstatus DBdelete_curve(DBptr la)
 
-/*      Stryker en curve-post och deallokerar allokerat
- *      minne.
+/*      Main entry for curve delete.
  *
- *      In: la => Kurvans GM-adress.
+ *      In:  la => Curve address in DB.
  *
- *      Ut: Inget.
+ *      Out: Nothing.
  *
- *      FV:  0  => Ok.
+ *      FV:  Always 0.
  *
  *      (C)microform ab 29/12/84 J. Kjellander
  *
@@ -516,23 +513,24 @@ DBfloat wdt_nc;             /* Bredd */
  *      18/3/92  GMCUR1, J. Kjellander
  *      18/2/93  GMCUR2, J. Kjellander
  *      1997-12-27 GMCUR3, J.Kjellander
+ *      2006-10-20 NURBS, J.Kjellander, Örebro university
  *
  ******************************************************!*/
 
   {
-    GMCUR3  cur3;
-    GMRECH *hedpek;
-    GMSEG   seg;
-    DBint   i,vers;
-    DBptr   la_seg;
+    GMCUR3    cur3;
+    DBHeader *hedpek;
+    DBSeg     seg;
+    DBint     i,vers;
+    DBptr     la_seg;
 
 /*
-***Vilken version av kurva är det ?
+***C-ptr to curve and version number.
 */
-    hedpek = (GMRECH *)gmgadr(la);
+    hedpek = (DBHeader *)gmgadr(la);
     vers   = GMVERS(hedpek);
 /*
-***Läs kurvposten utan segment och stryk den.
+***Read main curve data and release it's space in DB.
 */
     switch ( vers )
       {
@@ -547,39 +545,53 @@ DBfloat wdt_nc;             /* Bredd */
       break;
       }
 /*
-***Stryk segmenten.
+***Release space for NURBS data. A Varkon curve can only have
+***segments of the same type so if the first segment is NURBS
+***the curve is NURBS.
+*/
+    if ( cur3.nges_nc > 0 )
+      {
+      rddat1((char *)&seg,cur3.pges_nc,sizeof(DBSeg));
+
+      if ( seg.typ == NURB_SEG  ||  seg.typ == UV_NURB_SEG )
+        {
+        DBdelete_nurbs(&seg);
+        }
+      }
+/*
+***Release space for geometrical segments.
 */
     switch ( vers )
       {
       case GMPOSTV3:
       case GMPOSTV2:
-      la_seg = cur3.pges_nc;                /* Pekare till 1:a segm. */
+      la_seg = cur3.pges_nc;
       for ( i=0; i<cur3.nges_nc; ++i )
         {
-        rddat1((char *)&seg,la_seg,sizeof(GMSEG));
-        rldat1(la_seg,sizeof(GMSEG));
-        la_seg = seg.nxt_seg;               /* Pekare till nästa segm. */
+        rddat1((char *)&seg,la_seg,sizeof(DBSeg));
+        rldat1(la_seg,sizeof(DBSeg));
+        la_seg = seg.nxt_seg;
         }
 /*
-***Stryk ev. grafiska segment.
+***Release space for graphical segments. Graphical segments can only be CUB_SEG.
 */
       if ( cur3.pgrs_nc != cur3.pges_nc )
         {
         la_seg = cur3.pgrs_nc;
         for ( i=0; i<cur3.ngrs_nc; ++i )
           {
-          rddat1((char *)&seg,la_seg,sizeof(GMSEG));
-          rldat1(la_seg,sizeof(GMSEG));
+          rddat1((char *)&seg,la_seg,sizeof(DBSeg));
+          rldat1(la_seg,sizeof(DBSeg));
           la_seg = seg.nxt_seg;
           }
         }
 /*
-***Stryk ev. plan.
+***Release space for curve plane.
 */
       if ( cur3.cptr_nc != DBNULL ) rldat1(cur3.cptr_nc,sizeof(DBTmat));
       break;
 /*
-***Äldre kurvor.
+***Older curves.
 */
       default:
       gmdloc(la,vers);
@@ -787,63 +799,76 @@ DBfloat wdt_nc;             /* Bredd */
   }
 
 
-
-
-
-
-
 /********************************************************/
-/*!*****************************************************
+/*!******************************************************/
 
-        GMSEG *DBcreate_cpts(DBint antal)
+        DBstatus DBfree_nurbs(
+    DBfloat   *knots,
+    DBHvector *cpts)
 
-/*      Allokerar plats i primärminne för NURBS control points.
+
+/*      Deallocates C-memory for NURBS data.
  *
- *      In: antal = Antal control points.
+ *      In:  ptr => C-pekare till minnesarea.
  *
- *      Ut: Inget.
+ *      Out: None.
  *
- *      FV: C-adress till ledig minnesarea.
+ *      Return: Always 0.
  *
- *      Felkoder: GM1053 = Kan ej allokera minne
+ *      (C)2006-10-20 J. Kjellander, Örebro university
  *
- *      (C)Sören Larsson, örebro University
- *
- ******************************************************!
+ ******************************************************!*/
 
   {
-    DBint nbytes;
-    DBstatus status;
-    char *ptr,errbuf[80];
-
 /*
-***Allokera minne.
+***Free memory for knot vector and controlpoints.
+*/
+    if ( knots != NULL ) v3free((char *)knots,"DBfree_nurbs");
+  if ( cpts != NULL )  v3free((char *)cpts,"DBfree_nurbs");
 
-    if ( (ptr=v3mall(antal*sizeof(GMSEG),"DBcreate_segments")) == NULL )
-      {
-      sprintf(errbuf,"%d",(int)antal);
-      erpush("GM1053",errbuf);
-      }
-/*
-***Slut.
-
-    return((GMSEG *)ptr);
+    return(0);
   }
-
-
-
-
 
 /********************************************************/
 /*!******************************************************/
 
+        DBstatus DBdelete_nurbs(DBSeg *seg)
 
+/*      Deallocates DB memory for NURBS data.
+ *
+ *      In:  sptr = Ptr to first segment of a NURBS curve.
+ *
+ *      Out: None.
+ *
+ *      Return: Always 0.
+ *
+ *      (C)2006-10-20 J. Kjellander, Örebro university
+ *
+ ******************************************************!*/
 
+  {
+   DBint nbytes;
 
+/*
+***Free DB space for knot vector.
+*/
+   nbytes = seg->nknots * sizeof(DBfloat);
 
+   if ( nbytes <= PAGSIZ ) rldat1(seg->knots_db, nbytes);
+   else                    rldat2(seg->knots_db, nbytes);
+/*
+***Free DB space for control points.
+*/
+   nbytes = seg->ncpts * sizeof(DBHvector);
 
+   if ( nbytes <= PAGSIZ ) rldat1(seg->cpts_db, nbytes);
+   else                    rldat2(seg->cpts_db, nbytes);
 
+    return(0);
+  }
 
+/********************************************************/
+/*!******************************************************/
 
         static DBstatus gmrdoc(
         GMCUR   *curpek,

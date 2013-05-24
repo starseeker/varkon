@@ -1,0 +1,239 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>cur_comparr </TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.1  (Linux)">
+	<META NAME="CREATED" CONTENT="20061110;16024900">
+	<META NAME="CHANGED" CONTENT="20061120;11061800">
+	<STYLE>
+	<!--
+		@page { size: 21cm 29.7cm }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P STYLE="margin-bottom: 0cm">VARKON Version 1.18 2006-11-10</P>
+<HR>
+<H2 STYLE="margin-left: 1cm; margin-right: 1cm; margin-top: 0cm">cur_comparr
+- <FONT SIZE=3>Geometric procedure</FONT></H2>
+<BLOCKQUOTE>Creates a composite curve<BR><BR><BR><B>Description</B></BLOCKQUOTE>
+<BLOCKQUOTE>Creates a curve by copying one or many lines, arcs or
+curves into a new “composite” curve. Cur_comparr requires that
+the entities used to create the new curve are connected in the order
+they are specified. The first entity must be connected in either end
+to an end the second entity and the other end of the second entity
+must be connected to either end of the third entity and so on.
+Entities may be connected start-to-end or end-to-end or end-to-start
+or start-to-start (any of the 4 possible ways). Varkon automatically
+reverses all entities with the wrong sense of direction so that the
+parametrisation of the resulting new curve becomes continuous.
+Continuity in slope (tangent direction) is not required. Input
+entities are given in an array.</BLOCKQUOTE>
+<BLOCKQUOTE>Cur_comparr can optionally be used to define uv curves
+(curves on surface) by giving a reference to a surface (optional
+parameter). The input entities shall in this case exist in the basic
+xy-plane within x/y coordinates corresponding to the uv-space of the
+surface. This use of the function is not suitable for interactive use</BLOCKQUOTE>
+<BLOCKQUOTE><BR><B>Syntax<BR></B><BR>cur_comparr(id, nref,
+ref(),surid:attributes);</BLOCKQUOTE>
+<DL>
+	<DD>
+	<TABLE WIDTH=632 BORDER=0 CELLPADDING=2 CELLSPACING=0>
+		<COL WIDTH=46>
+		<COL WIDTH=578>
+		<TR>
+			<TD WIDTH=46>
+				<P>REF</P>
+			</TD>
+			<TD WIDTH=578>
+				<P>id;</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=46>
+				<P>INT</P>
+			</TD>
+			<TD WIDTH=578>
+				<P>nref;</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=46>
+				<P>REF</P>
+			</TD>
+			<TD WIDTH=578>
+				<P>ref();</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=46>
+				<P>INT</P>
+			</TD>
+			<TD WIDTH=578>
+				<P>surid;</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<BLOCKQUOTE><BR><B>Principal parameters</B></BLOCKQUOTE>
+<DL>
+	<DD>
+	<TABLE WIDTH=632 BORDER=0 CELLPADDING=2 CELLSPACING=0>
+		<COL WIDTH=45>
+		<COL WIDTH=579>
+		<TR>
+			<TD WIDTH=45>
+				<P>id 
+				</P>
+			</TD>
+			<TD WIDTH=579>
+				<P>- Local identity</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=45>
+				<P>nref</P>
+			</TD>
+			<TD WIDTH=579>
+				<P>- Number of included entities to build the composite curve</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=45>
+				<P>ref()</P>
+			</TD>
+			<TD WIDTH=579>
+				<P>- Ordered array of included entities, line arcs or curves</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<BLOCKQUOTE STYLE="margin-bottom: 0cm"><BR><B>Optional parameters</B>
+</BLOCKQUOTE>
+<DL>
+	<DD>
+	<TABLE WIDTH=632 BORDER=0 CELLPADDING=2 CELLSPACING=0>
+		<COL WIDTH=45>
+		<COL WIDTH=579>
+		<TR>
+			<TD WIDTH=45>
+				<P>surid 
+				</P>
+			</TD>
+			<TD WIDTH=579>
+				<P>- Identity of surface for UV-curve</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<BLOCKQUOTE><BR><B>Attributes</B></BLOCKQUOTE>
+<DL>
+	<DD>
+	<TABLE WIDTH=632 BORDER=0 CELLPADDING=2 CELLSPACING=2>
+		<TR>
+			<TD WIDTH=67>
+				<P>PEN 
+				</P>
+			</TD>
+			<TD WIDTH=557>
+				<P>- Pen or colour number</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=67>
+				<P>LEVEL</P>
+			</TD>
+			<TD WIDTH=557>
+				<P>- Level number</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=67>
+				<P>BLANK</P>
+			</TD>
+			<TD WIDTH=557>
+				<P>- Visible(0) or invisible(1)</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=67>
+				<P>CFONT</P>
+			</TD>
+			<TD WIDTH=557>
+				<P>- Solid(0), dashed(1) or centerline(2)</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=67>
+				<P>CDASHL</P>
+			</TD>
+			<TD WIDTH=557>
+				<P>- Dashlength</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=70>
+				<P>WIDTH</P>
+			</TD>
+			<TD WIDTH=554>
+				<P>- Linewidth</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<BLOCKQUOTE><BR><BR>
+</BLOCKQUOTE>
+<BLOCKQUOTE><B>Comments</B></BLOCKQUOTE>
+<BLOCKQUOTE>If lines or arcs are used in a cur_comp they will be
+converted to curve segments. One segment for a line and maximum four
+segments for an arc.</BLOCKQUOTE>
+<BLOCKQUOTE><BR><BR>
+</BLOCKQUOTE>
+<BLOCKQUOTE><B>Notes about NURBS curves</B></BLOCKQUOTE>
+<BLOCKQUOTE>If one or more of the input entities are NURBS curves,
+the resulting composite curve will be a NURBS curve, otherwise it
+will be a curve represented by cubic segments. 
+</BLOCKQUOTE>
+<BLOCKQUOTE>If a NURBS curve is to be created, lines, arcs and cubic
+segments are first converted to 3rd degree NURBS segments without
+approximation. The degree of the composite curve will then use the
+highest degree found in the input entities. Degree elevation (not
+implemented yet) is done without approximation.</BLOCKQUOTE>
+<BLOCKQUOTE>For a NURBS composite curve it is not allowed to mix UV
+and non UV segments. All UV segments must belong to the same surface.
+This is due to the fact that the resulting NURBS curve will have one
+set of control points and weights and theese must “live” in the
+same space i.e. R3-space or the UV-space of o<U>ne surface</U>. If
+any of the input curves is an offset curve, all other input entities
+must also be offset curves with the same offset value.</BLOCKQUOTE>
+<BLOCKQUOTE><BR><BR>
+</BLOCKQUOTE>
+<BLOCKQUOTE><B>Notes about uv-curves</B></BLOCKQUOTE>
+<BLOCKQUOTE>If cur_comparr is used to define uv-curves, the input
+entities may not be offset curves. If some of the input entities
+already are a uv-curve, it must be a uv-curve referring to the same
+surface as the one given as surid. They must also in this case be
+connected <U>after</U> the mapping to uv-space. 
+</BLOCKQUOTE>
+<BLOCKQUOTE>Varkon's internal parameterization of surfaces differ
+from the 'mbs'-parameterization.  Cur_comparr do this mapping for all
+surfaces except NURBS.   I.e. for a NURBS surface the varkon internal
+uv-space, defined by the knot vecktors, shall be considered.</BLOCKQUOTE>
+<HR>
+<CENTER>
+	<TABLE CELLPADDING=0 CELLSPACING=10>
+		<TR>
+			<TD>
+				<P><A HREF="../index.htm">VARKON Homepage</A></P>
+			</TD>
+			<TD>
+				<P><A HREF="entiindx.htm">Index</A></P>
+			</TD>
+		</TR>
+	</TABLE>
+</CENTER>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

@@ -22,10 +22,7 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-2000, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
-
 
 /*
 ***Constants used by debug-functions 
@@ -41,13 +38,21 @@
 #define WINPAC  8          /* Code for WP     */
 #define MSPAC   9          /* Code for MS     */
 
+/* Constants used by time measurement system*/
+
+#define V3_TIMER_RESET 0
+#define V3_TIMER_ON    1
+#define V3_TIMER_OFF   2
+#define V3_TIMER_WRITE 3
+
 /*
-***Debug function prototypes
+***Function prototypes
 */
-short dbgini();
-short dbgexi();
-short dbgon(char *str);
+void  dbgini();
+void  dbgexi();
+int   dbgon(char *str);
 int   dbglev(int srcpac);
 FILE *dbgfil(int srcpac);
+void  v3time(int op, int num);
 
 /********************************************************************/

@@ -77,12 +77,13 @@ of Linux. Includefiles sql.h and sqltypes.h and sqlext.h are installed
 in /usr/include. The library libodbcinst.so is installed in /usr/lib 
 but the library libmyodbc3.so is installed in /usr/lib/unixODBC.
 
-To get things working, edit Makefile.linux in the EX/src directory and
-uncomment the line -DV3_ODBC. This will force the compiler to include
+To get things working, edit Makefile in sources directory and
+uncomment the line DV3ODBC=TRUE. This will force the compiler to include
 the ODBC calls in the Varkon code. 
 
-Next, edit the Makefile.linux in the sources directory and uncomment
-the line defining SQLLIBS = -L/usr/lib/unixODBC -lmyodbc3
+If libmyodbc3.so is installed in another place than 
+/usr/lib/unixODBC, you will need to edit the Makefile.linux in 
+the sources directory. SQLLIBS = ... 
 
 Now it's time to rebuild the system.
 

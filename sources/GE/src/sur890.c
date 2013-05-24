@@ -259,6 +259,7 @@ fprintf(dbgfil(SURPAC),"sur890 nk_u= %d, nk_v= %d\n",
 /* pp_patout not is equal to NULL (also for errors).                */
 /*                                                                 !*/
 
+
 *pp_patout = NULL; 
 
 /* Local pointer for the case that all weights are one (1.0)        */

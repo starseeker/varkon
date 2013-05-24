@@ -31,7 +31,6 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#include "../../GP/include/GP.h"
 
 #ifdef UNIX
 #include <sys/utsname.h>

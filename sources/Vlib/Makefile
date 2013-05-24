@@ -20,4 +20,3 @@ distr :
 	@make -C plott   -f Makefile
 	@make -C stl   -f Makefile
 
-

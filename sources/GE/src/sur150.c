@@ -651,7 +651,7 @@ for ( ir=i_start; ir<= i_end; ++ir )     /* Start loop UV curve     */
 /*           For iso_c= V: Let c0x= start_v  c1x= end_dec-start_dec */
 /*                             c0y= iso_v    c1y=   0               */
 /*       ii. Let c0 = 1 and all other coefficients be zero          */
-/*      iii. Let offset be zero, type be UV_SEG and                 */
+/*      iii. Let offset be zero, type be UV_CUB_SEG and                 */
 /*           segment length be zero.                                */
 /*       iv. Increase number of output segments (no_seg) with one.  */
 /*        v. Goto oneseg.                                           */
@@ -696,7 +696,7 @@ for ( ir=i_start; ir<= i_end; ++ir )     /* Start loop UV curve     */
          (*parray).c3 = 0.0;
 
          (*parray).ofs = 0.0;
-         (*parray).typ = UV_SEG ;
+         (*parray).typ = UV_CUB_SEG ;
          (*parray).sl  = 0.0;     
 
          no_seg=no_seg+1;   /* Number of segments of UV curve       */
@@ -711,7 +711,7 @@ for ( ir=i_start; ir<= i_end; ++ir )     /* Start loop UV curve     */
 /*           For iso_c= V: Let c0x= start_v     c1x= 1-start_dec    */
 /*                             c0y= iso_v       c1y=   0            */
 /*       ii. Let c0 = 1 and all other coefficients be zero          */
-/*      iii. Let offset be zero, type be UV_SEG and                 */
+/*      iii. Let offset be zero, type be UV_CUB_SEG and                 */
 /*           segment length be zero.                                */
 /*       iv. Increase number of output segments (no_seg) with one.  */
 /*        v. Goto eloop.                                            */
@@ -757,7 +757,7 @@ for ( ir=i_start; ir<= i_end; ++ir )     /* Start loop UV curve     */
          (*parray).c3 = 0.0;
 
          (*parray).ofs = 0.0;
-         (*parray).typ = UV_SEG ;
+         (*parray).typ = UV_CUB_SEG ;
          (*parray).sl  = 0.0;     
 
          no_seg=no_seg+1;   /* Number of segments of UV curve       */
@@ -772,7 +772,7 @@ for ( ir=i_start; ir<= i_end; ++ir )     /* Start loop UV curve     */
 /*           For iso_c= V: Let c0x= i_end       c1x= 1-end_dec      */
 /*                             c0y= iso_v       c1y=   0            */
 /*       ii. Let c0 = 1 and all other coefficients be zero          */
-/*      iii. Let offset be zero, type be UV_SEG and                 */
+/*      iii. Let offset be zero, type be UV_CUB_SEG and                 */
 /*           segment length be zero.                                */
 /*       iv. Increase number of output segments (no_seg) with one.  */
 /*        v. Goto eloop.                                            */
@@ -817,7 +817,7 @@ for ( ir=i_start; ir<= i_end; ++ir )     /* Start loop UV curve     */
          (*parray).c3 = 0.0;
 
          (*parray).ofs = 0.0;
-         (*parray).typ = UV_SEG ;
+         (*parray).typ = UV_CUB_SEG ;
          (*parray).sl  = 0.0;     
 
          no_seg=no_seg+1;   /* Number of segments of UV curve       */
@@ -832,7 +832,7 @@ for ( ir=i_start; ir<= i_end; ++ir )     /* Start loop UV curve     */
 /*           For iso_c= V: Let c0x= ir          c1x=   1            */
 /*                             c0y= iso_v       c1y=   0            */
 /*      iii. Let c0 = 1 and all other coefficients be zero          */
-/*       iv. Let offset be zero, type be UV_SEG and                 */
+/*       iv. Let offset be zero, type be UV_CUB_SEG and                 */
 /*           segment length be zero.                                */
 /*                                                                 !*/
 
@@ -884,7 +884,7 @@ for ( ir=i_start; ir<= i_end; ++ir )     /* Start loop UV curve     */
       (*parray).c3 = 0.0;
 
       (*parray).ofs = 0.0;
-      (*parray).typ = UV_SEG ;
+      (*parray).typ = UV_CUB_SEG ;
       (*parray).sl  = 0.0;     
 
 

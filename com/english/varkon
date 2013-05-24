@@ -1,4 +1,4 @@
-#!/bin/sh
+ #!/bin/sh
 #######################################################
 #
 # Startscript for english version of VARKON.
@@ -8,12 +8,18 @@
 #
 # (C)Örebro university 2004
 #
+# 2006-09-22 Sören Larsson, Örebo university
+#            Added relative path to VARKON_ROOT  
+#
 #######################################################
 
-# Root directory for VARKON installation. Change this
-# line to point to the right location.
+# Root directory for VARKON installation. You may change 
+# this line to point to the right location.
 
-VARKON_ROOT=/usr/varkon/varkon_1.18A
+# alternative 1, find relative path from here
+# alternative 2, specify path explicit
+VARKON_ROOT=`(cd $(dirname $0); cd ..; cd ..; pwd)`
+# VARKON_ROOT=/home/username/varkon/varkon_1.99X
 export VARKON_ROOT
 
 # Standard menufiles  (*.MDF, *.INC)

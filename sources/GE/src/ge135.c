@@ -53,7 +53,7 @@
  *    (C)microform ab 1992-01-16 G.Liden
  *
  *    1993-03-05 Typ av segment, J. Kjellander
- *    1994-11-23 UV_SEGM's G. Liden
+ *    1994-11-23 UV_CUB_SEGM's G. Liden
  *    1999-05-21 Rewritten, J.Kjellander
  *
  *****************************************************************!*/
@@ -150,7 +150,7 @@
 /*
 ***Output surface data equal to input surface data
 */
-   if ( prin->typ == UV_SEG )
+   if ( prin->typ == UV_CUB_SEG )
      {
      prout->subtyp   = prin->subtyp;
      prout->spek_gm  = prin->spek_gm;

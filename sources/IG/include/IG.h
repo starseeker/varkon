@@ -22,9 +22,10 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
+
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef UNIX
 #include <X11/Xlib.h>
@@ -68,12 +69,6 @@
 #define V3MOME(from,to,size) memcpy(to,from,size)
 #endif
 
-typedef union
-{
-   gmflt  crd[4*GMXMXL];            /* Coordinates */
-   char   valarr[V3STRLEN*V2MPMX];  /* Parameter values */
-} GMDATA;
-
 /*
 ***Allmänt förekommande definitioner.
 */
@@ -82,7 +77,7 @@ typedef union
 #define GMMXGP    100      /* Max antal referenser i en grupp */
 #define GMMXXH    50       /* Max antal referenser i ett snitt */
 #define MXLSTP    25       /* Max antal strippar i en LFT_SUR */
-#define DSGANT    25       /* Allokeringsstorlek för dynamiska GMSEG */
+#define DSGANT    25       /* Allokeringsstorlek för dynamiska DBSeg */
 #define GPMAXV    20       /* Max antal vyer */
 #define GPVNLN    15       /* Max tecken i vynamn */
 #define NT1SIZ    2000     /* Max antal nivåer */
@@ -116,11 +111,7 @@ typedef union
 */
 #define IG_INP     1       /* Promt för inmatning */
 #define IG_MESS    2       /* Meddelande */
-/*
-***Koder för aktivt koordinatsystems grafik.
-*/
-#define V3_CS_NORMAL  0    /* Ej aktivt */
-#define V3_CS_ACTIVE  1    /* Aktivt */
+
 /*
 ***Koder för v3mode.
 */
@@ -132,49 +123,7 @@ typedef union
 #define BAS_MOD    12       /* Basmodulen allmänt */
 #define X11_MOD    16       /* Funktion bara för X11 */
 #define NO_X11_MOD 32       /* Funktion ej för X11 */
-/*
-***Koder för anrop till wpwwtw(), dvs. winpac:s eventloop.
-*/
-#define SLEVEL_ALL    0    /* Alla events returneras som servade */
-#define SLEVEL_MBS    1    /* Input från MBS, tex. WAIT_WIN(...) */
-#define SLEVEL_V3_INP 2    /* Input från V3, tex. wpmsip() */
-#define SLEVEL_NONE   3    /* Alla events servas lokalt */
-/*
-***Koder för grafiska fönster.
-*/
-#define GWIN_MAIN     0    /* Fönster-ID för huvudfönstret */
-#define GWIN_ALL     -1    /* Alla fönster */
-/*
-***Koder för nivåhantering.
-*/
-#define WP_BLANKL     1    /* Släck nivåer */
-#define WP_UBLANKL    2    /* Tänd nivåer */
-#define WP_LISTL      3    /* Lista nivåer */
-/*
-***Koder för vektorstatus (vec.a) i displayfilen.
-*/
-#define INVISIBLE 0         /* Släckt förflyttning */
-#define VISIBLE   1         /* Tänd förflyttning */
-#define ENDSIDE   2         /* Slut-vektor */
-/*
-***Post (union) i displayfilen.
-*/
-typedef union dfpost
-{
-struct
-  {                  /* Header */ 
-  short type;        /* Typ */
-  int   nvec;        /* Antal */
-  char hili;         /* Highlight */
-  } hdr;
-DBptr la;            /* Logisk adress till GM eller suddad */
-struct
-  {                  /* Vektor */
-  short x;           /* X-position */
-  short y;           /* Y-position */
-  char a;            /* Status */
-  } vec;
-} DFPOST;
+
 /*
 ***MDF konstanter.
 */
@@ -223,13 +172,6 @@ typedef struct mnudat
 #define MSMONO     16        /* MSKERMIT på monokrom PC */
 #define X11        17        /* X-WINDOWS */
 #define MSWIN      18        /* Microsoft WINDOWS-32 */
-
-/*
-***Koder för digitizer.
-*/
-#define C91360P      1        /* Stor Calcomp med penna */
-#define C2200P       2        /* Liten Calcomp med penna */
-#define MM1200P      3        /* Summagraphics MM 1200/961 med penna */
 
 /*
 ***Följande matematiska funktioner skall användas.
@@ -358,7 +300,6 @@ typedef struct nivnam        /* Structure för en nivå */
 #define GMSMXV   1000
 #define PLYMXV   6000
 #define IGMAXID  1000
-#define MIN_BLKS (long)8
 
 #else
 
@@ -368,7 +309,6 @@ typedef struct nivnam        /* Structure för en nivå */
 #define GMSMXV   1000
 #define PLYMXV   30000
 #define IGMAXID  5000
-#define MIN_BLKS (long)8
 #endif
 
 #ifdef WRK_STAT
@@ -377,7 +317,6 @@ typedef struct nivnam        /* Structure för en nivå */
 #define GMSMXV   1000
 #define PLYMXV   30000
 #define IGMAXID  5000
-#define MIN_BLKS (long)8
 #endif
 
 #endif
@@ -429,53 +368,6 @@ typedef struct nivnam        /* Structure för en nivå */
 #define SMBPOSM     11          /* positionsmenyn */
 #define SMBALT      12          /* meny-alternativ */
 
-/*
-***Definitioner för terminalegenskaper.
-*/
-
-typedef struct igtatt
- {
- short rmarg;     /* Skärm, bredd */
- short bmarg;     /* Skärm, antal rader */
- short sarx;      /* Status, rubrik-x */
- short sadx;      /* Status, data-x */
- short sarfw;     /* Status, fältbredd rubrik */
- short sadfw;     /* Status, fältbredd data */
- short say;       /* Status, läge-y */
- short shgt;      /* Status, antal rader */
- short mhgt;      /* Menyarea, höjd (antal rader) */
- short mwdt;      /* Menyarea, bredd (antal tecken) */
- short menurx;    /* Aktiv meny, läge-x */
- short menury;    /* Aktiv meny, läge-y */
- short ialy;      /* Input, läge-y */
- short ialx;      /* Input, läge-x */
- short lafcol;    /* Listarea, läge-x */
- short lafw;      /* Listarea, fältbredd */
- short laly;      /* Listarea, höjd (antal rader) */
- short lahedy;    /* Listarea, rubrik läge-y */
- short laflin;    /* Listarea, första rad-y */
- short lallin;    /* Listarea, sista rad-y */
- short maly;      /* Meddelande, läge-y */
- short malx;      /* Meddelande, läge_x */
-}IGTATT;
-
-/*
-***Digitizerdata.
-*/
-
-typedef struct digdat
- {
- bool  def;        /* Finns/finns ej */
- short typ;        /* Typ av digitizer. */
- int   fd;         /* Filedescriptor till port. */
- gmflt ldx;        /* Lokalt dig-X */
- gmflt ldy;        /* Lokalt dig-Y */
- gmflt lmx;        /* Lokalt modell-X */
- gmflt lmy;        /* Lokalt modell-Y */
- gmflt v;          /* Rotationsvinkel */
- gmflt s;          /* Skala */
- }DIGDAT;
-
 
 /*
 ***Function prototypes for the IG API.
@@ -487,7 +379,7 @@ typedef struct digdat
 short igckjn(char jobnam[]);
 
 /*
-***ige1.c
+***iginit.c
 */
 short iginit(char *fnam);
 short iglmdf(char *fnam);
@@ -499,85 +391,44 @@ short wpunik();
 short editcopy(char *p1, char *p2);
 short igstmu(short mnum, char *rubr, short nalt, char altstr[][V3STRLEN+1],
              char alttyp[], short altnum[]);
+short igsini();
+
 /*
-***ige2.c
+***ig2.c
 */
-void igwstr(char *s);
-void igmvac(short x, short y);
-void igpstr(char *s, short font);
-void igvstr(char  *s, short font);
-void igdfld(short x, short fw, short y)   ;
-void igfstr(char *s, short just, short font)    ;
 char *iggtts(short tnr);
-void igerar(short x, short y);
-void igersc();
 void igflsh();
 void igbell();
 short iggtsm(char *cp, MNUALT **altptr);
-short iglned(char *s, short *cursor, short *scroll, bool *dfuse, char  *ds,
-             short maxlen, short font, bool snabb);
 short igglin(char *pmt, char *dstr, short *ntkn, char *istr);
-char iggtch();
-short iggtds(char digbuf[]);
 
 /*
-***ige3.c
-*/
-short suropm();
-short suofpm();
-short sucypm();
-short suswpm();
-short surupm();
-
-/*
-***ige4.c
+***igview.c
 */
 short igcrvp();
 short igcrvc();
 short dlview();
-short liview();
-short chview();
-short olview();
-short scroll();
-short scale();
-short igascl();
-short igzoom();
-short repagm();
+
 short igcnog();
+
 short igcror();
 short igcrdx();
 short igcrdy();
 short igtndr();
 short igslkr();
-short igcrsk();
-short igcvyd();
+
 short igshd0();
 short igshd1();
 short igrenw();
 
 /*
-***ige5.c
+***igpoint.c
 */
 short pofrpm();
 short poprpm();
 
-DBstatus cuftpm();
-DBstatus cuctpm();
-DBstatus cuvtpm();
-DBstatus cufnpm();
-DBstatus cucnpm();
-DBstatus cuvnpm();
-
-short cucfpm();
-short cucppm();
-short partpm();
-short textpm();
-short cs3ppm();
-short cs1ppm();
-short bplnpm();
-
 /*
-***ige6.c
+***igline.c
 */
 short lifrpm();
 short liprpm();
@@ -588,103 +439,98 @@ short li2tpm();
 short lipepm();
 
 /*
-***ige7.c
+***igarc.c
 */
 short ar1ppm();
 short ar2ppm();
 short ar3ppm();
 short arofpm();
 short arflpm();
+short igcarr();
+short igcar1();
+short igcar2();
 
 /*
-***ige8.c
+***igcurve.c
 */
-short igangm();
-short iganpm();
-short lstitb();
-short rdgmpk();
-short lstsyd();
-short igdemo();
+short cuispm();
+short curapm();
+short curtpm();
+short cusipm();
+short cuftpm();
+short cuctpm();
+short cuvtpm();
+short cufnpm();
+short cucnpm();
+short cuvnpm();
+short cucfpm();
+short cucppm();
+short comppm();
+short curopm();
+short curipm();
 
 /*
-***ige9.c
+***igsurf.c
 */
-short igdlen();
-short igdlls();
-short igdlgp();
-short trimpm();
-short igblnk();
-short igubal();
-short ightal();
-short igupcs(DBptr la, int mode);
+short suropm();
+short suofpm();
+short sucypm();
+short suswpm();
+short surupm();
+short surtpm();
+short surapm();
+short sucopm();
+short suexpm();
+short sulopm();
 
 /*
-***ige10.c
+***igpart.c
 */
-short genint(short pnr, char *dstr, char *istr, pm_ptr *pexnpt);
-short geninv(short pnr, char *istr, char *dstr, v2int  *ival);
-short genflt(short pnr, char *dstr, char *istr, pm_ptr *pexnpt);
-short genflv(short pnr, char *istr, char *dstr, double *fval);
-short genstr(short pnr, char *dstr, char *istr, pm_ptr *pexnpt);
-short genstv(short pnr, char *istr, char *dstr, char   *strval);
-short genstm(short mnum, pm_ptr *pexnpt);
-short genref(short pnr, DBetype *ptyp, pm_ptr *pexnpt, bool *pe, bool *pr);
-short genpos(short pnr, pm_ptr *pexnpt);
-short genpov(DBVector *pos);
-short igpmon();
-short igpmof();
+short partpm();
+short igcpts(char *filnam, short atyp);
+bool  igoptp(char *prompt);
+bool  igmenp(char *prompt, short *mnum);
+bool  igposp(char *prompt, short *posalt);
+bool  igtypp(char *prompt, DBetype *typmsk);
+short igdefp(char *prompt, PMLITVA *defval);
+short igtstp(char *prompt);
+short iguppt();
+short igcptp();
+short igcptw();
+short iggnps(PMREFVA *id);
 
 /*
-***ige11.c
+***igtext.c
 */
+short textpm();
+short igctxv();
+short igctxs();
+
+/*
+***igcsy.c
+*/
+short cs3ppm();
+short cs1ppm();
 short modbpm();
 short modgpm();
 short modlpm();
-short igcges(char *typ, pm_ptr pplist);
-short igcprs(char *typ, pm_ptr pplist);
-short igcpts(char *filnam, short atyp);
-DBseqnum iggnid();
-bool igoptp(char *prompt);
-bool igmenp(char *prompt, short *mnum);
-bool igposp(char *prompt, short *posalt);
-bool igtypp(char *prompt, DBetype *typmsk);
-short igdefp(char *prompt, PMLITVA *defval);
-short igtstp(char *prompt);
+short igupcs(DBptr la, int mode);
 
 /*
-***ige12.c
+***igtform.c
 */
-short igplot();
-short igcgkm();
-short igcdxf();
-short igshll();
-short ighid1();
-short ighid2();
-short ighid3();
+short tfmopm();
+short tfropm();
+short tfmipm();
+short tcpypm();
 
 /*
-***ige13.c
+***igbplane.c
 */
-short igstid(char *idstr, DBId *idvek);
-short igidst(DBId *idvek, char *idstr);
-bool igcsid(DBId *pid1, DBId *pid2);
-bool igcmid(DBId *idpek, DBId idvek[][MXINIV], short vn);
-short igcpre(DBId *frompk, DBId *topk);
+short bplnpm();
 
 /*
-***ige14.c
-*/
-short getidt(DBId *idvek, DBetype *typ, bool *end, bool *right, short utstat);
-short getmid(DBId idmat[][MXINIV], DBetype typv[], short *idant);
-short gtpcrh(DBVector *pos);
-short gtpend(DBVector *vecptr);
-short gtpon(DBVector *vecptr);
-short gtpint(DBVector *vecptr);
-short gtpcen(DBVector *vecptr);
-short gtpdig(DBVector *vecptr);
-
-/*
-***ige15.c
+***igdim.c
 */
 short ld0pm();
 short ld1pm();
@@ -697,28 +543,92 @@ short adimpm();
 short xhtpm();
 
 /*
-***ige16.c
+***igsysdat.c
+*/
+short igangm();
+short iganpm();
+short lstitb();
+short rdgmpk();
+short lstsyd();
+
+/*
+***igdelete.c
+*/
+short igdlen();
+short igdlls();
+short igdlgp();
+short trimpm();
+short igblnk();
+short igubal();
+short ightal();
+
+/*
+***igexpr.c
+*/
+short genint(short pnr, char *dstr, char *istr, pm_ptr *pexnpt);
+short geninv(short pnr, char *istr, char *dstr, DBint  *ival);
+short genflt(short pnr, char *dstr, char *istr, pm_ptr *pexnpt);
+short genflv(short pnr, char *istr, char *dstr, double *fval);
+short genstr(short pnr, char *dstr, char *istr, pm_ptr *pexnpt);
+short genstv(short pnr, char *istr, char *dstr, char   *strval);
+short genstm(short mnum, pm_ptr *pexnpt);
+short genref(short pnr, DBetype *ptyp, pm_ptr *pexnpt, bool *pe, bool *pr);
+short genpos(short pnr, pm_ptr *pexnpt);
+short genpov(DBVector *pos);
+short igpmon();
+short igpmof();
+short getidt(DBId *idvek, DBetype *typ, bool *end, bool *right, short utstat);
+short getmid(DBId idmat[][MXINIV], DBetype typv[], short *idant);
+short gtpcrh(DBVector *pos);
+short gtpend(DBVector *vecptr);
+short gtpon(DBVector *vecptr);
+short gtpint(DBVector *vecptr);
+short gtpcen(DBVector *vecptr);
+short gtpdig(DBVector *vecptr);
+
+/*
+***igstatem.c
+*/
+DBseqnum iggnid();
+short igcges(char *typ, pm_ptr pplist);
+short igcprs(char *typ, pm_ptr pplist);
+short igedst();
+short iganrf();
+
+/*
+***igplot.c
+*/
+short igplot();
+short igcgkm();
+short igcdxf();
+short igshll();
+short ighid1();
+short ighid2();
+short ighid3();
+
+/*
+***igID.c
+*/
+short igstid(char *idstr, DBId *idvek);
+short igidst(DBId *idvek, char *idstr);
+bool  igcsid(DBId *pid1, DBId *pid2);
+bool  igcmid(DBId *idpek, DBId idvek[][MXINIV], short vn);
+short igcpre(DBId *frompk, DBId *topk);
+
+/*
+***ig16.c
 */
 short grppm();
-short comppm();
-short curopm();
-short curipm();
+short chgrgm();
 short symbpm();
 
 /*
-***ige17.c
+***ighelp.c
 */
 short ighelp();
 
 /*
-***ige18.c
-*/
-short lstniv();
-short namniv();
-short delniv();
-
-/*
-***ige19.c
+***igmodule.c
 */
 short crepar();
 short chapar();
@@ -732,7 +642,7 @@ short prtmod();
 short lstmod();
 
 /*
-***ige20.c
+***ig20.c
 */
 void iggnsa();
 void igupsa();
@@ -741,27 +651,18 @@ bool igsamu();
 short iggalt(MNUALT **paltp, short *ptyp);
 short igupmu();
 short igpamu(short x, short y, short mnum);
-short igerpl();
 short igsmmu(short m);
 short iggmmu();
-short iginla(char *hs);
-short igalla(char *ls, short lf);
 short igrsla();
-short igexla();
 short igplma(char *s, int mode);
 short igptma(int tsnum, int mode);
 short igwlma(char *s, int mode);
 short igwtma(short tsnum);
 short igrsma();
 char *igqema();
-short igmlv1();
-short igmlv2();
-short igmlv3();
-short igslv1();
-short igslv2();
 
 /*
-***ige21.c
+***ig21.c
 */
 short igssip(char *ps, char *is, char *ds, short ml);
 short igsfip(char *ps, DBfloat *fval);
@@ -771,8 +672,13 @@ bool  igialt(short psnum, short tsnum, short fsnum, bool  pip);
 bool  igials(char *ps, char *ts, char *fs, bool  pip);
 
 /*
-***ige22.c
+***igjob.c
 */
+short igmain();
+short irmain();
+short iglsjb();
+short igdljb();
+short igmvrr();
 short igload();
 short igldmo();
 short igsjpg();
@@ -795,7 +701,7 @@ short igchjn(char *newnam);
 bool  iggrst(char *resurs, char *pvalue);
 
 /*
-***ige23.c
+***igset.c
 */
 short igslvl();
 short igspen();
@@ -828,14 +734,7 @@ short igsxdl();
 short igswdt();
 
 /*
-***ige24.c
-*/
-short iggtmx(VY *pminvy);
-short igmsiz(VY *pminvy);
-short igcdig();
-
-/*
-***ige25.c
+***ig25.c
 */
 short mvengm();
 short mv1gm();
@@ -844,16 +743,13 @@ short mrengm();
 short roengm();
 
 /*
-***ige26.c
+***ig27.c
 */
-short chgrgm();
+short igcmos();
 
 /*
-***ige27.c
+***igfile.c
 */
-short igintt();
-short igextt();
-short igsini();
 short v3fmov(char *from, char *to);
 short v3fcpy(char *from, char *to);
 short v3fapp(char *from, char *to);
@@ -865,18 +761,8 @@ short igcmos(char oscmd[]);
 bool  v3cmpw(char *wc_str, char *tststr);
 
 /*
-***ige28.c
+***ig29.c
 */
-short  igmain();
-short  irmain();
-short  iglsjb();
-short  igdljb();
-short  igmvrr();
-
-/*
-***ige29.c
-*/
-short v2mome(char *frompk, char *topk, int size);
 int   v3fopr(char *path, char *fil, char *ext);
 void  v3trfp(char *path1, char *path2);
 short igckhw();
@@ -886,20 +772,11 @@ char *v3genv(int envkod);
 char *gtenv3(char *envstr);
 
 /*
-***ige30.c
+***igattedit.c
 */
-short igedit();
-short iguppt();
-short igcptp();
-short igcptw();
 short igcpen();
 short igcniv();
 short igcwdt();
-short iggnps(PMREFVA *id);
-
-/*
-***ige31.c
-*/
 short igcdal();
 short igcfs();
 short igcfd();
@@ -917,55 +794,24 @@ short igcda0();
 short igcda1();
 
 /*
-***ige32.c
+***igerror.c
 */
-short igcarr();
-short igcar1();
-short igcar2();
-short igctxv();
-short igctxs();
-
-/*
-***ige33.c
-*/
-
-/* Error handling */
-
 short erinit();
 short erpush(char *code, char *str);
 short errmes();
 short erlerr();
 
-/* Time measurement */
-
-void v3time(int op, int num);
-
-#define V3_TIMER_RESET 0
-#define V3_TIMER_ON    1
-#define V3_TIMER_OFF   2
-#define V3_TIMER_WRITE 3
-
 /*
-***ige34.c
+***igmalloc.c
 */
-short igedst();
-
-/*
-***ige35.c
-*/
-short iganrf();
-
-/*
-***ige36.c
-*/
-void v3mini();
+void  v3mini();
 void *v3mall(unsigned size, char *name);
-void *v3rall(void    *ptr, unsigned size, char *name);
+void *v3rall(void *ptr, unsigned size, char *name);
 short v3free(void *ptr, char *name);
-void v3msta();
+void  v3msta();
 
 /*
-***ige37.c
+***igPID.c
 */
 short igchpr();
 short igcnpr(char *newpid);
@@ -978,20 +824,8 @@ short igdir(char *inpath, char *typ, int maxant, int maxsiz, char *pekarr[],
 short igckpr();
 
 /*
-***ige50.c
+***igdebug.c
 */
-short cuispm();
-short curapm();
-short curtpm();
-short cusipm();
-short surtpm();
-short surapm();
-short sucopm();
-short suexpm();
-short sulopm();
-short tfmopm();
-short tfropm();
-short tfmipm();
-short tcpypm();
+/* See debug.h */
 
 /********************************************************************/

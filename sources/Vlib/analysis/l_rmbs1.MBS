@@ -1,7 +1,7 @@
 !*******************************************************
 
  basic geometry module l_rmbs1(
- STRING rn*10 >"Ange ritningens namn !");
+ STRING rn*132 >"Ange ritningens namn !");
 
 !*      Skriver ut ritning p} MBS-format.
 !*      Parter expanderas inte.
@@ -30,7 +30,6 @@
 !***\ppna utfil och ladda RIT-fil.
 !*
    open(utfil,"W",act_jobdir()+rn+".MBS");
-!*   load_gm(act_jobdir()+rn+".RIT");
 !*
 !***Deklaration av modul.
 !*

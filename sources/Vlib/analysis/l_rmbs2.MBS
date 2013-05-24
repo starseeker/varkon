@@ -1,7 +1,7 @@
 !*******************************************************
 
  basic geometry module l_rmbs2(
- STRING rn*10 >"Ange ritningens namn !");
+ STRING rn*132 >"Ange ritningens namn !");
 
 !*      Skriver ut ritning p} MBS-format.
 !*      Parter expanderas.

@@ -1,0 +1,45 @@
+##########################################################
+#
+#   Makefile for the GE demo programs
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+
+# Options to the C-compiler
+
+CFLAGS   = -ansi                          \
+           -ffloat-store                  \
+           -fsigned-char                  \
+           -fwritable-strings             \
+           -m486                          \
+           -O                             \
+           -DUNIX
+
+LDFLAGS = -lm
+
+# Libraries that the linker needs to know about
+
+LIBES    = ../lib/GElib.a ../../DB/lib/DBlib.a ../../VU/lib/VUlib.a
+
+# Programs to make
+
+PROGRAMS = GEdemo1 GEdemo2 GEdemo3
+
+# Target
+
+GEdemos: $(PROGRAMS)
+
+# Dependency rules
+
+GEdemo1 : GEdemo1.c ../lib/GElib.a
+	$(CC) $(CFLAGS) $< $(LDFLAGS) $(LIBES) -o $@
+
+GEdemo2 : GEdemo2.c ../lib/GElib.a
+	$(CC) $(CFLAGS) $< $(LDFLAGS) $(LIBES) -o $@
+
+GEdemo3 : GEdemo3.c ../lib/GElib.a
+	$(CC) $(CFLAGS) $< $(LDFLAGS) $(LIBES) -o $@
+clean:
+	rm $(PROGRAMS)

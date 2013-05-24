@@ -5,62 +5,71 @@
 #
 #  Make rules for the EX module
 #
-#  (C)Microform AB 1999-02-22 J.Kjellander
+#  (C)2006 J.Kjellander, Sören Larsson
 #
 ##########################################################
 
 INCFILES = ../include/EX.h              \
            ../../DB/include/DB.h
 
-OBJECTS = ../lib/EXlib.a(ex1.o)         \
-          ../lib/EXlib.a(ex2.o)         \
-          ../lib/EXlib.a(ex4.o)         \
-          ../lib/EXlib.a(ex5.o)         \
-          ../lib/EXlib.a(ex6.o)         \
-          ../lib/EXlib.a(ex7.o)         \
-          ../lib/EXlib.a(ex8.o)         \
-          ../lib/EXlib.a(ex9.o)         \
-          ../lib/EXlib.a(ex10.o)        \
-          ../lib/EXlib.a(ex11.o)        \
-          ../lib/EXlib.a(ex12.o)        \
-          ../lib/EXlib.a(ex13.o)        \
-          ../lib/EXlib.a(ex15.o)        \
-          ../lib/EXlib.a(ex16.o)        \
-          ../lib/EXlib.a(ex17.o)        \
-          ../lib/EXlib.a(ex18.o)        \
-          ../lib/EXlib.a(ex19.o)        \
-          ../lib/EXlib.a(ex20.o)        \
-          ../lib/EXlib.a(ex21.o)        \
-          ../lib/EXlib.a(ex22.o)        \
-          ../lib/EXlib.a(ex23.o)        \
-          ../lib/EXlib.a(ex24.o)        \
-          ../lib/EXlib.a(ex25.o)        \
-          ../lib/EXlib.a(ex26.o)        \
-          ../lib/EXlib.a(ex27.o)        \
-          ../lib/EXlib.a(ex28.o)        \
-          ../lib/EXlib.a(expoint.o)     \
-          ../lib/EXlib.a(excurve.o)     \
-          ../lib/EXlib.a(extcp.o)       \
-          ../lib/EXlib.a(extime.o)      \
-          ../lib/EXlib.a(exos.o)        \
-          ../lib/EXlib.a(excugl.o)      \
-          ../lib/EXlib.a(exsugl.o)      \
-          ifeq ($(DV3RAP),TRUE)         \
-          ../lib/EXlib.a(rap_clnt.o)    \
-          ../lib/EXlib.a(rap_xdr.o)     \
-          endif                         \
-          ../lib/EXlib.a(exrap.o)       \
-          ../lib/EXlib.a(exoru.o)       \
-          ../lib/EXlib.a(exmesh.o)
+OBJECTS = ../lib/EXlib.a(exarc.o)      \
+          ../lib/EXlib.a(exbplane.o)   \
+          ../lib/EXlib.a(excsy.o)      \
+          ../lib/EXlib.a(excugl.o)     \
+          ../lib/EXlib.a(excur1.o)     \
+          ../lib/EXlib.a(excur2.o)     \
+          ../lib/EXlib.a(exdia1.o)     \
+          ../lib/EXlib.a(exdia2.o)     \
+          ../lib/EXlib.a(exdim.o)      \
+          ../lib/EXlib.a(exdraw.o)     \
+          ../lib/EXlib.a(exgatt.o)     \
+          ../lib/EXlib.a(exgeofun1.o)  \
+          ../lib/EXlib.a(exgeofun2.o)  \
+          ../lib/EXlib.a(exget1.o)     \
+          ../lib/EXlib.a(exget2.o)     \
+          ../lib/EXlib.a(exgroup.o)    \
+          ../lib/EXlib.a(exline.o)     \
+          ../lib/EXlib.a(exmesh.o)     \
+          ../lib/EXlib.a(exmove.o)     \
+          ../lib/EXlib.a(exodbc.o)     \
+          ../lib/EXlib.a(exoru.o)      \
+          ../lib/EXlib.a(exos.o)       \
+          ../lib/EXlib.a(expart.o)     \
+          ../lib/EXlib.a(expoint.o)    \
+          ../lib/EXlib.a(exrap.o)      \
+          ../lib/EXlib.a(exref.o)      \
+          ../lib/EXlib.a(exsugl.o)     \
+          ../lib/EXlib.a(exsur1.o)     \
+          ../lib/EXlib.a(exsur2.o)     \
+          ../lib/EXlib.a(exsur3.o)     \
+          ../lib/EXlib.a(exsurcur.o)   \
+          ../lib/EXlib.a(exsurexd.o)   \
+          ../lib/EXlib.a(exsurtrim.o)  \
+          ../lib/EXlib.a(exsurusr.o)   \
+          ../lib/EXlib.a(exsymb.o)     \
+          ../lib/EXlib.a(extcp.o)      \
+          ../lib/EXlib.a(extext.o)     \
+          ../lib/EXlib.a(extform.o)    \
+          ../lib/EXlib.a(extime.o)     \
+          ../lib/EXlib.a(exview.o)     \
+          ../lib/EXlib.a(exxhatch.o)   \
+          ../lib/EXlib.a(rap_clnt.o)   \
+          ../lib/EXlib.a(rap_xdr.o
 
+
+ifeq ($(DV3RAP),TRUE)
+RAPOBJECTS = ../lib/EXlib.a(rap_clnt.o) \
+             ../lib/EXlib.a(rap_xdr.o)
+endif  
+            
 # EXlib.a depends on the objects. 
 
-distr : $(OBJECTS)
+distr : $(OBJECTS) $(RAPOBJECTS)
 
-debug : $(OBJECTS)
+debug : $(OBJECTS) $(RAPOBJECTS)
 
 clean:
-	rm ../lib/EXlib.a
+	rm -f ../lib/EXlib.a
 
 
 # Objects depend on sources implicitly and sources depend

@@ -153,16 +153,16 @@ static DBptr     xf_la    = DBNULL;
 */
     if ( mshptr == NULL )
       {
-      if ( vrtcache > NULL ) v3free((char *)vrtcache,"DBread_mesh");
+      if ( vrtcache != NULL ) v3free((char *)vrtcache,"DBread_mesh");
       vrtcache = NULL;
       vrt_la   = DBNULL;
-      if ( hdgcache > NULL ) v3free((char *)hdgcache,"DBread_mesh");
+      if ( hdgcache != NULL ) v3free((char *)hdgcache,"DBread_mesh");
       hdgcache = NULL;
       hdg_la   = DBNULL;
-      if ( faccache > NULL ) v3free((char *)faccache,"DBread_mesh");
+      if ( faccache != NULL ) v3free((char *)faccache,"DBread_mesh");
       faccache = NULL;
       fac_la   = DBNULL;
-      if ( xfcache > NULL ) v3free((char *)xfcache,"DBread_mesh");
+      if ( xfcache != NULL ) v3free((char *)xfcache,"DBread_mesh");
       xfcache = NULL;
       xf_la   = DBNULL;
       return(0);
@@ -189,7 +189,7 @@ static DBptr     xf_la    = DBNULL;
         if ( mshptr->pvarr_m == vrt_la ) mshptr->pv_m = vrtcache;
         else
           {
-          if ( vrtcache > NULL ) v3free((char *)vrtcache,"DBread_mesh");
+          if ( vrtcache != NULL ) v3free((char *)vrtcache,"DBread_mesh");
           if ( (mshptr->pv_m=(DBVertex *)v3mall(mshptr->nv_m*sizeof(DBVertex),"DBread_mesh")) == NULL )
             {
             sprintf(errbuf,"%d",mshptr->nv_m);
@@ -208,7 +208,7 @@ static DBptr     xf_la    = DBNULL;
         if ( mshptr->pharr_m == hdg_la ) mshptr->ph_m = hdgcache;
         else
           {
-          if ( hdgcache > NULL ) v3free((char *)hdgcache,"DBread_mesh");
+          if ( hdgcache != NULL ) v3free((char *)hdgcache,"DBread_mesh");
           if ( (mshptr->ph_m=(DBHedge *)v3mall(mshptr->nh_m*sizeof(DBHedge),"DBread_mesh")) == NULL )
             {
             sprintf(errbuf,"%d",mshptr->nh_m);
@@ -227,7 +227,7 @@ static DBptr     xf_la    = DBNULL;
         if ( mshptr->pfarr_m == fac_la ) mshptr->pf_m = faccache;
         else
           {
-          if ( faccache > NULL ) v3free((char *)faccache,"DBread_mesh");
+          if ( faccache != NULL ) v3free((char *)faccache,"DBread_mesh");
           if ( (mshptr->pf_m=(DBFace *)v3mall(mshptr->nf_m*sizeof(DBFace),"DBread_mesh")) == NULL )
             {
             sprintf(errbuf,"%d",mshptr->nf_m);
@@ -246,7 +246,7 @@ static DBptr     xf_la    = DBNULL;
         if ( mshptr->pxarr_m == xf_la ) mshptr->px_m = xfcache;
         else
           {
-          if ( xfcache > NULL ) v3free((char *)xfcache,"DBread_mesh");
+          if ( xfcache != NULL ) v3free((char *)xfcache,"DBread_mesh");
           if ( (mshptr->px_m=(DBfloat *)v3mall(mshptr->nx_m*sizeof(DBfloat),"DBread_mesh")) == NULL )
             {
             sprintf(errbuf,"%d",mshptr->nx_m);

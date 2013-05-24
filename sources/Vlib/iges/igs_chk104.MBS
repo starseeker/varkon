@@ -1,0 +1,59 @@
+!*******************************************************
+
+ LOCAL GEOMETRY MODULE igs_chk104(
+   VAR FILE logfile;
+   FLOAT a,b,c,d,e,f;
+   VAR VECTOR u,v;
+   FLOAT q1,q2,q3;
+   VAR INT status);
+
+!*      
+!*      Check validity of IGES Entity 104: Conic Arc.
+!*
+!*      In:  infil   = File to read from.
+!*           logfile = logfilee.
+!*           dl1     = Read 1st Directory Entry Section.
+!*           dl2     = Read 2nd Directory Entry Section.
+!*           ps_ptr  = Pointer to Parameter Section.
+!*
+!*      Out: status  = 0 => Ok
+!*                    -1 => Error
+!*
+!*      (c)Kastalyse 2000-04-13 R. Kastelein r.e.f.kastelein@kastalyse.nl 
+!*
+!*******************************************************
+
+BEGINMODULE
+  
+  status:=0;
+
+!*
+!***Parabola: q2 < 0 and q1 <> 0           : status = 1
+!*  N.B. typemismatch  on p.61 !
+
+  ! if q2 < 0 and q1 <> 0 then
+    if b**2-4*a*c = 0 then
+      status:=1;
+!*
+!***Ellipse:    q2 > 0 and q1*q3 < 0       : status = 2
+!*
+  ! elif  q2 > 0 and q1*q3 < 0 then
+  elif  b**2-4*a*c < 0 then
+     status:=2;
+!*
+!***Hyperbola: q2 = 0 and q1 <> 0          : status = 3
+!*  N.B. typemismatch  on p.61 ! 
+
+ !  elif q2 = 0  and q1 <> 0 then
+   elif b**2-4*a*c > 0 then
+     status:=3;
+   else
+     status:=-1;                          !* Error !
+   endif;
+
+!  status:=-99;     !* Generate always an error (for debugging)
+
+
+ENDMODULE
+
+!*************************************************************

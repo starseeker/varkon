@@ -595,7 +595,7 @@ extern V2NAPA  *geop_np; /* ingeop.c *npblock Pekare till namnparameterblock.*/
    V2VECVA poiarr[V2PARMAX];      /* point array */
    V2VECVA tanarr[V2PARMAX];      /* tangent array */
    V2VECVA iparr [V2PARMAX];      /* intermediate point array */
-   gmflt   pvarr [V2PARMAX];      /* P-value array */
+   DBfloat   pvarr [V2PARMAX];      /* P-value array */
    char    errbuf[20];            /* Felbuffert */
 
 /*
@@ -629,7 +629,7 @@ extern V2NAPA  *geop_np; /* ingeop.c *npblock Pekare till namnparameterblock.*/
        iparr[j].x_val = 0.0;
        iparr[j].y_val = 0.0;
        iparr[j].z_val = 0.0;
-       pvarr[j] = (gmflt)geop_pv[i].par_va.lit.int_va;
+       pvarr[j] = (DBfloat)geop_pv[i].par_va.lit.int_va;
        if ( pvarr[j] < 0.0 )
          {
          sprintf(errbuf,"%d",(int)(j+1));
@@ -641,7 +641,7 @@ extern V2NAPA  *geop_np; /* ingeop.c *npblock Pekare till namnparameterblock.*/
        iparr[j].x_val = 0.0;
        iparr[j].y_val = 0.0;
        iparr[j].z_val = 0.0;
-       pvarr[j] = (gmflt)geop_pv[i].par_va.lit.float_va;
+       pvarr[j] = (DBfloat)geop_pv[i].par_va.lit.float_va;
        if ( pvarr[j] < 0.0 )
          {
          sprintf(errbuf,"%d",(int)(j+1));
@@ -701,9 +701,9 @@ extern V2NAPA  *geop_np; /* ingeop.c *npblock Pekare till namnparameterblock.*/
    char    errbuf[81];
    short   status;
    int     dekl_dim,vecsiz,strsiz,fltsiz;
-   gmint   npos,i;
+   DBint   npos,i;
    DBint   posadr,tanadr,metadr,pvadr,mpadr;
-   gmflt  *pvpek;
+   DBfloat  *pvpek;
    STTYTBL typtbl;
    STARRTY postyp,tantyp,mettyp,pvtyp,mptyp;
    DBVector  *ppek,*tpek,*mppek;
@@ -781,7 +781,7 @@ extern V2NAPA  *geop_np; /* ingeop.c *npblock Pekare till namnparameterblock.*/
      return(erpush("IN5182",errbuf));
      }
 
-   if ( (pvpek=(gmflt *)v3mall(npos*sizeof(gmflt),"evcuca")) == NULL )
+   if ( (pvpek=(DBfloat *)v3mall(npos*sizeof(gmflt),"evcuca")) == NULL )
      {
      sprintf(errbuf,"%d",npos);
      return(erpush("IN5182",errbuf));
@@ -919,7 +919,7 @@ exit:
 /*
 ***Exekvera COMP.
 */
-   return(EXcomp( geop_id, refarr, nref, geop_np));
+   return(EXcomp( geop_id, refarr, nref,NULL, geop_np));
 
 }
 
@@ -969,7 +969,7 @@ exit:
  *      Ut: Inget.
  *
  *      Felkoder: IN5032 = nseg < 0
- *                IN5042 = Kan ej mallokera minne för nseg GMSEG
+ *                IN5042 = Kan ej mallokera minne för nseg DBSeg
  *                IN5052 = nseg > Dimensionen på 4X4-variabeln.
  *
  *      FV: Returnerar anropade rutiners status.
@@ -994,7 +994,7 @@ exit:
    PMLITVA  fval;
    STTYTBL  typtbl;
    STARRTY  arrtyp;
-   GMSEG   *segptr,*segdat;
+   DBSeg   *segptr,*segdat;
 
 
 /*
@@ -1040,7 +1040,7 @@ exit:
    strtyp(arrtyp.base_arr,&typtbl);
    fltsiz = typtbl.size_ty;
 /*
-***Kopiera 4X4-matriserna till GMSEG, och sätt offset = 0.0.
+***Kopiera 4X4-matriserna till DBSeg, och sätt offset = 0.0.
 */
    valadr = geop_pv[2].par_va.lit.adr_va;
 
@@ -1220,8 +1220,8 @@ end:
  ******************************************************!*/
 
 {
-   gmint sstart,sslut;
-   gmflt ustart,uslut;
+   DBint sstart,sslut;
+   DBfloat ustart,uslut;
 
 /*
 ***Optionella parametrar.
@@ -1304,7 +1304,7 @@ end:
  ******************************************************!*/
 
 {
-   gmflt tol_2;
+   DBfloat tol_2;
 
 /*
 ***Optionell parameter.
@@ -1352,3 +1352,126 @@ end:
 
 /********************************************************/
 /********************************************************/
+
+
+
+
+
+
+/*!******************************************************/
+
+        short evccmparr()
+
+/*      Evaluates the geometry procedure CUR_COMPARR.
+ *
+ *      In: extern *geop_id   => Storhetens ID.
+ *          extern *geop_pv   => Pekare till array med parametervärden.
+ *          extern *geop_np   => Pekare till namnparameterblock.
+ *
+ *      Out: Nothing.
+ *
+ *      Errors:   IN5202 = Number of curves < 2.
+ *                IN5212 = Number of curves > declared size.
+ *                IN5222 = Unable to allocate memory.
+ *
+ *      FV: Returns status from called functions.
+ *
+ *      (c)Örebro University 2006-09-14  S. Larsson
+ *
+ *
+ *
+ ******************************************************!*/
+
+{
+   int      ncur;           /* Number of input entities         */
+   DBint    curadr;         /* Adress to input curves           */
+   STTYTBL  typtbl;         /* Type of variable                 */
+   STARRTY  curtyp;         /* Type of array for input curves   */
+   int      dekl_dim;       /* Declared dimension for the array */
+   int      refsiz;         /* Size of ????                     */
+   PMLITVA  val;            /* Value from ??                    */
+   PMREFVA *lpek;           /* Pointer to array with references */
+   /*V2REFVA  refarr[ GMMXCO + 1 ];*/   /* referens array */
+   int      i;              /* Loop index                       */
+   short    status;         /* Status from execution function   */
+   char     errbuf[81];     /* String variable for errors       */
+   V2REFVA  *surid;
+   
+/*
+***Id of surface for uv curves
+*/
+   if (geop_pc == 3) 
+     {
+     surid = &geop_pv[3].par_va.lit.ref_va[0];
+     }
+   else 
+     {
+     surid = NULL;
+     }   
+
+
+/*
+***How many input entities for loop?.
+*/
+   ncur = geop_pv[1].par_va.lit.int_va;
+
+/*
+***Check that number of input entities are more than zero
+*/
+   if ( ncur < 1 ) return(erpush("IN5742",""));
+/*
+***Check that the declared dimension of the MBS-array is sufficient for ncur
+*/
+/* Address to the variable                                */
+   curadr = geop_pv[2].par_va.lit.adr_va;
+/* Get type of variable, which is defined in a structure  */
+   strtyp(geop_pv[2].par_ty,&typtbl);
+/* Get type of array                                      */
+   strarr(typtbl.arr_ty,&curtyp);
+/* Get the declared size of the array                     */
+   dekl_dim = curtyp.up_arr - curtyp.low_arr + 1;
+/* Return with error if array not has sufficient size     */
+   if ( dekl_dim < ncur ) return(erpush("IN5752",""));
+
+/*
+***Get size
+*/
+   strtyp(curtyp.base_arr,&typtbl);
+   refsiz = typtbl.size_ty;
+/*
+***Allocate memory.
+*/
+   if ( (lpek=(PMREFVA *)v3mall(ncur*sizeof(PMREFVA),"evccmparr")) == NULL )
+     {
+     sprintf(errbuf,"%d",ncur);
+     return(erpush("IN5222",errbuf));
+     }
+/*
+***Copy from RTS to the allocated area.
+*/
+   for ( i=0; i<ncur; ++i )
+     {
+     ingref(curadr+i*refsiz,&val);
+     (lpek+i)->seq_val  = val.lit.ref_va[0].seq_val;
+     (lpek+i)->ord_val  = val.lit.ref_va[0].ord_val;
+     (lpek+i)->p_nextre = val.lit.ref_va[0].p_nextre;
+     }     
+     
+/*
+***Call the execution function.
+*/
+status= EXcomp( geop_id, lpek, ncur, surid, geop_np);
+
+
+/*
+***Free memory
+*/
+    v3free(lpek,"evccmparr");      
+ 
+   return(status);
+}
+/********************************************************/
+
+
+
+

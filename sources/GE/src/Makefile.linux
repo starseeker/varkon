@@ -4,6 +4,9 @@
 #
 #  (C)Microform AB 1999-03-30 J.Kjellander
 #
+#   Removed -DDEBUG from debug:  2006-09-11 Soren L
+#            can be put back if some issues are solved
+#
 ##########################################################
 
 RM = rm -f
@@ -16,18 +19,15 @@ distr :     CFLAGS =                    \
             -Wall                       \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
             -O                          \
             -DUNIX
-            
+
 debug :     CFLAGS =                    \
             -ansi                       \
             -Wall                       \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
             -g3                         \
-            -DDEBUG                     \
             -DUNIX
 
 COMPILE = $(CC) -c $(CFLAGS)

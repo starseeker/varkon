@@ -341,7 +341,7 @@ if ( dbglev(SURPAC) == 1 )
 
    *p_seg = c_uvseg;
 
-   (*p_seg).typ = UV_SEG ; /* Temporary ! */
+   (*p_seg).typ = UV_CUB_SEG ; /* Temporary ! */
    *p_n_out = 1;   /* Output number of curve segments!! Temporary !! */
 
 
@@ -820,7 +820,7 @@ if ( dbglev(SURPAC) == 1 )
 
    xyz_c.t_local=  0.0;          
    xyz_c.evltyp = EVC_KAP;
-   c_uvseg.typ  = UV_SEG ; 
+   c_uvseg.typ  = UV_CUB_SEG ; 
 
    status= varkon_sur_uvsegeval (&parabola,&c_uvseg,&xyz_c);
    if ( status < 0 )

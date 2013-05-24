@@ -5,7 +5,7 @@
 #
 #   Top level makefile for xvarkon with GNU/Linux
 #
-#  (C)Microform AB 2000-05-19 J.Kjellander
+#  (C)Microform AB 2006-12-31 J.Kjellander
 #
 ##########################################################
 
@@ -15,7 +15,6 @@
 LIBS  = IG/lib/IGlib.a \
         PM/lib/PMlib.a \
         EX/lib/EXlib.a \
-        GP/lib/GPlib.a \
         DB/lib/DBlib.a \
         WP/lib/WPlib.a \
         GE/lib/GElib.a
@@ -31,7 +30,10 @@ GLIBS = -lGL -lGLU
 
 # ODBC libraries. You may have to change this line
 # to reflect the location of your ODBC libs.
-#SQLLIBS = -L/usr/lib/unixODBC -lmyodbc3
+
+ifeq ($(DV3ODBC),TRUE)
+SQLLIBS = -L/usr/lib/unixODBC -lmyodbc3
+endif
 
 # The actual executable, xvarkon.
 

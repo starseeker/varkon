@@ -108,7 +108,7 @@ extern DBTmat *lsyspk;
 ***Om det är ett UV-segment använder vi GE110 som anropar
 ***varkon_sur_uvsegeval, annars gör vi allt här.
 */
-    if ( sp->typ == UV_SEG )
+    if ( sp->typ == UV_CUB_SEG )
       {
 /*
 ***Kontrollera att ytans GM-adress har ett vettigt värde för Debug On

@@ -16,6 +16,8 @@
 *    evtrco();      Evaluerar TFORM_COMP
 *    evtrus();      Evaluerar TFORM_USDEF
 *    evtcop();      Evaluerar TCOPY
+*    evtmult();     Evaluerar TFORM_MULT
+*    evtinv();      Evaluerar TFORM_INV
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -33,6 +35,8 @@
 *
 *    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
 *
+*    2006-07-12 added evtmult() and evtinv(), Sören Larsson
+*
 ***********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -43,6 +47,9 @@ extern V2REFVA *geop_id;  /* ingeop.c *identp  Storhetens ID */
 extern PMPARVA *geop_pv;  /* ingeop.c *pv      Access structure for MBS routines */
 extern short    geop_pc;  /* ingeop.c parcount Number of actual parameters */
 extern V2NAPA  *geop_np;  /* ingeop.c *npblock Pekare till namnparameterblock.*/
+
+extern PMPARVA *proc_pv;  /*          Access structure for MBS routines */
+
 
 /*!******************************************************/
 
@@ -64,7 +71,7 @@ extern V2NAPA  *geop_np;  /* ingeop.c *npblock Pekare till namnparameterblock.*/
  ******************************************************!*/
 
  {
-    gmflt sx,sy,sz;
+    DBfloat sx,sy,sz;
 
 /*
 ***Har skalning begärts ?
@@ -111,7 +118,7 @@ extern V2NAPA  *geop_np;  /* ingeop.c *npblock Pekare till namnparameterblock.*/
  ******************************************************!*/
 
  {
-    gmflt sx,sy,sz;
+    DBfloat sx,sy,sz;
     DBVector p2;
 
 /*
@@ -167,7 +174,7 @@ extern V2NAPA  *geop_np;  /* ingeop.c *npblock Pekare till namnparameterblock.*/
  ******************************************************!*/
 
  {
-    gmflt sx,sy,sz;
+    DBfloat sx,sy,sz;
 
 /*
 ***Har skalning begärts ?
@@ -385,3 +392,289 @@ extern V2NAPA  *geop_np;  /* ingeop.c *npblock Pekare till namnparameterblock.*/
  }
 
 /********************************************************/
+
+
+
+
+/*!******************************************************/
+
+        short evtmult()
+
+/*      Evaluates the procedure TFORM_MULT.
+ *
+ *      In: extern proc_pv => Pekare till array med parametervärden
+ *
+ *      Ut: Inget.
+ *
+ *      FV: Returnerar anropade rutiners status.
+ *
+ *      (C) 2006-07-12 Sören Larsson, Örebro University 
+ *
+ ******************************************************!*/
+
+  {
+     short   status;
+     DBint   i,j,index[2];
+     PMLITVA litval;
+     DBfloat  *matpek;
+
+     DBTmat  tr1;
+     DBTmat  tr2;
+     DBTmat  tr3;
+     
+     int     radsiz,fltsiz;
+     PMLITVA fval;
+     STTYTBL typtbl;
+     STARRTY arrtyp;
+     DBint   valadr;
+     
+/*
+***1:a parametern
+***Beräkna div. RTS-offset.
+***radsiz = storleken på en FLOAT (4)       Normalt 32  bytes.
+***fltsiz = storleken på en FLOAT           Normalt 8   bytes.
+*/
+   strtyp(proc_pv[1].par_ty,&typtbl);
+   strarr(typtbl.arr_ty,&arrtyp);
+   strtyp(arrtyp.base_arr,&typtbl);
+   radsiz = typtbl.size_ty;
+
+   strarr(typtbl.arr_ty,&arrtyp);
+   strtyp(arrtyp.base_arr,&typtbl);
+   fltsiz = typtbl.size_ty;
+/*
+***Kopiera 4X4-matrisen till DBTmat.
+*/
+   valadr = proc_pv[1].par_va.lit.adr_va;
+
+   ingval(valadr,arrtyp.base_arr,FALSE,&fval);
+   tr1.g11 = fval.lit.float_va;
+   ingval(valadr+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g12 = fval.lit.float_va;
+   ingval(valadr+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g13 = fval.lit.float_va;
+   ingval(valadr+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g14 = fval.lit.float_va;
+
+   ingval(valadr+radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g21 = fval.lit.float_va;
+   ingval(valadr+radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g22 = fval.lit.float_va;
+   ingval(valadr+radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g23 = fval.lit.float_va;
+   ingval(valadr+radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g24 = fval.lit.float_va;
+
+   ingval(valadr+2*radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g31 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g32 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g33 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g34 = fval.lit.float_va;
+
+   ingval(valadr+3*radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g41 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g42 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g43 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g44 = fval.lit.float_va;     
+     
+/*     
+*** 2:a parametern
+***Beräkna div. RTS-offset.
+***radsiz = storleken på en FLOAT (4)       Normalt 32  bytes.
+***fltsiz = storleken på en FLOAT           Normalt 8   bytes.
+*/
+   strtyp(proc_pv[2].par_ty,&typtbl);
+   strarr(typtbl.arr_ty,&arrtyp);
+   strtyp(arrtyp.base_arr,&typtbl);
+   radsiz = typtbl.size_ty;
+
+   strarr(typtbl.arr_ty,&arrtyp);
+   strtyp(arrtyp.base_arr,&typtbl);
+   fltsiz = typtbl.size_ty;
+/*
+***Kopiera 4X4-matrisen till DBTmat.
+*/
+   valadr = proc_pv[2].par_va.lit.adr_va;
+
+   ingval(valadr,arrtyp.base_arr,FALSE,&fval);
+   tr2.g11 = fval.lit.float_va;
+   ingval(valadr+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g12 = fval.lit.float_va;
+   ingval(valadr+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g13 = fval.lit.float_va;
+   ingval(valadr+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g14 = fval.lit.float_va;
+
+   ingval(valadr+radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g21 = fval.lit.float_va;
+   ingval(valadr+radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g22 = fval.lit.float_va;
+   ingval(valadr+radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g23 = fval.lit.float_va;
+   ingval(valadr+radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g24 = fval.lit.float_va;
+
+   ingval(valadr+2*radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g31 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g32 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g33 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g34 = fval.lit.float_va;
+
+   ingval(valadr+3*radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g41 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g42 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g43 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr2.g44 = fval.lit.float_va; 
+  
+   
+   status = GEtform_mult(&tr1,&tr2,&tr3);
+
+/*
+***Returnera .
+*/
+     matpek = &tr3; 
+
+     for ( i=0; i<4; ++i )
+        {
+        index[0] = i+1;
+        for ( j=0; j<4; ++j )
+           {
+           index[1] = j+1;
+           litval.lit.float_va = *matpek;
+           status = inwvar(proc_pv[3].par_ty, 
+                     proc_pv[3].par_va.lit.adr_va,
+                     2, index, &litval);
+           ++matpek;
+           }
+        }
+/*
+***Slut.
+*/
+     return(status);
+  }
+/********************************************************/
+
+
+/*!******************************************************/
+
+        short evtinv()
+
+/*      Evaluates the procedure TFORM_INV.
+ *
+ *      In: extern proc_pv => Pekare till array med parametervärden
+ *
+ *      Ut: Inget.
+ *
+ *      FV: Returnerar anropade rutiners status.
+ *
+ *      (C) 2006-07-12 Sören Larsson, Örebro University 
+ *
+ ******************************************************!*/
+
+  {
+     short   status;
+     DBint   i,j,index[2];
+     PMLITVA litval;
+     DBfloat  *matpek;
+
+     DBTmat  tr1;
+     DBTmat  tr2;
+     
+     int     radsiz,fltsiz;
+     PMLITVA fval;
+     STTYTBL typtbl;
+     STARRTY arrtyp;
+     DBint   valadr;
+/*
+***1:a parametern
+***Beräkna div. RTS-offset.
+***radsiz = storleken på en FLOAT (4)       Normalt 32  bytes.
+***fltsiz = storleken på en FLOAT           Normalt 8   bytes.
+*/
+   strtyp(proc_pv[1].par_ty,&typtbl);
+   strarr(typtbl.arr_ty,&arrtyp);
+   strtyp(arrtyp.base_arr,&typtbl);
+   radsiz = typtbl.size_ty;
+
+   strarr(typtbl.arr_ty,&arrtyp);
+   strtyp(arrtyp.base_arr,&typtbl);
+   fltsiz = typtbl.size_ty;
+/*
+***Kopiera 4X4-matrisen till DBTmat.
+*/
+   valadr = proc_pv[1].par_va.lit.adr_va;
+
+   ingval(valadr,arrtyp.base_arr,FALSE,&fval);
+   tr1.g11 = fval.lit.float_va;
+   ingval(valadr+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g12 = fval.lit.float_va;
+   ingval(valadr+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g13 = fval.lit.float_va;
+   ingval(valadr+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g14 = fval.lit.float_va;
+
+   ingval(valadr+radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g21 = fval.lit.float_va;
+   ingval(valadr+radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g22 = fval.lit.float_va;
+   ingval(valadr+radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g23 = fval.lit.float_va;
+   ingval(valadr+radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g24 = fval.lit.float_va;
+
+   ingval(valadr+2*radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g31 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g32 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g33 = fval.lit.float_va;
+   ingval(valadr+2*radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g34 = fval.lit.float_va;
+
+   ingval(valadr+3*radsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g41 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g42 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g43 = fval.lit.float_va;
+   ingval(valadr+3*radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
+   tr1.g44 = fval.lit.float_va;     
+   
+   status = GEtform_inv(&tr1,&tr2);
+
+/*
+***Returnera .
+*/
+     matpek = &tr2; 
+
+     for ( i=0; i<4; ++i )
+        {
+        index[0] = i+1;
+        for ( j=0; j<4; ++j )
+           {
+           index[1] = j+1;
+           litval.lit.float_va = *matpek;
+           status = inwvar(proc_pv[2].par_ty, 
+                     proc_pv[2].par_va.lit.adr_va,
+                     2, index, &litval);
+           ++matpek;
+           }
+        }
+/*
+***Slut.
+*/
+     return(status);
+  }
+

@@ -1,0 +1,87 @@
+!**************************************************************************
+
+ LOCAL GEOMETRY MODULE igs_124(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Read data from Parameter Section
+!*      and create a Transformation matrix.
+!*
+!*      In: infile  = File to read from.
+!*          logfile = Logfile.
+!*          dl1     = 1st row of Directory Entry Section.
+!*          dl2     = 2nd row of Directory Entry Section.
+!*          ps_ptr  = Pointer to Parameter Section.
+!*          rowlgt  = Row length used.
+!*
+!*      Out: status = 0 => Ok
+!*                   -1 => Error
+!*          id_ent  = Identity of created entity.
+!*
+!*      2006-10-03, Mohamed Rahayem, Örebro university.
+!*
+!*************************************************************************
+
+   INT    i,j,rownumber;
+   STRING row*132;
+   FLOAT  t(4,4);
+
+ BEGINMODULE
+
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   rownumber:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(rownumber-1)*rowlgt);
+!*
+!***Read 1:st line and strip "124,".
+!*
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
+!*
+!***Read the coordinates of the two points
+!*
+   for i:=1 to 3 do
+     for j:=1 to 4 do
+       part(#1,igs_gflt(infile,row,t(i,j),status):SAVE=0);
+     endfor;
+   endfor;
+   
+   t(4,1):=0;
+   t(4,2):=0;
+   t(4,3):=0;
+   t(4,4):= 1;
+!*
+!***Check status from igs_gflt()
+!*
+   if status < 0 then
+     outstr(logfile,"igs_124, Error reading float in parameter section !");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     status:=-1;
+     id_ent:=##0;
+     exit();
+   endif;
+!*
+!**Create local coordinate system by using transformation matrix.
+!*    
+    csys_1p(#2,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);  
+    tform_usrdef(#3,t);
+    tcopy(#4,#2,#3,1:blank=1);
+    id_ent:=global_ref(#4); 
+!*
+!***End   
+!*   
+   status:=0;
+
+ ENDMODULE
+
+!*******************************************************************

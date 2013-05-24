@@ -722,14 +722,16 @@ static void  act();
 
         static void trim(char s[])
 
-/*      
- *      In:   
+/*      Removes all leading blanks (space characters, " ")
  *
- *      Out:   
+ *      In:   s = Ptr to string
+ *
+ *      Out:  s = Updates s, stripped from leading space
  *
  *      (C)microform ab 1986-01-16 J. Wilander
  *  
  *      1999-04-19 Rewritten, R. Svedin
+ *      2006-12-01 Writabel strings, J,Kjellander
  *
  ******************************************************!*/
 
@@ -747,7 +749,7 @@ static void  act();
 
         static void alout(
         char lead[],
-        char s[],
+        char s_in[],
         bool newline,
         bool termflg)
 
@@ -760,13 +762,20 @@ static void  act();
  *      (C)microform ab 1986-01-16 J. Wilander
  *  
  *      1999-04-19 Rewritten, R. Svedin
+ *      2006-12-01 Writable strings, J.Kjellander
  *
  ******************************************************!*/
 
   {
-   char c;                         /* Temporary char in very long lines  */
-   int   lead_len;                 /* Lenght of lead text                */
+   char c;             /* Temporary char in very long lines  */
+   int  lead_len;      /* Lenght of lead text                */
+   char s[V3STRLEN];
 
+/*
+***To avoid the risk that s might be a non writable string
+***we copy s to something which is writable.
+*/
+   strcpy(s,s_in);
    trim(s);
 
    if( allist)
@@ -1076,6 +1085,7 @@ static void  act();
  *      (C)microform ab 1986-01-16 J. Wilander
  *  
  *      1999-04-19 Rewritten, R. Svedin
+ *      2006-12-02 Writable strings, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1084,16 +1094,16 @@ static void  act();
    short no_err;
    char count[10];
 
-   strcpy(lead,"      ");
+   strcpy(lead,"      ");    /* lead is 6 spaces */
 
    if(allist) alejct();
 
-   alout(" "," ",TRUE,TRUE);
+   alout(" "," ",TRUE,TRUE);  /* Print 1 space + space i alout/printf + newline */
 
-   alout(lead,"Compilation ended",TRUE,TRUE);
+   alout(lead,"Compilation ended",TRUE,TRUE); /* 6space + space i alout/printf + text + newline */
 
-   alout(lead,lead,TRUE,FALSE);
-   alout(lead,lead,TRUE,TRUE);
+   alout(lead,lead,TRUE,FALSE);  /* Print 6 space + newline but not to term ! Why ?*/
+   alout(lead,lead,TRUE,TRUE);   /* 6space + space i alout/printf + text + newline */
 
    no_err = anyerr();
    if( no_err > 0 )
@@ -1104,7 +1114,8 @@ static void  act();
     
      alout(count," ",TRUE,TRUE);
      }
-   else alout(lead,"No compiler detected errors",TRUE,TRUE);
+   else alout(lead,"No compiler detected errors",TRUE,TRUE); /* 6space +
+                                                     space in alout/printf + text + newline */
   }
 
 /********************************************************/

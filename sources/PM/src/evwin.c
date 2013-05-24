@@ -79,7 +79,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 {
    if ( func_pv[5].par_va.lit.int_va == 0 )
      {
-     return(wpwciw((short)func_pv[1].par_va.lit.vec_va.x_val,
+     return(WPwciw((short)func_pv[1].par_va.lit.vec_va.x_val,
                    (short)func_pv[1].par_va.lit.vec_va.y_val,
                    (short)func_pv[2].par_va.lit.float_va,
                    (short)func_pv[3].par_va.lit.float_va,
@@ -88,7 +88,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
      }
    else if ( func_pv[5].par_va.lit.int_va == 1 )
      {
-     return(wpwcgw((short)func_pv[1].par_va.lit.vec_va.x_val,
+     return(WPwcgw((short)func_pv[1].par_va.lit.vec_va.x_val,
                    (short)func_pv[1].par_va.lit.vec_va.y_val,
                    (short)func_pv[2].par_va.lit.float_va,
                    (short)func_pv[3].par_va.lit.float_va,
@@ -121,7 +121,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
  ******************************************************!*/
 
 {
-   return(wpmced(       func_pv[1].par_va.lit.int_va,
+   return(WPmced(       func_pv[1].par_va.lit.int_va,
                  (short)func_pv[2].par_va.lit.vec_va.x_val,
                  (short)func_pv[2].par_va.lit.vec_va.y_val,
                  (short)func_pv[3].par_va.lit.float_va,
@@ -178,7 +178,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 /*
 ***Skapa knappen.
 */
-   return(wpmcbu(       func_pv[1].par_va.lit.int_va,
+   return(WPmcbu(       func_pv[1].par_va.lit.int_va,
                  (short)func_pv[2].par_va.lit.vec_va.x_val,
                  (short)func_pv[2].par_va.lit.vec_va.y_val,
                  (short)func_pv[3].par_va.lit.float_va,
@@ -237,7 +237,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 /*
 ***Skapa knappen.
 */
-   return(wpmcbu(     func_pv[1].par_va.lit.int_va,
+   return(WPmcbu(     func_pv[1].par_va.lit.int_va,
                  (int)func_pv[2].par_va.lit.vec_va.x_val,
                  (int)func_pv[2].par_va.lit.vec_va.y_val,
                  (int)func_pv[3].par_va.lit.float_va,
@@ -275,7 +275,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 /*
 ***Skapa knappen.
 */
-   return(wpcrfb(       func_pv[1].par_va.lit.int_va,
+   return(WPcrfb(       func_pv[1].par_va.lit.int_va,
                  (short)func_pv[2].par_va.lit.vec_va.x_val,
                  (short)func_pv[2].par_va.lit.vec_va.y_val,
                  (short)func_pv[3].par_va.lit.float_va,
@@ -325,7 +325,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 /*
 ***Skapa ikonen.
 */
-   return(wpmcic(       func_pv[1].par_va.lit.int_va,
+   return(WPmcic(       func_pv[1].par_va.lit.int_va,
                  (short)func_pv[2].par_va.lit.vec_va.x_val,
                  (short)func_pv[2].par_va.lit.vec_va.y_val,
                  (short)func_pv[3].par_va.lit.float_va,
@@ -358,7 +358,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 /*
 ***Skapa ikonen.
 */
-   return(wpcrfi(       func_pv[1].par_va.lit.int_va,
+   return(WPcrfi(       func_pv[1].par_va.lit.int_va,
                  (short)func_pv[2].par_va.lit.vec_va.x_val,
                  (short)func_pv[2].par_va.lit.vec_va.y_val,
                         func_pv[3].par_va.lit.str_va,
@@ -388,7 +388,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
  ******************************************************!*/
 
 {
-   return(wpgted(func_pv[1].par_va.lit.int_va,
+   return(WPgted(func_pv[1].par_va.lit.int_va,
                  func_pv[2].par_va.lit.int_va,
                  func_vp->lit.str_va));
 }
@@ -414,7 +414,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
  ******************************************************!*/
 
 {
-   return(wpgtbu(func_pv[1].par_va.lit.int_va,
+   return(WPgtbu(func_pv[1].par_va.lit.int_va,
                  func_pv[2].par_va.lit.int_va,
                 &func_vp->lit.int_va));
 }
@@ -445,7 +445,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
    char    rubrik[V3STRLEN+1];
    PMLITVA litval[5];
 
-   status = wpgtwi(proc_pv[1].par_va.lit.int_va,&x,&y,&dx,&dy,&typ,rubrik);
+   status = WPgtwi(proc_pv[1].par_va.lit.int_va,&x,&y,&dx,&dy,&typ,rubrik);
    if ( status < 0 ) return(status);
 /*
 ***Kopiera parametervärden till PMLITVA.
@@ -484,7 +484,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
  ******************************************************!*/
 
 {
-   return(wpwshw(proc_pv[1].par_va.lit.int_va));
+   return(WPwshw(proc_pv[1].par_va.lit.int_va));
 }
 
 /********************************************************/
@@ -508,7 +508,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
  ******************************************************!*/
 
 {
-   return(wpwwtw(func_pv[1].par_va.lit.int_va,
+   return(WPwwtw(func_pv[1].par_va.lit.int_va,
                  SLEVEL_MBS,
                 &func_vp->lit.int_va));
 }
@@ -540,9 +540,9 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 ***(npar = 2) ?
 */
    if ( proc_pc == 1 )
-     return(wpwdel(proc_pv[1].par_va.lit.int_va));
+     return(WPwdel(proc_pv[1].par_va.lit.int_va));
    else
-     return(wpwdls(proc_pv[1].par_va.lit.int_va,
+     return(WPwdls(proc_pv[1].par_va.lit.int_va,
                    proc_pv[2].par_va.lit.int_va));
 }
 
@@ -580,7 +580,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 /*
 ***Hämta textlängd.
 */
-   status = wpgtsl(func_pv[1].par_va.lit.str_va,fntnam,&npix);
+   status = WPgtsl(func_pv[1].par_va.lit.str_va,fntnam,&npix);
    if ( status < 0 ) return(status);
 
    func_vp->lit.int_va = npix;
@@ -622,7 +622,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 /*
 ***Hämta textlängd.
 */
-   status = wpgtsh(fntnam,&npix);
+   status = WPgtsh(fntnam,&npix);
    if ( status < 0 ) return(status);
 
    func_vp->lit.int_va = npix;

@@ -67,6 +67,8 @@
 /*  1997-11-28   NURB_SUR added                                     */
 /*  1997-12-13   Comments                                           */
 /*  1999-12-18   Free source code modifications                     */
+/*  2006-11-20   varkon_sur_scur_gra -> GEcur_cre_gra               */
+/*               S.Larsson, Örebro university                       */
 /*                                                                 !*/
 /********************************************************************/
 
@@ -80,7 +82,7 @@
 /*                                                                  */
 /* varkon_sur_nopatch     * Retrieve number of patches              */
 /* varkon_sur_isoparam    * Isoparametric (U,V) curve               */
-/* varkon_sur_scur_gra    * Graphical     (R*3) curve               */
+/* GEcur_cre_gra          * Graphical     (R*3) curve               */
 /* DBfree_segments        * Deallocate memory                       */
 /* varkon_erpush          * Error message to terminal               */
 /*                                                                  */
@@ -319,7 +321,9 @@ fflush(dbgfil(SURPAC));
 
     if ( status == 0 )
       {
-       status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);
+       /*status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg); */
+      status = GEcur_cre_gra (&cur,p_geoseg,&p_graseg);
+       
       if ( status == 0 )
         {
         DBfree_segments(p_geoseg);
@@ -389,7 +393,8 @@ fflush(dbgfil(SURPAC));
 
     if ( status == 0 )
       {
-       status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);
+       /*status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);*/
+       status = GEcur_cre_gra (&cur,p_geoseg,&p_graseg); 
       if ( status == 0 )
         {
         DBfree_segments(p_geoseg);
@@ -458,7 +463,8 @@ fflush(dbgfil(SURPAC));
 
     if ( status == 0 )
       {
-       status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);
+       /*status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);*/
+       status = GEcur_cre_gra (&cur,p_geoseg,&p_graseg);
       if ( status == 0 )
         {
         DBfree_segments(p_geoseg);
@@ -527,7 +533,8 @@ fflush(dbgfil(SURPAC));
 
     if ( status == 0 )
       {
-       status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);
+       /*status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);*/
+       status = GEcur_cre_gra (&cur,p_geoseg,&p_graseg);
       if ( status == 0 )
         {
         DBfree_segments(p_geoseg);
@@ -598,7 +605,8 @@ fflush(dbgfil(SURPAC));
 
     if ( status == 0 )
       {
-       status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);
+       /*status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);*/
+       status = GEcur_cre_gra (&cur,p_geoseg,&p_graseg);
       if ( status == 0 )
         {
         DBfree_segments(p_geoseg);
@@ -667,7 +675,8 @@ fflush(dbgfil(SURPAC));
 
     if ( status == 0 )
       {
-       status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);
+       /*status = varkon_sur_scur_gra (&cur,p_geoseg,&p_graseg);*/
+       status = GEcur_cre_gra (&cur,p_geoseg,&p_graseg);
       if ( status == 0 )
         {
         DBfree_segments(p_geoseg);

@@ -1,19 +1,18 @@
 !*******************************************************
 
  MACRO MODULE igs_dsec(
-   VAR FILE infil,logfil;
-       INT  eolsize;
+   VAR FILE infile,logfile;
+       INT   rowlgt;
    VAR INT  status);
 
-!*      Läser Directory Entry section en
-!*      första gång.
+!*      Reads Directory Entry section a 1:st time
 !*
-!*      Ut: status = 0 => Ok
-!*                  -1 => Fel
+!*      Out: status = 0 => Ok
+!*                   -1 => Error
 !*
 !*      (C)microform ab 1997-12-22 J. Kjellander
 !*
-!*      2004-07-20 eolsize, J.Kjellander, Örebro university
+!*      2006-09-20 rowlgt , J.Kjellander, Örebro university
 !*
 !*******************************************************
 
@@ -25,52 +24,45 @@
 !*
 !***HEADER.
 !*
-    outlin(logfil);
-    outstr(logfil,"Directory Entry Section (Pass 1)");
-    outlin(logfil);
+    outlin(logfile);
+    outstr(logfile,"Directory Entry Section, pass 1 (counting)"); outlin(logfile);
+    outstr(logfile,"------------------------------------------"); outlin(logfile);  
 !*
-!***Läs en 1:a rad och kolla att det är Directory section.
+!***Read a 1:st row and check that it is a Directory section.
 !*
-    rad1:=inlin(infil);
-    if length(rad1) <> 80 then
-      outstr(logfil,"Line not 80 columns");
-      outlin(logfil);
-      status:=-1;
-      exit();
-    elif substr(rad1,73,1) <> "D" then
-      outstr(logfil,"This is not a Directory Entry Section");
-      outlin(logfil);
+    rad1:=inlin(infile);
+    if substr(rad1,73,1) <> "D" then
+      outstr(logfile,"This is not a Directory Entry Section");
+      outlin(logfile);
       status:=-1;
       exit();
     else
       status:=0;
       nl:=2;
     endif;
-
-    rad2:=inlin(infil);
+    rad2:=inlin(infile);
 !*
-!***Läs resten av sektionen.
+!***Read the remainder of the section.
 !*
 loop:
-    rad1:=inlin(infil);
-    rad2:=inlin(infil);
 
+    rad1:=inlin(infile);
+    rad2:=inlin(infile);
     if substr(rad1,73,1) = "D" then
       nl:=nl+2;
       goto loop;
     endif;
 !*
-!***Skriv till loggfil.
+!***Write to logfilee.
 !*
-    outstr(logfil,"Processed "+str(nl/2,-1,0)+" entities");
-    outlin(logfil);
+    outstr(logfile,"Counted "+str(nl/2,-1,0)+" entities");
+    outlin(logfile);
 !*
-!***Ge tillbaks sist lästa rader. Efter det står filpekaren
-!***på första raden i Parameter Data Section.
+!***Give back the last read rows. After this the file pointer
+!***points at the 1:st row in the Parameter Data Section.
 !*
-    seek(infil,fpos(infil)-2*(80+eolsize));
+    seek(infile,fpos(infile)-2*( rowlgt));
 
  ENDMODULE
 
-!*******************************************************
-
+!***************************************************************

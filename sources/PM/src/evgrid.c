@@ -58,8 +58,8 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
   {
     extern bool  rstron;
-    extern gmflt rstrox,rstroy,rstrdx,rstrdy;
-    extern short gpdrrs(),gpdlrs();
+    extern DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    extern short WPdrrs(),WPdlrs();
 
 /*
 ***Rastret skall tändas. Om det redan var tänt gör vi ingenting.
@@ -71,7 +71,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
       if ( !rstron )
         {
         rstron = TRUE;
-        gpdrrs(rstrox,rstroy,rstrdx,rstrdy);
+        WPdrrs(rstrox,rstroy,rstrdx,rstrdy);
         }
       }
 /*
@@ -83,7 +83,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
       if ( rstron )
         {
         rstron = FALSE;
-        gpdlrs(rstrox,rstroy,rstrdx,rstrdy);
+        WPdlrs(rstrox,rstroy,rstrdx,rstrdy);
         }
       }
 /*
@@ -109,7 +109,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern gmflt rstrox;
+    extern DBfloat rstrox;
 
     rstrox = proc_pv[1].par_va.lit.float_va;
 
@@ -132,7 +132,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern gmflt rstroy;
+    extern DBfloat rstroy;
 
     rstroy = proc_pv[1].par_va.lit.float_va;
 
@@ -155,7 +155,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern gmflt rstrdx;
+    extern DBfloat rstrdx;
 
     rstrdx = proc_pv[1].par_va.lit.float_va;
 
@@ -178,7 +178,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern gmflt rstrdy;
+    extern DBfloat rstrdy;
 
     rstrdy = proc_pv[1].par_va.lit.float_va;
 

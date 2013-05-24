@@ -78,13 +78,13 @@
     DBfloat local_u;     /* Local u value for the curve            */
     DBfloat uextr[2];    /* Extrapolation parameter values         */
                          /* values on the curve !!                 */ 
-                         /* uextrÄ0Å = u0 if u0 > 1.0              */ 
+                         /* uextr(0) = u0 if u0 > 1.0              */ 
                          /*     else = 1.0                         */  
-                         /* uextrÄ1Å = u1 if u1 < nseg+1           */
+                         /* uextr(1) = u1 if u1 < nseg+1           */
                          /*     else = nseg + 0.999                */ 
     DBfloat utmp[2];     /* Extrapolation parameter values         */
-                         /* utmpÄ0Å = u0   Start                   */ 
-                         /* utmpÄ1Å = u1   End                     */
+                         /* utmp(0) = u0   Start                   */ 
+                         /* utmp(1) = u1   End                     */
     DBint   status;      /* Error code from a called function      */
 
 
@@ -371,7 +371,7 @@ _10050: /* All segment data for the trimmed curve is calculated     */
      {
      if (utmp[0] != 123.456)
        {
-       if ( pseg->typ ==  UV_SEG )
+       if ( pseg->typ ==  UV_CUB_SEG )
          {
          erinit();
          return(erpush("GE8293","GE817")); 
@@ -387,7 +387,7 @@ _10050: /* All segment data for the trimmed curve is calculated     */
        }
      if (utmp[1] != 123.456)
        {
-       if ( (pseg+noseg-1)->typ ==  UV_SEG )
+       if ( (pseg+noseg-1)->typ ==  UV_CUB_SEG )
          {
          erinit();
          return(erpush("GE8293","GE817")); 

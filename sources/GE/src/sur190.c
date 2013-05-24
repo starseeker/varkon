@@ -319,7 +319,7 @@ fflush(dbgfil(SURPAC));
 }
 #endif
 
-    if ( (p_seg-1+i_seg)->typ  == UV_SEG )
+    if ( (p_seg-1+i_seg)->typ  == UV_CUB_SEG )
       {
       for ( i_sur = 1 ; i_sur  <= n_sur ; ++i_sur  ) 
         {
@@ -335,7 +335,7 @@ fflush(dbgfil(SURPAC));
         sprintf(errbuf, "n_sur>SFMAX %%sur190");  
         return(varkon_erpush("SU2993",errbuf));
         }
-      }                      /* UV_SEG                */
+      }                      /* UV_CUB_SEG                */
 nxtseg:;
     }                        /* End loop i_seg        */
 

@@ -1,0 +1,117 @@
+!*******************************************************
+
+ LOCAL GEOMETRY MODULE igs_144(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ds_ptr;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Read Directory Entry Section and
+!*      get values from Parameter Section
+!*      and create a trimmed parametric surface.
+!*
+!*      In: infile  = File to read from.
+!*          logfile = logfilee.
+!*          dl1    = Read 1st Directory Entry Section.
+!*          dl2    = Read 2nd Directory Entry Section.
+!*          ps_ptr = Pointer to Parameter Section.
+!*
+!*      Out:id_ent = Identity of created entity. 
+!*          status = 0 => Ok
+!*                   -1 => Error
+!*
+!*      (C)2006-09-13, Sören Larsson, Örebro university
+!*
+!*******************************************************
+
+   INT    i,radnummer,antal_rader,pd;
+   STRING rad*132,fs*132,rad1*132,rad2*132;
+   FLOAT  f;
+   FLOAT  x(6);
+   INT    PTS,N1,N2,PT(0:10); ! ref to IGES spec
+   REF    PTS_ref, csysid;
+   INT    surtyp;
+ BEGINMODULE
+
+ 
+ 
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   radnummer:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(radnummer-1)*rowlgt);
+!*
+!***Read 1:st line and strip "144,".
+!*
+   rad:=inlin(infile);
+   rad:=substr(rad,finds(rad,",")+1);
+!*
+!***Read parameter data
+!*
+   part(#2,igs_gint(infile,rad,PTS,status):SAVE=0);
+   part(#3,igs_gint(infile,rad,N1,status):SAVE=0);
+   part(#4,igs_gint(infile,rad,N2,status):SAVE=0);
+   part(#5,igs_gint(infile,rad,PT(0),status):SAVE=0);
+   FOR i:=1 TO N2 DO
+      part(#6,igs_gint(infile,rad,PT(i),status):SAVE=0);
+   ENDFOR;
+!*
+!***Create the untrimmed surface
+!*   
+   seek(infile,ds_ptr+(PTS-1)*rowlgt);  
+   rad1:=inlin(infile);
+   rad2:=inlin(infile);   
+   surtyp:=ival(rad1); 
+ !*
+!**Create local coordinate system for transformation matrix.
+!*    
+     csys_1p(#11,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
+     csysid:=#11;     
+      
+   IF surtyp=122 THEN
+     part(#7,igs_122(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1); !add blank=1 later
+     IF status<>0 THEN 
+       GOTO END; 
+     ENDIF;
+     ELIF surtyp=128 THEN
+       part(#8,igs_128(infile,logfile,rad1,rad2,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1); !add blank=1 later
+       IF status<>0 THEN 
+         GOTO END; 
+       ENDIF;
+     ELIF surtyp=120 THEN
+     part(#9,igs_120(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1);  
+     IF status<>0 THEN 
+       GOTO END; 
+     ENDIF;
+   ELSE
+     status:=-1;
+     outstr(logfile,"igs_144,Error - Not implemented surface type in trimmed parametric surface");
+     outlin(logfile);
+     outlin(logfile);
+     GOTO END;
+   ENDIF;
+!*
+!***Create the loops
+!*
+   seek(infile,ds_ptr+(PT(0)-1)*rowlgt);   
+ 
+!*
+!***Create the trimmed surface
+!*
+ 
+
+
+
+
+!*
+!***End.
+!*
+   status:=0;
+   END:;
+ ENDMODULE
+
+!****************************************************************************

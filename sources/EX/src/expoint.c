@@ -25,15 +25,15 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
+*
 *
 *********************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
 #include "../../GE/include/GE.h"
-#include "../../GP/include/GP.h"
-#ifdef V3_X11
+
+#ifdef UNIX
 #include "../../WP/include/WP.h"
 #endif
 #include "../include/EX.h"
@@ -41,30 +41,23 @@
 extern DBTmat *lsyspk;
 extern DBTmat  lklsyi;
 extern DBptr   lsysla;
-extern short   gptrty,modtyp;
-
-#ifdef WIN32
-extern short wpdrpo();
-#endif
-
+extern short   modtyp;
 
 /*!******************************************************/
 
-       short EXepoi(
+       short    EXepoi(
        DBId    *id,
-       DBPoint   *poipek,
+       DBPoint *poipek,
        V2NAPA  *pnp)
 
-/*     Skapar punkt, lagrar i DB och ritar.
+/*     Create point. Generic for all point methods.
  *
- *     In: id     => Pekare till identitet.
- *         poipek => Pekare till DB-struktur.
- *         pnp    => Pekare till namnparameterblock.
+ *      In: id     => C-ptr to ID.
+ *          linpek => C-ptr to DBPoint.
+ *          pnp    => C-ptr to attributes.
  *
- *     Ut: Inget.
- *
- *     Felkod:      0 = Ok.
- *             EX1312 = Kan ej lagra punkt i DB.
+ *      Return:  0 = Ok.
+ *          EX1312 = Can't store point in DB.
  *
  *     (C)microform ab 14/11/85 B.Doverud
  *
@@ -72,7 +65,7 @@ extern short wpdrpo();
  *     27/12/86 hit och save, J. Kjellander
  *     20/3/92  lsysla, J. Kjellander
  *     1998-04-03 WIDTH, J.Kjellander
- *     1999-12-18 Empty error message stack G Liden
+ *     2006-12-09 Removed gpxxxx(), J.Kjellander
  *
  ******************************************************!*/
 
@@ -80,7 +73,7 @@ extern short wpdrpo();
     DBptr   la;
 
 /*
-***Namnparametrar.
+***Current point attributes.
 */
     poipek->hed_p.blank = (char)pnp->blank;
     poipek->hed_p.pen   = (short)pnp->pen;
@@ -88,7 +81,7 @@ extern short wpdrpo();
     poipek->wdt_p       = pnp->width;
     poipek->pcsy_p      = lsysla;
 /*
-***Lagra i DB.
+***Save in DB.
 */
     if ( pnp->save )
       {
@@ -100,22 +93,9 @@ extern short wpdrpo();
       poipek->hed_p.hit = 0;
       }
 /*
-***Rita.
+***Display point in all graphical windows.
 */
-    gpdrpo(poipek,la,DRAW);
-
-#ifdef V3_X11
-    if ( gptrty == X11 ) wpdrpo(poipek,la,GWIN_ALL);
-#endif
-#ifdef WIN32
-    wpdrpo(poipek,la,GWIN_ALL);
-#endif
-
-/*
-***Succesful creation of point. Empty error message stack
-*/
-
-    varkon_erinit();
+    WPdrpo(poipek,la,GWIN_ALL);
 
     return(0);
   }

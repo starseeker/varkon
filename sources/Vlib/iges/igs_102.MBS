@@ -1,0 +1,133 @@
+!**************************************************************************
+
+ LOCAL GEOMETRY MODULE igs_102(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ds_ptr;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Read data from Parameter Section
+!*      and create a composite Curve.
+!*
+!*      In: infile  = File to read from.
+!*          logfile = logfile.
+!*          dl1     = 1st row of Directory Entry Section.
+!*          dl2     = 2nd row of Directory Entry Section.
+!*          ps_ptr  = Pointer to Parameter Section.
+!*          rowlgt  = Row length used.
+!*
+!*      Out: status = 0 => Ok
+!*                   -1 => Error
+!*          id_ent  = Identity of created entity.
+!*
+!*      2006-09-25, Mohamed Rahayem, Örebro university.
+!*
+!*************************************************************************
+
+   INT    i,j,rownumber,n_ent;
+   STRING row*132,row1*132,row2*132,trrow1*132,trrow2*132;
+   INT    N(100);
+   REF    comp_ref(100);
+   INT    t_ptr,actpos;
+   REF    csysid,tr_csysid;
+   
+ BEGINMODULE
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   rownumber:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(rownumber-1)*rowlgt);
+!*
+!***Read 1:st line and strip "102,".
+!*
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
+!*
+!**Read Number of entities.
+!*   
+   part(#1,igs_gint(infile,row,n_ent,status):SAVE=0);
+!*
+!***Read parameter data.
+!*
+   For i:=1 To  n_ent DO
+       part(#2,igs_gint(infile,row,N(i),status):SAVE=0);
+   ENDFOR;
+!*
+!**Create local coordinate system in origo.
+!*    
+     csys_1p(#9,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
+     csysid:=#9;     
+!*
+!**Read entities from DE.
+!*   
+    j:=0; 
+    For i:=1 To  n_ent DO
+        seek(infile,ds_ptr+(N(i)-1)*rowlgt);  
+        row1:=inlin(infile);
+        row2:=inlin(infile);  
+!*
+!**Is there a pointer to transformation ?
+!*
+        t_ptr:=ival(substr(row1,49,8));
+        IF t_ptr<>0 THEN
+          actpos:=fpos(infile);
+          seek(infile,ds_ptr+(t_ptr-1)*rowlgt);  
+          trrow1:=inlin(infile);
+          trrow2:=inlin(infile);  
+          part(#12,igs_124(infile,logfile,trrow1,trrow2,ps_ptr,rowlgt,tr_csysid,status),csysid:SAVE=1,BLANK=1);
+          seek(infile,actpos);
+        ELSE
+          tr_csysid:= csysid;  
+        ENDIF;
+!*
+!**Check if composite curve is a point.
+!*        
+        IF ival(row1)=116 THEN
+           part(#11,igs_116(infile,logfile,row1,row2,ps_ptr,rowlgt,id_ent,status),tr_csysid:SAVE=1); 
+        ELSE
+           j:=j+1;          
+           part(#3,igs_curve(infile,logfile,row1,row2,ds_ptr,ps_ptr,rowlgt,comp_ref(j),
+                   status),tr_csysid:SAVE=1,BLANK=1);   
+        ENDIF;        
+        if status = -1  then  
+          outstr(logfile,"igs_102, Error some compsite entities not implemented yet");
+          outlin(logfile);
+          outlin(logfile);
+          id_ent:=##0;
+          exit();
+        endif;
+
+   ENDFOR;
+!*
+!**Set number of segments.
+!*   
+   n_ent:=j;
+!*
+!***Draw Composite curve.
+!*
+   IF n_ent >= 1  THEN
+     cur_comparr(#4,n_ent, comp_ref);
+     id_ent:=global_ref(#4);
+   ELSE
+!*
+!***Write Error message to logfil.
+!*   
+     outstr(logfile,"igs_102, number of entities less than 1 ");
+     outlin(logfile);
+     outlin(logfile);
+     status:=-1;
+     id_ent:=##0;
+     exit();
+   ENDIF;
+!*
+!**END
+!*
+   status:=0;
+   
+ ENDMODULE  
+ 
+!***************************************************************************************** 

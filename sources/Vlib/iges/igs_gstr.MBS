@@ -1,0 +1,55 @@
+!*******************************************************
+ 
+ MACRO MODULE igs_gstr(
+    VAR FILE   infile;
+    VAR STRING row*80;
+    VAR INT    n_chars;
+    VAR STRING s*81;
+    VAR INT    status);
+
+!*      Reads and removes next string constant from
+!*      a row in question global section. 
+!*      If the row is at end a new 
+!*      row is read.
+!*
+!*      In: infile  = File to read from.
+!*          row     = Row to read from.
+!*
+!*      Ut: f       = The read number.
+!*          status  = 0 => Ok
+!*                   -1 => Error
+!*
+!*      (C)Sören Larsson, Örebro university
+!*
+!*******************************************************
+
+   INT    p,pd,n_readch;
+   STRING fs*80;
+  
+ BEGINMODULE
+ 
+!* 
+!**strip blanks
+!*
+loop:
+   IF substr(row,1,1)=" " THEN
+      row:=substr(row,2);
+      GOTO loop;
+   ENDIF;
+   IF substr(row,1,1) = "G"  THEN
+     row := inlin(infile);
+     goto loop;
+   ENDIF; 
+   n_chars:=ival(row,status,n_readch);
+   IF status = -1 THEN
+     exit();
+   ENDIF;   
+   row:=substr(row,n_readch+2); 
+   s:= substr(row, 1, n_chars);
+   row:=substr(row,n_chars+2);
+!*
+!**END.
+!*
+ ENDMODULE
+ 
+!**********************************************************

@@ -3,12 +3,12 @@
 
 <head>
 <title>cur_comp </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<meta name="GENERATOR" content="kwrite">
 </head>
 
 <body bgcolor="#99CCFF">
 
-<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+<p align="center"><small>VARKON Version 1.18 2006-11-07</small></p>
 
 <hr width="100%" align="center">
 
@@ -20,7 +20,7 @@
   <b>Description<br>
   </b><br>
   Creates a curve by copying one or many lines, arcs or curves into a new
-  &quot;composite&quot; curve. cur_comp requires that the entities used to create the new
+  &quot;composite&quot; curve. Cur_comp requires that the entities used to create the new
   curve are connected in the order they are specified. The first entity must be connected in
   either end to an end the second entity and the other end of the second entity must be
   connected to either end of the third entity and so on. Entities may be connected
@@ -137,7 +137,29 @@
   <b>Comments<br>
   </b><br>
   If lines or arcs are used in a cur_comp they will be converted to curve segments. One
-  segment for a line and maximum four segments for an arc.</p>
+  segment for a line and maximum four segments for an arc.
+  <br><br><br>
+  <b>Notes about NURBS curves</b><br><br>
+  If one or more of the input entities are NURBS curves, the resulting composite
+  curve will be a NURBS curve, otherwise it will be a curve represented by cubic segments. 
+  <br><br>
+  If a NURBS curve is to be created, lines, arcs and cubic segments are first converted 
+  to 3rd degree NURBS segments without approximation. The degree of the composite
+  curve will then use the highest degree found in the input entities. Degree
+  elevation (not implemented yet) is done without approximation.
+   
+  <br><br>
+  For a NURBS composite curve it is not allowed to mix UV and non UV segments. All UV 
+  segments must belong to the same surface. This is due to the fact that the resulting 
+  NURBS curve will have one set of control points and weights and theese must 
+  &quot;live&quot; in the same 
+  space i.e. R3-space or the UV-space of <u>one surface</u>. If any of the input curves is 
+  an offset curve, all other input entities must also be offset curves with the
+  same offset value.
+  
+  
+  </p>
+    
 </blockquote>
 
 <hr width="100%" align="center">

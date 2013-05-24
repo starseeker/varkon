@@ -296,7 +296,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-   gmflt u,v;
+   DBfloat u,v;
 
    if ( func_pc == 1 )
      {
@@ -308,18 +308,18 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
      switch ( func_pv[2].par_va.lit_type )
         {
         case C_INT_VA:
-        u = (gmflt)func_pv[2].par_va.lit.int_va;
+        u = (DBfloat)func_pv[2].par_va.lit.int_va;
         v = 0.0;
         break;
 
         case C_FLO_VA:
-        u = (gmflt)func_pv[2].par_va.lit.float_va;
+        u = (DBfloat)func_pv[2].par_va.lit.float_va;
         v = 0.0;
         break;
 
         case C_VEC_VA:
-        u = (gmflt)func_pv[2].par_va.lit.vec_va.x_val;
-        v = (gmflt)func_pv[2].par_va.lit.vec_va.y_val;
+        u = (DBfloat)func_pv[2].par_va.lit.vec_va.x_val;
+        v = (DBfloat)func_pv[2].par_va.lit.vec_va.y_val;
         break;
  
         default:
@@ -403,7 +403,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-   gmflt u,v;
+   DBfloat u,v;
 
    if ( func_pc == 1 )
      {
@@ -415,18 +415,18 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
      switch ( func_pv[2].par_va.lit_type )
         {
         case C_INT_VA:
-        u = (gmflt)func_pv[2].par_va.lit.int_va;
+        u = (DBfloat)func_pv[2].par_va.lit.int_va;
         v = 0.0;
         break;
 
         case C_FLO_VA:
-        u = (gmflt)func_pv[2].par_va.lit.float_va;
+        u = (DBfloat)func_pv[2].par_va.lit.float_va;
         v = 0.0;
         break;
 
         case C_VEC_VA:
-        u = (gmflt)func_pv[2].par_va.lit.vec_va.x_val;
-        v = (gmflt)func_pv[2].par_va.lit.vec_va.y_val;
+        u = (DBfloat)func_pv[2].par_va.lit.vec_va.x_val;
+        v = (DBfloat)func_pv[2].par_va.lit.vec_va.y_val;
         break;
  
         default:
@@ -524,7 +524,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
    if ( status < 0 ) return(status);
 
-   func_vp->lit.int_va = (v2int)numint;
+   func_vp->lit.int_va = (DBint)numint;
    return(0);
   }  
 
@@ -815,8 +815,8 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 */
     return(EXions(   &func_pv[1].par_va.lit.ref_va[0],
          (DBVector *)&func_pv[2].par_va.lit.vec_va,
-               (gmint)func_pv[3].par_va.lit.int_va,
-               (gmint)func_pv[4].par_va.lit.int_va,
+               (DBint)func_pv[3].par_va.lit.int_va,
+               (DBint)func_pv[4].par_va.lit.int_va,
                      &uv_start,
          (DBVector *)&func_vp->lit.vec_va));
 }

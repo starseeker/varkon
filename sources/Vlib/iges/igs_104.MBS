@@ -1,0 +1,251 @@
+!*************************************************************************
+
+ LOCAL GEOMETRY MODULE igs_104(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ps_ptr;
+   INT      rowlgt;
+   REF      id_ent;
+   VAR INT  status);
+
+!*      Read Directory Entry Section and
+!*      get values from Parameter Section
+!*      and create entity 104: Conic Arc.
+!*
+!*      In:  infile  = File to read from.
+!*           logfile = logfilee.
+!*           dl1     = Read 1st Directory Entry Section.
+!*           dl2     = Read 2nd Directory Entry Section.
+!*           ps_ptr  = Pointer to Parameter Section.
+!*
+!*      Out: status  = 0 => Ok
+!*                    -1 => Error
+!*
+!*      (C)microform 1997-12-23 J. Kjellander
+!*      (C)kastalyse 2000-04-13 R. Kastelein r.e.f.kastelein@kastalyse.nl 
+!*                   2000-06-02 Gunnar Liden
+!*                   2006-11-5 Mohamed Rahayem, Örebro University
+!*
+!***************************************************************************
+
+   CONSTANT INT IMAX=11;
+   CONSTANT STRING C_TYPE="FREE";
+   CONSTANT FLOAT P_VALUE=0.5;   
+   INT    i,rownumber; 
+   STRING row*80;
+   FLOAT  x(IMAX);
+   VECTOR u,v,m;                   
+   FLOAT   a,b,c,d,e,f,q1,q2,q3,t,z,aa,bb,u_tan,v_tan,x_s,x_e,y_m,x_m,y_e;
+   REF     csysid;                  
+  
+ BEGINMODULE
+ 
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   rownumber:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(rownumber-1)*rowlgt);      
+!*
+!**Create local coordinate system in origo.
+!*    
+     csys_1p(#15,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
+     csysid:=#15;        
+!*
+!***Read 1st line in Second Section and strip "104,".
+!*
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
+!*
+!***Read coordinates A,B,C,D,E,F, ZT, X1, Y1, X2, Y2.
+!*
+   for i:=1 to IMAX do
+     part(#2,igs_gflt(infile,row,x(i),status):SAVE=0);
+   endfor;
+!*
+!*** conic curve: ax2+bxy+cy2+dx+ey+f = 0
+!*
+   a:=x(1);
+   b:=x(2);
+   c:=x(3);
+   d:=x(4);  
+   e:=x(5);
+   f:=x(6);
+   z:=x(7);
+   u.x:=x(8);
+   u.y:=x(9);
+   u.z:=z;
+   v.x:=x(10);
+   v.y:=x(11);
+   v.z:=z;
+   m.z:=z;
+!*
+!***Calculate Determinants
+!*
+   q1:=a*(c*f-e/2*e/2)-b/2*(b/2*f-e/2*d/2)+d/2*(b/2*f-e/2*d/2);
+   q2:=a*c-b*b/4;
+   q3:=a+c;
+!*
+!***Check parameters
+!*
+   status:=0;
+!*
+!***Parabola:  q2 < 0 and q1 <> 0           : status = 1
+!* 
+    if b**2-4*a*c = 0 then
+      status:=1;
+!*
+!***Ellipse:   q2 > 0 and q1*q3 < 0         : status = 2
+!* 
+  elif  b**2-4*a*c < 0 then
+     status:=2;
+!*
+!***Hyperbola: q2 = 0 and q1 <> 0           : status = 3
+!*   
+   elif b**2-4*a*c > 0 then
+     status:=3;
+   else
+     status:=-1;                            !* Error !
+   endif;
+!*
+!**Calculate Derivation of guadratic equation
+!*
+!********************************************************!
+!Theory:
+!   2AX + BY + BX*dy/dx + 2CY*dy/dx + D + E*dy/dx = 0    !
+!   2AX + BY + D + dy/dx*[BX + 2CY + E] = 0              !
+!   dy/dx = -[2aX + bY + d]/[bX + 2cY + e]               !
+!********************************************************!
+!*
+!***Parabola
+!*
+  if status = 1 then
+   
+   if abs(b*u.x+2*c*u.y+e) < 0.001 then
+      u_tan := 87;
+      outstr(logfile,"igs_104, strat tangent 90 degree approximated to => 87 degree");
+      outlin(logfile);
+      outlin(logfile);
+    else      
+      u_tan := -(2*a*u.x +b*u.y +d)/(b*u.x+2*c*u.y+e);
+   endif;
+   
+   if abs(b*v.x+2*c*v.y+e) < 0.001 then
+      v_tan := 87;
+      outstr(logfile,"igs_104, End tanget 90 degree approximated to => 87 degree");
+      outlin(logfile);
+      outlin(logfile);
+    else      
+      v_tan := -(2*a*v.x +b*v.y +d)/(b*v.x+2*c*v.y+e);
+   endif;
+   
+   lin_ang(#11,u,arctan(u_tan),1:pen=4,blank=1);
+   lin_ang(#12,v,arctan(v_tan)+180,1:pen=4,blank=1);
+   cur_conic(#13,"free",u,on(#11,1),P_VALUE,v,on(#12,1));
+   id_ent:=global_ref(#13);    
+!*
+!***Ellipse
+!*
+  elif status =2 then
+     aa:=sqrt(-f/a);
+     bb:=sqrt(-f/c);
+     t:=arccos(0.5*(u.x+v.x)/aa);
+     m:=vec(aa*cos(t),bb*sin(t),z);       
+     x_s := - d/2.0/a + SQRT((d/2.0/a)**2 - f/a);
+     y_e := - e/2.0/c + SQRT((e/2.0/c)**2 - f/c);
+     x_m := x_s/2.0;
+     y_m := - (b/c*x_m + e/c)/2 +SQRT((b/c*x_m+e/c)**2/4-a/c*x_m**2-d/c*x_m-f/c);
+!*
+!**Create ellipse.
+!*     
+ CUR_CONIC(#50, "FREE",
+   VEC( x_s,  0 ,z), VEC( x_s,  0 ,z)+VEC(0,1,0), VEC( x_m, y_m,z),
+   VEC(  0 , y_e,z), VEC(  0 , y_e,z)+VEC(1,0,0), VEC(-x_m, y_m,z),
+   VEC(-x_s,  0 ,z), VEC(-x_s,  0 ,z)+VEC(0,1,0), VEC(-x_m,-y_m,z),
+   VEC(  0 ,-y_e,z), VEC(  0 ,-y_e,z)+VEC(1,0,0), VEC( x_m,-y_m,z),
+   VEC( x_s,  0 ,z), VEC( x_s,  0 ,z)+VEC(0,1,0));      
+ id_ent:=global_ref (#50);          
+!*
+!***Hyperbola: q2 = 0 and q1 <> 0
+!*
+   elif status = 3 then 
+       if f*a < 0 and f*c > 0 then   
+        aa:=sqrt(-f/a);
+        bb:=sqrt(f/c);
+        if arctan(u.y) < arctan(v.y) then
+          t:=arctan(0.5*(u.y+v.y)/bb);
+          m:=vec(aa/cos(t),bb*tan(t),z); 
+        else
+          t:=arctan(0.5*(u.y+v.y)/bb);
+          m:=vec(aa/cos(-t),bb*tan(-t),z) ;
+        endif;
+	
+if abs(b*u.x+2*c*u.y+e) < 0.001 then
+      u_tan := 87;
+      outstr(logfile,"igs_104, strat tangent 90 degree approximated to => 87 degree");
+      outlin(logfile);
+      outlin(logfile);
+    else      
+      u_tan := -(2*a*u.x +b*u.y +d)/(b*u.x+2*c*u.y+e);
+   endif;
+   
+   if abs(b*v.x+2*c*v.y+e) < 0.001 then
+      v_tan := 87;
+      outstr(logfile,"igs_104, End tanget 90 degree approximated to => 87 degree");
+      outlin(logfile);
+      outlin(logfile);
+    else      
+      v_tan := -(2*a*v.x +b*v.y +d)/(b*v.x+2*c*v.y+e);
+   endif;
+!*
+!**Creat hyperbola.
+!*
+   lin_ang(#14,u,arctan(u_tan),1:pen=4,blank=1);
+   lin_ang(#16,v,arctan(v_tan)+180,1:pen=4,blank=1);
+   cur_conic(#17,"free",u,on(#14,1),m,v,on(#16,1));
+   id_ent:=global_ref(#17);
+   
+      elif f*a > 0 and f*c < 0 then   
+        aa:=sqrt(f/a);
+        bb:=sqrt(-f/c);
+        if arctan(u.x) < arctan(v.x) then
+          t:=arctan(0.5*(u.x+v.x)/aa);
+          m:=vec(aa*tan(t),bb/cos(t),z);
+        else
+          t:=arctan(0.5*(u.x+v.x)/aa);
+          m:=vec(aa*tan(-t),bb/cos(-t),z);
+        endif;
+      endif; 
+
+if abs(b*u.x+2*c*u.y+e) < 0.001 then
+      u_tan := 89;
+      outstr(logfile,"igs_104, strat tangent 90 degree approximated to => 89 degree");
+      outlin(logfile);
+      outlin(logfile);
+    else      
+      u_tan := -(2*a*u.x +b*u.y +d)/(b*u.x+2*c*u.y+e);
+   endif;
+   
+   if abs(b*v.x+2*c*v.y+e) < 0.001 then
+      v_tan := 89;
+      outstr(logfile,"igs_104, End tanget 90 degree approximated to => 89 degree");
+      outlin(logfile);
+      outlin(logfile);
+    else      
+      v_tan := -(2*a*v.x +b*v.y +d)/(b*v.x+2*c*v.y+e);
+   endif;
+!*
+!**Creat hyperbola.
+!*
+   lin_ang(#18,u,arctan(u_tan),1:pen=4,blank=1);
+   lin_ang(#19,v,arctan(v_tan)+180,1:pen=4,blank=1);
+   cur_conic(#20,"free",u,on(#18,1),m,v,on(#19,1));        
+   id_ent:=global_ref(#20);                              
+ endif;
+!*
+!***End.
+!*
+  status:=0;
+
+ ENDMODULE
+!***************************************************************************************

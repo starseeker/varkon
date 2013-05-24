@@ -2,33 +2,36 @@
 *
 *    dbsurf.c
 *    ========
-*
+*    This file is part of the VARKON Database Library.
+*    URL: http://www.tech.oru.se/cad/varkon
 *
 *    This file includes the following public functions:
 *
-*    DBinsert_surface();     Inserts a surface entity (no patch data)
+*    DBinsert_surface();     Inserts a surface entity
 *    DBread_surface();       Reads a surface entity (no patch data)
 *    DBupdate_surface();     Updates a surface entity (no patch data)
 *    DBdelete_surface();     Deletes a surface entity (no patch data)
 *
 *    DBread_patches();       Reads all patches
 *    DBread_one_patch();     Reads one patch
-*   *DBcreate_patches();     Allocates memory for patch data
+*    DBcreate_patches();     Allocates memory for patch data
 *    DBcreate_NURBS();       Allocates memory for NURBS data
 *    DBfree_patches();       Free's allocated patch memory
 *
-*    DBadd_srep_curves();    Writes wireframe representation
-*    DBread_srep_curves();   Reads wireframe representation
-*    DBdelete_srep_curves(); Deletes wireframe representation
-*    DBfree_srep_curves();   Free's mem allocated for wireframe representation
+*    DBread_getrimcurves();  Read geometrical trimcurves
+*    DBread_getrimcurves();  Free's allocated trimcurve memory
+*    DBcreate_segarrs();     Allocates memory for trimcurves
 *
-*    DBadd_srep_NURBS();     Writes NURBS representation
-*    DBread_srep_NURBS();    Reads NURBS representation
-*    DBdelete_srep_NURBS();  Deletes NURBS representation
-*    DBfree_srep_NURBS();    Free's memory allocated for NURBS representation
+*    DBadd_sur_grwire();     Writes wireframe representation
+*    DBread_sur_grwire();    Reads wireframe representation
+*    DBdelete_sur_grwire();  Deletes wireframe representation
+*    DBfree_sur_grwire();    Free's mem allocated for wireframe representation
 *
-*    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    DBadd_sur_grsur();      Writes NURBS representation
+*    DBread_sur_grsur();     Reads NURBS representation
+*    DBdelete_sur_grsur();   Deletes NURBS representation
+*    DBfree_sur_grsur();     Free's memory allocated for NURBS representation
+*
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -44,62 +47,65 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 #include <string.h>
 #include "../include/DB.h"
 #include "../include/DBintern.h"
 
-static DBptr    wrgseg (short nseg, GMSEG *segdat);
-static GMSEG   *rdgseg(short nseg, DBptr la);
+/*
+***Prototypes for internal functions.
+*/
+static DBptr    wrgseg (short nseg, DBSeg *segdat);
+static DBSeg   *rdgseg(short nseg, DBptr la);
 static DBstatus dlgseg(short nseg,DBptr la);
-static DBstatus gmwrnp(GMPATNU *np, DBptr *pla);
-static DBstatus gmrdnp(GMPATNU *np);
+static DBstatus gmwrnp(DBPatchNU *np, DBptr *pla);
+static DBstatus gmrdnp(DBPatchNU *np);
 static DBstatus gmrlnp(DBptr la);
 
 /*!******************************************************/
 
-        DBstatus DBinsert_surface(
-        GMSUR   *surpek,
-        GMPAT   *ptpat,
-        DBId    *idpek,
-        DBptr   *lapek)
+        DBstatus  DBinsert_surface(
+        DBSurf   *surpek,
+        DBPatch  *ptpat,
+        DBSegarr *ptrim,
+        DBId     *idpek,
+        DBptr    *lapek)
 
-/*      Huvudrutin för lagring av yta.
+/*      Insert surface in DB.
  *
- *      In: surpek => Pekare till en surf-structure.
- *          ptpat  => Pekare till topologipatchnätet.
- *          idpek  => Pekare till identitet-structure.
- *          lapek  => Pekare till DBptr-variabel.
+ *      In: surpek  => C-ptr to DBSurf.
+ *          ptpat   => C-ptr to array of topological patches.
+ *          ptrim   => C-ptr to array of trimcurves or NULL.
+ *          idpek   => C-ptr to surface ID.
  *
- *      Ut: *la    => Logisk adress till surf-post.
+ *      Out: *lapek => Surface DB address.
  *
- *      FV:  Returnerar status från inpost().
+ *      Return: The status of inpost().
  *
- *      Felkoder: GM1043 = Kan ej allokera minne för patchtabell
+ *      Error codes: GM1043 = Can't allocate memory for patch table
  *
  *      (C)microform ab 3/11/92 J. Kjellander
  *
  *      22/2/93    RATSUR och LFTSUR, J.Kjellander
  *      31/1/94    Grafiska segment, J.Kjellander
- *      14/3/94    Nya GMPAT, J.Kjellander
+ *      14/3/94    Nya DBPatch, J.Kjellander
  *      15/3/95    v3mall(), J.Kjellander
  *      1996-01-29 CON_PAT, J.Kjellander
  *      1996-07-04 Polynompatchar, J.Kjellander
  *      1997-03-05 GMPOSTV1, J.Kjellander
- *      1997-11-05 GMPATNU, J.Kjellander
+ *      1997-11-05 DBPatchNU, J.Kjellander
+ *      2007-01-01 GMPOSTV2, J.Kjellander
  *
  ******************************************************!*/
 
   {
     DBptr   *tabpek,*ptab,tabla,la;
     DBint    nu,nv,i,j,tabsiz;
-    GMPAT   *patpek,*spek;
+    DBPatch *patpek,*spek;
 
 /*
-***Allokera minne för patch-tabellen.
+***Allocate C-memory for the DB patch table.
 */
     nu = surpek->nu_su;
     nv = surpek->nv_su;
@@ -108,8 +114,8 @@ static DBstatus gmrlnp(DBptr la);
       return(erpush("GM1043",""));
     ptab = tabpek;
 /*
-***Gå igenom de primära patcharna. Lagra eventuella geometriska
-***patchar och därefter den primära patchen själv.
+***For each topological patch, store the geometric patch first
+***(if therre is one) and then store the topological patch itself.
 */
     patpek = ptpat;
 
@@ -120,108 +126,106 @@ static DBstatus gmrlnp(DBptr la);
         switch ( patpek->styp_pat )
           {
 /*
-***Den primära patchen pekar direkt på en geometrisk patch.
-***Lagra den geometriska patchen och notera dess GM-adress i den
-***primära patchen.
+***Store the geometric patch. Save it's DB address in
+***the topological patch and then store the topological patch.
 */
           case CUB_PAT:
-          wrdat1(patpek->spek_c,&la,sizeof(GMPATC));
+          wrdat1(patpek->spek_c,&la,sizeof(DBPatchC));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case RAT_PAT:
-          wrdat1(patpek->spek_c,&la,sizeof(GMPATR));
+          wrdat1(patpek->spek_c,&la,sizeof(DBPatchR));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case LFT_PAT:
-          wrdat2(patpek->spek_c,&la,sizeof(GMPATL));
+          wrdat2(patpek->spek_c,&la,sizeof(DBPatchL));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case FAC_PAT:
-          wrdat1(patpek->spek_c,&la,sizeof(GMPATF));
+          wrdat1(patpek->spek_c,&la,sizeof(DBPatchF));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case PRO_PAT:
-          wrdat2(patpek->spek_c,&la,sizeof(GMPATP));
+          wrdat2(patpek->spek_c,&la,sizeof(DBPatchP));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case CON_PAT:
-          wrdat1(patpek->spek_c,&la,sizeof(GMPATN));
+          wrdat1(patpek->spek_c,&la,sizeof(DBPatchN));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case P3_PAT:
-          wrdat1(patpek->spek_c,&la,sizeof(GMPATP3));
+          wrdat1(patpek->spek_c,&la,sizeof(DBPatchP3));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case P5_PAT:
-          wrdat1(patpek->spek_c,&la,sizeof(GMPATP5));
+          wrdat1(patpek->spek_c,&la,sizeof(DBPatchP5));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case P7_PAT:
-          wrdat2(patpek->spek_c,&la,sizeof(GMPATP7));
+          wrdat2(patpek->spek_c,&la,sizeof(DBPatchP7));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case P9_PAT:
-          wrdat2(patpek->spek_c,&la,sizeof(GMPATP9));
+          wrdat2(patpek->spek_c,&la,sizeof(DBPatchP9));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case P21_PAT:
-          wrdat2(patpek->spek_c,&la,sizeof(GMPATP21));
+          wrdat2(patpek->spek_c,&la,sizeof(DBPatchP21));
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 
           case NURB_PAT:
-          gmwrnp((GMPATNU *)patpek->spek_c,&la);
+          gmwrnp((DBPatchNU *)patpek->spek_c,&la);
           patpek->spek_gm = la;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
 /*
-***Den primära patchen pekar på en NULL-patch. Ingenting
-***lagras.
+***A NULL patch is not stored.
 */
           case NUL_PAT:
          *ptab = DBNULL;
           break;
 /*
-***Den primära patchen pekar på en annan primär (GMPAT) patch.
-***Lagra inte denna men notera dess patchadress.
+***The primary topological patch points to another topological
+****patch. Don't save it but remember it's address.
 */
           case TOP_PAT:
-          spek = (GMPAT *) patpek->spek_c;
+          spek = (DBPatch *) patpek->spek_c;
           patpek->su_pat = spek->iu_pat;
           patpek->sv_pat = spek->iv_pat;
-          wrdat1((char *)patpek,ptab,sizeof(GMPAT));
+          wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
           }
 /*
-***Nästa patch.
+***Next patch.
 */
         ++ptab;
         ++patpek;
         }
       }
 /*
-***Lagra patch-tabellen.
+***Store the patch table.
 */
     if ( tabsiz <= PAGSIZ ) wrdat1((char *)tabpek,&tabla,tabsiz);
     else                    wrdat2((char *)tabpek,&tabla,tabsiz);
@@ -241,59 +245,102 @@ static DBstatus gmrlnp(DBptr la);
     surpek->nku_su = surpek->nkv_su = 0;
     surpek->pkvu_su = surpek->pkvv_su = surpek->pcpts_su = DBNULL;
 /*
-***Typ-specifika data.
+***Type and DBSurf version.
 */
     surpek->hed_su.type = SURTYP;
-    surpek->hed_su.vers = GMPOSTV1;
+    surpek->hed_su.vers = GMPOSTV2;
 /*
-***Lagra själva surf-posten. 
+***Store the DBSurf itself. 
 */
-    return(inpost((GMUNON *)surpek,idpek,lapek,sizeof(GMSUR)));
+    return(inpost((GMUNON *)surpek,idpek,lapek,sizeof(DBSurf)));
   }
 
 /********************************************************/
 /*!******************************************************/
 
         DBstatus DBread_surface(
-        GMSUR  *surpek,
-        DBptr   la)
+        DBSurf  *surpek,
+        DBptr    la)
 
-/*      Huvudrutin för läsning av en yta.
+/*      Read surface main data. No geometrical
+ *      or graphical data is read.
  *
- *      In: surpek => Pekare till en GMSUR-structure.
- *          la     => Ytans adress i GM.
+ *      In: surpek   => C-ptr to surface.
+ *          la       => Surface address in DB
  *
- *      Ut: *surpek => Surf-post.
+ *      Out: *surpek => Surface data.
  *
  *      FV: Inget.
  *
  *      (C)microform ab 21/11/92 J. Kjellander
  *
  *      1997-03-05 GMPOSTV1, J.Kjellander
+ *      2007-01-01 GMPOSTV2, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    GMRECH *hedpek;
+    DBHeader *hedpek;
 
-    hedpek = (GMRECH *)gmgadr(la);
-
+/*
+***Get a C-ptr to the surface header.
+*/
+    hedpek = (DBHeader *)gmgadr(la);
+/*
+***What DB version of surface is it ?
+*/
     switch ( GMVERS(hedpek) )
       {
-      case GMPOSTV1:
-      V3MOME(hedpek,surpek,sizeof(GMSUR));
+/*
+***GMPOSTV2 is the current representation
+***implemented 2007-01-01 JK.
+*/
+      case GMPOSTV2:
+      V3MOME(hedpek,surpek,sizeof(DBSurf));
       break;
 /*
-***GMSUR0 har ingen B-spline approximation.
+***GMSUR1 has no trimcurves.
+*/
+      case GMPOSTV1:
+      V3MOME(hedpek,surpek,sizeof(GMSUR1));
+      surpek->ntrim_su         = 0;
+      surpek->getrim_su        = DBNULL;
+      surpek->ngrwborder_su    = 0;
+      surpek->grwborder_su     = DBNULL;
+      surpek->ngrwiso_su       = 0;
+      surpek->grwiso_su        = DBNULL;
+      surpek->vertextype_su    = -1;
+      surpek->grstrim_su       = DBNULL;
+      surpek->nustep_su        = -1.0;
+      surpek->nvstep_su        = -1.0;
+      break;
+/*
+***GMSUR0 has no NURBS approximation.
+***It is not likely to find any GMSUR0
+***around anymore but the cost of this
+***extra code is nothing and it helps
+***to understand the history.
 */ 
       default:
       V3MOME(hedpek,surpek,sizeof(GMSUR0));
       surpek->uorder_su = surpek->vorder_su = 0;
       surpek->nku_su = surpek->nkv_su = 0;
       surpek->pkvu_su = surpek->pkvv_su = surpek->pcpts_su = DBNULL;
+      surpek->ntrim_su         = 0;
+      surpek->getrim_su        = DBNULL;
+      surpek->ngrwborder_su    = 0;
+      surpek->grwborder_su     = DBNULL;
+      surpek->ngrwiso_su       = 0;
+      surpek->grwiso_su        = DBNULL;
+      surpek->vertextype_su    = -1;
+      surpek->grstrim_su       = DBNULL;
+      surpek->nustep_su        = -1.0;
+      surpek->nvstep_su        = -1.0;
       break;
       }
-
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -301,12 +348,12 @@ static DBstatus gmrlnp(DBptr la);
 /*!******************************************************/
 
         DBstatus DBupdate_surface(
-        GMSUR  *surpek,
-        DBptr   la)
+        DBSurf  *surpek,
+        DBptr    la)
 
 /*      Uppdaterar (skriver över) en yt-post.
  *
- *      In: surpek => Pekare till en GMSUR-structure.
+ *      In: surpek => Pekare till en DBSurf-structure.
  *          la     => Ytans adress i GM.
  *
  *      Ut: Inget.
@@ -316,6 +363,7 @@ static DBstatus gmrlnp(DBptr la);
  *      (C)microform ab 21/11/92 J. Kjellander
  *
  *      1997-03-05 GMPOSTV1, J.Kjellander
+ *      2007-01-01 GMPOSTV2, J.Kjellander
  *
  ******************************************************!*/
 
@@ -326,8 +374,12 @@ static DBstatus gmrlnp(DBptr la);
 
     switch ( GMVERS(hedpek) )
       {
+      case GMPOSTV2:
+      updata( (char *)surpek, la, sizeof(DBSurf));
+      break;
+
       case GMPOSTV1:
-      updata( (char *)surpek, la, sizeof(GMSUR));
+      updata( (char *)surpek, la, sizeof(GMSUR1));
       break;
  
       default:
@@ -355,21 +407,22 @@ static DBstatus gmrlnp(DBptr la);
  *      (C)microform ab 26/11/92 J. Kjellander
  *
  *      22/2/93    RATSUR och LFTSUR, J. Kjellander
- *      21/3/94    Nya GMPAT, J. Kjellander
+ *      21/3/94    Nya DBPatch, J. Kjellander
  *      1996-01-29 CON_PAT, J. Kjellander
  *      1996-07-04 Polynompatchar, J.Kjellander
  *      1997-03-05 GMPOSTV1, J.Kjellander
  *      1997-05-28 DBread_one_patch(NULL), J.Kjellander
  *      1997-05-28 DBdelete_srep_NURBS(), J.Kjellander
- *      1997-11-05 GMPATNU, J.Kjellander
+ *      1997-11-05 DBPatchNU, J.Kjellander
+ *      2007-01-01 GMPOSTV2, J.Kjellander
  *
  ******************************************************!*/
 
   {
     DBptr  *tabpek,*ptab,tabla;
     DBint   nu,nv,i,j,tabsiz;
-    GMSUR   sur;
-    GMPAT   toppat;
+    DBSurf   sur;
+    DBPatch   toppat;
 
 /*
 ***Läs själva yt-posten.
@@ -378,18 +431,22 @@ static DBstatus gmrlnp(DBptr la);
 /*
 ***Stryk eventuella grafiska segment.
 */
-    DBdelete_srep_curves(&sur);
+    DBdelete_sur_grwire(&sur);
 /*
 ***Stryk ev. nurbs-representation.
 */
-    DBdelete_srep_NURBS(&sur);
+    DBdelete_sur_grsur(&sur);
 /*
 ***Stryk själva yt-posten.
 */
     switch ( sur.hed_su.vers )
       {
+      case GMPOSTV2:
+      rldat1(la,sizeof(DBSurf));
+      break;
+
       case GMPOSTV1:
-      rldat1(la,sizeof(GMSUR));
+      rldat1(la,sizeof(GMSUR1));
       break;
  
       default:
@@ -433,8 +490,8 @@ static DBstatus gmrlnp(DBptr la);
 */
         if ( *ptab != DBNULL )
           {
-          rddat1((char *)&toppat,*ptab,sizeof(GMPAT));
-          rldat1(*ptab,sizeof(GMPAT));
+          rddat1((char *)&toppat,*ptab,sizeof(DBPatch));
+          rldat1(*ptab,sizeof(DBPatch));
 /*
 ***Sen den sekundära patchen.
 */
@@ -444,52 +501,52 @@ static DBstatus gmrlnp(DBptr la);
 ***Om den sekundära patchen är geometrisk stryker vi den.
 */
             case CUB_PAT:
-            rldat1(toppat.spek_gm,sizeof(GMPATC));
+            rldat1(toppat.spek_gm,sizeof(DBPatchC));
             break;
 
             case RAT_PAT:
-            rldat1(toppat.spek_gm,sizeof(GMPATR));
+            rldat1(toppat.spek_gm,sizeof(DBPatchR));
             break;
 
             case LFT_PAT:
-            rldat2(toppat.spek_gm,sizeof(GMPATL));
+            rldat2(toppat.spek_gm,sizeof(DBPatchL));
             break;
 
             case FAC_PAT:
-            rldat1(toppat.spek_gm,sizeof(GMPATF));
+            rldat1(toppat.spek_gm,sizeof(DBPatchF));
             break;
 
             case PRO_PAT:
-            rldat2(toppat.spek_gm,sizeof(GMPATP));
+            rldat2(toppat.spek_gm,sizeof(DBPatchP));
             break;
 
             case CON_PAT:
-            rldat1(toppat.spek_gm,sizeof(GMPATN));
+            rldat1(toppat.spek_gm,sizeof(DBPatchN));
             break;
 
             case P3_PAT:
-            rldat1(toppat.spek_gm,sizeof(GMPATP3));
+            rldat1(toppat.spek_gm,sizeof(DBPatchP3));
             break;
 
             case P5_PAT:
-            rldat1(toppat.spek_gm,sizeof(GMPATP5));
+            rldat1(toppat.spek_gm,sizeof(DBPatchP5));
             break;
 
             case P7_PAT:
-            rldat2(toppat.spek_gm,sizeof(GMPATP7));
+            rldat2(toppat.spek_gm,sizeof(DBPatchP7));
             break;
 
             case P9_PAT:
-            rldat2(toppat.spek_gm,sizeof(GMPATP9));
+            rldat2(toppat.spek_gm,sizeof(DBPatchP9));
             break;
 
             case P21_PAT:
-            rldat2(toppat.spek_gm,sizeof(GMPATP21));
+            rldat2(toppat.spek_gm,sizeof(DBPatchP21));
             break;
 
             case NURB_PAT:
             gmrlnp(toppat.spek_gm);
-            rldat1(toppat.spek_gm,sizeof(GMPATNU));
+            rldat1(toppat.spek_gm,sizeof(DBPatchNU));
             break;
             }
           }
@@ -519,13 +576,13 @@ static DBstatus gmrlnp(DBptr la);
 /********************************************************/
 /*!******************************************************/
 
- static DBstatus gmwrnp(
-        GMPATNU *np,
-        DBptr   *pla)
+ static DBstatus   gmwrnp(
+        DBPatchNU *np,
+        DBptr     *pla)
 
 /*      Lagrar nurbspatch.
  *
- *      In: np  => Pekare till en GMPATNU-structure.
+ *      In: np  => Pekare till en DBPatchNU-structure.
  *          pla => Pekare till utdata.
  *
  *      Ut: *pla = GM-pekare.
@@ -559,7 +616,7 @@ static DBstatus gmrlnp(DBptr la);
 /*
 ***Och slutligen själva patch-posten.
 */
-    wrdat1((char *)np,pla,sizeof(GMPATNU));
+    wrdat1((char *)np,pla,sizeof(DBPatchNU));
 
     return(0);
   }
@@ -567,14 +624,14 @@ static DBstatus gmrlnp(DBptr la);
 /********************************************************/
 /*!******************************************************/
 
- static DBstatus gmrdnp(GMPATNU *np)
+ static DBstatus gmrdnp(DBPatchNU *np)
 
 /*      Läser nurbspatch.
  *
  *      In: np  => Pekare till en delvis ifylld 
- *                 GMPATNU-structure.
+ *                 DBPatchNU-structure.
  *
- *      Ut: *np = GMPATNU med C-pekare till NURBS-data.
+ *      Ut: *np = DBPatchNU med C-pekare till NURBS-data.
  *
  *      FV: Inget.
  *
@@ -618,7 +675,7 @@ static DBstatus gmrlnp(DBptr la);
 
 /*      Stryker nurbsdata.
  *
- *      In: la => Pekare till GMPATNU-post.
+ *      In: la => Pekare till DBPatchNU-post.
  *
  *      Ut: Inget.
  *
@@ -630,12 +687,12 @@ static DBstatus gmrlnp(DBptr la);
 
   {
     DBint   size;
-    GMPATNU np;
+    DBPatchNU np;
 
 /*
 ***Läs posten.
 */
-    rddat1((char *)&np,la,sizeof(GMPATNU));
+    rddat1((char *)&np,la,sizeof(DBPatchNU));
 /*
 ***Stryk knutvektorerna.
 */
@@ -660,9 +717,9 @@ static DBstatus gmrlnp(DBptr la);
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBread_patches(
-        GMSUR  *surpek,
-        GMPAT **pptpat)
+        DBstatus  DBread_patches(
+        DBSurf   *surpek,
+        DBPatch **pptpat)
 
 /*      Läser patch-data för alla patchar i ytan.
  *      Allokerar minne för patcharna.
@@ -681,18 +738,18 @@ static DBstatus gmrlnp(DBptr la);
  *      (C)microform ab 20/11/92 J. Kjellander
  *
  *      22/2/93    RATSUR och LFTSUR, J. Kjellander
- *      14/3/94    Nya GMPAT, J. Kjellander
+ *      14/3/94    Nya DBPatch, J. Kjellander
  *      1996-01-29 CON_PAT, J. Kjellander
  *      1996-07-04 Bug, PRO_PAT, J.Kjellander
  *      1996-07-04 Polynompatchar, J.Kjellander
- *      1997-11-05 GMPATNU, J.Kjellander
+ *      1997-11-05 DBPatchNU, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    DBptr *tabpek,*ptab,tabla;
-    DBint  nu,nv,i,j,tabsiz;
-    GMPAT *patpek;
+    DBptr   *tabpek,*ptab,tabla;
+    DBint    nu,nv,i,j,tabsiz;
+    DBPatch *patpek;
 
 /*
 ***Allokera minne för patch-tabellen.
@@ -712,7 +769,7 @@ static DBstatus gmrlnp(DBptr la);
 /*
 ***Allokera minne för primära patchar.
 */
-    if ( (*pptpat=(GMPAT *)DBcreate_patches(TOP_PAT,nu*nv)) == NULL )
+    if ( (*pptpat=(DBPatch *)DBcreate_patches(TOP_PAT,nu*nv)) == NULL )
       return(erpush("GM1033",""));
     patpek = *pptpat;
 /*
@@ -733,7 +790,7 @@ static DBstatus gmrlnp(DBptr la);
           patpek->iu_pat   = (short) (i + 1);
           patpek->iv_pat   = (short) (j + 1);
           }
-        else rddat1((char *)patpek,*ptab,sizeof(GMPAT));
+        else rddat1((char *)patpek,*ptab,sizeof(DBPatch));
 /*
 ***Sen den sekundära patchen.
 */
@@ -746,74 +803,74 @@ static DBstatus gmrlnp(DBptr la);
           case CUB_PAT:
           if ( (patpek->spek_c=DBcreate_patches(CUB_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATC));
+          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchC));
           break;
 
           case RAT_PAT:
           if ( (patpek->spek_c=DBcreate_patches(RAT_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATR));
+          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchR));
           break;
 
           case LFT_PAT:
           if ( (patpek->spek_c=DBcreate_patches(LFT_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATL));
+          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchL));
           break;
 
           case FAC_PAT:
           if ( (patpek->spek_c=DBcreate_patches(FAC_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATF));
+          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchF));
           break;
 
           case PRO_PAT:
           if ( (patpek->spek_c=DBcreate_patches(PRO_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP));
+          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP));
           break;
 
           case CON_PAT:
           if ( (patpek->spek_c=DBcreate_patches(CON_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATN));
+          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchN));
           break;
 
           case P3_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P3_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP3));
+          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP3));
           break;
 
           case P5_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P5_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP5));
+          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP5));
           break;
 
           case P7_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P7_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP7));
+          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP7));
           break;
 
           case P9_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P9_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP9));
+          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP9));
           break;
 
           case P21_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P21_PAT,1)) == NULL )
             return(erpush("GM1063",""));
-          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP21));
+          rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP21));
           break;
 
           case NURB_PAT:
           if ( (patpek->spek_c=DBcreate_patches(NURB_PAT,1)) == NULL )
             return(erpush("GM1053",""));
-          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATNU));
-          if ( gmrdnp((GMPATNU *)patpek->spek_c) < 0 )
+          rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchNU));
+          if ( gmrdnp((DBPatchNU *)patpek->spek_c) < 0 )
             return(erpush("GM1063",""));
           break;
 /*
@@ -844,10 +901,10 @@ static DBstatus gmrlnp(DBptr la);
 /*!******************************************************/
 
         DBstatus DBread_one_patch(
-        GMSUR  *surpek,
-        GMPAT  *patpek,
-        short   iu,
-        short   iv)
+        DBSurf  *surpek,
+        DBPatch *patpek,
+        short    iu,
+        short    iv)
 
 /*      Läser patch-data för en enstaka patch. Lagrar
  *      sist lästa patchtabell i cache för snabb åtkomst
@@ -870,15 +927,12 @@ static DBstatus gmrlnp(DBptr la);
  *      17/3/95    Reentrans, J. Kjellander
  *      1996-01-29 CON_PAT, J. Kjellander
  *      1996-07-04 Polynompatchar, J.Kjellander
- *      1997-11-05 GMPATNU, J.Kjellander
+ *      1997-11-05 DBPatchNU, J.Kjellander
+ *      2006-11-20 if patpek->spek_c != NULL S. Larsson
  *
  ******************************************************!*/
 
   {
-#ifdef V3_X11
-extern bool wpintr();
-#endif
-
     DBptr  *tabpek,*ptab,tabla,patla;
     DBint   nu,nv,tabsiz;
     char   *geopat;
@@ -894,12 +948,6 @@ static DBptr  tab[500];
      otabla = DBNULL;
      return(0);
      }
-/*
-***På prov lägger vi in ett anrop till vänta-systemet här.
-*/
-#ifdef V3_X11
-    wpintr();
-#endif
 /*
 ***Hur många patchar har ytan och var finns patchtabellen ?
 */
@@ -942,63 +990,67 @@ static DBptr  tab[500];
 ***skrivas över. Sen läser vi och sen återställer vi rätt adress.
 */
     geopat = patpek->spek_c;
-    rddat1((char *)patpek,patla,sizeof(GMPAT));
+    rddat1((char *)patpek,patla,sizeof(DBPatch));
     patpek->spek_c = geopat;
 /*
 ***Nu kan vi läsa även den geometriska patchen.
 */
-    switch ( patpek->styp_pat )
+
+    if (patpek->spek_c != NULL)
       {
-      case CUB_PAT:
-      rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATC));
-      break;
+      switch ( patpek->styp_pat )
+        {
+        case CUB_PAT:
+        rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchC));
+        break;
 
-      case RAT_PAT:
-      rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATR));
-      break;
+        case RAT_PAT:
+        rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchR));
+        break;
 
-      case LFT_PAT:
-      rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATL));
-      break;
+        case LFT_PAT:
+        rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchL));
+        break;
 
-      case FAC_PAT:
-      rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATF));
-      break;
+        case FAC_PAT:
+        rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchF));
+        break;
 
-      case PRO_PAT:
-      rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP));
-      break;
+        case PRO_PAT:
+        rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP));
+        break;
 
-      case CON_PAT:
-      rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATN));
-      break;
+        case CON_PAT:
+        rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchN));
+        break;
 
-      case P3_PAT:
-      rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP3));
-      break;
+        case P3_PAT:
+        rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP3));
+        break;
 
-      case P5_PAT:
-      rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP5));
-      break;
+        case P5_PAT:
+        rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP5));
+        break;
 
-      case P7_PAT:
-      rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP7));
-      break;
+        case P7_PAT:
+        rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP7));
+        break;
 
-      case P9_PAT:
-      rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP9));
-      break;
+        case P9_PAT:
+        rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP9));
+        break;
 
-      case P21_PAT:
-      rddat2(patpek->spek_c,patpek->spek_gm,sizeof(GMPATP21));
-      break;
+        case P21_PAT:
+        rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP21));
+        break;
 
-      case TOP_PAT:
-      rddat1(patpek->spek_c,patpek->spek_gm,sizeof(GMPAT));
-      break;
-
-      default:
-      return(erpush("GM1073",""));
+        case TOP_PAT:
+        rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatch));
+        break;
+      
+        default:
+        return(erpush("GM1073",""));
+        }
       }
     return(0);
   }
@@ -1022,10 +1074,10 @@ static DBptr  tab[500];
  *
  *      (C)microform ab 20/11/92 J. Kjellander
  *
- *      17/3/94    GMPAT, J. Kjellander
- *      1996-01-29 GMPATN, J. Kjellander
+ *      17/3/94    DBPatch, J. Kjellander
+ *      1996-01-29 DBPatchN, J. Kjellander
  *      1996-07-04 Polynompatchar, J.Kjellander
- *      1997-05-05 GMPATNU, J.Kjellander
+ *      1997-05-05 DBPatchNU, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1038,19 +1090,19 @@ static DBptr  tab[500];
 */
     switch ( typ )
       {
-      case CUB_PAT:  nbytes = antal*sizeof(GMPATC);   break;
-      case RAT_PAT:  nbytes = antal*sizeof(GMPATR);   break;
-      case LFT_PAT:  nbytes = antal*sizeof(GMPATL);   break;
-      case FAC_PAT:  nbytes = antal*sizeof(GMPATF);   break;
-      case PRO_PAT:  nbytes = antal*sizeof(GMPATP);   break;
-      case CON_PAT:  nbytes = antal*sizeof(GMPATN);   break;
-      case P3_PAT:   nbytes = antal*sizeof(GMPATP3);  break;
-      case P5_PAT:   nbytes = antal*sizeof(GMPATP5);  break;
-      case P7_PAT:   nbytes = antal*sizeof(GMPATP7);  break;
-      case P9_PAT:   nbytes = antal*sizeof(GMPATP9);  break;
-      case P21_PAT:  nbytes = antal*sizeof(GMPATP21); break;
-      case NURB_PAT: nbytes = antal*sizeof(GMPATNU);  break;
-      case TOP_PAT:  nbytes = antal*sizeof(GMPAT);    break;
+      case CUB_PAT:  nbytes = antal*sizeof(DBPatchC);   break;
+      case RAT_PAT:  nbytes = antal*sizeof(DBPatchR);   break;
+      case LFT_PAT:  nbytes = antal*sizeof(DBPatchL);   break;
+      case FAC_PAT:  nbytes = antal*sizeof(DBPatchF);   break;
+      case PRO_PAT:  nbytes = antal*sizeof(DBPatchP);   break;
+      case CON_PAT:  nbytes = antal*sizeof(DBPatchN);   break;
+      case P3_PAT:   nbytes = antal*sizeof(DBPatchP3);  break;
+      case P5_PAT:   nbytes = antal*sizeof(DBPatchP5);  break;
+      case P7_PAT:   nbytes = antal*sizeof(DBPatchP7);  break;
+      case P9_PAT:   nbytes = antal*sizeof(DBPatchP9);  break;
+      case P21_PAT:  nbytes = antal*sizeof(DBPatchP21); break;
+      case NURB_PAT: nbytes = antal*sizeof(DBPatchNU);  break;
+      case TOP_PAT:  nbytes = antal*sizeof(DBPatch);    break;
       default: return(NULL);
       }
 /*
@@ -1066,11 +1118,11 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBcreate_NURBS(GMPATNU *patpek)
+        DBstatus DBcreate_NURBS(DBPatchNU *patpek)
 
-/*      Allokerar minne för NURBS-data i en GMPATNU.
+/*      Allokerar minne för NURBS-data i en DBPatchNU.
  *
- *      In: patpek => Pekare till delvis ifylld GMPATNU.
+ *      In: patpek => Pekare till delvis ifylld DBPatchNU.
  *
  *      Ut: Inget.
  *
@@ -1110,8 +1162,8 @@ static DBptr  tab[500];
 /*!******************************************************/
 
         DBstatus DBfree_patches(
-        GMSUR *surpek,
-        GMPAT *patpek)
+        DBSurf  *surpek,
+        DBPatch *patpek)
 
 /*      Återlämnar C-minne allokerat för patchar.
  *
@@ -1124,17 +1176,17 @@ static DBptr  tab[500];
  *
  *      (C)microform ab 20/11/92 J. Kjellander
  *
- *      21/3/94    Nya GMPAT, J. Kjellandert
- *      1996-01-29 GMPATN, J. Kjellander
+ *      21/3/94    Nya DBPatch, J. Kjellandert
+ *      1996-01-29 DBPatchN, J. Kjellander
  *      1996-07-04 Polynompatchar, J.Kjellander
- *      1997-05-05 GMPATNU, J.Kjellander
+ *      1997-05-05 DBPatchNU, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    DBint    i,j;
-    GMPAT   *ppat;
-    GMPATNU *nurbpat;
+    DBint      i,j;
+    DBPatch   *ppat;
+    DBPatchNU *nurbpat;
 
 /*
 ***Initiering.
@@ -1166,7 +1218,7 @@ static DBptr  tab[500];
           break;
 
           case NURB_PAT:
-          nurbpat = (GMPATNU *)ppat->spek_c;
+          nurbpat = (DBPatchNU *)ppat->spek_c;
           v3free((char *)nurbpat->kvec_u,"DBfree_patches");
           v3free((char *)nurbpat->kvec_v,"DBfree_patches");
           v3free((char *)nurbpat->cpts,"DBfree_patches");
@@ -1187,13 +1239,73 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBadd_srep_curves(
-        GMSUR  *surpek,
-        GMSEG  *sptarr[])
+        DBstatus   DBread_getrimcurves(
+        DBSurf    *surpek,
+        DBSegarr **ppgetrimcurves)
+
+/*      Allocates memory for, and reads, the geometric
+ *      trimcurves of a surface.
+ *
+ *      In: surpek = Ptr to surface
+ *
+ *      Out: *ppgetrimcurves = A pointer to an array of
+ *                             pointers to trimcurves.
+ *
+ *      (C)2007-01-01 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+  }
+
+/********************************************************/
+/*!******************************************************/
+/* ?????? Skall inte denna heta DBfree_segarrs ???????? */
+
+        DBstatus  DBfree_getrimcurves(
+        DBSurf   *surpek,
+        DBSegarr *pgetrimcurves)
+
+/*      Free's all memory allocated for geometrical
+ *      trimcurves.
+ *
+ *      In: surpek        = Ptr to surface
+ *          pgetrimcurves = Ptr to array of trimcurves
+ *
+ *      (C)2007-01-01 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        DBSegarr *DBcreate_segarrs(DBint nsegarr)
+
+/*      Allocates C memory for DBSegarrs.
+ *
+ *      In: nsegarr = Number of segarrs
+ *
+ *      (C)2007-01-01 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   return(NULL);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        DBstatus DBadd_sur_grwire(
+        DBSurf  *surpek,
+        DBSeg   *sptarr[])
 
 /*      Lagrar en ytas grafiska segment.
  *
- *      In: surpek => Pekare till en GMSUR-structure.
+ *      In: surpek => Pekare till en DBSurf-structure.
  *          sptarr => Pekare till segment.
  *
  *      Ut: Inget.
@@ -1236,13 +1348,13 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBread_srep_curves(
-        GMSUR  *surpek,
-        GMSEG  *sptarr[])
+        DBstatus DBread_sur_grwire(
+        DBSurf  *surpek,
+        DBSeg   *sptarr[])
 
 /*      Läser en ytas grafiska segment.
  *
- *      In: surpek => Pekare till en GMSUR-structure.
+ *      In: surpek => Pekare till en DBSurf-structure.
  *          sptarr => Pekare till utdata.
  *
  *      Ut: *sptarrÄÅ => Pekare till segment.
@@ -1293,11 +1405,11 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBdelete_srep_curves(GMSUR  *surpek)
+        DBstatus DBdelete_sur_grwire(DBSurf *surpek)
 
 /*      Suddar en ytas grafiska segment.
  *
- *      In: surpek => Pekare till en GMSUR-structure.
+ *      In: surpek => Pekare till en DBSurf-structure.
  *
  *      Ut: Inget.
  *
@@ -1335,11 +1447,11 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBfree_srep_curves(GMSEG *sptarr[])
+        DBstatus DBfree_sur_grwire(DBSeg *sptarr[])
 
 /*      Återlämnar minne för grafiska segment.
  *
- *      In: sptarr = 6 GMSEG-pekare.
+ *      In: sptarr = 6 DBSeg-pekare.
  *
  *      Ut: Inget.
  *
@@ -1350,12 +1462,12 @@ static DBptr  tab[500];
  ******************************************************!*/
 
   {
-    if ( sptarr[0] != NULL ) v3free((char *)sptarr[0],"DBfree_srep_curves");
-    if ( sptarr[1] != NULL ) v3free((char *)sptarr[1],"DBfree_srep_curves");
-    if ( sptarr[2] != NULL ) v3free((char *)sptarr[2],"DBfree_srep_curves");
-    if ( sptarr[3] != NULL ) v3free((char *)sptarr[3],"DBfree_srep_curves");
-    if ( sptarr[4] != NULL ) v3free((char *)sptarr[4],"DBfree_srep_curves");
-    if ( sptarr[5] != NULL ) v3free((char *)sptarr[5],"DBfree_srep_curves");
+    if ( sptarr[0] != NULL ) v3free((char *)sptarr[0],"DBfree_sur_grwire");
+    if ( sptarr[1] != NULL ) v3free((char *)sptarr[1],"DBfree_sur_grwire");
+    if ( sptarr[2] != NULL ) v3free((char *)sptarr[2],"DBfree_sur_grwire");
+    if ( sptarr[3] != NULL ) v3free((char *)sptarr[3],"DBfree_sur_grwire");
+    if ( sptarr[4] != NULL ) v3free((char *)sptarr[4],"DBfree_sur_grwire");
+    if ( sptarr[5] != NULL ) v3free((char *)sptarr[5],"DBfree_sur_grwire");
 
     return(0);
   }
@@ -1363,8 +1475,8 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBadd_srep_NURBS(
-        GMSUR   *surpek,
+        DBstatus DBadd_sur_grsur(
+        DBSurf   *surpek,
         GLfloat *kvu,
         GLfloat *kvv,
         GLfloat *cpts)
@@ -1423,8 +1535,8 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus  DBread_srep_NURBS(
-        GMSUR    *surpek,
+        DBstatus  DBread_sur_grsur(
+        DBSurf   *surpek,
         GLfloat **kvu,
         GLfloat **kvv,
         GLfloat **cpts)
@@ -1432,7 +1544,7 @@ static DBptr  tab[500];
 /*      Läser en ytas B-splineapproximation. C-minne
  *      allokeras och pekare returneras.
  *
- *      In: surpek => Pekare till en GMSUR-structure.
+ *      In: surpek => Pekare till en DBSurf-structure.
  *          kvu    => Nodvektor U
  *          kvv    => Nodvektor V
  *          cpts   => Kontrollpunkter
@@ -1464,12 +1576,12 @@ static DBptr  tab[500];
 ***Allokera minne för noder och läs.
 */
    size = surpek->nku_su*sizeof(GLfloat);
-   if ( (*kvu=(GLfloat *)v3mall(size,"DBread_srep_NURBS")) == NULL ) return(-2);
+   if ( (*kvu=(GLfloat *)v3mall(size,"DBread_sur_grsur")) == NULL ) return(-2);
    if ( size < PAGSIZ ) rddat1((char *)*kvu,surpek->pkvu_su,size);
    else                 rddat2((char *)*kvu,surpek->pkvu_su,size);
   
    size = surpek->nkv_su*sizeof(GLfloat);
-   if ( (*kvv=(GLfloat *)v3mall(size,"DBread_srep_NURBS")) == NULL ) return(-2);
+   if ( (*kvv=(GLfloat *)v3mall(size,"DBread_sur_grsur")) == NULL ) return(-2);
    if ( size < PAGSIZ ) rddat1((char *)*kvv,surpek->pkvv_su,size);
    else                 rddat2((char *)*kvv,surpek->pkvv_su,size);
 /*
@@ -1478,7 +1590,7 @@ static DBptr  tab[500];
    size = (surpek->nku_su - surpek->uorder_su) *
           (surpek->nkv_su - surpek->vorder_su) * 3 * sizeof(GLfloat);
 
-   if ( (*cpts=(GLfloat *)v3mall(size,"DBread_srep_NURBS")) == NULL ) return(-2);
+   if ( (*cpts=(GLfloat *)v3mall(size,"DBread_sur_grsur")) == NULL ) return(-2);
 
    if ( size < PAGSIZ ) rddat1((char *)*cpts,surpek->pcpts_su,size);
    else                 rddat2((char *)*cpts,surpek->pcpts_su,size);
@@ -1489,11 +1601,11 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBdelete_srep_NURBS(GMSUR *surpek)
+        DBstatus DBdelete_sur_grsur(DBSurf *surpek)
 
 /*      Suddar en ytas B-splineapproximation.
  *
- *      In: surpek => Pekare till en GMSUR-structure.
+ *      In: surpek => Pekare till en DBSurf-structure.
  *
  *      Ut: Inget.
  *
@@ -1541,7 +1653,7 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBfree_srep_NURBS(
+        DBstatus DBfree_sur_grsur(
         GLfloat *kvu,
         GLfloat *kvv,
         GLfloat *cpts)
@@ -1560,9 +1672,9 @@ static DBptr  tab[500];
  ******************************************************!*/
 
   {
-    if ( kvu != NULL ) v3free((char *)kvu,"DBfree_srep_NURBS");
-    if ( kvv != NULL ) v3free((char *)kvv,"DBfree_srep_NURBS");
-    if ( cpts != NULL ) v3free((char *)cpts,"DBfree_srep_NURBS");
+    if ( kvu != NULL ) v3free((char *)kvu,"DBfree_sur_grsur");
+    if ( kvv != NULL ) v3free((char *)kvv,"DBfree_sur_grsur");
+    if ( cpts != NULL ) v3free((char *)cpts,"DBfree_sur_grsur");
 
     return(0);
   }
@@ -1570,11 +1682,11 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        static DBptr wrgseg(
-        short  nseg,
-        GMSEG  segdat[])
+ static DBptr wrgseg(
+        short nseg,
+        DBSeg segdat[])
 
-/*      Lagrar nseg stycken GMSEG och returnerar GM-adress.
+/*      Lagrar nseg stycken DBSeg och returnerar GM-adress.
  *
  *      In: segdat => Pekare till segment.
  *          nseg   => Antal segment.
@@ -1602,7 +1714,7 @@ static DBptr  tab[500];
     for ( i=nseg; i > 0; --i)
       {
       (segdat+i-1)->nxt_seg = la;
-      if ( wrdat1((char *)&segdat[i-1],&la,sizeof(GMSEG)) < 0 ) return(0);
+      if ( wrdat1((char *)&segdat[i-1],&la,sizeof(DBSeg)) < 0 ) return(0);
       }
 
   return(la);
@@ -1611,11 +1723,11 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        static GMSEG *rdgseg(
+ static DBSeg *rdgseg(
         short  nseg,
         DBptr  la)
 
-/*      Läser nseg stycken GMSEG och returnerar C-adress.
+/*      Läser nseg stycken DBSeg och returnerar C-adress.
  *
  *      In: nseg   => Antal segment.
  *          la     => Segmentens GM-adress.
@@ -1632,7 +1744,7 @@ static DBptr  tab[500];
   {
     DBint  i;
     DBptr  la_seg;
-    GMSEG *segpek,*ptr_seg;
+    DBSeg *segpek,*ptr_seg;
 
 /*
 ***Allokera minne.
@@ -1646,7 +1758,7 @@ static DBptr  tab[500];
 
     for ( i=0; i < nseg; ++i)
       {
-      rddat1((char *)ptr_seg,la_seg,sizeof(GMSEG));
+      rddat1((char *)ptr_seg,la_seg,sizeof(DBSeg));
       la_seg = ptr_seg->nxt_seg;
       ++ptr_seg;
       }
@@ -1657,11 +1769,11 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        static DBstatus dlgseg(
-        short  nseg,
-        DBptr  la)
+ static DBstatus dlgseg(
+        short    nseg,
+        DBptr    la)
 
-/*      Dödar nseg stycken GMSEG vid la.
+/*      Dödar nseg stycken DBSeg vid la.
  *
  *      In: nseg   => Antal segment.
  *          la     => Segmentens GM-adress.
@@ -1677,14 +1789,14 @@ static DBptr  tab[500];
   {
     DBint i;
     DBptr la_seg;
-    GMSEG seg;
+    DBSeg seg;
 
     la_seg = la;
 
     for ( i=0; i<nseg; ++i)
       {
-      rddat1((char *)&seg,la_seg,sizeof(GMSEG));
-      rldat1(la_seg,sizeof(GMSEG));
+      rddat1((char *)&seg,la_seg,sizeof(DBSeg));
+      rldat1(la_seg,sizeof(DBSeg));
       la_seg = seg.nxt_seg;
       }
 

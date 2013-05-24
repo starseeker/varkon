@@ -79,16 +79,15 @@ typedef DBint   DBpagnum;     /* A page number, changed to 32 bit 020222, JK */
 
 /*
 ***Surface graphical NURBS representations are based on datatypes
-***defined in OpenGL.
+***defined in OpenGL. On unix systems gl.h is included explicitly.
+***On WIN32 platforms gl.h is included by windows.h
 */
-#ifdef WIN32
-#include <windows.h>
+#ifdef UNIX
+#include <GL/gl.h>
 #endif
 
-#ifdef V3_OPENGL
-#include <GL/gl.h>
-#else
-#define GLfloat float
+#ifdef WIN32
+#include <windows.h>
 #endif
 
 /*
@@ -202,20 +201,21 @@ DBfloat zmax;                 /* Maximum z value */
 ***A curve segment.
 */
 
-#define CUB_SEG  1            /* Rational cubic (offset-)segment */
-#define UV_SEG   2            /* Segment on a surface */
-#define NURB_SEG 3            /* NURBS-span */
+#define CUB_SEG      1          /* Rational cubic (offset-)segment */
+#define UV_CUB_SEG   2          /* Rational cubic segment on a surface */
+#define NURB_SEG     3          /* NURBS-span */
+#define UV_NURB_SEG  4          /* NURBS-span on a surface */
 
 typedef struct
 {
 DBfloat    c0x,c0y,c0z,c0;    /* Segment-coefficients. */
-DBfloat    c1x,c1y,c1z,c1;    /* UV_SEG only use 12. */
-DBfloat    c2x,c2y,c2z,c2;    /* NURB_SEG use none */
+DBfloat    c1x,c1y,c1z,c1;    /* UV_CUB_SEG only use 12. */
+DBfloat    c2x,c2y,c2z,c2;    /* NURB_SEG and UV_NURB_SEG use none */
 DBfloat    c3x,c3y,c3z,c3;
 DBptr      nxt_seg;           /* DB-Pointer to next segment */
 DBfloat    ofs;               /* Optional offset */
 DBfloat    sl;                /* Arclength in R3 */
-DBshort    typ;               /* Segment type CUB_SEG, UV_SEG or NURB_SEG */
+DBshort    typ;               /* Segment type CUB_SEG, UV_CUB_SEG or NURB_SEG */
 DBshort    subtyp;            /* Sub type */
 DBptr      spek_gm;           /* Optional DB-pointer to surface */
 DBptr      spek2_gm;          /* Optional DB-pointer to surface */
@@ -229,6 +229,32 @@ DBint      nknots;            /* Number of knots */
 DBint      offset_knots;      /* Offset for this span */
 DBshort    nurbs_degree;      /* Degree (order-1) for NURB span */
 } DBSeg;
+
+/*
+***An array of curve segments.
+*/
+
+typedef struct
+{
+DBint      nseg;             /* Number of segments in array */
+DBptr      segptr_db;        /* DBptr to array of segments */
+DBSeg     *segptr_c;         /* C-ptr to array of segments */
+} DBSegarr;
+
+/*
+***A graphical NURBS surface trim curve.
+*/
+
+typedef struct
+{
+DBint      order;            /* Curve NURBS order */
+DBint      nknots;           /* Number of knots */
+DBptr      knots_db;         /* DBptr to array of knots */
+GLfloat   *knots_c;          /* C-ptr to array of knots */
+GLenum     vertextype;       /* GL_MAP2_VERTEX_3 or GLMAP2_VERTEX_4 */
+DBptr      cpts_db;          /* DBptr to array of control points */
+GLfloat   *cpts_c;           /* C-ptr to array of control points */
+} DBGrstrimcurve;
 
 /*
 ***All Varkon entities have a common entity record header.
@@ -328,11 +354,11 @@ DBfloat  wdt_cu;             /* Linewidth */
 } DBCurve;
 
 /*
-***A surface. Type = 16.
+***A surface. Type = 16. Most of the surface related
+***datatypes are defined in surdef.h
 */
 
 #include "surdef.h"
-
 
 /*
 ***A 2D or 3D Text. Type = 32.
@@ -357,7 +383,7 @@ DBfloat  lang_tx;            /* Angle in local system */
 } DBText;
 
 /*
-***A 2D crosshatch. Type = 64.
+***A 2D hatch. Type = 64.
 */
 
 #define GMXMXL 1000          /* Max number of hatchlines in one DBHatch */
@@ -658,31 +684,35 @@ DBstatus DBwrite_nurbs(DBHvector *cpts, DBint ncpts, DBfloat *knots,
                        DBint nknots, DBptr *cpts_la, DBptr *knots_la);
 DBstatus DBread_nurbs(DBHvector *cpts, DBint ncpts, DBfloat *knots,
                              DBint nknots, DBptr cpts_la, DBptr knots_la);
-          
+DBstatus DBfree_nurbs(DBfloat  *knots, DBHvector *cpts);                             
+DBstatus DBdelete_nurbs(DBSeg *seg);                  
                        
                        
 /* Surface insert, read, update, deltete etc. */
 
-DBstatus DBinsert_surface(DBSurf *surptr, DBPatch *tpptr,
-                          DBId *idptr, DBptr *laptr);
-DBstatus DBread_surface(DBSurf *surptr, DBptr la);
-DBstatus DBupdate_surface(DBSurf *surptr, DBptr la);
-DBstatus DBdelete_surface(DBptr la);
-DBstatus DBread_patches(DBSurf *surptr, DBPatch **ppatpt);
-DBstatus DBread_one_patch(DBSurf *surptr, DBPatch *patptr, DBshort iu, DBshort iv);
-char    *DBcreate_patches(DBint pattyp, DBint numpat);
-DBstatus DBcreate_NURBS(GMPATNU *patptr);
-DBstatus DBfree_patches(DBSurf *surptr, DBPatch *patptr);
-DBstatus DBadd_srep_curves(DBSurf *surptr, DBSeg *sptarr[]);
-DBstatus DBread_srep_curves(DBSurf *surptr, DBSeg *sptarr[]);
-DBstatus DBdelete_srep_curves(DBSurf *surptr);
-DBstatus DBfree_srep_curves(DBSeg *sptarr[]);
-DBstatus DBadd_srep_NURBS(DBSurf *surptr, GLfloat *ku,
-                          GLfloat *kv, GLfloat *cpts);
-DBstatus DBread_srep_NURBS(DBSurf *surptr, GLfloat **ku,
-                           GLfloat **kv, GLfloat **cpts);
-DBstatus DBdelete_srep_NURBS(DBSurf *surptr);
-DBstatus DBfree_srep_NURBS(GLfloat *ku, GLfloat *kv, GLfloat *cpts);
+DBstatus  DBinsert_surface(DBSurf *surptr, DBPatch *tpptr, DBSegarr *ptrim,
+                           DBId *idptr, DBptr *laptr);
+DBstatus  DBread_surface(DBSurf *surptr, DBptr la);
+DBstatus  DBupdate_surface(DBSurf *surptr, DBptr la);
+DBstatus  DBdelete_surface(DBptr la);
+DBstatus  DBread_patches(DBSurf *surptr, DBPatch **ppatpt);
+DBstatus  DBread_one_patch(DBSurf *surptr, DBPatch *patptr, DBshort iu, DBshort iv);
+char     *DBcreate_patches(DBint pattyp, DBint numpat);
+DBstatus  DBcreate_NURBS(DBPatchNU *patptr);
+DBstatus  DBfree_patches(DBSurf *surptr, DBPatch *patptr);
+DBstatus  DBadd_sur_grwire(DBSurf *surptr, DBSeg *sptarr[]);
+DBstatus  DBread_sur_grwire(DBSurf *surptr, DBSeg *sptarr[]);
+DBstatus  DBdelete_sur_grwire(DBSurf *surptr);
+DBstatus  DBfree_sur_grwire(DBSeg *sptarr[]);
+DBstatus  DBadd_sur_grsur(DBSurf *surptr, GLfloat *ku,
+                           GLfloat *kv, GLfloat *cpts);
+DBstatus  DBread_sur_grsur(DBSurf *surptr, GLfloat **ku,
+                            GLfloat **kv, GLfloat **cpts);
+DBstatus  DBdelete_sur_grsur(DBSurf *surptr);
+DBstatus  DBfree_sur_grsur(GLfloat *ku, GLfloat *kv, GLfloat *cpts);
+DBstatus  DBread_getrimcurves(DBSurf *surpek, DBSegarr **ppgetrimcurves);
+DBstatus  DBfree_getrimcurves(DBSurf *surpek, DBSegarr *pgetrimcurves);
+DBSegarr *DBcreate_segarrs(DBint nsegarr);
 
 /* Coordinate system insert, read, update and delete */
 
@@ -818,25 +848,39 @@ typedef V3MSIZ DBSystemsize;
 ***Typedefs to ensure comatibility with old nameschemes.
 ***To be removed when all old code is updated
 */
-
-typedef DBHeader          GMRECH;
-typedef DBTform           GMTRF;
-typedef DBPoint           GMPOI;
-typedef DBLine            GMLIN;
-typedef DBArc             GMARC;
-typedef DBCurve           GMCUR;
-typedef DBSeg             GMSEG;
-typedef DBSurf            GMSUR;
-typedef DBPatch           GMPAT;
-typedef DBBplane          GMBPL;
-typedef DBText            GMTXT;
-typedef DBCsys            GMCSY;
-typedef DBLdim            GMLDM;
-typedef DBCdim            GMCDM;
-typedef DBRdim            GMRDM;
-typedef DBAdim            GMADM;
-typedef DBHatch           GMXHT;
-typedef DBGroup           GMGRP;
-typedef DBPart            GMPRT;
-typedef DBPdat            GMPDAT;
-typedef DBAny             GMUNON;
+typedef DBHeader     GMRECH;
+typedef DBTform      GMTRF;
+typedef DBPoint      GMPOI;
+typedef DBLine       GMLIN;
+typedef DBArc        GMARC;
+typedef DBCurve      GMCUR;
+typedef DBSeg        GMSEG;
+typedef DBSurf       GMSUR;
+typedef DBPatch      GMPAT;
+typedef DBPatchC     GMPATC;
+typedef DBPatchR     GMPATR;
+typedef DBPatchL     GMPATL;
+typedef DBPatchF     GMPATF;
+typedef DBPatchP     GMPATP;
+typedef DBPatchB     GMPATB;
+typedef DBPatchN     GMPATN; 
+typedef DBPatchP3    GMPATP3;
+typedef DBPatchP5    GMPATP5;
+typedef DBPatchP7    GMPATP7;
+typedef DBPatchP9    GMPATP9;
+typedef DBPatchP21   GMPATP21;
+typedef DBPatchNU    GMPATNU;
+typedef DBPatchBR3   GMPATBR3;
+typedef DBPatchX     GMPATX;
+typedef DBBplane     GMBPL;
+typedef DBText       GMTXT;
+typedef DBCsys       GMCSY;
+typedef DBLdim       GMLDM;
+typedef DBCdim       GMCDM;
+typedef DBRdim       GMRDM;
+typedef DBAdim       GMADM;
+typedef DBHatch      GMXHT;
+typedef DBGroup      GMGRP;
+typedef DBPart       GMPRT;
+typedef DBPdat       GMPDAT;
+typedef DBAny        GMUNON;

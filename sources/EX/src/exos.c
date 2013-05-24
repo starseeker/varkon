@@ -22,13 +22,13 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
+*
 *
 *********************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#include "../../GP/include/GP.h"
+/*#include "../../GP/include/GP.h"*/
 #include <string.h>
 
 #ifdef UNIX
@@ -37,7 +37,6 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <errno.h>
-extern short   igtrty,gptrty;
 #endif
 
 #ifdef WIN32
@@ -75,7 +74,7 @@ extern short   igtrty,gptrty;
  *      16/11/88   CGI, J. Kjellander
  *      3/10/91    mode, J. Kjellander
  *      15/4/92    Flyttat v3cmos() hit, J. Kjellander
- *      1996-02-21 wpwton(), J. Kjellander
+ *      1996-02-21 WPwton(), J. Kjellander
  *
  ******************************************************!*/
 
@@ -106,11 +105,11 @@ extern short   igtrty,gptrty;
 ***under OS-anropet.
 */
 #ifdef V3_X11
-      if ( gptrty == X11  &&  wpwton() ) wplset(FALSE);
+      if ( WPwton() ) WPlset(FALSE);
 #endif
       system_stat = system(oscmd);
 #ifdef V3_X11
-      if ( gptrty == X11  &&  wpwton()  ) wplset(TRUE);
+      if ( WPwton()  ) WPlset(TRUE);
 #endif
 
 #ifdef DEBUGJK

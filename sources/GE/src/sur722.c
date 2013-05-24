@@ -116,7 +116,7 @@
                          /* Eq. 4: Points, tangents and curvature   */
 
   DBint    a_case,       /* Approximation case                      */
-                         /* Eq. 1: Approximate to varkon_cur_approxLINE   segments   */
+                         /* Eq. 1: Approximate to LINE   segments   */
                          /* Eq. 2: Approximate to CUBIC  segments   */
                          /* Eq. 3: Approximate to CIRCLE segments   */
                          /* Eq. 4: Approximate to CONIC  segments   */

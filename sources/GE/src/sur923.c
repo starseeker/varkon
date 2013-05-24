@@ -324,7 +324,7 @@ n_uvsur = 0 ;           /* Number of intersect points     */
    iso_seg.c3          = 0.0;
 
    iso_seg.ofs          = 0.0;
-   iso_seg.typ          = UV_SEG ;
+   iso_seg.typ          = UV_CUB_SEG ;
    iso_seg.sl           = 0.0;     
 
 /*!                                                                 */

@@ -137,7 +137,7 @@
    uvflag = FALSE;
    for ( i=0; i<ocur->ns_cu; ++i )
      {
-     if ( (oldgeo+i)->typ == UV_SEG )
+     if ( (oldgeo+i)->typ == UV_CUB_SEG )
        {
        uvflag = TRUE;
        break;

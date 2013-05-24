@@ -1,0 +1,58 @@
+/**********************************************************************
+*
+*    README
+*    ======
+*
+*    This README-file includes information about
+*    the DB module.
+*
+*    For information about late changes see the CHANGES-file.
+*    For information about future plans see the TODO-file.
+*
+*    (C)Örebro University 2003-03-20    http://www.tech.oru.se/cad
+*
+***********************************************************************/
+
+The DB module is the database used by Varkon to store
+entities like points, lines, arcs, curves, surfaces etc.
+in hierachial structures. Its written from scratch in
+ANSI C and is copyright of Microform AB in Sweden.
+
+The core data manager of DB i based on the Demand
+Page Virtual Memory scheme.
+
+Pages of typically 1k in size are automatically swapped
+between a RAM cache and a page file on dsic. The swapping
+algorithm is based on statistics for the usage of different
+pages so that pages recently used stay in memory for a
+longer time.
+
+The size of the RAM cache can be set by the user when
+calling DBinit(). The virtual size of the DB is limited
+by the 32 bit address space, ie. 2^32 bytes.
+
+The memory model from a users point of view is a hierachial
+structure where the nodes are "PART" entities and each node
+can contain any number of entities including other PART's.
+Similar to a standard UNIX file system.
+
+Data can be accessed by ID or by pointer. An ID is
+similar to a filepath. It's a multi level adress like
+#7#2#19 meaning entity #19 which is a member of PART #2.
+PART #2 finally, is a member of PART #7. A pointer
+is a low level 32 bit virtual adress into the virtual
+adresspace of the DB. Pointers are faster than ID:s.
+Pointers as well as ID:s are persistent and never
+change unless data is deleted. If so a pointer or
+ID may be used again by new data.
+
+The DB also includes a possibility to store/retrieve and
+delete bulk data by name (key). This is not used for
+geometrical objects but rather for administrative data
+like layertables or colortables etc.
+
+To make the DB module, cd to the DB/src directory and read
+its README file.
+
+To make the DB demos, cd to the DB/demo directory and read
+its README file.

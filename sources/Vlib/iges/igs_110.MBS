@@ -1,35 +1,40 @@
-!*******************************************************
+!**************************************************************************
 
- BASIC GEOMETRY MODULE igs_110(
-   VAR FILE infil,logfil;
+ LOCAL GEOMETRY MODULE igs_110(
+   VAR FILE infile,logfile;
    STRING   dl1*80,dl2*80;
    INT      ps_ptr;
-   INT      eolsize;
+   INT      rowlgt;
+   VAR REF  id_ent;
    VAR INT  status);
 
-!*      Read Directory Entry Section and
-!*      get values from Parameter Section
+!*      Read data from Parameter Section
 !*      and create a line.
 !*
-!*      In: infil  = File to read from.
-!*          logfil = Logfile.
-!*          dl1    = Read 1st Directory Entry Section.
-!*          dl2    = Read 2nd Directory Entry Section.
-!*          ps_ptr = Pointer to Parameter Section.
+!*      In: infile  = File to read from.
+!*          logfile = Logfile.
+!*          dl1     = 1st row of Directory Entry Section.
+!*          dl2     = 2nd row of Directory Entry Section.
+!*          ps_ptr  = Pointer to Parameter Section.
+!*          rowlgt  = Row length used.
 !*
 !*      Out: status = 0 => Ok
 !*                   -1 => Error
+!*          id_ent  = Identity of created entity.
 !*
-!*      (C)microform 1997-12-23 J. Kjellander
-!*      (C)kastalyse 2000-04-09 R. Kastelein r.e.f.kastelein@kastalyse.nl 
-!*      2004-07-20, eolsize, J.Kjellander, Örebro university
+!*      (C)microform 1997-12-23 J. Kjellander.
+!*      (C)kastalyse 2000-04-09 R. Kastelein r.e.f.kastelein@kastalyse.nl.
+!*      2004-07-20, eolsize,    J.Kjellander, Örebro university.
+!*      2006-09-15, rowlgt and id_ent,  M. Rahayem, Örebro university.
 !*
-!*******************************************************
+!*************************************************************************
 
-   INT    i,radnummer,antal_rader,pd;
-   STRING rad*132,fs*132;
-   FLOAT  f;
+   INT    i,rownumber;
+   STRING row*132;
    FLOAT  x(6);
+   VECTOR p1,p2;
+   
+   CONSTANT FLOAT TOL2 = 0.002;   !* 2*TOL2 in Varkon sources 
 
  BEGINMODULE
 
@@ -37,31 +42,62 @@
 !***Get entity line number in Parameter
 !***Data Section and position filepointer.
 !*
-   radnummer:=round(val(substr(dl1,9,8)));
-   antal_rader:=round(val(substr(dl2,25,8)));
-   seek(infil,ps_ptr+(radnummer-1)*(80+eolsize));
+   rownumber:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(rownumber-1)*rowlgt);
 !*
 !***Read 1:st line and strip "110,".
 !*
-   rad:=inlin(infil);
-   rad:=substr(rad,finds(rad,",")+1);
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
 !*
 !***Read the coordinates of the two points
 !*
    for i:=1 to 6 do
-     part(#2,igs_gflt(infil,rad,x(i),status):SAVE=0);
+     part(#1,igs_gflt(infile,row,x(i),status):SAVE=0);
    endfor;
+!*
+!***Check status from igs_gflt()
+!*
+   if status < 0 then
+     outstr(logfile,"igs_110, Error reading float in parameter section !");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     status:=-1;
+     id_ent:=##0;
+     exit();
+   endif;
+!*
+!***Check line length.
+!*
+   p1:=vec(x(1),x(2),x(3));
+   p2:=vec(x(4),x(5),x(6));
+   
+   if vecl(p1-p2) < TOL2 then
+     outstr(logfile,"igs_110, Start- and end point equal !");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     outlin(logfile);
+     status:=-1;
+     id_ent:=##0;
+     exit();
+   endif;
 !*
 !***Draw line between the two points
 !*
-   lin_free(#3,vec(x(1),x(2),x(3)),vec(x(4),x(5),x(6)));
+   lin_free(#2,p1,p2);
+   
+   id_ent:=global_ref(#2); 
 !*
-!***End.
-!*
+!***End   
+!*   
    status:=0;
 
  ENDMODULE
 
-!*******************************************************
-
-
+!**************************************************************************************

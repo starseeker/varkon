@@ -1,0 +1,65 @@
+!**************************************************************************
+
+ LOCAL GEOMETRY MODULE igs_116(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Read data from Parameter Section
+!*      and create a Point.
+!*
+!*      In: infile  = File to read from.
+!*          logfile = Logfile.
+!*          dl1     = 1st row of Directory Entry Section.
+!*          dl2     = 2nd row of Directory Entry Section.
+!*          ps_ptr  = Pointer to Parameter Section.
+!*          rowlgt  = Row length used.
+!*
+!*      Out: status = 0 => Ok
+!*                   -1 => Error
+!*          id_ent  = Identity of created entity.
+!*
+!*     
+!*      2006-09-27, Mohamed Rahayem, Örebro university.
+!*
+!*************************************************************************
+
+   INT    i,rownumber;
+   STRING row*132;
+   FLOAT  X(3);
+
+ BEGINMODULE
+
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   rownumber:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(rownumber-1)*rowlgt);
+!*
+!***Read 1:st line and strip "116,".
+!*
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
+!*
+!***Read the coordinates of the point
+!*
+   for i:=1 to 3 do
+     part(#1,igs_gflt(infile,row,x(i),status):SAVE=0);
+   endfor;
+!*
+!***Draw point.
+!*
+   poi_free(#2,vec(x(1),x(2),x(3)));
+   id_ent:=global_ref(#2);
+!*
+!***End   
+!*   
+   status:=0;
+
+ ENDMODULE
+
+!******************************************************************************

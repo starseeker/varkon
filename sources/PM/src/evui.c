@@ -55,7 +55,7 @@
 #include "../../IG/include/IG.h"
 #include "../../EX/include/EX.h"
 #include "../../GE/include/GE.h"
-#include "../../GP/include/GP.h"
+/*#include "../../GP/include/GP.h"*/
 
 #ifdef V3_X11
 #include <X11/Xlib.h>
@@ -458,7 +458,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 */
 #ifdef V3_X11
 
-   wpgtmp(&intx,&inty);
+   WPgtmp(&intx,&inty);
 #endif
 #ifdef WIN32
    int dum1,dum2;
@@ -484,7 +484,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
      case 1:
 #ifdef V3_X11
      gwinpt = (WPGWIN *)wpwtab[GWIN_MAIN].ptr;
-     wpgtwp(gwinpt->id.x_id,&main_x,&main_y);
+     WPgtwp(gwinpt->id.x_id,&main_x,&main_y);
 #endif
 #ifdef WIN32
      msggeo(ms_main,&main_x,&main_y,&dum1,&dum2,NULL,NULL);
@@ -499,7 +499,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
      case 2:
      gwinpt = (WPGWIN *)wpwtab[GWIN_MAIN].ptr;
 #ifdef V3_X11
-     wpgtwp(gwinpt->id.x_id,&gra_x,&gra_y);
+     WPgtwp(gwinpt->id.x_id,&gra_x,&gra_y);
      func_vp->lit.vec_va.x_val = (DBfloat)(intx - gra_x);
      func_vp->lit.vec_va.y_val = (DBfloat)(inty - gra_y);
      func_vp->lit.vec_va.z_val = 0.0;
@@ -521,7 +521,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
      case 3:
      gwinpt = (WPGWIN *)wpwtab[GWIN_MAIN].ptr;
 #ifdef V3_X11
-     wpgtwp(gwinpt->id.x_id,&gra_x,&gra_y);
+     WPgtwp(gwinpt->id.x_id,&gra_x,&gra_y);
      intx = intx - gra_x;
      inty = gwinpt->geo.dy - (inty - gra_y);
 #endif
@@ -578,7 +578,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    short   intx; 
    short   inty;
    short   status;
-   v2int   win_id;
+   DBint   win_id;
    PMLITVA litval;
 
    if ( (status=EXscr(&intx,&inty,&win_id)) != 0 ) return(status);
@@ -628,7 +628,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    if ( rubmod < 0 ) rubmod = 0;
    if ( rubmod > 3 ) rubmod = 3;
 #ifdef V3_X11
-   status = wpgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
+   status = WPgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
 #endif
 #ifdef WIN32
    status = (short)msgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
@@ -749,7 +749,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    if ( rubmod < 0 ) rubmod = 0;
    if ( rubmod > 3 ) rubmod = 3;
 #ifdef V3_X11
-   status = wpgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
+   status = WPgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
 #endif
 #ifdef WIN32
    status = (short)msgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
@@ -899,7 +899,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 */
     idant = maxref;
     if ( (typvek[0]=typmask) == PRTTYP ) typvek[0] = ALLTYP;
-    status = wpgmlw(lavek,&idant,typvek,hitmod);
+    status = WPgmlw(lavek,&idant,typvek,hitmod);
     if ( status == REJECT  ||  status == GOMAIN ) idant = -1;
     else if ( status < 0 ) return(status);
 /*
@@ -954,6 +954,8 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *
  *      (C)microform ab 1998-03-23 J. Kjellander
  *
+ *      2006-12-30 Removed GP, J.Kjellander
+ *
  ******************************************************!*/
 
  {
@@ -966,16 +968,23 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 */
    if ( proc_pv[1].par_va.lit.int_va == 1 ) draw = TRUE;
    else                                     draw = FALSE;
-
+/*
+***If only one param. is supplied, highligt all entities.
+***This code only works if draw = FALSE because there is
+***is no WP-routine to highlight all entities.
+*/
    if ( proc_pc == 1 )
      {
-     gphgal(draw);
+     WPerhg();
      }
+/*
+***If 2 params. are supplied only one entity is to be highlighted.
+*/
    else
      {
      if ( DBget_pointer('I',proc_pv[2].par_va.lit.ref_va,&la,&typ) < 0 )
        return(erpush("IN5432",""));
-     wphgen(GWIN_ALL,la,draw);
+     WPhgen(GWIN_ALL,la,draw);
      }
 
    return(0);

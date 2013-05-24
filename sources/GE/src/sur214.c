@@ -264,9 +264,17 @@ fflush(dbgfil(SURPAC));
 /* Calculate coordinates u,v and derivatives du/dt,dvdt, ...        */
 /* for the given point on the input U,V segment.                    */
 /* Call of varkon_seg_uveval (sur786).                              */
+/* for UV_NURB_SEG call GEevaluvnc                                  */
 /*                                                                 !*/
-
-   status=varkon_seg_uveval   (p_cur,p_seg,p_xyz_c);
+   if ( p_seg->typ  ==  UV_NURB_SEG ) 
+     {
+     status=GEevaluvnc(p_cur,p_seg,p_xyz_c); 
+     }
+   else 
+     {
+     status=varkon_seg_uveval (p_cur,p_seg,p_xyz_c);
+     }
+     
    if (status<0) 
        {
        sprintf(errbuf,"sur768%%sur214");

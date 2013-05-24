@@ -22,13 +22,16 @@
 *
 *    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
 *
+*    2006-02-23 cirpek and cirdef: DBshort to DBint, S. Larsson 
+*
 ***********************************************************************/
 
 /*
 ***Include old versions of GM structures for backward
 ***compatibility.
 */
-
+#include <memory.h>
+#include <stdlib.h>
 #include "gmolds.h"
 
 /*
@@ -41,8 +44,8 @@ extern V3MDAT   gmsdat_db;
 extern V3MSIZ   gmssiz;
 extern FILE    *gmpfpk;
 extern DBint    pfsiz;
-extern DBshort  cirpek;
-extern DBshort  cirdef;
+extern DBint    cirpek;
+extern DBint    cirdef;
 extern DBptr    lstprt;
 extern DBptr    lstidt;
 extern DBptr    nxtins;

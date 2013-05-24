@@ -1,63 +1,45 @@
 !*******************************************************
 
  MACRO MODULE igs_ssec(
-   VAR FILE infil,logfil;
-   VAR INT  eolsize;
+   VAR FILE infile,logfile;
+   VAR INT  rowlgt;
    VAR INT  status);
 
-!*      Läser Start-section.
+!*      Reads start section.
 !*
-!*      Ut: status = 0 => Ok
-!*                  -1 => Ej IGES-fil
+!*      Out: status = 0 => Ok
+!*                   -1 => Not an IGES-file
 !*
 !*      (C)microform ab 1997-12-22 J. Kjellander
-!*
-!*      2004-07-20 eolsiz, J.Kjellander, Örebro university
+!*             rowlgt   2006-9-20  J.Kjellander ,Örebro University
 !*
 !*******************************************************
 
    STRING rad*132;
-   INT    nl,nchars,offset;
+   INT    nl,nchars;
 
  BEGINMODULE
 
 !*
 !***HEADER.
 !*
-    outlin(logfil);
-    outstr(logfil,"Start Section");
-    outlin(logfil);
+    outlin(logfile);
+    outstr(logfile,"Start Section");    outlin(logfile);
+    outstr(logfile,"-------------");    outlin(logfile);
 !*
-!***Läs en 1:a rad och kolla hur många tecken som används
-!***som radslutsmärke.
+!***Read a 1:st row and checks how many characters that is used in each row.
 !*
-    rad:=inlin(infil);
+    rad:=inlin(infile);
     nchars:=length(rad);
-    offset:=fpos(infil);
-    eolsize:=offset-nchars;
-    outstr(logfil,rad);
-    outlin(logfil);
-    outstr(logfil,"First line read is "+str(nchars,-1,0)+" characters long.");
-    outlin(logfil);
-    outstr(logfil,"FPOS after first line is = "+str(offset,-1,0));
-    outlin(logfil);
-    outstr(logfil,"EOL-size "+str(eolsize,-1,0)+" will be used.");
-    outlin(logfil);
+    rowlgt:=fpos(infile);
 !*
-!***Write to logfile.
+!***Write to logfilee.
 !*
-    if length(rad) <> 80 then
-      outstr(logfil,"This does not seem to be an uncompressed");
-      outlin(logfil);
-      outstr(logfil,"ASCII-formatted IGES-file !");
-      outlin(logfil);
-      status:=-1;
-      exit();
-    elif substr(rad,73,1) <> "S" then
-      outstr(logfil,"This does not seem to be an uncompressed");
-      outlin(logfil);
-      outstr(logfil,"ASCII-formatted IGES-file !");
-      outlin(logfil);
+    if substr(rad,73,1) <> "S" then
+      outstr(logfile,"This does not seem to be an uncompressed");
+      outlin(logfile);
+      outstr(logfile,"ASCII-formatted IGES-file !");
+      outlin(logfile);
       status:=-1;
       exit();
     else
@@ -65,31 +47,27 @@
       nl:=1;
     endif;
 !*
-!***Läs resten av start-sektionen.
+!***Read the remainder of the start section.
 !*
 loop:
-    rad:=inlin(infil);
+    rad:=inlin(infile);
 
     if substr(rad,73,1) = "S" then
       nl:=nl+1;
       goto loop;
     endif;
 !*
-!***Skriv till loggfil.
+!***Write to log-file.
 !*
-    outstr(logfil,"Processed "+str(nl,-1,0)+" lines");
-    outlin(logfil);
+    outstr(logfile,"Processed "+str(nl,-1,0)+" lines");
+    outlin(logfile);
 !*
-!***Ge tillbaks sist lästa rad.
+!***Give back the last read row.
 !*
-    seek(infil,fpos(infil)-(80+eolsize));
-
+    seek(infile,fpos(infile)-( rowlgt));
+!*
+!**END
+!*
  ENDMODULE
 
-!*******************************************************
-
-
-
-
-
-
+!*************************************************************'

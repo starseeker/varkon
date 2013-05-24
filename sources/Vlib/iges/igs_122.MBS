@@ -1,0 +1,90 @@
+!**************************************************************
+
+ LOCAL GEOMETRY MODULE igs_122(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ds_ptr;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Read Directory Entry Section and
+!*      get values from Parameter Section
+!*      and create a tabulated cylinder entity.
+!*
+!*      In: infile  = File to read from.
+!*          logfile = logfilee.
+!*          dl1    = Read 1st Directory Entry Section.
+!*          dl2    = Read 2nd Directory Entry Section.
+!*          ds_ptr = Pointer to Directory Entry Section
+!*          ps_ptr = Pointer to Parameter Section.
+!*          rowlgt = Rowlength used
+!*
+!*     Out: id_ent = Identity of created entity.
+!*          status = 0 => Ok
+!*                  -1 => Error
+!*
+!*      (c)2006-09-13, Sï¿½en Larsson, Örebro university
+!*         2006-09-22, Mohamed Rahayem, Örebro university
+!***************************************************************
+
+   INT    i,rownumber,pd;
+   STRING row*132,row1*132,row2*132;
+   FLOAT  f;
+   FLOAT  x(6);
+   INT    DE;                       ! pointer to DE section.
+   VECTOR L;                        ! position of terminate point of the generatix.
+   INT    curtyp;
+   REF    DE_ref,csysid; 
+   
+ BEGINMODULE
+ 
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   rownumber:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(rownumber-1)*rowlgt);
+!*
+!***Read 1:st line and strip "122,".
+!*
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
+!*
+!***Read parameter data.
+!*
+   part(#2,igs_gint(infile,row,DE,status):SAVE=0);
+   part(#3,igs_gflt(infile,row,L.x,status):SAVE=0);
+   part(#4,igs_gflt(infile,row,L.y,status):SAVE=0);
+   part(#5,igs_gflt(infile,row,L.z,status):SAVE=0);
+!*
+!***Create the directrix curve.
+!*   
+   seek(infile,ds_ptr+(DE-1)*rowlgt);  
+   row1:=inlin(infile);
+   row2:=inlin(infile);  
+!*
+!**Create local coordinate system for transformation matrix.
+!*    
+   csys_1p(#14,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
+   csysid:=#14;        
+   part(#7,igs_curve(infile,logfile,row1,row2,ds_ptr,ps_ptr,rowlgt,DE_ref,status),csysid:SAVE=1,BLANK=1); 
+!*
+!***Copy the curve along the generatrix. 
+!*    
+   tform_move(#11, on(DE_ref,0), L:SAVE=1);
+   tcopy(#12, DE_ref, #11:SAVE=1,BLANK=1);
+!*
+!***Create the surface.
+!*    
+   sur_ruled(#13, DE_ref, #12);
+   id_ent:=global_ref(#13);   
+!*
+!***End.
+!*
+   status:=0;
+   
+ ENDMODULE
+
+!*************************************************************************************

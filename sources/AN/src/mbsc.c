@@ -27,7 +27,7 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
+*    Updated 2005-08-02 Johan Kjellander, Örebro university
 *
 ***********************************************************************/
 
@@ -52,7 +52,7 @@ V3MDAT sydata = {                  /* System constants */
                 1000,              /* Serienummer      */
                 1,                 /* Version          */
                 18,                /* Revision         */
-                'A',               /* "upplaga"        */
+                'B',               /* "upplaga"        */
                 0, 0, 0, 0, 0,     /* tider            */
                 0, 0, 0, 0, 0,
                 "",                /* Sysname          */
@@ -75,7 +75,7 @@ bool  andbg();
 /*!******************************************************/
 
         int main(
-        unsigned argc, 
+        int argc, 
         char *argv[])
 
 /*      MBS analyser main function

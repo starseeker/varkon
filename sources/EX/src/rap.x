@@ -9,9 +9,9 @@
 
    Denna kod ska köras med rpcgen för att få:
 
-   oru_rap_clnt.c
-   oru_rap_.h
-   oru_rap_xdr.c
+   rap_clnt.c
+   rap_.h
+   rap_xdr.c
 
    Som i sin tur används för att bygga progarmmet. 
 ******************************************************************************/

@@ -1411,7 +1411,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
    char *binaddr;      /* address to the binary data block */
    char  cdum;         /* Very short int */
    short sdum;         /* Short int */
-   v2int idum;         /* VARKON int */
+   DBint idum;         /* VARKON int */
    float fdum;         /* C float */
    v2float ddum;       /* VARKON float */
    STTYTBL type;       /* type info */
@@ -1488,7 +1488,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
           else
             {
             f->iostat = 0;
-            idum = (v2int)cdum;
+            idum = (DBint)cdum;
             V3MOME(&idum,binaddr,sizeof(idum));
             }
           }
@@ -1498,11 +1498,11 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
           else
             {
             f->iostat = 0;
-            idum = (v2int)sdum;
+            idum = (DBint)sdum;
             V3MOME(&idum,binaddr,sizeof(idum));
             }
           }
-        else if ( nbytes == sizeof(v2int) )
+        else if ( nbytes == sizeof(DBint) )
           {
           if ( read(fd,binaddr,nbytes) != nbytes ) f->iostat = -7;
           else                                     f->iostat =  0;
@@ -1605,7 +1605,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
        { 
 #ifdef VAX
        f->iostat = 0;
-       func_vp->lit.int_va = (v2int)ftell( f->fp );
+       func_vp->lit.int_va = (DBint)ftell( f->fp );
 #else
        f->iostat = -1;
        func_vp->lit.int_va = -1;
@@ -1613,7 +1613,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
        }
 else
        {
-       func_vp->lit.int_va = (v2int)ftell( f->fp );
+       func_vp->lit.int_va = (DBint)ftell( f->fp );
        f->iostat = 0;
        }
 
@@ -1651,7 +1651,7 @@ else
 /*
 ***Execute IOSTAT
 */
-   func_vp->lit.int_va = (v2int)(f->iostat);
+   func_vp->lit.int_va = (DBint)(f->iostat);
 
    return( 0 );
   }

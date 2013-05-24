@@ -377,7 +377,7 @@ fflush(dbgfil(SURPAC));
 /*   Output number of segments                                      */
      *p_nseg = i_interv;
 
-     cur_seg.typ = UV_SEG ;
+     cur_seg.typ = UV_CUB_SEG ;
 
  V3MOME((char *)(&cur_seg),(char *)(p_seg+*p_nseg-1),sizeof(DBSeg));
 
@@ -389,21 +389,21 @@ fflush(dbgfil(SURPAC));
 /*   Goto addsegm if out of tolerance m_idpoint.                    */
 /*                                                                 !*/
 
-     cur_seg.typ = UV_SEG ;
+     cur_seg.typ = UV_CUB_SEG ;
      status = chepoi (p_sur,p_pat,u_25, &dist_25 );
      if      ( status < 0 && f_check != 2 ) f_add = 1;      
      else if ( status < 0 )                 dist_25 = 1.23456789;
      if ( dist_25 > max_dev   ) max_dev = dist_25;
      if ( dist_25 > m_idpoint && f_check != 2 ) f_add = 1;      
 
-     cur_seg.typ = UV_SEG ;
+     cur_seg.typ = UV_CUB_SEG ;
      status = chepoi (p_sur,p_pat,u_75, &dist_75 );
      if      ( status < 0 && f_check != 2 ) f_add = 1;      
      else if ( status < 0 )                 dist_75 = 1.23456789;
      if ( dist_75 > max_dev   ) max_dev = dist_75;
      if ( dist_75 > m_idpoint && f_check != 2 ) f_add = 1;      
 
-     cur_seg.typ = UV_SEG ;
+     cur_seg.typ = UV_CUB_SEG ;
      status = chepoi (p_sur,p_pat,u_50, &dist_50 );
      if      ( status < 0 && f_check != 2 ) goto  addsegm;
      else if ( status < 0 )                 dist_50 = 1.23456789;
@@ -1624,11 +1624,11 @@ noipt:; /* Label: Mid point calculation failed                  */
 midused:;  /* Label: Mid point was used                             */
 
 /*!                                                                 */
-/* Let segment .ofs= 0.0, .typ= UV_SEG and .sl= 0.0                 */
+/* Let segment .ofs= 0.0, .typ= UV_CUB_SEG and .sl= 0.0                 */
 /*                                                                 !*/
 
    cur_seg.ofs = 0.0;
-   cur_seg.typ = UV_SEG ;
+   cur_seg.typ = UV_CUB_SEG ;
    cur_seg.sl  = 0.0;     
 
 /*!                                                                 */
@@ -2537,7 +2537,7 @@ fflush(dbgfil(SURPAC));
         }
 
    cur_seg.ofs = 0.0;
-   cur_seg.typ = UV_SEG ;
+   cur_seg.typ = UV_CUB_SEG ;
    cur_seg.sl  = 0.0;     
 
    *p_nseg = 1;

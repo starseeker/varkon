@@ -62,7 +62,7 @@
 /*  1994-05-28   Originally written                                 */
 /*  1996-01-01   Erase of not used CUR_GL functions. Note           */
 /*               that there is a copy on /u/bibliotek/EXE G. Liden  */
-/*  1996-01-24   GMPATF bortkommenterad tills vidare                */
+/*  1996-01-24   DBPatchF bortkommenterad tills vidare                */
 /*  1996-05-13   Gary's rutiner bortkommenterade                    */
 /*  1996-06-08   AFACE added                                        */
 /*  1996-08-22   SUR_ROT added                                      */
@@ -90,7 +90,6 @@
 extern DBTmat *lsyspk;             /* C  ptr active coord. system   */
 extern DBTmat  lklsyi;             /* C  ptr active inverted matrix */
 extern DBptr   amsyla;             /* DB ptr active coord. system   */
-extern GMDATA  v3dbuf;             /* Curve segm. coefficients      */
 /*-----------------------------------------------------------------!*/
 
 /*!-------------- Function calls (external) ------------------------*/
@@ -1193,7 +1192,7 @@ if ( dbglev(EXEPAC) == 1 )
    EVALS   r01;          /* Corner point U=0 , V=1                  */
    EVALS   r11;          /* Corner point U=1 , V=1                  */
 
-   GMPATC   patbic;      /* Bicubic patch                           */
+   DBPatchC patbic;      /* Bicubic patch                           */
    DBPatch  patout;      /* Topological patch                       */
    DBSurf   surout;      /* Output surface                          */
 /*                                                                  */

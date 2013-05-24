@@ -78,7 +78,6 @@
 extern DBTmat *lsyspk;             /* C  ptr active coord. system   */
 extern DBTmat  lklsyi;             /* C  ptr active inverted matrix */
 extern DBptr   amsyla;             /* DB ptr active coord. system   */
-extern GMDATA  v3dbuf;             /* Curve segm. coefficients      */
 /*-----------------------------------------------------------------!*/
 
 /*!-------------- Function calls (external) ------------------------*/
@@ -325,8 +324,8 @@ nodeall:  /* Label: No deallocation of memory                       */
   DBptr    la;           /* DB pointer                              */
   DBetype  typ;          /* Type of entity                          */
   char     name[9];      /* Name   (SELE99)                         */
-  gmflt    xe,ye,ze;     /* External point                          */
-  gmflt    u_s,v_s;      /* Start u,v point                         */
+  DBfloat    xe,ye,ze;     /* External point                          */
+  DBfloat    u_s,v_s;      /* Start u,v point                         */
   DBint    status;       /* Error code from called function         */
   char     errbuf[80];   /* String for error message fctn erpush    */
 
@@ -510,8 +509,8 @@ if ( dbglev(EXEPAC) == 1 )
   DBSeg   *p_spineseg;   /* Spine segments                    (ptr) */
   DBCurve  lim_s;        /* Start limit curve                       */
   DBSeg   *p_limseg;     /* Start limit curve segments        (ptr) */
-  gmflt    l_s;          /* Start parameter value limit curve       */
-  gmflt    l_e;          /* End   parameter value limit curve       */
+  DBfloat    l_s;          /* Start parameter value limit curve       */
+  DBfloat    l_e;          /* End   parameter value limit curve       */
   DBCurve  gener1;       /* Generatrix 1 curve                      */
   DBSeg   *p_gener1seg;  /* Generatrix 1 curve segments       (ptr) */
   DBCurve  gener2;       /* Generatrix 2 curve                      */

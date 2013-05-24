@@ -80,7 +80,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
  ******************************************************!*/
 
 {
-    gmflt trim[4];
+    DBfloat trim[4];
 /*
 ***trim-värden.
 */
@@ -132,11 +132,11 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
    V2REFVA *midarr[MXLSTP];
 
 /*
-***ID för spinekurva.
+***ID fär spinekurva.
 */
    spine = &geop_pv[1].par_va.lit.ref_va[0];
 /*
-***Hur många strippar ?
+***Hur märga strippar ?
 */
    nstrips = (geop_pc - 3)/4;
 /*
@@ -228,7 +228,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
    char    errbuf[81];
    short   status;
    int     nu_dekl,nv_dekl,dekl_dim,vecsiz;
-   gmint   nu,nv,i,j;
+   DBint   nu,nv,i,j;
    DBint   posadr,tuadr=0,tvadr=0,twadr=0;
    STTYTBL typtbl;
    STARRTY arrtyp;
@@ -236,7 +236,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
    PMLITVA val;
 
 /*
-***Hur många positioner.
+***Hur märga positioner.
 */
    nu = geop_pv[2].par_va.lit.int_va;
    nv = geop_pv[3].par_va.lit.int_va;
@@ -246,13 +246,13 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
    if ( nu < 2 ) return(erpush("IN5112","U"));
    if ( nv < 2 ) return(erpush("IN5112","V"));
 /*
-***Kolla att deklarerad dimension på MBS-arrayer är tillräcklig för
+***Kolla att deklarerad dimension pärMBS-arrayer är tillrärklig fär
 ***nu*nv positioner och tangenter.
 */
    posadr = geop_pv[4].par_va.lit.adr_va;
 /*
-***Strtyp kan alltid göras på en variabel och en variabel vet vi
-***säkert att det är eftersom v3c kollar detta (.av. i formpar.h).
+***Strtyp kan alltid gäras pären variabel och en variabel vet vi
+***särert att det är eftersom v3c kollar detta (.av. i formpar.h).
 */
    strtyp(geop_pv[4].par_ty,&typtbl);
 /*
@@ -261,7 +261,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
 */
    if ( typtbl.arr_ty == (pm_ptr)NULL ) return(erpush("IN5122","no array"));
 /*
-***Om det är en array kan vi nu ta reda på vilken slags array.
+***Om det är en array kan vi nu ta reda pärvilken slags array.
 */
    strarr(typtbl.arr_ty,&arrtyp);
 /*
@@ -271,19 +271,19 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
    nu_dekl = arrtyp.up_arr - arrtyp.low_arr + 1;
    if ( nu_dekl < nu ) return(erpush("IN5122","nu > decl"));
 /*
-***Denna array skall i sin tur bestå av arrayer.
+***Denna array skall i sin tur bestärav arrayer.
 */
    strtyp(arrtyp.base_arr,&typtbl);
    if ( typtbl.arr_ty == (pm_ptr)NULL ) return(erpush("IN5122","1-dim array"));
 /*
-***Som också skall vara tillräckligt stora.
+***Som ocksärskall vara tillrärkligt stora.
 ***Dvs. minst lika stora som antalet punkter i V-riktningen.
 */
    strarr(typtbl.arr_ty,&arrtyp);
    nv_dekl = arrtyp.up_arr - arrtyp.low_arr + 1;
    if ( nv_dekl < nv ) return(erpush("IN5122","nv > decl"));
 /*
-***Allokera minne för positioner.
+***Allokera minne fär positioner.
 */
    if ( (ppek=(DBVector *)v3mall(nu*nv*sizeof(DBVector),"evssar")) == NULL )
      {
@@ -291,7 +291,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
      return(erpush("IN5102",errbuf));
      }
 /*
-***Likaså U-tangenterna.
+***LikasärU-tangenterna.
 */
    if ( geop_pc > 4 )
      {
@@ -366,12 +366,12 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
      }
    else twpek = NULL;
 /*
-***vecsiz = storleken på en VECTOR.
+***vecsiz = storleken pären VECTOR.
 */
    strtyp(arrtyp.base_arr,&typtbl);
    vecsiz = typtbl.size_ty;
 /*
-***Kopiera positioner från RTS till allokerad area.
+***Kopiera positioner frär RTS till allokerad area.
 */
    for ( i=0; i<nu; ++i )
      {
@@ -410,7 +410,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
    status = EXssar(geop_id,geop_pv[1].par_va.lit.str_va,nu,nv,
                    ppek,tupek,tvpek,twpek,geop_np);
 /*
-***Återlämna allokerat minne.
+***ärerlärna allokerat minne.
 */
    v3free(ppek,"evssar");
    if ( tupek != NULL ) v3free(tupek,"evssar");
@@ -451,7 +451,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
    char     errbuf[81];
    short    status;
    int      ncur,dekl_dim,refsiz,strsiz;
-   gmint    i,*metpek;
+   DBint    i,*metpek;
    DBint    limadr,tanadr,metadr,mpadr;
    STTYTBL  typtbl;
    STARRTY  limtyp,tantyp,mettyp,mptyp;
@@ -459,7 +459,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
    PMLITVA  val;
 
 /*
-***Hur många kurvor.
+***Hur märga kurvor.
 */
    ncur = geop_pv[2].par_va.lit.int_va;
 /*
@@ -467,7 +467,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
 */
    if ( ncur < 2 ) return(erpush("IN5202",""));
 /*
-***Kolla att deklarerad dimension på MBS-arrayer är tillräcklig för
+***Kolla att deklarerad dimension pärMBS-arrayer är tillrärklig fär
 ***ncur kurvor etc.
 */
    limadr = geop_pv[4].par_va.lit.adr_va;
@@ -514,7 +514,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
      return(erpush("IN5222",errbuf));
      }
 
-   if ( (metpek=(gmint *)v3mall(ncur*sizeof(gmint),"evscar")) == NULL )
+   if ( (metpek=(DBint *)v3mall(ncur*sizeof(gmint),"evscar")) == NULL )
      {
      sprintf(errbuf,"%d",ncur);
      return(erpush("IN5222",errbuf));
@@ -526,7 +526,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
      return(erpush("IN5222",errbuf));
      }
 /*
-***Kopiera från RTS till allokerade areor.
+***Kopiera frär RTS till allokerade areor.
 */
    for ( i=0; i<ncur; ++i )
      {
@@ -567,7 +567,7 @@ extern PMLITVA *func_vp; /* Pekare till resultat. */
 */
    status = EXscar(geop_id,geop_pv[1].par_va.lit.str_va,
                           &geop_pv[3].par_va.lit.ref_va[0],
-                          (gmint)ncur,
+                          (DBint)ncur,
                            lpek,tpek,metpek,mppek,geop_np);
 /*
 ***Deallokera minne.
@@ -598,8 +598,8 @@ exit:
  *      Felkoder: IN5222 = Kan ej allokera minne.
  *                IN5372 = cpts/w felaktigt deklarerad
  *                IN5402 = cpts fel typ
- *                IN5382 = uknots/vknots för liten
- *                IN5392 = w för liten
+ *                IN5382 = uknots/vknots fär liten
+ *                IN5392 = w fär liten
  *
  *      FV: Returnerar anropade rutiners status.
  *
@@ -637,7 +637,7 @@ exit:
    np_u = nk_u - order_u;
    np_v = nk_v - order_v;
 /*
-***Kolla att deklarerad dimension på cpts är tillräcklig.
+***Kolla att deklarerad dimension pärcpts är tillrärklig.
 */
    posadr = geop_pv[5].par_va.lit.adr_va;
    strtyp(geop_pv[5].par_ty,&typtbl);
@@ -656,7 +656,7 @@ exit:
    if ( typtbl.kind_ty != ST_VEC ) return(erpush("IN5402",""));
    vecsiz = typtbl.size_ty;
 /*
-***Kolla att deklarerad dimension på ev. knots är ok.
+***Kolla att deklarerad dimension pärev. knots är ok.
 */
    if ( geop_pc > 5 )
      {
@@ -679,7 +679,7 @@ exit:
      if ( dekl_dim < nk_v ) return(erpush("IN5382",""));
      }
 /*
-***Kolla typ och dimension på ev. w.
+***Kolla typ och dimension pärev. w.
 */
    if ( geop_pc > 7 )
      {
@@ -707,26 +707,26 @@ exit:
 
    if ( geop_pc > 5 )
      {
-     if ( (ukpek=(gmflt *)v3mall(nk_u*sizeof(gmflt),"evsnar")) == NULL )
+     if ( (ukpek=(DBfloat *)v3mall(nk_u*sizeof(gmflt),"evsnar")) == NULL )
        return(erpush("IN5412",""));
      }
    else ukpek = NULL;
 
    if ( geop_pc > 6 )
      {
-     if ( (vkpek=(gmflt *)v3mall(nk_v*sizeof(gmflt),"evsnar")) == NULL )
+     if ( (vkpek=(DBfloat *)v3mall(nk_v*sizeof(gmflt),"evsnar")) == NULL )
        return(erpush("IN5412",""));
      }
    else vkpek = NULL;
 
    if ( geop_pc > 7 )
      {
-     if ( (wpek=(gmflt *)v3mall(np_u*np_v*sizeof(gmflt),"evsnar")) == NULL )
+     if ( (wpek=(DBfloat *)v3mall(np_u*np_v*sizeof(gmflt),"evsnar")) == NULL )
        return(erpush("IN5412",""));
      }
    else wpek = NULL;
 /*
-***Kopiera från RTS till allokerade areor.
+***Kopiera frär RTS till allokerade areor.
 */
    for ( i=0; i<np_u; ++i )
      {
@@ -811,7 +811,7 @@ exit:
  ******************************************************!*/
 
 {
-   gmflt tol_2;
+   DBfloat tol_2;
 
 /*
 ***Optionell parameter.
@@ -914,7 +914,7 @@ exit:
                           geop_pv[3].par_va.lit.float_va,
                           geop_pv[4].par_va.lit.float_va,
                           geop_pv[5].par_va.lit.float_va,
-                         (gmint)fall,geop_np));
+                         (DBint)fall,geop_np));
 }
 
 /********************************************************/
@@ -1203,3 +1203,43 @@ exit:
    return(status);
 }
 /********************************************************/
+
+
+
+
+
+
+/*!******************************************************/
+
+        short evstusr()
+
+/*      Evaluates the geometry procedure SUR_TRIM_USRDEF.
+ *
+ *      In: extern *geop_id   => Storhetens ID.
+ *          extern *geop_pv   => Pekare till array med parametervärden.
+ *          extern *geop_np   => Pekare till namnparameterblock.
+ *
+ *      Out: Nothing.
+ *
+ *      Errors:   IN5202 = Number of curves < 2.
+ *                IN5212 = Number of curves > declared size.
+ *                IN5222 = Unable to allocate memory.
+ *
+ *      FV: Returns status from called functions.
+ *
+ *      (c)Orebro University 2006-09-14  S. Larsson
+ *
+ *
+ *
+ ******************************************************!*/
+
+{
+
+   return(0); /* Not implemented yet */
+}
+/********************************************************/
+
+
+
+
+

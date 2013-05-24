@@ -67,7 +67,7 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#include "../../GP/include/GP.h"
+#include "../../WP/include/WP.h"
 
 #ifdef UNIX
 #include <sys/utsname.h>
@@ -75,9 +75,8 @@
 
 extern V2NAPA defnap;
 extern V3MDAT sydata;
-extern gmflt  rstrox,rstroy,rstrdx,rstrdy;
+extern DBfloat  rstrox,rstroy,rstrdx,rstrdy;
 extern bool   rstron;
-extern double curnog,ritskl,gpgszx;
 extern char   pidnam[],jobnam[],jobdir[];
 extern pm_ptr actmod;
 extern DBptr  lsysla;
@@ -143,28 +142,30 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evavin()
 
-/*      Evaluerar funktionen ACT_VNAM.
- *
- *      In:
+/*      Evaluates function ACT_VNAM(). Returns the
+ *      name of the view currently active in the
+ *      main graphics window.
  *
  *      Ut: Global *func_vp  =  Pointer to result value.
  *
- *      FV:
- *
- *      (C)microform ab 31/10/86 R. Svedin
- *
- *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      (C)2006-12-31 J.Kjellander
  *
  ******************************************************!*/
 
   {
-    VY    actwin;
+   WPWIN  *winptr;
+   WPGWIN *gwinpt;
 
-    gpgwin(&actwin);
-    strcpy(func_vp->lit.str_va , actwin.vynamn);
+/*
+***Get a ptr to GWIN_MAIN. To be changed in the future so
+***that any window can be used.
+*/
+   winptr = WPwgwp((wpw_id)GWIN_MAIN);
+   gwinpt = (WPGWIN *)winptr->ptr;
 
-    return(0);
+   strcpy(func_vp->lit.str_va , gwinpt->vy.vynamn);
 
+   return(0);
   }
 
 /********************************************************/
@@ -237,20 +238,30 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 31/10/86 R. Svedin
  *
  *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      2006-12-30 removed GP, J.Kjellander
  *
  ******************************************************!*/
 
   {
+   double  skala;
+   WPWIN  *winptr;
+   WPGWIN *gwinpt;
+/*
+***Get a pointer to the main graphics window.
+*/
+   winptr = WPwgwp((wpw_id)GWIN_MAIN);
+   gwinpt = (WPGWIN *)winptr->ptr;
+/*
+***Current scale factor in this window =
+***(n_pixels * pixel_size) / model_window_size
+*/
+   skala = (gwinpt->vy.scrwin.xmax - gwinpt->vy.scrwin.xmin) *
+            gwinpt->geo.psiz_x /
+           (gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin);
 
-    VY     actwin;
-    double skala;
+   func_vp->lit.float_va = skala;
 
-    gpgwin(&actwin);
-    skala=gpgszx / (actwin.vywin[2]-actwin.vywin[0]);
-    func_vp->lit.float_va = skala;
-
-    return(0);
-
+   return(0);
   }
 
 /********************************************************/
@@ -274,7 +285,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
   {
 
-    func_vp->lit.float_va = ritskl;
+    func_vp->lit.float_va = 1.0;
 
     return(0);
 
@@ -296,12 +307,16 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 31/10/86 R. Svedin
  *
  *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      2006-12-31 Removed GP, J.Kjellander
  *
  ******************************************************!*/
 
   {
+    double c;
 
-    func_vp->lit.float_va = curnog;
+    WPget_cacc(&c);
+
+    func_vp->lit.float_va = c;
 
     return(0);
 
@@ -1084,7 +1099,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    func_vp->lit.int_va = (v2int)sydata.sernr;
+    func_vp->lit.int_va = (DBint)sydata.sernr;
 
     return(0);
   }

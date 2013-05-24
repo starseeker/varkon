@@ -51,8 +51,6 @@ extern pm_ptr ststrp;      /* PM-pointer to literal string type in sym. tab. */
 extern DBint  stgldz;      /* global data area size */
 extern bool intrup;        /* <CTRL>c-flaggan */
 
-extern short gptrty;       /* Terminaltyp */
-
 extern pm_ptr stintp;
 extern pm_ptr stflop;
 extern pm_ptr stvecp;
@@ -272,7 +270,7 @@ static STLABEL actlabel;
 ***Med X11 sköter vi interrupt på ett annat sätt.
 */
 #ifdef V3_X11
-   if ( gptrty == X11  &&  wpintr() )
+   if ( WPintr() )
      {
      igwtma(169);
      return(AVBRYT);

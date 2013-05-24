@@ -33,13 +33,16 @@
 *
 *    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
 *
+*    2006-02-23 cirpek and cirdef: DBshort to DBint, S. Larsson
+*     
 ***********************************************************************/
 
 #include "../include/DB.h"
 #include "../include/DBintern.h"
 
-DBshort cirpek;    /* Cirkulär pekare, initieras till cirdef i gmclr() */
-DBshort cirdef;    /* cirpek:s startvärde */
+DBint   cirpek;    /* circular pointer. initieras to cirdef i gmclr().
+                      SL changed from DBshort 2006-02-23  */
+DBint   cirdef;    /*  cirpek:s start value . SL changed from DBshort 2006-02-23*/
 DBint   pfcnt=0;   /* Page-fault statistik */
 DBint   wrcnt=0;
 DBint   rdcnt=0;

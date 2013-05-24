@@ -45,7 +45,7 @@
 /*  1994-01-23   Originally written                                 */
 /*  1994-10-15   GEsort_1->sur982, GE109, comptol and ctol           */
 /*               start and end segment parameter values   G Liden   */
-/*  1995-03-07   UV_SEG (CUB_SEG)                                   */
+/*  1995-03-07   UV_CUB_SEG (CUB_SEG)                                   */
 /*  1996-01-12   fflush. Check INTMAX                               */
 /*  1996-01-27   Debug                                              */
 /*  1999-11-27   Free source code modifications                     */

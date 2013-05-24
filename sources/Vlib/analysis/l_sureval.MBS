@@ -1,0 +1,100 @@
+!********************************************************************************
+                                   
+ macro module l_sureval(REF    id     > "@t16 t1608";                     
+                        FLOAT  u:= 0  > "t1656";                          
+                        FLOAT  v:= 0  > "t1657");                         
+
+!*       This function is used to analyze a surface by using the EVAL function.   
+!*       
+!*       In: id = Surface identity.  t1608 = "Select surface !"
+!*           u  = u parameter value. t1656 = "Enter U parameter value !"    
+!*           v  = v parameter value. t1657 = "Enter V parameter value !"
+!*                                                                                        
+!*       (C)Örebro University 11/9/2006  Mohamed Rahayem.  
+!*   
+!******************************************************************************** 
+          
+   VECTOR result;                                                                 
+   FLOAT  Sur_area;                                                               
+   CONSTANT FLOAT Curvat_tol = 0.00001 ;                                         
+              
+ beginmodule
+ 
+!*
+!*** Creates and initializes a new list window
+!*
+   lst_ini(get_tstr(1644));                    
+      
+   lst_lin("        "+get_tstr(1645) );
+   lst_lin("        ----------     ");
+   lst_lin(get_tstr(1646)+str(u,-15,2));          ! Show parameters 
+   lst_lin(get_tstr(1647)+str(v,-15,2));          ! (u,v) values
+ 
+   lst_lin(get_tstr(246)+rstr(id,-15));           ! Show Surface ID
+ 
+   lst_lin("        ");
+   
+   lst_lin("         "+get_tstr(1648 ));
+   lst_lin("         --------       ");
+     
+   result:= EVAL(id,"XYZ",vec(u,v));              ! Evaluate position coordinates
+   
+   lst_lin(get_tstr(1507)+str(result.x,-15,4));   ! Show position components X-Component
+   lst_lin(get_tstr(1508)+str(result.y,-15,4));   ! Y-component
+   lst_lin(get_tstr(1509)+str(result.z,-15,4));   ! Z-component
+   lst_lin("        ");
+   
+   lst_lin("          "+get_tstr(1649));
+   lst_lin("          ------         ");
+   
+   result:= EVAL(id,"NORMAL",vec(u,v));           ! Evaluate Normal Vector
+   
+   lst_lin(get_tstr(1507)+str(result.x,-15,4));   ! Show normal components X-Component
+   lst_lin(get_tstr(1508)+str(result.y,-15,4));   ! Y-component
+   lst_lin(get_tstr(1509)+str(result.z,-15,4));   ! Z-component 
+   lst_lin("        ");
+   
+   lst_lin("        "+get_tstr(1650));
+   lst_lin("        ----------      ");
+    
+   result:= EVAL(id,"KAPPAMIN",vec(u,v));         ! Evaluate Minimum Curvature
+!*   
+!*** Check the curvature value not equal to tolerance constant to avoid division on zero
+!* 
+   IF ABS(result.x) > Curvat_tol THEN
+      lst_lin(get_tstr(1651)+str(result.x,-15,4));
+   ELSE
+      lst_lin(get_tstr(1651)+str(0,-15,4));
+   ENDIF; 
+           
+   result:= EVAL(id,"KAPPAMAX",vec(u,v));        ! Evaluate Maximum Curvature
+!*   
+!*** Check the curvature value not equal to tolerance constant to avoid division on zero
+!*      
+   IF ABS(result.x) > Curvat_tol THEN
+      lst_lin(get_tstr(1652)+str(result.x,-15,8));
+   ELSE
+      lst_lin(get_tstr(1652)+str(0,-15,4));
+   ENDIF; 
+        
+   result:= EVAL(id,"GAUSSIAN",vec(u,v));        ! Evaluate Gaussian
+   
+   lst_lin(get_tstr(1653)+str(result.x,-15,4));
+ 
+   result:= EVAL(id,"MEAN",vec(u,v));            ! Evaluate Mean
+   
+   lst_lin(get_tstr(1654)+str(result.x,-15,4));
+   
+   lst_lin("        ");
+   
+   Sur_area:=surface_area(id);                   ! Calculate Area by Sur_area function  
+   
+   lst_lin(get_tstr(1655)+str(sur_area,-15,2));
+
+   lst_lin("        ");
+      
+   lst_exi();                                    !  Close and display a list window. 
+
+ endmodule
+ 
+!********************************************************************************                                

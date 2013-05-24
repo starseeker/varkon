@@ -258,9 +258,9 @@ fprintf(dbgfil(SURPAC),
  if ( p_seg1->typ == CUB_SEG )
 fprintf(dbgfil(SURPAC),
 "sur122 Type of segment is CUB_SEG \n");
- if ( p_seg1->typ ==  UV_SEG )
+ if ( p_seg1->typ ==  UV_CUB_SEG )
 fprintf(dbgfil(SURPAC),
-"sur122 Type of segment is  UV_SEG \n");
+"sur122 Type of segment is  UV_CUB_SEG \n");
 fflush(dbgfil(SURPAC)); /* From buffer to file */
 }
 #endif
@@ -479,7 +479,7 @@ status=GE107 ((DBAny  *)p_cur1,p_seg1+ir,t_l,3,uvout);
         return(varkon_erpush("SU2943",errbuf));
         }
 
-    (p_seg1+ir)->typ = UV_SEG;
+    (p_seg1+ir)->typ = UV_CUB_SEG;
 
       us1  = uvout[0]; 
       vs1  = uvout[1]; 
@@ -510,7 +510,7 @@ status=GE107 ((DBAny  *)p_cur1,p_seg2+ir,t_l,3,uvout);
         return(varkon_erpush("SU2943",errbuf));
         }
 
-    (p_seg2+ir)->typ = UV_SEG;
+    (p_seg2+ir)->typ = UV_CUB_SEG;
 
       us2  = uvout[0]; 
       vs2  = uvout[1]; 
@@ -564,7 +564,7 @@ status=GE107 ((DBAny  *)p_cur1,p_seg1+ir,t_l,3,uvout);
         return(varkon_erpush("SU2943",errbuf));
         }
 
-    (p_seg1+ir)->typ = UV_SEG;
+    (p_seg1+ir)->typ = UV_CUB_SEG;
 
       ue1  = uvout[0]; 
       ve1  = uvout[1]; 
@@ -595,7 +595,7 @@ status=GE107 ((DBAny  *)p_cur1,p_seg2+ir,t_l,3,uvout);
         return(varkon_erpush("SU2943",errbuf));
         }
 
-    (p_seg2+ir)->typ = UV_SEG;
+    (p_seg2+ir)->typ = UV_CUB_SEG;
 
       ue2  = uvout[0]; 
       ve2  = uvout[1]; 

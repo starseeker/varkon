@@ -23,7 +23,6 @@ CFLAGS = -ansi \
          -Wall \
          -ffloat-store \
          -fsigned-char \
-         -fwritable-strings \
          -O \
          -D_POSIX_SOURCE \
          -DUNIX \

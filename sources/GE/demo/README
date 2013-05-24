@@ -1,0 +1,28 @@
+/**********************************************************************
+*
+*    README
+*    ======
+*
+*    This README-file includes information about how to
+*    build and run the Varkon GEdemo programs.
+*
+*    (C)Microform AB 1984-1999, http://www.microform.se
+*
+*    Johan Kjellander, johan@microform.se
+*
+***********************************************************************/
+
+1. Make sure you have built the GE library and
+   VU library, GElib.a and VUlib.a
+   See GE/src/README and VU/src/README
+
+2. cd to the GE/demo directory
+
+3. A Makefile for linux is included in the demo directory.
+   Type "make -f Makefile.linux" to build the GE demo programs.
+
+4. Run the programs. Too see what they do, read
+   the sources of each program.
+   They are fairly well commented.
+
+/**********************************************************************/

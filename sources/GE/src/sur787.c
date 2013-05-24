@@ -51,7 +51,7 @@
 /*  Revisions                                                       */
 /*                                                                  */
 /*  1994-10-16   Originally written                                 */
-/*  1996-01-27   ctol->idpoint, initialize, comptol, UV_SEG         */
+/*  1996-01-27   ctol->idpoint, initialize, comptol, UV_CUB_SEG         */
 /*  1997-02-15   No compile optimization in WIN32                   */
 /*  1999-11-27   Free source code modifications                     */
 /*                                                                 !*/
@@ -185,10 +185,10 @@ fprintf(dbgfil(SURPAC),
 fflush(dbgfil(SURPAC)); 
 }
 
-if ( dbglev(SURPAC) == 1 && p_seg->typ ==  UV_SEG ) 
+if ( dbglev(SURPAC) == 1 && p_seg->typ ==  UV_CUB_SEG ) 
 {
 fprintf(dbgfil(SURPAC),
-"sur787 idpoint Start segment is UV_SEG (=%d)\n", (int)p_seg->typ );
+"sur787 idpoint Start segment is UV_CUB_SEG (=%d)\n", (int)p_seg->typ );
 fflush(dbgfil(SURPAC)); /* To file from buffer      */
 }
 if ( dbglev(SURPAC) == 1 && p_seg->typ == CUB_SEG ) 
@@ -199,10 +199,10 @@ fflush(dbgfil(SURPAC));
 }
 
 
-if ( dbglev(SURPAC) == 1 && (p_seg+p_cur->ns_cu-1)->typ ==  UV_SEG ) 
+if ( dbglev(SURPAC) == 1 && (p_seg+p_cur->ns_cu-1)->typ ==  UV_CUB_SEG ) 
 {
 fprintf(dbgfil(SURPAC),
-"sur787 idpoint Last  segment is UV_SEG \n" );
+"sur787 idpoint Last  segment is UV_CUB_SEG \n" );
 fflush(dbgfil(SURPAC));
 }
 if ( dbglev(SURPAC) == 1 && (p_seg+p_cur->ns_cu-1)->typ == CUB_SEG ) 
@@ -256,10 +256,10 @@ fflush(dbgfil(SURPAC));
 /*                                                                 !*/
 
 /*!                                                                 */
-/* Start of curve (no extraoplation for UV_SEG)                     */
+/* Start of curve (no extraoplation for UV_CUB_SEG)                     */
 /*                                                                 !*/
 
-   if  ( p_seg->typ ==  UV_SEG ) 
+   if  ( p_seg->typ ==  UV_CUB_SEG ) 
      {
      t_start = 1.0 + comptol;                 /* 1996-01-27 */
      goto endseg;
@@ -304,9 +304,9 @@ fflush(dbgfil(SURPAC));
 
 /* End   of curve                                                   */
 
-endseg:;  /* Label: First segment is a UV_SEGment                   */
+endseg:;  /* Label: First segment is a UV_CUB_SEGment                   */
 
-   if  ( (p_seg+p_cur->ns_cu-1)->typ ==  UV_SEG ) 
+   if  ( (p_seg+p_cur->ns_cu-1)->typ ==  UV_CUB_SEG ) 
      {
      t_end   = (DBfloat)p_cur->ns_cu + 1.0 - comptol;
      goto endcur;
@@ -349,7 +349,7 @@ fflush(dbgfil(SURPAC));
        }
      }
 
-endcur:;  /* Label: Last  segment is a UV_SEGment                   */
+endcur:;  /* Label: Last  segment is a UV_CUB_SEGment                   */
 
   *p_tstart = t_start;
   *p_tend   = t_end;
@@ -365,7 +365,7 @@ endcur:;  /* Label: Last  segment is a UV_SEGment                   */
 #ifdef DEBUG
 /* Start DEBUG:    Check of distance                                */
 
-   if  ( p_seg->typ ==  UV_SEG ) goto endsegc;
+   if  ( p_seg->typ ==  UV_CUB_SEG ) goto endsegc;
 
    xyz.evltyp   = EVC_DR;
    xyz.t_global = t_start;
@@ -400,7 +400,7 @@ fprintf(dbgfil(SURPAC),
 
 endsegc:;
 
-   if  ( (p_seg+p_cur->ns_cu-1)->typ ==  UV_SEG ) goto  endcurc;
+   if  ( (p_seg+p_cur->ns_cu-1)->typ ==  UV_CUB_SEG ) goto  endcurc;
 
    xyz.evltyp   = EVC_DR;
    xyz.t_global = t_end;

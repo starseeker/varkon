@@ -9,14 +9,18 @@
 #   Varkon-installation.
 #
 #  (C)Microform AB 1999-11-05 J.Kjellander
+#  2006-09-21 Changed, Sören Larsson, Örebro University
+#             now not dependent of VARKON_ROOT
 #
 ##########################################################
 
 RM = rm -f
 
-COMPILE = $(VARKON_ROOT)/bin/mbsc
+#COMPILE = $(VARKON_ROOT)/bin/mbsc
+COMPILE = ../../../bin/mbsc
 
-LIBDIR = $(VARKON_ROOT)/lib
+#LIBDIR = $(VARKON_ROOT)/lib
+LIBDIR = ../../../lib
 
 # MBO-files
 
@@ -74,6 +78,7 @@ OBJECTS = $(LIBDIR)/l_akedja.MBO     \
           $(LIBDIR)/l_stgraf.MBO     \
           $(LIBDIR)/l_stjobb.MBO     \
           $(LIBDIR)/l_suarea.MBO     \
+          $(LIBDIR)/l_sureval.MBO    \
           $(LIBDIR)/l_sysdat.MBO     \
           $(LIBDIR)/l_tniv1.MBO      \
           $(LIBDIR)/l_tniv2.MBO

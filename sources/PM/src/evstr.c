@@ -319,7 +319,7 @@ extern pm_ptr  *func_ty;
  ******************************************************!*/
 
   {
-   register v2int code;
+   register DBint code;
 
    code = func_pv[1].par_va.lit.int_va;
 
@@ -366,7 +366,7 @@ extern pm_ptr  *func_ty;
 /*
 ***unsigned char 1999-03-05, JK
 */
-   func_vp->lit.int_va = (v2int)(unsigned char)func_pv[1].par_va.lit.str_va[0];
+   func_vp->lit.int_va = (DBint)(unsigned char)func_pv[1].par_va.lit.str_va[0];
 
    return( 0 );
   }

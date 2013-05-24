@@ -1892,7 +1892,7 @@ static short ppindl = DEFINDL;
 
   {
    if ( ppmode == PPFILE ) fprintf( mbsfp, "%s\n", pplin );
-   else if ( ppmode == PPIGLIST ) igalla(pplin,(short)1);
+   else if ( ppmode == PPIGLIST ) WPalla(pplin,(short)1);
 
    if ( ppmode != PPSTRING )
       {

@@ -18,7 +18,6 @@ CFLAGS =                             \
          -pedantic                   \
          -ffloat-store               \
          -fsigned-char               \
-         -fwritable-strings          \
          -O                          \
          -DUNIX                      \
          -DWRK_STAT

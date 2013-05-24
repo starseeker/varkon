@@ -9,14 +9,18 @@
 #   Varkon-installation.
 #
 #  (C)Microform AB 1999-11-05 J.Kjellander
+#  2006-09-21 , Sören Larsson, Örebro university
+#               Changed, now not dependent of VARKON_ROOT
 #
 ##########################################################
 
 RM = rm -f
 
-COMPILE = $(VARKON_ROOT)/bin/mbsc
+#COMPILE = $(VARKON_ROOT)/bin/mbsc
+COMPILE = ../../../bin/mbsc
 
-LIBDIR = $(VARKON_ROOT)/lib
+#LIBDIR = $(VARKON_ROOT)/lib
+LIBDIR = ../../../lib
 
 # MBO-files
 
@@ -29,9 +33,8 @@ OBJECTS = $(LIBDIR)/igs_106.MBO    \
           $(LIBDIR)/igs_fnam.MBO   \
           $(LIBDIR)/igs_gflt.MBO   \
           $(LIBDIR)/igs_gint.MBO   \
-          $(LIBDIR)/igs_gsec.MBO    \
+          $(LIBDIR)/igs_gsec.MBO   \
           $(LIBDIR)/igs_in.MBO     \
-          $(LIBDIR)/igs_rekn.MBO   \
           $(LIBDIR)/igs_ssec.MBO
 
 # The rule for compiling MBS sources and moving

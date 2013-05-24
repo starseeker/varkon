@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.varkon.com
+*    URL: http://www.tech.oru.se/cad/varkon
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -19,8 +19,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
 *
 ***********************************************************************/
 
@@ -38,42 +36,77 @@
 /*
 ***Window types.
 */
-#define TYP_UNDEF   0          /* Odefinierad typ */
-#define TYP_IWIN    1          /* Input-Fönster */
-#define TYP_EDIT    2          /* Edit */
-#define TYP_ICON    3          /* Icon */
-#define TYP_BUTTON  4          /* Button */
-#define TYP_LWIN    5          /* List-fönster */
-#define TYP_GWIN    6          /* Grafiskt fönster */
-#define TYP_RWIN    7          /* Renderings-fönster (OpenGL) */
+#define TYP_UNDEF   0            /* Undefined */
+#define TYP_IWIN    1            /* Input window */
+#define TYP_EDIT    2            /* Edit */
+#define TYP_ICON    3            /* Icon */
+#define TYP_BUTTON  4            /* Button */
+#define TYP_LWIN    5            /* List window */
+#define TYP_GWIN    6            /* Graphical fönster */
+#define TYP_RWIN    7            /* Rendering window (OpenGL) */
 
 /*
 ***Colors.
 */
-#define WP_NPENS 256             /* Antal normala pennor */
-#define WP_SPENS 5               /* Antal systempennor */
-#define WP_BGND  WP_NPENS        /* Bakgrund */
-#define WP_FGND  WP_NPENS+1      /* Förgrund */
-#define WP_TOPS  WP_NPENS+2      /* Toppskugga */
-#define WP_BOTS  WP_NPENS+3      /* Bottenskugga */
+#define WP_NPENS 256             /* Number of normal pens */
+#define WP_SPENS 5               /* Number of system pens */
+#define WP_BGND  WP_NPENS        /* Background */
+#define WP_FGND  WP_NPENS+1      /* Foreground */
+#define WP_TOPS  WP_NPENS+2      /* Top shadow */
+#define WP_BOTS  WP_NPENS+3      /* Bottom shadow */
 #define WP_NOTI  WP_NPENS+4      /* Notify */
 
 /*
 ***Rubberband modes.
 */
-#define WP_RUB_NONE    0         /* Ingen figur */
-#define WP_RUB_RECT    1         /* Rektangel */
-#define WP_RUB_LINE    2         /* Rät linje */
-#define WP_RUB_ARROW   3         /* Pil och ring */
+#define WP_RUB_NONE    0         /* Nothing */
+#define WP_RUB_RECT    1         /* Rectangle */
+#define WP_RUB_LINE    2         /* Line */
+#define WP_RUB_ARROW   3         /* Arrow and ring */
+
+/*
+***Codes to use with WPwwtw() for event loop service level.
+*/
+#define SLEVEL_ALL    0          /* All events returned served */
+#define SLEVEL_MBS    1          /* Input from MBS, ie. WAIT_WIN(...) */
+#define SLEVEL_V3_INP 2          /* Input from Varkon, ie. WPmsip() */
+#define SLEVEL_NONE   3          /* All events served locally */
+
+/*
+***Graphical windows.
+*/
+#define GWIN_MAIN     0          /* Window ID for main WPGWIN */
+#define GWIN_ALL     -1          /* All WPGWIN's */
+
+/*
+***Level handling.
+*/
+#define WP_BLANKL     1          /* Blank levels */
+#define WP_UBLANKL    2          /* Unblank levels */
+#define WP_LISTL      3          /* List levels */
+
+/*
+***Status codes for points in polylines.
+*/
+#define INVISIBLE 0              /* Invisible */
+#define VISIBLE   1              /* Visible */
+#define ENDSIDE   2              /* End */
+
+/*
+***Codes for coordinate system status.
+*/
+#define V3_CS_NORMAL  0          /* Not active */
+#define V3_CS_ACTIVE  1          /* Active */
+
 /*
 **Window-ID.
 */
-typedef DBint  wpw_id;          /* Ett fönster-ID är en int */
+typedef DBint  wpw_id;          /* A window ID is an int */
 
 typedef struct
 {
-wpw_id     w_id;               /* Eget ID, dvs. entry i "ägarens wintab" */
-wpw_id     p_id;               /* Ägarens ID */
+wpw_id     w_id;               /* Local ID, index in parent wintab */
+wpw_id     p_id;               /* Parent ID */
 Window     x_id;               /* X-window ID */
 } WPWID;
 
@@ -88,7 +121,7 @@ short      dx;                 /* Storlek i X-led */
 short      dy;                 /* Storlek i Y-led */
 short      bw;                 /* Ramens tjocklek */
 double     psiz_x;             /* Pixelstorlek i X-led i mm. */
-double     psiz_y;             /* Pixelstorlek i X-led i mm. */
+double     psiz_y;             /* Pixelstorlek i Y-led i mm. */
 } WPWGEO;
 
 /*
@@ -172,10 +205,31 @@ bool       hlight;             /* Highlight, TRUE/FALSE */
 } WPBUTT;
 
 /*
+***A DisplayFile record. 
+*/
+typedef union
+{
+struct
+  {                            /* A Header */ 
+  short type;                  /* Type */
+  int   nvec;                  /* Number of vectors */
+  char  hili;                  /* Highlight TRUE/FALSE */
+  } hdr;
+DBptr la;                      /* DB-pointer or -1 = Deleted */
+struct
+  {                            /* A Vector */
+  short x;                     /* X-position */
+  short y;                     /* Y-position */
+  char  a;                     /* Status */
+  } vec;
+} DFPOST;
+
+/*
 ***A graphical window.
 */
 
 #define GWEM_NORM    (ButtonPressMask      | \
+                      ButtonReleaseMask    | \
                       ExposureMask         | \
                       StructureNotifyMask  | \
                       KeyPressMask         | \
@@ -189,7 +243,7 @@ bool       hlight;             /* Highlight, TRUE/FALSE */
 #define WP_GWMAX      25       /* Max antal WPGWIN-fönster */
 #define WP_GWSMAX     100      /* Max antal sub-fönster i ett WPGWIN */
 #define WP_NIVANT     2000     /* Max antal nivåer/fönster */
-#define WP_NTSIZ      250      /* Nivåtabellens storlek i bytes */
+#define WP_NTSIZ      250      /* Nivåtabellens storlek i bytes 2000/8 */
 #define WP_PMKMAX     10       /* Max antal pekmärken */
 
 typedef struct

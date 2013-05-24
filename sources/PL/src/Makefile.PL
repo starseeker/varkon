@@ -3,6 +3,8 @@
 #   Platform independant Makefile for Varkon plotterdrivers
 #
 #  (C)Microform AB 1999-02-22 J.Kjellander
+#  2006-09-21 Sören Larsson, Örebro University
+#             Changed, now not dependet of VARKON_ROOT 
 #
 ##########################################################
 
@@ -23,14 +25,20 @@ OBJECTS = ../lib/PLlib.a(pl1.o)         \
           ../lib/PLlib.a(pl6.o)
 
 # Targets
-POSTSCRIPT = $(VARKON_ROOT)/bin/postscript
-EPSON      = $(VARKON_ROOT)/bin/epson
-IBMPRO     = $(VARKON_ROOT)/bin/ibmpro
-HP7475     = $(VARKON_ROOT)/bin/hp7475
-HPCL5      = $(VARKON_ROOT)/bin/hpcl5
-HPGL2      = $(VARKON_ROOT)/bin/hpgl2
-GERBER     = $(VARKON_ROOT)/bin/gerber        
-
+#POSTSCRIPT = $(VARKON_ROOT)/bin/postscript
+POSTSCRIPT = ../../../bin/postscript
+#EPSON      = $(VARKON_ROOT)/bin/epson
+EPSON      = ../../../bin/epson
+#IBMPRO     = $(VARKON_ROOT)/bin/ibmpro
+IBMPRO     = ../../../bin/ibmpro
+#HP7475     = $(VARKON_ROOT)/bin/hp7475
+HP7475     = ../../../bin/hp7475
+#HPCL5      = $(VARKON_ROOT)/bin/hpcl5
+HPCL5      = ../../../bin/hpcl5
+#HPGL2      = $(VARKON_ROOT)/bin/hpgl2
+HPGL2      = ../../../bin/hpgl2
+#GERBER     = $(VARKON_ROOT)/bin/gerber        
+GERBER     = ../../../bin/gerber
 
 # PLlib.a depends on the objects. 
 PLlib : $(OBJECTS)

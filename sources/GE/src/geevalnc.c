@@ -1,8 +1,13 @@
 /*****************************************************************************/
 /*                                                                           */
-/*   File: geevalnc.c                                                        */
+/*  File: geevalnc.c                                                        */
 /*                                                                           */
 /*  This file includes:                                                      */
+/*                                                                           */ 
+/*  GEevalnc()   Evaluator for NURBS curve segment(span)                     */
+/*                                                                           */
+/*  GEevaluvnc() Evaluator in UV space for NURBS curve segment(span)         */
+/*                                                                           */
 /*                                                                           */
 /*  This file is part of the VARKON Geometry Library.                        */
 /*  URL:                                                                     */
@@ -33,7 +38,8 @@
 
 
 
-                                 /* MAX_NURBD ,max NURBS degree (surdef.h).  */                                                        
+                                 /* MAX_NURBD ,max NURBS degree (surdef.h).  */
+                                         
   static DBstatus DersBasisFuns  (
   DBint i,                       /* Offset in knot vector                    */
   DBfloat t_seg,                 /* Local parameter value                    */         
@@ -43,8 +49,6 @@
   DBfloat ders[3][MAX_NURBD]);   /* basis values[der_no][index] (1)          */
   
   /* (1) At most degree+1 of the basis values are nonzero */
-
-  
 
 
 /*****************************************************************************/
@@ -610,6 +614,244 @@
 
 
 
+/*****************************************************************************/
+/*                                                                           */
+/*  Function: GEevaluvnc                                   File: geevalnc.c  */
+/*  =======================================================================  */
+/*                                                                           */
+/*  Purpose                                                                  */
+/*  -------                                                                  */
+/*                                                                           */
+/*  The function calculates the coordinates and derivatives in uv space      */
+/*  for a point on a NURBS uv curve                                          */
+/*                                                                           */
+/*  (C) 2006-11-07 Sören Larsson, Örebro University                          */
+/*                                                                           */
+/*  Revisions                                                                */
+/*  ---------                                                                */
+/*  2006-11-07   Originally written                                          */
+/*                                                                           */
+/*                                                                           */
+/*****************************************************************************/
+
+
+
+
+/*!****************** Function ***********************************************/
+/*                                                                           */
+    DBstatus GEevaluvnc(
+
+/*-------------- Argument declarations --------------------------------------*/
+/*                                                                           */
+/* In:                                                                       */
+   DBCurve *p_cur,       /* Curve                             (ptr)          */
+   DBSeg   *p_seg,       /* Curve segment                     (ptr)          */
+   EVALC   *p_evalc )    /* Curve coordinates & derivatives   (ptr)          */
+/* Out:                                                                      */
+/*       Data to p_evalc                                                     */
+/*---------------------------------------------------------------------------*/
+
+
+   { /* Start of function */
+
+/*!------------------------ Internal variables ------------------------------*/
+        
+       
+   bool     offseg;        /* Flag for offset segment                        */
+   bool     ratseg;        /* Flag for rational segment                      */
+   DBint    status;        /* Error code from called function                */
+   DBint    i;             /* loop variable                                  */
+   
+   DBVector r;             /* Position (non-offset)                          */
+   DBVector drdu;          /* First   derivative with respect to u           */
+   DBVector d2rdu2;        /* Second  derivative with respect to u           */
+   
+   DBHvector w;            /* Position, homogenus coordinates                */
+   DBHvector dwdu;         /* 1:st der.with respect to u, hom. coord.        */
+   DBHvector d2wdu2;       /* 2:nd der.with respect to u, hom. coord.        */
+
+   DBshort   degree;       /* Nurbs degree                                   */
+   DBint     offs_p;       /* offset in control points array                 */
+   DBint     offs_u;       /* offset in knots array                          */  
+   DBHvector *P;           /* Pointer to control points for curve            */
+   DBfloat   *U;           /* Pointer to knots for curve                     */
+   DBfloat    u;           /* local parameter value */
+
+   DBfloat   invHom;       /* 1/w.w_gm)                                      */
+   DBfloat   invHomQuad;   /* 1/((w.w_gm)*(w.w_gm))                          */
+   DBfloat   invHomCub;    /* 1/((w.w_gm)*(w.w_gm)*(w.w_gm))                 */
+ 
+   char     errbuf[80];         /* String for error message fctn erpush      */
+
+   DBfloat ders[3][MAX_NURBD];  /* basis values[der_no][index]               */
+   DBint   no_der;              /* no off requested derivatives              */
+
+/*-------------------end-of-declarations-------------------------------------*/
+
+/*
+*** Let flag for UV segment be true.
+*/   
+
+   if ( p_seg->typ  ==  UV_NURB_SEG )
+        p_evalc->surpat = TRUE;
+   else
+      {    
+      sprintf(errbuf,                       
+      "(not UV_NURB_SEG)%%varkon_seg_uveval");
+      return(varkon_erpush("SU2993",errbuf));
+      }
+        
+/*
+*** Copy to local variables
+*/
+   degree  =  p_seg -> nurbs_degree;  
+   offs_p  =  p_seg -> offset_cpts;
+   offs_u  =  p_seg -> offset_knots;
+   P       =  p_seg -> cpts_c;         
+   U       =  p_seg -> knots_c;        
+   u       =  p_evalc->t_local;
+/*                        
+*** Is the segment rational?     
+*/
+   ratseg = FALSE;
+   for (i=0 ;i <= degree  ; i++ )
+      {
+      if (ABS((P + offs_p + i)->w_gm - 1.0) > COMPTOL) 
+         {
+         ratseg = TRUE;
+         break;
+         }
+      }
+/*                        
+*** How many derivatives do we need in "DeersBasisFuns"?    
+*/
+   no_der = -1;
+   if (  p_evalc ->evltyp & EVC_R   ) no_der = 0;
+   if (  p_evalc ->evltyp & EVC_DR  ) no_der = 1;
+   if (  p_evalc ->evltyp & EVC_D2R  ) no_der = 2;
+
+   if (no_der < 0) 
+      {
+      sprintf(errbuf," - evltyp - %%GEevalnc");
+      return(varkon_erpush("SU2993",errbuf));
+      }
+/*                        
+*** Calculate basis values    
+*/
+   status = DersBasisFuns (offs_u,u,degree,no_der,p_seg->knots_c,ders);
+
+/*                        
+*** Calculate position 
+*** (always needed for a rational curve)    
+*/
+   if ((p_evalc ->evltyp & EVC_R) || (ratseg == TRUE)) 
+      {
+      w.x_gm = w.y_gm = w.z_gm = w.w_gm = 0.0;
+      
+      for (i=0;i<=degree;i++)
+         {        
+         w.x_gm = w.x_gm + (P + offs_p + i)->x_gm * ders[0][i];
+         w.y_gm = w.y_gm + (P + offs_p + i)->y_gm * ders[0][i];
+         w.w_gm = w.w_gm + (P + offs_p + i)->w_gm * ders[0][i];     
+         }
+      
+      if (ratseg == TRUE)
+         {
+         invHom = 1.0 / w.w_gm;
+         p_evalc -> u = r.x_gm = w.x_gm * invHom;
+         p_evalc -> v = r.y_gm = w.y_gm * invHom;
+         }
+      else
+         {
+         w.w_gm = 1.0; 
+         p_evalc -> u = r.x_gm = w.x_gm;
+         p_evalc -> v = r.y_gm = w.y_gm;
+         }
+      if ( no_der == 0 ) return(SUCCED);
+      }
+      /* end position */
+/*                        
+*** Calculate first derivative     
+*/
+   if ((p_evalc ->evltyp & (EVC_DR+EVC_PN+EVC_BN+EVC_KAP))) 
+      {
+      dwdu.x_gm = dwdu.y_gm = dwdu.z_gm = dwdu.w_gm = 0.0;
+   
+      for (i=0 ;i <= degree ;i++ ) 
+         {        
+         dwdu.x_gm = dwdu.x_gm + (P + offs_p + i)->x_gm * ders[1][i];
+         dwdu.y_gm = dwdu.y_gm + (P + offs_p + i)->y_gm * ders[1][i];
+         dwdu.w_gm = dwdu.w_gm + (P + offs_p + i)->w_gm * ders[1][i];
+         }
+            
+      if (ratseg == TRUE)
+         {
+         invHomQuad = invHom * invHom; 
+         drdu.x_gm = (w.w_gm * dwdu.x_gm - dwdu.w_gm * w.x_gm) * invHomQuad;
+         drdu.y_gm = (w.w_gm * dwdu.y_gm - dwdu.w_gm * w.y_gm) * invHomQuad;
+         }
+      else
+         {
+         drdu.x_gm = dwdu.x_gm;
+         drdu.y_gm = dwdu.y_gm;
+         } 
+         
+      p_evalc ->u_t = drdu.x_gm;
+      p_evalc ->v_t = drdu.y_gm;
+
+      if ( no_der == 1 ) return(SUCCED);
+      }
+      /* end 1:st derivative */
+/*                        
+*** Calculate second derivative     
+*/
+   if ( (p_evalc->evltyp & (EVC_D2R+EVC_PN+EVC_BN+EVC_KAP)) || (offseg==TRUE )) 
+      {
+      if (degree > 1)
+         {
+         d2wdu2.x_gm=0.0;
+         d2wdu2.y_gm=0.0;
+         d2wdu2.w_gm=0.0;
+   
+         for (i=0 ;i <= degree ;i++ )  
+            {        
+            d2wdu2.x_gm = d2wdu2.x_gm + (P + offs_p + i)->x_gm * ders[2][i];
+            d2wdu2.y_gm = d2wdu2.y_gm + (P + offs_p + i)->y_gm * ders[2][i];
+            d2wdu2.w_gm = d2wdu2.w_gm + (P + offs_p + i)->w_gm * ders[2][i];
+            }
+
+         if (ratseg == TRUE)
+            {
+            invHomCub = invHomQuad * invHom;
+
+            d2rdu2.x_gm = 
+             (w.w_gm  * (w.w_gm * d2wdu2.x_gm - w.x_gm * d2wdu2.w_gm) + 2 * 
+            dwdu.w_gm * (w.x_gm * dwdu.w_gm   - w.w_gm * dwdu.x_gm)) 
+            * invHomCub;
+
+            d2rdu2.y_gm = 
+             (w.w_gm  * (w.w_gm * d2wdu2.y_gm - w.y_gm * d2wdu2.w_gm) + 2 * 
+            dwdu.w_gm * (w.y_gm * dwdu.w_gm   - w.w_gm * dwdu.y_gm)) 
+            * invHomCub;
+            }
+         else
+            {
+             d2rdu2.x_gm = d2wdu2.x_gm;
+             d2rdu2.y_gm = d2wdu2.y_gm;
+            }
+         }
+      else d2rdu2.x_gm = d2rdu2.y_gm = d2rdu2.z_gm = d2wdu2.w_gm = 0.0;
+
+      p_evalc->u_t2 = d2rdu2.x_gm ;
+      p_evalc->v_t2 = d2rdu2.y_gm ;
+      }
+      /* end 2:nd derivative */
+
+   return(SUCCED);
+
+   } /* End of function */
+
+/*****************************************************************************/
 
 
 
@@ -686,7 +928,8 @@
 
 /*                        
 *** Adjust local parameter "u" to suite NURBS-algorithm    
-*** (Theory, see ______)
+*** (Theory, see "Implementation of NURBS curves into the varkon CAD system",
+*** ISSN 1404-7225)
 */
   
 f=1 / (U[i+1] - U[i]);
@@ -695,13 +938,12 @@ f=1 / (U[i+1] - U[i]);
 u = u + U[i] * f;
 
 
-/* NURBS book, Algorithm A2.3, adjusted to suite Varkon parameterisation */
-
+/* NURBS book, Algorithm A2.3, adjusted to suit Varkon parameterisation */
 
 ndu[0][0]=1.0;
 for (j=1; j<=p; j++)
   {
-  /* Knot values multipilcated (scaled) with f to suite 
+  /* Knot values multipilcated (scaled) with f to suit 
      the varkon, local (1-unit) parameterisation for this span */
   left[j]  =  u - U[i+1-j]*f; 
   right[j] =  U[i+j]*f - u;  

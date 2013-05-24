@@ -119,7 +119,7 @@
 /*                                                                  */
 /* kappa      0.00022932                                            */
 /*                                                                  */
-/* Surface curve (a segment of type UV_SEG):                        */
+/* Surface curve (a segment of type UV_CUB_SEG):                        */
 /*                                                                  */
 /* tlocal     0.20000000                                            */
 /* segadr     1.00000000                                            */
@@ -245,7 +245,7 @@ if ( dbglev(SURPAC) == 1 )
 
 
    if ( xyz.surpat == TRUE )
-      segtype =  UV_SEG;
+      segtype =  UV_CUB_SEG;
    else
       segtype = CUB_SEG;
 

@@ -16,6 +16,8 @@ varkon.font:                    fixed
 !*
 varkon.mbsedit.emulator:        xterm -title MBS-Edit -e
 varkon.mbsedit.editor:          vi
+!varkon.mbsedit.emulator:        kwrite
+!varkon.mbsedit.editor: 
 varkon.mbsedit.compiler:        mbsc
 varkon.mbsedit.autocompile:     True
 varkon.mbsedit.autoexec:        True

@@ -37,7 +37,7 @@
 #include "../../DB/include/DB.h"
 #include "../include/IG.h"
 #include "../../EX/include/EX.h"
-#include "../../GP/include/GP.h"
+#include "../../WP/include/WP.h"
 
 extern short posmod;
 
@@ -96,7 +96,7 @@ extern short posmod;
 ***Slut.
 */
 exit:
-    gphgal(0);
+    WPerhg();
     if ( status < 0 && status != REJECT  &&  status != GOMAIN ) errmes();
     return(status);
   }
@@ -123,12 +123,12 @@ exit:
 
   {
     DBetype  typ;
-    gmflt    t;
+    DBfloat    t;
     short    posorg,status;
     bool     end,right;
     DBId     id[1][MXINIV];
     DBVector p1,p2;
-    GMCUR    cur;
+    DBCurve    cur;
 
 /*
 ***Hämta id för storheten som skall flyttas.
@@ -162,7 +162,7 @@ start:
       break;
       }
 
-    EXon((DBId *)id,t,(gmflt)0.0,&p1);
+    EXon((DBId *)id,t,(DBfloat)0.0,&p1);
 /*
 ***Den nya positionen.
 */
@@ -182,7 +182,7 @@ start:
 ***Slut.
 */
 exit:
-    gphgal(0);
+    WPerhg();
     if ( status < 0 && status != REJECT  &&  status != GOMAIN ) errmes();
     return(status);
   }
@@ -208,7 +208,7 @@ exit:
   {
     DBetype  typv[IGMAXID];
     short    idant,status,antal;
-    v2int    lantal;
+    DBint    lantal;
     char     istr[V3STRLEN+1];
     bool     orgniv;
     DBId     idmat[IGMAXID][MXINIV];
@@ -256,7 +256,7 @@ static char dstr[V3STRLEN+1] = "1";
 ***Slut.
 */
 exit:
-    gphgal(0);
+    WPerhg();
     if ( status < 0 && status != REJECT  &&  status != GOMAIN ) errmes();
     return(status);
   }
@@ -323,7 +323,7 @@ exit:
 ***Slut.
 */
 exit:
-    gphgal(0);
+    WPerhg();
     if ( status < 0 && status != REJECT  &&  status != GOMAIN ) errmes();
     return(status);
   }
@@ -387,7 +387,7 @@ static char dstr[V3STRLEN+1] = "0.0";
 ***Slut.
 */
 exit:
-    gphgal(0);
+    WPerhg();
     if ( status < 0 && status != REJECT  &&  status != GOMAIN ) errmes();
     return(status);
   }

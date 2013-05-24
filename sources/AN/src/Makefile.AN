@@ -6,6 +6,7 @@
 #   Platform independent rules for the MBS compiler, mbsc.
 #
 #  (C)Microform AB 1999-05-03 J.Kjellander
+#  2006-09-21 Changed, now not dependet on VARKON_ROOT
 #
 ##########################################################
 
@@ -44,12 +45,13 @@ OBJS = ../lib/mbsclib.a(anascan.o)    \
        ../lib/mbsclib.a(stacc.o)      \
        ../lib/mbsclib.a(stac10.o)     \
        ../lib/mbsclib.a(ig29.o)       \
-       ../lib/mbsclib.a(ig36.o)
+       ../lib/mbsclib.a(igmalloc.o)
 
 # The actual executable, mbsc. VARKON_ROOT should be set
 # in the users loginfile or elswhere as preferred.
 
-MBSC = $(VARKON_ROOT)/bin/mbsc
+#MBSC = $(VARKON_ROOT)/bin/mbsc
+MBSC = ../../../bin/mbsc
 
 # Targets
 
@@ -199,9 +201,9 @@ test:
 	ar r ../lib/mbsclib.a ig29.o
 	$(RM) ig29.o
 
-../lib/mbsclib.a(ig36.o): ../../IG/src/ig36.c $(INCFILES)
-	$(COMPILE) ../../IG/src/ig36.c
-	ar r ../lib/mbsclib.a ig36.o
-	$(RM) ig36.o
+../lib/mbsclib.a(igmalloc.o): ../../IG/src/igmalloc.c $(INCFILES)
+	$(COMPILE) ../../IG/src/igmalloc.c
+	ar r ../lib/mbsclib.a igmalloc.o
+	$(RM) igmalloc.o
 
 ##########################################################

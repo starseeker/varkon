@@ -37,8 +37,6 @@
 #include "../../IG/include/IG.h"
 #include "../../EX/include/EX.h"
 
-extern GMDATA   v3dbuf;
-
 extern short    proc_pc; /* inproc.c parcount Number of actual parameters */
 extern PMPARVA *proc_pv;  /* inproc.c *pv      Access structure for MBS routines */
 
@@ -139,7 +137,7 @@ extern PMPARVA *proc_pv;  /* inproc.c *pv      Access structure for MBS routines
 
 {
    short   status;
-   gmint   nint;
+   DBint   nint;
    DBVector   uv[25],xyz[25];
    PMLITVA litval;
 
@@ -326,7 +324,7 @@ extern PMPARVA *proc_pv;  /* inproc.c *pv      Access structure for MBS routines
 
 {
    short   status;
-   gmint   nint;
+   DBint   nint;
    DBVector   uv[25],xyz[25];
    PMLITVA litval;
 

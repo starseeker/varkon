@@ -22,8 +22,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-2001, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 /*
@@ -58,7 +56,7 @@ static FUATTR futab[] =
  {igramo, FALSE, BAS_MOD},                   /* f5   Kör aktiv modul */
 
  {trimpm, FALSE, RIT_MOD+BAS2_MOD},          /* f6   Trimma storhet */
- {igcptp, FALSE, RIT_MOD+BAS_MOD},           /* f7   Ändra part, VT100 */
+ {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f7   Ändra part, VT100 */
  {igrnmo, FALSE, RIT_MOD+BAS_MOD},           /* f8   Kör namngiven modul */
  {cs1ppm, FALSE, RIT_MOD+BAS2_MOD},          /* f9   Koordinatsystem 1 pos */
  {igdlen, FALSE, RIT_MOD+BAS_MOD},           /* f10  Ta bort storhet */
@@ -159,33 +157,33 @@ static FUATTR futab[] =
  {igctsl, FALSE, RIT_MOD+BAS_MOD},           /* f89  Ändra textlutning */
  {igslvl, FALSE, RIT_MOD+BAS_MOD},           /* f90  Byt aktiv nivå */
 
- {olview,  TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* f91  Föregående vy */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* Fd. f91 Föregående vy */
  {igcdxf, FALSE, RIT_MOD+BAS_MOD},           /* f92  Skriv ut DXF-fil */
- {namniv, FALSE, RIT_MOD+BAS_MOD},           /* f93  Namnge nivå */
- {lstniv, FALSE, RIT_MOD+BAS_MOD},           /* f94  Lista nivåer */
- {delniv, FALSE, RIT_MOD+BAS_MOD},           /* f95  Ta bort nivånamn */
+ {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f93  Namnge nivå */
+ {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f94  Lista nivåer */
+ {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f95  Ta bort nivånamn */
 
  {igspen, FALSE, RIT_MOD+BAS_MOD},           /* f96  Byt aktivt pennummer */
- {igascl,  TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* f97  Auto-ZOOM */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* f97  Fd. Auto-ZOOM */
  {igcnog,  TRUE, RIT_MOD+BAS_MOD},           /* f98  Kurvnoggrannhet */
  {igcrvc, FALSE, BAS3_MOD},                  /* f99  Skapa vy med ksys */
- {igzoom,  TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* f100 ZOOM */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* Fd. f100 ZOOM */
 
- { scale,  TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* f101 Skala */
- {scroll,  TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* f102 Centrum */
- {repagm,  TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* f103 Generera bild */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* Fd. f101 Skala */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* Fd. f102 Centrum */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* Fd. f103 Generera bild */
  {cs3ppm, FALSE, BAS3_MOD},                  /* f104 Koordinatsystem */
  {cs3ppm, FALSE, RIT_MOD+BAS2_MOD},          /* f105 Koordinatsystem */
 
  {modlpm, FALSE, RIT_MOD+BAS_MOD},           /* f106 Aktivera lokalt ksys */
  {modgpm, FALSE, RIT_MOD+BAS_MOD},           /* f107 Aktivera globala */
- {igcrsk,  TRUE, RIT_MOD+BAS_MOD},           /* f108 Ritningsskala */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f108 Ritningsskala */
  {iguppt, FALSE, RIT_MOD+BAS_MOD},           /* f109 Updatera part */
- {chview,  TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* f110 Byt vy */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* Fd. f110 Byt vy */
 
  {igcrvp,  TRUE, RIT_MOD+BAS_MOD},           /* f111 Skapa vy */
  {dlview,  TRUE, RIT_MOD+BAS_MOD},           /* f112 Ta bort vy */
- {liview,  TRUE, RIT_MOD+BAS_MOD},           /* f113 Lista vyer */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f113 Lista vyer */
  {igtndr,  TRUE, RIT_MOD+BAS_MOD},           /* f114 Tänd raster */
  {igslkr,  TRUE, RIT_MOD+BAS_MOD},           /* f115 Släck raster */
 
@@ -208,14 +206,14 @@ static FUATTR futab[] =
  {igcda0, FALSE, RIT_MOD+BAS2_MOD},          /* f130 Ändra mått auto av */
 
  {igcda1, FALSE, BAS2_MOD},                  /* f131 Ändra mått auto på */
- {igcvyd, FALSE, BAS3_MOD+NO_X11_MOD},       /* f132 Perspektiv */
+ {notimpl,FALSE, BAS3_MOD+NO_X11_MOD},       /* Fd. f132 Perspektiv */
  {ighid1,  TRUE, BAS3_MOD},                  /* f133 Dolda konturer skärm */
  {ighid2,  TRUE, BAS3_MOD},                  /* f134 Dolda konturer fil */
  {ighid3,  TRUE, BAS3_MOD},                  /* f135 Dolda konturer båda */
 
- {igcdig, FALSE, RIT_MOD+BAS2_MOD},          /* f136 Kalibrera digitizer */
- {igslv1, FALSE, RIT_MOD+BAS_MOD},           /* f137 Status */
- {igslv2, FALSE, RIT_MOD+BAS_MOD},           /* f138 Ej status */
+ {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f136 Kalibrera digitizer */
+ {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f137 Status */
+ {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f138 Ej status */
  {iganpm, FALSE, RIT_MOD+BAS_MOD},           /* f139 Analysera PM */
  {igangm, FALSE, RIT_MOD+BAS_MOD},           /* f140 Analysera GM */
 
@@ -226,9 +224,9 @@ static FUATTR futab[] =
  {symbpm, FALSE, RIT_MOD+BAS2_MOD},          /* f145 Läs in plotfil */
 
  {lstmod, FALSE, BAS_MOD},                   /* f146 Lista modul till skärm */
- {igmlv1,  TRUE, RIT_MOD+BAS_MOD},           /* f147 Hela menyer */
- {igmlv2,  TRUE, RIT_MOD+BAS_MOD},           /* f148 Bara rubriker */
- {igmlv3,  TRUE, RIT_MOD+BAS_MOD},           /* f149 Inga menyer */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f147 Hela menyer */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f148 Bara rubriker */
+ {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f149 Inga menyer */
  {igplot,  TRUE, RIT_MOD+BAS_MOD},           /* f150 Plotta */
 
  {igcgkm,  TRUE, RIT_MOD+BAS_MOD},           /* f151 Skapa plotfil */
@@ -287,7 +285,7 @@ static FUATTR futab[] =
 #ifdef WIN32
  {msneww, TRUE,  RIT_MOD+BAS_MOD},           /* f196 WIN32-Skapa nytt fönster */
 #else
- {wpneww, TRUE,  RIT_MOD+BAS_MOD+X11_MOD},   /* f196 X-Skapa nytt fönster */
+ {WPneww, TRUE,  RIT_MOD+BAS_MOD+X11_MOD},   /* f196 X-Skapa nytt fönster */
 #endif
  {wpunik, FALSE, NONE_MOD},                  /* f197 X-Nivåer */
  {igshd0, TRUE,  BAS3_MOD},                  /* f198 Flat shading */
@@ -332,11 +330,11 @@ static FUATTR futab[] =
 
 #else
 
-{ wpamod, FALSE, BAS_MOD+X11_MOD},           /* f216 MBS:a aktiv modul X11 */
-{ wpomod, FALSE, BAS_MOD+X11_MOD},           /* f217 MBS:a annan modul X11 */
+{ WPamod, FALSE, BAS_MOD+X11_MOD},           /* f216 MBS:a aktiv modul X11 */
+{ WPomod, FALSE, BAS_MOD+X11_MOD},           /* f217 MBS:a annan modul X11 */
  { igcff, FALSE, RIT_MOD+BAS_MOD},           /* f218 Edit entity font = 3 */
 {notimpl, FALSE, NONE_MOD},                  /* f219  */
-{ wpcoal, FALSE, BAS_MOD+X11_MOD},           /* f220 Kompilera alla X11 */
+{ WPcoal, FALSE, BAS_MOD+X11_MOD},           /* f220 Kompilera alla X11 */
 
 {notimpl, FALSE, NONE_MOD},                  /* f221  */
 {notimpl, FALSE, NONE_MOD},                  /* f222  */

@@ -294,6 +294,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
  *      7/03/94  Plan kurva, G. Liden       
  *      17/3/95  Plan kurva, J. Kjellander
  *      1999-04-27 Rewritten, J.Kjellander
+ *      2006-11-08 Transform NURBS, Sören Larsson
  *
  ******************************************************!*/
 
@@ -301,7 +302,11 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
     DBTmat invmat;
     char   errbuf[81];
     int    i;
-
+    DBptr      cpts_la,knots_la;
+    DBVector   ocpt,ncpt;
+    DBfloat    w;  
+    DBint      ncpts,nknots; 
+   
 /*
 ***Transform curve plane. 
 */
@@ -310,21 +315,53 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
       GEtform_inv(pt,&invmat);
       GEtform_mult(&ocur->csy_cu,&invmat,&ncur->csy_cu);
       }
-/*
-***Transform geometrical segments.
-*/
     if ( osge != NULL )
       {
-      for ( i=0; i<ocur->ns_cu; ++i )
-        {
-        if ( osge[i].typ != CUB_SEG )
+      if ( osge[0].typ == NURB_SEG  )
+        { 
+        nknots=osge->nknots;
+        ncpts=nknots-osge->nurbs_degree-1;
+        for ( i=0; i<ncpts; ++i )
           {
-          sprintf(errbuf,"%d",i+1);
-          return(erpush("GE6282",errbuf));
+          w=osge->cpts_c[i].w_gm;
+          ocpt.x_gm=osge->cpts_c[i].x_gm/w;
+          ocpt.y_gm=osge->cpts_c[i].y_gm/w;
+          ocpt.z_gm=osge->cpts_c[i].z_gm/w;
+          GEtfpos_to_local(&ocpt,pt,&ncpt);
+          nsge->cpts_c[i].x_gm=ncpt.x_gm*w;
+          nsge->cpts_c[i].y_gm=ncpt.y_gm*w;
+          nsge->cpts_c[i].z_gm=ncpt.z_gm*w;         
           }
-        else GEtfseg_to_local(&osge[i],pt,&nsge[i]);
+/*
+***Store transformed controlpoints and knotvector in DB.
+*/
+        DBwrite_nurbs(nsge->cpts_c,ncpts,nsge->knots_c,nknots,&cpts_la,&knots_la);
+        /*if ( status < 0 ) return(erpush("GExxx2",""));   TODO */
+/*
+***Update DBSeg's. only logical adresses to cpts and knots
+***need update here.
+*/
+        for ( i=0; i<ocur->ns_cu; ++i )
+          {
+          (nsge+i)->cpts_db      = cpts_la;
+          (nsge+i)->knots_db     = knots_la;
+          }         
         }
-      }
+
+      else /* not NURB_SEG */
+        {
+        for ( i=0; i<ocur->ns_cu; ++i )
+          {
+          if ( osge[i].typ == CUB_SEG )
+            GEtfseg_to_local(&osge[i],pt,&nsge[i]);
+          else
+            {
+            sprintf(errbuf,"%d",i+1);
+            return(erpush("GE6282",errbuf)); /* this segment is an UV_CUB_SEG */
+            }
+          }
+        }
+      }    
 /*
 ***Transform graphical segments if they are different
 ***from the geometric segments.
@@ -777,3 +814,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
   }
 
 /********************************************************/
+
+
+
+

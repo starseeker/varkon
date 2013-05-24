@@ -27,6 +27,7 @@
 #include "../../DB/include/DB.h"
 #include "../include/GE.h"
 
+
 /********************************************************************/
 /*!                                                                 */
 /*  Function: varkon_sur_scur_gra                  File: sur960.c   */
@@ -55,7 +56,7 @@
 /*  1995-03-02   Initialize pp_graseg= NULL and                     */
 /*               check surface (temporary fix surface               */
 /*               should be checked more instead)                    */
-/*  1995-03-08   Check of p_seg->spek_gm for UV_SEG                 */
+/*  1995-03-08   Check of p_seg->spek_gm for UV_CUB_SEG                 */
 /*  1995-05-16   Comments added                                     */
 /*  1995-11-03   Debug    added                                     */
 /*  1996-02-23   Bug when first segment is missing                  */
@@ -236,7 +237,7 @@ fflush(dbgfil(SURPAC));
    idpoint   = varkon_idpoint();
    idangle   = varkon_idangle();
 
-     a_case   =      5;
+     a_case   =      5;  
      c_type   =      2;
      n_req    =     15;  /* Number of check points for d_che< 0 */
      t_incur  =      3;
@@ -375,7 +376,7 @@ if ( dbglev(SURPAC) == 1 )
 if ( dbglev(SURPAC) == 1 )
   {
   fprintf(dbgfil(SURPAC),
-  "sur960 Error (p_seg+ir)->spek_gm= %d ( 0   for UV_SEG) \n",
+  "sur960 Error (p_seg+ir)->spek_gm= %d ( 0   for UV_CUB_SEG) \n",
     (int)(p_seg+ir)->spek_gm);     
    fflush(dbgfil(SURPAC)); 
    }
@@ -695,3 +696,11 @@ fflush(dbgfil(SURPAC));
 } /* End of function                                                */
 
 /********************************************************************/
+
+
+
+
+
+
+
+

@@ -5,7 +5,7 @@
                   (C)Örebro University 2004-09-30
                   ===============================
 
-      Installation guide for binary version of VARKON 1.18A 
+      Installation guide for binary version of VARKON n.nnX 
       for GNU/Linux. 
 
       Contents:
@@ -26,7 +26,7 @@
       -------------------------------------
 
       First step is to decide where (in what directory) to place
-      the VARKON-system. A usual place is /usr or /user or /u but
+      the VARKON-system. A usual place is /home/username or /usr but
       any place in a filesystem will do. Make sure you have the 
       proper priveliges ! If you have an earlier version of VARKON
       installed you can use the same directory but we recommend that
@@ -40,13 +40,13 @@
             tar xf varkon.tar
 
       All files on the distribution will be placed in a subdirectory
-      named varkon_1.18X where X is a different letter  depending
+      named varkon_n.nnX where n are numbers and X is a letter depending
       on what revision of VARKON you are installing. This directory
       becomes the root-directory of your installation and is called
-      VARKON_ROOT. If you install varkon 1.18A in /usr VARKON_ROOT
-      is:
+      VARKON_ROOT. If you install varkon 1.18A in /home/username,
+      VARKON_ROOT       is:
 
-                 /usr/varkon_1.18A
+                 /home/username/varkon_1.18A
 
       The idea with this installation procedure is to make it
       possible to install a new version of VARKON at any time 
@@ -57,7 +57,7 @@
       If you want to remove a VARKON-installation the only thing
       you need to do is to remove its root-directory.
 
-      NOTE!!! Varkon version 1.18A is not fully compatible with
+      NOTE!!! Varkon versions 1.18A and later are not fully compatible with
               previous versions of Varkon. You cannot use MBO-
               or RES-files from 1.17D or earlier. MBS files are
               compatible.
@@ -91,11 +91,12 @@
       The first thing to check is the line defining VARKON's root-
       directory VARKON_ROOT.
 
-      VARKON_ROOT=/usr/varkon_1.18X
+      VARKON_ROOT=/usr/varkon_n.nnX
 
-      Where X is a letter depending on the current revision.
-      If this is not the place where you installed the system
-      you must modify this line to point to the right location.
+      By default the start script set this directory by finding
+      the relative path from the start script, so it should work 
+      without changes. But if you move the startscript, you may want
+      to set VARKON_ROOT explicitly.
 
       Having done this it is time to start the system for the first
       time.  Save the file and exit from the editor. Write..
@@ -126,7 +127,7 @@
       for more info on these directories.
 
       Version 1.18 of VARKON is dynamically linked to the
-      following Linux libray modules:
+      following Linux libary modules:
 
       libX11.so.6
       libXext.so.6

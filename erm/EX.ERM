@@ -116,7 +116,7 @@ VARKON Error messages for EXEPAC
 407  2  Requested curve branch number is <= 0
 408  2  SUR_EXDEF, U,V-directions can not be swapped for %s surface
 409  2  SUR_EXDEF, Extrapolation not allowed for %s surface
-410  2  SUR_EXDEF, Surface type %s can mot be trimmed
+410  2  SUR_EXDEF, Surface type %s can not be trimmed
 411  2  SUR_EXDEF, Failed to trim surface of type = %s
 412  2  GET----, Patch nr:%s does not exist
 413  2  GETCUBP, Patch nr:%s is not bicubic
@@ -129,6 +129,15 @@ VARKON Error messages for EXEPAC
 420  2  ALL_INT_LIN_MSUR, Can't calculate intersect
 421  2  Can't store NURBS curve in DB
 422  2  Can't malloc for NURBS data
+423  2  CUR_COMP/CUR_COMPARR, mixing UV and R3/R2 entities are not allowed for a NURBS composite curve
+424  2  CUR_COMP/CUR_COMPARR, UV curves must belong to the same surface for a NURBS composite curve
+425  2  CUR_COMP/CUR_COMPARR, curve may not have mixed segement types (UV / non UV) for a NURBS composite curve
+426  2  CUR_COMP/CUR_COMPARR, all offsets must be equal for a NURBS composite curve
+427  2  CUR_COMPARR, entities to be converted to UV must have offset=0
+428  2  CUR_COMP/CUR_COMPARR, unclamped NURBS curves are not allowed in a composite curve
+429  2  CUR_COMPARR, cant read surface from DB
+430  2  CUR_COMPARR, %s is outside the UV-bounds of the surface
+431  2  CUR_COMPARR, %s is not a 2D curve (z < > 0)
 
 600  2  TCP/IP - %s
 601  2  Robot Application Protocol (RAP) is not included in this build of Varkon

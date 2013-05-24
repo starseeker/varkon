@@ -56,7 +56,7 @@ V3MDAT  sydata =
            { 1000,       /* Serial number, microform = 1000 */
              1,          /* Version number*/
              18,         /* Revision */
-            'A',         /* 2004-07-11 */
+            'B',         /* 2005-08-09 */
              0,0,0,0,0,  /* Dummy times */
              0,0,0,0,0,
              " ",        /* Sysname */
@@ -139,24 +139,28 @@ char    actpnm[JNLGTH+1];
 bool    intrup = FALSE;
 
 /*
-***Current table of graphical views.
+***The global viewtable. This table holds views
+***that are not bound to any particular graphic
+***window but can be loaded into a window.
 */
 VY      vytab[GPMAXV];
+VY      actvy;
+DBTmat  actvym;
 
 /*
-***Current level tables.
+***This is the current pen (color).
 */
-tbool   nivtb1[NT1SIZ];   /* TRUE = Not visible */
-NIVNAM  nivtb2[NT2SIZ];   /* Level name "" = Not defined */
+short   actpen = -1;
+
 
 /*
 ***Current raster (grid).
 */
-gmflt   rstrox;     /* Origin X */
-gmflt   rstroy;     /* Origin Y */
-gmflt   rstrdx;     /* Spacing in X */
-gmflt   rstrdy;     /* Spacing in Y */
-bool    rstron;     /* TRUE = Visible and active */
+DBfloat   rstrox;     /* Origin X */
+DBfloat   rstroy;     /* Origin Y */
+DBfloat   rstrdx;     /* Spacing in X */
+DBfloat   rstrdy;     /* Spacing in Y */
+bool      rstron;     /* TRUE = Visible and active */
 
 /*
 ***C:s iobuffer for stdout.
@@ -184,13 +188,6 @@ bool    igxflg,iggflg,igbflg;
 short   igmtyp,igmatt;
 
 /*
-***Static buffer for temporary data. Not used very much
-***nowdays. Users of this buffer should be changed to use
-***dynamic allocation.
-*/
-GMDATA  v3dbuf;
-
-/*
 ***Internal routines.
 */
 static short igppar(int argc, char *argv[]);
@@ -215,7 +212,7 @@ extern short igtrty;   /* Defined in ig1.c */
 /*!******************************************************/
 
 #ifdef UNIX
-        main(ac,av)
+        int main(ac,av)
         int   ac;     /* arg. count */
         char *av[];   /* argument vector */
 #endif
@@ -298,10 +295,9 @@ extern short igtrty;   /* Defined in ig1.c */
     igppar(ac,av);
 #endif
 /*
-***Initiera signaler, terminalport, felhanteringssystem.
+***Initiera signaler och felhanteringssystem.
 */
     igsini();
-    igintt();
     erinit();
 /*
 ***Redan nu kan vi initiera Microsoft Windows eftersom
@@ -337,7 +333,6 @@ extern short igtrty;   /* Defined in ig1.c */
       msmbox("VARKON Startup error",errbuf,0);
       v3exit();
 #else
-      igextt();
       dbgexi();
       printf("v3:Can't load menufile %s\n",mdffil);
       exit(V3EXOK);
@@ -348,7 +343,7 @@ extern short igtrty;   /* Defined in ig1.c */
 ***initiera X-Windows om så är fallet.
 */
 #ifdef V3_X11
-   if ( igtrty == X11  &&  wpinit(inifil_1,inifil_2) < 0 )
+   if ( igtrty == X11  &&  WPinit(inifil_1,inifil_2) < 0 )
      {
      igtrty = VT100;
      status = EREXIT;
@@ -550,7 +545,7 @@ end:
 ***tas om hand här på vanligt sätt.
 */
 #ifdef V3_X11
-   wpmrdb(&argc,argv);
+   WPmrdb(&argc,argv);
 #endif
 
 /*

@@ -590,6 +590,10 @@ SOURCE=..\..\sources\Ge\src\gemktf.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\sources\GE\src\gepinc.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\sources\Ge\src\gesort.c
 # End Source File
 # Begin Source File
@@ -2212,6 +2216,10 @@ SOURCE=..\..\sources\PM\src\evos.c
 # Begin Source File
 
 SOURCE=..\..\sources\PM\src\evpart.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\sources\PM\src\evpinc.c
 # End Source File
 # Begin Source File
 

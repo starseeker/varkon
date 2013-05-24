@@ -63,7 +63,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    short  nref = 0; /* Number of referenses */ 
    short  i;        /* loop variable */
    short  status;
-   gmflt  area;
+   DBfloat  area;
    DBVector  tp;
    V2REFVA refarr[GMMXXH + 1]; /* reference array */
 
@@ -108,7 +108,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 {
    short  status;
-   gmflt  area;
+   DBfloat  area;
 
 /*
 ***Execute.
@@ -144,7 +144,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 {
    short  status;
-   gmflt  area;
+   DBfloat  area;
 
 /*
 ***Execute.
@@ -220,7 +220,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    short  nref = 0; /* Number of referenses */ 
    short  i;        /* loop variable */
    short  status;
-   gmflt  area;
+   DBfloat  area;
    DBVector  tp;
    V2REFVA refarr[GMMXXH + 1]; /* reference array */
 

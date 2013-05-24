@@ -24,8 +24,14 @@
 /*                                                                  */
 /********************************************************************/
 
+#define DEBUG
+
 #include "../../DB/include/DB.h"
 #include "../include/GE.h"
+
+#ifdef DEBUG
+#include "../../IG/include/debug.h"
+#endif
 
 /********************************************************************/
 /*!                                                                 */
@@ -2051,7 +2057,7 @@ fprintf(dbgfil(SURPAC),
 /* cannot be transformed (surface must be transformed for this case)*/
 /*                                                                 !*/
 
-      if  ( (p_seg+i_seg-1)->typ == UV_SEG )
+      if  ( (p_seg+i_seg-1)->typ == UV_CUB_SEG )
          {
          sprintf(errbuf,"sur850%% ");
          varkon_erinit();
@@ -2554,7 +2560,15 @@ status=GE109 ((DBAny *)p_cur, p_seg, &xyz_c );
 
 
 
-  if ( dot_spine >  0.0 )
+ /*
+ ***A straight line segment rotated around an axis to which
+ ***it is perpendicular will give a value of dotspine close to zero.
+ ***The following original check produced random results in this case.
+ *** if ( dot_spine >  0.0 ) ***
+ ***To remove the random behaviour it was changed 30/1 2006 JK 
+ */
+
+  if ( ABS(dot_spine) > varkon_idangle() )
     {
     points[0].x_gm = p_p1->x_gm;
     points[0].y_gm = p_p1->y_gm;

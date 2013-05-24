@@ -27,8 +27,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, J. Kjellander johan@microform.se     */
-/*                                                                  */
 /********************************************************************/
 /* Names on structures and elements are constructed from the          */
 /* following abbreviations.                                           */
@@ -46,17 +44,15 @@
 /*              ST = STATEMENT                                        */
 /*              TY = TYPE                                             */
 
-typedef char *string;   /* character pointer for names and string references */
-                        /* the string ends with the NULL-character.          */
+#define MIN_BLKS (long)8 /* Minimum number of bytes to allocate for data in   */
+                         /* PM in order to assure alignment of all datatypes  */
 
-/* flyttat till common.h typedef DBint pm_ptr;    pointer type to PM structures, intern form nodes  */
-                        /* and symbol table.                                 */ 
-                        /* The definition of pm_ptr can be redefined under   */
-                        /* the implementation face.                          */
+typedef char *string;    /* character pointer for names and string references */
+                         /* the string ends with the NULL-character.          */
 
-typedef DBseqnum pmseqn; /*PM sequence number in PM                      */
+typedef DBseqnum pmseqn; /*PM sequence number in PM                           */
 
-typedef short pmroutn;  /* Type for MBS routine identifier                   */
+typedef short pmroutn;   /* Type for MBS routine identifier                   */
 
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -340,6 +336,7 @@ short evcfan(void);
 short evcged(void);
 short evcapp(void);
 short evcugl(void);
+short evccmparr(void);
 
 /*
 ***evdim.c
@@ -586,6 +583,11 @@ short evpofr(void);
 short evpopr(void);
 
 /*
+***evpinc.c
+*/
+short evpinc(void);
+
+/*
 ***evrdb.c
 */
 short evdbop(void);
@@ -648,6 +650,7 @@ short evscyl(void);
 short evsswp(void);
 short evsrul(void);
 short evscur(void);
+short evstusr(void);
 
 /*
 ***evstr.c
@@ -701,6 +704,8 @@ short evtrmi(void);
 short evtrco(void);
 short evtrus(void);
 short evtcop(void);
+short evtmult(void);
+short evtinv(void);
 
 /*
 ***evui.c
@@ -995,7 +1000,6 @@ short  pmibuf(void);
 short  pmallo(DBint blsize, pm_ptr *retla);
 short  pmgeba(char *moname, pm_ptr *retla);
 short  pmclea(void);
-short  pmrset(void);
 char  *pmgadr(pm_ptr pmla);
 short  pmsbla(pm_ptr basla);
 pm_ptr pmgbla(void);

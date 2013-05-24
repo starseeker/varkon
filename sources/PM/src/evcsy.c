@@ -101,7 +101,7 @@ extern V2NAPA  *geop_np; /* ingeop.c *npblock Pekare till namnparameterblock.*/
  ******************************************************!*/
 
 {
-   gmflt v1,v2,v3;
+   DBfloat v1,v2,v3;
 
 /*
 ***Exekvera CSYS_1P.

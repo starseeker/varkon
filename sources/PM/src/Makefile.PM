@@ -97,15 +97,14 @@ OBJS = ../lib/PMlib.a(evact.o)     \
        ../lib/PMlib.a(anpar31.o)   \
        ../lib/PMlib.a(anpar51.o)   \
        ../lib/PMlib.a(anpar52.o)   \
-       ../lib/PMlib.a(anlog.o)
+       ../lib/PMlib.a(anlog.o)     \
+       ../lib/PMlib.a(evpinc.o)    
 
 # Targets
 
 distr : $(OBJS)
 
 debug : $(OBJS)
-
-kdebug : $(OBJS)
 
 clean:
 	$(RM) *.o ../lib/PMlib.a

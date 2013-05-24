@@ -41,7 +41,7 @@
       EVALC   *evlpek)
 
 /*    Evaluation of arcs and curves with global parameter
- *    as input.
+ *    as input. GE109() supports all curve representations.
  *
  *      In: gmpost  => Pointer to arc/curve
  *          segpek  => Pointer to segments
@@ -50,9 +50,9 @@
  *
  *      Out: *evlpek => Requested evaluated data
  *
- *
  *      (C)microform ab 1999-04-14 J. Kjellander
- *      (C)microform ab 1999-12-18 sur785->varkon_cur_segadr Liden
+ *      1999-12-18 sur785->varkon_cur_segadr Liden
+ *      2006-12-12 Optimizations for speed, J.Kjellander
  *
  *****************************************************************!*/
 
@@ -61,8 +61,6 @@
    short   status;
    char    errbuf[80];
    DBfloat t;
-   DBfloat t_local;
-   gmint   iseg;
 
 /*
 ***Arc or curve ?
@@ -74,12 +72,9 @@
 ***parametric value.
 */
      case CURTYP:
-     status = varkon_cur_segadr(evlpek->t_global,
-               gmpost->cur_un.ns_cu,&iseg,&t_local);
-     if ( status < 0 ) return(status);
-     evlpek->t_local = t_local;
-     evlpek->iseg    = iseg;
-     return(GE110(gmpost,segpek+iseg-1,evlpek));
+     if ( (status=varkon_cur_segadr(evlpek->t_global,gmpost->cur_un.ns_cu,
+                                   &evlpek->iseg,&evlpek->t_local)) < 0 ) return(status);
+     else return(GE110(gmpost,segpek+evlpek->iseg-1,evlpek));
 /*
 ***Same for 3D-Arc.
 */

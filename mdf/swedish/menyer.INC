@@ -1,7 +1,7 @@
 
 ! Varkons standardmenyer
-! Senast uppdaterade för version 1.18A
-! Johan Kjellander, Örebro universitet
+! Senast uppdaterade för version 1.18B
+! Sören Larsson, Örebro universitet
 !
 m2  = "HUVUDMENY-2D"
       "skapa",m13
@@ -75,8 +75,6 @@ m10 = "TCOPY"
       "spegling",f241
       "kopiering",f242;
 
-! Skapa för Basmodul-3D
-
 m11 = "SKAPA"
       "punkt",m20
       "linje",m40
@@ -101,8 +99,6 @@ m12 = "YTOR"
       "trimmad",f234
       "sammansatt",f236
       "importera",f237;
-
-! Skapa för Basmodul-2D och Ritmodul
 
 m13 = "SKAPA"
       "punkt",f20
@@ -246,7 +242,7 @@ m38 = "LISTA MODUL"
       "fil",f144;
 
 m39 = "PARTER"
-      "fast",f25
+      "lägg till",f25
       "temporär",f8
       "iges",p1624
       "dxf",m44
@@ -276,7 +272,7 @@ m42 = "LINJER"
       "strecklängd",f49;
 
 m43 = "PARTER"
-      "fast",f25
+      "lägg till",f25
       "temporär",f8
       "iges",p1624
       "dxf",m53
@@ -409,19 +405,6 @@ m66 = "GRAFIK"
       "plottning",m71
       "diverse",m72;
 
-! Meny-66 för teckenbaserade terminaler
-!m66 = "GRAFIK"
-!      "vyer",m67 
-!      "raster",m69 
-!      "plottning",m71
-!      "skala",f101
-!      "centrum",f102
-!      "generera",f103
-!      "föregående",f91
-!      "zoom",m74
-!      "auto-zoom",f97
-!      "diverse",m72;
-
 m67 = "VYER"
       "skapa vy",m70
       "ta bort vy",f112
@@ -431,11 +414,6 @@ m67 = "VYER"
       "dolda kont",m62;
 
 m68 = "SKÄRMLAYOUT"
-      "hela menyer",f147
-      "bara rubriker",f148
-      "inga menyer",f149
-      "status",f137
-      "ej status",f138
       "pos-menyn",m73;
 
 m69 = "RASTER"
@@ -458,17 +436,11 @@ m72 = "DIV"
       "kurv-noggr",f98
       "skärmlayout",m68 
       "allt pekbart",f215
-      "kalibrera dig",f136
       "ritningsskala",f108;
 
 m73 = "POS-MENYN"
       "på",f118
       "av",f117;
-
-m74 = "ZOOM"
-      "hårkors",f100
-      "pos./längd",M394
-      "nytt centrum",M395;
 
 m75 = "ANALYS"
       "formel",M393
@@ -482,9 +454,10 @@ m76 = "GEOMETRI"
       "position",M363
       "avstånd",M364
       "vinkel",M365
+      "kurvor",m91
+      "ytor",M1643
       "area",m86
-      "tyngdpunkt",M417
-      "kurvor",m91;
+      "tyngdpunkt",M417;
 
 m77 = "SYSTEMDATA"
       "gm-data",f140
@@ -705,8 +678,7 @@ m119 = "B_PLAN"
        "1:a hörnet",a1
        "2:a hörnet",a2
        "3:e hörnet",a3
-       "4:e hörnet",a4
-       "reversera",a5;
+       "4:e hörnet",a4;
 
 m120 = "KÄGELSNITT"
        "1 startpos",a1
@@ -729,6 +701,30 @@ m123 = "SKÄRNING"
        "yta",a1
        "plan",a2;
 
+m124 = "ISOPARAM"
+       "surface",a1
+       "type",a2
+       "iso-value",a3
+       "start",a4
+       "end",a5;
+
+m125 = "APPROX"
+       "curve",a1
+       "type",a2
+       "method",a3
+       "data" ,a4;
+
+m126 = "TRIM"
+       "curve",a1
+       "start",a2
+       "end" ,a3;
+
+m127 = "SILHOUETTE"
+       "surface",a1
+       "direction",a2
+       "type" ,a3
+       "branch" ,a4;       
+       
 m134= "GRUPP"
       "namn",a3
       "ta bort",a4
@@ -791,8 +787,6 @@ m151= "ROTATION"
       "1:a position",a4
       "2:a position",a5;
 
-!Ej klar      "reversera",a6;
-
 m152= "CYLINDER"
       "kurva",a1
       "avstånd",a2
@@ -803,11 +797,26 @@ m153= "SVEPYTA"
       "styrkurva",a2
       "reversera",a3;
 
-m154= "REGELYTA"
-      "1:a kurvan",a1
-      "2:a kurvan",a2
-      "reversera",a3;
+m154 = "RULED"
+       "1:st curve",a1
+       "2:nd curve",a2
+       "reverse",a3;
 
-!Ej klar      "båglängd",a4
-!Ej klar      "ursprunglig",a5;
-      
+m155 = "TRIM"
+       "surface",a1
+       "u start",a2
+       "u end"  ,a3
+       "v start",a4
+       "v end"  ,a5;
+
+m156 = "IMPORT"
+       "file name",a1
+       "file type",a2
+       "surface type",a3;
+
+m157 = "SUR_CONIC"
+       "1 start curve",a1
+       "2 start tangent",a2
+       "3 P-value",a3
+       "4 end curve",a4
+       "5 end tangent",a5;

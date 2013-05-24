@@ -230,7 +230,7 @@ fprintf(dbgfil(SURPAC),
     if ( p_seg->ofs != 0.0 )    p_xyz->offseg = TRUE;
     else                        p_xyz->offseg = FALSE;
 
-    if ( p_seg->typ == UV_SEG ) p_xyz->surpat = TRUE;
+    if ( p_seg->typ == UV_CUB_SEG ) p_xyz->surpat = TRUE;
     else                        p_xyz->surpat = FALSE;
 
     if ( p_seg->c0 == 1.0  &&  

@@ -52,22 +52,22 @@
 
 /*! Geometrical patch types, DBPatch.styp_pat                      !*/
 
-#define NUL_PAT   0     /* No patch                                 */
-#define CUB_PAT   1     /* Geometrical cubic patch, GMPATC          */
-#define RAT_PAT   2     /* Geometrical rational patch, GMPATR       */
-#define LFT_PAT   3     /* Geometrical conic lofting  patch, GMPATL */
-#define FAC_PAT   4     /* Geometrical facet patch, GMPATF          */
-#define TOP_PAT   5     /* Topological patch, DBPatch               */
-#define PRO_PAT   6     /* Geometrical procedure type patch, GMPATP */
-#define COO_PAT   7     /* Geometrical Coon's patch, GMPATB         */
-#define CON_PAT   8     /* Geometrical Consurf patch, GMPATN        */
-#define P3_PAT    9     /* Geometrical Polynomial patch, GMPATP3    */
-#define P5_PAT   10     /* Geometrical Polynomial patch, GMPATP5    */
-#define P7_PAT   11     /* Geometrical Polynomial patch, GMPATP7    */
-#define P9_PAT   12     /* Geometrical Polynomial patch, GMPATP9    */
-#define P21_PAT  13     /* Geometrical Polynomial patch, GMPATP21   */
-#define NURB_PAT 14     /* Geometrical NURBS-patch(surface),GMPATNU */
-#define BR3_PAT  15     /* Geometrical Bezier     patch, GMPATBR3   */
+#define NUL_PAT   0   /* No patch                                   */
+#define CUB_PAT   1   /* Geometrical cubic patch, DBPatch_C         */
+#define RAT_PAT   2   /* Geometrical rational patch, DBPatchR       */
+#define LFT_PAT   3   /* Geometrical conic lofting  patch, DBPatchL */
+#define FAC_PAT   4   /* Geometrical facet patch, DBPatchF          */
+#define TOP_PAT   5   /* Topological patch, DBPatch                 */
+#define PRO_PAT   6   /* Geometrical procedure type patch, DBPatchP */
+#define COO_PAT   7   /* Geometrical Coon's patch, DBPatchB         */
+#define CON_PAT   8   /* Geometrical Consurf patch, DBPatchN        */
+#define P3_PAT    9   /* Geometrical Polynomial patch, DBPatchP3    */
+#define P5_PAT   10   /* Geometrical Polynomial patch, DBPatchP5    */
+#define P7_PAT   11   /* Geometrical Polynomial patch, DBPatchP7    */
+#define P9_PAT   12   /* Geometrical Polynomial patch, DBPatchP9    */
+#define P21_PAT  13   /* Geometrical Polynomial patch, DBPatchP21   */
+#define NURB_PAT 14   /* Geometrical NURBS-patch(surface),DBPatchNU */
+#define BR3_PAT  15   /* Geometrical Bezier     patch, DBPatchBR3   */
 
 /*!*********************** BBOX ***********************************!*/
 /*!                                                                !*/
@@ -127,28 +127,38 @@ short flag;         /*! Eq.   1: Normals are calculated            !*/
 
 /*!*********************** DBSurf *********************************!*/
 
-typedef struct                 /* Yt-post */
+typedef struct                 /* GMPOSTV2 2007-01-01, J.Kjellander */
 {
 DBHeader hed_su;               /* Header                            */
 short    typ_su;               /* CUB_SUR/RAT_SUR/LFT_SUR, etc.     */
-short    fnt_su;               /* Font,används ej. Alltid = 0       */
-gmflt    lgt_su;               /* Strecklängd mittkurvor om font=0  */
-short    nu_su;                /* Antal DBPatch i U-riktningen      */
-short    nv_su;                /* Antal DBPatch i V-riktningen      */
-short    ngu_su;               /* Används ej                        */
-short    ngv_su;               /* Används ej                        */
-DBptr    ptab_su;              /* DB-pekare till patchtabell        */
-DBptr    pcsy_su;              /* Pekare till aktivt koordinatsys.  */
-short    ngseg_su[6];          /* Antal segment för font = 0        */
-DBptr    pgseg_su[6];          /* 6 DBSeg-arraypekare för font = 0  */
-int      uorder_su;            /* Order i U-led                     */
-int      vorder_su;            /* Order i V-led                     */
-int      nku_su;               /* Antal noder i U-led               */
-int      nkv_su;               /* Antal noder i V-led               */
-DBptr    pkvu_su;              /* Pekare till U-nodvektorn          */
-DBptr    pkvv_su;              /* Pekare till V-nodvektorn          */
-DBptr    pcpts_su;             /* Pekare till kontrollpunkter       */
-BBOX     box_su;               /* Bounding box för hela ytan        */
+short    fnt_su;               /* Font, always = 0                  */
+gmflt    lgt_su;               /* Dash length for midcurves         */
+short    nu_su;                /* Number of patches in U direction  */
+short    nv_su;                /* Number of patches in V direction  */
+short    ngu_su;               /* Not used                          */
+short    ngv_su;               /* Not used                          */
+DBptr    ptab_su;              /* DBptr to patch table              */
+DBptr    pcsy_su;              /* DBptr to active csys              */
+short    ngseg_su[6];          /* Not used                          */
+DBptr    pgseg_su[6];          /* Not used                          */
+int      uorder_su;            /* NURBS order in U direction        */
+int      vorder_su;            /* NURBS order in V direction        */
+int      nku_su;               /* Number of knots in U dir.         */
+int      nkv_su;               /* Number of knots in V dir.         */
+DBptr    pkvu_su;              /* DBptr to U knots                  */
+DBptr    pkvv_su;              /* DBptr to V knots                  */
+DBptr    pcpts_su;             /* DBPtr to control points           */
+BBOX     box_su;               /* Surface bounding box              */
+DBint    ntrim_su;             /* Number of trim curves 0=Untrimmed */
+DBptr    getrim_su;            /* DBPtr to geometrical trimcurves   */
+DBint    ngrwborder_su;        /* Number of graph. border curves    */
+DBptr    grwborder_su;         /* DBptr to graph. border curves     */
+DBint    ngrwiso_su;           /* Number of graph. iso mid curves   */
+DBptr    grwiso_su;            /* DBptr to graph. iso mid curves    */
+DBint    vertextype_su;        /* GL_MAP2_VERTEX_3 / GLMAP2_VERTEX_4*/
+DBptr    grstrim_su;           /* DBptr to graphical trim curves    */
+DBfloat  nustep_su;            /* Tesselation steps in U dir        */
+DBfloat  nvstep_su;            /* Tesselation steps in V dir        */
 } DBSurf;
 /*!*********************** DBSurf *********************************!*/
 
@@ -168,7 +178,7 @@ BBOX     box_su;               /* Bounding box för hela ytan        */
 /*! consist of a rectangular grid of topological patches of        !*/
 /*! type DBPatch. Each DBPatch patch has a pointer to a secondary  !*/
 /*! patch. The secondary patch is normally a geometric patch       !*/
-/*! type DBPatchC, GMPATR etc. but can also be another DBPatch if  !*/
+/*! type DBPatchC, DBPatchR etc. but can also be another DBPatch if  !*/
 /*! more than one DBPatch share the same geometric patch.          !*/
 /*! The pointer may also be zero in the case of a NULL-patch.      !*/
 /*!                                                                !*/
@@ -191,7 +201,7 @@ BBOX     box_su;               /* Bounding box för hela ytan        */
 /*!  !          !  !           !  !           !  !          !      !*/
 /*!  !  NULL-   !  ! Geometric !  ! Geometric !  ! Topolog. !      !*/
 /*!  !  patch   !  !  patch    !  !  patch    !  !  patch   !      !*/
-/*!  !          !  !  GMPATC   !  !  GMPATL   !  !  GMPAT   !      !*/
+/*!  !          !  !  DBPatch_C!  !  DBPatchL !  !  GMPAT   !      !*/
 /*!  !__________!  !___________!  !___________!  !__________!      !*/
 /*!                                                                !*/
 /*!                                                                !*/
@@ -230,7 +240,7 @@ BCONE  cone_pat;           /* Bounding cone for the (DBPatch) patch */
 } DBPatch;
 /*!*********************** DBPatch ********************************!*/
 
-/*!*********************** GMPATC *********************************!*/
+/*!*********************** DBPatch_C *********************************!*/
 /*!                                                                !*/
 /*! A non-rational cubic patch                                     !*/
 /*! --------------------------                                     !*/
@@ -264,10 +274,10 @@ gmflt a10z,a11z,a12z,a13z;
 gmflt a20z,a21z,a22z,a23z;
 gmflt a30z,a31z,a32z,a33z;
 gmflt ofs_pat;               /* Offset for the patch         */
-} GMPATC;
-/*!*********************** GMPATC *********************************!*/
+} DBPatchC;
+/*!*********************** DBPatch_C *********************************!*/
 
-/*!*********************** GMPATR *********************************!*/
+/*!*********************** DBPatchR *********************************!*/
 /*!                                                                !*/
 /*! A rational cubic patch                                         !*/
 /*! ----------------------                                         !*/
@@ -305,15 +315,15 @@ gmflt a10 ,a11 ,a12 ,a13 ;
 gmflt a20 ,a21 ,a22 ,a23 ;
 gmflt a30 ,a31 ,a32 ,a33 ;
 gmflt ofs_pat;               /* Offset for the patch         */
-} GMPATR;
-/*!*********************** GMPATR *********************************!*/
+} DBPatchR;
+/*!*********************** DBPatchR *********************************!*/
 
-/*!*********************** GMPATP3 ********************************!*/
+/*!*********************** DBPatchP3 ********************************!*/
 /*!                                                                !*/
 /*! A third degree polynomial patch                                !*/ 
 /*! -------------------------------                                !*/
 /*!                                                                !*/
-/*! This patch is exactly the same as GMPATC but members are       !*/
+/*! This patch is exactly the same as DBPatch_C but members are       !*/
 /*! named diferently in order to allow for patches of high         !*/
 /*! degree where more digits are needed for row- and column-       !*/
 /*! numbering.                                                     !*/
@@ -338,10 +348,10 @@ gmflt c0100z,c0101z,c0102z,c0103z;
 gmflt c0200z,c0201z,c0202z,c0203z;
 gmflt c0300z,c0301z,c0302z,c0303z;
 gmflt ofs_pat;
-} GMPATP3;
-/*!*********************** GMPATP3 ********************************!*/
+} DBPatchP3;
+/*!*********************** DBPatchP3 ********************************!*/
 
-/*!*********************** GMPATP5 ********************************!*/
+/*!*********************** DBPatchP5 ********************************!*/
 /*!                                                                !*/
 /*! A fifth degree polynomial patch                                !*/ 
 /*! -------------------------------                                !*/
@@ -373,10 +383,10 @@ gmflt c0300z,c0301z,c0302z,c0303z,c0304z,c0305z;
 gmflt c0400z,c0401z,c0402z,c0403z,c0404z,c0405z;
 gmflt c0500z,c0501z,c0502z,c0503z,c0504z,c0505z;
 gmflt ofs_pat;
-} GMPATP5;
-/*!*********************** GMPATP5 ********************************!*/
+} DBPatchP5;
+/*!*********************** DBPatchP5 ********************************!*/
 
-/*!*********************** GMPATP7 ********************************!*/
+/*!*********************** DBPatchP7 ********************************!*/
 /*!                                                                !*/
 /*! A seventh degree polynomial patch                              !*/ 
 /*! ---------------------------------                              !*/
@@ -414,10 +424,10 @@ gmflt c0500z,c0501z,c0502z,c0503z,c0504z,c0505z,c0506z,c0507z;
 gmflt c0600z,c0601z,c0602z,c0603z,c0604z,c0605z,c0606z,c0607z;
 gmflt c0700z,c0701z,c0702z,c0703z,c0704z,c0705z,c0706z,c0707z;
 gmflt ofs_pat;
-} GMPATP7;
-/*!*********************** GMPATP7 ********************************!*/
+} DBPatchP7;
+/*!*********************** DBPatchP7 ********************************!*/
 
-/*!*********************** GMPATP9 ********************************!*/
+/*!*********************** DBPatchP9 ********************************!*/
 /*!                                                                !*/
 /*! A ninth degree polynomial patch                                !*/ 
 /*! -------------------------------                                !*/
@@ -491,10 +501,10 @@ gmflt c0800z,c0801z,c0802z,c0803z,c0804z,c0805z,c0806z,c0807z,
 gmflt c0900z,c0901z,c0902z,c0903z,c0904z,c0905z,c0906z,c0907z,
       c0908z,c0909z;
 gmflt ofs_pat;
-} GMPATP9;
-/*!*********************** GMPATP9 ********************************!*/
+} DBPatchP9;
+/*!*********************** DBPatchP9 ********************************!*/
 
-/*!*********************** GMPATP21 *******************************!*/
+/*!*********************** DBPatchP21 *******************************!*/
 /*!                                                                !*/
 /*! A 21:st degree polynomial patch                                !*/ 
 /*! -------------------------------                                !*/
@@ -706,10 +716,10 @@ gmflt c2100z,c2101z,c2102z,c2103z,c2104z,c2105z,c2106z,c2107z,
       c2108z,c2109z,c2110z,c2111z,c2112z,c2113z,c2114z,c2115z,
       c2116z,c2117z,c2118z,c2119z,c2120z,c2121z;
 gmflt ofs_pat;
-} GMPATP21;
-/*!*********************** GMPATP21 *******************************!*/
+} DBPatchP21;
+/*!*********************** DBPatchP21 *******************************!*/
 
-/*!*********************** GMPATL *********************************!*/
+/*!*********************** DBPatchL *********************************!*/
 /*!                                                                !*/
 /*! A patch for a Conic Lofting Surface                            !*/
 /*! -----------------------------------                            !*/
@@ -791,10 +801,10 @@ short p_flag;                /* Patch flag:                         */
 DBLine vs;                   /* V start line                        */
 DBLine ve;                   /* V end   line                        */
 gmflt ofs_pat;               /* Offset for the patch                */
-} GMPATL;
-/*!*********************** GMPATL *********************************!*/
+} DBPatchL;
+/*!*********************** DBPatchL *********************************!*/
 
-/*!*********************** GMPATF ***********************************/
+/*!*********************** DBPatchF ***********************************/
 /*                                                                  */
 /* A plane facet patch                                              */
 /* -------------------                                              */
@@ -827,10 +837,10 @@ gmflt v4;                    /* V value for point 4                 */
 bool  triangles;             /* Eq.  TRUE: Two triangles (B_PLANE's)*/
 bool  defined;               /* Eq.  TRUE: Patch is defined         */
 DBptr p_att;                 /* Pointer to additional attributes    */
-} GMPATF;
-/*!*********************** GMPATF ***********************************/
+} DBPatchF;
+/*!*********************** DBPatchF ***********************************/
 
-/*!*********************** GMPATP *********************************!*/
+/*!*********************** DBPatchP *********************************!*/
 /*!                                                                !*/
 /*! A general procedural type of surface patch                     !*/
 /*! ------------------------------------------                     !*/
@@ -868,10 +878,10 @@ gmflt p_flt2;                /* Patch float 2                       */
 short p_flag1;               /* Patch flag 1                        */
 short p_flag2;               /* Patch flag 2                        */
 gmflt ofs_pat;               /* Offset            for the patch     */
-} GMPATP;
-/*!*********************** GMPATP *********************************!*/
+} DBPatchP;
+/*!*********************** DBPatchP *********************************!*/
 
-/*!*********************** GMPATB *********************************!*/
+/*!*********************** DBPatchB *********************************!*/
 /*!                                                                !*/
 /*! Coons patch with linear blending functions                     !*/
 /*! ------------------------------------------                     !*/
@@ -1147,10 +1157,10 @@ gmint  c_flag;               /* Case flag:                          */
                              /* Eq. 2: Multi-segment curves.        */
                              /*        Relative arclengt param.     */
 gmflt  ofs_pat;              /* Offset for the patch                */
-} GMPATB;
-/*!*********************** GMPATB *********************************!*/
+} DBPatchB;
+/*!*********************** DBPatchB *********************************!*/
 
-/*!*********************** GMPATN *********************************!*/
+/*!*********************** DBPatchN *********************************!*/
 /*!                                                                !*/
 /*! Consurf patch                                                  !*/
 /*! -------------                                                  !*/
@@ -1231,10 +1241,10 @@ gmflt  p3;                   /* Flag 3                              */
 DBVector  cl_p;                 /* Core Line Point                     */
 DBVector  cl_v;                 /* Core Line Vector                    */
 gmflt ofs_pat;               /* Offset for the patch                */
-} GMPATN;
-/*!*********************** GMPATN *********************************!*/
+} DBPatchN;
+/*!*********************** DBPatchN *********************************!*/
 
-/*!*********************** GMPATNU ********************************!*/
+/*!*********************** DBPatchNU ********************************!*/
 /*!                                                                !*/
 /*! NURBS patch (surface)                                          !*/
 /*! ---------------------                                          !*/
@@ -1254,10 +1264,10 @@ DBptr   pku;                  /* GM-pekare till U-knutvektor        */
 DBptr   pkv;                  /* GM-pekare till V-knutvektor        */
 DBptr   pcpts;                /* GM-pekare till kontrollpunkter     */
 gmflt ofs_pat;                /* Offset for the patch               */
-} GMPATNU;
-/*!*********************** GMPATNU ********************************!*/
+} DBPatchNU;
+/*!*********************** DBPatchNU ********************************!*/
 
-/************************* GMPATBR3 *********************************/
+/************************* DBPatchBR3 *********************************/
 /*!                                                                !*/
 /*! A rational Bezier cubic patch                                  !*/
 /*! -----------------------------                                  !*/
@@ -1305,10 +1315,10 @@ gmflt r10 ,r11 ,r12 ,r13 ;
 gmflt r20 ,r21 ,r22 ,r23 ;
 gmflt r30 ,r31 ,r32 ,r33 ;
 gmflt ofs_pat;               /* Offset for the patch         */
-} GMPATBR3;
-/************************* GMPATBR3 *********************************/
+} DBPatchBR3;
+/************************* DBPatchBR3 *********************************/
 
-/*!*********************** GMPATX ***********************************/
+/*!*********************** DBPatchX ***********************************/
 /*                                                                  */
 /* The union of all other patches                                   */
 /* ------------------------------                                   */
@@ -1319,22 +1329,22 @@ gmflt ofs_pat;               /* Offset for the patch         */
 
 typedef union
 {
-DBPatch  toppat;
-GMPATC   cubpat;
-GMPATR   ratpat;
-GMPATL   lftpat;
-GMPATF   facpat;
-GMPATP   propat;
-GMPATB   blnpat;
-GMPATN   conpat; 
-GMPATP3  p3pat;
-GMPATP5  p5pat;
-GMPATP7  p7pat;
-GMPATP9  p9pat;
-GMPATP21 p21pat;
-GMPATNU  nurbpat;
-} GMPATX;
-/*!*********************** GMPATX ***********************************/
+DBPatch    toppat;
+DBPatchC   cubpat;
+DBPatchR   ratpat;
+DBPatchL   lftpat;
+DBPatchF   facpat;
+DBPatchP   propat;
+DBPatchB   blnpat;
+DBPatchN   conpat; 
+DBPatchP3  p3pat;
+DBPatchP5  p5pat;
+DBPatchP7  p7pat;
+DBPatchP9  p9pat;
+DBPatchP21 p21pat;
+DBPatchNU  nurbpat;
+} DBPatchX;
+/*!*********************** DBPatchX ***********************************/
 
 /*!*********************** EVALS **********************************!*/
 /*!                                                                !*/

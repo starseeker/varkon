@@ -47,7 +47,7 @@
 /* !!! (enough with a vector that sur222 converts to coordinate     */
 /* !!! system when the offset curve is evaluated).                  */
 /*                                                                  */
-/* !!! This routine should hopefully be able to handle UV_SEG       */
+/* !!! This routine should hopefully be able to handle UV_CUB_SEG   */
 /* !!! curves. It is probably only handling of the patch data       */
 /* !!! that is retrieved by DBread_one_patch in sur214 that need    */
 /* !!! to be added. Use the new functions GE109 and/or GE110.       */
@@ -72,7 +72,7 @@
 /*  1994-11-27   pp_at= NULL                               G Liden  */
 /*  1995-02-17   Check also last point of P value fctn     G Liden  */
 /*  1995-02-26   Debug ..                                  G Liden  */
-/*  1995-03-07   UV_SEG and offset curves                  G Liden  */
+/*  1995-03-07   UV_CUB_SEG and offset curves              G Liden  */
 /*  1995-03-19   Documentation                             G Liden  */
 /*  1996-05-28   Elimination of compilation warnings                */
 /*  1996-08-29   Debug                                              */
@@ -2136,13 +2136,13 @@ if ( p_cseg->typ == CUB_SEG )
 fprintf(dbgfil(SURPAC),
 "sur800*credir CUB_SEG p_cseg->typ %d p_cseg->ofs %f\n"
      , (int)p_cseg->typ , p_cseg->ofs );
-if ( p_cseg->typ == UV_SEG )
+if ( p_cseg->typ == UV_CUB_SEG )
    {
 fprintf(dbgfil(SURPAC),
-"sur800*credir UV_SEG p_cseg->typ %d p_cseg->ofs %f\n"
+"sur800*credir UV_CUB_SEG p_cseg->typ %d p_cseg->ofs %f\n"
      , (int)p_cseg->typ , p_cseg->ofs );
 fprintf(dbgfil(SURPAC),
-"sur800*credir UV_SEG p_cseg->subtyp %d p_cseg->spek_gm %d spek2_gm %d nxt_seg %d\n"
+"sur800*credir UV_CUB_SEG p_cseg->subtyp %d p_cseg->spek_gm %d spek2_gm %d nxt_seg %d\n"
      , (int)p_cseg->subtyp , (int)p_cseg->spek_gm, (int)p_cseg->spek2_gm, (int)p_cseg->nxt_seg );
    }
 }
@@ -2155,7 +2155,7 @@ fprintf(dbgfil(SURPAC),
      return(varkon_erpush("SU2413",errbuf));
      }
 
-  if ( p_cseg->typ == UV_SEG )  /* Tas bort n{r Johan inf|rt nytt i sur214 */
+  if ( p_cseg->typ == UV_CUB_SEG )  /* Tas bort n{r Johan inf|rt nytt i sur214 */
      {
      sprintf(errbuf,"%%varkon_sur_creloft");
      varkon_erinit();
@@ -2163,7 +2163,7 @@ fprintf(dbgfil(SURPAC),
      }
 
 
-  if ( p_cseg->typ == UV_SEG ) 
+  if ( p_cseg->typ == UV_CUB_SEG ) 
      {
      p_segpat->c0x = p_cseg->c0x;
      p_segpat->c0y = p_cseg->c0y;

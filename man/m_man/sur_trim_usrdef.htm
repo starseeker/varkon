@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>sur_trim_usrdef </TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.1  (Linux)">
+	<META NAME="CREATED" CONTENT="20060913;10391900">
+	<META NAME="CHANGED" CONTENT="20060913;11000400">
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P ALIGN=CENTER><FONT SIZE=2>VARKON Version 1.18 2006-09-15</FONT></P>
+<HR>
+<H2 STYLE="margin-left: 1cm; margin-right: 1cm; margin-top: 0cm">sur_trim_usrdef
+- <FONT SIZE=3>Geometric procedure</FONT></H2>
+<BLOCKQUOTE>Creates a trimmed surface<BR><BR><BR><B>Description<BR><BR></B>Creates
+a trimmed surface by &quot;trimming&quot; a copy of another surface.
+The desired portion of the old surface is specified by loops.</BLOCKQUOTE>
+<BLOCKQUOTE><BR><BR><B>Syntax<BR><BR></B>sur_trim_usrdef(id,surid,
+nloops,looparr:attributes);</BLOCKQUOTE>
+<DL>
+	<DD>
+	<TABLE WIDTH=615 BORDER=0 CELLPADDING=2 CELLSPACING=0>
+		<COL WIDTH=68>
+		<COL WIDTH=539>
+		<TR>
+			<TD WIDTH=68>
+				<P>REF</P>
+			</TD>
+			<TD WIDTH=539>
+				<P>id;</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=68>
+				<P>REF</P>
+			</TD>
+			<TD WIDTH=539>
+				<P>surid;</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=68>
+				<P>INT</P>
+			</TD>
+			<TD WIDTH=539>
+				<P>nloops;</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=68>
+				<P>REF</P>
+			</TD>
+			<TD WIDTH=539>
+				<P>looparr();</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=68>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=539>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<BLOCKQUOTE><B>Principal parameters</B></BLOCKQUOTE>
+<DL>
+	<DD>
+	<TABLE WIDTH=615 BORDER=0 CELLPADDING=2 CELLSPACING=0>
+		<COL WIDTH=80>
+		<COL WIDTH=527>
+		<TR>
+			<TD WIDTH=80>
+				<P>id 
+				</P>
+			</TD>
+			<TD WIDTH=527>
+				<P>- Local identity</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=80>
+				<P>surid</P>
+			</TD>
+			<TD WIDTH=527>
+				<P>- Untrimmed surface to copy and trim</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=80>
+				<P>nloops</P>
+			</TD>
+			<TD WIDTH=527>
+				<P>- Number of trimming loops, at least 1.</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=80>
+				<P>looparr</P>
+			</TD>
+			<TD WIDTH=527>
+				<P>- Array of ref's to loops. looparr(1) is the outer loop</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=80>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=527>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<BLOCKQUOTE><BR><B>Optional parameters</B></BLOCKQUOTE>
+<DL>
+	<DD>
+	<TABLE WIDTH=615 CELLPADDING=2 CELLSPACING=2>
+		<TR>
+			<TD WIDTH=56>
+				<P>-none</P>
+			</TD>
+			<TD WIDTH=551>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=56></TD>
+			<TD WIDTH=551>
+				<P><BR>
+				</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<BLOCKQUOTE><B>Attributes</B></BLOCKQUOTE>
+<DL>
+	<DD>
+	<TABLE WIDTH=615 CELLPADDING=2 CELLSPACING=2>
+		<TR>
+			<TD WIDTH=64>
+				<P>PEN 
+				</P>
+			</TD>
+			<TD WIDTH=543>
+				<P>- Pen or colour number</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=64>
+				<P>LEVEL</P>
+			</TD>
+			<TD WIDTH=543>
+				<P>- Level number</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=64>
+				<P>BLANK</P>
+			</TD>
+			<TD WIDTH=543>
+				<P>- Visible (0) or invisible (1)</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=64>
+				<P>SFONT</P>
+			</TD>
+			<TD WIDTH=543>
+				<P>- Solid boundary and dashed midcurves (0)</P>
+			</TD>
+		</TR>
+		<TR>
+			<TD WIDTH=64>
+				<P>SDASHL</P>
+			</TD>
+			<TD WIDTH=543>
+				<P>- Dash length</P>
+			</TD>
+		</TR>
+	</TABLE>
+</DL>
+<BLOCKQUOTE><BR><B>Example<BR><BR></B><BR><BR>
+</BLOCKQUOTE>
+<BLOCKQUOTE><BR><BR><B>Comments<BR><BR></B><SPAN STYLE="font-weight: medium">The
+outer loop, looparr(1), is mandatory and should be defined
+counterclockwise around the surface. I.e untrimmed part of the
+surface is to the left of the curve. Zero or more inner boundaries
+can be specified as looparr(2), looparr(3), ...</SPAN></BLOCKQUOTE>
+<BLOCKQUOTE STYLE="font-weight: medium"><BR><BR>
+</BLOCKQUOTE>
+<HR>
+<CENTER>
+	<TABLE CELLPADDING=0 CELLSPACING=10>
+		<TR>
+			<TD>
+				<P><A HREF="../index.htm">VARKON Homepage</A></P>
+			</TD>
+			<TD>
+				<P><A HREF="entiindx.htm">Index</A></P>
+			</TD>
+		</TR>
+	</TABLE>
+</CENTER>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

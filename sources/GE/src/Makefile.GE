@@ -321,8 +321,10 @@ VARKON_OBJS = ../lib/GElib.a(suinit.o)      \
               ../lib/GElib.a(ge813.o)       \
               ../lib/GElib.a(ge815.o)       \
               ../lib/GElib.a(ge817.o)       \
+              ../lib/GElib.a(gecregra.o)     \
               ../lib/GElib.a(geevale.o)     \
               ../lib/GElib.a(geevalnc.o)    \
+              ../lib/GElib.a(genurbs.o)     \
               ../lib/GElib.a(gevector.o)    \
               ../lib/GElib.a(getfmath.o)    \
               ../lib/GElib.a(getfpos.o)     \
@@ -339,7 +341,8 @@ VARKON_OBJS = ../lib/GElib.a(suinit.o)      \
               ../lib/GElib.a(gedim.o)       \
               ../lib/GElib.a(gelinint.o)    \
               ../lib/GElib.a(gecurint.o)    \
-              ../lib/GElib.a(geintpos.o)
+              ../lib/GElib.a(geintpos.o)    \
+              ../lib/GElib.a(gepinc.o)      
 
 # GElib.a depends on the objects. 
 

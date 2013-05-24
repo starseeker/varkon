@@ -1,0 +1,107 @@
+!****************************************************************
+
+ LOCAL GEOMETRY MODULE igs_120(
+   VAR FILE infil,logfil;
+   STRING   dl1*80,dl2*80;
+   INT      ds_ptr;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Read Directory Entry Section and
+!*      get values from Parameter Section
+!*      and create a revelution surface.
+!*
+!*      In: infil  = File to read from.
+!*          logfil = Logfile.
+!*          dl1    = Read 1st Directory Entry Section.
+!*          dl2    = Read 2nd Directory Entry Section.
+!*          ds_ptr = Pointer to Directory Entry Section
+!*          ps_ptr = Pointer to Parameter Section.
+!*          rowlgt = Rowlength used
+!*
+!*     Out: id_ent = Identity of created entity
+!*          status = 0 => Ok
+!*                  -1 => Error
+!*        
+!*
+!*      (c)2006-09-20, Mohamed Rahayem, Örebro university
+!*
+!*****************************************************************
+
+   INT    i,rownumber ; 
+   STRING row*132,row1*132,row2*132;
+   FLOAT  S_angle,E_angle;
+   INT    DE_axis,DE_gener;          !  pointers to DE section. !
+   REF    Cur_ref,Lin_ref,csysid; 
+   
+ BEGINMODULE
+ 
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   rownumber:=ival(substr(dl1,9,8));
+   seek(infil,ps_ptr+(rownumber-1)*rowlgt);
+!*
+!***Read 1:st line and strip "120,".
+!*
+   row:=inlin(infil);
+   row:=substr(row,finds(row,",")+1);
+!*
+!***Read parameter data
+!*
+   part(#2,igs_gint(infil,row,DE_axis,status):SAVE=0);
+   part(#3,igs_gint(infil,row,DE_gener,status):SAVE=0);
+   part(#4,igs_gflt(infil,row,S_angle,status):SAVE=0);
+   part(#5,igs_gflt(infil,row,E_angle,status):SAVE=0);
+!*
+!**Create local coordinate system for transformation matrix.
+!*    
+     csys_1p(#11,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
+     csysid:=#11;     
+!*
+!***Create the axis line
+!*   
+   seek(infil,ds_ptr+(DE_axis-1)*rowlgt);  
+   row1:=inlin(infil);
+   row2:=inlin(infil);  
+   part(#6,igs_110(infil,logfil,row1,row2,ps_ptr,rowlgt,Lin_ref,status),csysid:SAVE=1,BLANK=1);
+!*
+!***Create the generetix
+!*   
+   seek(infil,ds_ptr+(DE_gener-1)*rowlgt);     
+   row1:=inlin(infil);
+   row2:=inlin(infil);  
+   part(#7,igs_curve(infil,logfil,row1,row2,ds_ptr,ps_ptr,rowlgt,Cur_ref,status),csysid:SAVE=1,BLANK=1);    
+!*
+!**To be sure generattix and axis of revolution in the same plane.
+!*    
+    csys_3p(#9,"test", startp(Lin_ref), endp(Lin_ref)*100, startp(Cur_ref):Blank=1);
+    mode_local(#9);
+!*
+!**Check Start and End angles
+!*
+    IF S_angle*180/PI > 2*PI   THEN
+     S_angle:=s_angle - 2*PI;   
+    ELIF S_angle*180/PI < -2*PI THEN
+       S_angle:=s_angle + 2*PI;           
+    ENDIF;        
+    IF E_angle*180/PI > 2*PI THEN
+     E_angle:=(E_angle) - 2*PI;     
+    ELIF E_angle*180/PI < -2*PI THEN
+       E_angle:=(E_angle) + 2*PI;                            
+    ENDIF;    
+!*
+!***Create a surface.
+!* 
+     sur_rot(#10,Cur_ref, startp(Lin_ref), endp(Lin_ref)*100,(S_angle*180/PI), (E_angle*180/PI));
+     id_ent:=global_ref(#10);     
+!*
+!**END.
+!*   
+   status:=0;
+   
+ ENDMODULE
+!***********************************************************************************

@@ -348,7 +348,7 @@ extern pm_ptr  stflop;
 */
    else if ( ineqty( stintp, tyla ) )
       {
-      func_vp->lit.int_va = (v2int)abs( val.lit.int_va );
+      func_vp->lit.int_va = (DBint)abs( val.lit.int_va );
       func_vp->lit_type = C_INT_VA;
       *func_ty = stintp;
       }  
@@ -404,9 +404,9 @@ extern pm_ptr  stflop;
  {
 
    if ( func_pv[1].par_va.lit.float_va < 0.0 )
-        func_vp->lit.int_va = (v2int)( func_pv[1].par_va.lit.float_va - 0.5 );
+        func_vp->lit.int_va = (DBint)( func_pv[1].par_va.lit.float_va - 0.5 );
    else
-        func_vp->lit.int_va = (v2int)( func_pv[1].par_va.lit.float_va + 0.5 );
+        func_vp->lit.int_va = (DBint)( func_pv[1].par_va.lit.float_va + 0.5 );
     
    return(0);
  }
@@ -429,7 +429,7 @@ extern pm_ptr  stflop;
 
  {
 
-   func_vp->lit.int_va = (v2int) func_pv[1].par_va.lit.float_va ;
+   func_vp->lit.int_va = (DBint) func_pv[1].par_va.lit.float_va ;
     
    return(0);
  }

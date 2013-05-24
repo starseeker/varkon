@@ -50,8 +50,6 @@ distr : $(OBJECTS)
 
 debug : $(OBJECTS)
 
-kdebug : $(OBJECTS)
-
 # Objects depend on sources implicitly and sources depend
 # on the following include-files.
 

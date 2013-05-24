@@ -1,8 +1,8 @@
 
 ! Varkon standard menues
-! Latest update for version 1.18A
-! Johan Kjellander, Örebro university
-
+! Latest update for version 1.18B
+! Mohamed Rahayem, Örebro university
+!
 m2  = "MAIN MENU 2D"
       "create",m13
       "edit",m15
@@ -295,8 +295,7 @@ m46 = "EXIT"
 
 m47 = "OPEN"
       "save first",f124
-      "don't save",f120
-      "list",f180;
+      "don't save",f120;
 
 m48 = "SAVE AS"
       "all files",f201
@@ -456,6 +455,7 @@ m76 = "GEOMETRY"
       "distance",M364
       "angle",M365
       "curves",m91
+      "surfaces",M1643
       "area",m86
       "cgrav",M417;
 

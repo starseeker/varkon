@@ -801,7 +801,7 @@
 /* sur960.c   varkon_sur_scur_gra   Approx. UV curve for graphics     */
    DBstatus   varkon_sur_scur_gra (
               DBCurve *p_cur, DBSeg   *p_seg, DBSeg  **pp_graseg );
-
+              
 /* sur962.c   varkon_sur_graphic    Surface graphical representation  */
    DBstatus   varkon_sur_graphic (
               DBSurf  *p_sur, DBPatch *p_pat, DBptr pgm_sur,

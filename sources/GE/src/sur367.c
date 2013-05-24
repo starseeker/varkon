@@ -210,7 +210,7 @@ fflush(dbgfil(SURPAC));
 
 /*!                                                                 */
 /* The curve (segments) shall be handled like a R*3 curve in        */
-/* this function: UV_SEG --> CUB_SEG                                */
+/* this function: UV_CUB_SEG --> CUB_SEG                                */
 /*                                                                 !*/
 
    for ( i_seg= 0; i_seg < p_cur->ns_cu; ++i_seg )
@@ -750,11 +750,11 @@ fflush(dbgfil(SURPAC));
 /*                                                                 !*/
 
 /*!                                                                 */
-/* Change back to a surface curve: CUB_SEG --> UV_SEG               */
+/* Change back to a surface curve: CUB_SEG --> UV_CUB_SEG               */
 /*                                                                 !*/
 
    for ( i_seg= 0; i_seg < p_cur->ns_cu; ++i_seg )
-       (p_seg+i_seg)->typ = UV_SEG;
+       (p_seg+i_seg)->typ = UV_CUB_SEG;
 
    c_case = 1;
    pcrit  = -1.0;

@@ -5,7 +5,7 @@
 #
 #  Make rules for the WP module.
 #
-#  (C)Microform AB 1999-03-30 J.Kjellander
+#  (C)2006 J.Kjellander
 #
 ##########################################################
 
@@ -16,48 +16,49 @@ INCFILES = ../include/WP.h            \
 
 # The contents of WPlib.a
 
-OBJECTS = ../lib/WPlib.a(wp1.o)        \
-          ../lib/WPlib.a(wp2.o)        \
-          ../lib/WPlib.a(wp3.o)        \
-          ../lib/WPlib.a(wp4.o)        \
-          ../lib/WPlib.a(wp5.o)        \
-          ../lib/WPlib.a(wp6.o)        \
-          ../lib/WPlib.a(wp7.o)        \
-          ../lib/WPlib.a(wp8.o)        \
-          ../lib/WPlib.a(wp9.o)        \
-          ../lib/WPlib.a(wp10.o)       \
-          ../lib/WPlib.a(wp11.o)       \
-          ../lib/WPlib.a(wp12.o)       \
-          ../lib/WPlib.a(wp13.o)       \
-          ../lib/WPlib.a(wp14.o)       \
-          ../lib/WPlib.a(wp15.o)       \
-          ../lib/WPlib.a(wp16.o)       \
-          ../lib/WPlib.a(wp17.o)       \
-          ../lib/WPlib.a(wp18.o)       \
-          ../lib/WPlib.a(wp19.o)       \
-          ../lib/WPlib.a(wp20.o)       \
-          ../lib/WPlib.a(wp21.o)       \
-          ../lib/WPlib.a(wp22.o)       \
-          ../lib/WPlib.a(wp23.o)       \
-          ../lib/WPlib.a(wp24.o)       \
-          ../lib/WPlib.a(wp25.o)       \
-          ../lib/WPlib.a(wp26.o)       \
-          ../lib/WPlib.a(wp27.o)       \
-          ../lib/WPlib.a(wp28.o)       \
-          ../lib/WPlib.a(wp29.o)       \
-          ../lib/WPlib.a(wp30.o)       \
-          ../lib/WPlib.a(wp31.o)       \
-          ../lib/WPlib.a(wp32.o)       \
-          ../lib/WPlib.a(wp33.o)       \
-          ../lib/WPlib.a(wp34.o)
+OBJECTS = ../lib/WPlib.a(wpinit.o)     \
+          ../lib/WPlib.a(wpLWIN.o)     \
+          ../lib/WPlib.a(wpfontcol.o)  \
+          ../lib/WPlib.a(wpwait.o)     \
+          ../lib/WPlib.a(wpgetkey.o)   \
+          ../lib/WPlib.a(wpmenu.o)     \
+          ../lib/WPlib.a(wpgetalt.o)   \
+          ../lib/WPlib.a(wpgetstr.o)   \
+          ../lib/WPlib.a(wpRWIN.o)     \
+          ../lib/WPlib.a(wpw.o)        \
+          ../lib/WPlib.a(wpIWIN.o)     \
+          ../lib/WPlib.a(wpBUTT.o)     \
+          ../lib/WPlib.a(wpEDIT.o)     \
+          ../lib/WPlib.a(wpICON.o)     \
+          ../lib/WPlib.a(wpGWIN.o)     \
+          ../lib/WPlib.a(wpview1.o)    \
+          ../lib/WPlib.a(wpview2.o)    \
+          ../lib/WPlib.a(wpplylin.o)   \
+          ../lib/WPlib.a(wpDF.o)       \
+          ../lib/WPlib.a(wppoint.o)    \
+          ../lib/WPlib.a(wpline.o)     \
+          ../lib/WPlib.a(wparc.o)      \
+          ../lib/WPlib.a(wpcurve.o)    \
+          ../lib/WPlib.a(wpsurf.o)     \
+          ../lib/WPlib.a(wptext.o)     \
+          ../lib/WPlib.a(wpxhatch.o)   \
+          ../lib/WPlib.a(wpdim.o)      \
+          ../lib/WPlib.a(wpcsy.o)      \
+          ../lib/WPlib.a(wpbplane.o)   \
+          ../lib/WPlib.a(wpedmbs.o)    \
+          ../lib/WPlib.a(wpshade.o)    \
+          ../lib/WPlib.a(wpGLlist.o)   \
+          ../lib/WPlib.a(wpplot.o)     \
+          ../lib/WPlib.a(wphide.o)     \
+          ../lib/WPlib.a(wpDXF.o)      \
+          ../lib/WPlib.a(wpgrid.o)     \
+          ../lib/WPlib.a(wpmesh.o)
 
 # WPlib.a depends on the objects. 
 
 distr : $(OBJECTS)
 
 debug : $(OBJECTS)
-
-kdebug : $(OBJECTS)
 
 # Objects depend on sources implicitly and sources depend
 # on the following include-files.

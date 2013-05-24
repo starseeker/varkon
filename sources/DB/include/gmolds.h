@@ -20,8 +20,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 /*
@@ -32,7 +30,7 @@
 /*
 ***Curve segments.
 */
-typedef struct gmseg0
+typedef struct
 {
 gmflt c0x,c0y,c0z,c0;
 gmflt c1x,c1y,c1z,c1;
@@ -41,7 +39,7 @@ gmflt c3x,c3y,c3z,c3;
 DBptr nxt_oc;
 } GMSEG0;
 
-typedef struct gmseg1
+typedef struct
 {
 gmflt c0x,c0y,c0z,c0;
 gmflt c1x,c1y,c1z,c1;
@@ -55,13 +53,13 @@ gmflt sl_oc;
 /*
 ***Points.
 */
-typedef struct gmpoi0
+typedef struct
 {
 GMRECH hed_p;
 DBVector  crd_p;
 } GMPOI0;
 
-typedef struct gmpoi1
+typedef struct
 {
 GMRECH hed_p;
 DBVector  crd_p;
@@ -71,7 +69,7 @@ DBptr  pcsy_p;
 /*
 ***Lines.
 */
-typedef struct gmlin0
+typedef struct
 {
 GMRECH  hed_l;
 short   fnt_l;
@@ -80,7 +78,7 @@ DBVector   crd1_l;
 DBVector   crd2_l;
 } GMLIN0;
 
-typedef struct gmlin1
+typedef struct
 {
 GMRECH  hed_l;
 short   fnt_l;
@@ -93,7 +91,7 @@ DBptr   pcsy_l;
 /*
 ***Arcs/Circles.
 */
-typedef struct gmarc0
+typedef struct
 {
 GMRECH  hed_a;
 short   fnt_a;
@@ -108,7 +106,7 @@ short   ns_a;
 DBptr   sptr_a;
 } GMARC0;
 
-typedef struct gmarc1
+typedef struct
 {
 GMRECH  hed_a;
 short   fnt_a;
@@ -127,7 +125,7 @@ DBptr   pcsy_a;
 /*
 ***Curves.
 */
-typedef struct gmcur0
+typedef struct
 {
 GMRECH  hed_oc;
 gmflt   o_oc;
@@ -135,7 +133,7 @@ short   ns_oc;
 DBptr   sptr_oc;
 } GMCUR0;
 
-typedef struct gmcur1
+typedef struct
 {
 GMRECH  hed_oc;
 short   fnt_oc;
@@ -147,7 +145,7 @@ DBptr   cptr_oc;
 DBptr   pcsy_oc;
 } GMCUR1;
 
-typedef struct gmcur2
+typedef struct
 {
 GMRECH  hed_oc;
 short   fnt_oc;
@@ -164,7 +162,7 @@ DBptr   pgrs_oc;
 /*
 ***Surfaces.
 */
-typedef struct gmsur0
+typedef struct
 {
 GMRECH  hed_su;
 short   typ_su;
@@ -180,11 +178,35 @@ short   ngseg_su[6];
 DBptr   pgseg_su[6];
 } GMSUR0;
 
+typedef struct
+{
+DBHeader hed_su;
+short    typ_su;
+short    fnt_su;
+gmflt    lgt_su;
+short    nu_su;
+short    nv_su;
+short    ngu_su;
+short    ngv_su;
+DBptr    ptab_su;
+DBptr    pcsy_su;
+short    ngseg_su[6];
+DBptr    pgseg_su[6];
+int      uorder_su;
+int      vorder_su;
+int      nku_su;
+int      nkv_su;
+DBptr    pkvu_su;
+DBptr    pkvv_su;
+DBptr    pcpts_su;
+BBOX     box_su;
+} GMSUR1;
+
 /*
 ***Coordinatesystems.
 */
 
-typedef struct gmcsy0
+typedef struct
 {
 GMRECH  hed_pl;
 char    name_pl[10+1];
@@ -194,7 +216,7 @@ DBTmat  mat_pl;
 /*
 ***B_planes.
 */
-typedef struct gmbpl0
+typedef struct
 {
 GMRECH hed_bp;
 DBVector  crd1_bp;
@@ -206,7 +228,7 @@ DBVector  crd4_bp;
 /*
 ***Text.
 */
-typedef struct gmtxt0
+typedef struct
 {
 GMRECH  hed_tx;
 DBVector   crd_tx;
@@ -219,7 +241,7 @@ short   nt_tx;
 DBptr   tptr_tx;
 } GMTXT0;
 
-typedef struct gmtxt1
+typedef struct
 {
 GMRECH  hed_tx;
 DBVector   crd_tx;
@@ -233,7 +255,7 @@ DBptr   tptr_tx;
 DBptr   pcsy_tx;
 } GMTXT1;
 
-typedef struct gmtxt2
+typedef struct
 {
 GMRECH  hed_tx;
 DBVector   crd_tx;
@@ -250,7 +272,7 @@ gmflt   wdt_tx;
 /*
 ***Xhatch.
 */
-typedef struct gmxht0
+typedef struct
 {
 GMRECH  hed_xh;
 short   fnt_xh;
@@ -264,7 +286,7 @@ DBptr   lptr_xh;
 /*
 ***Dimensions.
 */
-typedef struct gmldm0
+typedef struct
 {
 GMRECH  hed_ld;
 DBVector   p1_ld;
@@ -277,7 +299,7 @@ short   ndig_ld;
 tbool   auto_ld;
 } GMLDM0;
 
-typedef struct gmcdm0
+typedef struct
 {
 GMRECH  hed_cd;
 DBVector   p1_cd;
@@ -290,7 +312,7 @@ short   ndig_cd;
 tbool   auto_cd;
 } GMCDM0;
 
-typedef struct gmrdm0
+typedef struct
 {
 GMRECH  hed_rd;
 DBVector   p1_rd;
@@ -303,7 +325,7 @@ short   ndig_rd;
 tbool   auto_rd;
 } GMRDM0;
 
-typedef struct gmadm0
+typedef struct
 {
 GMRECH  hed_ad;
 DBVector   pos_ad;
@@ -318,4 +340,3 @@ gmflt   tsiz_ad;
 short   ndig_ad;
 tbool   auto_ad;
 } GMADM0;
-

@@ -1,0 +1,140 @@
+!**************************************************************************
+
+ LOCAL GEOMETRY MODULE igs_100(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Read data from Parameter Section
+!*      and create a Circular Arc.
+!*
+!*      In: infile  = File to read from.
+!*          logfile = Logfile.
+!*          dl1     = 1st row of Directory Entry Section.
+!*          dl2     = 2nd row of Directory Entry Section.
+!*          ps_ptr  = Pointer to Parameter Section.
+!*          rowlgt  = Row length used.
+!*
+!*      Out: status = 0 => Ok
+!*                   -1 => Error
+!*          id_ent  = Identity of created entity.
+!*
+!*      2006-09-25 Mohamed Rahayem, Örebro university.
+!*
+!*************************************************************************
+
+   INT    i,rownumber,flag;
+   STRING row*132;
+   FLOAT  x(7),r1,r2,s_angle,e_angle;
+   VECTOR p1,p2,p3;
+
+ BEGINMODULE
+ 
+!*
+!***Get entity line number in Parameter
+!***Data Section and position file pointer.
+!*
+   rownumber:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(rownumber-1)*rowlgt);
+!*
+!***Read 1:st line and strip "100,".
+!*
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
+!*
+!***Read the coordinates of the Three points
+!*
+   for i:=1 to 7 do
+     part(#1,igs_gflt(infile,row,x(i),status):SAVE=0);
+   endfor; 
+!*
+!**Create local coordinate system in origin.
+!*    
+     csys_1p(#4,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);              
+!*
+!***Check status from igs_gflt().
+!*
+   if status < 0 then
+     outstr(logfile,"igs_100, Error in reading Coordinates in parameter section !");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     id_ent:=##0;
+     status:=-1;
+     exit();
+   endif;
+!*
+!***Calculate start,terminate and center points.
+!*  
+   p1:=vec(x(4),x(5),x(1));
+   p2:=vec(x(6),x(7),x(1));
+   p3:=vec(x(2),x(3),x(1));
+!*
+!***Calculate raduises between p1,p3 and p2,p3.
+!*
+    r1:= vecl(p1-p3);
+    r2:= vecl(p2-p3);
+    flag:= 1;
+!*      
+!**Check the Points A and B if they are identical, Then it is Circle.     
+!*    
+    if vecl(p1-p2) < 0.01 THEN 
+    
+     flag:=-1;                                         
+     arc_1pos(#2,p3,r1,0,360);
+     id_ent:=global_ref(#2); 
+     status:=0;
+!*
+!**Check raduises not equal to 0.
+!*        
+   elif r1 = 0 or r2 = 0 then
+     flag:=-2;                                         
+     outstr(logfile,"igs_100, Error one or both of Rduises = 0 !");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     status:=-1;
+     id_ent:=##0;
+     exit();
+!*
+!**Check if Radius r1 not equal to raduis r2.
+!*     
+   elif abs(r1- r2) > 0.01 then
+     flag:=-3;                                          
+     outstr(logfile,"igs_100, Error Radius r1 not equal to r2  !");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     status:=-1;
+     id_ent:=##0;    
+     exit(); 
+   endif;
+   
+   If flag > 0 then
+       s_angle:= angle(p1.x-p3.x,p1.y-p3.y);
+       e_angle:= angle(p2.x-p3.x,p2.y-p3.y);
+!*
+!**Create a arc.
+!*       
+       arc_1pos(#3,p3,r1,s_angle,e_angle);
+  
+    id_ent:=global_ref(#3); 
+    status:=0;
+   endif;
+!*
+!***End   
+!*   
+   status:=0;
+   
+ ENDMODULE
+ 
+!*******************************************************

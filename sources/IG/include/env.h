@@ -8,11 +8,9 @@
 *      OS-oberoende sätt mappar dem till vad det nu skall
 *      vara på den dator som används.
 *
-*      (C)microform ab 951130 J. Kjellander
+*      (C)2006 J. Kjellander
 *
 *********************************************************/
-
-extern char *v3genv(),*gtenv3();
 
 #define  VARKON_ERM    0  /* Felmeddelandefiler */
 #define  VARKON_DOC    1  /* Hjälptextfiler */

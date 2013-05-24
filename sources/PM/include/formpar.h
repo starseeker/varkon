@@ -61,146 +61,226 @@
 *                              
 ********************************************************************/
 /*
-***Parameter lists for Varkon.
+***Parameter lists for Varkon MBS functions and procedures.
 */
+
 #ifdef VARKON
 
-"",                      /*         = 0,  not defined                        */
-"-5:ve",                 /* VPOI    = 1,  poi_free(-,<vec>)                  */
-"-3:ve",                 /* VPOIP   = 2,  poi_proj(-,<vec>)                  */
-"-5:ve.ve",              /* VLINF   = 3,  lin_free<-,<vec>,<vec>             */
-"-3:ve.ve",              /* VLINP   = 4,  lin_proj(-,<vec>,<vec>)            */
-"-5:ve.fe.fe",           /* VLINA   = 5,  lin_ang(-,<vec>,<flo>,<flo>)       */
-"-5:re.fe",              /* VLINO   = 6,  lin_offs(-,<ref>,<flo>)            */
-"-5:ve.re.ie",           /* VLINT1  = 7,  lin_tan1(-,<vec>,<ref>,<int>)      */
-"-5:re.re.ie",           /* VLINT2  = 8,  lin_tan2(-,<ref>,<ref>,<int>)      */
-"-5:ve.fe.1(fd<0>).1(fd<360>)",
-                         /* VARCF   = 9,  arc_1pos(-,<vec>,<flo>,<flo>,<flo>)*/
-"-5:ve.ve.fe",           /* VARC2P  = 10, arc_2pos(-,<vec>,<vec>,<flo>)      */
-
-
-"-5:ve.ve.ve",           /* VARC3P  = 11, arc_3pos(-,<vec>,<vec>,<vec>)      */
-"-5:re.fe",              /* VARCO   = 12, arc_offs(-,<ref>,<flo>)            */
-"-5:re.re.fe.ie",        /* VARCFI  = 13, arc_fil(-,<ref>,<ref>,<flo>,<int>) */
-"-5:ve.vd<0,0,0>.ve.1(vd<0,0,0>.24(ve.vd<0,0,0>))",
-                         /* VCURF   = 14, cur_free(-,ä<vec>,<vec>å)          */
-"-3:ve.vd<0,0,0>.ve.1(vd<0,0,0>.24(ve.vd<0,0,0>))",
-                         /* VCURP   = 15, cur_proj(-,ä<vec>,<vec>å           */
-"-5:re.fe",              /* VCURO   = 16, cur_offs(-,<ref>,<flo>)            */
-"-5:re.24(re)",          /* VCOMP   = 17, cur_comp(-,<ref>ä,<ref>å)          */
-"-2:fe.fe.re.49(re)",    /* VXHT    = 18, xhatch(-,<flo>,<flo>,<ref>ä,<ref>å)*/
-"-5:1(re)",              /* VPART   = 19, part(-,-,<ref>)                    */
-"v3:re.ve.ie.ie.1(ve)",  /* VIONSUR = 20, inv_on_sur(ref,p,kod,nä,start_uvå) */
-
 /*
-***VTEXT = 21, text(id,pos,angle,string);
-*/
-     "-5:ve.fe.se",
-/*
-***VPLANE = 22, not used.
+***       = 0,  not defined
 */
      "",
 /*
+***VPOI = 1,  POI_FREE(-,<vec>)
+*/
+     "-5:ve",
+/*
+***VPOIP = 2,  POI_PROJ(-,<vec>)
+*/
+     "-3:ve",
+/*
+***VLINF = 3,  LIN_FREE<-,<vec>,<vec>
+*/
+     "-5:ve.ve",
+/*
+***VLINP = 4,  LIN_PROJ(-,<vec>,<vec>)
+*/
+     "-3:ve.ve",
+/*
+***VLINA = 5,  LIN_ANG(-,<vec>,<flo>,<flo>) 
+*/
+     "-5:ve.fe.fe",
+/*
+***VLINO = 6,  LIN_OFFS(-,<ref>,<flo>) 
+*/
+     "-5:re.fe",
+/*
+***VLINT1 = 7,  LIN_TAN1(-,<vec>,<ref>,<int>)
+*/
+     "-5:ve.re.ie",
+/*
+***VLINT2 = 8,  LIN_TAN2(-,<ref>,<ref>,<int>)
+*/
+     "-5:re.re.ie",
+/*
+***VARCF = 9,  ARC_1POS(-,<vec>,<flo>,<flo>,<flo>)
+*/
+     "-5:ve.fe.1(fd<0>).1(fd<360>)",
+/*
+***VARC2P = 10, ARC_2POS(-,<vec>,<vec>,<flo>)
+*/
+     "-5:ve.ve.fe",
+/*
+***VARC3P = 11, ARC_3POS(-,<vec>,<vec>,<vec>)
+*/
+     "-5:ve.ve.ve",
+/*
+***VARCO = 12, ARC_OFFS(-,<ref>,<flo>)
+*/
+     "-5:re.fe",
+/*
+***VARCFI = 13, ARC_FIL(-,<ref>,<ref>,<flo>,<int>)
+*/
+     "-5:re.re.fe.ie",
+/*
+***VCURF = 14, CUR_FREE(-,[<vec>,<vec>])
+*/
+     "-5:ve.vd<0,0,0>.ve.1(vd<0,0,0>.24(ve.vd<0,0,0>))",
+/*
+***VCURP = 15, CUR_PROJ(-,[<vec>,<vec>])
+*/
+     "-3:ve.vd<0,0,0>.ve.1(vd<0,0,0>.24(ve.vd<0,0,0>))",
+/*
+***VCURO = 16, CUR_OFFS(-,<ref>,<flo>)
+*/
+     "-5:re.fe",
+/*
+***VCOMP = 17, CUR_COMP(-,<ref>[,<ref>])
+*/
+     "-5:re.24(re)",
+/*
+***VXHT = 18, XHATCH(-,<flo>,<flo>,<ref>[,<ref>])
+*/
+     "-2:fe.fe.re.49(re)",
+/*
+***VPART = 19, PART(-,-,<ref>)
+*/
+     "-5:1(re)",
+/*
+***VIONSUR = 20, INV_ON_SUR(ref,p,kod,nï¿½start_uvï¿½
+*/
+     "v3:re.ve.ie.ie.1(ve)",
+/*
+***VTEXT = 21, TEXT(id,pos,angle,string);
+*/
+     "-5:ve.fe.se",
+/*
+***VPINC = 22, status:=POS_IN_CONE(p1,p2,r1,r2,npts,pts,pstat);
+*/
+     "i5:ve.ve.fe.fe.ie.nv.1(pv)",
+/*
 ***VCSYS3P = 23, CSYS_3P(id,namn,origo,xaxel[,yaxel]);
-***Y-Axeln optionell 1996-05-28 JK.
+***Y-Axis optional 1996-05-28 JK.
 */
      "-5:se.ve.ve.1(ve)",
 /*
-***
+***VGROUP = 24, GROUP(---,<str>,<ref>[,<ref>])
 */
-"-5:se.re.99(re)",       /* VGROUP  = 24, group(---,<str>,<ref>ä,<ref>å)     */
-"-2:ve.ve.ve.ie",        /* VLDIM   = 25, ldim(-,<vec>,<vec>,<vec>,<int>)    */
-"-2:re.ve.ie",           /* VCDIM   = 26, cdim(-,<ref>,<pos>,<int>)          */
-"-2:re.ve.ve",           /* VRDIM   = 27, rdim(-,<ref>,<vec>,<vec>)          */
-
-
-
-
+     "-5:se.re.99(re)",
 /*
-***VADIM   = 28, ADIM(-,<ref>,<ref>,<vec>,<int>)
+***VLDIM = 25, LDIM(-,<vec>,<vec>,<vec>,<int>)
+*/
+     "-2:ve.ve.ve.ie",
+/*
+***VCDIM = 26, CDIM(-,<ref>,<pos>,<int>) 
+*/
+     "-2:re.ve.ie",
+/*
+***VRDIM = 27, RDIM(-,<ref>,<vec>,<vec>)
+*/
+     "-2:re.ve.ve",
+/*
+***VADIM = 28, ADIM(-,<ref>,<ref>,<vec>,<int>)
 */
      "-2:re.re.ve.ie",
 /*
-***VACOS   = 29, ARCCOS(<float>) = <float>
+***VACOS = 29, ARCCOS(<float>) = <float>
 */
      "f5:fe",
 /*
-***VASIN   = 30, ARCSIN(<float>) = <float>
+***VASIN = 30, ARCSIN(<float>) = <float>
 */
      "f5:fe",
 /*
-***VATAN   = 31, ARCTAN(<float>) = <float>
+***VATAN = 31, ARCTAN(<float>) = <float>
 */
      "f5:fe",
 /*
-***VCOS    = 32, COS(<float>) = <float>
+***VCOS = 32, COS(<float>) = <float>
 */
      "f5:fe",
 /*
-***VSIN    = 33, SIN(<float>) = <float>
+***VSIN = 33, SIN(<float>) = <float>
 */
      "f5:fe",
 /*
-***VTAN    = 34, TAN(<float>) = <float>
+***VTAN = 34, TAN(<float>) = <float>
 */
      "f5:fe",
 /*
-***VLN     = 35, LN(<float>) = <float>
+***VLN = 35, LN(<float>) = <float>
 */
      "f5:fe",
 /*
-***VLOG    = 36, LOG(<float>) = <float>
+***VLOG = 36, LOG(<float>) = <float>
 */
      "f5:fe",
 /*
-***VSQRT   = 37, SQRT(<float>) = <float>
+***VSQRT = 37, SQRT(<float>) = <float>
 */
      "f5:fe",
 /*
-***VABS    = 38, ABS(<float> | <int>) = <float> | <int>
+***VABS = 38, ABS(<float> | <int>) = <float> | <int>
 */
      "f5:fe",
 /*
-***VFRAC   = 39, FRAC(<float>) = <float>
+***VFRAC = 39, FRAC(<float>) = <float>
 */
      "f5:fe",
 /*
-***VROUND  = 40, ROUND(<float>) = <int>
+***VROUND = 40, ROUND(<float>) = <int>
 */
      "i5:fe",
 /*
-***VTRUNC  = 40, TRUNC(<float>) = <int>
+***VTRUNC = 41, TRUNC(<float>) = <int>
 */
      "i5:fe",
 /*
-***Nya rutiner i samband med Kartro 30/5/86
+***VGTREF = 42, GETREF(<ref>,<int>)
 */
-
-"r5:re.ie",              /* VGTREF  = 42, getref(<ref>,<int>)                */
-"-5:se",                 /* VLDGM   = 43, load_gm(<str>)                     */
-"-5:se",                 /* VSVGM   = 44, save_gm(<str>)                     */
-"-5:ie.1(id<0>)",        /* VBLEV   = 45, blank_lev(<int>Ä,<int>Å)           */
-"-5:ie.1(id<0>)",        /* VUBLEV  = 46, unblank_lev(<int>Ä,<int>Å)         */
-"-5:ie.iv.sv",           /* VGTLEV  = 47, get_lev(<int>,<int>,<str>)         */
-"i5:",                   /* VACLEV  = 48, act_lev()                          */
-"i3:re.re",              /* VNCURI  = 49, n_cur_int(ref1,ref2)               */
-"v5:re.se.ve",           /* VEVAL   = 50, eval(ref,case,inval)               */
-
-
+     "r5:re.ie",
 /*
-***Ny rutin för version 1.4 10/4/87
+***VLDGM = 43, LOAD_GM(<str>)
 */
-
+     "-5:se",
 /*
-***VFINDS = 51, finds(<str>,<str>) = <int>
+***VSVGM = 44, SAVE_GM(<str>)
+*/
+     "-5:se",
+/*
+***VBLEV = 45, BLANK_LEV(<int>ï¿½<int>ï¿½
+*/
+     "-5:ie.1(id<0>)",
+/*
+***VUBLEV = 46, UNBLANK_LEV(<int>ï¿½<int>ï¿½
+*/
+     "-5:ie.1(id<0>)",
+/*
+***VGTLEV = 47, GET_LEV(<int>,<int>,<str>)
+*/
+     "-5:ie.iv.sv",
+/*
+***VACLEV = 48, ACT_LEV()
+*/
+     "i5:",
+/*
+***VNCURI = 49, N_CUR_INT(ref1,ref2)
+*/
+     "i3:re.re",
+/*
+***VEVAL = 50, EVAL(ref,case,inval)
+*/
+     "v5:re.se.ve",
+/*
+***VFINDS = 51, FINDS(<str>,<str>) = <int>
 */
     "i5:se.se",
 /*
-***VARCL = 52, arcl(<ref>) = <flo>
+***VARCL = 52, ARCL(<ref>) = <flo>
 */
     "f5:re",
 /*
-***VTANG = 53, tang(<ref>Ä,<flo>Å) = <vec>
+***VTANG = 53, TANG(<ref>ï¿½<flo>ï¿½ = <vec>
 */
     "v5:re.1(fe)",
 /*
@@ -231,16 +311,28 @@
 ***VSCREEN = 60, pos:=SCREEN[win_id]);
 */
      "v5:1(iv)",
-
- 
-"-5:ve.ve.ve.ve",        /* VBPLAN  = 61  b_plane(<vec>,<vec>,<vec>,<vec>) */
-"-5:re",                 /* VMODLO  = 62, mode_local(<ref>)                  */
-"-5:",                   /* VMODGL  = 63, mode_global()                      */
-"v5:fe.fe.1(fe<0.0>)",   /* VVEC    = 64, vec(<flo>,<flo>Ä,<flo>Å) = <vec>   */
-"-5:",                   /* VSET    = 65, set()                              */
-
 /*
-***VOS = 66, OS(<str>,Ä<mode>Å) mode V3 1.11 JK
+***VBPLAN = 61  B_PLANE(<vec>,<vec>,<vec>,<vec>)
+*/
+     "-5:ve.ve.ve.ve",
+/*
+***VMODLO = 62, MODE_LOCAL(<ref>)
+*/
+     "-5:re",
+/*
+***VMODGL = 63, MODE_GLOBAL()
+*/
+     "-5:",
+/*
+***VVEC = 64, pos:=VEC(<flo>,<flo>[,<flo>])
+*/
+     "v5:fe.fe.1(fe<0.0>)",
+/*
+***VSET = 65, SET()
+*/
+     "-5:",
+/*
+***VOS = 66, OS(<str>,[<mode>])
 */
      "-5:se.1(ie)",
 /*
@@ -261,7 +353,7 @@
 */
      "i5:se",
 /*
-***VSTR = 71, str(<flo>Ä,<int>Ä,<int>ÅÅ) = <str>
+***VSTR = 71, str(<flo>ï¿½<int>ï¿½<int>ï¿½) = <str>
 */
      "s5:fe.1(ie<20>.1(ie<-2>))",
 /*
@@ -341,7 +433,6 @@
 */
      "i5:de",
 /*
-***Nya rutiner i och med VARKON-3D 1.2
 ***VGTID = 91, GETID.
 */
      "r5:se",
@@ -402,7 +493,7 @@
 */
      "-5:re.sv.jv",
 /*
-***VGTSYM = 106, GETSYM. Utången !!!!!!!!!!!!!!!!!!!!!!
+***VGTSYM = 106, GETSYM. Obsolete !!!!!!!!!!!!!!!!!!!!!!
 */
      "-5:re.sv.vv.fv.fv.iv.lv",
 /*
@@ -629,9 +720,6 @@
 ***VGLOREF = 162, GLOBAL_REF
 */
      "r5:re.1(ie<0>)",
-
-/* Nya rutiner för version 1.4 10/4/87 */
-
 /*
 ***VPSPMT  = 163, PSH_PMT
 */
@@ -676,10 +764,6 @@
 ***VLINPER = 173, LIN_PERP
 */
      "-5:ve.re.fe",
-/*
-***Databasrutiner, 16/5/87.
-*/
-
 /*
 ***VDBOP = 174, DB_OPEN
 */
@@ -744,9 +828,6 @@
 ***VPLTWI = 189, PLOT_WIN.
 */
      "-5:ve.ve.se.1(ve)",
-
-/* Nya rutiner för version 1.7 13/10/88 */
-
 /*
 ***VUPHDR  = 190, UPDHDR.
 */
@@ -760,8 +841,8 @@
 */
      "-5:se",
 /*
-***VINPMT  = 193, INPMT.   OBS OBS ie borde väl vara id ????
-***Även se kan vara default.
+***VINPMT  = 193, INPMT.   OBS OBS ie borde vï¿½ vara id ????
+***ï¿½en se kan vara default.
 */
      "s5:se.se.1(ie<0>)",
 /*
@@ -913,7 +994,7 @@
 */
      "-5:vv.vv",
 /*
-***VCRWIN = 231, win_id:=CRE_WIN(pos,dx,dy,labelÄ,typÅ);
+***VCRWIN = 231, win_id:=CRE_WIN(pos,dx,dy,labelï¿½typï¿½;
 */
      "i5:ve.fe.fe.se.1(id<0>)",
 /*
@@ -952,7 +1033,7 @@
 */
      "i5:ie.ie",
 /*
-***VDLWIN = 240, DEL_WIN(win_idÄ,subwin_idÅ);
+***VDLWIN = 240, DEL_WIN(win_idï¿½subwin_idï¿½;
 */
      "-5:ie.1(ie)",
 /*
@@ -972,7 +1053,7 @@
 */
      "-5:re.ie.se.1(id<0>)",
 /*
-***VSURCON = 245, SUR_CONIC. För antal strippar se MXLSTP i V3.h.
+***VSURCON = 245, SUR_CONIC. Fï¿½ antal strippar se MXLSTP i V3.h.
 */
      "-3:re.re.re.se.re.re.re.24(se.re.re.re)",
 /*
@@ -1372,143 +1453,114 @@
 ***VCURNA = 344, CUR_NURBSARR(id,order,ncpts,cpts,[w,k]);
 */
      "-5:ie.ie.nv.1(lv.1(lv))",
-
 /*
 ***VTCPCO = 345, status:=TCP_CONNECT(server, port, localport, socket);
 */
      "i5:se.ie.ie.iv",
-
 /*
 ***VTCPLI = 346, status:=TCP_LISTEN(port, timeout, socket);
 */
      "i5:ie.fe.iv",
-
 /*
 ***VTCPCL = 347, status:=TCP_CLOSE(socket);
 */
      "i5:ie",
-
 /*
 ***VTCPSI = 348, status:=TCP_OUTINT(socket,bytecount,byteorder,timeout,data);
 */
      "i5:ie.ie.ie.fe.ie",
-
 /*
 ***VTCPRI = 349, status:=TCP_ININT(socket,bytecount,byteorder,timeout,data);
 */
      "i5:ie.ie.ie.fe.iv",
-
 /*
 ***VTCPSF = 350, status:=TCP_OUTFLOAT(socket,bytecount,byteorder,timeout,data);
 */
      "i5:ie.ie.ie.fe.fe",
-
 /*
 ***VTCPRF = 351, status:=TCP_INFLOAT(socket,bytecount,byteorder,timeout,data);
 */
      "i5:ie.ie.ie.fe.fv",
-
 /*
 ***VTCPSF = 352, status:=TCP_OUTCHAR(socket,timeout,data);
 */
      "i5:ie.fe.fe",
-
 /*
 ***VTCPRF = 353, status:=TCP_INCHAR(socket,timeout,data);
 */
      "i5:ie.fe.fv",
-
 /*
 ***VTCPRF = 354, status:=TCP_GETLOCAL(socket,name,port);
 */
      "i5:ie.sv.iv",
-
-
 /*
 ***VTCPRF = 355, status:=TCP_GETREMOTE(socket,name,port);
 */
      "i5:ie.sv.iv",
-
 /*
 ***VTCPSF = 356, status:=TCP_OUTVEC(socket,bytecount,byteorder,timeout,data);
 */
      "i5:ie.ie.ie.fe.ve",
-
 /*
 ***VTCPRF = 357, status:=TCP_INVEC(socket,bytecount,byteorder,timeout,data);
 */
-     "i5:ie.ie.ie.fe.vv",
-     
+     "i5:ie.ie.ie.fe.vv",   
 /*
 ***VRPCCC = 358, status:=RPC_CLIENTCREATE(servername,programnumber,versionnumber,client);
 */
      "i5:se.ie.ie.iv",
-
 /*
 ***VRPCCD = 359, status:=RPC_CLIENTDESTROY(client);
 */
      "i5:ie",
-
 /*
 ***VRAPOF = 360, status:=RAP_OUTFLOAT(client,var_name,data);
 */
      "i5:ie.se.fe",
-
 /*
 ***VRAPIF = 361, status:=RAP_INFLOAT(client,var_name,data);
 */
      "i5:ie.se.fv",
-
 /*
 ***VRAPOF = 362, status:=RAP_OUTINT(client,var_name,data);
 */
      "i5:ie.se.ie",
-
 /*
 ***VRAPIF = 363, status:=RAP_ININT(client,var_name,data);
 */
      "i5:ie.se.iv",     
-
 /*
 ***VRAPORT= 364, status:=RAP_OUTROBTARGET(client,var_name,trans,rot,conf,extax);
 */
      "i5:ie.se.ve.lv.pv.lv",     
-
 /*
 ***VRAPIRT= 365, status:=RAP_INROBTARGET(client,var_name,trans,rot,conf,extax);
 */
      "i5:ie.se.vv.lv.pv.lv",                          
-
 /*
 ***VRAPOS= 366, status:=RAP_OUTSPEED(client,var_name,speeddata);
 */
      "i5:ie.se.lv",
-
 /*
 ***VRAPIS= 367, status:=RAP_INSPEED(client,var_name,speeddata);
 */
      "i5:ie.se.lv",                          
-
 /*
 ***VRAPORT= 368, status:=RAP_OUTROBTARR(client,var_name,first,last,trans,rot,conf,extax);
 */
      "i5:ie.se.ie.ie.nv.lv.pv.lv",
-
 /*
 ***VRAPIRT= 369, status:=RAP_INROBTARR(client,var_name,first,last,trans,rot,conf,extax);
 */
      "i5:ie.se.ie.ie.nv.lv.pv.lv",                          
-
 /*
 ***VORURSTD= 370, status:=ORU_RSTIMEDIFF(rclient,ssocket,diff,robtime);
 */
      "i5:ie.ie.fv.fv",
-
 /*
 ***VRAPORT= 371, status:=RAP_OUTFLOATARR(client,var_name,first,last,data);
 */
      "i5:ie.se.ie.ie.lv",
-
 /*
 ***VRAPIRT= 372, status:=RAP_INFLOATARR(client,var_name,first,last,data);
 */
@@ -1540,8 +1592,28 @@
 /*
 ***VGTXFLT = 379, GETXFLOAT(id,n,f);
 */
-     "-5:re.ie.fv"
+     "-5:re.ie.fv",
 
+/*
+***VTMULT = 380, TFORM_MULT(tmat,tmat,tmat);
+*/
+     "-5:jv.jv.jv",
+     
+/*
+***VTINV = 381, TFORM_INV(tmat,tmat);
+*/
+     "-5:jv.jv",
+     
+/*
+***VCCMPARR = 382, CUR_COMPARR(id,nref,ref,surid);
+*/
+     "-3:ie.mv.1(re)",
+     
+/*
+***VSURTUSRD = 383, SUR_TRIM_USRDEF(id,surid,nloops,looparr);
+*/
+     "-3:re.ie.mv"     
+     
 
 /*
 ***Remember, no comma after the last parameter list definition.
@@ -1554,5 +1626,6 @@
 #else
 #include "my_formpar.h"
 #endif
+
 
 /************************************************************/

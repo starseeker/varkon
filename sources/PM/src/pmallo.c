@@ -14,7 +14,6 @@
 *    short pmgeba()    get base address to module in PM and load
 *                      module from file if not in PM
 *    short pmclea()    clears and reinitialise PM
-*    short pmrset()    resets PM
 *    char *pmgadr()    get address to PM location
 *    pm_ptr pmgbla()   get PM-base address
 *    short pmsbla()    set PM-base address
@@ -52,12 +51,14 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
+#include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
 
 #ifdef UNIX
 #include <unistd.h>
 #endif
+
 
 #ifdef WIN32
 #include <io.h>
@@ -298,28 +299,6 @@ static pm_ptr loadmo(char *moname);
 */
    if ( ( status = clheap() ) < -1 )
       return( status );
-
-   return( 0 );
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short pmrset( )
-
-/*      Reset PM.
- *      ANVÄNDS EJ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *
- *      FV:    return - status 
- *
- *      (C)microform ab 1986-03-21 Per-Ove Agne'
- *
- *      1999-11-18 Rewritten, R. Svedin
- *
- ******************************************************!*/
-
-  {
-   actmodba = stackp = MIN_BLKS;
 
    return( 0 );
   }

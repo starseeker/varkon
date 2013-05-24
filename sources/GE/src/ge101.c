@@ -227,7 +227,7 @@ static short fix_tol2(DBAny *pstr, DBSeg *pseg, DBfloat *ptol2);
  *     1991-12-14 GE107(), Johan Kjellander
  *     1996-09-30 Intialization m2,m3. Transformation of
  *                segments replaced by transformation of pts
- *                and vectors. Problems with UV_SEG and curve
+ *                and vectors. Problems with UV_CUB_SEG and curve
  *                planes otherwise.
  *     1999-04-19 Rewritten, J.Kjellander
  *

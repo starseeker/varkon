@@ -768,7 +768,7 @@ exit:
     char    *oldrtb,*oldrsp;
     char     curmna[V2SYNLEN+1];
     bool     dstflg;
-    GMPRT    part;
+    DBPart    part;
     PMMONO  *mnp,*np;
     PMSTNO  *snp;
     PMPAST  *pnp;

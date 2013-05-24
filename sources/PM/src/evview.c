@@ -71,14 +71,14 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    DBint   i,j,index[2];
    char    vynamn[V3STRLEN+1];
    double  skala,xmin,ymin,xmax,ymax,persp;
-   v2int   win_id;
+   DBint   win_id;
    DBTmat  vymat;
    PMLITVA litval[16];
 
    win_id = proc_pv[1].par_va.lit.int_va;
 
 #ifdef V3_X11
-   wpgtvi(win_id,vynamn,&skala,&xmin,&ymin,&xmax,&ymax,&vymat,&persp);
+   WPgtvi(win_id,vynamn,&skala,&xmin,&ymin,&xmax,&ymax,&vymat,&persp);
 #else
 #ifdef WIN32
    msgtvi(win_id,vynamn,&skala,&xmin,&ymin,&xmax,&ymax,&vymat,&persp);
@@ -284,7 +284,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      Ut: Inget.
  *
  *      FV:      0 = OK.
- *          AVBRYT = <CTRL>c i gphide().
+ *          AVBRYT = <CTRL>c i WPhide().
  *
  *      Felkoder: IN2262 = Filnamn saknas.
  *                IN2272 = Felaktig kod.
@@ -404,7 +404,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    v2int azoom,win_id;
+    DBint azoom,win_id;
 
     if ( proc_pc == 0 )
       {
@@ -464,6 +464,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 8/8/93
  *
  *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      2006-12-28 Removed GP, J.Kjellander
  *
  ******************************************************!*/
 
@@ -471,13 +472,18 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    short   status;
    VY      modvy;
    PMLITVA litval;
+   WPWIN  *winptr;
 
 /*
-***Hämta modellens storlek.
+***Get a ptr to the main GWIN.
 */
-    if ( (status=igmsiz(&modvy)) < 0 ) return(status);
+    winptr = WPwgwp((wpw_id)GWIN_MAIN);
 /*
-***Om modell saknas eller saknar utsträckning returnerar vi nollor.
+***Calculate bounding rectangle of projected model.
+*/
+    WPmsiz(winptr->ptr,&modvy);
+/*
+***If there is no model or it has no size, return zeros.
 */
     if ( (modvy.vywin[2] < modvy.vywin[0]) &&
          (modvy.vywin[3] < modvy.vywin[1]) )
@@ -486,7 +492,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
       modvy.vywin[2] = modvy.vywin[3] = 0.0;
       }
 /*
-***Skriv in resultatet i p1 och p2.
+***Else return 2D view limits in p1 and p2.
 */    
     litval.lit.vec_va.x_val = modvy.vywin[0];
     litval.lit.vec_va.y_val = modvy.vywin[1];

@@ -1,75 +1,101 @@
 !*******************************************************
 
  MACRO MODULE igs_gsec(
-   VAR FILE infil,logfil;
-       INT  eolsize;
-   VAR INT  status);
+   VAR FILE   infile,logfile;
+       INT    rowlgt;
+   VAR INT    n_lweight_grad;
+   VAR FLOAT  max_lweight;
+   VAR INT    status);
 
-!*      Läser Global section.
+!*      Reads Global section.
 !*
-!*      Ut: status = 0 => Ok
-!*                  -1 => Fel
+!*      Out: status = 0 => Ok
+!*                   -1 => Error
 !*
 !*      (C)microform ab 1997-12-22 J. Kjellander
 !*
-!*     2004-07-20 eolsize, J.Kjellander, Örebro university
+!*        2006-9-20 rowlgt, J.Kjellander ,Örebro University
 !*
 !*******************************************************
 
-   STRING rad*132;
-   INT    nl;
-
+   STRING row*132;
+   INT    nl,i,tmpi;
+   INT    n_chars;
+   STRING readstring*81;
+   STRING tmp*81,prod_id*81,syst_id*81;
+   FLOAT  tmpf;
+   
  BEGINMODULE
 
 !*
 !***HEADER.
 !*
-    outlin(logfil);
-    outstr(logfil,"Global Section");
-    outlin(logfil);
+    outlin(logfile);
+    outstr(logfile,"Global Section");    outlin(logfile);
+    outstr(logfile,"--------------");    outlin(logfile);    
 !*
-!***Läs en 1:a rad och kolla att det är Global section.
+!***Reads a 1:st row and checks that it is a global section.
 !*
-    rad:=inlin(infil);
-    if length(rad) <> 80 then
-      outstr(logfil,rad);
-      outlin(logfil);
-      outstr(logfil,"Line "+str(length(rad),-1,0)+" columns, should be 80 !");
-      outlin(logfil);
-      status:=-1;
-      exit();
-    elif substr(rad,73,1) <> "G" then
-      outstr(logfil,"This is not a Global Section");
-      outlin(logfil);
+    row:=inlin(infile);
+    if substr(row,73,1) <> "G" then
+      outstr(logfile,"This is not a Global Section");
+      outlin(logfile);
       status:=-1;
       exit();
     else
       status:=0;
       nl:=1;
     endif;
+!*    
+!***read some data from global section
 !*
-!***Läs resten av sektionen.
+    IF substr(row,1,1)="," THEN
+       row:=substr(row,2); 
+    ELSE
+       part(#1,igs_gstr(infile,row,n_chars,tmp,status));      !index 1
+    ENDIF;
+    IF substr(row,1,1)="," THEN
+       row:=substr(row,2); 
+    ELSE
+       part(#21,igs_gstr(infile,row,n_chars,tmp,status));     !index 2
+    ENDIF;
+
+    part(#3,igs_gstr(infile,row,n_chars,prod_id,status));     !index 3
+    part(#4,igs_gstr(infile,row,n_chars,tmp,status));         !index 4
+    part(#5,igs_gstr(infile,row,n_chars,syst_id,status));     !index 5
+    part(#6,igs_gstr(infile,row,n_chars,tmp,status));         !index 6   
+    FOR i:= 7 TO 11 DO
+       part(#7,igs_gint_gsec(infile,row,tmpi,status));        !index 7-11
+    ENDFOR;
+    part(#8,igs_gstr(infile,row,n_chars,tmp,status));         !index 12 
+    part(#9,igs_gflt_gsec(infile,row,tmpf,status));           !index 13    
+    part(#10,igs_gint_gsec(infile,row,tmpi,status));          !index 14    
+    part(#11,igs_gstr(infile,row,n_chars,tmp,status));        !index 15
+    part(#12,igs_gint_gsec(infile,row,n_lweight_grad,status));!index 16
+    part(#13,igs_gflt_gsec(infile,row,max_lweight,status));   !index 17        
+!*    
+!***write to logfilee
+!*
+    outstr(logfile,"Sending system: " + syst_id);
+    outlin(logfile);
+    outstr(logfile,"product id:     " + prod_id);
+    outlin(logfile);
+!*
+!***Read the remainder of the section.
 !*
 loop:
-    rad:=inlin(infil);
-
-    if substr(rad,73,1) = "G" then
-      nl:=nl+1;
+    row:=inlin(infile);
+    if substr(row,73,1) = "G" then
       goto loop;
     endif;
 !*
-!***Skriv till loggfil.
+!***Give back the last read row.
 !*
-    outstr(logfil,"Processed "+str(nl,-1,0)+" lines");
-    outlin(logfil);
+    seek(infile,fpos(infile)-( rowlgt));
 !*
-!***Läma tillbaks senast lästa rad.
-!*
-    seek(infil,fpos(infil)-(80+eolsize));
+!**END
+!*    
 
  ENDMODULE
 
-!*******************************************************
-
-
-
+!***************************************************************************

@@ -1,0 +1,223 @@
+!********************  igs_ell **********************
+! +++
+! Convert ellipse from canonical form to rational form
+! 
+!
+! Revision history
+! ________________
+!
+! 2000-06-02  Gunnar Liden
+!
+! ---
+!*******************************************************
+!sdesce Convert ellipse from canonical form to rational form
+
+
+LOCAL GEOMETRY MODULE  igs_ell (
+    FLOAT    a_c;                     ! Conic Coefficient A
+    FLOAT    b_c;                     ! Conic Coefficient B
+    FLOAT    c_c;                     ! Conic Coefficient C
+    FLOAT    d_c;                     ! Conic Coefficient D
+    FLOAT    e_c;                     ! Conic Coefficient E
+    FLOAT    f_c;                     ! Conic Coefficient F
+    FLOAT    z_t;                     ! Z coordinate of plane of definition
+    FLOAT    x_1;                     ! Start Point Abscissa
+    FLOAT    y_1;                     ! Start Point Ordinata
+    FLOAT    x_2;                     ! End   Point Abscissa
+    FLOAT    y_2;                     ! End   Point Ordinata
+VAR FILE     logfile;                 ! Log file
+VAR REF      cur_id;                  ! Output curve identity
+    INT      graphic);                ! Eq. 0: None 1: Curve 2: All
+
+! Theory
+! Conic: a_c*X**2 + b_c*X*Y + c_c*Y**2 + d_c*X + e_c*Y + f_c = 0
+!
+! Y=0   ==> x_s = - d_c/2.0/a_c + SQRT((d_c/2.0/a_c)**2 - f_c/a_c)
+! X=0   ==> y_e = - e_c/2.0/c_c + SQRT((e_c/2.0/c_c)**2 - f_c/c_c)
+! x_m = x_s/2.0
+! X=x_m ==> 
+!  a_c*x_m**2 + b_c*x_m*y_m + c_c*y_m**2 + d_c*x_m + e_c*y_m + f_c = 0
+!
+! a_c/c_c*x_m**2+b_c/c_c*x_m*y_m+y_m**2+d_c/c_c*x_m+e_c/c_c*y_m+f_c/c_c=0
+! y_m**2+(b_c/c_c*x_m + e_c/c_c)*y_m+a_c/c_c*x_m**2+d_c/c_c*x_m+f_c/c_c=0
+! y_m = - (b_c/c_c*x_m + e_c/c_c)/2 + 
+!  SQRT((b_c/c_c*x_m+e_c/c_c)**2/4-a_c/c_c*x_m**2-d_c/c_c*x_m-f_c/c_c)
+
+! Internal variables:
+
+  FLOAT  x_s;                       ! Start X for start conic segment
+  FLOAT  y_e;                       ! End   Y for start conic segment
+  FLOAT  x_m;                       ! Mid   X for start conic segment
+  FLOAT  y_m;                       ! Mid   Y for start conic segment
+
+  VECTOR p_1;                       ! Start point for the conic
+  VECTOR p_2;                       ! End   point for the conic
+
+  FLOAT  t_1;                       ! Parameter corresponding to p_1
+  FLOAT  t_2;                       ! Parameter corresponding to p_2
+
+  VECTOR p_seg1;                    ! Teat point in segment 1
+  VECTOR p_seg2;                    ! Teat point in segment 2
+  VECTOR p_seg3;                    ! Teat point in segment 3
+  VECTOR p_seg4;                    ! Teat point in segment 4
+
+
+  INT    i_pt;                      ! Loop index
+  INT    i_seg;                     ! Loop index
+
+  INT    b_val_c;                   ! Blank value conic
+  INT    b_val_a;                   ! Blank value all other entities
+
+  INT    DEBUG;                     ! Eq. 0: No Debug  
+                                    ! Eq. 1: Full Debug
+
+  CONSTANT  INT   i_undef = -12345;       ! Undefined integer
+  CONSTANT  FLOAT f_undef = -0.123456789; ! Undefined float  
+
+BEGINMODULE
+
+! +++
+! Algorithm
+! _________
+! ---
+
+! +++
+! Checks and initializations
+! ---
+
+! Initializations of the output parameter
+  cur_id := #0;
+
+
+  IF    graphic = 0 THEN  
+    b_val_c := 0;
+    b_val_a := 0;
+  ELIF  graphic = 1 THEN  
+    b_val_c := 0;
+    b_val_a := 1;
+  ELIF  graphic = 2 THEN  
+    b_val_c := 0;
+    b_val_a := 0;
+  ELSE               
+    EXIT("igs_ell graphic not 0, 1 or 2");
+  ENDIF;     
+
+! Intializations of internal variables
+  x_s    := f_undef;
+  y_e    := f_undef;
+  x_m    := f_undef;
+  y_m    := f_undef;
+  p_1    := VEC(f_undef,f_undef,f_undef);
+  p_2    := VEC(f_undef,f_undef,f_undef);
+  t_1    := f_undef;
+  t_2    := f_undef;
+  p_seg1 := VEC(f_undef,f_undef,f_undef);
+  p_seg2 := VEC(f_undef,f_undef,f_undef);
+  p_seg3 := VEC(f_undef,f_undef,f_undef);
+  p_seg4 := VEC(f_undef,f_undef,f_undef);
+
+
+    OUTSTR(logfile,"igs_ell Create an ellipse");
+    OUTLIN(logfile);
+
+! +++
+! Create a full ellipse
+! ---
+
+  x_s := - d_c/2.0/a_c + SQRT((d_c/2.0/a_c)**2 - f_c/a_c);
+  y_e := - e_c/2.0/c_c + SQRT((e_c/2.0/c_c)**2 - f_c/c_c);
+  x_m := x_s/2.0;
+  y_m := - (b_c/c_c*x_m + e_c/c_c)/2 +SQRT((b_c/c_c*x_m+e_c/c_c)**2/4-a_c/c_c*x_m**2-d_c/c_c*x_m-f_c/c_c);
+  
+  
+  
+  !CUR_CONIC(#2, "FREE",vec(x_s,0,z_t),vec(x_s,1,z_t),vec(x_m,y_m,z_t),vec(0,y_e,z_t),vec(1,y_e,z_t):Pen=4);
+  
+  
+
+   CUR_CONIC(#2, "FREE",
+   VEC( x_s,  0 ,z_t), VEC( x_s,  0 ,z_t)+VEC(0,1,0), VEC( x_m, y_m,z_t),
+   VEC(  0 , y_e,z_t), VEC(  0 , y_e,z_t)+VEC(1,0,0), VEC(-x_m, y_m,z_t),
+   VEC(-x_s,  0 ,z_t), VEC(-x_s,  0 ,z_t)+VEC(0,1,0), VEC(-x_m,-y_m,z_t),
+   VEC(  0 ,-y_e,z_t), VEC(  0 ,-y_e,z_t)+VEC(1,0,0), VEC( x_m,-y_m,z_t),
+   VEC( x_s,  0 ,z_t), VEC( x_s,  0 ,z_t)+VEC(0,1,0):BLANK=b_val_a);
+
+! Test points
+!  p_seg1 := ON(#2,0.12);
+!  p_seg2 := ON(#2,1.32);
+!  p_seg3 := ON(#2,2.42);
+!  p_seg4 := ON(#2,3.52);
+
+!  x_2    := p_seg4.x;
+!  y_2    := p_seg4.y;
+
+!  x_1    := p_seg3.x;
+!  y_1    := p_seg3.y;
+
+
+ 
+! +++
+! Calculate parameter values for the start and end point
+! ---
+
+
+  p_1 := VEC(x_1,y_1,z_t);
+  p_2 := VEC(x_2,y_2,z_t);
+
+
+  t_1 := INV_ON(#2, p_1,1);
+  t_2 := INV_ON(#2, p_2,1);
+  IF  graphic >= 2 THEN
+    POI_FREE(#21, p_1);
+    POI_FREE(#22, p_2);
+    POI_FREE(#31, ON(#2,t_1):PEN=2);
+    POI_FREE(#32, ON(#2,t_2):PEN=2);
+  ENDIF;
+! The distance must be zero. Otherwise the other solution
+  IF  VECL(ON(#2,t_1)-p_1) > 0.01 THEN
+    t_1 := INV_ON(#2, p_1,2);
+    IF  graphic >= 2 THEN
+      POI_FREE(#41, ON(#2,t_1):PEN=4);
+    ENDIF;
+  ENDIF;
+  IF  VECL(ON(#2,t_2)-p_2) > 0.01 THEN
+    t_2 := INV_ON(#2, p_2,2);
+    IF  graphic >= 2 THEN
+      POI_FREE(#42, ON(#2,t_2):PEN=4);
+    ENDIF;
+  ENDIF;
+ 
+! +++
+! Create the output curve
+! ---
+
+  IF   ABS(t_1) < 0.001 AND ABS(t_2) < 0.001 THEN
+!   Whole ellipse
+    cur_id := #2;
+  ELIF ABS(t_1-t_2) < 0.001 THEN
+!   Error
+    OUTSTR(logfile,"igs_ell Error for create of an ellipse");
+    OUTLIN(logfile);
+    EXIT();
+  ELIF t_1 <  t_2 THEN
+!   Trim the curve
+    CUR_TRIM(#4, #2, t_1, t_2:BLANK=b_val_c,PEN=2);
+    DEL(#2);
+    cur_id := #4;
+  ELIF t_1 >  t_2 THEN
+!   Trim the curve
+    CUR_TRIM(#5, #2, t_1, 4.0:BLANK=b_val_a,PEN=2);
+    CUR_TRIM(#6, #2, 0.0, t_2:BLANK=b_val_a,PEN=4);
+    CUR_COMP(#7, #5, #6:BLANK=b_val_c,PEN=4);
+    cur_id := #7;
+    DEL(#2);
+    DEL(#5);
+    DEL(#6);
+  ENDIF;
+
+! Global reference
+  cur_id := GLOBAL_REF(cur_id);
+
+ENDMODULE
+
+!*****************************************************************************

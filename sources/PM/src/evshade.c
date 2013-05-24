@@ -61,7 +61,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
 
  {
    DBVector dir;
-   gmflt spotang,focus;
+   DBfloat spotang,focus;
 
 
    if ( proc_pc == 2 )
@@ -97,7 +97,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
      focus    = proc_pv[5].par_va.lit.float_va;
      }
 
-   return(wpltvi(proc_pv[1].par_va.lit.int_va,
+   return(WPltvi(proc_pv[1].par_va.lit.int_va,
     (DBVector *)&proc_pv[2].par_va.lit.vec_va,
                 &dir,spotang,focus));
  }
@@ -118,7 +118,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
  ******************************************************!*/
 
  {
-   return(wplton(proc_pv[1].par_va.lit.int_va,
+   return(WPlton(proc_pv[1].par_va.lit.int_va,
                  proc_pv[2].par_va.lit.float_va,
                  TRUE));
  }
@@ -139,7 +139,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
  ******************************************************!*/
 
  {
-   return(wplton(proc_pv[1].par_va.lit.int_va,
+   return(WPlton(proc_pv[1].par_va.lit.int_va,
                  100.0,
                  FALSE));
  }
@@ -162,7 +162,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
  ******************************************************!*/
 
  {
-   return(wpshad(proc_pv[1].par_va.lit.int_va,
+   return(WPshad(proc_pv[1].par_va.lit.int_va,
                  proc_pv[2].par_va.lit.int_va));
  }
 
@@ -184,7 +184,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
  ******************************************************!*/
 
  {
-   return(wpmtvi(proc_pv[1].par_va.lit.int_va,
+   return(WPmtvi(proc_pv[1].par_va.lit.int_va,
                  proc_pv[2].par_va.lit.float_va,
                  proc_pv[3].par_va.lit.float_va,
                  proc_pv[4].par_va.lit.float_va,
@@ -220,7 +220,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
  {
 #ifdef V3_X11
 
-   return(wpccol(proc_pv[1].par_va.lit.int_va,
+   return(WPccol(proc_pv[1].par_va.lit.int_va,
                  proc_pv[2].par_va.lit.int_va,
                  proc_pv[3].par_va.lit.int_va,
                  proc_pv[4].par_va.lit.int_va));

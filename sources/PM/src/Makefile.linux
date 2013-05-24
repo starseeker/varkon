@@ -16,7 +16,6 @@ distr :     CFLAGS =                    \
             -Wall                       \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
             -O                          \
             -DWRK_STAT                  \
             -DV3_X11                    \
@@ -28,7 +27,6 @@ debug :      CFLAGS =                   \
             -Wall                       \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
             -g3                         \
             -DWRK_STAT                  \
             -DV3_X11                    \

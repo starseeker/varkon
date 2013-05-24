@@ -72,8 +72,6 @@
 #include <string.h>
 #include <memory.h>
 
-extern GMDATA   v3dbuf;
-
 extern PMPARVA *proc_pv;  /* inproc.c *pv      Access structure for MBS routines */
 extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
 
@@ -386,7 +384,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
      short   status,i;
      DBptr   la;
      DBetype typ;
-     GMRECH  hdr;
+     DBHeader  hdr;
      PMLITVA litval[5];
      PMREFVA idvek[MXINIV];
 
@@ -501,7 +499,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
   {
     short status;
-    gmflt width;
+    DBfloat width;
 
     status = EXgwdt(func_pv[1].par_va.lit.ref_va,&width);
 
@@ -531,7 +529,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
   {
      short   status;
-     GMPOI   punkt;
+     DBPoint   punkt;
      PMLITVA litval;
 
 /*
@@ -573,7 +571,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
   {
      short   status;
-     GMLIN   linje;
+     DBLine   linje;
      PMLITVA litval[4];
 
 /*
@@ -623,8 +621,8 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
   {
      short   status;
-     GMARC   arc;
-     GMSEG   arcseg[4];
+     DBArc   arc;
+     DBSeg   arcseg[4];
      PMLITVA litval[7];
 
 /*
@@ -680,9 +678,9 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   {
      short   status;
      DBint   i,j,index[2];
-     gmflt  *offs,*matpek;
-     GMCUR   cur;
-     GMSEG  *segpek;
+     DBfloat  *offs,*matpek;
+     DBCurve   cur;
+     DBSeg  *segpek;
      PMLITVA litval[3];
 
 /*
@@ -705,7 +703,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /*
 ***Returnera offset.
 */
-     if ( (offs=(gmflt *)v3mall(cur.ns_cu*sizeof(gmflt),"evgcur")) == NULL )
+     if ( (offs=(DBfloat *)v3mall(cur.ns_cu*sizeof(gmflt),"evgcur")) == NULL )
        {
        status = erpush("PM1032","");
        goto end;
@@ -725,7 +723,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 ***Om inget kurvplan finns, returnera nollor, annars
 ***blir det problem på VAX:en.
 */
-     matpek = (gmflt *) &cur.csy_cu;
+     matpek = (DBfloat *) &cur.csy_cu;
 
      for ( i=0; i<4; ++i )
         {
@@ -772,7 +770,7 @@ end:
 
   {
      short   status;
-     GMCUR   cur;
+     DBCurve   cur;
      PMLITVA litval[4];
 
 /*
@@ -817,9 +815,9 @@ end:
      char    errbuf[80];
      short   status,segnum,segant;
      DBint   i,j,index[2];
-     gmflt  *datpek;
-     GMCUR   cur;
-     GMSEG  *segpek,*actpek;
+     DBfloat  *datpek;
+     DBCurve   cur;
+     DBSeg  *segpek,*actpek;
      PMLITVA litval;
 
 /*
@@ -854,7 +852,7 @@ end:
 ***Fixa en pekare till det önskade segmentet.
 */
    actpek = segpek + (segnum - 1);
-   datpek = (gmflt *)actpek;
+   datpek = (DBfloat *)actpek;
 /*
 ***Returnera segment-koefficienter.
 */
@@ -897,7 +895,7 @@ end:
 */
    if ( proc_pc > 7 )
      {
-     if ( actpek->typ == UV_SEG  &&  actpek->spek_gm > 0 )
+     if ( actpek->typ == UV_CUB_SEG  &&  actpek->spek_gm > 0 )
        {
        DBget_id(actpek->spek_gm,&litval.lit.ref_va[0]);
        }
@@ -915,7 +913,7 @@ end:
 */
    if ( proc_pc > 8 )
      {
-     if ( actpek->typ == UV_SEG  &&  actpek->spek2_gm > 0 )
+     if ( actpek->typ == UV_CUB_SEG  &&  actpek->spek2_gm > 0 )
        {
        DBget_id(actpek->spek2_gm,&litval.lit.ref_va[0]);
        }
@@ -960,7 +958,7 @@ end:
     DBptr   la;
     DBetype typ;
     char   *kod;
-    GMSUR   sur;
+    DBSurf   sur;
     PMLITVA litval;
 
 /*
@@ -1020,7 +1018,7 @@ end:
 
   {
    short   status;
-   GMPAT   toppat;
+   DBPatch   toppat;
    PMLITVA litval;
 
 /*
@@ -1077,8 +1075,8 @@ end:
 
   {
    short    status;
-   gmflt    data[48];
-   GMPATC   cubpat;
+   DBfloat  data[48];
+   DBPatchC cubpat;
    PMLITVA  litval;
 /*
 ***Hämta patchdata från GM.
@@ -1142,7 +1140,7 @@ end:
 
   {
    short    status;
-   GMPATF   facpat;
+   DBPatchF   facpat;
    PMLITVA  litval[4];
 
 /*
@@ -1227,9 +1225,9 @@ end:
   {
      short   status;
      DBint   i,j,index[2];
-     GMTRF   trf;
+     DBTform   trf;
      PMLITVA litval;
-     gmflt  *matpek;
+     DBfloat  *matpek;
 
 /*
 ***Hämta transformation från GM.
@@ -1239,7 +1237,7 @@ end:
 /*
 ***Returnera parameter 2, transformationsmatris.
 */
-     matpek = (gmflt *) &trf.mat_tf;
+     matpek = (DBfloat *) &trf.mat_tf;
 
      for ( i=0; i<4; ++i )
         {
@@ -1280,7 +1278,7 @@ end:
 
   {
      short   status;
-     GMTXT   text;
+     DBText   text;
      char    str[V3STRLEN+1];
      PMLITVA litval[7];
 
@@ -1332,14 +1330,15 @@ end:
 
   {
      short   status;
-     GMXHT   xht;
+     DBHatch xht;
+     DBfloat xhtcrd[4*GMXMXL];
      PMLITVA litval[5];
 
 /*
 ***Hämta snitt från GM.
 */
      if ( (status=EXgtxh(&proc_pv[1].par_va.lit.ref_va[0],
-		                 &xht, v3dbuf.crd)) < 0 )
+		                 &xht, xhtcrd)) < 0 )
        return(status);
 /*
 ***Kopiera parametervärden 1-5 till PMLITVA.
@@ -1356,7 +1355,7 @@ end:
 /*
 ***Returnera parameter 6, snittlinjer.
 */
-     return(evwfvk(v3dbuf.crd,4*xht.nlin_xh,7,proc_pv));
+     return(evwfvk(xhtcrd,4*xht.nlin_xh,7,proc_pv));
   }
 
 /********************************************************/
@@ -1380,7 +1379,7 @@ end:
 
   {
      short   status;
-     GMLDM   ldm;
+     DBLdim   ldm;
      PMLITVA litval[8];
 
 /*
@@ -1437,7 +1436,7 @@ end:
 
   {
      short   status;
-     GMCDM   cdm;
+     DBCdim   cdm;
      PMLITVA litval[8];
 
 /*
@@ -1494,7 +1493,7 @@ end:
 
   {
      short   status;
-     GMRDM   rdm;
+     DBRdim   rdm;
      PMLITVA litval[8];
 
 /*
@@ -1551,7 +1550,7 @@ end:
 
   {
      short   status;
-     GMADM   adm;
+     DBAdim   adm;
      PMLITVA litval[11];
 
 /*
@@ -1608,7 +1607,7 @@ end:
   {
      short   status,i;
      DBptr   lavek[GMMXGP];
-     GMGRP   grp;
+     DBGroup   grp;
      PMLITVA litval[2];
      PMREFVA idvek[MXINIV];
 
@@ -1663,9 +1662,9 @@ end:
   {
      short   status;
      DBint   i,j,index[2];
-     GMCSY   csy;
+     DBCsys   csy;
      PMLITVA litval;
-     gmflt  *matpek;
+     DBfloat  *matpek;
 
 /*
 ***Hämta koordinatsystem från GM.
@@ -1680,7 +1679,7 @@ end:
 /*
 ***Returnera parameter 2, transformationsmatris.
 */
-     matpek = (gmflt *) &csy.mat_pl;
+     matpek = (DBfloat *) &csy.mat_pl;
 
      for ( i=0; i<4; ++i )
         {
@@ -1723,7 +1722,7 @@ end:
 
   {
      short   status;
-     GMBPL   bplan;
+     DBBplane   bplan;
      PMLITVA litval[4];
 
 /*
@@ -1785,9 +1784,9 @@ end:
   {
      short   status,i,nst;
      DBptr   la_mem;
-     GMPRT   part;
-     GMRECH  hed;
-     GMPDAT  pdat;
+     DBPart   part;
+     DBHeader  hed;
+     DBPdat  pdat;
      PMLITVA litval[6];
      PMREFVA idvek[MXINIV];
 

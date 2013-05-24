@@ -36,17 +36,16 @@
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
 #include "../../GE/include/GE.h"
-#include "../../GP/include/GP.h"
 #include "../../WP/include/WP.h"
 #include "../include/EX.h"
 
 extern DBTmat *lsyspk;
 extern DBTmat  lklsyi;
 extern DBptr   lsysla;
-extern short   gptrty,modtyp;
+extern short   modtyp;
 
 #ifdef WIN32
-extern short wpdrpo();
+extern short WPdrpo();
 #endif
 
 
@@ -121,15 +120,7 @@ extern short wpdrpo();
 /*
 ***Display.
 */
-    gpdrms(mshptr,la,DRAW);
-
-#ifdef V3_X11
-    if ( gptrty == X11 ) wpdrms(mshptr,la,GWIN_ALL);
-#endif
-#ifdef WIN32
-    wpdrms(mshptr,la,GWIN_ALL);
-#endif
-
+    WPdrms(mshptr,la,GWIN_ALL);
 /*
 ***Succesful creation of mesh. Empty error message stack
 */
@@ -531,7 +522,7 @@ extern short wpdrpo();
 /*
 ***Sort.
 */
-    if ( status=GEsort_mesh(&mesh,mode,facelist,min,max) < 0 ) return(status);
+    if ( (status=GEsort_mesh(&mesh,mode,facelist,min,max)) < 0 ) return(status);
 
     return(0);
   }

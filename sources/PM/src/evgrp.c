@@ -61,7 +61,7 @@ extern V2NAPA  *geop_np; /* ingeop.c *npblock Pekare till namnparameterblock.*/
 {
 short  nref = 0;                /* Number of referenses */ 
 short  i;                       /* loop variable */
-GMGRP grprec;                   /* GM struct för GROUP */
+DBGroup grprec;                   /* GM struct för GROUP */
 V2REFVA  refarr[ GMMXGP + 1 ];  /* referens array */
 
 /*

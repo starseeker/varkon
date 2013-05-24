@@ -38,9 +38,8 @@
 #include "../../DB/include/DB.h"
 #include "../include/IG.h"
 #include "../../WP/include/WP.h"
-#include "../include/screen.h"
 
-extern short igtrty,rmarg,ialy,ialx;
+extern short igtrty;
 
 /*!*******************************************************/
 
@@ -177,15 +176,7 @@ extern short igtrty,rmarg,ialy,ialx;
  *******************************************************!*/
 {
     int   typarr[V2MPMX];
-    short prx[ MSMAX ];                     /* promptlägen */
-    short isx[ MSMAX ];                     /* inputfältlägen */
-    short fwdt[ MSMAX ];                    /* fältlängder */
-    short ilen,plen;
-    short tab,air,retsmb=0;
-    short cursor[ MSMAX ];                  /* cursor pos */
-    short scroll[ MSMAX ];                  /* fönster pos */
-    bool dfuse[ MSMAX ];                    /* defaultsäkringar */
-    short i,j;
+    short i;
 
 /*
 ***X11.
@@ -194,7 +185,7 @@ extern short igtrty,rmarg,ialy,ialx;
     if ( igtrty == X11 )
       {
       for ( i=0; i<as; ++i ) typarr[i] = C_STR_VA;
-      return(wpmsip(igqema(),ps,ds,is,ml,typarr,as));
+      return(WPmsip(igqema(),ps,ds,is,ml,typarr,as));
       }
 #endif
 /*
@@ -205,110 +196,8 @@ extern short igtrty,rmarg,ialy,ialx;
     if ( as < 4 )return((short)msdl03(igqema(),ps,ds,is,ml,(int)as));
     else         return((short)msmsip(igqema(),ps,ds,is,ml,typarr,as));
 #endif
-/*
-***Gör inmatning.
-*/
-    if ( as < 1 ) as = 1;
-    else if ( as > MSMAX ) as = MSMAX;
 
-    air = 1;                                   /* luft mellan fälten */
-    tab = ((rmarg-ialx)/as) - (air*(as - 1));  /* max utrymme per fält */
-
-    j = ialx;                                /* aktuellt x-läge */
-
-    for ( i=0; i < as; i++ )
-      {
-      prx[i] = j;                            /* promtens läge */
-      plen = strlen(ps[i]) + 1;              /* promtlängd */
-      isx[i] = j + plen;                     /* infältets läge */
-      ilen = (tab - 1) - plen;               /* infältets max längd */
-      if (ilen > ml[i])                      /* behövs inte hela fältet ? */
-           ilen = ml[i];
-      fwdt[i] = ilen;                        /* infältets längd */
-      j = isx[i] + fwdt[i] + 1 + air;        /* nästa promt */ 
-      }
-/*
-***Promt och defaultvärde.
-*/
-    for (i = 0; i < as; i++)
-      {
-      igmvac(prx[ i ],ialy);     
-      igpstr(ps[ i ],REVERS);           /* ut med prompten */
-
-      igdfld(isx[ i ],fwdt[ i ],ialy);
-      strcpy(is[ i ],ds[ i ]);            /* default -> infältet */  
-      dfuse[ i ] = TRUE;
-      cursor[ i ] = 0;
-      scroll[ i ] = 0;
-      igfstr(is[ i ],JULEFT,NORMAL);      /* infältet */ 
-      }
-
-    j = 0;
-    while ((j >= 0) && (j < as)) {
-
-        retsmb = 0;
-        igdfld(isx[ j ],fwdt[ j ],ialy);
-/*
-***Läs in sträng med redigering och snabbval.
-*/
-        switch (iglned(is[ j ],&cursor[ j ],&scroll[ j ],
-                        &dfuse[ j ],ds[ j ],ml[ j ],NORMAL,TRUE)) {
-
-             case SMBRETURN:
-             case SMBDOWN:
-                  if (strlen(is[ j ]) == 0) {
-                       j--;
-                       retsmb = REJECT;
-                  } else
-                       j++;
-                  break;
-
-             case SMBMAIN:
-                  retsmb = GOMAIN;
-                  goto end;
-
-             case SMBPOSM:
-                  retsmb = POSMEN;
-                  goto end;
-
-             case SMBUP:
-                  j--;
-                  retsmb = REJECT;
-                  break;
-/*
-***Hjälp.
-*/
-             case SMBHELP:
-                  if ( ighelp() == GOMAIN )
-                    {
-                    retsmb = GOMAIN;
-                    goto end;
-                    }
-/*
-***Snabbval och hjälp, återställ inmatningsraden.
-*/
-             case SMBESCAPE:
-                  igmvac(ialx,ialy);
-                  igerar(rmarg,1);
-                  for (i = 0; i < as; i++)
-                     {
-                     igmvac(prx[ i ],ialy);     
-                     igpstr(ps[ i ],REVERS);
-                     igdfld(isx[ i ],fwdt[ i ],ialy);
-                     igfstr((is[ i ] + scroll[ i ]),JULEFT,NORMAL);
-                     }
-                  break;
-        }
-    }
-
-/*
-***Avsluta.
-*/
-end:
-    igmvac(ialx,ialy);
-    igerar(rmarg,1);
-
-    return(retsmb);
+   return(0);
 }
 
 /**************************************************************/
@@ -372,13 +261,12 @@ end:
  *******************************************************!*/
 
  {
-    char c;
+
 /*
 ***X11.
 */
 #ifdef V3_X11
-      if ( igtrty == X11 )
-        return(wpialt(ps,ts,fs,pip));
+      return(WPialt(ps,ts,fs,pip));
 #endif
 /*
 ***WIN32.
@@ -386,29 +274,7 @@ end:
 #ifdef WIN32
       return(msialt(ps,ts,fs,pip));
 #endif
-/*
-***Ev. ett litet pip.
-*/
-    if ( pip ) igbell();
-/*
-***Ev. prompt.
-*/
-loop:
-    if ( strlen(ps) > 0 ) igplma(ps,IG_INP);
-/*
-***Läs in svar, max ett tecken och jämför med ts och fs.
-*/
-    c = iggtch();
 
-    if ( strlen(ps) > 0 ) igrsma();
-
-    if ( c == *ts ) return(TRUE);
-    else if ( c == *fs ) return(FALSE);
-    else
-     {
-     igbell();
-     goto loop;
-     }
  }
 
 /*********************************************************/

@@ -46,6 +46,7 @@
 /*  1996-05-28   Declaration of erpush                              */
 /*  1997-02-09   Elimination f compiler warning                     */
 /*  1999-11-27   Free source code modifications                     */
+/*  2006-12-12   Optimizations for speed J.Kjellander               */
 /*                                                                  */
 /******************************************************************!*/
 
@@ -55,12 +56,6 @@
 /*sdescr varkon_cur_segadr     Segment adress for given T value */
 /*                                                              */
 /*------------------------------------------------------------- */
-
-/*!-------------- Function calls (external) ------------------------*/
-/*                                                                  */
-/* varkon_erpush          * Error message to terminal               */
-/*                                                                  */
-/*-----------------------------------------------------------------!*/
 
 /*!------------ Error messages and warnings ------------------------*/
 /*                                                                  */
@@ -78,7 +73,7 @@
 /* In:                                                              */
    DBfloat  tglob,       /* Global t value                          */
    DBint    nseg,        /* Number of curve segments                */
-   DBint   *p_iseg,      /* Curve segment address iseg              */
+   DBint   *p_iseg,      /* Curve segment offset iseg               */
    DBfloat *p_t )        /* Segment (local) parameter value         */
 
 /* Out:                                                             */
@@ -97,27 +92,9 @@
    char   errbuf[80];    /* String for error message fctn erpush    */
 
 /*--------------end-of-declarations---------------------------------*/
-
-/*!New-Page--------------------------------------------------------!*/
-
-/*!                                                                 */
-/* Algorithm                                                        */
-/* =========                                                        */
-/*                                                                 !*/
-
-#ifdef DEBUG
-if ( dbglev(SURPAC) == 2 )
-  {
-  fprintf(dbgfil(SURPAC),
-  "sur785 Enter*varkon_cur_segadr: tglob= %15.10f nseg= %d\n", 
-              tglob, (int)nseg  );
-  }
-#endif
-
 /*!                                                                 */
 /* 1. Segment address iseg and local parameter t_seg                */
 /* _________________________________________________                */
-/*                                                                  */
 /*                                                                 !*/
 /*  Integer part of tglob                                           */
 
@@ -125,75 +102,40 @@ if ( dbglev(SURPAC) == 2 )
 
 /*  Check that the segment iseg exists  1 <= iseg <= nseg + 1       */
 
-    if (iseg > nseg + 1 )
-        {
-#ifdef DEBUG
-if ( dbglev(SURPAC) == 1 )
-  {
-  fprintf(dbgfil(SURPAC),
-  "sur785 Segment iseg= %d outside definition area nseg= %d \n",
-   (int)iseg,(int)nseg);
-  }
-#endif
-        sprintf(errbuf,"%f %% %d varkon_cur_patadr (sur785)"
+    if ( iseg > nseg + 1 )
+      {
+      sprintf(errbuf,"%f %% %d varkon_cur_patadr (sur785)"
                ,tglob-1.0,(int)nseg);
-        return(varkon_erpush("SU2523",errbuf));
-        }
+      return(varkon_erpush("SU2523",errbuf));
+      }
 
-
-    if (iseg < 0 )
-        {
-        sprintf(errbuf,"%f %% %d varkon_cur_patadr (sur785)"
+    if ( iseg < 0 )
+      {
+      sprintf(errbuf,"%f %% %d varkon_cur_patadr (sur785)"
                ,tglob-1.0,(int)nseg);
-        return(varkon_erpush("SU2523",errbuf));
-        }
-
+      return(varkon_erpush("SU2523",errbuf));
+      }
 /*  Calculate local parameter t_seg= decimal part of tglob          */
 /*  Note that extrapolation  0< tglob <1 and nseg< tglob <nseg+1    */
 /*  is allowed.                                                     */
 
-    if (iseg == nseg+1 )
-        {
-        iseg = iseg - 1;
-        t_seg  = tglob    - (DBfloat)iseg;     
-        }
-
-    else if (iseg ==  0   )
-        {
-        iseg = iseg + 1;
-        t_seg  = tglob    - (DBfloat)iseg;     
-        }
-
+    if ( iseg == nseg+1 )
+      {
+      iseg   = iseg - 1;
+      t_seg  = tglob - (DBfloat)iseg;     
+      }
+    else if ( iseg ==  0  )
+      {
+      iseg = iseg + 1;
+      t_seg  = tglob - (DBfloat)iseg;     
+      }
     else                    
-        {
-        t_seg  = tglob    - (DBfloat)iseg;     
-        }
-
-/*!                                                                 */
-/* 2. Data to output variables                                      */
-/* ___________________________                                      */
-/*                                                                  */
-/*                                                                 !*/
+      {
+      t_seg = tglob - (DBfloat)iseg;     
+      }
 
    *p_iseg = iseg;
    *p_t    = t_seg;
-
-#ifdef DEBUG
-if ( dbglev(SURPAC) == 2 )
-  {
-  fprintf(dbgfil(SURPAC),
-  "sur785 Local parameter point *p_t %15.10f\n",
-   *p_t);
-  }
-if ( dbglev(SURPAC) == 1 )
-  {
-  fprintf(dbgfil(SURPAC),
-  "sur785 Exit tglob %15.10f *p_iseg %d *p_t %15.10f\n",
-   tglob,(int)*p_iseg,*p_t);
-  fflush(dbgfil(SURPAC)); 
-  }
-#endif
-
 
     return(SUCCED);
 

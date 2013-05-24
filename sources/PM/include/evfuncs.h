@@ -26,7 +26,7 @@
 *  Free Software Foundation, Inc., 675 Mass Ave, Cambridge, 
 *  MA 02139, USA. 
 *       
-*  (C) J.Kjellander, Örebro university
+*  (C) J.Kjellander, ï¿½ebro university
 *   
 ******************************************************************/
 
@@ -67,11 +67,11 @@ static short (*functab[])() =
    evlian,    evliof,    evlit1,    evlit2,    evarfr, /* 09 */
    evar2p,    evar3p,    evarof,    evarfl,    evcufr, /* 14 */
    evcupr,    evcuro,    evcomp,    evxht,     NULL,   /* 19 */
-   evions,    evtext,    NULL,      evcs3p,    evgrp,  /* 24 */
+   evions,    evtext,    evpinc,    evcs3p,    evgrp,  /* 24 */
    evldim,    evcdim,    evrdim,    evadim,    evacos, /* 29 */
    evasin,    evatan,
-   evcos,     evsin,     evtan,    evnlog,    evlogn,
-   evsqrt,    evabs,     evfrac,   evroud,    evtrnc,
+   evcos,     evsin,     evtan,     evnlog,    evlogn,
+   evsqrt,    evabs,     evfrac,    evroud,    evtrnc,
    evgref,    evldgm,    evsvgm,
    evbllv,    evublv,    evgtlv,    evalev,    evncui, /* 49 */
    eveval,    evfins,    evarcl,    evtang,    evcen,
@@ -79,8 +79,7 @@ static short (*functab[])() =
    evscr,     evbpln,    evmolo,    evmogl,    evvec,
    evset,     evos,      evvecl,    evvecn,    evangl, /* 69 */
    evasci,    evstr,     evchr,     evval,     evleng,
-   evsubs,
-   evopen,    evseek,    evouti,    evoutf, /* 79 */
+   evsubs,    evopen,    evseek,    evouti,    evoutf, /* 79 */
    evouts,    evoutl,    evoutb,    evinii,    evinif,
    evinis,    evinl,     evinb,     evfpos,    evclos, /* 89 */
    eviost,    evgtid,    evghdr,    evgpoi,    evglin,
@@ -141,6 +140,7 @@ static short (*functab[])() =
    evrpirt,   evrpos,    evrpis,    evrpora,   evrpira,/* 369 */
    evorrstd,  evrpofa,   evrpifa,   evmsar,    evgmsh,
    evgvrt,    evghdg,    evgface,   evsrms,    evgxflt,/* 379 */
+   evtmult,   evtinv,    evccmparr, evstusr,
 #endif
 };
 

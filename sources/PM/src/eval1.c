@@ -37,8 +37,6 @@
 #include "../../IG/include/IG.h"
 #include "../../EX/include/EX.h"
 
-extern GMDATA   v3dbuf;
-
 extern PMPARVA *proc_pv;  /* inproc.c *pv      Access structure for MBS routines */
 
 extern PMPARVA *func_pv;   /* Access structure for MBS routines */
@@ -82,7 +80,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evwseg(
         DBint    nseg,
-        GMSEG    seg[],
+        DBSeg    seg[],
         DBint    pn,
         PMPARVA *pv)
 
@@ -211,7 +209,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /*!******************************************************/
 
         short evwfvk(
-        gmflt    fvk[],
+        DBfloat    fvk[],
         DBint    nval,
         DBint    pn,
         PMPARVA *pv)

@@ -55,6 +55,7 @@
  *      1994-12-01 evltyp, J. Kjellander
  *      1999-12-18 sur214->varkon_sur_uvsegeval G Liden
  *      2002-05-23 NURBS, Johan Kjellander,Örebro University
+ *      2006-11-03 Added UV_NURB_SEG S.Larsson, Örebro university
  *
  ******************************************************!*/
 
@@ -124,11 +125,11 @@
           }
         break;
 /*
-***UV-segment.
+***UV-segment, cubic or NURBS.
 */
-
-        case UV_SEG:
-        return(varkon_sur_uvsegeval((DBCurve *)gmpost,segpek,evlpek));
+        case UV_CUB_SEG:
+        case UV_NURB_SEG:
+        return(varkon_sur_uvsegeval((DBCurve *)gmpost,segpek,evlpek));        
 /*
 ***NURBS-span.
 */

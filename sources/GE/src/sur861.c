@@ -408,7 +408,7 @@ if ( dbglev(SURPAC) == 2 )
 
 /*!                                                                 */
 /* Determine the surface type and check that there are no surface   */
-/* curve segments (UV_SEG) in the input curve segments              */
+/* curve segments (UV_CUB_SEG) in the input curve segments              */
 /*                                                                 !*/
 
   surface_type = 1; /* Initialize to CUB_SUR surface                */

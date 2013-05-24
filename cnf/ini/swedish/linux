@@ -1,6 +1,6 @@
 !***************************************************************
 !*
-!*    Resursfil för VARKON 1.16 för Linux.
+!*    Resursfil för VARKON 1.18 för Linux.
 !*
 !*    Copyright Microform AB 1998
 !*
@@ -67,6 +67,8 @@ varkon.font:                   fixed
 varkon.mbsedit.emulator:          xterm -title MBS-Edit -e
 varkon.mbsedit.editor:            vi
 varkon.mbsedit.compiler:          mbsc
+!varkon.mbsedit.editor:           kwrite
+!varkon.mbsedit.compiler:
 varkon.mbsedit.autocompile:       True
 varkon.mbsedit.autoexec:          True
 !*

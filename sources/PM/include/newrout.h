@@ -28,7 +28,7 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C) J. Kjellander, Örebro university                            */
+/*  (C) J. Kjellander, ï¿½ebro university                            */
 /*                                                                  */
 /********************************************************************/
 
@@ -112,7 +112,15 @@
 {"GETFACE",           ST_PROC,     FALSE,  ST_ORD,    VGTFACE},
 {"SORT_MESH",         ST_PROC,     FALSE,  ST_ORD,    VSRTMSH},
 {"GETXFLOAT",         ST_PROC,     FALSE,  ST_ORD,    VGTXFLT},
-
+{"POS_IN_CONE",       ST_FUNC,     FALSE,  ST_ORD,    VPINC},
+{"TFORM_MULT",        ST_PROC,     FALSE,  ST_ORD,    VTMULT},
+{"TFORM_INV",         ST_PROC,     FALSE,  ST_ORD,    VTINV},
+{"CUR_COMPARR",       ST_PROC,     FALSE,  ST_GEO,    VCCMPARR},
+{"SUR_TRIM_USRDEF",   ST_PROC,     FALSE,  ST_GEO,    VSURTUSRD},
+/*
+***The global symbol table ends here.
+*/
+{"",           ST_UNDEF,    FALSE,  ST_ORD,   ST_UNDEF}
 /*
 ***If you want to build your own version of the system,
 ***undefine VARKON and include your own file here.
@@ -120,9 +128,5 @@
 #else
 #include "my_newrout.h"
 #endif
-/*
-***The global symbol table ends here.
-*/
-{"",           ST_UNDEF,    FALSE,  ST_ORD,   ST_UNDEF}
 
 /******************************************************/

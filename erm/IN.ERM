@@ -80,7 +80,7 @@ VARKON Error messages for Interpreter routines
 
 401  4  Error allocating system memory
 
-500  2  Curve should be "free" or "proj" not "%s"
+500  2  Spline type should be FERGUSON, CHORD or STIFFNESS not "%s"
 501  2  CUR_CONIC, P-value < 0. Segment %s
 502  2  CUR_CONIC, P-value should be FLOAT
 503  2  Number of segments must be > 0. CUR_USDEF
@@ -150,4 +150,9 @@ VARKON Error messages for Interpreter routines
 568  2  Can't malloc data for MESH_ARR
 569  2  %s is not a valid direction in SORT_MESH, should be X, Y or Z
 570  2  Can't allocate memory for %s faces, SORT_MESH()
+571  2  Illegal value for number of positions in PTS_IN_CONE
+572  2  Illegal declaration of array for %s, PTS_IN_CONE
+573  2  Can't allocate memory for %s positions, PTS_IN_CONE()
+574  2  Minimum 1 input curve/line entity is needed to create loop
+575  2  Number of input entities > declared size, LOOP_ARR
 

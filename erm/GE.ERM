@@ -212,6 +212,7 @@ VARKON Error messages for GEOPAC
 829  3  CUR_TRIM, UV-curves can not be extended %s
 830  2  NORM, b_plane is not well defined, d = 0.
 831  2  XHATCH-boundary is not connected !
+832  2  POS_IN_CONE(), Cone length = 0
 899  3  %s Fatal programming error. Report to Microform.
 
 900  1  %s The input vector to normv() has zero length (TOL1)

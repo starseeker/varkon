@@ -4,7 +4,6 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  v2mome();     Move bytes in memory                              */
 /*  v3fopr();     Open file with path =  path;path...               */
 /*  v3trfp();     Process $environment in path                      */
 /*  igckhw();     Check HW                                          */
@@ -72,51 +71,7 @@ static char *envtab[] = { "VARKON_ERM",
 
 extern V3MDAT sydata;
 
-/*!******************************************************/
 
-        short v2mome(
-        char *frompk,
-        char *topk,
-        int   size)
-
-/*      Flyttar data i primärminne.
- *
- *      In: frompk => Pekare till ställe där data hämtas.
- *          topk   => Pekare till ställe där data lagras.
- *          size   => Antal char som flyttas.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 21/5/85 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-
-#ifdef UNIX
-     memcpy(topk,frompk,size);
-#endif
-
-#ifdef WIN32
-     memcpy(topk,frompk,size);
-#endif
-
-#ifdef VMS
-     register int i;
-     register char *pf,*pt;
-
-     pf = frompk;
-     pt = topk;
-
-     for ( i=0; i<size; ++i,++pt,++pf ) *pt = *pf;
-#endif
-
-     return(0);
-  }
-
-/********************************************************/
 /*!******************************************************/
 
         int v3fopr(

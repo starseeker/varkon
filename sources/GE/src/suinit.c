@@ -62,7 +62,7 @@
 /*  1998-02-28   linecrit added                                     */
 /*  1999-11-20   Only long names                                    */
 /*  2000-01-25   Include env.h                                      */
-/*                                                                  */
+/*  2006-11-08   Read cgraph from file SURPAC.TOL                   */
 /*                                                                  */
 /******************************************************************!*/
 
@@ -172,7 +172,7 @@ if ( (f_tol= fopen( path ,"r")) == NULL )
  }                                  
 
 /*!                                                                 */
-/* Read first line with description and eight tolerances            */
+/* Read first line with description and nine tolerances            */
 /* Calls of C functions fgets and sscanf.                           */
 /*                                                                 !*/
 
@@ -194,7 +194,10 @@ if ( (f_tol= fopen( path ,"r")) == NULL )
   sscanf(rad,"%lf",&def_tol_tab[6]);
   fgets(rad,132,f_tol);                /* idradius                  */
   sscanf(rad,"%lf",&def_tol_tab[7]);
+  fgets(rad,132,f_tol);                /* Graphic ctol              */
+  sscanf(rad,"%lf",&def_tol_tab[8]);
 
+  
 /*!                                                                 */
 /* Close the file (C function fclose)                               */
 /*                                                                 !*/

@@ -70,7 +70,7 @@ extern double skala,curnog;
 /*
 ***Vektortabell för teckengenerering.
 */
-#include "../../GP/include/font0.h"
+#include "../../WP/include/font0.h"
 
 /*!******************************************************/
 

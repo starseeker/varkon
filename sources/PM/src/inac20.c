@@ -308,7 +308,7 @@
 ***Beräkna var i valarr som värdet skall lagras.
 */
     valoffs = var.addr_va - rtsstart;
-    if ( valoffs >= sizeof(GMDATA) ) return(erpush("IN2302",""));
+    if ( valoffs >= (V3STRLEN*V2MPMX) ) return(erpush("IN2302",""));
 
     if ( var.kind_va != ST_RPAVA )
         {

@@ -9,6 +9,9 @@
 #
 # (C)Örebro universitet 2004
 #
+# 2006-09-22 Sören Larsson, Örevbo universitet
+#            Relativ sökväg till VARKON_ROOT 
+#
 #######################################################
 
 # VARKON_ROOT är systemets huvudkatalog. Om resten
@@ -16,7 +19,10 @@
 # vis räcker det att ändra VARKON_ROOT för att kunna
 # starta. Övriga environmentparametrar är kopplade till
 # VARKON_ROOT men kan förstås ändras om så önskas.
-VARKON_ROOT=/usr/varkon/varkon_1.18A
+# Alternativ 1, hitta relativ sökväg härifrån.
+# Alternativ 2, ange sökvägen explicit
+VARKON_ROOT=`(cd $(dirname $0); cd ..; cd ..; pwd)`
+# VARKON_ROOT=/home/username/varkon/varkon_1.99X
 export VARKON_ROOT
 
 # Svenska menyfiler.
@@ -96,7 +102,7 @@ export PATH
 #export LD_LIBRARY_PATH
 
 # Starta VARKON
-xvarkon $1 $2   -pm1000000 -rts10000000 \
+xvarkon $1 $2  \
 -i$VARKON_INI/linux
 
 # Om man vill kan man även lägga till en egen ini-fil

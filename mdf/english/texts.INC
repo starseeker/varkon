@@ -1,7 +1,7 @@
 
 ! Varkon standard texts
-! Latest update for version 1.18A
-! Johan Kjellander, Örebro university
+! Latest update for version 1.18B
+! Mohamed Rahayem, Orebro university
 
 t0   = "Select : "
 t1   = "  <SPACE>=Next message       <CR>=Cancel"
@@ -648,8 +648,8 @@ t1619 = "What is the name of the IGES-file ?"
 t1620 = "Width            : "
 t1621 = "Linewidth        : "
 t1622 = "Jobdirectory does not exist, do you want to create it ?"
-t1623 = "stl_txt"
-t1624 = "stl_bin"
+t1623 = "stl_in"
+t1624 = "igs_in"
 t1625 = "stl_out"
 t1626 = "A job with this name already exists, replace ?"
 t1627 = "-No promt defined-"
@@ -668,4 +668,19 @@ t1639 = "Zmax             : "
 t1640 = "Vertices         : "
 t1641 = "Half edges       : "
 t1642 = "Faces            : "
+t1643 = "l_sureval"
+t1644 = "ANALYSIS - Surface"
+t1645 = "Parameters"
+t1646 = "U-value          : "
+t1647 = "V-value          : " 
+t1648 = "Position"
+t1649 = "Normal"
+t1650 = "Curvatures"
+t1651 = "Min-Curvature    : "
+t1652 = "Max-curvature    : "
+t1653 = "Gaussian         : "
+t1654 = "Mean             : "
+t1655 = "Area             : "
+t1656 = "Enter U parameter value !"
+t1657 = "Enter V parameter value !"
 

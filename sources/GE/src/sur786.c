@@ -132,12 +132,12 @@ fprintf(dbgfil(SURPAC),
 /* Let flag for UV segment be true.                                 */
 /*                                                                 !*/
 
-   if ( p_seg->typ  ==  UV_SEG )
+   if ( p_seg->typ  ==  UV_CUB_SEG )
         p_xyz->surpat = TRUE;
    else
       {    
       sprintf(errbuf,                       
-      "(not UV_SEG)%%varkon_seg_uveval");
+      "(not UV_CUB_SEG)%%varkon_seg_uveval");
       return(varkon_erpush("SU2993",errbuf));
       }                            
 

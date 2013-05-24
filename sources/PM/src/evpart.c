@@ -125,13 +125,13 @@ extern short modtyp;
 
    V2NAPA partnpbl;             /* Named parameter block for default in parted module */
                                                                    /* POA 850521 */
-   GMPRT prtrec;                /* GM record for Part */              /* POA 850514 */
-   GMPDAT prtdat;               /* GM record for Part */              /* POA 860310 */
+   DBPart prtrec;                /* GM record for Part */              /* POA 850514 */
+   DBPdat prtdat;               /* GM record for Part */              /* POA 860310 */
 
-   extern GMDATA v3dbuf;        /* array for parameter values to be logged in GM */
-   PMPATLOG ptyparr[ INPTLOG ]; /* and it's type info */
-   int npar;                    /* the number of parameters */
-   short olmtyp;                /* Anroparens modtyp */
+   PMPATLOG ptyparr[ INPTLOG ];      /* and it's type info */
+   int      npar;                    /* the number of parameters */
+   short    olmtyp;                  /* Anroparens modtyp */
+   char     valarr[V3STRLEN*V2MPMX]; /* array for parameter values to be logged in GM */
 /*
 ***Spara anropad moduls namn i "prtmna".
 ***From. V1.12 kan namnet representeras på två olika sätt.
@@ -381,7 +381,7 @@ extern short modtyp;
 ***Read parameter values for parted module from RTS and fill in value 
 ***and type to be logged in GM.
 */
-     if ( (status=ingpva( np->ppali_, v3dbuf.valarr, ptyparr, &npar )) < -1 )
+     if ( (status=ingpva( np->ppali_, valarr, ptyparr, &npar )) < -1 )
        {
        errlev = 2;           /* 861028, JK */
        goto error;
@@ -403,7 +403,7 @@ extern short modtyp;
 ***Öppna part i GM.
 */
      if (( status = EXoppt( ident, refp, &prtrec, &prtdat,
-                            ptyparr, v3dbuf.valarr )) < -1 )
+                            ptyparr, valarr )) < -1 )
      {
      errlev = 2;
      goto error;
