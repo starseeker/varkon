@@ -1,0 +1,62 @@
+!*******************************************************
+
+ MACRO MODULE stl_fnam(
+   STRING     name_in*132 ;
+   VAR STRING name_out*132;
+   VAR INT    status);
+
+!*      Normalises filename and checks for exixtence
+!*      and permissions.
+!*
+!*      In: name_in  = Name entered by user
+!*          name_out = Complete path
+!*          status   = 0 = OK, -1 = Can't open that file.
+!*
+!*      (C)microform ab 1998-09-03 J. Kjellander
+!*
+!*******************************************************
+
+ STRING name_tmp*132;
+
+ BEGINMODULE
+
+!*
+!***Initialization.
+!*
+   name_out:=name_in;
+!*
+!***Is the ".STL"-suffix there ? If not, add it.
+!*
+   if finds(name_out,".") = 0 then
+     name_out:=name_out+".STL";
+   endif;
+!*
+!***If no "/" or "\" is there we assume act_jobdir().
+!*
+   if act_ostype() = "UNIX" then
+     if finds(name_out,"/") = 0 then
+       name_out:=act_jobdir()+name_out;
+     endif;
+   else
+     if finds(name_out,"\") = 0  and finds(name_out,":") = 0 then
+       name_out:=act_jobdir()+name_out;
+     endif;
+   endif;
+!*
+!***Try to open for read.
+!***If this does'n work, try lower case ".stl" as well.
+!*
+   status:=0;
+
+   if test_file(name_out,"R") = 0 then
+     name_tmp:=substr(name_out,1,length(name_out)-3) + "stl";
+     if test_file(name_tmp,"R") = 0 then
+       status:=-1;
+     else
+       name_out:=name_tmp;
+     endif;
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

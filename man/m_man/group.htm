@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>group </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>group - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a group<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Associates a text with one or more entities. A group can be used to add an attribute to a
+  single entity or to collect a number of entities under a common name.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  group(id, name, ref1, refn:attributes);<br>
+  <br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 17 Row 01 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="491">id;</td>
+    </tr>
+<!-- Table 17 Row 02 -->
+    <tr>
+      <td width="71">STRING</td>
+      <td width="491">name*20;</td>
+    </tr>
+<!-- Table 17 Row 03 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="491">ref1;</td>
+    </tr>
+<!-- Table 17 Row 04 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="491">refn;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 18 Row 01 -->
+    <tr>
+      <td width="61">id </td>
+      <td width="501">- Local identity</td>
+    </tr>
+<!-- Table 18 Row 02 -->
+    <tr>
+      <td width="61">name</td>
+      <td width="501">- User defined name</td>
+    </tr>
+<!-- Table 18 Row 03 -->
+    <tr>
+      <td width="61">ref1</td>
+      <td width="501">- Identity of first member</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 19 Row 01 -->
+    <tr>
+      <td width="60">refn</td>
+      <td width="502">- Identity of additional members</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 20 Row 01 -->
+    <tr>
+      <td width="61">PEN </td>
+      <td width="501">- Pen or colour number</td>
+    </tr>
+<!-- Table 20 Row 02 -->
+    <tr>
+      <td width="61">LEVEL</td>
+      <td width="501">- Level number</td>
+    </tr>
+<!-- Table 20 Row 03 -->
+    <tr>
+      <td width="61">BLANK</td>
+      <td width="501">- Visible(0) or invisible(1)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>group(#5,&quot;Steel&quot;,#2);<br>
+  <br>
+  Adds the text attribute &quot;Steel&quot; to #2.<br>
+  <br>
+  group(#10,&quot;Walls&quot;,#1,#2,#3,#4,#5);<br>
+  <br>
+  Collects #1 to #5 in a common group with name = &quot;Walls&quot;.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  A group can hold up to 100 members including parts and other groups. A single entity can
+  only be a member of maximum 3 different groups.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

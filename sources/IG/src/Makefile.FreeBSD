@@ -1,0 +1,22 @@
+##########################################################
+#
+#   Makefile for IGlib with gcc and FreeBSD
+#
+#  (C)Microform AB 1999-02-15 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC ?= gcc
+
+CFLAGS +=   -ansi -ffloat-store -fsigned-char -fwritable-strings	\
+            -DUNIX -DV3_X11 -I/usr/X11R6/include -DWRK_STAT 
+
+debug :     CFLAGS += -g -DDEBUG
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.IG
+
+##########################################################

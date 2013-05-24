@@ -1,0 +1,70 @@
+VARKON Error messages for WINPAC
+(C) Microform AB 1996
+
+100  2  Can't load font = "%s"
+101  2  Maximum number of fonts already loaded, font = "%s"
+102  2  Font "%s" does not exist
+103  2  Can't init fonts on display %s
+104  2  Can't open display %s
+105  2  Can't create "%s"-window, wpw-table full
+106  2  Can't create "%s"-window, error from malloc()
+107  2  CRE_BUTTON, Window nr%s does not exist
+108  2  CRE_BUTTON, Window nr:%s is of wrong type  
+109  2  CRE_BUTTON, Window nr:%s is full
+110  2  Can't create  BUTTON, can't load font %s.
+111  2  Can't create  BUTTON "%s", error from malloc()
+112  2  GET_BUTTON, Window nr:%s does not exist
+113  2  GET_BUTTON, Window nr:%s is of wrong type
+114  2  GET_BUTTON, Button nr:%s does not exist
+115  2  GET_BUTTON, ID nr:%s is not a button
+116  2  GET_EDIT, Window nr:%s does not exist
+117  2  GET_EDIT, Window nr:%s is of wrong type
+118  2  GET_EDIT, Edit nr:%s does not exist
+119  2  GET_EDIT, ID nr:%s is not an edit
+120  2  WAIT_WIN, ID nr:%s is not a window
+121  2  CRE_ICON, Can't read icon-file %s
+122  2  DEL_WINDOW, Window nr:%s does not exist
+123  2  DEL_WINDOW, Window nr:%s has no child with ID:%s
+124  2  Can't create graphical window on display %s
+125  2  Can't create menu window on display %s
+126  2  CRE_ICON, Window nr:%s does not exist
+127  2  CRE_ICON, Window nr:%s is of wrong type
+128  2  CRE_ICON, Window nr:%s is full 
+129  2  Can't create ICON "%s", error from malloc()
+130  2  CRE_EDIT, Window nr:%s does not exist
+131  2  CRE_EDIT, Window nr:%s is of wrong type
+132  2  CRE_EDIT, Window nr:%s is full 
+133  2  ACT_VIEW, View %s does not exist
+134  2  ACT_VIEW, Window med ID = %s does not exist
+135  2  ACT_VIEW, Window med ID = %s is not graphical
+136  2  wpergw(), Graphical window with ID = %s does not exist
+137  3  wpdply(), PLYMXV < k  or  k < 2
+138  2  REP_VIEW, Window with ID = %s does not exist
+139  2  BLANK/UNBLANK_LEVEL, Window with ID = %s does not exist
+140  2  GET_VIEW, Window with ID = %s does not exist
+141  2  ACT_VIEW, view "%s" has illegal data
+142  2  Can't write window information to jobfile !
+143  2  Can't read window information from jobfile !
+144  2  Can't find resource or init file "%s"
+145  2  Can't create file: %s
+146  2  Can't create pipe, command=%s
+147  2  Unused error code
+148  2  CRE_FBUTTON, Window nr:%s does not exist
+149  2  CRE_FBUTTON, Window nr:%s is of wrong type
+150  2  CRE_FBUTTON, Window nr:%s is full 
+151  2  CRE_FBUTTON, %s is an illegal actioncode
+152  2  CRE_FICON, Window nr:%s does not exist
+153  2  CRE_FICON, Window nr:%s is of wrong type
+154  2  CRE_FIFON, Window nr:%s is full
+155  2  CRE_FICON, %s is an illegal actioncode
+156  2  GET_WIN, Window nr:%s does not exist
+157  2  GET_WIN, Window nr:%s is of wrong type
+158  2  CRE_DBUTTON, Window nr:%s alraedy has a default button
+159  2  SHADE_VIEW, Window nr:%s does not exist
+160  2  SHADE_VIEW, Window nr:%s is of wrong type
+161  2  Can't init OpenGL !
+162  3  GLX-extension not supported by this X-server !
+163  3  No appropriate visual for %s !
+164  3  Can't create rendering context !
+165  3  Surface BBOX-flag = -99
+166  3  Visual mismatch, Win=%s, GL=%s

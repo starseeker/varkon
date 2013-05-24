@@ -1,0 +1,139 @@
+!*******************************************************
+
+ macro module p_getpar(
+ VAR STRING pv4*80;
+ VAR FLOAT  s;
+ VAR FLOAT  v;
+ VAR FLOAT  x;
+ VAR FLOAT  y;
+ VAR FLOAT  c;
+ VAR FLOAT  h;
+ VAR INT    p;
+ VAR FLOAT  w;
+ VAR INT    l;
+ VAR STRING f*3;
+ VAR STRING d*2;
+ VAR STRING pf*3;
+ INT    flg);
+
+!*      Tar fram parametervärden för plottrar och skrivare.
+!*
+!*      In:  pv4   = Parametervärden från conf. fil.
+!*           flg  = Typ 0=Plotter. 1=Skrivare.
+!*
+!*      Ut:  s    = Skala.
+!*           v    = Vridning.
+!*           x    = X-min.
+!*           y    = Y-min.
+!*           c    = Kurvnoggranhet.
+!*           h    = Hastighet eller för skrivare Upplösning i X-led.
+!*           p    = För skrivare Upplösning i Y-led.
+!*           w    = För skrivare Plottområdets bredd
+!*           l    = För skrivare Antal rader.
+!*           f    = För skrivare Ny sida.
+!*           d    = För skrivare Debugg.
+!*           pf   = Pennfil.
+!*
+!*      (C)microform ab 1/2/91 R. Svedin
+!*
+!*******************************************************
+
+ STRING ps*20,s1*1,s2*80;
+
+ beginmodule
+
+!*
+!***Ta fram parametervärden.
+!*
+   if finds(pv4,"-s") <> 0 then
+     ps:=substr(pv4,finds(pv4,"-s")+2);
+     ps:=substr(ps,1,finds(ps," ")-1);
+     s:=val(ps);
+   else
+     s:=1.0;
+   endif;
+
+   if finds(pv4,"-x") <> 0 then
+     ps:=substr(pv4,finds(pv4,"-x")+2);
+     ps:=substr(ps,1,finds(ps," ")-1);
+     x:=val(ps);
+   else
+     x:=0.0;
+   endif;
+
+   if finds(pv4,"-y") <> 0 then
+     ps:=substr(pv4,finds(pv4,"-y")+2);
+     ps:=substr(ps,1,finds(ps," ")-1);
+     y:=val(ps);
+   else
+     y:=0.0;
+   endif;
+
+   if finds(pv4,"-v") <> 0 then
+     ps:=substr(pv4,finds(pv4,"-v")+2);
+     ps:=substr(ps,1,finds(ps," ")-1);
+     v:=val(ps);
+   else
+     v:=0.0;
+   endif;
+
+   if finds(pv4,"-K") <> 0 then
+     ps:=substr(pv4,finds(pv4,"-K")+2);
+     ps:=substr(ps,1,finds(ps," ")-1);
+     c:=val(ps);
+   else
+     c:=1.0;
+   endif;
+
+   if finds(pv4,"-h") <> 0 then
+     ps:=substr(pv4,finds(pv4,"-h")+2);
+     ps:=substr(ps,1,finds(ps," ")-1);
+     h:=val(ps);
+   else
+     if flg = 0 then h:=0.6; 
+     else            h:=1.0;
+     endif;
+   endif;
+
+   if finds(pv4,"-p24") <> 0 then
+     p:=24;
+   else
+     p:=8;
+   endif;
+
+   if finds(pv4,"-w") <> 0 then
+     ps:=substr(pv4,finds(pv4,"-w")+2);
+     ps:=substr(ps,1,finds(ps," ")-1);
+     w:=val(ps);
+   else
+     w:=203.2;
+   endif;
+
+   if finds(pv4,"-l") <> 0 then
+     ps:=substr(pv4,finds(pv4,"-l")+2);
+     ps:=substr(ps,1,finds(ps," ")-1);
+     l:=trunc(val(ps));
+   else
+     l:=85;
+   endif;
+
+   if finds(pv4,"-FF") <> 0 then
+     f:="-FF";
+   else
+     f:="n";
+   endif;
+
+   if finds(pv4,"-d") <> 0 then
+     d:="-d";
+   else
+     d:="n";
+   endif;
+   if finds(pv4,"-pf") <> 0 then
+     pf:="-pf";
+   else
+     pf:="n";
+   endif;
+
+ endmodule
+   
+!*******************************************************

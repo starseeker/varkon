@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>tcopy </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>tcopy - <small><small>Geometric procedure</small></small></h2>
+  <p>Copies entities<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a transformed copy of an entity. If the entity is a part a new part with the same
+  name is created and TCOPY is performed on all its members.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  tcopy(id, entity, tform, amode:attributes);<br>
+  <br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 57 Row 01 -->
+    <tr>
+      <td width="55">REF</td>
+      <td width="507">id;</td>
+    </tr>
+<!-- Table 57 Row 02 -->
+    <tr>
+      <td width="55">REF</td>
+      <td width="507">entity;</td>
+    </tr>
+<!-- Table 57 Row 03 -->
+    <tr>
+      <td width="55">REF</td>
+      <td width="507">tform;</td>
+    </tr>
+<!-- Table 57 Row 04 -->
+    <tr>
+      <td width="55">INT</td>
+      <td width="507">amode;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 58 Row 01 -->
+    <tr>
+      <td width="46">id </td>
+      <td width="516">- Local identity</td>
+    </tr>
+<!-- Table 58 Row 02 -->
+    <tr>
+      <td width="46">entity</td>
+      <td width="516">- Identity of the entity to copy and transform</td>
+    </tr>
+<!-- Table 58 Row 03 -->
+    <tr>
+      <td width="46">tform</td>
+      <td width="516">- Identity of transformation</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 59 Row 01 -->
+    <tr>
+      <td width="47">amode</td>
+      <td width="515">- Attribute mode, 0 = copy from entity (default), 1 = use current</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 60 Row 01 -->
+    <tr>
+      <td>Any attribute valid for the copied entity </td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>tcopy(#5,#2,#1);<br>
+  <br>
+  Create a copy #5 of #2 using the transformation #1. Copy attributes from #2.<br>
+  <br>
+  tcopy(#5,#2,#1,1:LEVEL=10);<br>
+  <br>
+  Same as above but #2 will not inherit its attributes from the original entity. Instead the
+  system current values will be used including LEVEL=10.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  If the copied entity is a part no parameters are copied.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

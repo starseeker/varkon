@@ -1,0 +1,123 @@
+!*******************************************************
+
+ macro module l_anacur(REF id);
+
+!*      Skriver ut specifika data för en kurva.
+!*
+!*      IN : Kurvans identitet.
+!*
+!*      UT : Inget.
+!*
+!*      (C)microform ab 8/10/86 R. Svedin
+!*
+!*      28/12/86 Globala ref, J. Kjellander
+!*      25/11/91 Nya kurvor, J. Kjellander
+!*      10/1/94  GETCURH och GETSEG, J. Kjellander
+!*      1996-06-03 Engelska,J.Kjellander
+!*      1998-01-01, J.Kjellander
+!*
+!*******************************************************
+
+   INT    ns_geo,ns_gra,i,j,fnt,typ,subtyp;
+   FLOAT  w,offset,sdat(4,4),sl;
+   STRING sdstr(4)*5;
+   REF    yt_id1,yt_id2;
+
+ beginmodule
+
+!*
+!***Strängar för utskrift av matris med segmentdata.
+!*
+   sdstr(1) := "k0 : ";
+   sdstr(2) := "k1 : ";
+   sdstr(3) := "k2 : ";
+   sdstr(4) := "k3 : ";
+!*
+!***Läs kurvdata ur GM.
+!*
+   getcurh(global_ref(id,2),fnt,sl,ns_geo,ns_gra);
+   w:=getwidth(global_ref(id,2));
+!*
+!***Attribut.
+!*
+   if fnt = 0 then
+     lst_lin(get_tstr(286));
+     ! t286 = "Typ              : Heldragen"
+   elif fnt = 1 then
+     lst_lin(get_tstr(311));
+     ! t311 = "Typ              : Streckad"
+   else
+     lst_lin(get_tstr(312));
+     ! t312 = "Typ              : Streck-prickad"
+   endif;
+
+   if fnt <> 0 then
+     lst_lin(get_tstr(313) + str(sl,-12,5));
+     ! t313 = "Strecklängd      : "
+   endif;
+
+   lst_lin(get_tstr(1620) + str(w,-12,5));   ! t1620 = "Bredd           : "
+!*
+!***Segmenten, geometrisk representation.
+!*
+   lst_lin(get_tstr(394) +  str(ns_geo,-5,0));
+   ! t394 = "Antal segment    : "
+   lst_lin("");
+
+   for i := 1 to ns_geo do
+     getseg(global_ref(id,2),i,0,sdat,offset,typ,subtyp,yt_id1,yt_id2);
+!*
+!***Segment typ 1 = CUB_SEG.
+!*
+     if typ = 1 then
+       lst_lin(get_tstr(402)+str(i,-5,0)+get_tstr(403));
+       ! t402 = "Segment nr:"
+       ! t403 = " Kubiskt"
+       lst_lin("        x            y            z            w");
+       for j := 1 to 4 do
+         lst_lin(sdstr(j) + 
+                 str(sdat(j,1),-12,5) + 
+                 "," + str(sdat(j,2),-12,5) + 
+                 "," + str(sdat(j,3),-12,5) + 
+                 "," + str(sdat(j,4),-12,5));
+       endfor;
+!*
+!***Segment typ 2 = UV_SEG.
+!*
+     elif typ = 2 then
+       lst_lin(get_tstr(402)+str(i,-5,0)+get_tstr(404)+str(subtyp,-1,0));
+       ! t402 = "Segment nr:"
+       ! t404 = " UV-segment typ "
+       if subtyp = 1 then
+         lst_lin(get_tstr(405)+rstr(yt_id1));
+         ! t405 = "                 Yt-ID ="
+       elif subtyp = 2 then
+         lst_lin(get_tstr(406)+rstr(yt_id1));
+         ! t406 = "                 Yt-ID1 ="
+         lst_lin(get_tstr(407)+rstr(yt_id2));
+         ! t407 = "                 Yt-ID2 ="
+       endif;
+
+       lst_lin("        u            v            w");
+       for j := 1 to 4 do
+         lst_lin(sdstr(j) + 
+                 str(sdat(j,1),-12,5) + 
+                 "," + str(sdat(j,2),-12,5) + 
+                 "," + str(sdat(j,4),-12,5));
+       endfor;
+     endif;
+!*
+!***Ev. offset.
+!*
+     if offset <> 0.0 then
+       lst_lin(get_tstr(408)+str(offset,-12,5));    ! t408 = "Offset : "
+     endif;
+!*
+!***Nästa segment.
+!*
+     lst_lin("");
+   endfor;
+
+ endmodule
+
+!*******************************************************

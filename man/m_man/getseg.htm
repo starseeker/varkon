@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>getseg </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>getseg - <small><small>Procedure</small></small></h2>
+  <p>Get curve segment from GM<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads a geometric or graphic curve segment from GM.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  getseg(curve_id, segnum, rep, segdata, offset, type, subtype, surfid_1, surfid_2)<br>
+  <br>
+  </p>
+  <table width="666" border="0">
+<!-- Table 22 Row 01 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="587">curve_id;</td>
+    </tr>
+<!-- Table 22 Row 02 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="587">segnum;</td>
+    </tr>
+<!-- Table 22 Row 03 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="587">rep;</td>
+    </tr>
+<!-- Table 22 Row 04 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="587">segdata(4,4);</td>
+    </tr>
+<!-- Table 22 Row 05 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="587">offset;</td>
+    </tr>
+<!-- Table 22 Row 06 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="587">type;</td>
+    </tr>
+<!-- Table 22 Row 07 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="587">subtype;</td>
+    </tr>
+<!-- Table 22 Row 08 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="587">surfid_1;</td>
+    </tr>
+<!-- Table 22 Row 09 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="587">surfid_2;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="666" border="0">
+<!-- Table 23 Row 01 -->
+    <tr>
+      <td width="61">id</td>
+      <td width="597">- Global identity of a curve</td>
+    </tr>
+<!-- Table 23 Row 02 -->
+    <tr>
+      <td width="61">segnum</td>
+      <td width="597">- The segment to read, first segment = 1</td>
+    </tr>
+<!-- Table 23 Row 03 -->
+    <tr>
+      <td width="61">rep</td>
+      <td width="597">- 0 = Read geometric segment, 1 = Read graphic segment</td>
+    </tr>
+<!-- Table 23 Row 04 -->
+    <tr>
+      <td width="61">segdata</td>
+      <td width="597">- A 4 by 4 matrix with polynomial coefficients</td>
+    </tr>
+<!-- Table 23 Row 05 -->
+    <tr>
+      <td width="61">offset</td>
+      <td width="597">- Offset</td>
+    </tr>
+<!-- Table 23 Row 06 -->
+    <tr>
+      <td width="61">type</td>
+      <td width="597">- 1 = Rational cubic segment, 2 = UV-segment</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b></p>
+  <table width="666" border="0">
+<!-- Table 24 Row 01 -->
+    <tr>
+      <td width="61">subtype</td>
+      <td width="597">&nbsp;- Always 0 for a rational cubic segment. 1 for an UV-segment that
+      lies on one surface</td>
+    </tr>
+    <tr>
+      <td width="61"></td>
+      <td width="597">&nbsp;&nbsp; 2 for an UV-segment that lies on two surfaces (intersect
+      curve)&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="61">surfid_1</td>
+      <td width="597">- Identity of first surface if subtype = 1 or 2</td>
+    </tr>
+<!-- Table 24 Row 02 -->
+    <tr>
+      <td width="61">surfid_2</td>
+      <td width="597">- Identity of second surface if subtype = 2</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments<br>
+  </b><br>
+  Each segment is a rational cubic with 0 to 1 parametrisation and the coefficients ordered
+  as follows:<br>
+  <br>
+  k0x k0y k0z k0w<br>
+  k1x k1y k1z k1w<br>
+  k2x k2y k2z k2w<br>
+  k3x k3y k3z k3w<br>
+  <br>
+  Se for example Faux and Pratt, &quot;Computational Geometry for design and
+  manufacture&quot;, page 144 for a further discussion on rational cubic parametric
+  segments.<br>
+  <br>
+  Graphical segments and geometric segments can be the same thing since many curves use
+  their geometric representation also for graphics. In that case an attempt to read
+  graphical segment number n will simply return geometrical segment number n.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="gmdbindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

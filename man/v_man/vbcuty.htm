@@ -1,0 +1,71 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (X11; I; Linux 2.2.5-15 i686) [Netscape]">
+   <title>Basic curve types</title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.17 1999-10-29</font></center>
+
+<p>
+<hr width="100%" align="center">
+<ul>
+<h3>
+Basic curve types</h3>
+VARKON uses two different representation schemes for curves. The first
+is the rational cubic parametric multisegment. This representation is used
+for splines and conics and 3D circular arcs. A spline is created using
+positions and optional tangents in the following way....
+<p><b>cur_spline</b>(id, type, pos_1, tan_1, pos_2, tan_2......pos_n, tan_n);
+<p>There is no upper limit for the number of points but a minimum of two
+is always needed. Where no tangents are given VARKON calculates (splines)
+tangents automatically using the algorithm specified by the type parameter.
+You can choose between Ferguson, Chordlength and Variable Stiffness. End
+tangents if not specified are calculated using the free end constraint
+(curvature = 0).
+<p>A multi segment conic is created using positions, tangents and intermediate
+points or P-values (I/P)...
+<p><b>cur_conic</b>(id,"FREE",pos_1,tan_1,I/P_1,pos_2,tan_2,I/P_2........pos_n,tan_n);
+<p>A <b>cur_conic</b> becomes a true planar quadric if possible otherwise
+a general twisted cubic rational. For those who wish to define cubic rationals
+using other methods or to import them from other systems there is also
+a low level routine <b>cur_usrdef</b> where you set all coefficients yourself.
+<p>For curves on surfaces VARKON uses a representation based on multi segmented&nbsp;
+cubic rationals in the UV-plane of the surface. An intersect between two
+surfaces for example.....
+<p><b>cur_int</b>(id,surface_id_1,surface_id_2);
+<p>creates a UV-curve. Other methods are <b>cur_iso</b> for curves of constant
+U or V and <b>cur_sil</b> for silhouette curves. The UV-representation
+is computationally much heavier than the cubic rational but necessary to
+achieve accuracy enough for complex modeling.
+<p>The final representation is the analytical offset which is actually
+an extension of the two schemes described above. Any plane curve, cubic
+rational, UV-curve or offset-curve can be used to create a new curve on
+a constant offset using....
+<p><b>cur_offs</b>(id,other_curve,offset);
+<p>VARKON treats offset curves as true analytical offsets to the original
+curves by first evaluating the original curve and then adding the desired
+offset. If the original curve is a UV-curve this is a very heavy computation
+but the only way to act if you want highest possible accuracy.
+<p>If you want to change an offset curve or a UV-curve into an ordinary
+cubic you can do this using <b>cur_approx</b>. You will then have to supply
+a maximum value for the error of approximation that you can tolerate.</ul>
+
+<hr width="100%" align="center">
+<center>
+
+
+
+<br>&nbsp;
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm">VARKON Homepage</a></td>
+
+<td><a href="vindex.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+/**********************************************************************
+*
+*    README
+*    ======
+*
+*    This README-file includes information about how to
+*    build the DXF import/export module.
+*
+*    (C)Örebro University 2003-03-20    http://www.oru.se/tech/cad
+*
+***********************************************************************/
+
+1. cd to the $VARKON_ROOT/sources/Vlib/dxf directory
+
+2. Type "make" to compile the MBS programs
+   and to install the MBO-modules in the Varkon library.
+
+3. Note that the Varkon MBS-compiler mbsc is used to
+   compile the sources so if you havn't installed mbsc
+   you must do that first.
+
+4. Note also that the environment variable VARKON_ROOT must
+   be set up properly in your environment for the Makefile
+   to work correctly. VARKON_ROOT is the top directory of
+   your current Varkon installation.
+
+/**********************************************************************/

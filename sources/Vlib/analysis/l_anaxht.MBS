@@ -1,0 +1,69 @@
+!*******************************************************
+
+ macro module l_anaxht(REF id);
+
+!*      Skriver ut specifika data för ett snitt.
+!*
+!*      In: id = Snittets identitet.
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 8/10/86 R. Svedin
+!*
+!*      28/12/86   Globala ref, J. Kjellander
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+
+    INT    lt,nl,i,j;
+    FLOAT  sl,a,v,lind(1000*4);
+
+ beginmodule
+
+    getxht(global_ref(id,2),lt,sl,a,v,nl,lind);
+!*
+!***Font och strecklängd.
+!*
+    if lt = 0 then
+      lst_lin(get_tstr(286));  ! t286 = "Typ             : Heldragen"
+    elif lt = 1 then
+      lst_lin(get_tstr(311));  ! t311 = "Typ             : Streckad"
+    else
+      lst_lin(get_tstr(312));  ! t312 = "Typ             : Streck-prickad"
+    endif;
+
+    if lt <> 0 then
+      lst_lin(get_tstr(313) + str(sl,-12,5));   ! t313 = "Strecklängd     : "
+    endif;
+!*
+!***Avstånd och vinkel.
+!*
+    lst_lin("");
+    lst_lin(get_tstr(1511) + str(a,-1,6));
+    ! t1511 = "Avstånd         : "
+
+    lst_lin(get_tstr(1512) + str(v,-1,6));
+    ! t1512 = "Vinkel          : "
+!*
+!***Själva snittlinjerna.
+!*
+    lst_lin("");
+    lst_lin(get_tstr(1513) + str(nl,-1,0));
+    ! t1513 = "Antal linjer    : "
+
+    lst_lin("");
+    lst_lin("             X1          Y1          X2          Y2");
+    lst_lin("          ---------------------------------------------");
+
+    j := 1;
+    for i := 1 to nl*4 step 4 do
+      lst_lin(" " + str(j,-4,0) +  "     " +
+              str(lind(i),-12,6) + str(lind(i+1),-12,6) +
+              str(lind(i+2),-12,6) + str(lind(i+3),-12,6));
+      j := j+1;
+    endfor;
+
+ endmodule
+
+!*******************************************************

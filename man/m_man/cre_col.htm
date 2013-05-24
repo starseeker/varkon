@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cre_color </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cre_color - <small><small>Procedure</small></small></h2>
+  <p>Creates a color<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Sets the RGB color value for a pen. Pen numbers range from 0 to 255. Pen 0 is used for
+  background in graphics windows and pen 1 is the default pen for drawing. Pen 0 and 1 are
+  always defined in Varkon's resource- or ini-file. Additional pens may be defined there as
+  well but usually not all 256. <br>
+  <br>
+  cre_color() can be used by a module to create or change a large number of pen colors
+  automatically. It is good advice however not to change the default RGB values of pen 0 and
+  1.<br>
+  <br>
+  A pen color is defined by mixing different intensities of Red, Green and Blue color (RGB).
+  No intensity is 0 and full intensity is 255. This gives what is often referred to as 24
+  bits of color or True Color. If the hardware of the computer does not support true color
+  Varkon uses the closest match to the desired color.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cre_color(pen, red, green, blue)<br>
+  <br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 34 Row 01 -->
+    <tr>
+      <td width="51">INT</td>
+      <td width="606">pen;</td>
+    </tr>
+<!-- Table 34 Row 02 -->
+    <tr>
+      <td width="51">INT</td>
+      <td width="606">red;</td>
+    </tr>
+<!-- Table 34 Row 03 -->
+    <tr>
+      <td width="51">INT</td>
+      <td width="606">green;</td>
+    </tr>
+<!-- Table 34 Row 04 -->
+    <tr>
+      <td width="51">INT</td>
+      <td width="606">blue;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 35 Row 01 -->
+    <tr>
+      <td width="42">pen</td>
+      <td width="615">- Pen number. 2 - 255</td>
+    </tr>
+<!-- Table 35 Row 02 -->
+    <tr>
+      <td width="42">red</td>
+      <td width="615">- Red intensity, 0 - 255</td>
+    </tr>
+<!-- Table 35 Row 03 -->
+    <tr>
+      <td width="42">green</td>
+      <td width="615">- Green intensity, 0 - 255</td>
+    </tr>
+<!-- Table 35 Row 04 -->
+    <tr>
+      <td width="42">blue</td>
+      <td width="615">- Blue intensity, 0 - 255</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 36 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments</b><br>
+  <br>
+  Colors may look different on different computers due to differences in hardware. Varkon
+  uses the specified RGB-triplet as it is without gamma correction.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cre_button</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cre_button - <small><small>Function</small></small></h2>
+  <p>Create button<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a button in a dialogue window. Buttons without frames ( frame = 0 ) are regarded
+  as simple text labels. A button without frame and with str1 = str2 = &quot;&quot; (null
+  string) appear as simple rectangles and may be used for decoration.<br>
+  <br>
+  Buttons with frame may toggle between two states if str1 is different from str2 or may not
+  toggle if str1 = str2.<br>
+  <br>
+  Clicking a button with frame generates an event that will be catched if waited for by the
+  wait_win() routine.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cre_button(window, pos, width, height, frame, str1, str2, font, bcolor, tcolor)<br>
+  <br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 01 Row 01 -->
+    <tr>
+      <td width="77">INT</td>
+      <td width="574">window;</td>
+    </tr>
+<!-- Table 01 Row 02 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="574">pos;</td>
+    </tr>
+<!-- Table 01 Row 03 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="574">width;</td>
+    </tr>
+<!-- Table 01 Row 04 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="574">height;</td>
+    </tr>
+<!-- Table 01 Row 05 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="574">frame;</td>
+    </tr>
+<!-- Table 01 Row 06 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="574">str1;</td>
+    </tr>
+<!-- Table 01 Row 07 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="574">str2;</td>
+    </tr>
+<!-- Table 01 Row 08 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="574">font;</td>
+    </tr>
+<!-- Table 01 Row 09 -->
+    <tr>
+      <td width="77">INT</td>
+      <td width="574">bcolor;</td>
+    </tr>
+<!-- Table 01 Row 10 -->
+    <tr>
+      <td width="77">INT</td>
+      <td width="574">tcolor;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 02 Row 01 -->
+    <tr>
+      <td width="68">window</td>
+      <td width="583">- Dialogue window identity</td>
+    </tr>
+<!-- Table 02 Row 02 -->
+    <tr>
+      <td width="68">pos</td>
+      <td width="583">- Upper left coordinates relative to the dialogue window</td>
+    </tr>
+<!-- Table 02 Row 03 -->
+    <tr>
+      <td width="68">width</td>
+      <td width="583">- Horisontal size in pixels</td>
+    </tr>
+<!-- Table 02 Row 04 -->
+    <tr>
+      <td width="68">height</td>
+      <td width="583">- Vertical size in pixels</td>
+    </tr>
+<!-- Table 02 Row 05 -->
+    <tr>
+      <td width="68">frame</td>
+      <td width="583">- Frame width in pixels</td>
+    </tr>
+<!-- Table 02 Row 06 -->
+    <tr>
+      <td width="68">str1</td>
+      <td width="583">- Default string</td>
+    </tr>
+<!-- Table 02 Row 07 -->
+    <tr>
+      <td width="68">str2</td>
+      <td width="583">- Toggle string</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 03 Row 01 -->
+    <tr>
+      <td width="68">font</td>
+      <td width="583">- Textfont (UNIX, with Microsoft Windows font = Size, see below)</td>
+    </tr>
+<!-- Table 03 Row 02 -->
+    <tr>
+      <td width="68">bcolor</td>
+      <td width="583">- Background color (UNIX only, not supported on Microsoft Windows)</td>
+    </tr>
+<!-- Table 03 Row 03 -->
+    <tr>
+      <td width="68">tcolor</td>
+      <td width="583">- Text color (UNIX only, not supported on Microsoft Windows)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  An INT holding the id of the button created.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  button_id:=cre_button(dia_win, 5, 5, 0, &quot;&quot;,&quot;&quot;,&quot;&quot;,2);<br>
+  <br>
+  Creates a rectangle 5 by 5 pixels filled with colour number 2, usually red. No text is
+  displayed.<br>
+  <br>
+  button_id:=cre_button(dia_win, 5, 5, 0, &quot;Text&quot;,&quot;&quot;);<br>
+  <br>
+  Creates a text label.<br>
+  <br>
+  button_id:=cre_button(dia_win, 5, 5, 1, &quot;OKEY&quot;, &quot;OKEY&quot;);<br>
+  <br>
+  Creates a non toggling button.<br>
+  <br>
+  button_id:=cre_button(dia_win, 5, 5, 1, &quot;ON&quot;, &quot;OFF&quot;);<br>
+  <br>
+  Creates a toggle button.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The Microsoft Windows implementation of VARKON is different from the UNIX implementation
+  when it comes to fonts for text. In UNIX where X-Windows (X11) is used fonts of different
+  sizes have different names but in Microsoft Windows a font with a certain name may be
+  displayed in many different sizes. <br>
+  <br>
+  The font parameter in cre_button() is treated as the name of a X11 font if UNIX is used
+  but treated as the size of the currently active font set by VARKON.INI if Windows is used.<br>
+  <br>
+  Frame width can be zero or one but the UNIX version of VARKON also honours values greater
+  than one to create thicker frames if needed.<br>
+  <br>
+  The Microsoft Windows implementation of VARKON currently does not support parameters
+  bcolor and tcolor.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="dialindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+!*******************************************************
+
+ MACRO MODULE igs_dsec(
+   VAR FILE infil,logfil;
+       INT  eolsize;
+   VAR INT  status);
+
+!*      Läser Directory Entry section en
+!*      första gång.
+!*
+!*      Ut: status = 0 => Ok
+!*                  -1 => Fel
+!*
+!*      (C)microform ab 1997-12-22 J. Kjellander
+!*
+!*      2004-07-20 eolsize, J.Kjellander, Örebro university
+!*
+!*******************************************************
+
+   STRING rad1*80,rad2*80;
+   INT    nl;
+
+ BEGINMODULE
+
+!*
+!***HEADER.
+!*
+    outlin(logfil);
+    outstr(logfil,"Directory Entry Section (Pass 1)");
+    outlin(logfil);
+!*
+!***Läs en 1:a rad och kolla att det är Directory section.
+!*
+    rad1:=inlin(infil);
+    if length(rad1) <> 80 then
+      outstr(logfil,"Line not 80 columns");
+      outlin(logfil);
+      status:=-1;
+      exit();
+    elif substr(rad1,73,1) <> "D" then
+      outstr(logfil,"This is not a Directory Entry Section");
+      outlin(logfil);
+      status:=-1;
+      exit();
+    else
+      status:=0;
+      nl:=2;
+    endif;
+
+    rad2:=inlin(infil);
+!*
+!***Läs resten av sektionen.
+!*
+loop:
+    rad1:=inlin(infil);
+    rad2:=inlin(infil);
+
+    if substr(rad1,73,1) = "D" then
+      nl:=nl+2;
+      goto loop;
+    endif;
+!*
+!***Skriv till loggfil.
+!*
+    outstr(logfil,"Processed "+str(nl/2,-1,0)+" entities");
+    outlin(logfil);
+!*
+!***Ge tillbaks sist lästa rader. Efter det står filpekaren
+!***på första raden i Parameter Data Section.
+!*
+    seek(infil,fpos(infil)-2*(80+eolsize));
+
+ ENDMODULE
+
+!*******************************************************
+

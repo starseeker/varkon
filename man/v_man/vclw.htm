@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>hp7475</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1998-11-12</FONT></CENTER>
+
+<BR>&nbsp;
+<P><BR>
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+<B>Printing and plotting with variable linewidth and color</B></H3>
+</UL>
+
+<UL>VARKON supports color printouts through the PEN attribute. Pen 1 is
+usually black, pen 2 red, pen 3 green, pen 4 blue and so on. The PEN attribute
+can be used in conjunction with the WIDTH attribute to produce a colored
+printout with user defined linewidths. The "-bw" parameter can be used
+to force a color printer to neglect pen numbers and only print in black.
+This is useful if a color printerdriver like "postscript" or "msw32.dll"
+is used for a non color printer which may otherwise try to emulate color
+by the use of grayscales.
+<P>VARKON supports variable linewidth in two different ways. The normal
+way that should be used in new applications is to use the WIDTH attribute
+to control linewidth. VARKON's plotterdrivers support the WIDTH attribute
+directly if the printer supports variable linewidth or emulate variable
+linewidth by painting if the printer does not support it. The "postscript"
+driver for example supports variable linewidth directly since variable
+linewidth is supported by the postscript specification. Other drivers like
+the "epson" driver for example automatically create wide lines by painting
+as many parallell thin lines as required to achieve the selected width.
+The -ws plotterdriver option may be used to override the -s option for
+scaling of linewidth during plotting.
+<P>The other way linewidth is supported is through the use of penfiles.
+This is an older method that is kept alive to support older applications
+and it is still supported by all printer drivers. We do not reccommend
+this method for new applications as it might be removed from VARKON in
+a future release. All printer drivers support the "-pf" parameter which
+enables you to specify the name of a penfile. A penfile maps the PEN attribute
+to specific linewidths. Pen 1 could be 0.5 millimeters, pen 2 could be
+1.0 millimeters and so on. You can not use this method in conjunction with
+color or the WIDTH attribute. Do not use the "-pf" parameter if you want
+to use PEN for color or WIDTH for linewidth.</UL>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>VARKON_FNT</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>VARKON_FNT</H3>
+
+<P>Environment variable<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Environment variable used by VARKON to locate files with fonts for
+vector based graphical text (the TEXT statement in MBS). Version 1.14 of
+VARKON includes two fonts named font 0 and font 1. Additional fonts can
+be defined by the user. Font 0 is the system default and its appearence
+is hardcoded within the system. Font 1 is defined in a fontfile named 1.FNT
+residing in $VARKON_FNT. 1.FNT is not loaded until it is used for the first
+time but then it stays loaded in memory until VARKON terminates.<BR>
+<BR>
+If a user defined font is created it should have a name beginning at 10.FNT
+and higer up to 20.FNT and reside in $VARKON_FNT.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If VARKON_FNT is not defined a hard coded default will be used.<BR>
+<BR>
+If VARKON_FNT points to a non existent directory or if read permission
+to $VARKON_FNT is missing no loadable fonts will be available and the system
+default (font 0) will be used instead.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

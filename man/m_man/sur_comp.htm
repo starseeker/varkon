@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_comp </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>sur_comp - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a surface<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Two or more surfaces can be concatenated to one surface. <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  sur_com(id, surf1, surf2, surf3, surf4, .....:attributes);<br>
+  <br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 15 Row 01 -->
+    <tr>
+      <td width="48">REF</td>
+      <td width="559">id;</td>
+    </tr>
+<!-- Table 15 Row 02 -->
+    <tr>
+      <td width="48">REF</td>
+      <td width="559">surf1;</td>
+    </tr>
+<!-- Table 15 Row 03 -->
+    <tr>
+      <td width="48">REF</td>
+      <td width="559">surf2;</td>
+    </tr>
+<!-- Table 15 Row 04 -->
+    <tr>
+      <td width="48">REF</td>
+      <td width="559">surf3;</td>
+    </tr>
+<!-- Table 15 Row 05 -->
+    <tr>
+      <td width="48">REF</td>
+      <td width="559">surf4;</td>
+    </tr>
+<!-- Table 15 Row 06 -->
+    <tr>
+      <td width="48">REF</td>
+      <td width="559">.</td>
+    </tr>
+<!-- Table 15 Row 07 -->
+    <tr>
+      <td width="48">REF</td>
+      <td width="559">.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 16 Row 01 -->
+    <tr>
+      <td width="39">id </td>
+      <td width="568">- Local identity</td>
+    </tr>
+<!-- Table 16 Row 02 -->
+    <tr>
+      <td width="39">surf1</td>
+      <td width="568">- Surface 1</td>
+    </tr>
+<!-- Table 16 Row 03 -->
+    <tr>
+      <td width="39">surf2</td>
+      <td width="568">- Surface 2</td>
+    </tr>
+<!-- Table 16 Row 04 -->
+    <tr>
+      <td width="39">surf3</td>
+      <td width="568">- Surface 3</td>
+    </tr>
+<!-- Table 16 Row 05 -->
+    <tr>
+      <td width="39">surf4</td>
+      <td width="568">- Surface 4</td>
+    </tr>
+<!-- Table 16 Row 06 -->
+    <tr>
+      <td width="39">.</td>
+      <td width="568">- .</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 17 Row 01 -->
+    <tr>
+      <td width="38">surf3</td>
+      <td width="569">- Surface 3</td>
+    </tr>
+<!-- Table 17 Row 02 -->
+    <tr>
+      <td width="38">surf4</td>
+      <td width="569">- Surface 4</td>
+    </tr>
+<!-- Table 17 Row 03 -->
+    <tr>
+      <td width="38">.</td>
+      <td width="569">- .</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 18 Row 01 -->
+    <tr>
+      <td width="66">PEN </td>
+      <td width="541">- Pen or colour number</td>
+    </tr>
+<!-- Table 18 Row 02 -->
+    <tr>
+      <td width="66">LEVEL</td>
+      <td width="541">- Level number</td>
+    </tr>
+<!-- Table 18 Row 03 -->
+    <tr>
+      <td width="66">BLANK</td>
+      <td width="541">- Visible (0) or invisible (1)</td>
+    </tr>
+<!-- Table 18 Row 04 -->
+    <tr>
+      <td width="66">SFONT</td>
+      <td width="541">- Solid boundary and dashed midcurves (0)</td>
+    </tr>
+<!-- Table 18 Row 05 -->
+    <tr>
+      <td width="66">SDASHL</td>
+      <td width="541">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  sur_comp(#3, #2, #1);<br>
+  <br>
+  Creates a new surface #3 with surface #1 and surface #2.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The only case yet implemented is for surfaces that have a common surface boundary </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

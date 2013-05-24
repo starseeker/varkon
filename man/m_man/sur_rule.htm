@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_ruled </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>sur_ruled - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a surface<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a ruled surface by connecting consecutive positions from two lines, arcs or curves
+  with straight lines (rulers). <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  sur_ruled(id, curve1, curve2, reverse, par:attributes);<br>
+  <br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 05 Row 01 -->
+    <tr>
+      <td width="60">REF</td>
+      <td width="547">id;</td>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      <td width="60">REF</td>
+      <td width="547">curve1;</td>
+    </tr>
+<!-- Table 05 Row 03 -->
+    <tr>
+      <td width="60">REF</td>
+      <td width="547">curve2;</td>
+    </tr>
+<!-- Table 05 Row 04 -->
+    <tr>
+      <td width="60">INT</td>
+      <td width="547">reverse;</td>
+    </tr>
+<!-- Table 05 Row 05 -->
+    <tr>
+      <td width="60">INT</td>
+      <td width="547">par;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td width="50">id </td>
+      <td width="557">- Local identity</td>
+    </tr>
+<!-- Table 06 Row 02 -->
+    <tr>
+      <td width="50">curve1</td>
+      <td width="557">- Identity of first line, arc or curve</td>
+    </tr>
+<!-- Table 06 Row 03 -->
+    <tr>
+      <td width="50">curve2</td>
+      <td width="557">- Identity of second line, arc or curve</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b></p>
+  <table width="615" border="0" height="69">
+    <tr>
+      <td width="50" height="15">reverse </td>
+      <td width="557" height="15">- Controls the parametric directions of the resulting surface</td>
+    </tr>
+    <tr>
+      <td width="50" height="21"></td>
+      <td width="557" height="21">&nbsp;&nbsp; 1 = No reversal of input (default)</td>
+    </tr>
+    <tr>
+      <td width="50" height="21"></td>
+      <td width="557" height="21">&nbsp; -1 = Both input curves (U-direction) are reversed</td>
+    </tr>
+    <tr>
+      <td width="50" height="15"></td>
+      <td width="557" height="15">&nbsp;&nbsp; 2 = Input curves change place (V-direction)</td>
+    </tr>
+    <tr>
+      <td width="50" height="21"></td>
+      <td width="557" height="21">&nbsp;&nbsp; 3 = Input curves are reversed and change place</td>
+    </tr>
+    <tr>
+      <td width="50" height="21">par</td>
+      <td width="557" height="21">- Controls the type of parametrisation</td>
+    </tr>
+    <tr>
+      <td width="50" height="21"></td>
+      <td width="557" height="21">&nbsp;&nbsp; 1 = Arc length parametrisation (default)</td>
+    </tr>
+  </table>
+  <p><b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 07 Row 01 -->
+    <tr>
+      <td width="65">PEN </td>
+      <td width="542">- Pen or colour number</td>
+    </tr>
+<!-- Table 07 Row 02 -->
+    <tr>
+      <td width="65">LEVEL</td>
+      <td width="542">- Level number</td>
+    </tr>
+<!-- Table 07 Row 03 -->
+    <tr>
+      <td width="65">BLANK</td>
+      <td width="542">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 07 Row 04 -->
+    <tr>
+      <td width="65">SDASHL</td>
+      <td width="542">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>sur_ruled(#3, #1, #2);<br>
+  <br>
+  Creates a ruled surface connecting #1 with #2<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The parameter of the curves becomes the U-direction of the surface and V goes from curve1
+  to curve2. The optional &quot;reverse&quot; parameter can be used to alter this.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

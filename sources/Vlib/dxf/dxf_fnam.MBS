@@ -1,0 +1,63 @@
+!*******************************************************
+
+ MACRO MODULE dxf_fnam(
+   STRING     name_in*132 ;
+   VAR STRING name_out*132;
+   VAR INT    status);
+
+!*      Skapar fullständigt filnamn och kollar
+!*      att filen går att öppna för direktaccess.
+!*
+!*      In: name_in  = Namn från användaren
+!*          name_out = Fullständig vägbeskrivning
+!*          status   = 0 = OK, -1 = Filen finns ej.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*******************************************************
+
+ STRING name_tmp*132;
+
+ BEGINMODULE
+
+!*
+!***Initiering.
+!*
+   name_out:=name_in;
+!*
+!***Det är tillåtet att utelämna .DXF i slutet.
+!*
+   if finds(name_out,".") = 0 then
+     name_out:=name_out+".DXF";
+   endif;
+!*
+!***Om "/" saknas i filnamnet utgår vi från att man avsett
+!***act_jobdir().
+!*
+   if act_ostype() = "UNIX" then
+     if finds(name_out,"/") = 0 then
+       name_out:=act_jobdir()+name_out;
+     endif;
+   else
+     if finds(name_out,"\") = 0  and finds(name_out,":") = 0 then
+       name_out:=act_jobdir()+name_out;
+     endif;
+   endif;
+!*
+!***Prova att öppna för skrivning (update).
+!***Om det inte går prova även med lilla "dxf".
+!*
+   status:=0;
+
+   if test_file(name_out,"W") = 0 then
+     name_tmp:=substr(name_out,1,length(name_out)-3) + "dxf";
+     if test_file(name_tmp,"W") = 0 then
+       status:=-1;
+     else
+       name_out:=name_tmp;
+     endif;
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

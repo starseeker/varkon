@@ -1,0 +1,115 @@
+!*******************************************************
+
+  GLOBAL DRAWING MODULE dxf_txt(
+  VAR FILE   infil;
+  INT        levlim;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  FLOAT      s;
+  VAR INT    ntxt);
+
+!*      Läser TEXT i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*      1998-01-13 Långa rader, J.Kjellander
+!*
+!*******************************************************
+
+ CONSTANT INT TRUE=1, FALSE=0;
+
+ STRING rad*132,txt*132,txt2*132,tkn*1;
+ INT    kod,pn,lev,ppos,ustryk,nustryk;
+ VECTOR p,dp;
+ FLOAT  ts,b,v,l;
+
+ BEGINMODULE
+
+!*
+!***Text.
+!*
+    p:=vec(0,0); p.z:=0.0;
+    set(TFONT=0,TSIZE=5,TWIDTH=60,TSLANT=0);
+    ts:=5; b:=1; v:=0; l:=0;
+
+loop:
+    kod:=inint(infil); rad:=inlin(infil);
+
+    if kod = 8 then                         ! Nivånamn
+      part(#11,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+      if levlim > -1 and lev <> levlim then
+        exit();
+      else
+        set(LEVEL=lev);
+      endif;
+    elif kod = 62 then                      ! Pennummer
+      pn:=inint(infil); rad:=inlin(infil);
+      if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+    elif kod = 6 then                       ! Linjetyp
+      rad:=instr(infil,3);
+      if   rad="DSH" then set(AFONT=1,ADASHL=s*inflt(infil));
+      elif rad="CEN" then set(AFONT=2,ADASHL=s*inflt(infil)); endif;
+      rad:=inlin(infil);
+    elif kod = 10 then                      ! X-koordinat
+      p.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 20 then                      ! Y-koordinat
+      p.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 30 then                      ! Z-koordinat
+      p.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 40 then                      ! Storlek
+      ts:=inflt(infil); rad:=inlin(infil);
+    elif kod = 41 then                      ! Bredd
+      b:=inflt(infil); rad:=inlin(infil);
+    elif kod = 50 then                      ! Vinkel
+      v:=inflt(infil); rad:=inlin(infil);
+    elif kod = 51 then                      ! Lutning
+      l:=inflt(infil)/0.45; rad:=inlin(infil);
+    elif kod = 1 then                       ! Sträng
+      txt:=inlin(infil);
+      if length(txt) >= 132 then
+        txt2:=inlin(infil);
+      endif;
+      ppos:=finds(txt,"%%");
+      ustryk:=FALSE;
+      if ppos > 0 then
+        tkn:=substr(txt,ppos+2,1);
+        if   tkn = "U"  or  tkn = "u" then
+          ustryk:=TRUE;
+          txt:=substr(txt,ppos+3);
+          nustryk:=length(txt);
+          ppos:=finds(txt,"%%");
+          if ppos > 0 then
+            nustryk:=ppos-1;
+            txt:=substr(txt,1,ppos-1) + substr(txt,ppos+3);
+          endif;
+        else
+          if   tkn = "D"  or  tkn = "d" then tkn:=chr(13);
+          elif tkn = "C"  or  tkn = "c" then tkn:=chr(16);
+          elif tkn = "P"  or  tkn = "p" then tkn:=chr(20);
+          endif; 
+          if length(txt) = 3 then txt:=tkn;
+          elif ppos = length(txt)-2 then txt:=substr(txt,1,ppos-1)+tkn;
+          elif ppos = 1 then txt:=tkn+substr(txt,ppos+3);
+          else txt:=substr(txt,1,ppos-1)+tkn+substr(txt,ppos+3);
+          endif;
+        endif;
+      endif;
+    elif kod = 0 then                       ! Slut
+      set(TSIZE=s*ts,TWIDTH=b*53,TSLANT=l);
+      text(#50,s*p,v,txt:SAVE=1);
+      ntxt:=ntxt+1;
+      if ustryk = TRUE then
+        dp:=0.2*s*ts*vec(cos(v-90),sin(v-90));
+        lin_ang(#51,s*p+dp,v,textl(substr(txt,1,nustryk)):SAVE=1);
+      endif;
+      exit();
+    else                                    ! Okänt
+      rad:=inlin(infil);
+    endif;
+
+    goto loop;
+
+ ENDMODULE
+
+!*******************************************************

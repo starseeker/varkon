@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>all_int_lin_sur</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1996-04-20</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>all_int_lin_sur - <FONT SIZE=+0>Function</FONT></H2>
+
+<P>Calculates all intersect points between a surface and a line.<BR>
+<BR>
+<BR>
+<B>Description</B>. <BR>
+<BR>
+The function calculates all intersect points between a surface and a straight
+line. There are many options for the ordering of the intersect points.
+<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>all_int_lin_sur(surface, p, v, order, start, nint, uv, xyz)<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="646" >
+<TR>
+<TD>REF</TD>
+
+<TD width="554">surface;</TD>
+</TR>
+
+<TR>
+<TD width="84">VECTOR</TD>
+
+<TD width="554">p;</TD>
+</TR>
+
+<TR>
+<TD width="84">VECTOR</TD>
+
+<TD width="554">v:</TD>
+</TR>
+
+<TR>
+<TD width="84">INT</TD>
+
+<TD width="554">order;</TD>
+</TR>
+
+<TR>
+<TD>VECTOR</TD>
+
+<TD>start;</TD>
+</TR>
+
+<TR>
+<TD width="84">INT</TD>
+
+<TD width="554">nsol;</TD>
+</TR>
+
+<TR>
+<TD width="84">VECTOR</TD>
+
+<TD width="554">uv ( );</TD>
+</TR>
+
+<TR>
+<TD width="84">VECTOR</TD>
+
+<TD width="554">xyz ( );</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="646" >
+<TR>
+<TD>surface</TD>
+
+<TD width="564">- Identity of the surface</TD>
+</TR>
+
+<TR>
+<TD width="74">p</TD>
+
+<TD width="564">- Position</TD>
+</TR>
+
+<TR>
+<TD width="74">v</TD>
+
+<TD width="564">- Direction of the line (ray)</TD>
+</TR>
+
+<TR>
+<TD width="74">order</TD>
+
+<TD width="564">- Method for the ordering of intersect points (the solutions).</TD>
+</TR>
+
+<TR>
+<TD width="74"></TD>
+
+<TD width="564">&nbsp;&nbsp; Ordering is always with respect to the distance
+to the input R*3 point p <BR>
+&nbsp;&nbsp; but solution points will be omitted for the different cases.
+<BR>
+&nbsp;&nbsp; Eq. 1: All intersect points&nbsp; <BR>
+&nbsp;&nbsp; Eq. 2: Only intersect points in the v (shooting) direction
+<BR>
+&nbsp;&nbsp; Eq. 3: As 2 but only intersect points with surface normals
+that have the same direction as<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the v vector (the shooting direction) <BR>
+&nbsp;&nbsp; Eq. 4: As 2 but only intersect points with surface normals
+that are in the opposite<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+direction as the v vector (the shooting direction) <BR>
+&nbsp;&nbsp; Eq. 5: As 3 but the number of solutions will be zero ( 0 )
+if the first solution &nbsp; point has a<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+surface normal that is in the opposite direction compared to vector v (the
+shooting<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+direction) <BR>
+&nbsp;&nbsp; Eq. 6: As 3 but the number of solutions will be zero ( 0 )
+if the first solution point has a<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+surface normal that is in the same direction as the vector v&nbsp;</TD>
+</TR>
+</TABLE>
+
+<TABLE WIDTH="646" >
+<TR>
+<TD>nint</TD>
+
+<TD width="565">- Number of solution points</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="646" >
+<TR>
+<TD>start</TD>
+
+<TD width="565">- Start uv-value for faster numerical solution. vec(-1,-1,-1)
+= none = default</TD>
+</TR>
+
+<TR>
+<TD>uv</TD>
+
+<TD>- Array with output U,V solutions (intersect points)</TD>
+</TR>
+
+<TR>
+<TD width="73">xyz</TD>
+
+<TD width="565">- Array with output R*3 solutions (intersect points)</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<BR>
+<B>Example<BR>
+<BR>
+</B>VECTOR uv (10);<BR>
+<BR>
+all_int_lin_sur(#5, vec(100,20,30), vec(1,0,0), 2, ,uv )<BR>
+<BR>
+Calculates all intersect points between the line defined by point (100,
+20, 30) and the vector ( 1, 0, 0)<BR>
+and the surface #5. Output solution points in uv will only be the points
+in the shooting direction.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="geomindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

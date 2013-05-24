@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+  <title>GM database routines</title>
+</head>
+<body bgcolor="#99ccff">
+<br>
+<div style="text-align: center;"><font size="-1">VARKON Version 1.18
+2004-07-18</font><br>
+<font size="-1"></font></div>
+<center></center>
+<p>
+</p>
+<hr width="100%" align="center">
+<blockquote>
+  <h1>Database routines</h1>
+</blockquote>
+<blockquote>
+  <table width="686">
+    <caption>&nbsp;</caption> <tbody>
+      <tr>
+        <td width="114"><a href="get_next.htm">get_next_gm</a></td>
+        <td width="564">Searces GM for entity</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="set_root.htm">set_root_gm</a></td>
+        <td width="564">Sets GM root position</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="gethdr.htm">gethdr</a></td>
+        <td width="564">Gets entity header</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="updhdr.htm">updhdr</a></td>
+        <td width="564">Updates entity header</td>
+      </tr>
+      <tr>
+        <td><a href="getwdt.htm">getwidth</a></td>
+        <td>Gets entity WIDTH attribute</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getpoi.htm">getpoi</a></td>
+        <td width="564">Gets point</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getlin.htm">getlin</a></td>
+        <td width="563">Gets line</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getarc.htm">getarc</a></td>
+        <td width="564">Gets arc</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getcurh.htm">getcurh</a></td>
+        <td width="564">Gets curve header</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getseg.htm">getseg</a></td>
+        <td width="563">Gets segment</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getsurh.htm">getsurh</a></td>
+        <td width="564">Gets surface header</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="gettopp.htm">gettopp</a></td>
+        <td width="564">Gets topological patch</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getcubp.htm">getcubp</a></td>
+        <td width="564">Gets bicubic patch</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getcsy.htm">getcsy</a></td>
+        <td width="564">Gets coordinate system</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="gettrf.htm">gettrf</a></td>
+        <td width="564">Gets transformation</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getbpl.htm">getbpl</a></td>
+        <td width="564">Gets b_plane</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="gettxt.htm">gettxt</a></td>
+        <td width="564">Gets text</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;"><a href="getmshh.htm">getmshh</a><br>
+        </td>
+        <td style="vertical-align: top;">Gets mesh header<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;"><a href="getvertex.htm">getvertex</a><br>
+        </td>
+        <td style="vertical-align: top;">Gets mesh vertex<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;"><a href="gethedge.htm">gethedge</a><br>
+        </td>
+        <td style="vertical-align: top;">Gets mesh half edge<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;"><a href="getxfloat.htm">getxfloat</a></td>
+        <td style="vertical-align: top;">Gets mesh extra floats<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;"><a href="getface.htm">getface</a><br>
+        </td>
+        <td style="vertical-align: top;">Gets mesh face<br>
+        </td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getldm.htm">getldm</a></td>
+        <td width="564">Gets ldim</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getcdm.htm">getcdm</a></td>
+        <td width="564">Gets cdim</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getrdm.htm">getrdm</a></td>
+        <td width="564">Gets rdim</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getadm.htm">getadm</a></td>
+        <td width="564">Gets adim</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getxht.htm">getxht</a></td>
+        <td width="564">Gets xhatch</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getgrp.htm">getgrp</a></td>
+        <td width="564">Gets group</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getprt.htm">getprt</a></td>
+        <td width="564">Gets part header</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="gettyp.htm">gettyp</a></td>
+        <td width="564">Gets parameter type</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getint.htm">getint</a></td>
+        <td width="564">Gets int parameter</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getflt.htm">getflt</a></td>
+        <td width="564">Gets float parameter</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getvec.htm">getvec</a></td>
+        <td width="564">Gets vector parameter</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getstr.htm">getstr</a></td>
+        <td width="564">Gets string parameter</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="getref.htm">getref</a></td>
+        <td width="564">Gets ref prameter</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="clear_gm.htm">clear_gm</a></td>
+        <td width="564">Clears GM</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="load_gm.htm">load_gm</a></td>
+        <td width="564">Loads GM from file</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="save_gm.htm">save_gm</a></td>
+        <td width="564">Saves GM to file</td>
+      </tr>
+      <tr>
+        <td width="114"><a href="del.htm">del</a></td>
+        <td width="564">Deletes entity from GM</td>
+      </tr>
+      <tr>
+        <td><a href="putdat.htm">putdat_gm</a></td>
+        <td>Stores array data in GM</td>
+      </tr>
+      <tr>
+        <td><a href="getdat.htm">getdat_gm</a></td>
+        <td>Gets array data from GM</td>
+      </tr>
+      <tr>
+        <td><a href="deldat.htm">deldat_gm</a></td>
+        <td>Deletes array data from GM</td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+<hr width="100%" align="center">
+<center>
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="mfupindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</center>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>seek </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>seek - <small><small>Procedure</small></small></h2>
+  <b><p><br>
+  </b>Sets the current position within a file<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Used to move from one position (byte) within a file to another. Next read or write will
+  take place beginning at the new position (byte). If positioning is performed beyond the
+  end of the file it will automatically grow. If this happens the contents of the new part
+  of the file is undefined.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  seek(f, pos)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 05 Row 01 -->
+    <tr>
+      <td width="48">FILE</td>
+      <td width="611">f;</td>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      <td width="48">INT </td>
+      <td width="611">pos;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td width="38">f</td>
+      <td width="621">- The name of a filevariable accociated with a file opened for update
+      (mode = U)</td>
+    </tr>
+<!-- Table 06 Row 02 -->
+    <tr>
+      <td width="38">pos</td>
+      <td width="621">- The position to move to. First byte in file = 0</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 07 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="fileindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

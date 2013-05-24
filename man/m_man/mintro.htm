@@ -1,0 +1,94 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>MBS Introduction</title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.15 1997-10-24</font></center>
+
+<hr width="100%" align="center">
+<blockquote>
+<blockquote><b><font size=+3>MBS reference manual</font></b></blockquote>
+</blockquote>
+
+<blockquote>
+<blockquote>&nbsp;
+<br><font size=-1>The MBS language is an integrated part of the VARKON
+system. Its main purpose is to act as a generic product modeling language
+but it is also used for other things (see below).</font></blockquote>
+</blockquote>
+
+<blockquote>
+<blockquote><b><font size=+1>Introduction</font></b></blockquote>
+</blockquote>
+
+<blockquote>
+<blockquote><font size=-1>All real products have some kind of structure.
+They usually consist of several different parts and it is therefore important
+to model the parts individually. MBS uses the concept of a MODULE to generically
+define each type of part that is used in a product. Here's an example...</font>
+<p><font size=-1>MODULE plate_with_hole(</font>
+<br><font size=-1>FLOAT width:=100 >"Horisontal size ?";</font>
+<br><font size=-1>FLOAT height:=50 >"Vertical size ?";</font>
+<br><font size=-1>FLOAT hole_diameter:=30 >"Size of hole ?";</font>
+<br><font size=-1>STRING material*10:="Steel" >"What material ?");</font>
+<p><font size=-1>BEGINMODULE</font>
+<p><font size=-1>lin_ang(#1,vec(0,0), 0, width);</font>
+<br><font size=-1>lin_offs(#2,#1,-height);</font>
+<br><font size=-1>lin_free(#3,on(#1),on(#2));</font>
+<br><font size=-1>lin_free(#4,on(#1,1),on(#2,1));</font>
+<br><font size=-1>arc_1pos(#5,vec(width/2,height/2),hole_diameter/2);</font>
+<p><font size=-1>ENDMODULE</font>
+<p><font size=-1>This module defines a rectangular plate with a hole in
+the center. It has a name (plate_with_hole), it has 4 parameters with default
+values and prompt strings (width, height, hole_diameter, material) and
+it has a body with statements that defines its geometrical appearence generically.</font>
+<p><font size=-1>In order to use this module to create an actual instance
+of a plate_with_hole we must first compile the text based MBS file into
+a binary MBO equivalent and then call the module from within the VARKON
+system. This can be done interactively or by another module. In any case
+we have to provide actual values for all parameters or at least accept
+the defaults. VARKON then evaluates (executes) the module using actual
+parameters and stores the result in the GM database. Each time we call
+the module VARKON will evaluate it again and store a new instance in the
+GM database. The result in GM from evaluating a module is called a part.
+Each part holds its name, its actual parameter values and the entities
+created by the statements in the body.</font>
+<p><font size=-1>Suppose now that we want to model a product consisting
+of many plates next to each other with a small distance between them. Lets
+make them all 10 by 10 with a hole of 2 and with copper as material.</font>
+<p><font size=-1>MODULE many_plates(</font>
+<br><font size=-1>INT n:=10 >"How many ?";</font>
+<br><font size=-1>FLOAT d:=1 >"At what distance ?");</font>
+<p><font size=-1>INT i;</font>
+<p><font size=-1>BEGINMODULE</font>
+<p><font size=-1>for i:=1 to n do</font>
+<br><font size=-1>csys_1p(#1,"Z-plane",vec(0,0,i*d));</font>
+<br><font size=-1>part(#2,hole_with_plate(10,10,2,"Copper"),refc(1,i));</font>
+<br><font size=-1>endfor;</font>
+<p><font size=-1>ENDMODULE</font>
+<p><font size=-1>The result of evaluating this module is a part named many_plates
+consisting of a number of other parts named plate_with_hole all stored
+in the GM database. A part may consist of any number of other parts as
+well as basic geometric entities like lines or arcs. Parts may also consist
+of parts that consist of parts and so on down to a depth of maximum 10
+levels.</font>
+<br>&nbsp;
+<blockquote><b></b>&nbsp;</blockquote>
+</blockquote>
+</blockquote>
+
+<hr width="100%" align="center">&nbsp;
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm">VARKON Homepage</a></td>
+
+<td><a href="mindex.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

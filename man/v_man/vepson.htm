@@ -1,0 +1,266 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>ibmpro</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-11-12</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3><B>epson</B></H3>
+
+<P>VARKON plotter driver<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>The epson driver translates .PLT or .DXF format to epson 8 or 24 pin
+format. epson reads from standard input and writes to standard output.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>epson -sS -wsL -xX -yY -vN -hS -pN -wN -lN -FF -d -kK<BR>
+<BR>
+Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.<BR>
+<BR>
+<B>Options </B></P>
+</UL>
+
+<TABLE WIDTH="691" >
+
+<TR>
+<TD width="81">
+<UL>
+<P>-sS</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Set scale to S. Float value, default = 1.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-wsL</UL>
+</TD>
+
+<TD>
+<UL>- Set linewidthscale to L. Float value, default = S</UL>
+</TD>
+</TR>
+
+
+
+
+<TR>
+<TD width="81">
+<UL>
+<P>-xX</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Set origin.x to X. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-yY</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Set origin.y to Y. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-vN</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Rotate n degrees. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-hS</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Horisontal resolution . 0 = Max, 1 = Min = Default</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-pN</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Vertical resolution, 8 or 24 pins, default = 8</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-wN</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Width of plot area in millimeters, default = 8 inch = A4</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-ln</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Height of plot area in lines, default = 85 = A4</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-FF</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Send trailing formfeed </P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-d</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Show outline of plot area and print statistics</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="81">
+<UL>
+<P>-kK</P>
+</UL>
+</TD>
+
+<TD width="602">
+<UL>
+<P>- Set curve accuracy to K. Float value, default = 1.0</P>
+</UL>
+</TD>
+</TR>
+</TABLE>
+
+<UL>
+<P><B>Examples<BR>
+<BR>
+</B>epson&lt;file.PLT &gt;file.epson -v90<BR>
+<BR>
+Rotates the image in plotfile.PLT 90 degrees anticlockwise and writes the
+result to a new file named &quot;file.epson&quot; with 8 pin resolution
+using the 8 pin native epson format.<BR>
+<BR>
+ibmpro &lt;file.PLT -v90 -h0 -p24 | lp<BR>
+<BR>
+Same as above but the result is sent to a spooled plotter. Horisontal and
+vertical resolution is set to highest possible. 24 pin format is used.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>epson automatically recognizes if the input is in PLT or DXF format.
+The -k option only applies to DXF format.<BR>
+<BR>
+In 8-pin mode the epson gives a horisontal resolution of:<BR>
+<BR>
+240 dots/inch with -h0<BR>
+120 dots/inch with -h0.5<BR>
+60 dots/inch with -h1<BR>
+<BR>
+In 24-pin mode the resolution becomes:<BR>
+<BR>
+360 dots/inch with -h0<BR>
+180 dots/inch with -h0.4<BR>
+120 dots/inch with -h0.6<BR>
+60 dots/inch with -h1<BR>
+<BR>
+-p8 gives a vertical resolution of 72 dots/inch and -p24 produces 216 dots/inch.</P>
+
+<P>Note that 8 pin epson and 24 pin epson in 8 pin mode are different.
+If the -pN option is not used native 8 pin mode will be used. If -p8 is
+specified, 8 pin mode in 24 pin format will be used.</P>
+
+<P>Color is not supported but variable linewidth is supported through the
+WIDTH attribute. Penfiles are still supported but may not be in future
+releases. epson reads &quot;$VARKON_PLT/epson.PEN&quot; when invoked to
+establish what dotsize (linewidth) the hardware uses. If this file is missing
+an errormessage is reported and no output is produced.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

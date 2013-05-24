@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>lin_tan1 </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-12-29</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>lin_tan1 - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+
+<P>Creates a line<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Creates a line tangent to either an arc or a curve. Possible tangency
+alternatives are enumerated along the referenced entity and an alt parameter
+is supplied to select the right solution.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>lin_tan1(id, p, ref, alt:attributes);<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="608" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="78">REF</TD>
+
+<TD width="522">id;</TD>
+</TR>
+
+<TR>
+<TD width="78">VECTOR</TD>
+
+<TD width="522">p;</TD>
+</TR>
+
+<TR>
+<TD width="78">REF</TD>
+
+<TD width="522">ref;</TD>
+</TR>
+
+<TR>
+<TD width="78">INT</TD>
+
+<TD width="522">alt;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="608" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="68">id </TD>
+
+<TD width="532">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="68">p</TD>
+
+<TD width="532">- Start position</TD>
+</TR>
+
+<TR>
+<TD width="68">ref</TD>
+
+<TD width="532">- Identity of arc or curve</TD>
+</TR>
+
+<TR>
+<TD width="68">alt</TD>
+
+<TD width="532">- Requested position of tangency</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="95%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD>None.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Attributes</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="608" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="68">PEN </TD>
+
+<TD width="532">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="68">LEVEL</TD>
+
+<TD width="532">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="68">BLANK</TD>
+
+<TD width="532">- Visible(0) or invisible(1)</TD>
+</TR>
+
+<TR>
+<TD width="68">LFONT</TD>
+
+<TD width="532">- Solid(0), dashed(1) or centerline(2)</TD>
+</TR>
+
+<TR>
+<TD width="68">LDASHL</TD>
+
+<TD width="532">- Dashlength</TD>
+</TR>
+
+<TR>
+<TD>WIDTH</TD>
+
+<TD>- Linewidth</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Example<BR>
+<BR>
+</B>lin_tan1(#6,vec(100,200),#3,2:BLANK=1,LEVEL=50);<BR>
+<BR>
+Creates an invisible line on level 50 starting in X=100, Y=200 and ending
+in the second possible position of tangency with #3.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>In a 3D module the resulting line is restricted to the XY-plane of
+the active coordinate system. If the start position p or the line ref is
+not in this plane they will be projected along the Z-axis onto the XY-plane
+before used to create the new line.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

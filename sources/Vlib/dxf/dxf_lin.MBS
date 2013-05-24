@@ -1,0 +1,82 @@
+!*******************************************************
+
+  GLOBAL MODULE dxf_lin(
+  VAR FILE   infil;
+  INT        levlim;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  FLOAT      s;
+  VAR INT    nlin);
+
+!*      Läser LINE i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-05 J. Kjellander
+!*
+!*      1999-06-14 Linewidth, J.Kjellander
+!*
+!*******************************************************
+
+ CONSTANT FLOAT LTOL=0.001;   ! Motsvarar TOL2 i geo200()
+
+ STRING rad*132;
+ INT    kod,pn,lev;
+ VECTOR p1,p2;
+ FLOAT  wdt;
+
+ BEGINMODULE
+
+!*
+!***Linje.
+!*
+       set(LFONT=0,LDASHL=3);
+       p1:=vec(0,0,0);
+       p2:=vec(0,0,0);
+loop:
+       kod:=inint(infil); rad:=inlin(infil);
+       if kod = 8 then                        ! Nivånamn
+         part(#11,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+         if levlim > -1 and lev <> levlim then
+           exit();
+         else
+           set(LEVEL=lev);
+         endif;
+       elif kod = 6 then                      ! Linjetyp
+         rad:=instr(infil,3);
+         if   rad="DSH" then set(LFONT=1,LDASHL=inflt(infil));
+         elif rad="CEN" then set(LFONT=2,LDASHL=inflt(infil)); endif;
+         rad:=inlin(infil);
+       elif kod = 62 then                      ! Pennummer
+         pn:=inint(infil); rad:=inlin(infil);
+         if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+       elif kod = 39 then
+         wdt:=inflt(infil); rad:=inlin(infil); ! Linewidth
+         set(WIDTH=wdt);
+       elif kod = 10 then                      ! X-koordinat
+         p1.x:=inflt(infil); rad:=inlin(infil);
+       elif kod = 20 then                      ! Y-koordinat
+         p1.y:=inflt(infil); rad:=inlin(infil);
+       elif kod = 30 then                      ! Z-koordinat
+         p1.z:=inflt(infil); rad:=inlin(infil);
+       elif kod = 11 then                      ! X-koordinat
+         p2.x:=inflt(infil); rad:=inlin(infil);
+       elif kod = 21 then                      ! Y-koordinat
+         p2.y:=inflt(infil); rad:=inlin(infil);
+       elif kod = 31 then                      ! Z-koordinat
+         p2.z:=inflt(infil); rad:=inlin(infil);
+       elif kod = 0 then                       ! Slut
+         if s*vecl(p1-p2) > LTOL then
+           lin_free(#30,s*p1,s*p2:SAVE=1);
+           nlin:=nlin+1;
+!           if nlin > 32000 then exit("Too many LINE entities !"); endif;
+         endif;
+         exit();
+       else                                    ! Okänt
+         rad:=inlin(infil);
+       endif;
+
+       goto loop;
+
+ ENDMODULE
+
+!*******************************************************

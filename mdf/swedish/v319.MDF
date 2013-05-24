@@ -1,0 +1,44 @@
+! VARKON-menyfil för Microsoft Windows
+
+#include "$VARKON_MDF\texter.INC"
+#include "$VARKON_MDF\mswin.INC"
+#include "$VARKON_MDF\menyer.INC"
+#include "$VARKON_MDF\plott.INC"
+
+m2  = "HUVUDMENY-2D"
+      "Arkiv",m5
+      "font-editor",m93
+      "skapa",m13
+      "ändra",m15
+      "ta bort",m22
+      "variera",m34
+      "analys",m75
+      "grafik",m66
+      "nivåer",m65
+      "attribut",m14
+      "MBS",m58
+      "Hjälp",f153;
+
+m3  = "HUVUDMENY-3D"
+      "Arkiv",m5
+      "skapa",m11
+      "ändra",m15
+      "ta bort",m22
+      "variera",m34
+      "analys",m75  
+      "grafik",m66 
+      "nivåer",m65
+      "attribut",m14
+      "MBS",m58
+      "Hjälp",f153;
+
+m4  = "RITNING"
+      "Arkiv",m6
+      "skapa",m13
+      "redigera",m49
+      "ta bort",m22
+      "analys",m75  
+      "grafik",m66 
+      "nivåer",m65
+      "attribut",m14
+      "Hjälp",f153;

@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>VARKON Introduction</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<P><B><FONT SIZE=+3>VARKON users manual</FONT></B></P>
+
+<P><FONT SIZE=-1>&nbsp;</FONT></P>
+
+<H3>Introduction</H3>
+
+<P><FONT SIZE=-1>&nbsp;</FONT></P>
+
+<P>VARKON &copy; is a high level development tool for applications in the
+area of Engineering, Computer Aided Design and Product Modeling.</P>
+
+<P>The system was originally developed by a group at the University of
+Linkoping in Sweden during 1984-86 under the leadership of Dr. J.A.P. Kjellander
+now the president of Microform AB. Since then the system has been owned,
+marketed and further developed by Microform AB. VARKON is a trademark registered
+by Microform AB in Sweden.</P>
+
+<P>VARKON is written in ANSI portable C and has been compiled and successfully
+executed on many different platforms. The UNIX version has a user interface
+based on X-Windows and the PC-version uses Microsoft WIN32. Currently there
+are VARKON-systems running on workstations from HP, SUN, IBM and SiliconGraphics
+and also systems on VAX’s with VMS or PC’s with SCO/UNIX, LINUX or Windows95/NT.
+</P>
+
+<P>For further information email to:</P>
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<P><B><A HREF="mailto:johan.kjellander@tech.oru.se">johan.kjellander@tech.oru.se</A></B></P>
+</BLOCKQUOTE>
+
+
+<P><FONT SIZE=-1>&nbsp;</FONT></P>
+<BLOCKQUOTE>
+<H3>What is VARKON ?</H3>
+
+<P>VARKON is a completely open general purpose interactive modeling system
+but also a programming language, an object oriented database, a sculptured
+surface modeller, fully parametric in 2D and 3D and a very powerful development
+tool. VARKON can even be used as a 2D drafting system when this is needed.
+<BR>
+</P>
+
+<P>VARKON can be used as a traditional 2D drafting editor (ie. Autocad)
+if you want to but the real power of the system is in parametric design
+and CAD applications development. The corner-stone in the system is the
+integrated MBS programming language with its compiler and interactive environment.
+MBS includes all the general functionality you would expect from a high
+level language:<BR>
+<BR>
+- 7 Datatypes including STRING, REF and VECTOR<BR>
+<BR>
+- Flow control like if, for and goto<BR>
+<BR>
+- File I/O<BR>
+<BR>
+- Standard library<BR>
+<BR>
+but also extensive support for development in the areas of: <BR>
+<BR>
+- Window based user interfaces<BR>
+<BR>
+- Geometric modeling<BR>
+<BR>
+- Product modeling (structures, relations and attributes)<BR>
+<BR>
+- Object oriented database storage and retrieval<BR>
+<BR>
+- Graphics output and viewing<BR>
+<BR>
+A minimal application can be developed in only a few minutes if you want
+to. There is a standard user interface and a standard library of functions
+but you would probably prefer to modify them or replace them completely
+as you proceed.<BR>
+<BR>
+A well designed application acts as a completely new system with its own
+user interface and functionality. You can develop for your own use or for
+others in your organization or to resell anywhere in the world. You are
+free to distribute your own applications as much as you want but each computer
+needs a separate license for the VARKON runtime environment.</P>
+
+<P><FONT SIZE=-1>&nbsp;</FONT></P>
+
+<H3>Some things you can do with VARKON.</H3>
+
+<P>With VARKON you develop and run <B>applications</B>. An application
+is a VARKON system that's been modified and extended with knowledge and
+functionality specific to a certain product or problem. VARKON applications
+can perform any calculations, retrieve data from external databases, make
+decisions, perform complex geometrical operations, build object oriented
+structures with attributes and geometry, generate graphic images like 2D
+drawings or 3D models with hidden lines removed and create any type of
+datafiles with output of your own choice.<BR>
+<BR>
+VARKON is ideally suited for all types of variational design. Wooden houses,
+tools for ballbearings, welded steel parts or electrical installations
+are some of the products currently designed in VARKON using this technique.<BR>
+<BR>
+In variational design the actual design work is often reduced to a few
+percent of the time spent with traditional methods. Using VARKON with its
+unique ability to handle geometry as well as other<B> </B>features and
+store the result in a well structured and object oriented manner it is
+also easy to produce much more information than paper drawings. Cost estimations,
+bill of materials and different forms of manufacturing data are usually
+created automatically in VARKON applications. <BR>
+<BR>
+VARKON is easy to integrate. A VARKON application can communicate using
+files or pipes and can spawn other processes as well as being spawned itself.
+Using this technique you can either let a VARKON application be on top
+and control other systems or you can use other systems to control VARKON.
+<BR>
+<BR>
+VARKON is a powerful geometric modeller. Basic 3D entities are points,
+lines, arcs, curves, surfaces, coordinate systems and transformations.
+Several representations of parametric curves are implemented including
+rational polynomial, analytical offset and curves on surfaces so called
+UV-curves. Surface representations include rational polynomial, lofted
+procedural, analytical offset and a faceted surface for approximations.
+Operations include intersects, closest point, silhouette, curvatures, transformation,
+trimming, export, import and approximation. <BR>
+<BR>
+A key feature in all modeling is the capability to record not only the
+results of interactive operations but also the operations themselves, making
+it possible to go back and inspect what you have done, then change something
+and automatically update the model. Being a fully generic system this is
+standard behavior in VARKON. All interactive operations are automatically
+recorded as MBS-statements and the model can any time be edited using the
+MBS-editor instead of interactive graphics if this is preferred. Using
+MBS your own design rules or constraints can easily be linked into the
+model. Such changes are automatically compiled and the result shown immediately
+on the screen.</P>
+
+<P><FONT SIZE=-1>&nbsp;</FONT></P>
+
+<H3>Two things you can't do.</H3>
+
+<P>VARKON is not a true solid modeller. VARKON surfaces can be faceted
+and images can be produced with shading or hidden lines removed automatically
+but mass properties like volume or center of gravity can not be calculated
+automatically. This doesn't mean you cant use VARKON in applications where
+weight or volume is important. It only means you will have to deal with
+the problem in other (maybe less automatic) ways. <BR>
+<BR>
+VARKON is not a manufacturing (CAM) system. There are no high level functions
+in VARKON to support the programming of multi axis numerical machines.
+You can create your geometry in VARKON but multi axis machine programming
+will have to be done using other software. For less complicated manufacturing
+processes though it can surprisingly often be worth the effort to let VARKON
+applications generate numerical control data automatically even if this
+means extra programming in MBS initially. </P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

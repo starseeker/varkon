@@ -1,0 +1,60 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <title>Text</title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.17 1999-05-07</font></center>
+
+<p>
+<hr width="100%" align="center">
+<ul>
+<h3>
+Text</h3>
+VARKON includes a text entity that can be used in 2D as well as 3D. A text
+is a string of maximum 132 characters with starting position and angle
+of direction. In MBS it looks like this..
+<p><b>text</b>(id,p1,angle,string:attributes);
+<p>p1 is the lower left corner of the first character in the string and
+angle is the anticlockwise rotation around p1 relative to the X-axis of
+the active coordinate system. In a <b>DRAWING MODULE</b> (2D) the text
+is always oriented in the plane of the screen but in a <b>GEOMETRY MODULE</b>
+a text can be placed in the XY-plane of any coordinate system.
+<p>The size, width, slant and font of a text is controlled using attributes.
+<b>TSIZE
+</b>controls
+the height of the text and scales the width accordingly.
+<b>TWIDTH</b>
+controls the width scaling factor. <b>TSLANT</b> controls the slanting
+of individual characters and <b>TFONT</b> sets the basic font to be used.
+VARKON includes a normal font and a serif font but other fonts can be created
+using a font editor supplied with the system. Since fonts are continuously
+scaleable and slantable and can be drawn using any linewidth there is no
+need for the large number of fonts often found in other systems. A <b>TPMODE</b>
+attribute can be used to control the display orientation of a text in 3D.
+With <b>TPMODE</b>=0 the text is alwyays displayed in the plane of the
+screen, ie. readable in any view. With <b>TPMODE</b>=1 the text is displayed
+in the plane it was originally created in as a true 3D text.
+<p>VARKON uses vector representation for its text. When printed or plotted
+the boldness of a text will therefore depend on the current penwidth as
+well as the <b>TFONT</b> and <b>WIDTH</b> attribute.</ul>
+
+<hr width="100%" align="center">
+<center>
+
+
+
+<p><br>
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm">VARKON Homepage</a></td>
+
+<td><a href="vindex.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE ma_posw4(INT main_id;
+                               VECTOR p;
+                               INT    b,h;
+                           VAR STRING mbsstr*132);
+
+!*      Interaktiv inmatning av en position på.
+!*      Om inmatningen avbryts lämnas mbsstr orörd.
+!*
+!*      Ut:  mbsstr = on(id,value)
+!*
+!*      (C)microform ab 1996-06-10 J. Kjellander
+!*
+!*******************************************************
+
+ REF    id,grupp(3);
+ INT    label,typ,vers,blank,nivå,penna;
+ STRING fltstr*40;
+
+ BEGINMODULE
+
+!*
+!***Promt.
+!*
+   label:=cre_button(main_id,p,b,h,0,get_tstr(52),get_tstr(52));
+!*
+!***Identitet och värde. Punkt, linje, cirkel, kurva, ksys, text,
+!***4 mått och yta.
+!*
+   id:=ident(1+2+4+8+8192+32+128+256+512+1024+16);
+   if id <> #0.1 then
+!*
+!***Vilken typ av storhet ?
+!*
+     gethdr(id,typ,vers,blank,nivå,penna,grupp);
+!*
+!***Linje, cirkel eller kurva.
+!*
+     if typ = 2  or  typ = 4  or  typ = 8 then
+       fltstr:="";
+       fltstr:=inpmt(get_tstr(208),"0.5",40);
+       if fltstr <> "" then
+         mbsstr:="on("+rstr(id)+","+fltstr+")";
+       endif;
+!*
+!***Yta.
+!*
+     elif typ = 16 then
+       ;
+!*
+!***Storheten finns ej i GM.
+!*
+     elif typ = -1 then
+       ;
+!*
+!***Övriga.
+!*
+     else
+       mbsstr:="on("+rstr(id)+")";
+     endif;
+   endif;
+!*
+!***Sudda promten.
+!*
+   del_win(main_id,label);
+
+ ENDMODULE
+
+!******************************************************

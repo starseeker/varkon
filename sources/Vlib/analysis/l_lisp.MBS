@@ -1,0 +1,92 @@
+!*******************************************************
+
+ macro module l_lisp(STRING namn*20:="*" > "t1577");
+
+!*      Huvudprogram för listning av parter.
+!*
+!*      In : namn => Sökt partnamn ev. med wildcard.
+!*           t1577 = "Ange namn på part(er) att söka efter !"
+!*
+!*      Ut : Inget.
+!*
+!*      (C)microform ab 1996-02-15 J. Kjellander
+!*
+!*      1996-06-05 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ CONSTANT INT MAXNAM=500, TRUE=1, FALSE=0;
+
+ STRING prtnam*10,namtab(MAXNAM)*10;
+ INT    prtant,hit,i,namant,mtyp,mattr,n,mant,anttab(MAXNAM);
+ REF    id,kid,idm(2);
+
+ beginmodule
+
+!*
+!***Först en liten trevlig utskrift.
+!*
+   psh_pmt(get_tstr(1578)+chr(34)+namn+chr(34)); ! Söker efter....
+!*
+!***Sök i hela GM.
+!*
+   set_root_gm(#0);
+!*
+!***Loopa runt och sök efter parter med angivet namn.
+!*
+   prtant:=0;
+   namant:=0;
+
+loop:
+   id:=get_next_gm(0,16384,namn);
+   if id <> #0 then
+     prtant:=prtant+1;
+     getprt(id,prtnam,mtyp,mattr,kid,n,mant,idm);
+
+     hit:=FALSE;
+     for i:=1 to namant do
+       if prtnam = namtab(i) then
+         anttab(i):=anttab(i)+1;
+         hit:=TRUE;
+       endif;
+     endfor;
+
+     if hit = FALSE then
+       if namant < MAXNAM then
+         namant:=namant+1;
+         namtab(namant):=prtnam;
+         anttab(namant):=1;
+       else
+         exit("Max "+str(MAXNAM,-1,0)+" different names !");
+       endif;
+     endif;
+
+     goto loop;
+   endif;
+!*
+!***Padda partnamn med blanka (på slutet).
+!*
+   for i:=1 to namant do
+     for n:=1 to 10-length(namtab(i)) do namtab(i):=namtab(i)+" "; endfor;
+   endfor;
+!*
+!***Utskrift till listfönster.
+!*
+   lst_ini(get_tstr(1579) + act_jobnam());             ! ANALYS- Partlista..
+   lst_lin(get_tstr(1580) + namn);                     ! Söksträng
+   lst_lin(get_tstr(1581) + str(namant,-1,0));         ! Antal namn
+   lst_lin(get_tstr(1582) + str(prtant,-1,0));         ! Antal parter
+   lst_lin("");
+   for i:=1 to namant do
+     lst_lin(namtab(i)+" "+str(anttab(i),4,0));
+   endfor;
+
+   lst_exi();
+!*
+!***Slut.
+!*
+   pop_pmt();
+
+ endmodule
+
+!*******************************************************

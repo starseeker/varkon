@@ -1,0 +1,30 @@
+##########################################################
+#
+#   Makefile for PL with gcc and GNU/linux
+#
+#  (C)Microform AB 1999-11-17 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+# Options to CC
+
+CFLAGS =                             \
+         -ansi                       \
+         -Wall                       \
+         -pedantic                   \
+         -ffloat-store               \
+         -fsigned-char               \
+         -fwritable-strings          \
+         -O                          \
+         -DUNIX                      \
+         -DWRK_STAT
+
+COMPILE = $(CC) $(CFLAGS)
+
+include Makefile.PL
+
+##########################################################

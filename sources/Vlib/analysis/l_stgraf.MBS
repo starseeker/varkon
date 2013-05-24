@@ -1,0 +1,50 @@
+!*******************************************************
+
+ macro module l_stgraf();
+
+!*      Skriver ut grafisk status.
+!*
+!*      In: Inget.
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 3/11/86 R. Svedin
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*      1998-01-01 Bredd, J.Kjellander
+!*
+!*******************************************************
+
+
+ beginmodule
+
+   lst_ini(get_tstr(1556));                           ! ANALYS - Grafikdata
+
+   lst_lin(get_tstr(1560) + str(act_pen(),-5,0));     ! Penna
+   lst_lin(get_tstr(1558) + str(act_lev(),-5,0));     ! Nivå
+   lst_lin(get_tstr(1557) + str(act_blank(),-5,0));   ! Blank
+   lst_lin(get_tstr(1620) + str(act_width(),-5,0));   ! Bredd
+
+   lst_lin("");
+   lst_lin(get_tstr(1559) + act_vnam());              ! Vy
+   lst_lin(get_tstr(1561) + str(act_scl(),-12,5));    ! Skala
+   lst_lin(get_tstr(1562) + str(act_dscl(),-12,5));   ! Ritningsskala
+   lst_lin(get_tstr(1563) + str(act_cacc(),-12,5));   ! Kurvnoggrannhet
+
+   lst_lin("");
+   lst_lin(get_tstr(1564) + str(act_gridx(),-12,5));  ! Raster origo X
+   lst_lin(get_tstr(1565) + str(act_gridy(),-12,5));  ! Raster origo Y
+   lst_lin(get_tstr(1566) + str(act_griddx(),-12,5)); ! Delning X
+   lst_lin(get_tstr(1567) + str(act_griddy(),-12,5)); ! Delning Y
+
+   if act_grid() = 1 then
+     lst_lin(get_tstr(1568));                         ! Tänt
+   else
+     lst_lin(get_tstr(1569));                         ! Släckt
+   endif;
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

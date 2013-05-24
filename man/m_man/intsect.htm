@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>intersect </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-06-08</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>intersect - <FONT SIZE=+0>Function</FONT></H2>
+
+<P>Geometrical function<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Returns the position of intersect between a line, arc or curve and
+a line, arc, curve, b_plane, XY-plane or surface. In the case of a lin/surface,
+arc/surfcae or curve/surface intersect an optional parameter may be used
+to specify that parametric values relating to the surface should be returned
+instead of the usual coordinates.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>intersect(ref1, ref2, alt, output)</P>
+
+<TABLE WIDTH="602" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="46">REF</TD>
+
+<TD width="548">ref1;</TD>
+</TR>
+
+<TR>
+<TD width="46">REF</TD>
+
+<TD width="548">ref2;</TD>
+</TR>
+
+<TR>
+<TD width="46">INT</TD>
+
+<TD width="548">alt;</TD>
+</TR>
+
+<TR>
+<TD>INT</TD>
+
+<TD>output;</TD>
+</TR>
+</TABLE>
+
+<P><B>Principal parameters</B></P>
+
+<TABLE WIDTH="602" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="35">ref1</TD>
+
+<TD width="559">- Identity of first entity</TD>
+</TR>
+
+<TR>
+<TD width="35">ref2</TD>
+
+<TD width="559">- Identity of second entity</TD>
+</TR>
+</TABLE>
+
+<P><B>Optional parameters</B></P>
+
+<TABLE WIDTH="526" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="35">alt</TD>
+
+<TD width="483">- Alternative, default = 1</TD>
+</TR>
+
+<TR>
+<TD>output</TD>
+
+<TD>- Requested output. 0 = coordinates (default), 1= parameter value(s)</TD>
+</TR>
+</TABLE>
+
+<P><B>Return value<BR>
+<BR>
+</B>A VECTOR equal to the specified position<BR>
+<BR>
+<B>Example<BR>
+<BR>
+</B>intersect(#1,#2)<BR>
+<BR>
+The first position of intersect between #1 and #2 if you travel along #1
+from its start to its end.<BR>
+<BR>
+<BR>
+intersect(#1,#2,-1)<BR>
+<BR>
+Same as above but with #1 and #2 extended.</P>
+
+<P><BR>
+<BR>
+intersect(#1,#2,2)<BR>
+<BR>
+The position where #1 intersects with #2 for the second time.</P>
+
+<P><BR>
+<BR>
+intersect(#2,#1,2)<BR>
+<BR>
+The position where #2 intersects with #1 for the second time.</P>
+
+<P>intersect(#2,#1,1,1)</P>
+
+<P>The parametric (u,v)-value corresponding to the position on the surface
+where #2 and #1 intersect. One of #1 and #2 must be a surface.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If more than one intersection exists the &quot;alt&quot;-parameter
+can be used to select the right solution. If alt is negative any involved
+lines or arcs are extended to infinity.<BR>
+<BR>
+In a 2D module lines, arcs and curves can be intersected with lines arcs
+or curves only. In a 3D module lines, arcs and curves may also be intersected
+with surfaces, b_planes and the XY-plane of a coordinate system. <BR>
+<BR>
+If a line, arc or curve is intersected with a line, arc or curve in a 3D
+module their projection along the Z-axis onto the active XY-plane is used
+to calculate the the intersect. This means that they do not have to be
+in true 3D contact with each other in order to find an intersect but it
+also means that the result will depend on the orientation of the active
+XY-plane. If a line, arc or curve is intersected with a surface, b_plane
+or XY-plane the true position is calculated without respect to the active
+XY-plane.<BR>
+<BR>
+If a line, arc or curve is intersected with a line, arc or curve in a 3D
+module the position returned is guaranteed to be a position on the first
+entity even if this entity is not in the active XY-plane. This means that
+intersecting #1 with #2 is not the same as intersecting #2 with #1 if they
+are not in contact with each other.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="geomindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

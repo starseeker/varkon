@@ -1,0 +1,192 @@
+!*******************************************************
+
+ macro module l_anhk(REF id >"t268");
+
+!*      Analyserar en med hårkors utpekad storhet.
+!*
+!*      In : id => Identitet för storhet som skall
+!*                 anlyseras.
+!*                 t268 = "Ange storhet !"
+!*
+!*      Ut : Inget.
+!*
+!*      (C)microform ab 6/10/86 R. Svedin
+!*
+!*      9/10/86    Utskrift av header data här, R. Svedin
+!*      15/10/86   Ny rubriktext, R. Svdein
+!*      24/12/86   Globala ref, J. Kjellander
+!*      30/4/87    Endast header för part, R. Svedin, J. Kjellander
+!*      27/8/87    B_PLANE, J. Kjellander
+!*      1/11/89    Temp. fix OR-OR-OR, J. Kjellander
+!*      23/11/91   Nya kurvor, J. Kjellander
+!*      15/12/92   Transformationer, J. Kjellander
+!*      1996-05-31 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   CONSTANT INT TRUE=1,FALSE=0;
+
+   INT    typ,vers,blnk,niv,pen,gnm,i,j,grupper;
+   REF    gid(3),gidm(100);
+   STRING gnam*31,gruppn*80,rad*132;
+   STRING typstr*60,typvec(17)*40;
+
+ beginmodule
+
+    lst_ini(get_tstr(18));         ! t18 = "ANALYS en storhet"
+
+    if id<>#0 then
+!*
+!***Header data.
+!*
+     lst_lin("    "+get_tstr(39));        ! t39 = "Huvud data"
+     rad:="";
+     for i:=1 to length(get_tstr(39)) do rad:=rad+"-"; endfor;
+     lst_lin("    "+rad);
+     lst_lin("");
+
+     gethdr(global_ref(id,1),typ,vers,blnk,niv,pen,gid);
+!*
+!***Initiera typvektorn.
+!*
+     typvec(1):=get_tstr(40);       ! t40  = "Transformation"
+     typvec(2):=get_tstr(41);       ! t41  = "Punkt"
+     typvec(3):=get_tstr(42);       ! t42  = "Linje"
+     typvec(4):=get_tstr(127);      ! t127 = "Cirkelbåge"
+     typvec(5):=get_tstr(139);      ! t139 = "Kurva"
+     typvec(6):=get_tstr(231);      ! t231 = "Yta"
+     typvec(7):=get_tstr(232);      ! t232 = "Text"
+     typvec(8):=get_tstr(233);      ! t233 = "Snitt"
+     typvec(9):=get_tstr(234);      ! t234 = "Längdmått"
+     typvec(10):=get_tstr(235);     ! t235 = "Diametermått"
+     typvec(11):=get_tstr(236);     ! t236 = "Radiemått"
+     typvec(12):=get_tstr(237);     ! t237 = "Vinkelmått"
+     typvec(13):=get_tstr(238);     ! t238 = "Symbol"
+     typvec(14):=get_tstr(239);     ! t239 = "Grupp"
+     typvec(15):=get_tstr(240);     ! t240 = "Koordinatsystem"
+     typvec(16):=get_tstr(241);     ! t241 = "Part"
+     typvec(17):=get_tstr(242);     ! t242 = "Bplan"
+!*
+!***Plocka ut rätt typ ur vektorn.
+!*
+     j:=1; i:=2;
+
+ loop:
+     if typ = 0 then
+       typstr:=typvec(1);
+     elif typ = j then
+       typstr:=typvec(i);
+     elif typ = -1 then
+       typstr:=get_tstr(243);           ! t243 = "Storheten finns ej i GM !"
+     else
+       j:=2*j;
+       i:=i+1;
+       goto loop;
+     endif;
+
+     lst_lin(get_tstr(245)+typstr);      ! t245 = "Storhetens typ   : "
+     lst_lin(get_tstr(246)+rstr(id));    ! t246 = "Identitet        : "
+     if vers > 0 then vers:=0; endif;
+     lst_lin("GM-version       : "+str(ABS(vers),-1,0));
+     if blnk = 0 then
+       lst_lin(get_tstr(250));           ! t250 = "Tänd/Släckt      : Tänd"
+     else
+       lst_lin(get_tstr(251));           ! t251 = "Tänd/Släckt      : Släckt"
+     endif;
+     lst_lin(get_tstr(252)+str(niv,-5,0));   ! t252 = "Nivå             : "
+     lst_lin(get_tstr(253)+str(pen,-5,0));   ! t253 = "Penna            : "
+!*
+!***Skriv ut ev grupper.
+!*
+     if   (gid(1)<>#0) then grupper:=TRUE;
+     elif (gid(2)<>#0) then grupper:=TRUE;
+     elif (gid(3)<>#0) then grupper:=TRUE;
+     else                   grupper:=FALSE;
+     endif;
+
+     gruppn:=get_tstr(254);         ! t254 = "Grupper          : "
+
+     if grupper=TRUE then
+         if gid(1) <> #0 then
+           getgrp(gid(1),gnam,gnm,gidm);
+           gruppn:=gruppn+gnam;
+           lst_lin(gruppn);
+           gruppn:="                   ";
+         endif;
+         if gid(2) <> #0 then
+           getgrp(gid(2),gnam,gnm,gidm);
+           gruppn:=gruppn+gnam;
+           lst_lin(gruppn);
+           gruppn:="                   ";
+         endif;
+         if gid(3) <> #0 then
+           getgrp(gid(3),gnam,gnm,gidm);
+           gruppn:=gruppn+gnam;
+           lst_lin(gruppn);
+           gruppn:="                   ";
+         endif;
+     else
+       lst_lin(gruppn+"-");
+     endif;   
+
+     lst_lin("");
+!*
+!***Övriga data för storheter utom part.
+!*
+     if typ<>16384 then
+       lst_lin("    "+get_tstr(255));     ! t255 = "    Övriga data"
+       rad:="";
+       for i:=1 to length(get_tstr(255)) do rad:=rad+"-"; endfor;
+       lst_lin("    "+rad);
+       lst_lin("");
+
+       if typ=0 then
+         part(#1,l_anatrf(id));
+       elif typ=1 then 
+         part(#2,l_anapoi(id));
+       elif typ=2 then
+         part(#3,l_analin(id));
+       elif typ=4 then
+         part(#4,l_anaarc(id));
+       elif typ=8 then
+         part(#5,l_anacur(id));
+       elif typ=16 then
+         part(#6,l_anasur(id));
+       elif typ=32 then
+         part(#7,l_anatxt(id));
+       elif typ=64 then
+         part(#8,l_anaxht(id));
+       elif typ=128 then
+         part(#9,l_analdm(id));
+       elif typ=256 then
+         part(#10,l_anacdm(id));
+       elif typ=512 then
+         part(#11,l_anardm(id));
+       elif typ=1024 then
+         part(#12,l_anaadm(id));
+       elif typ=2048 then
+         part(#13,l_anamsh(id));
+       elif typ=4096 then
+         part(#14,l_anagrp(id));
+       elif typ=8192 then
+         part(#15,l_anacsy(id));
+       elif typ=32768 then
+         part(#16,l_anabpl(id));
+       else
+         lst_lin(get_tstr(256));         ! t256 = "Okänd typ"
+       endif;
+
+     endif;
+
+   endif;
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************
+
+
+
+
+

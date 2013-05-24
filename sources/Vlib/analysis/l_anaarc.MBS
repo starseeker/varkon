@@ -1,0 +1,93 @@
+!*******************************************************
+
+ macro module l_anaarc(REF id);
+
+!*      Skriver ut specifika data för en cirkel.
+!*
+!*      In : id => Cirkelns identitet.
+!*
+!*      Ut : Inget.
+!*
+!*      (C)microform ab 6/10/86 R. Svedin
+!*
+!*      28/12/86   Globala ref, J. Kjellander
+!*      1996-06-03 Engelska, J.Kjellander
+!*      1998-01-01, J.Kjellander
+!*
+!*******************************************************
+
+   INT    ct,ns,i,j;
+   FLOAT  sl,w,r,v1,v2,sdat(4,4,4);
+   VECTOR pos;
+   STRING sdstr(4)*5;
+
+ beginmodule
+
+   getarc(global_ref(id,2),ct,sl,pos,r,v1,v2,ns,sdat);
+   w:=getwidth(global_ref(id,2));
+
+   if ns > 0 then
+     lst_lin(get_tstr(284));      ! t284 = "Geometrityp      : 3D"
+!*
+!***Strängar för utskrift av matris med segmentdata.
+!*
+     sdstr(1) := "k0 : ";
+     sdstr(2) := "k1 : ";
+     sdstr(3) := "k2 : ";
+     sdstr(4) := "k3 : ";
+   else
+     lst_lin(get_tstr(285));   ! t285 = "Geometrityp      : 2D"
+   endif;
+
+   if ct = 0 then
+     lst_lin(get_tstr(286));   ! t286 = "Typ              : Heldragen"
+   elif ct = 1 then
+     lst_lin(get_tstr(311));   ! t311 = "Typ              : Streckad"
+   else
+     lst_lin(get_tstr(312));   ! t312 = "Typ              : Streck-prickad"
+   endif;
+
+   if ct <> 0 then
+     lst_lin(get_tstr(313) + str(sl,-1,6));   ! t313 = "Strecklängd      : "
+   endif;
+
+   lst_lin(get_tstr(1620) + str(w,-12,5));   ! t1620 = "Bredd           : "
+
+   lst_lin("");
+   lst_lin(get_tstr(314) + str(pos.x,-1,6));  ! t314 = "Origo X          : "
+   lst_lin(get_tstr(315) + str(pos.y,-1,6));  ! t315 = "Origo Y          : "
+
+   if ns > 0 then
+     lst_lin(get_tstr(316) + str(pos.z,-1,6));  ! t316 = "Origo Z          : "
+   endif;
+
+   lst_lin("");
+   lst_lin(get_tstr(317) + str(r,-1,6));        ! t317 = "Radie            : "
+   lst_lin(get_tstr(342) + str(v1,-1,6));       ! t342 = "Startvinkel      : "
+   lst_lin(get_tstr(343) + str(v2,-1,6));       ! t343 = "Slutvinkel       : "
+
+   if ns > 0 then
+     lst_lin("");
+     lst_lin(get_tstr(394) + str(ns,-5,0));     ! t343 = "Antal segment    : "
+!*
+!***Skriv ut matrisen med segmentdata.
+!*
+     lst_lin("");
+     for i := 1 to ns do
+       lst_lin(get_tstr(402) + str(i,-3,0) );
+       ! t402 = "Segment nr:"
+       lst_lin("        x            y            z            w");
+       for j := 1 to 4 do
+         lst_lin(sdstr(j) + 
+                 str(sdat(i,j,1),-12,5) + 
+                 "," + str(sdat(i,j,2),-12,5) + 
+                 "," + str(sdat(i,j,3),-12,5) + 
+                 "," + str(sdat(i,j,4),-12,5));
+       endfor;
+       lst_lin("");
+     endfor;
+   endif;
+    
+ endmodule
+
+!*******************************************************

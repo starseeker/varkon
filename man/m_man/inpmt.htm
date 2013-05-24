@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>inpmt </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>inpmt - <small><small>Function</small></small></h2>
+  <p>Input window<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Displays the string input dialogue window. A prompt and default value must be supplied.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  inpmt(prompt, default, width)<br>
+  <br>
+  </p>
+  <table width="654" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="574">prompt*132;</td>
+    </tr>
+<!-- Table 06 Row 02 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="574">default*132:</td>
+    </tr>
+<!-- Table 06 Row 03 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="574">width;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="654" border="0">
+<!-- Table 07 Row 01 -->
+    <tr>
+      <td width="61">prompt</td>
+      <td width="585">- The prompt string</td>
+    </tr>
+<!-- Table 07 Row 02 -->
+    <tr>
+      <td width="61">default</td>
+      <td width="585">- A default value to display in the input field</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="654" border="0">
+<!-- Table 08 Row 01 -->
+    <tr>
+      <td width="60">width</td>
+      <td width="586">- Maximum number of characters to accept for input, default = 132 (max). </td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A STRING of characters. If input is finished by clicking the Okey button inpmt() will
+  return the contents of the input field. Clicking the Reject button returns a null string
+  &quot;&quot;.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  name:=inpmt(&quot;What is your name ?&quot;,&quot;John&quot;,20);<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  If the prompt stack is not empty when inpmt() is called the topmost prompt will
+  automatically be displayed also in the input dialogue window. This makes it possible to
+  display two lines of text in the input window.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="dialindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

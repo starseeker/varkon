@@ -1,0 +1,62 @@
+!*******************************************************
+
+ MACRO MODULE igs_gflt(
+   VAR FILE   infil;
+   VAR STRING rad*80;
+   VAR FLOAT  f;
+   VAR INT    status);
+
+!*      Läser och avlägsnar nästa flyttal från
+!*      aktuell rad. Om raden är slut läses ny rad. 
+!*
+!*      In: infil  = Fil att läsa från.
+!*          rad    = Rad att läsa ifrån.
+!*
+!*      Ut: f      = Det lästa talet.
+!*          status = 0 => Ok
+!*                  -1 => Fel
+!*
+!*      (C)microform ab 1997-12-23 J. Kjellander
+!*
+!*******************************************************
+
+   INT    p,pd;
+   STRING fs*80;
+
+ BEGINMODULE
+
+!*
+!***Sök upp slutet på nästa fält. Om inga mer fält
+!***finns i raden läser vi nästa rad.
+!*
+   p:=finds(rad,",");
+
+   if p = 0 then
+     p:=finds(rad,";");
+   endif;
+    
+   if p = 0 then
+     rad:=inlin(infil);
+     p:=finds(rad,",");
+   endif;
+!*
+!***Plocka ut talet. Byt ev. exponent-D mot E.
+!*
+   fs:=substr(rad,1,p-1);
+   pd:=finds(fs,"D");
+   if pd > 0 then
+     fs:=substr(fs,1,pd-1)+"E"+substr(fs,pd+1);
+   endif;
+   f:=val(fs);
+!*
+!***Avlägsna talet från raden.
+!*
+   rad:=substr(rad,p+1);
+!*
+!***Slut.
+!*
+   status:=0;
+
+ ENDMODULE
+
+!*******************************************************

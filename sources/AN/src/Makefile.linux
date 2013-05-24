@@ -1,0 +1,40 @@
+##########################################################
+#
+#   Makefile for the GNU/linux version of the
+#   Varkon MBS compiler mbsc. This makefile
+#   compiles the sources, builds the object
+#   library and links the objects into an
+#   executable (mbsc) in the VARKON_ROOT
+#   directory. 
+#
+#   VARKON_ROOT must be set to the directory
+#   where your Varkon system is installed before
+#   you run this makefile.
+#
+#  (C)Microform AB 1999-05-03 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+CFLAGS = -ansi \
+         -Wall \
+         -ffloat-store \
+         -fsigned-char \
+         -fwritable-strings \
+         -O \
+         -D_POSIX_SOURCE \
+         -DUNIX \
+         -DANALYZER \
+         -DWRK_STAT \
+         -DVARKON
+
+LDFLAGS =
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.AN
+
+##########################################################

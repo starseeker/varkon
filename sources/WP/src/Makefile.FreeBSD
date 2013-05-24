@@ -1,0 +1,31 @@
+##########################################################
+#
+#   Makefile for WPlib on FreeBSD
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC ?= gcc
+
+CFLAGS +=   -ansi                       \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -O                          \
+            -DUNIX                      \
+            -DV3_X11                    \
+            -DV3_OPENGL                 \
+            -DWRK_STAT -I/usr/X11R6/include
+
+debug :     CFLAGS += -g -DDEBUG
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.WP
+
+##########################################################

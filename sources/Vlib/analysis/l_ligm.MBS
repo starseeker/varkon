@@ -1,0 +1,93 @@
+!*******************************************************
+
+ macro module l_ligm();
+
+!*      Skriver ut hela GM.
+!*
+!*      (C)microform ab 1996-06-04 J.Kjellander
+!*
+!*******************************************************
+
+   INT    typ,mtyp,blnk,vers,niv,pen,attr,nm,np;
+   INT    inm,ityp,ipek,i,flag;
+   REF    id,kid,gid(3),idm(20);
+   STRING namn*20,pad*40;
+   STRING typstr*40,typvec(20)*40;
+
+ beginmodule
+
+    lst_ini(get_tstr(1545));  ! t1545 = "ANALYS - Hela GM"
+!*
+!***Initiera typvektorn.
+!*
+    typvec(1):=get_tstr(40);       ! t40  = "Transformation"
+    typvec(2):=get_tstr(41);       ! t41  = "Punkt"
+    typvec(3):=get_tstr(42);       ! t42  = "Linje"
+    typvec(4):=get_tstr(127);      ! t127 = "Cirkelbåge"
+    typvec(5):=get_tstr(139);      ! t139 = "Kurva"
+    typvec(6):=get_tstr(231);      ! t231 = "Yta"
+    typvec(7):=get_tstr(232);      ! t232 = "Text"
+    typvec(8):=get_tstr(233);      ! t233 = "Snitt"
+    typvec(9):=get_tstr(234);      ! t234 = "Längdmått"
+    typvec(10):=get_tstr(235);     ! t235 = "Diametermått"
+    typvec(11):=get_tstr(236);     ! t236 = "Radiemått"
+    typvec(12):=get_tstr(237);     ! t237 = "Vinkelmått"
+    typvec(13):=get_tstr(238);     ! t238 = "Symbol"
+    typvec(14):=get_tstr(239);     ! t239 = "Grupp"
+    typvec(15):=get_tstr(240);     ! t240 = "Koordinatsystem"
+    typvec(16):=get_tstr(241);     ! t241 = "Part"
+    typvec(17):=get_tstr(242);     ! t242 = "Bplan"
+!*
+!**Lista hela GM.
+!*
+    set_root_gm();
+
+loop:
+    id:=get_next_gm(0);
+    if id <> #0 then
+      gethdr(id,typ,vers,blnk,niv,pen,gid);
+      ityp:=0; ipek:=1;
+!*
+!***Om det är en part hämtar vi även namnet.
+!*
+      if typ = 16384 then
+       lst_lin("");
+       getprt(id,namn,mtyp,attr,kid,np,nm,idm);
+      endif;
+!*
+!***Plocka fram storhetens typ.
+!*
+ ntyp:
+      if typ = ityp then
+        typstr:=typvec(ipek);
+      else
+        if ityp = 0 then
+          ityp:=1;
+        else
+          ityp:=ityp*2;
+        endif;
+        ipek:=ipek + 1;
+        goto ntyp;
+      endif;
+!*
+!***Positionera utskriften.
+!*
+     if typ=16384 then typstr:=typstr+" "+namn; endif;
+      pad:=" ";
+      for i:=1 to 20-length(typstr) do
+        pad:=pad + "_";
+      endfor;
+      pad:=pad+" ";
+!*
+!***Skriv ut typ och referens.
+!*
+      lst_lin(typstr + pad + rstr(id));
+
+      goto loop;
+    endif;
+
+    lst_exi();
+
+ endmodule
+
+!*******************************************************

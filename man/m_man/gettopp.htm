@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>gettopp </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>gettopp - <small><small>Procedure</small></small></h2>
+  <p>Get topological patch from GM<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads topological patch data from GM.<br>
+  <br>
+  <b>Syntax<br>
+  <br>
+  </b>gettopp(sur_id, iu, iv, geo_type, u1, u2, v1, v2)<br>
+  <br>
+  </p>
+  <table width="670" border="0">
+<!-- Table 28 Row 01 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="591">sur_id;</td>
+    </tr>
+<!-- Table 28 Row 02 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="591">iu;</td>
+    </tr>
+<!-- Table 28 Row 03 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="591">iv;</td>
+    </tr>
+<!-- Table 28 Row 04 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="591">geo_type;</td>
+    </tr>
+<!-- Table 28 Row 05 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="591">u1;</td>
+    </tr>
+<!-- Table 28 Row 06 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="591">v1;</td>
+    </tr>
+<!-- Table 28 Row 07 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="591">u2;</td>
+    </tr>
+<!-- Table 28 Row 08 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="591">v2;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  <u><br>
+  </b></u></p>
+  <table width="670" border="0">
+<!-- Table 29 Row 01 -->
+    <tr>
+      <td width="62">sur_id</td>
+      <td width="600">- Global identity of surface to which the patch belongs</td>
+    </tr>
+<!-- Table 29 Row 02 -->
+    <tr>
+      <td width="62">iu</td>
+      <td width="600">- Patch number in U direction </td>
+    </tr>
+<!-- Table 29 Row 03 -->
+    <tr>
+      <td width="62">iv</td>
+      <td width="600">- Patch number in V direction</td>
+    </tr>
+<!-- Table 29 Row 04 -->
+    <tr>
+      <td width="62">geo_type</td>
+      <td width="600">- The kind of corresponding geometrical patch</td>
+    </tr>
+<!-- Table 29 Row 05 -->
+    <tr>
+      <td width="62">u1</td>
+      <td width="600">- Start parameter value in U direction</td>
+    </tr>
+<!-- Table 29 Row 06 -->
+    <tr>
+      <td width="62">u2</td>
+      <td width="600">- End parameter value in U direction</td>
+    </tr>
+<!-- Table 29 Row 07 -->
+    <tr>
+      <td width="62">v1</td>
+      <td width="600">- Start parameter value in V direction</td>
+    </tr>
+<!-- Table 29 Row 08 -->
+    <tr>
+      <td width="62">v2</td>
+      <td width="600">- End parameter value in V direction</td>
+    </tr>
+  </table>
+  <b><u><p><br>
+  </u>Optional parameters<br>
+  </b><br>
+  None.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The patch address for the start patch is (iu,iv)= (1,1).<br>
+  <br>
+  Patch parameter values are normally u1= 0.0, v1= 1.0, v1= 0.0 and v2= 1.0 but values may
+  be different for trimmed patches.<br>
+  <br>
+  Geometrical patches may be of the following types:<br>
+  <br>
+  0 = Null patch<br>
+  1 = Non rational bicubic <br>
+  2 = Rational bicubic<br>
+  3 = Conic lofting<br>
+  4 = Plane facett<br>
+  5 = Topological<br>
+  6 = Procedural<br>
+  7 = Coons<br>
+  8 = Consurf</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="gmdbindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

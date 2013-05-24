@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>tform_move </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>tform_move - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a transformation<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a translational transformation with optional scaling.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  tform_move(id, p1, p2, sx, sy, sz:attributes);<br>
+  <br>
+  </p>
+  <table width="494" border="0">
+<!-- Table 33 Row 01 -->
+    <tr>
+      <td width="77">REF</td>
+      <td width="409">id;</td>
+    </tr>
+<!-- Table 33 Row 02 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="409">p1;</td>
+    </tr>
+<!-- Table 33 Row 03 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="409">p2;</td>
+    </tr>
+<!-- Table 33 Row 04 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="409">sx;</td>
+    </tr>
+<!-- Table 33 Row 05 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="409">sy;</td>
+    </tr>
+<!-- Table 33 Row 06 -->
+    <tr>
+      <td width="77">FLOAT </td>
+      <td width="409">sz;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="494" border="0">
+<!-- Table 34 Row 01 -->
+    <tr>
+      <td width="68">id </td>
+      <td width="418">- Local identity</td>
+    </tr>
+<!-- Table 34 Row 02 -->
+    <tr>
+      <td width="68">p1</td>
+      <td width="418">- Original position</td>
+    </tr>
+<!-- Table 34 Row 03 -->
+    <tr>
+      <td width="68">p2</td>
+      <td width="418">- Translated position and origin for optional scaling</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="494" border="0">
+<!-- Table 35 Row 01 -->
+    <tr>
+      <td width="68">sx</td>
+      <td width="418">- Scalefactor in X-direction, default = 1</td>
+    </tr>
+<!-- Table 35 Row 02 -->
+    <tr>
+      <td width="68">sy</td>
+      <td width="418">- Scalefactor in Y-direction, default = sx</td>
+    </tr>
+<!-- Table 35 Row 03 -->
+    <tr>
+      <td width="68">sz</td>
+      <td width="418">- Scalefactor in Z-direction, default = sy</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="494" border="0">
+<!-- Table 36 Row 01 -->
+    <tr>
+      <td width="68">PEN </td>
+      <td width="418">- Pen or colour number</td>
+    </tr>
+<!-- Table 36 Row 02 -->
+    <tr>
+      <td width="68">LEVEL</td>
+      <td width="418">- Level number</td>
+    </tr>
+<!-- Table 36 Row 03 -->
+    <tr>
+      <td width="68">BLANK</td>
+      <td width="418">- Visible(0) or invisible(1)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>tform_move(#1,vec(0,0,0),vec(100,0,0),1,1,5);<br>
+  <br>
+  Creates a translation of 100 units in the X-direction with simultaneous scaling 5 times in
+  Z. Scaling is performed with X=100 and Y=Z=0 as origin.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

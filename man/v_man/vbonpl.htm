@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>The bounded plane</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>The bounded plane</H3>
+
+<P>VARKON includes a simple planar surface called B-plane. A B-plane is
+defined by four positions in the following manner.....<BR>
+<BR>
+<B>b_plane</B>(id,p1,p2,p3,p4);<BR>
+<BR>
+p1 through p4 are considered as vertices of a planar polygon and must therefore
+all be positions in one and the same plane. VARKON also expects the polygon
+to be convex. With four different positions VARKON creates a plane bounded
+by four straight lines but if p2 is set equal to p3 then a three sided
+plane is created.<BR>
+<BR>
+B-planes can be used when generating intersects but the main purpose is
+to make it possible to produce images with automatic removal of hidden
+lines. B-planes have two sides where one is regarded as the outside and
+the other as the inside. If viewed from the outside a B-plane will hide
+everything behind it. Wireframe objects as well as other B-planes and sculptured
+surfaces are all clipped to the borders of the B-plane. If viewed from
+the inside a B-plane doesn't hide anything. In many respects a B-plane
+is thus the same thing as a planar <I>face</I> in a solid modeller.<BR>
+<BR>
+When VARKON creates an image with hidden lines removed it will only display
+those parts of the model that are not hidden by B-planes but it will also
+add and display all visible B-plane/B-plane intersects automatically. This
+means that if you dress two wireframe objects with B-planes and let the
+objects intersect then VARKON will produce the same image with hidden lines
+removed and new edges added as would be the result if using a true faceted
+solid modeller. <BR>
+<BR>
+Many VARKON applications use B-planes to produce realistic images. For
+objects with complex shape this may require large numbers of B-planes.
+Due to the simple implementation of B-planes though the algorithm for removal
+of hidden lines is very fast and scales almost linearly. One thousand B-planes
+are processed in 2 seconds on a PC with a 90 Mhz Pentium processor. </P>
+
+<P>The VARKON shader (based on OpenGL) can be used to produce shaded images
+of surfaces as well as B-planes.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

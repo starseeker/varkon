@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>inv_on_sur</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>inv_on_sur - <small><small>Function</small></small></h2>
+  <p>Geometrical function<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Returns the parameter point of a position on a surface. <br>
+  <br>
+  The function calculates the closest point to the given input point.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  inv_on_sur(ref, p, order, sno, uv)<br>
+  <br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 18 Row 01 -->
+    <tr>
+      <td width="76">REF</td>
+      <td width="485">ref;</td>
+    </tr>
+<!-- Table 18 Row 02 -->
+    <tr>
+      <td width="76">VECTOR</td>
+      <td width="485">p;</td>
+    </tr>
+<!-- Table 18 Row 03 -->
+    <tr>
+      <td width="76">INT</td>
+      <td width="485">order;</td>
+    </tr>
+<!-- Table 18 Row 04 -->
+    <tr>
+      <td width="76">INT</td>
+      <td width="485">sno;</td>
+    </tr>
+<!-- Table 18 Row 05 -->
+    <tr>
+      <td width="76">VECTOR</td>
+      <td width="485">uv;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 19 Row 01 -->
+    <tr>
+      <td width="68">ref</td>
+      <td width="493">- Identity of the surface</td>
+    </tr>
+<!-- Table 19 Row 02 -->
+    <tr>
+      <td width="68">p</td>
+      <td width="493">- Position</td>
+    </tr>
+<!-- Table 19 Row 03 -->
+    <tr>
+      <td width="68">order</td>
+      <td width="493">- Method for the ordering of closest points (the solutions)</td>
+    </tr>
+<!-- Table 19 Row 04 -->
+    <tr>
+      <td width="68"></td>
+      <td width="493">&nbsp; Eq. 1: With respect to the distance to the input R*3 point</td>
+    </tr>
+<!-- Table 19 Row 05 -->
+    <tr>
+      <td width="68"></td>
+      <td width="493">&nbsp; Eq. 2: With respect to the input UV start point&nbsp;</td>
+    </tr>
+  </table>
+  <table width="569" border="0">
+<!-- Table 20 Row 01 -->
+    <tr>
+      <td width="68">sno</td>
+      <td width="493">- Requested solution number</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 21 Row 01 -->
+    <tr>
+      <td width="67">uv</td>
+      <td width="494">- Start UV point for the calculation</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A VECTOR that is the parameter point on the surface for the closest point on the surface.<br>
+  <br>
+  The third component of the output vector will be negative if there is no closest point.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  uv_value:=inv_on_sur(#5, vec(100,100,100), 1, 1);<br>
+  <br>
+  The parameter point on surface #5 for the point which is closest to the R*3 point (X, Y,
+  Z)=(100,100,100).<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The input point p need not to be exactly on the referenced surface.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+!********************************************************
+!*
+
+     MACRO MODULE stl_wfac(
+     VAR FILE f;
+     VECTOR n,p1,p2,p3);
+
+!*   Writes a single facet to disc.
+!*
+!*   (C)Microform AB 1998-09-08 J.Kjellander
+!*
+!*******************************************************
+
+ BEGINMODULE
+
+    outstr(f,"facet normal ");
+    outflt(f,n.x,-1,6); outstr(f," ");
+    outflt(f,n.y,-1,6); outstr(f," ");
+    outflt(f,n.z,-1,6); outlin(f);
+
+    outstr(f," outer loop"); outlin(f);
+
+    outstr(f,"  vertex ");
+    outflt(f,p1.x,-1,6); outstr(f," ");
+    outflt(f,p1.y,-1,6); outstr(f," ");
+    outflt(f,p1.z,-1,6); outlin(f);
+
+    outstr(f,"  vertex ");
+    outflt(f,p2.x,-1,6); outstr(f," ");
+    outflt(f,p2.y,-1,6); outstr(f," ");
+    outflt(f,p2.z,-1,6); outlin(f);
+
+    outstr(f,"  vertex ");
+    outflt(f,p3.x,-1,6); outstr(f," ");
+    outflt(f,p3.y,-1,6); outstr(f," ");
+    outflt(f,p3.z,-1,6); outlin(f);
+
+    outstr(f," endloop"); outlin(f);
+
+    outstr(f," endfacet"); outlin(f);
+
+ ENDMODULE
+
+!*************************************************

@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cur_trim </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cur_trim -<small><small> Geometric procedure</small></small></h2>
+  <p>Creates a curve<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a curve by &quot;trimming&quot; a copy of another curve. The desired portion of
+  the old curve is specified by two parameter values t1 and t2 relating to the position on
+  the old curve where the new curve should start and end. Usually t2 &gt; t1 but if t1 &gt;
+  t2 the new curve is also &quot;reversed&quot; meaning that it gets the opposite sense of
+  direction compared to the original curve. With t2 = 0 and t1 = the number of segments of
+  the old curve the new curve becomes an exact copy of the old curve only with opposite
+  sense of direction.<br>
+  <br>
+  Trimming can also be used to extend the first or last segment of a curve. Such
+  extrapolation is done by first creating a new segment with the same coefficients as the
+  old segment but the new larger interval for curve parameter and then reparametrise the new
+  segment to the standard interval of 0 -&gt; 1.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cur_trim(id, ref, t1, t2:attributes);<br>
+  <br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 09 Row 01 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="558">id;</td>
+    </tr>
+<!-- Table 09 Row 02 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="558">ref;</td>
+    </tr>
+<!-- Table 09 Row 03 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="558">t1;</td>
+    </tr>
+<!-- Table 09 Row 04 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="558">t2;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 10 Row 01 -->
+    <tr>
+      <td width="56">id </td>
+      <td width="568">- Local identity</td>
+    </tr>
+<!-- Table 10 Row 02 -->
+    <tr>
+      <td width="56">ref</td>
+      <td width="568">- Curve to copy and trim</td>
+    </tr>
+<!-- Table 10 Row 03 -->
+    <tr>
+      <td width="56">t1</td>
+      <td width="568">- Curve parameter start value</td>
+    </tr>
+<!-- Table 10 Row 04 -->
+    <tr>
+      <td width="56">t2</td>
+      <td width="568">- Curve parameter end value</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 11 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 12 Row 01 -->
+    <tr>
+      <td width="68">PEN </td>
+      <td width="556">- Pen or colour number</td>
+    </tr>
+<!-- Table 12 Row 02 -->
+    <tr>
+      <td width="68">LEVEL</td>
+      <td width="556">- Level number</td>
+    </tr>
+<!-- Table 12 Row 03 -->
+    <tr>
+      <td width="68">BLANK</td>
+      <td width="556">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 12 Row 04 -->
+    <tr>
+      <td width="68">CFONT</td>
+      <td width="556">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 12 Row 05 -->
+    <tr>
+      <td width="68">CDASHL</td>
+      <td width="556">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="70">WIDTH</td>
+      <td width="554">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  cur_trim(#3,#2,0,0.5);<br>
+  <br>
+  Creates a new curve #3 by copying the part of curve #2 that starts in t=0 and ends t=0.5.<br>
+  <br>
+  cur_trim(#3,#2,5,0);<br>
+  <br>
+  Creates a new curve #3 by copying the part of #2 that starts in t=0 and ends in t=5 while
+  at the same time reversing the sense of direction.<br>
+  cur_trim(#3,#2,-0.5,5);<br>
+  <br>
+  Creates a new curve #3 by extending the start of #2 to -0.5.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  Extrapolation is not useful for UV-curves.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

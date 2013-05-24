@@ -1,0 +1,95 @@
+VARKON Error messages for ANAPAC
+(C) Microform AB 1996
+
+    000 0 : Analysis complete. %s errors detected.
+    100 2 : Illegal token. Ignored.
+    101 2 : Fractional part of decimal literal missing.
+    102 2 : Error in exponent part of decimal literal. Assumed zero.
+    103 1 : String terminated by end of line before '"'.
+    104 1 : String literal too long. Truncated to %s characters.
+    105 1 : Identifier too long. Truncated to "%s".
+    106 2 : Integer literal out of range. Set to %s.
+    107 2 : Too many digits. %s significant, rest ignored.
+    108 2 : Decimal literal out of range (> 1E%s or < 1E-%s). Assumed zero.
+    109 2 : Unsigned literal integer expected in reference constant.
+    110 2 : Integer literal in reference constant out of range.
+    111 2 : Two "#":s only allowed on first sequencenumber
+    112 2 : EOF reached in comment started at line %s.
+
+    201 2 : "MODULE" expected.
+    202 2 : Illegal module name. "%s" will be used.
+    203 2 : Semicolon (";") expected.
+    204 3 : Declaration or "BEGINMODULE" expected.
+    205 2 : End of file expected.
+    206 2 : "ENDMODULE" expected.
+    207 2 : Left parenthesis ("(") expected.
+    208 2 : Right parenthesis (")") expected.
+    209 3 : Missing or erroneous constant type.
+    210 2 : Multiple definition.
+    211 2 : Equal sign ("=") expected.
+    212 3 : Expression type is not compatible with declaration.
+    213 3 : A constant identifier is expected.
+    214 2 : A comma (",") or a semicolon (";") is expected.
+    215 3 : Missing or erroneous variable type.
+    216 3 : A variable identifier expected.
+    217 3 : Index range must be of integer type.
+    218 3 : Lower bound must not be greater than upper bound.
+    219 3 : String size must be of integer type.
+    220 2 : String definition expected.
+    221 3 : Missing or erroneous reference parameter type.
+    222 3 : A value parameter must not be dimensioned.
+    223 3 : String literal expected.
+    224 3 : String size must be positive.
+    225 3 : String size too large.
+    226 3 : Formal parameter declaration expected.
+    227 2 : A right parenthesis (")") or semicolon (";") expected.
+    228 2 : A comma (",") expected.
+    229 1 : Dangerous module name. "%s" will be used.
+    230 2 : Too many characters in modulename : %s
+
+    900 2 : Illegal unary combination : %s %s.
+    901 2 : Illegal binary combination : %s %s %s.
+    902 2 : Undefined identifier : %s.
+    905 2 : Operand expected.
+    907 2 : Procedure/function has too few parameters.
+    908 2 : Illegal field identifier : x, y or z expected, %s found.
+    909 2 : Not a variable, constant or function : %s.
+    910 2 : Procedure/function has too many parameters.
+    911 2 : Parameter nr. %s has illegal datatype : %s expected, %s found.
+    912 2 : Reference literal expected.
+    913 2 : Index nr. %s : <integer> expected, %s found.
+    914 2 : Too many indexes : at most %s expected, %s found.
+    915 2 : <vector> variable expected , %s found.
+    916 1 : Postdefined reference : #%s.
+    917 2 : Missing symbol : "%s".
+    918 2 : Not a named parameter : %s.
+    919 2 : Illegal datatype for named parameter: %s expected, %s found.
+    920 2 : Unrecognized statement.
+    921 2 : Multiply defined label/identifier : %s.
+    923 2 : Module name missing.
+    924 2 : Undefined variable : %s.
+    925 2 : Left and right side of ":=" have incompatible datatypes : %s := %s.
+    926 2 : Relational operator expected.
+    927 2 : Missing keyword : %s.
+    928 2 : Integer variable expected.
+    929 2 : Illegal expression datatype : %s expected, %s found.
+    930 2 : Identifier expected.
+    931 2 : Not a label.
+    932 2 : Not a constant expression.
+    933 2 : Can't evaluate constant expression.
+    934 2 : Parameter nr. %s : %s expected, %s found.
+    935 2 : Multiply defined sequence number.
+    936 2 : Undefined label : %s.
+    937 1 : Unreferenced label : %s.
+    938 1 : Undefined reference : #%s.
+    939 2 : No order number allowed in reference definition .
+    940 2 : Not allowed in a GEOMETRY module : %s
+    941 2 : Not allowed in this procedure : %s
+    942 2 : Procedure/function not allowed in a %s module.
+    943 2 : Procedure only allowed in a %s module.
+    944 1 : Module name can be interpreted as VAR, CONST or FUNC
+    945 2 : Global reference not allowed in this context
+    946 2 : #0 not allowed in this context
+
+    998 2 : Too many errors in MBS-program.
+    999 0 : Resumed analyse at .. 

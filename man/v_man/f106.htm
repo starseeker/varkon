@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>f106 Activate local coordinate system</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>f106 Activate local coordinate system</H3>
+
+<P><B>Description<BR>
+<BR>
+</B>Makes a local coordinate system become the currently active coordinate
+system. Coordinates and angles entered are always relative to the currently
+active coordinate system.<BR>
+<BR>
+There are three levels of coordinate systems in VARKON. The big coordinate
+system in which all other systems are defined is referred to as BASIC.
+The BASIC system is not stored anywhere or displayed but all geometry in
+the GM-database is stored in BASIC coordinates.<BR>
+<BR>
+Each module also has a GLOBAL system of its own wich is automatically activated
+when the module is called and executed. Depending on the module attribute
+this can be one of the following. A BASIC module has the BASIC coordinate
+system as its GLOBAL system. A GLOBAL module inherits the GLOBAL system
+of the calling module and a LOCAL module uses a LOCAL system (specified
+in the calling part statement) as its GLOBAL. The active (topmost) module
+always has BASIC as its GLOBAL system.<BR>
+<BR>
+LOCAL coordinate systems are those created by the user, see f14 and f104.<BR>
+<BR>
+<B>Available in<BR>
+<BR>
+</B>2D and 3D.<BR>
+<BR>
+<B>MBS Correspondence<BR>
+<BR>
+</B>mode_local(id);<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>See also <A HREF="f107.htm">f107</A> and <A HREF="f177.htm">f177</A><BR>
+</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vbiindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

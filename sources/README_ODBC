@@ -1,0 +1,108 @@
+/**********************************************************************
+*
+*    README_ODBC
+*    ===========
+*
+*    This README-file includes information about how to
+*    build the UNIX version of Varkon with support for ODBC.
+*
+*    (C)Örebro University 2004-09-30    http://www.oru.se/tech/cad
+*
+*
+***********************************************************************/
+
+ODBC-support was implemented in the Windows version of Varkon several years
+ago but has not been included in the Unix version of Varkon until now.
+The first person to do this was Richard Shepard who tried it all out using
+a Sun machine with Solaris. Using Richard's instructions we then did the same 
+thing on a Linux system (Suse 9.1). This file includes Richards instructions
+for Sun/Solaris and after that our own experiences from building the system
+using Suse Linux.
+
+
+-------------------------------------------------------------------------------
+
+                  ODBC and SUN/Solaris by Richard Shepard
+
+This document is a step-by-step guide explaining how to build Varkon with 
+ODBC support. 
+It is geared towards MyODBC and MySQL on Sun in particular but should be 
+applicable, to some extent, to other packages and platforms as well.
+
+- install MyODBC-3.51.06 (or later) libs in /usr/local/lib.
+  It is available at http://dev.mysql.com/downloads/connector/odbc/3.51.html
+
+- install unixODBC-2.1.1 (or later) which you can get from 
+  http://www.unixodbc.org    (or add sql.h, sqltypes.h and sqlext.h from 
+  unixODBC to /usr/local/include)
+  (you may be able to use sql.h, sqltypes.h and sqlext.h from the Solaris 
+  Adabas install instead)
+
+- install libodbcinst.so.1.0.0 from unixODBC in /usr/local/lib
+
+- create links libodbcinst.so and libodbcinst.so.1 in usr/local/lib
+	cd /usr/local/lib
+	su
+	ln -ns libodbcinst.so.1.0.0 libodbcinst.so
+	ln -ns libodbcinst.so.1.0.0 libodbcinst.so.1
+
+- create link to libmyodbc3 in usr/local/lib
+	ln -ns libmyodbc3.3-3.51.06.so libmyodbc3.so
+
+  NOTE: version numbers will be different if you downloaded a later version
+
+- add "SQLLIBS = -lmyodbc3 -lodbcinst" to sources/Makefile.sun:
+
+	# ODBC/SQL libs
+	SQLLIBS = -lmyodbc3 -lodbcinst
+
+- add "$(SQLLIBS)" to gcc line in sources/Makefile.sun:
+
+	$(XVARKON): $(LIBS)
+		gcc -O3 $(LIBS) $(XLIBS) $(GLIBS) -lm $(CLIBS) $(SQLLIBS) -o $(XVARKON)
+
+- the "CFLAGS" line in EX/src/Makefile.sun should have "-DV3_ODBC" added, e.g.:
+
+	CFLAGS = -O3 -I/usr/openwin/include -ffloat-store -fsigned-char -fwritable-strings -DUNIX -DV3_OPENGL -DV3_ODBC -DV3_X11 -DWRK_STAT
+
+
+- Rebuild
+
+---------------------------------------------------------------------------------
+
+                    ODBC and Suse-Linux
+
+Includefiles and libraries for ODBC are included in the Suse distribution
+of Linux. Includefiles sql.h and sqltypes.h and sqlext.h are installed
+in /usr/include. The library libodbcinst.so is installed in /usr/lib 
+but the library libmyodbc3.so is installed in /usr/lib/unixODBC.
+
+To get things working, edit Makefile.linux in the EX/src directory and
+uncomment the line -DV3_ODBC. This will force the compiler to include
+the ODBC calls in the Varkon code. 
+
+Next, edit the Makefile.linux in the sources directory and uncomment
+the line defining SQLLIBS = -L/usr/lib/unixODBC -lmyodbc3
+
+Now it's time to rebuild the system.
+
+Finally, edit your startscript (the file named varkon in the com/swedish
+or com/english directory) and uncomment the 2 lines defining the 
+LD_LIBRARY_PATH variable. 
+
+You should now be able to start Varkon and run the system as usual. To
+make actual ODBC calls you must also install the MySQL database of
+course. We have not done this yet, we have only built the system so far.
+If anyone tries to actually use Varkon with MySQL (or another database)
+we would be glad to know the result. Contact:
+
+johan.kjellander@tech.oru.se
+
+or
+
+soren.larsson@tech.oru.se
+
+
+
+
+/**********************************************************************/

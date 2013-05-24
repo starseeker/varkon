@@ -1,0 +1,43 @@
+!*******************************************************
+
+ MACRO MODULE ed_lin(REF id);
+
+!*      Editerar en linje.
+!*
+!*      In: id = Identitet för linje som skall
+!*               editeras.
+!*
+!*      (C)microform ab 6/5/92 J. Kjellander
+!*
+!*******************************************************
+
+   STRING typ*20;
+
+ beginmodule
+
+!*
+!***Kolla hur linjen är skapad.
+!*
+   typ:=getp_mbs(id,0);
+!*
+!***Anropa rätt rutin.
+!*
+   if typ = "LIN_FREE" then
+     part(#1,ed_linf(id));
+   elif typ = "LIN_PROJ" then
+     part(#2,ed_linf(id));
+   elif typ = "LIN_OFFS" then
+     part(#3,ed_lino(id));
+   elif typ = "LIN_PERP" then
+     part(#4,ed_linp(id));
+   elif typ = "LIN_ANG" then
+     part(#5,ed_lina(id));
+   elif typ = "LIN_TAN1" then
+     part(#6,ed_lint1(id));
+   elif typ = "LIN_TAN2" then
+     part(#7,ed_lint2(id));
+   endif;
+
+ endmodule
+
+!*******************************************************

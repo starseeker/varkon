@@ -1,0 +1,249 @@
+!*******************************************************
+
+ basic drawing module l_anastr(STRING resfil*40 >"t498");
+
+!*      Visar grafiskt GM:s part-struktur.
+!*
+!*      In: resfil = Fil att analysera.
+!*          t498 = "Vad heter resultat- eller rit-filen ?"
+!*
+!*      Algoritm:
+!*
+!*      Pass 1.
+!*      Skapa en text-lista genoma att traversera
+!*      GM en gång med P som funktionskod. För varje
+!*      part skrivs partnivå och namn ut.
+!*
+!*      Pass 2.
+!*      Läs listan och komplettera varje rad med en 
+!*      siffra som anger hur många parter som ingår
+!*      i den aktuella parten på närmast lägre nivå.
+!*
+!*      Pass 3.
+!*      Rita. Innan Pass 1 görs load_gm() vilket innebär
+!*      att det GM som fanns när l_anastr anropades
+!*      skrivs ut till en fil med namnet act_jobnam() samt
+!*      .RES eller ".a42" om det är ritsystemet som används.
+!*      Därefter laddas en kopia av resfil med extension .TMP.
+!*      Innan själva ritningen startar görs sedan clear_gm()
+!*      för att inte nya storheter som skapas skall krocka
+!*      med gamla id-nummer. Resultatet blir att efter l_anastr
+!*      har man ett GM med ett träd kopplat till resfil.TMP
+!*      och denna tas dessutom bort.
+!*
+!*      Nästa gång man startar upp jobbet får man inte med
+!*      trädet. Lämplig metod är att starta upp ett nytt jobb,
+!*      skapa trädet, skriva ut det på PLT/DXF-format och sedan
+!*      lagra utan att sluta.
+!*
+!*      (C)microform ab 6/11/91 J. Kjellander
+!*
+!*      1996-06-03 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   CONSTANT FLOAT b=0.5,h=0.2;     ! Boxarnas storlek
+   CONSTANT FLOAT dx=0.6,dy=1.0;   ! Delning
+   CONSTANT INT   C1=2,C2=6;       ! Färger
+
+   INT    niv,nxtniv,nxtnm,nivmax,i,mtyp,mattr,np,mant,
+          nadd,addlim,actpos,actniv,actnm,
+          typ,nref,blnk,pen,nmem(-1:10),ndone(-1:10);
+   REF    id,kid,idm(100),gid(3);
+   STRING code*1,namn*80,ids*132,rad*80;
+   FLOAT  actx,lastx(-1:10),dtx,dty,l;
+   FILE   tf;
+
+ beginmodule
+
+!*
+!***Indatakontroll.
+!*
+   if resfil = act_jobnam() then exit(get_tstr(499)); endif;
+   ! t499 = "Använd inte aktivt jobb !"
+!*
+!***Ladda resultatfil.
+!*
+   open(tf,"r",act_jobdir()+resfil+".RES");
+   if iostat(tf) <> 0 then
+     open(tf,"r",act_jobdir()+resfil+".RIT");
+     if iostat(tf) <> 0 then
+       exit("Can't find : "+resfil);
+     else
+       close(tf);
+       copy_file(act_jobdir()+resfil+".RIT",act_jobdir()+resfil+".TMP");
+     endif;
+   else
+     close(tf);
+     copy_file(act_jobdir()+resfil+".RES",act_jobdir()+resfil+".TMP");
+   endif;
+
+   load_gm(act_jobdir()+resfil+".TMP");
+!*
+!***Initiering.
+!*
+   open(tf,"w",act_jobdir()+resfil+".STR");
+   psh_pmt("Pass 1...");
+   nivmax:=0;
+   outstr(tf,"0 0   "+resfil); outlin(tf);
+!*
+!***Hämta parter ur GM.
+!*
+   id:=getid("F");
+   if id <> #0 then
+     gethdr(id,typ,nref,blnk,niv,pen,gid);
+     if typ = 16384 then goto first; endif;
+   else
+     goto first;
+   endif;
+nxtid:
+   id:=getid("P");
+first:
+   if id <> #0 then
+!*
+!***Vilken nivå ? dvs. hur många brähögar.
+!*
+     niv:=1; ids:=substr(rstr(id),3);
+nxtlev:
+     if finds(ids,"#") > 0 then
+       ids:=substr(ids,finds(ids,"#")+1);
+       niv:=niv+1;
+       goto nxtlev;
+     endif;
+
+     if niv > nivmax then nivmax:=niv; endif;
+!*
+!***Läs part-namn.
+!*
+     getprt(id,namn,mtyp,mattr,kid,np,mant,idm);
+!*
+!***Skriv ut.
+!*
+     if namn <> "l_anastr" then
+       outint(tf,niv,-6); outstr(tf,namn); outlin(tf);
+     endif;
+     goto nxtid;
+   endif;
+
+   outstr(tf,"0 1   "+resfil); outlin(tf);
+   close(tf);
+   pop_pmt();
+!*
+!***Formattera. Räkna ihop lokalt platsbehov inom varje nivå.
+!*
+   psh_pmt("Pass 2...");
+   open(tf,"u",act_jobdir()+resfil+".STR");
+
+loop1:
+   actpos:=fpos(tf);
+   actnm:=0;
+   actniv:=inint(tf,2); rad:=inlin(tf);
+   if iostat(tf) < 0 then goto tot; endif;
+loop2:
+   nxtniv:=inint(tf,2); rad:=inlin(tf);
+   if iostat(tf) = 0 then
+     if nxtniv = actniv+1 then
+       actnm:=actnm+1;
+       goto loop2;
+     elif nxtniv <= actniv then
+       seek(tf,actpos+2);
+       outint(tf,actnm,-4);
+       seek(tf,actpos);
+       rad:=inlin(tf);
+       goto loop1;
+     else
+       goto loop2;
+     endif;
+   else
+     seek(tf,actpos+2);
+     outint(tf,actnm,-4);
+     seek(tf,actpos);
+     rad:=inlin(tf);
+     goto loop1;
+   endif;
+
+tot:
+   close(tf);
+   pop_pmt();
+!*
+!***Rita trädet.
+!*
+   clear_gm();
+   psh_pmt("Pass 3...");
+   open(tf,"r",act_jobdir()+resfil+".STR");
+   set(TSIZE=0.5*h,TSLANT=0,TWIDTH=30);
+   dtx:=(b-textl(resfil))/2;
+   dty:=(h-act_tsize())/2.0;
+
+   actniv:=inint(tf,2); actnm:=inint(tf,4); rad:=inlin(tf);
+   actx:=0.0;
+!*
+!***Nollställ ndone.
+!*
+   for i:=0 to 10 do ndone(i):=0; endfor;
+!*
+!***Traversera.
+!*
+loop5:
+   nxtniv:=inint(tf,2); nxtnm:=inint(tf,4); namn:=inlin(tf);
+   if iostat(tf) = 0 then
+!*
+!***Ett eller flera steg uppåt. Stega tillbaks ett steg i taget
+!***och dra eventuella horisontella streck.
+!*
+     if nxtniv < actniv then
+       ndone(nxtniv-1):=ndone(nxtniv-1)+1;
+       for i:=actniv to nxtniv step -1 do
+         actnm:=nmem(i);
+         if nmem(i) > 1  and  ndone(i) = nmem(i) then
+           lin_ang(#7,vec(lastx(i)*dx,-(2*(i-0)+1)*dy),0,
+                      (actx-lastx(i))*dx:PEN=C2);
+           if nxtniv = 0 then actx:=lastx(i); endif;
+         endif;
+       ndone(i):=0;
+       endfor;
+       actx:=actx+1;
+!*
+!***Samma nivå som förra.
+!*
+     elif nxtniv = actniv then
+       actx:=actx+1;
+       ndone(actniv-1):=ndone(actniv-1)+1;
+!*
+!***Ett steg nedåt.
+!*
+     else
+       lastx(actniv):=actx;
+       nmem(actniv):=actnm;
+       ndone(actniv):=1;
+     endif;
+
+     lin_ang(#8,vec(actx*dx-b/2,-2*nxtniv*dy),0,b:PEN=C1);
+     lin_ang(#9,vec(actx*dx-b/2,h-2*nxtniv*dy),0,b:PEN=C1);
+     lin_ang(#10,vec(actx*dx-b/2,-2*nxtniv*dy),90,h:PEN=C1);
+     lin_ang(#11,vec(actx*dx+b/2,-2*nxtniv*dy),90,h:PEN=C1);
+     dtx:=(b-textl(namn))/2;
+     text(#16,vec(actx*dx-b/2+dtx,-2*nxtniv*dy+dty),0,namn);
+
+     if nxtniv > 0 then
+       lin_ang(#12,vec(actx*dx,-2*nxtniv*dy+h),90,1-h:PEN=C2);
+     endif;
+     if nxtnm > 0  or  nxtniv = 0 then
+       lin_ang(#13,vec(actx*dx,-2*nxtniv*dy),-90,1:PEN=C2);
+     endif;
+     actniv:=nxtniv; 
+     actnm:=nxtnm;
+     goto loop5;
+   endif;
+
+   close(tf);
+   pop_pmt();
+!*
+!***Slut.
+!*
+   delete_file(act_jobdir()+resfil+".STR");
+   delete_file(act_jobdir()+resfil+".TMP");
+
+ endmodule
+
+!*******************************************************

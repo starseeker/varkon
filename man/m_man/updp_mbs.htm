@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>updp_mbs </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>updp_mbs - <small><small>Procedure</small></small></h2>
+  <p>Update simple statement<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Updates a parameter in a statement defining a simple entity and reevaluates the statement
+  or the active module.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  updp_mbs(id, parnum, parstr, mode)<br>
+  <br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 04 Row 01 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="579">id;</td>
+    </tr>
+<!-- Table 04 Row 02 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="579">parnum;</td>
+    </tr>
+<!-- Table 04 Row 03 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="579">parstr*132;</td>
+    </tr>
+<!-- Table 04 Row 04 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="579">mode;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 05 Row 01 -->
+    <tr>
+      <td width="61">id</td>
+      <td width="590">- Identity of entity whose deinition to update</td>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      <td width="61">parnum</td>
+      <td width="590">- Relative position of parameter to update, first = 1</td>
+    </tr>
+<!-- Table 05 Row 03 -->
+    <tr>
+      <td width="61">parstr</td>
+      <td width="590">- New parameter as a string in MBS syntax</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b></p>
+  <table width="659" border="0">
+    <tr>
+      <td width="61">mode</td>
+      <td width="590">- Controls the amount of reevaluation, default = 0</td>
+    </tr>
+    <tr>
+      <td width="61"></td>
+      <td width="590">&nbsp;&nbsp; 0 = Reevaluate the statement but if referenced, reevaluate
+      entire module</td>
+    </tr>
+    <tr>
+      <td width="61"></td>
+      <td width="590">&nbsp;&nbsp; 1 = Reevaluate the statement only</td>
+    </tr>
+    <tr>
+      <td width="61"></td>
+      <td width="590">&nbsp;&nbsp; 2 = No reevaluation&nbsp;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  If a statement originally was...<br>
+  <br>
+  lin_free(#5, on(#2), intersect(#1, #3));<br>
+  <br>
+  then a<br>
+  <br>
+  updp_mbs(#5, 2, &quot;vec(10,10)&quot;);<br>
+  <br>
+  would change the statement into...<br>
+  <br>
+  lin_free(#5, on(#2), vec(10,10));<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  Use updpp_mbs() (two p:s) to update a part() statement.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="modmindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>symb </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>symb - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a part <br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a 2D part by reading lines from a named VARKON plotfile. Translation and optional
+  rotation and scaling is controlled by parameters. The part created gets the same name as
+  the plotfile and the transformed lines from the plotfile as its members.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  symb(#1,name, p, s, rot:attributes);<br>
+  <br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 13 Row 01 -->
+    <tr>
+      <td width="77">REF</td>
+      <td width="485">id;</td>
+    </tr>
+<!-- Table 13 Row 02 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="485">name;</td>
+    </tr>
+<!-- Table 13 Row 03 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="485">p;</td>
+    </tr>
+<!-- Table 13 Row 04 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="485">s;</td>
+    </tr>
+<!-- Table 13 Row 05 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="485">rot;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 14 Row 01 -->
+    <tr>
+      <td width="68">id </td>
+      <td width="494">- Local identity</td>
+    </tr>
+<!-- Table 14 Row 02 -->
+    <tr>
+      <td width="68">name</td>
+      <td width="494">- Name of plotfile</td>
+    </tr>
+<!-- Table 14 Row 03 -->
+    <tr>
+      <td width="68">p</td>
+      <td width="494">- Plotfile origin</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 15 Row 01 -->
+    <tr>
+      <td width="68">s</td>
+      <td width="494">- Scale, default = 1</td>
+    </tr>
+<!-- Table 15 Row 02 -->
+    <tr>
+      <td width="68">rot</td>
+      <td width="494">- Anticlockwise rotation, default = 0</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 16 Row 01 -->
+    <tr>
+      <td width="67">LEVEL</td>
+      <td width="495">- Level number</td>
+    </tr>
+<!-- Table 16 Row 02 -->
+    <tr>
+      <td width="67">BLANK</td>
+      <td width="495">- Visible(0) or invisible(1)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  symb(#1,&quot;logo&quot;,vec(100,100),0.1);<br>
+  <br>
+  Creates a part by copying the lines in plotfile &quot;logo&quot; and placing them relative
+  to X=Y=100. Scalefactor is 0.1.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  symb automatically appends &quot;.PLT&quot; to name and tries to locate the plotfile first
+  in the active job directory and then in the alternative symb directory specified by the
+  active project.<br>
+  <br>
+  symb uses the pen number information in the plotfile to assign the PEN attribute to the
+  lines created. <br>
+  <br>
+  symb can not be used in a 3D module.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>The bicubic parametric surface</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>The bicubic parametric surface</H3>
+
+<P>A<B> CUB_SUR</B> is either defined by interpolation or by approximation.
+Lets begin with a look at interpolation...<BR>
+<BR>
+<B>sur_splarr</B>(id,method,nu,nv,p,tu,tv,twist);<BR>
+<BR>
+Suppose we have a nu=10 by nv=20 rectangular grid of positions. In that
+case p is a two-dimensional array of positions declared as follows...<BR>
+<BR>
+<B>VECTOR</B> p(10,20);<BR>
+<BR>
+Optional arrays declared the same way with tangents in the U-direction
+(tu) and V-direction (tv) can be supplied as well as twist vectors (tw).
+Any tangents not supplied will be splined using the Variable Stiffness
+Spline algorithm and twist vectors will be calculated using the named method.
+<BR>
+<BR>
+<B>sur_splarr</B> can also be used to interpolate data created in other
+systems. Using MBS it is easy to open a file and copy data to internal
+variables before calling <B>sur_splarr. <BR>
+<BR>
+</B>Approximation is done using....<BR>
+<BR>
+<B>sur_approx</B>(id,other_surface,&quot;<B>CUB_SUR</B>&quot;,method,tol_1,tol_2);<BR>
+<BR>
+The quality of the approximation is controlled by method and 2 optional
+tolerance values. One method is to use a fix number of evenly distributed
+patches. Another method is to let the system adjust the number of patches
+so that a maximum value of positional error or error in normal direction
+is not exceeded.<BR>
+<BR>
+MBS can also be used to export a <B>CUB_SUR</B>. Patch coefficients are
+available through a get routine and any geometric data is easy to retrieve
+using <B>on</B>, <B>norm</B> or <B>eval</B>.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

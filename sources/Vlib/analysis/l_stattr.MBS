@@ -1,0 +1,88 @@
+!*******************************************************
+
+ macro module l_stattr();
+
+!*      Skriver ut attribut status.
+!*
+!*      In: Inget.
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 3/11/86 R. Svedin
+!*
+!*      13/1/92    Kurv-attribut, J.Kjellander
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+
+ beginmodule
+
+   lst_ini(get_tstr(1570));                                ! ANALYS - Attribut
+
+   lst_lin(get_tstr(1571));                                ! Linjeattribut
+   if act_lfont() = 0 then
+     lst_lin(get_tstr(286));                               ! Heldragen
+   elif act_lfont() = 1 then
+     lst_lin(get_tstr(311));                               ! Streckad
+   else
+     lst_lin(get_tstr(312));                               ! Streckprickad
+   endif;
+   lst_lin(get_tstr(313) + str(act_ldashl(),-1,5));        ! Strecklängd
+
+   lst_lin("");
+   lst_lin(get_tstr(1572));                                ! Cirkelattribut
+   if act_afont() = 0 then
+     lst_lin(get_tstr(286));                               ! Heldragen
+   elif act_afont() = 1 then
+     lst_lin(get_tstr(311));                               ! Streckad
+   else
+     lst_lin(get_tstr(312));                               ! Streckprickad
+   endif;
+   lst_lin(get_tstr(313) + str(act_adashl(),-1,5));        ! Strecklängd
+
+   lst_lin("");
+   lst_lin(get_tstr(1573));                                ! Kurvattribut
+   if act_cfont() = 0 then
+     lst_lin(get_tstr(286));                               ! Heldragen
+   elif act_cfont() = 1 then
+     lst_lin(get_tstr(311));                               ! Streckad
+   else
+     lst_lin(get_tstr(312));                               ! Streckprickad
+   endif;
+   lst_lin(get_tstr(313) + str(act_cdashl(),-1,5));        ! Strecklängd
+
+   lst_lin("");
+   lst_lin(get_tstr(1574));                                ! Textttribut
+   lst_lin(get_tstr(1501) + str(act_tsize(),-1,5));        ! Höjd
+   lst_lin(get_tstr(1502) + str(act_twidth(),-1,5));       ! Bredd
+   lst_lin(get_tstr(1503) + str(act_tslant(),-1,5));       ! Lutning
+   
+   lst_lin("");
+   lst_lin(get_tstr(1575));                                ! Snittattribut
+   if act_xfont() = 0 then
+     lst_lin(get_tstr(286));                               ! Heldragen
+   elif act_xfont() = 1 then
+     lst_lin(get_tstr(311));                               ! Streckad
+   else
+     lst_lin(get_tstr(312));                               ! Streckprickad
+   endif;
+   lst_lin(get_tstr(313) + str(act_xdashl(),-1,5));        ! Strecklängd
+   
+   lst_lin("");
+   lst_lin(get_tstr(1576));                                ! Måttattribut
+   lst_lin(get_tstr(297) + str(act_dtsiz(),-1,5));         ! Textstorlek
+   lst_lin(get_tstr(296) + str(act_dasiz(),-1,5));         ! Pilstorlek
+   lst_lin(get_tstr(298) + str(act_dndig(),-1,0));         ! Antal decimaler
+   if act_dauto() = 1 then
+     lst_lin(get_tstr(300));                               ! Auto
+   else
+     lst_lin(get_tstr(299));                               ! Manuell
+   endif;
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************
+

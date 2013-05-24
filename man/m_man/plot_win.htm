@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>plot_win </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>plot_win - <small><small>Procedure</small></small></h2>
+  <p>Creates a plotfile<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Writes any portion of the model to a plotfile using GKS-metafile format or AutoCAD
+  DXF-format. The viewing direction of the view curently active in the main window (ID=0) is
+  used.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  plot_win(minpos, maxpos, file, origin)<br>
+  <br>
+  </p>
+  <table width="653" border="0">
+<!-- Table 13 Row 01 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="567">minpos;</td>
+    </tr>
+<!-- Table 13 Row 02 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="567">maxpos;</td>
+    </tr>
+<!-- Table 13 Row 03 -->
+    <tr>
+      <td width="78">STRING</td>
+      <td width="567">file*132;</td>
+    </tr>
+<!-- Table 13 Row 04 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="567">origin;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="653" border="0">
+<!-- Table 14 Row 01 -->
+    <tr>
+      <td width="68">name</td>
+      <td width="577">- Lower left corner of plot area</td>
+    </tr>
+<!-- Table 14 Row 02 -->
+    <tr>
+      <td width="68">scale</td>
+      <td width="577">- Upper right corner of plot area</td>
+    </tr>
+    <tr>
+      <td width="68">file</td>
+      <td width="577">- Name of file to create ending with either &quot;.PLT&quot; or
+      &quot;.DXF&quot;. A path may be included.</td>
+    </tr>
+    <tr>
+      <td width="68"></td>
+      <td width="577">&nbsp;&nbsp; If the name ends with &quot;.PLT&quot; then GKS format is
+      used.</td>
+    </tr>
+    <tr>
+      <td width="68"></td>
+      <td width="577">&nbsp;&nbsp; If the name ends with &quot;.DXF&quot; then DXF format is
+      used.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b></p>
+  <table width="653" border="0">
+    <tr>
+      <td width="68">origin</td>
+      <td width="577">- A position in the model to be used as the origin (X=Y=0) of the plot. If
+      not specified</td>
+    </tr>
+    <tr>
+      <td width="68"></td>
+      <td width="577">&nbsp;&nbsp; then minpos is used as the origin.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments<br>
+  </b><br>
+  plotwin() automatically uses a value for curve accuracy twice as high as the value
+  currently active on the display.<br>
+  <br>
+  The plotwin routine can only produce GKS or DXF format but VARKON also includes a number
+  of translators (plotter drivers) that translate plotfiles to other formats like HP-GL,
+  Postscript, Tektronix and so on.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

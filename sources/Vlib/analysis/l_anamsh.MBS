@@ -1,0 +1,63 @@
+!*******************************************************
+
+ basic geometry module l_anamsh(REF id);
+
+!*      Prints mesh-specific data.
+!*
+!*      IN : id => Mesh ID.
+!*
+!*      OUT : Inget.
+!*
+!*      (C)J.Kjellander, Örebro university 2004
+!*
+!*******************************************************
+
+ INT    nv,nh,nf,font;
+ VECTOR pmin,pmax;
+ FLOAT  w;
+
+
+ beginmodule
+
+!*
+!***Get mesh header.
+!*
+    getmshh(global_ref(id,2),nv,nh,nf,pmin,pmax,font);
+!*
+!***List font and linewidth.
+!
+    lst_lin(get_tstr(1500) + str(font,-1,0));
+    w:=getwidth(global_ref(id,2));
+    lst_lin(get_tstr(1621) + str(w,-12,5));
+
+!*
+!***List number of vertices, halfedges and faces.
+!*
+    lst_lin("");
+    lst_lin(get_tstr(1640) + str(nv,-1,0));
+    lst_lin(get_tstr(1641) + str(nh,-1,0));
+    lst_lin(get_tstr(1642) + str(nf,-1,0));
+!*
+!***List size of bounding box.
+!*
+    lst_lin("");
+    lst_lin(get_tstr(1634) + str(pmin.x,-12,6));
+    lst_lin(get_tstr(1635) + str(pmin.y,-12,6));
+    lst_lin(get_tstr(1636) + str(pmin.z,-12,6));
+
+    lst_lin("");
+    lst_lin(get_tstr(1637) + str(pmax.x,-12,6));
+    lst_lin(get_tstr(1638) + str(pmax.y,-12,6));
+    lst_lin(get_tstr(1639) + str(pmax.z,-12,6));
+
+ endmodule
+
+!*******************************************************
+
+
+
+
+
+
+
+

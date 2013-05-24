@@ -1,0 +1,293 @@
+
+
+
+
+
+
+
+                      Implementering av nya MBS-rutiner
+
+
+                         Steg- för steg-beskrivning
+
+
+
+
+1. Den nya rutinen skall ges ett symboliskt namn och en unik kod
+i filen 'include/namecode.h'
+
+så här ser en bit av 'namcode.h' ut idag :
+
+#define VROUND  40    /*               ROUND       */
+#define VTRUNC  41    /*               TRUNC       */
+/*---------------------------------------------------------------------------*/
+#define VARCL   52    /* constant for  ARCL        */
+#define VTANG   53    /*               TANG        */
+
+efter tillägg av den tänkta funktionen strip() på ledig
+plats (kod) :
+
+#define VROUND  40    /*               ROUND       */
+#define VTRUNC  41    /*               TRUNC       */
+#define VSTRIP  42    /*               STRIP       */
+/*---------------------------------------------------------------------------*/
+#define VARCL   52    /* constant for  ARCL        */
+#define VTANG   53    /*               TANG        */
+
+
+2. Den nya rutinenens namn och andra data skall föras in i symbol-
+   tabellen via include-filen 'pmpac/newrout.h'.
+
+så här ser den "tomma" 'newrout.h' ut :
+
+"",            ST_UNDEF,   FALSE,   ST_ORD,   ST_UNDEF   /* obl. sista rad */
+
+efter tillägg av funktionen strip() :
+
+"STRIP",       ST_FUNC,    TRUE,    ST_ORD,   VSTRIP,
+"",            ST_UNDEF,   FALSE,   ST_ORD,   ST_UNDEF   /* obl. sista rad */
+
+- fält 1 : rutinens namn som c-str{ng
+
+- fält 2 : vid funktion, ST_FUNC
+           vid procedur, ST_PROC
+
+- fält 3 : funktion som skall vara tillåten i ett konstant-uttryck
+           sätts TRUE, annars (och normalt) FALSE. Om FALSE kommer
+           analysatorn (v3c) att klaga om funktionen används i sam-
+           manhang där ett konstantuttryck förvä{ntas. T.ex. gränser
+           vid arraydefinition och värdetilldelning vid konstant-
+           deklaration.
+
+- fält 4 : vid geometreiprocedur, ST_GEO
+           vid ordinär procedur, ST_ORD
+           annars, ST_ORD
+
+- fält 5 : rutinens symboliska namn (se 1.).
+
+Obs! Det är endast tillåtet att lägga till nya rader sist (dock
+före den obligatoriska sista raden) i listan.
+
+
+3. Den nya rutinens formella parametrar skall beskrivas i filen 
+'pmpac/formpar.h'. En formell parameterlista beskrivs av en sträng
+som är placerad i en tabell av strängar där placeringen i tabellen
+är densamma som rutinens nummer (se 1.). Tillägg kan göras i"hål"
+märkta "not defin" eller sist i tabellen.
+
+Regler, konstruktion av en formell parameterbskrivnning :
+
+En formell parameter beskrivs av två bokstäver. Den första anger
+typen (integer, float etc.) och den andra klassen (expression,
+variabel etc.).
+
+typ-tecken:                                intern representation:
+----------                                 ---------------------
+  v ->  vektor                               stvecp          (enkla typer)
+  f ->  float                                stflop
+  i ->  integer                              stintp
+  s ->  string                               ststrp
+  r ->  reference                            strefp
+  d ->  file ( device )                      stfilp
+  a ->  anytype                               NULL
+  j ->  4*4 float matrix                     st_j_p          (array typer)
+  k ->  conformant j-array (se ovan)         st_k_p   (conformant = size *)
+  l ->  conformant float-array               st_l_p
+  m ->  conformant reference-array           st_m_p
+
+klass-tecken:
+------------ 
+  e -> expression
+  v -> variabel
+  d -> default
+
+ex. ie = integer expression, formell parameter.
+    vd = vector default, formell parameter.
+    vv = vector varaible, formell parameter.
+
+Formella parameterar kan :
+
+ -- konkateneras
+
+    ex. ie.fe.fe   - integer expression följd av float expression följd
+                     av float expression.
+
+ -- repeteras
+
+   ex. 25(ie)      - 0 eller max. 25 integer expressions. Parametrarna
+                     sägs vara optionella. En repetition måste stå sist
+                     i en parametersträng.
+
+   ex. 2(ie.3(fe)) - Konkatenering och repetition kan nästlas fritt.
+
+ -- ges defaultvärden
+
+Optionella (se ovan) parametrar och parameterar med klassen default (d)
+kan ges ett default-värde i parameterbeskrivningen.
+
+  ex. flyttal: 2(fe<3.34>)  - Defaultvärde: 3.34
+      heltal:  1(ie<23>)    - Defaultvärde: 23
+      vektor:  2(ve<1,2,3>) - Defaultvärde: vec(1,2,3)
+      str{ng:  2(sd<ru>)    - Defaultvärde: "ru"
+       
+Defaultvärden kan endast ges vid ovan angivna datatyper.
+
+Förutom parametrar skall info. om rutiners geometritillhörighet samt
+returvärdets typ för funktioner anges. Detta görs först i strängen och
+separeras mot själva parameterbeskrivningen med ett kolon ':'. Funk-
+tionenes typ anges med de vanliga typbokstäverna och geometritill-
+hörigheten med en siffra så att :
+
+  5 -> kan användas i både 2D och 3D-geometri
+  2 -> kan endast användas i 2D-geometri
+  3 -> kan endast användas i 3D-geometri.
+
+För procedurer används '-' för att ange den obefintliga returtypen.
+
+Med dessa byggstenar kan nu hela parameterlistor för funktioner och
+procedurer beskrivas på ett kompakt och effektivt sätt. Se befintliga
+parameterbeskrivningar i formpar.h.
+
+OBS!!! Av prestandaskäl görs ingen som helst kontroll av en
+parametersträng. Alla ändringar och tillägg skall alltså göras med
+största försiktighet och måste verifieras med testning.
+
+en bit av 'formpar.h' :
+
+"f5:fe",                 /* VFRAC   = 39, frac(<flo>) = <flo>                */
+"i5:fe",                 /* VROUND  = 40, round(<flo>) = <int>               */
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+"i5:fe",                 /* VTRUNC  = 41, trunc(<flo>) = <int>               */
+"",                      /*         = 42, not defin                          */
+"",                      /*         = 43, not defin                          */
+
+efter tillägg av strip() :
+
+"f5:fe",                 /* VFRAC   = 39, frac(<flo>) = <flo>                */
+"i5:fe",                 /* VROUND  = 40, round(<flo>) = <int>               */
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+"i5:fe",                 /* VTRUNC  = 41, trunc(<flo>) = <int>               */
+"i5:fe.ie",              /* VSTRIP  = 42, strip(<flo>,<int>) = <int>         */
+"",                      /*         = 43, not defin                          */
+
+
+4.  Anrop av den nya rutinens access-funktion läggs till i en 
+case-kratta i :
+
+  - infunc.c, vid funktion.
+
+  - inproc.c, vid ordinär procedur.
+
+  - ingeop.c, vid geometriprocedur.
+
+ex.
+
+strip() är en funktion och skall därför läggas till i infunc.c
+
+  case VSTRIP:
+
+      if ( status = evstrip( pv, valp ) ) < -1 )
+          goto eexit;
+
+      break;
+
+valp är en pekare till en functions returvärde (PMLITVA). Använd member
+int_va för integer, float_va för float osv. osv. (se 'pmdef.h'
+för info. om PMLITVA).
+
+pv[] är en array av aktuella parametervärden (PMPARVA) så att
+pv[1] är 1:a parametern pv[2] är 2:dra parametern. se 'pmdef.h'
+för info om PMPARVA).
+
+Glöm inte att deklarera funktionen:
+
+extern short evstrip();
+
+På motsvarande sätt hanteras procedurer - se koden i resp. filer.
+
+Om den nya rutinen är en funktion och fält 3 i 'newrout.h' (se 2 ovan)
+satts till FALSE skall villkorlig kompilering användas i infunc.c .
+Detta för att förhindra inaktiv kod från att i onödan ta plats och
+ge bekymmer vid länkning av analysatorn (v3c).
+
+Eftersom strip() uppfyller villkoret ovan skall den i infunc.c till-
+agda koden omges med :
+
+#ifndef ANALYZER
+  .
+#endif
+
+
+5.  Har den nya rutinen parameterar av klassen "variabel" skall
+motsvarande MBS-variabel uppdateras. Detta görs med rutinen inwvar()
+( write MBS-variable ). 
+Värdet av en parameter av klassen "variabel" är en adress som man kommer
+åt genom medlemmen "adr_va" i PMLITVA:n. Denna adress utgör referens till 
+en MBS-variabel och skall användas vid tilldelning genom "inwvar()".
+Man måste också ha tillgång till en typpekare för variabeln. Den finns
+i parametervärdesarrayen "pv" i medelemmen "par_ty". Är variabeln en array
+sker tilldelningen av ett element vid varje anrop till "inwvar()", indexering
+sker genom att i en c-array av int ange index. T.ex. skall ett element i en
+array med 3-dimensioner och index 1,1,1 tilldelas ett värde indikeras det 
+med en c-array enl. följande:
+
+                index[ 1 ] = 1;
+                index[ 2 ] = 1;
+                index[ 3 ] = 1;
+
+                dim = 3;
+
+    och anropet till inwvar blir om det är rutinens fjärde parameter:
+
+  status =  inwvar( pv[ 4 ].par_ty,           /* pekare till typen */
+                    pv[ 4 ].par_va.lit.adr_va,/* variabelns adress */
+                    dim,                      /* dimension */
+                    index,                    /* index om array */
+                    &new_val );               /* det nya värdet */
+ 
+Snittet för inwvar() ser ut på f|ljande sätt ( finns i inac20.c ):
+
+/*!--------------------- Write MBS-variable -------------------------------*/
+
+short inwvar( acttyla, rtsaddr, dim, indarr, valp )
+
+pm_ptr  acttyla;  /* in - type pointer for actual parameter */
+long   rtsaddr;   /* in - variable address in MBS run-time stack */
+short   dim;      /* in - dimension, number of indexes in array. Zereo 
+                          indicates simple variable */
+short indarr[];   /* in - array of indexes for an dimensioned variable, must 
+                          be positive integers */
+PMLITVA  *valp;   /* in - value to be assigned to the MBS-variable.  */
+                  /* return - error severity code */
+                  /*          IN340  =  Ilegal dimension for return variable */
+                  /*          IN341  =  Array index out of bound for return 
+                                        variable */
+
+
+
+
+6.  Om den nya rutinen är en geometriprocedur skall hanteringen av
+namngivna parameterar uppdateras. Koden finns i 'anapac/annaml.c'.
+
+Under kommentaren '/* check parameter/procedure */' kontrolleras
+att den namngivna parametern kan användas tillsammans med
+aktuell rutin. Uppdatera 'case-krattan' ifall en ny geometri-
+procedur införs. 
+
+
+7. Vid tillägg av nya namngina parametrar skall följande göras.
+
+     -  lägg till en ny medlem i strukturen V2NAPA och en ny konstant
+        för den namngivna parametern, detta görs i filen 'V3.h'
+
+     -  för interpretetorn uppdateras rutinen 'inrdnp()' med default-värde
+        och tillägg görs i case-krattan i 'inevnp()', dessa rutiner finns 
+        i filen 'innpar.c'
+
+     -  för analysatorn görs uppdateringar enl. 6 i filen 'annaml.c'
+
+8.  Gör en total omkompilering (för att vara på säkra sidan) och
+länka ett nytt v3 och v3c.
+
+
+9.  Testa

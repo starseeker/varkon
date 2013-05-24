@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>pos_in_cone</title>
+  <meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+<body bgcolor="#99ccff">
+<p align="center"><small>VARKON Version 1.18 2005-08-02<br>
+</small></p>
+<hr width="100%" align="center">
+<blockquote>
+  <h2>pos_in_cone - <small><small>Function</small></small></h2>
+  <p>Geometrical function<br>
+  <br>
+  <br>
+  <u>Description<br>
+  </u><br>
+Tests if one or more of a number of positions are inside or outside a
+cone. <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+pos_in_cone(p1, p2, r1, r2, npos, positions, pstatus)<br>
+  <br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 01 Row 01 --> <tbody>
+      <tr>
+        <td width="67">VECTOR<br>
+        </td>
+        <td width="527">p1;</td>
+      </tr>
+<!-- Table 01 Row 02 --> <tr>
+        <td width="67">VECTOR<br>
+        </td>
+        <td width="527">p2;</td>
+      </tr>
+<!-- Table 01 Row 03 --> <tr>
+        <td width="67">FLOAT <br>
+        </td>
+        <td width="527">r1;</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">FLOAT<br>
+        </td>
+        <td style="vertical-align: top;">r2;<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">npos;<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">VECTOR<br>
+        </td>
+        <td style="vertical-align: top;">positions();<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">pstatus();<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 02 Row 01 --> <tbody>
+      <tr>
+        <td width="56">p1<br>
+        </td>
+        <td width="538">- Cone start position<br>
+        </td>
+      </tr>
+<!-- Table 02 Row 02 --> <tr>
+        <td width="56">p2<br>
+        </td>
+        <td width="538">- Cone end position<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">r1<br>
+        </td>
+        <td style="vertical-align: top;">- Cone radius at start position<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">r2<br>
+        </td>
+        <td style="vertical-align: top;">- Cone radius at end position<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">npos<br>
+        </td>
+        <td style="vertical-align: top;">- Number of positions to test<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">positions<br>
+        </td>
+        <td style="vertical-align: top;">- An array of at least npos
+position vectors<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 03 Row 01 --> <tbody>
+      <tr>
+        <td width="56">pstatus<br>
+        </td>
+        <td width="538">- Array to recieve the individual status of
+each position, 1 = Inside, 0 = Outside<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+An INT value = 1 if one or more of the positions are inside the cone.
+If
+no positions are inside zero is returned.<br>
+  <br>
+  <b>Example</b><br>
+  </p>
+  <p>INT status,pstatus(500);<br>
+VECTOR p1,p2,p(500);<br>
+FLOAT r1,r2;<br>
+  </p>
+  <p>status:=pts_in_cone(p1,p2,r1,r2,500,p);<br>
+  <br>
+Tests 500 3D positions in p against a cone starting in p1 with radius
+r1 and ending in p2 with radius r2. If one or more of the points are
+located inside the cone a value of 1 is returned in variable status,
+else zero is returned.<br>
+  <br>
+status:=pts_in_cone(p1,p2,r1,r2,500,p,pstatus);</p>
+  <p>Same as above but in this example each position is classified
+individually and it's status is returned. pstatus(1) holds the status
+for the position in p(1),&nbsp; pstatus(2) corresponds to p(2) etc. A
+value of 1 means that the position is inside the cone, a value of 0
+means that it is outside.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+This function was developed for the CAD reserach group at &Ouml;rebro
+university in Sweden. It is used in an automatic planning algorithm for
+laser scanning to find points that are close to a given point in a
+specific direction.<br>
+  </p>
+</blockquote>
+<hr width="100%" align="center">
+<p></p>
+<div align="center">
+<center>
+<table align="center" cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="geomindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</div>
+</body>
+</html>

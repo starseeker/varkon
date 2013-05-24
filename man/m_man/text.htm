@@ -1,0 +1,199 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <title>text </title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.17 1999-03-15</font></center>
+
+<p>
+<hr width="100%" align="center">
+<blockquote>
+<h2>
+text - <font size=+0>Geometric procedure</font></h2>
+Creates a graphical text
+<br>&nbsp;
+<p><b>Description</b>
+<p>Creates a 2D- or 3D-text with variable position, direction, size, width,
+character slant and typeface (font). The text entity is a vector font type
+of text continously scalable and with the same appearance when printed
+as when displayed on screen (true type). In 3D the textplane orientation
+can be controlled by the TPMODE attribute.
+<p><b>Syntax</b>
+<p>text(id, p, dir, str:attributes);
+<table WIDTH="570" >
+<caption>&nbsp;</caption>
+
+<tr>
+<td WIDTH="77">REF</td>
+
+<td WIDTH="485">id;</td>
+</tr>
+
+<tr>
+<td WIDTH="77">VECTOR</td>
+
+<td WIDTH="485">p;</td>
+</tr>
+
+<tr>
+<td WIDTH="77">FLOAT</td>
+
+<td WIDTH="485">dir;</td>
+</tr>
+
+<tr>
+<td WIDTH="77">STRING</td>
+
+<td WIDTH="485">str;</td>
+</tr>
+</table>
+
+<p><b>Principal parameters</b>
+<table WIDTH="570" >
+<caption>&nbsp;</caption>
+
+<tr>
+<td WIDTH="68">id&nbsp;</td>
+
+<td WIDTH="494">- Local identity</td>
+</tr>
+
+<tr>
+<td WIDTH="68">p</td>
+
+<td WIDTH="494">- Lower left corner of first character in text</td>
+</tr>
+
+<tr>
+<td WIDTH="68">dir</td>
+
+<td WIDTH="494">- Direction, counterclockwise angle from positive X-axis
+active</td>
+</tr>
+
+<tr>
+<td WIDTH="68"></td>
+
+<td WIDTH="494">&nbsp;&nbsp; coordinate system</td>
+</tr>
+
+<tr>
+<td WIDTH="68">str</td>
+
+<td WIDTH="494">- Text string of characters&nbsp;</td>
+</tr>
+</table>
+
+<p><b>Optional parameters</b>
+<table WIDTH="95%" >
+<caption>&nbsp;</caption>
+
+<tr>
+<td>None.</td>
+
+<td></td>
+</tr>
+</table>
+
+<p><b>Attributes</b>
+<table WIDTH="570" >
+<caption>&nbsp;</caption>
+
+<tr>
+<td WIDTH="67">PEN&nbsp;</td>
+
+<td WIDTH="495">- Pen or colour number</td>
+</tr>
+
+<tr>
+<td WIDTH="67">LEVEL</td>
+
+<td WIDTH="495">- Level number</td>
+</tr>
+
+<tr>
+<td WIDTH="67">BLANK</td>
+
+<td WIDTH="495">- Visible(0) or invisible(1)</td>
+</tr>
+
+<tr>
+<td WIDTH="67">TSIZE</td>
+
+<td WIDTH="495">- Textsize, the height of a capital l "A"</td>
+</tr>
+
+<tr>
+<td WIDTH="67">TWIDTH</td>
+
+<td WIDTH="495">- Textwidth in % of TSIZE</td>
+</tr>
+
+<tr>
+<td WIDTH="67">TSLANT</td>
+
+<td WIDTH="495">- Character slant in % of 45 degrees</td>
+</tr>
+
+<tr>
+<td WIDTH="67">TFONT</td>
+
+<td WIDTH="495">- Font number</td>
+</tr>
+
+<tr>
+<td>TPMODE</td>
+
+<td>- Text plane display mode, 0 or 1</td>
+</tr>
+
+<tr>
+<td>WIDTH</td>
+
+<td>- Linewidth</td>
+</tr>
+</table>
+
+<p><b>Examples</b>
+<p>text(#2,vec(10,10),0,"Hello everybody !":TSIZE=20);
+<p>Creates a size 20 horisontal text with identity = #2 in X = Y = 10.
+<p><b>Comments</b>
+<p>6 fonts are delivered with the system. Font 0 is default. Font 1 is
+serif and more "beautiful" but also slower. Font 2 is and font 3 are non
+serif and serif fonts conforming to the ISO8859 characterset and font 4
+and font 5 are the non serif and serif fonts conforming to the PC characterset.
+Click below to see what they look like:
+<blockquote>&nbsp;
+<br><a href="tfont0.gif">TFONT=0</a> Default font
+<br><a href="tfont1.gif">TFONT=1</a> Serif version of font 0
+<br><a href="tfont2.gif">TFONT=2</a> ISO8859
+<br><a href="tfont3.gif">TFONT=3</a> Serif version of font 2
+<br><a href="tfont4.gif">TFONT=4</a> PC
+<br><a href="tfont5.gif">TFONT=5</a> Serif version of font 4</blockquote>
+Customized fonts can be created using the font editor supplied with the
+system.
+<p>In 3D the TPMODE attribute controls the orientation of the plane in
+which the text is displayed. TPMODE = 0 (default) always displays the text
+in the plane of the screen (fully readable in all views). TPMODE = 1 displays
+the text as a "true" 3D entity in the XY-plane of the coordinate system
+that was active when the text was created.</blockquote>
+
+<hr width="100%" align="center">
+<center>
+
+
+
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm">VARKON Homepage</a></td>
+
+<td><a href="entiindx.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Group</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Group</H3>
+
+<P>A <B>group</B> is a non geometric entity with a name and a list of members.
+In its simplest form a <B>group</B> can be used to associate a text with
+a single entity.....<BR>
+<BR>
+<B>arc_1pos</B>(#1,vec(0,0),10);<BR>
+<B>group</B>(#2,&quot;screwhole&quot;,#1);<BR>
+<BR>
+In this example a <B>group</B> is created with name = screwhole and the
+arc #1 is its only member. The significance of this would be that the arc
+represents a screw hole, information that could be used for example by
+another application during process planning or cost estimation. The <B>group</B>
+entity is implemented using two way pointers between the <B>group</B> and
+its members. The arc entity knows which <B>group</B> it belongs to and
+the<B> group</B> entity knows where its members are.<BR>
+<BR>
+A <B>group</B> can also be used to combine several entities into a common
+structure...<BR>
+<BR>
+<B>poi_free</B>(#1,vec(0,0));<BR>
+<B>poi_free</B>(#2,vec(100,0));<BR>
+<B>poi_free</B>(#3,vec(50,50));<BR>
+<B>group</B>(#4,&quot;triangle&quot;,#1,#2,#3);<BR>
+<BR>
+In this case a <B>group</B> #4 is created with three points as members
+and name = triangle. Each point holds information that it belongs to <B>group</B>
+#4 and the <B>group</B> itself holds its name and the identity of its three
+members. Any entity including <B>group</B> itself can belong to a maximum
+of 3 different <B>groups</B> at the same time.<BR>
+<BR>
+The <B>group </B>entity is a way to create a structural relationship or
+context in much the same way as the<B> part</B>. A <B>part</B> is more
+powerful but also more complex to use. A <B>part</B> needs a defining <B>MODULE</B>,
+uses parameters and holds any number of entities while a <B>group </B>only
+has a name and can only hold a maximum of 100 members.<BR>
+<BR>
+In many cases it turns out best to use the <B>part</B> to describe different
+objects and the <B>group</B> to describe smaller structures within the
+object. A <B>group</B> can also be used to express a relation between two
+different <B>parts.</B></P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

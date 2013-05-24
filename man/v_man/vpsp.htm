@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>hp7475</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-11-12</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3><B>postscript</B></H3>
+
+<P>VARKON plotter driver<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>postscript translates .PLT or .DXF format to the postscript printer
+format. postscript reads from standard input and writes to standard output.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>postscript -sS -wsL -xX -yY -vN -bw -kK<BR>
+<BR>
+Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.<BR>
+<BR>
+<B>Options </B></P>
+</UL>
+
+<TABLE WIDTH="95%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD>
+<UL>
+<P>-sS</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Set scale to S. Float value, default = 1.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-wsL</UL>
+</TD>
+
+<TD>
+<UL>- Set linewidthscale to L. Float value, default = S</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>
+<P>-xX</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Set origin.x to X. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>
+<P>-yY</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Set origin.y to Y. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>
+<P>-vN</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Rotate n degrees. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>
+<P>-bw</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Dont try to use color, default = use color.</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>
+<P>-kK</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Set curve accuracy to K. Float value, default = 1.0</P>
+</UL>
+</TD>
+</TR>
+</TABLE>
+
+<UL>
+<P><B>Examples<BR>
+<BR>
+</B>postscript &lt;plofile.PLT &gt;plotfile.ps -s0.5<BR>
+<BR>
+Scales the image in plotfile.PLT to half size and writes the result to
+a new file named &quot;plotfile.ps&quot; using the postscript format.<BR>
+<BR>
+postscript &lt;plofile.PLT -s0.5 | lp<BR>
+<BR>
+Same as above but the result is sent to a spooled plotter.<BR>
+<BR>
+postscript &lt;plofile.PLT -bw | lp<BR>
+<BR>
+Same as above but pennumbers are not mapped to color or grayscale. The
+result is always truly black and white.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>postscript automatically recognizes if the input is in .PLT or DXF
+format. The -k option only applies to DXF format.<BR>
+<BR>
+postscript supports the WIDTH attribute introduced in VARKON&nbsp;1.15C
+as well as the PEN attribute for color. Penfiles are still supported but
+may not be in future releases.</P>
+
+<P>The dotsize used by the postscript driver is always 72 dots per inch.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

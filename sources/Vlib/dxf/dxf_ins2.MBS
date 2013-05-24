@@ -1,0 +1,68 @@
+!*******************************************************
+
+  LOCAL DRAWING MODULE dxf_ins2(
+  VAR FILE   infil;
+  INT        levlim;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  FLOAT      s;
+  VAR STRING bntab(2000)*32;
+  VAR INT    bptab(2000);
+  INT        nb;
+  VAR INT    nins);
+
+!*      Läser INSERT i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*******************************************************
+
+ STRING rad*132,blknam*132;
+ INT    kod,pn,lev;
+ VECTOR p,sxy;
+ FLOAT  v;
+
+ BEGINMODULE
+
+!*
+!***Insert.
+!*
+    v:=0.0; sxy:=vec(1.0,1.0); blknam:="";
+
+loop:
+    kod:=inint(infil); rad:=inlin(infil);
+    if kod = 8 then                         ! Nivånamn
+      part(#1,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+      set(LEVEL=lev);
+    elif kod = 62 then                      ! Pennummer
+      pn:=inint(infil); rad:=inlin(infil);
+      if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+    elif kod = 2 then                       ! Blocknamn
+      blknam:=inlin(infil);
+    elif kod = 10 then                      ! X-koordinat
+      p.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 20 then                      ! Y-koordinat
+      p.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 30 then                      ! Z-koordinat
+      p.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 41 then                      ! X-skala
+      sxy.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 42 then                      ! Y-skala
+      sxy.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 50 then                      ! Vinkel
+      v:=inflt(infil); rad:=inlin(infil);
+    elif kod = 0 then                       ! Slut
+      part(#100,dxf_blk2(infil,blknam,s*p,s*sxy,v,levlim,bntab,bptab,nb,
+                                         levant,levnam,lintyp,s):SAVE=0);
+      nins:=nins+1;
+      exit();
+    else                                    ! Okänt
+      rad:=inlin(infil);
+    endif;
+
+    goto loop;
+
+ ENDMODULE
+
+!*******************************************************

@@ -1,0 +1,115 @@
+#!/bin/sh
+#######################################################
+#
+# varkon
+#
+# Startscript för VARKON.
+#
+# Parametrar = inga eller en (projekt) eller två (projekt och jobb)
+#
+# (C)Örebro universitet 2004
+#
+#######################################################
+
+# VARKON_ROOT är systemets huvudkatalog. Om resten
+# av systemet är installerat under denna på normalt
+# vis räcker det att ändra VARKON_ROOT för att kunna
+# starta. Övriga environmentparametrar är kopplade till
+# VARKON_ROOT men kan förstås ändras om så önskas.
+VARKON_ROOT=/usr/varkon/varkon_1.18A
+export VARKON_ROOT
+
+# Svenska menyfiler.
+VARKON_MDF=$VARKON_ROOT/mdf/swedish
+export VARKON_MDF
+
+# PID-filer, här är det vanligt att man istället väljer
+# tex. $HOME/pid så att gamla projekt blir kvar när en
+# ny VARKON-version installeras. Alla användare måste
+# ha både skriv- och läs-rättigheter till denna katalog.
+VARKON_PID=$VARKON_ROOT/pid
+export VARKON_PID
+
+# Felmeddelandefiler
+VARKON_ERM=$VARKON_ROOT/erm
+export VARKON_ERM
+
+# Manualen
+VARKON_DOC=$VARKON_ROOT/man
+export VARKON_DOC
+
+# Systembiblioteket (MBO-filer)
+VARKON_LIB=$VARKON_ROOT/lib
+export VARKON_LIB
+
+# Temporärfiler. Här kan man istället välja tex. bara /tmp
+# om den finns. I ett nätverk kan man spara lite prestanda
+# om temporärfiler får ligga på den lokala hårddisken.
+# Alla användare måste ha både skriv- och läs-rättigheter
+# till denna katalog.
+VARKON_TMP=$VARKON_ROOT/tmp
+export VARKON_TMP
+
+# Fontfiler för grafisk text.
+VARKON_FNT=$VARKON_ROOT/cnf/fnt
+export VARKON_FNT
+
+# Filer för konfiguration av plottrar. Dessa brukar man
+# istället lägga på tex. $HOME/cnf/plt så att ev. ändringar
+# kvarstår när en ny version av VARKON installeras.
+# Alla användare måste ha både skriv- och läs-rättigheter
+# till denna katalog.
+VARKON_PLT=$VARKON_ROOT/cnf/plt
+export VARKON_PLT
+
+# Eventuella ikonfiler (bitmappar)
+VARKON_ICO=$VARKON_ROOT/cnf/icons
+export VARKON_ICO
+
+# Filer med toleranser
+VARKON_TOL=$VARKON_ROOT/cnf/tol
+export VARKON_TOL
+
+# X-Windows resurser på svenska
+VARKON_INI=$VARKON_ROOT/cnf/ini/swedish
+export VARKON_INI
+
+# Förställd root-katalog för nya projekt (applikationer)
+# Även här är det lämpligt att välja något annat, tex. $HOME/app
+# Alla användare måste ha både skriv- och läs-rättigheter
+# till denna katalog.
+VARKON_PRD=$VARKON_ROOT/app
+export VARKON_PRD
+
+# PATH till exekverbara binärer (xvarkon, mbsc, plotprogram)
+# Här lägger vi den aktuella bin-katalogen först så att
+# vi säkert kör just denna version av VARKON.
+PATH=$VARKON_ROOT/bin:$PATH
+export PATH
+
+# Path till shared ODBC library. Avkommentera följande två
+# rader och sätt sökvägen att peka på det ställe där du
+# har ODBC-biblioteken installerade om du har byggt ihop
+# Varkon med stöd för ODBC.
+
+#LD_LIBRARY_PATH=/usr/lib/unixODBC
+#export LD_LIBRARY_PATH
+
+# Starta VARKON
+xvarkon $1 $2   -pm1000000 -rts10000000 \
+-i$VARKON_INI/linux
+
+# Om man vill kan man även lägga till en egen ini-fil
+# med X-resurser som då laddas efter VARKON:s ordinarie
+# fil. Tex. nåt i stil med:
+
+# xvarkon $1 $2 \
+# -i$VARKON_INI/linux -i$HOME/cnf/ini/swedish/min_egen_inifil
+
+# Ladda alltid den ordinarie filen först och lägg alla egna ändringar
+# i den egna filen. Det är det sist laddade som gäller. Ändra inte
+# i standardfilen. 
+
+# Vill man köra systemet i ritnings-mode lägger man till "-r" på
+# kommandoraden.
+# xvarkon -r $1 $2 -i$VARKON_INI/linux

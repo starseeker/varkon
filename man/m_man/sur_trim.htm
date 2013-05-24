@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>sur_trim </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-08-22</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>sur_trim - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+
+<P>Creates a surface<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Creates a surface by &quot;trimming&quot; a copy of another surface.
+The desired portion of the old surface is specified by two surface parameter
+points u1,u2 and v1,v2 relating to the position on the old surface where
+the new surface should start and end.<BR>
+</P>
+
+<P>The parameter directions may be reversed. If the parameter value u1
+is greater then u2 will be the start u (u=0) isoparameter curve in the
+trimmed surface and u1 will be the end isoparameter curve. If u1&gt;u2
+and v1&gt;v2 both parameter directions be reversed.</P>
+
+<P>The parameters may also be interchanged , i.e. the u isoparameter lines
+in the input surface will become v parameter lines in the trimmed surface
+and input surface v lines will become output surface u lines. This option
+is for the moment only implemented for CUB_SUR surfaces</P>
+
+<P>Reverse and interchange options are very useful when mirrored surfaces
+shall be combined to one surface with function sur_comp.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>sur_trim(id, ref, u1, u2, v1, v2, case:attributes);</P>
+
+<TABLE WIDTH="615" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="65">REF</TD>
+
+<TD width="542">id;</TD>
+</TR>
+
+<TR>
+<TD width="65">REF</TD>
+
+<TD width="542">ref;</TD>
+</TR>
+
+<TR>
+<TD width="65">FLOAT</TD>
+
+<TD width="542">u1;</TD>
+</TR>
+
+<TR>
+<TD width="65">FLOAT</TD>
+
+<TD width="542">u2;</TD>
+</TR>
+
+<TR>
+<TD width="65">FLOAT</TD>
+
+<TD width="542">v1;</TD>
+</TR>
+
+<TR>
+<TD width="65">FLOAT</TD>
+
+<TD width="542">v2;</TD>
+</TR>
+
+<TR>
+<TD width="65">INT</TD>
+
+<TD width="542">case;</TD>
+</TR>
+</TABLE>
+
+<P><B>Principal parameters</B></P>
+
+<TABLE WIDTH="615" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="56">id </TD>
+
+<TD width="551">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="56">ref</TD>
+
+<TD width="551">- Surface to copy and trim</TD>
+</TR>
+
+<TR>
+<TD width="56">u1</TD>
+
+<TD width="551">- Surface U parameter start value</TD>
+</TR>
+
+<TR>
+<TD width="56">u2</TD>
+
+<TD width="551">- Surface U parameter end value</TD>
+</TR>
+
+<TR>
+<TD width="56">v1</TD>
+
+<TD width="551">- Surface V parameter start value</TD>
+</TR>
+
+<TR>
+<TD width="56">v2</TD>
+
+<TD width="551">- Surface V parameter end value</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+</P>
+
+<TABLE WIDTH="615" >
+<TR>
+<TD width="56">case</TD>
+
+<TD width="551">- Surface trimming case</TD>
+</TR>
+
+<TR>
+<TD width="56"></TD>
+
+<TD width="551">&nbsp; Eq. 1: Normal trimming (default) 
+<P>Eq. 11: No reversal of parameter directions even if u1&gt; u2 and/or
+v1&gt;v2</P>
+
+<P>Eq. 69: Trimming and interchange of parameter directions (reverse not
+allowed for this case)</P>
+</TD>
+</TR>
+</TABLE>
+
+<P><B>Attributes</B></P>
+
+<TABLE WIDTH="615" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="64">PEN </TD>
+
+<TD width="543">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="64">LEVEL</TD>
+
+<TD width="543">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="64">BLANK</TD>
+
+<TD width="543">- Visible (0) or invisible (1)</TD>
+</TR>
+
+<TR>
+<TD width="64">SFONT</TD>
+
+<TD width="543">- Solid boundary and dashed midcurves (0)</TD>
+</TR>
+
+<TR>
+<TD width="64">SDASHL</TD>
+
+<TD width="543">- Dash length</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Example<BR>
+<BR>
+</B>sur_trim(#3, #2, 2.3, 4.1, 0.0, 6.7);<BR>
+<BR>
+Creates a new surface #3, which is limited by the iso-parametric curves
+U= 2.3, U= 4.1, V= 0.0 and V= 6.7. The shape of limited part is identical
+to the shape of the old surface #2.<BR>
+</P>
+
+<P>sur_trim(#8, #5, 4.0, 0.0, 0.0, 7.0);</P>
+
+<P>Creates a trimmed surface where the U parameter direction is reversed</P>
+
+<P>sur_trim(#9, #8, 0.0, 4.0, 0.0, 7.0, 69);</P>
+
+<P>The parameter lines will be interchanged.</P>
+
+<P><BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>Surface types (LFT_SUR, RAT_SUR and CON_SUR) can only be trimmed along
+the original patch boundaries, i.e. limited by integer valued iso-parametric
+curves (U=0.0, 1.0, 2.0, .. V= 0.0, 1.0, 2.0, 3.0, .....)</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

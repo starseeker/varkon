@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Points and lines</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Points and lines</H3>
+
+<P>A point is a geometric entity occupying a specific position in space.
+Points are created using one of the following methods....<BR>
+<BR>
+<B>poi_proj</B>(id,p1);<BR>
+<BR>
+<B>poi_free</B>(id,p1);<BR>
+<BR>
+The proj version indicates that position p1 is projected onto the XY-plane
+of the active coordinate system before the point is created. The free version
+creates a point anywhere in 3D space.<BR>
+<BR>
+There is also a proj and a free version of the line entity....<BR>
+<BR>
+<B>lin_proj</B>(id,p1,p2);<BR>
+<BR>
+<B>lin_free</B>(id,p1,p2);<BR>
+<BR>
+A line entity is always straight and limited. There are no infinite or
+semi infinite line entities in VARKON. (If you need something with direction
+and infinite length you can use the VECTOR datatype). Other ways to create
+a line are....<BR>
+<BR>
+<B>lin_ang</B>(id,p1,angle,length); ! From p1 with angle and length<BR>
+<BR>
+<B>lin_offs</B>(id,other_line,distance); ! Offset to other line at distance<BR>
+<BR>
+<B>lin_perp</B>(id,p1,other_line,length); ! From p1 perpendicular to other
+line<BR>
+<BR>
+<B>lin_tan1</B>(id,p1,other_entity,alternative); ! From p1 tangent to arc
+or curve<BR>
+<BR>
+<B>lin_tan2</B>(id,other_entity_1,other_entity_2,alternative); ! Tangent
+to two arcs<BR>
+<BR>
+The parameter named alternative in <B>lin_tan1</B> and <B>lin_tan2</B>
+is used to distinguish between different possible solutions. In <B>lin_tan1</B>
+for example it could very well be the case that a straight line from p1
+can find more than one point of tangency on a curve or arc. For a closed
+circular arc there is always two points of tangency and for a curve that
+oscillates there could be more than two.<BR>
+<BR>
+VARKON enumerates solutions (tangency points) in the order they appear
+when traveling along the curved entity in its right sense of direction
+and the parameter named alternative above is then used to select the right
+solution. A 1 for the first, 2 for the second and so on.<BR>
+<BR>
+A line can be converted to a curve using <B>cur_comp</B>.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

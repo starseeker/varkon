@@ -1,0 +1,168 @@
+!*******************************************************
+
+ basic geometry module l_rmbs1(
+ STRING rn*10 >"Ange ritningens namn !");
+
+!*      Skriver ut ritning p} MBS-format.
+!*      Parter expanderas inte.
+!*
+!*      (C)microform ab 8/2/90 J. Kjellander
+!*
+!*******************************************************
+
+   INT    typ,nref,blnk,niv,actniv,pen,actpen,ns,tf,
+          mtyp,mattr,np,mant,i,ptyp,lf,actlf,af,actaf;
+   REF    id,gid(3),idm(100),kid;
+   STRING fnam*80,code*1,txt*132,namn*10,snr*10;
+   FLOAT  r,v1,v2,segdat(4,4,4),ld,actld,ad,actad,
+          th,tb,tl,actth,acttb,acttl;
+   VECTOR p1,p2;
+   FILE   utfil;
+
+ beginmodule
+
+!*
+!***Initiering.
+!*
+   actniv:=0; actpen:=1; actlf:=0; actld:=3;
+   actaf:=0; actad:=3; actth:=5; acttb:=60; acttl:=15;
+!*
+!***\ppna utfil och ladda RIT-fil.
+!*
+   open(utfil,"W",act_jobdir()+rn+".MBS");
+!*   load_gm(act_jobdir()+rn+".RIT");
+!*
+!***Deklaration av modul.
+!*
+   outstr(utfil,"BASIC DRAWING MODULE "+rn+"();");
+   outlin(utfil); outlin(utfil);
+   outstr(utfil,"BEGINMODULE"); outlin(utfil); outlin(utfil);
+!*
+!***H{mta storheter ur GM.
+!*
+   code:="F";
+ next:
+   id:=getid(code);
+   code:="n";
+
+   if id <> #0 then
+     gethdr(id,typ,nref,blnk,niv,pen,gid);
+
+     if niv<>actniv then
+       outstr(utfil,"   set(LEVEL="+str(niv,-1,0)+");");
+       outlin(utfil); actniv:=niv;
+     endif;
+
+     if pen<>actpen then
+       outstr(utfil,"   set(PEN="+str(pen,-1,0)+");");
+       outlin(utfil); actpen:=pen;
+     endif;
+
+     snr:=rstr(id); snr:=substr(snr,2,finds(snr,".")-2);
+!*
+!***Punkt.
+!*
+     if typ=1 then
+       getpoi(id,p1);
+       outstr(utfil,"   poi_free("+snr); 
+       outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+"));");
+       outlin(utfil);
+!*
+!***Linje.
+!*
+     elif typ=2 then
+       getlin(id,lf,ld,p1,p2);
+       if lf<>actlf then
+         outstr(utfil,"   set(LFONT="+str(lf,-1,0)+");");
+         outlin(utfil); actlf:=lf;
+       endif;
+       if ld<>actld then
+         outstr(utfil,"   set(LDASHL="+str(ld,-1,0)+");");
+         outlin(utfil); actld:=ld;
+       endif;
+       outstr(utfil,"   lin_free("+snr); 
+       outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+")");
+       outstr(utfil,",vec("+str(p2.x,-1,5)+","+str(p2.y,-1,5)+"));");
+       outlin(utfil);
+!*
+!***Arc.
+!*
+     elif typ=4 then
+       getarc(id,af,ad,p1,r,v1,v2,ns,segdat);
+       if af<>actaf then
+         outstr(utfil,"   set(AFONT="+str(af,-1,0)+");");
+         outlin(utfil); actaf:=af;
+       endif;
+       if ad<>actad then
+         outstr(utfil,"   set(ADASHL="+str(ad,-1,0)+");");
+         outlin(utfil); actad:=ad;
+       endif;
+       outstr(utfil,"   arc_1pos("+snr); 
+       outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+"),");
+       outstr(utfil,str(r,-1,5)+","+str(v1,-1,5)+","+str(v2,-1,5)+");");
+       outlin(utfil);
+!*
+!***Text
+!*
+     elif typ=32 then
+       gettxt(id,p1,tf,th,tb,tl,v1,txt);
+       if th<>actth then
+         outstr(utfil,"   set(TSIZE="+str(th,-1,0)+");");
+         outlin(utfil); actth:=th;
+       endif;
+       if tb<>acttb then
+         outstr(utfil,"   set(TWIDTH="+str(tb,-1,0)+");");
+         outlin(utfil); acttb:=tb;
+       endif;
+       if tl<>acttl then
+         outstr(utfil,"   set(TSLANT="+str(tl,-1,0)+");");
+         outlin(utfil); acttl:=tl;
+       endif;
+       outstr(utfil,"   text("+snr); 
+       outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+"),");
+       outstr(utfil,str(v1,-1,5)+","+chr(34)+txt+chr(34)+");");
+       outlin(utfil);
+!*
+!***Part.
+!*
+     elif typ=16384 then
+       getprt(id,namn,mtyp,mattr,kid,np,mant,idm);
+       outstr(utfil,"   part("+snr); 
+       outstr(utfil,","+namn+"(");
+       for i:=1 to np do
+         ptyp:=gettyp(id,i);
+         if i<>1 then outstr(utfil,","); endif;
+         if ptyp=1 then
+           outint(utfil,getint(id,i),-1);
+         elif ptyp=2 then
+           outflt(utfil,getflt(id,i),-1,5);
+         elif ptyp=3 then
+           outstr(utfil,chr(34)+getstr(id,i)+chr(34));
+         elif ptyp=4 then
+           p1:=getvec(id,i);
+           outstr(utfil,"vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+")");
+         elif ptyp=5 then
+           outstr(utfil,rstr(getref(id,i)));
+         endif;
+       endfor;
+       outstr(utfil,"));");
+       outlin(utfil);
+     endif;
+!*
+!***N{sta storhet.
+!*
+     goto next;
+   endif;
+!*
+!***Slut p} filen.
+!*
+   outlin(utfil);
+   outstr(utfil,"ENDMODULE"); outlin(utfil);
+!*
+!***St{ng densamma.
+!*
+   close(utfil);
+
+ endmodule
+
+!*******************************************************

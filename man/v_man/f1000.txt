@@ -1,0 +1,3 @@
+Choose a project by clicking one of the buttons or
+enter the name of a project that you want to create
+in the textfield, then select the OK-button.

@@ -1,0 +1,58 @@
+!*******************************************************
+
+macro module l_ankrok(REF   id >"@t14 t268";
+                      FLOAT  u >"t208");
+
+!*      Analyserar en kurvas krökning.
+!*
+!*      In: id = Kurvans identitet. t268 = "Ange storhet"
+!*          u  = Var på kurvan. t208 = "Ange parametervärde"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 15/11/91 J. Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    typ,nref,blnk,niv,pen;
+   REF    gid(3);
+   FLOAT  kappa;
+
+ beginmodule
+
+!*
+!***Ta reda på vilken typ av storhet det är.
+!*
+   gethdr(global_ref(id,1),typ,nref,blnk,niv,pen,gid);
+!*
+!***Beräkna krökningen.
+!*
+   kappa:=curv(id,u);
+!*
+!***Skriv ut.
+!*
+   lst_ini(get_tstr(1517));                     ! t1517 = "ANALYS - Krökning"
+
+   if typ = 2 then
+     lst_lin(get_tstr(1514) + get_tstr( 42));   ! Storhet     : Linje
+   elif typ = 4 then
+     lst_lin(get_tstr(1514) + get_tstr(127));   ! Storhet     : Cirkel
+   else
+     lst_lin(get_tstr(1514) + get_tstr(139));   ! Storhet     : Kurva
+   endif;
+
+   lst_lin(get_tstr(1515)+str(u,-1,6));         ! Parametervärde
+
+   lst_lin("");
+   lst_lin(get_tstr(1518)+str(kappa,-1,14));    ! Krökning
+   if kappa > 1E-15 then
+     lst_lin(get_tstr(1519)+str(1.0/kappa,-1,14)); ! Krökningsradie
+   endif;
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

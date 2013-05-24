@@ -1,0 +1,33 @@
+!*******************************************************
+
+ macro module l_invcur(REF   id    >"@t12 t1539";
+                       FLOAT kappa >"t1542");
+
+!*      Analyserar invers krökning på kurva.
+!*
+!*      In: id    = Storhetens identitet.
+!*                  t1539 = "Ange kurva"
+!*          längd = Önskad krökning.
+!*                  t1542 = "Ange önskad krökning !"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 19/12/91 J. Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   STRING s*1;
+
+ beginmodule
+
+!*
+!***Utskrift.
+!*
+     s:=inpmt(get_tstr(1543)+str(kappa,-1,6)+" => u = " +
+               str(inv_curv(id,kappa,1),-1,6),"",1);
+
+ endmodule
+
+!*******************************************************

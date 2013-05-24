@@ -1,0 +1,240 @@
+!********************************************************
+!*
+
+MACRO MODULE dxf_out3();
+
+!*   Writes points, facet surfaces, mesh and B-planes
+!*   to disc DXF-formatted.
+!*
+!*   (C)Microform AB 1997
+!*
+!*   1999-12-02 POINT, J.Kjellander
+!*   2004-07-20 Mesh, J.Kjellander, Örebro university
+!*
+!*******************************************************
+
+   CONSTANT INT SURFACE=16,B_PLANE=32768,FAC_SUR=4,
+                POINT=1,MESH=2048;
+
+   REF    id;                   ! ID of current surface
+   INT    type;                 ! Surface type
+   INT    nu,nv;                ! Number of facets in U and V
+   INT    nvertex,nhedge,nface; ! Mesh data
+   INT    h,ev,oh,nh,pf,eh;     ! Mesh data
+   INT    iu,iv;                ! Loop counters
+   INT    version,blank,state,
+          level,pen;            ! Entity header data
+   INT    levtab(0:1999);       ! Level table
+   INT    i;                    ! Counter
+   REF    groups(3);            ! Entity header data
+   VECTOR p1,p2,p3,p4;          ! Facet/b_plane data
+   FILE   f;                    ! Output file
+   STRING name*10;              ! Level name
+
+BEGINMODULE
+
+!*
+!***Init levtab.
+!*
+   for i:=1 to 1999 do
+     levtab(i):=-1;
+   endfor;
+!*
+!***Create file and write start section.
+!*
+   psh_pmt("Creating "+act_jobnam()+".DXF");
+   open(f,"W",act_jobdir()+act_jobnam()+".DXF");
+   outstr(f,"0");        outlin(f);
+   outstr(f,"SECTION");  outlin(f);
+   outstr(f,"2");        outlin(f);
+   outstr(f,"ENTITIES"); outlin(f);
+!*
+!***Start at the top of the GM tree structure.
+!*
+   set_root_gm(#0);
+!*
+!***Traverse all levels of DB (0).
+!*
+loop:
+   id:=get_next_gm(0,POINT+SURFACE+B_PLANE+MESH);
+   if id <> #0 then
+!*
+!***Get the entity header and check what type it is.
+!*
+     gethdr(id,type,version,blank,level,pen,groups);
+!*
+!***Check level.
+!*
+     if levtab(level) < 0 then
+       get_lev(level,state,name);
+       levtab(level):=state;
+     endif;
+!*
+!***Skip blanked entities.
+!*
+     if levtab(level) = 1  or  blank = 1 then
+       goto loop;
+!*
+!***What type of entity ?
+!*
+     elif type = SURFACE then
+!*
+!***A surface was found. Get surface type from GM.
+!*
+       getsurh(id,"SUR_TYPE",type);
+!*
+!***If its a facet surface write the facets to disc.
+!*
+       if type = FAC_SUR then
+         getsurh(id,"NPATU",nu);
+         getsurh(id,"NPATV",nv);
+         for iu:=1 to nu do
+           for iv:=1 to nv do
+             getfacp(id,iu,iv,p1,p2,p3,p4);
+             outstr(f,"0");        outlin(f);
+             outstr(f,"3DFACE");   outlin(f);
+             outstr(f,"8");        outlin(f);
+             outstr(f,"0");        outlin(f);
+             outstr(f,"62");       outlin(f);
+             outint(f,pen,-1);     outlin(f);
+             outstr(f,"10");       outlin(f);
+             outflt(f,p1.x,-1,5);  outlin(f);
+             outstr(f,"20");       outlin(f);
+             outflt(f,p1.y,-1,5);  outlin(f);
+             outstr(f,"30");       outlin(f);
+             outflt(f,p1.z,-1,5);  outlin(f);
+             outstr(f,"11");       outlin(f);
+             outflt(f,p2.x,-1,5);  outlin(f);
+             outstr(f,"21");       outlin(f);
+             outflt(f,p2.y,-1,5);  outlin(f);
+             outstr(f,"31");       outlin(f);
+             outflt(f,p2.z,-1,5);  outlin(f);
+             outstr(f,"12");       outlin(f);
+             outflt(f,p3.x,-1,5);  outlin(f);
+             outstr(f,"22");       outlin(f);
+             outflt(f,p3.y,-1,5);  outlin(f);
+             outstr(f,"32");       outlin(f);
+             outflt(f,p3.z,-1,5);  outlin(f);
+             outstr(f,"13");       outlin(f);
+             outflt(f,p4.x,-1,5);  outlin(f);
+             outstr(f,"23");       outlin(f);
+             outflt(f,p4.y,-1,5);  outlin(f);
+             outstr(f,"33");       outlin(f);
+             outflt(f,p4.z,-1,5);  outlin(f);
+           endfor;
+         endfor;
+       endif;
+!*
+!***A b_plane was found. Get data from DB and
+!***write to file.
+!*
+     elif type = B_PLANE then
+       getbpl(id,p1,p2,p3,p4);
+       outstr(f,"0");        outlin(f);
+       outstr(f,"3DFACE");   outlin(f);
+       outstr(f,"8");        outlin(f);
+       outstr(f,"0");        outlin(f);
+       outstr(f,"62");       outlin(f);
+       outint(f,pen,-1);     outlin(f);
+       outstr(f,"10");       outlin(f);
+       outflt(f,p1.x,-1,5);  outlin(f);
+       outstr(f,"20");       outlin(f);
+       outflt(f,p1.y,-1,5);  outlin(f);
+       outstr(f,"30");       outlin(f);
+       outflt(f,p1.z,-1,5);  outlin(f);
+       outstr(f,"11");       outlin(f);
+       outflt(f,p2.x,-1,5);  outlin(f);
+       outstr(f,"21");       outlin(f);
+       outflt(f,p2.y,-1,5);  outlin(f);
+       outstr(f,"31");       outlin(f);
+       outflt(f,p2.z,-1,5);  outlin(f);
+       outstr(f,"12");       outlin(f);
+       outflt(f,p3.x,-1,5);  outlin(f);
+       outstr(f,"22");       outlin(f);
+       outflt(f,p3.y,-1,5);  outlin(f);
+       outstr(f,"32");       outlin(f);
+       outflt(f,p3.z,-1,5);  outlin(f);
+       outstr(f,"13");       outlin(f);
+       outflt(f,p4.x,-1,5);  outlin(f);
+       outstr(f,"23");       outlin(f);
+       outflt(f,p4.y,-1,5);  outlin(f);
+       outstr(f,"33");       outlin(f);
+       outflt(f,p4.z,-1,5);  outlin(f);
+!*
+!***3D Point.
+!*
+     elif type = POINT then
+       getpoi(id,p1);
+       outstr(f,"0");        outlin(f);
+       outstr(f,"POINT");   outlin(f);
+       outstr(f,"8");        outlin(f);
+       outstr(f,"0");        outlin(f);
+       outstr(f,"62");       outlin(f);
+       outint(f,pen,-1);     outlin(f);
+       outstr(f,"10");       outlin(f);
+       outflt(f,p1.x,-1,5);  outlin(f);
+       outstr(f,"20");       outlin(f);
+       outflt(f,p1.y,-1,5);  outlin(f);
+       outstr(f,"30");       outlin(f);
+       outflt(f,p1.z,-1,5);  outlin(f);
+!*
+!***A Mesh.
+!*
+     elif type = MESH then
+       getmshh(id,nvertex,nhedge,nface,p1,p2,i);
+       for i:=1 to nface do
+         getface(id,i,h);
+         gethedge(id,h,ev,oh,nh,pf);
+         getvertex(id,ev,p1,eh);
+         gethedge(id,nh,ev,oh,nh,pf);
+         getvertex(id,ev,p2,eh);
+         gethedge(id,nh,ev,oh,nh,pf);
+         getvertex(id,ev,p3,eh);
+         outstr(f,"0");        outlin(f);
+         outstr(f,"3DFACE");   outlin(f);
+         outstr(f,"8");        outlin(f);
+         outstr(f,"0");        outlin(f);
+         outstr(f,"62");       outlin(f);
+         outint(f,pen,-1);     outlin(f);
+         outstr(f,"10");       outlin(f);
+         outflt(f,p1.x,-1,5);  outlin(f);
+         outstr(f,"20");       outlin(f);
+         outflt(f,p1.y,-1,5);  outlin(f);
+         outstr(f,"30");       outlin(f);
+         outflt(f,p1.z,-1,5);  outlin(f);
+         outstr(f,"11");       outlin(f);
+         outflt(f,p2.x,-1,5);  outlin(f);
+         outstr(f,"21");       outlin(f);
+         outflt(f,p2.y,-1,5);  outlin(f);
+         outstr(f,"31");       outlin(f);
+         outflt(f,p2.z,-1,5);  outlin(f);
+         outstr(f,"12");       outlin(f);
+         outflt(f,p3.x,-1,5);  outlin(f);
+         outstr(f,"22");       outlin(f);
+         outflt(f,p3.y,-1,5);  outlin(f);
+         outstr(f,"32");       outlin(f);
+         outflt(f,p3.z,-1,5);  outlin(f);
+       endfor;
+     endif;
+!*
+!***Next entity.
+!*
+     goto loop;
+   endif;
+!*
+!***Write end section and close the file.
+!*
+   outstr(f,"0");       outlin(f);
+   outstr(f,"ENDSEC");  outlin(f);
+   outstr(f,"0");       outlin(f);
+   outstr(f,"EOF");     outlin(f);
+
+   close(f);
+!*
+!***Exit.
+!*
+   pop_pmt();
+
+ENDMODULE
+
+

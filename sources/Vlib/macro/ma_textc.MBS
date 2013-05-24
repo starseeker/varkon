@@ -1,0 +1,33 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE ma_textc(
+  VECTOR p2        >"t263";           ! Ange mittposition !"
+  FLOAT  v:=0      >"t274";           ! Ange vinkel !
+  STRING s*132     >"t10");           ! Ange sträng !
+
+!*      Skapar centrerad text.
+!*
+!*      (C)microform ab 11/5/92 J. Kjellander
+!*
+!*      1996-06-11 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ VECTOR p1;
+ FLOAT  tl;
+ REF    id;
+
+ beginmodule
+
+!*
+!***Beräkna textens startposition.
+!*
+   tl:=textl(s);
+   p1.x:=p2.x-tl*cos(v)/2.0;
+   p1.y:=p2.y-tl*sin(v)/2.0;  
+   id:=add_mbs("text","vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+")",
+           str(v,-1,5),chr(34)+s+chr(34));
+
+ endmodule
+
+!*******************************************************

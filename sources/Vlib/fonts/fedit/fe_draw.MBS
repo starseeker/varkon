@@ -1,0 +1,67 @@
+!*******************************************************
+
+ BASIC DRAWING MODULE fe_draw(
+  REF id1      >"@t1 Ange start-punkt !";
+  REF id2      >"@t1 Ange slut-punkt !";
+  INT onr);
+
+!*      T{nd f|rflyttning.
+!*
+!*      (C)microform ab 21/12/92 J. Kjellander
+!*
+!*******************************************************
+
+  FLOAT  v,l,size;
+  VECTOR p1,p2;
+  FILE   f;
+
+ beginmodule
+
+!*
+!***Lite initiering.
+!* 
+   id1:=global_ref(id1,1);
+   id2:=global_ref(id2,1); 
+   p1:=on(id1);
+   p2:=on(id2);
+   l:=vecl(p2-p1);
+!*
+!***Felkontroll, beh|vs egentligen inte eftersom
+!***samma kontroll g|rs i drawm().
+!*
+   if l < 1.0 then
+     exit("Punkt 1 och 2 har samma koordinater !");
+   endif;
+   if   p1.x < -0.1  or  p1.x > 10000.1 then
+     exit("Startpunkten ej innanf|r mallen !");
+   elif p2.x < -0.1  or  p2.x > 10000 then
+     exit("Slutpunkten ej innanf|r mallen !");
+   elif p1.y < -5000.1  or  p1.y > 12500.1 then
+     exit("Startpunkten ej innanf|r mallen !");
+   elif p2.y < -5000.1  or  p2.y > 12500.1 then
+     exit("Slutpunkten ej innanf|r mallen !");
+   endif;
+!*
+!***Rita streck med pilspets och siffra.
+!* 
+   if l > 2000 then
+     size:=400;
+   else
+     size:=l/5.0;
+   endif;
+   lin_free(#2,p1,p2);
+   v:=180+angle(p2.x-p1.x,p2.y-p1.y);
+   lin_ang(#4,p2,v+10,size);
+   lin_ang(#5,p2,v-10,size);
+   lin_free(#6,on(#4,1),on(#5,1));
+   text(#7,on(#2,0.5),0,str(onr,-1,0):TSIZE=size,TSLANT=0);
+!*
+!***Default-v{rde f|r ordningsnummer.
+!*
+   open(f,"u","fedit.ONR");
+   outint(f,onr+1,-5);
+   close(f);
+
+ endmodule
+
+!*******************************************************

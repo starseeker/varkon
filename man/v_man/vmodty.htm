@@ -1,0 +1,74 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <title>MODULE type and attribute</title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.17 1999-04-14</font></center>
+
+<p>
+<hr width="100%" align="center">
+<ul>
+<h3>
+MODULE type and attribute</h3>
+Each time a new job is started VARKON asks if the new job is meant to be
+done using 2D drawing mode or 3D geometric modeling mode. The two modes
+are referred to as <b>DRAWING </b>(2D) and <b>GEOMETRY </b>(3D).
+<p>In <b>DRAWING</b> mode no geometry is created outside the XY-plane of
+VARKON's
+<b>BASIC </b>coordinate system. Z-coordinates are never specified
+and rotations are only permitted in the <b>BASIC </b>XY-plane. A module
+of type<b> DRAWING</b> may however call a module of type <b>GEOMETRY.</b>
+A <b>GEOMETRY MODULE</b> called by a <b>DRAWING MODULE</b> will create
+a true 3D result but project it onto the XY-plane of the<b> BASIC</b> coordinate
+system. This is useful for creating one or more 3D views on a 2D drawing.
+<p>A <b>DRAWING MODULE</b> can create the following entities....
+<p><b>point, line, arc, curve, transformation, coordinate system, group,
+part, symbol, hatch</b>
+<br><b>linear dimension, circular dimension, radius dimension, angular
+dimension, text</b>
+<p>while a <b>MODULE</b> of type<b> GEOMETRY</b> is restricted to.....
+<p><b>point, line, arc, curve, b_plane, surface, transformation, coordinate
+system, group, part, text</b>
+<p>A module also has the <b>LOCAL GLOBAL BASIC </b>or <b>MACRO</b> attribute.
+<p>A <b>LOCAL MODULE</b> executes with a specific local coordinate system
+as its <b>GLOBAL</b> system. A <b>GLOBAL MODULE</b> executes in the same
+coordinate system as the calling module and a <b>BASIC MODULE</b> executes
+in VARKON's <b>BASIC</b> coordinate system.
+<p>The <b>MACRO</b> attribute is used for modules that perform other services
+than modeling. A <b>MACRO MODULE</b> can not create any entities directly
+and is not a part of a generic model. A <b>MACRO</b> module can only be
+called interactively or by another module with the <b>MACRO </b>attribute.
+<b>MACRO</b>
+modules can be used for traditional programming of any kind. They are often
+used to define user interfaces and other functionality related to a certain
+application. A <b>MACRO </b>module can produce a cost estimation or start
+a printing or do just anything...
+<p>A <b>MODULE</b> is declared in the following manner....
+<p>attribute type<b> MODULE</b> name(declaration of parameters);
+<br>declaration of local variables and constants
+<br><b>BEGINMODULE</b>
+<br>statements
+<br><b>ENDMODULE</b>
+<p>Attribute and type are optional and default to<b> LOCAL</b> and <b>GEOMETRY</b>
+if not explicitly declared.</ul>
+
+<hr width="100%" align="center">
+<center>
+
+
+
+<br>&nbsp;
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm#VAR">VARKON Homepage</a></td>
+
+<td><a href="vindex.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

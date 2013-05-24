@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_conic </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>sur_conic - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a conic lofting surface.<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a conic lofting surface. Input data is a number of longitudinal curves
+  (directrices), scalar functions and a spine curve. The cross-section curves (generatrices)
+  will always be of the cur_conic() type. The cross-section curves are defined by
+  intersection points between the longitudinal curves and planes, which are perpendicular to
+  the spine curve. <br>
+  <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  sur_conic(id, spine, lim1, tan1, m1, mcur1, lim2, tan2, m2, mcur2, lim3, ......
+  :attributes);<br>
+  <br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 36 Row 01 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">id;</td>
+    </tr>
+<!-- Table 36 Row 02 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">spine;</td>
+    </tr>
+<!-- Table 36 Row 03 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">lim1;</td>
+    </tr>
+<!-- Table 36 Row 04 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">tan1;</td>
+    </tr>
+<!-- Table 36 Row 05 -->
+    <tr>
+      <td width="73">STRING</td>
+      <td width="594">m1;</td>
+    </tr>
+<!-- Table 36 Row 06 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">lim2;</td>
+    </tr>
+<!-- Table 36 Row 07 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">tan2;</td>
+    </tr>
+<!-- Table 36 Row 08 -->
+    <tr>
+      <td width="73">STRING</td>
+      <td width="594">m2;</td>
+    </tr>
+<!-- Table 36 Row 09 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">mcur2;</td>
+    </tr>
+<!-- Table 36 Row 10 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">lim3;</td>
+    </tr>
+<!-- Table 36 Row 11 -->
+    <tr>
+      <td width="73">REF</td>
+      <td width="594">....</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 37 Row 01 -->
+    <tr>
+      <td width="60">id </td>
+      <td width="607">- Local identity</td>
+    </tr>
+<!-- Table 37 Row 02 -->
+    <tr>
+      <td width="60">spine</td>
+      <td width="607">- Spine curve</td>
+    </tr>
+<!-- Table 37 Row 03 -->
+    <tr>
+      <td width="60">lim1</td>
+      <td width="607">- Limit 1 curve (will be the V= 0.0 curve in the surface)</td>
+    </tr>
+<!-- Table 37 Row 04 -->
+    <tr>
+      <td width="60">tan1</td>
+      <td width="607">- Tangent definition curve 1</td>
+    </tr>
+<!-- Table 22 Row 01 -->
+    <tr>
+      <td width="62">m1</td>
+      <td width="562">- Flag defining the type of mid curve</td>
+    </tr>
+<!-- Table 22 Row 02 -->
+    <tr>
+      <td width="62"></td>
+      <td width="562">&nbsp;&nbsp; Eq. M: Mid curve is a R*3 curve</td>
+    </tr>
+<!-- Table 22 Row 03 -->
+    <tr>
+      <td width="62"></td>
+      <td width="562">&nbsp;&nbsp; Eq. P: Mid curve is a P-value curve</td>
+    </tr>
+<!-- Table 22 Row 03 -->
+    <tr>
+      <td width="62"></td>
+      <td width="562">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A function with X= spine
+      length and Y = P value</td>
+    </tr>
+<!-- Table 38 Row 01 -->
+    <tr>
+      <td width="59">mcur1</td>
+      <td width="608">- Mid curve 1</td>
+    </tr>
+<!-- Table 38 Row 02 -->
+    <tr>
+      <td width="59">lim2</td>
+      <td width="608">- Limit 2 curve (will be the V= 1.0 curve in the surface)</td>
+    </tr>
+<!-- Table 38 Row 03 -->
+    <tr>
+      <td width="59">tan2</td>
+      <td width="608">- Tangent definition curve 2</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 39 Row 01 -->
+    <tr>
+      <td width="62">m2</td>
+      <td width="605">- Flag defining the type of mid curve</td>
+    </tr>
+<!-- Table 39 Row 02 -->
+    <tr>
+      <td width="62">mcur2</td>
+      <td width="605">- Mid curve 2</td>
+    </tr>
+<!-- Table 39 Row 03 -->
+    <tr>
+      <td width="62">lim3</td>
+      <td width="605">- Limit 3 curve (will be the V= 2.0 curve in the surface)</td>
+    </tr>
+<!-- Table 39 Row 04 -->
+    <tr>
+      <td width="62">...</td>
+      <td width="605">....</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 40 Row 01 -->
+    <tr>
+      <td width="66">PEN </td>
+      <td width="601">- Pen or colour number</td>
+    </tr>
+<!-- Table 40 Row 02 -->
+    <tr>
+      <td width="66">LEVEL</td>
+      <td width="601">- Level number</td>
+    </tr>
+<!-- Table 40 Row 03 -->
+    <tr>
+      <td width="66">BLANK</td>
+      <td width="601">- Visible (0) or invisible (1)</td>
+    </tr>
+<!-- Table 40 Row 04 -->
+    <tr>
+      <td width="66">SFONT</td>
+      <td width="601">- Solid boundary and dashed midcurves (0)</td>
+    </tr>
+<!-- Table 40 Row 05 -->
+    <tr>
+      <td width="66">SDASHL</td>
+      <td width="601">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  sur_conic( #10, #1, #2, #3, &quot;M&quot;, #4, #5, #6, &quot;P&quot;, #7, #8);<br>
+  <br>
+  Creates a conic lofting surface (type LFT_SUR) with spine curve #1. The number of patches
+  in the V direction will be two since the number of limit curves (#2, #4, #7) and tangent
+  definition curves (#3, #5, #8) is three. The number of patches in the U direction is
+  defined by the segments in the longitudinal curves and the spine. <br>
+  <br>
+  The mid curve in the first V strip is a R*3 curve and in the second V strip a P value
+  function. <br>
+  <br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The created surface LFT_SUR is of the procedural type. </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+! a8 = TEKTRONICS plottrar. Spooler = tek
+ nice -19 /usr/v3/bin/t4010 <
+ | lp -dtek -s &
+ /usr/v3/job/test.PLT
+

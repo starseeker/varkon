@@ -1,0 +1,97 @@
+!*******************************************************
+
+  GLOBAL MODULE dxf_sol(
+  VAR FILE   infil;
+  INT        levlim;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  FLOAT      s;
+  VAR INT    nsol);
+
+!*      Läser SOLID i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-07 J. Kjellander
+!*
+!*      1998-05-08 Test av alla linjers längd, J.Kjellander
+!*
+!*******************************************************
+
+ CONSTANT FLOAT LTOL=0.001;  ! TOL2 i geo200()
+
+ STRING rad*132;
+ INT    kod,pn,lev;
+ VECTOR p1,p2,p3,p4;
+
+ BEGINMODULE
+
+!*
+!***Solid.
+!*
+   p1:=vec(0,0,0);
+   p2:=p1; p3:=p1; p4:=p1;
+   set(LFONT=0);
+
+loop:
+   kod:=inint(infil); rad:=inlin(infil);
+   if kod = 8 then                        ! Nivånamn
+     part(#11,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+     if levlim > -1 and lev <> levlim then
+       exit();
+     else
+       set(LEVEL=lev);
+     endif;
+   elif kod = 62 then                      ! Pennummer
+     pn:=inint(infil); rad:=inlin(infil);
+     if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+   elif kod = 10 then                      ! X-koordinat
+     p1.x:=inflt(infil); rad:=inlin(infil);
+   elif kod = 20 then                      ! Y-koordinat
+     p1.y:=inflt(infil); rad:=inlin(infil);
+   elif kod = 30 then                      ! Z-koordinat
+     p1.z:=inflt(infil); rad:=inlin(infil);
+   elif kod = 11 then                      ! X-koordinat
+     p2.x:=inflt(infil); rad:=inlin(infil);
+   elif kod = 21 then                      ! Y-koordinat
+     p2.y:=inflt(infil); rad:=inlin(infil);
+   elif kod = 31 then                      ! Z-koordinat
+     p2.z:=inflt(infil); rad:=inlin(infil);
+   elif kod = 12 then                      ! X-koordinat
+     p3.x:=inflt(infil); rad:=inlin(infil);
+   elif kod = 22 then                      ! Y-koordinat
+     p3.y:=inflt(infil); rad:=inlin(infil);
+   elif kod = 32 then                      ! Z-koordinat
+     p3.z:=inflt(infil); rad:=inlin(infil);
+   elif kod = 13 then                      ! X-koordinat
+     p4.x:=inflt(infil); rad:=inlin(infil);
+   elif kod = 23 then                      ! Y-koordinat
+     p4.y:=inflt(infil); rad:=inlin(infil);
+   elif kod = 33 then                      ! Z-koordinat
+     p4.z:=inflt(infil); rad:=inlin(infil);
+   elif kod = 0 then                       ! Slut
+     if vecl(p2-p1) > LTOL then
+       lin_free(#70,s*p1,s*p2:SAVE=1);
+     endif;
+     if vecl(p3-p2) > LTOL then
+       lin_free(#71,s*p2,s*p3:SAVE=1);
+     endif;
+     if vecl(p4-p3) > LTOL then
+       lin_free(#72,s*p3,s*p4:SAVE=1);
+       if vecl(p4-p1) > LTOL then
+         lin_free(#73,s*p4,s*p1:SAVE=1);
+       endif;
+     elif vecl(p3-p1) > LTOL then
+       lin_free(#74,s*p3,s*p1:SAVE=1);
+     endif;
+     nsol:=nsol+1;
+!     if nsol > 32000 then exit("Too many SOLID entities !"); endif;
+     exit();
+   else                                    ! Okänt
+     rad:=inlin(infil);
+   endif;
+
+   goto loop;
+
+ ENDMODULE
+
+!*******************************************************

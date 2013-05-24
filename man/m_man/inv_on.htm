@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>inv_on</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>inv_on - <small><small>Function</small></small></h2>
+  <p>Geometrical function<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Returns the parameter value of a position on a line, arc or curve.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  inv_on(ref, p, alt)<br>
+  <br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 15 Row 01 -->
+    <tr>
+      <td width="78">REF</td>
+      <td width="483">ref;</td>
+    </tr>
+<!-- Table 15 Row 02 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="483">p;</td>
+    </tr>
+<!-- Table 15 Row 03 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="483">alt;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 16 Row 01 -->
+    <tr>
+      <td width="69">ref</td>
+      <td width="492">- Identity of line, arc or curve</td>
+    </tr>
+<!-- Table 16 Row 02 -->
+    <tr>
+      <td width="69">p</td>
+      <td width="492">- Position</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 17 Row 01 -->
+    <tr>
+      <td width="68">alt</td>
+      <td width="493">- Alternative, default = 1</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A FLOAT value equal to the parameter value of the specified position.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  inv_on(#5,vec(100,100))<br>
+  <br>
+  The parameter value for which the position of #5 is equal to X=Y=100.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  If p is not exactly on the referenced entity a position on the entity is calculated by
+  enumerating all positions on the entity with a normal passing through p and selecting the
+  solution specified by alt.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

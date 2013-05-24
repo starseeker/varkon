@@ -1,0 +1,8 @@
+!
+! Detta är VARKON:s "default" menyfil för Unix.
+! Denna fil laddas alltid när systemet startas innan
+! någon annan menyfil laddas.
+! 
+#include "$VARKON_MDF/x11.INC"
+#include "$VARKON_MDF/texter.INC"
+#include "$VARKON_MDF/menyer.INC"

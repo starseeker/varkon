@@ -1,0 +1,9 @@
+Default tolerances for surpac functions 1995-12-09 Gunnar Liden
+0.0000000000001       Computer tolerance (accuracy)        comptol
+0.0005                Coordinate end calculation criterion ctol
+0.0000004             Angle      end calculation criterion ntol
+0.01                  Identical point tolerance (0.01)     idpoint
+0.001                 Identical angle tolerance            idangle
+1000000.0             Infinite distance criterion      infinitetol
+0.000000001           Geodesic curvature criterion     geodesictol
+1.00                  Identical radius criterion          idradius

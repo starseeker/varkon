@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_rot </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>sur_rot - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a surface<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a surface by rotating a line, arc or curve around an axis. The curve must be
+  planar and the rotation axis must be in the same plane as the curve. The output surface is
+  a LFT_SUR with maximum 4 patches in the V-direction and the same number of patches in the
+  U-direction as the number of segments in the input curve.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  sur_rot(id, ref, p1, p2, rotang1, rotang2, dir, reverse:attributes);<br>
+  <br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 51 Row 01 -->
+    <tr>
+      <td width="78">REF</td>
+      <td width="529">id;</td>
+    </tr>
+<!-- Table 51 Row 02 -->
+    <tr>
+      <td width="78">REF</td>
+      <td width="529">ref;</td>
+    </tr>
+<!-- Table 51 Row 03 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="529">p1;</td>
+    </tr>
+<!-- Table 51 Row 04 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="529">p2;</td>
+    </tr>
+<!-- Table 51 Row 05 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="529">rotang1;</td>
+    </tr>
+<!-- Table 51 Row 06 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="529">rotang2;</td>
+    </tr>
+<!-- Table 51 Row 07 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="529">dir;</td>
+    </tr>
+<!-- Table 51 Row 08 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="529">reverse;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 52 Row 01 -->
+    <tr>
+      <td width="67">id </td>
+      <td width="540">- Local identity</td>
+    </tr>
+<!-- Table 52 Row 02 -->
+    <tr>
+      <td width="67">ref</td>
+      <td width="540">- Identity of line, arc or curve to rotate</td>
+    </tr>
+<!-- Table 52 Row 03 -->
+    <tr>
+      <td width="67">p1</td>
+      <td width="540">- First position on rotation axis</td>
+    </tr>
+<!-- Table 52 Row 04 -->
+    <tr>
+      <td width="67">p2 </td>
+      <td width="540">- Second position on rotation axis</td>
+    </tr>
+<!-- Table 52 Row 05 -->
+    <tr>
+      <td width="67">rotang1</td>
+      <td width="540">- Start angle of rotation</td>
+    </tr>
+<!-- Table 52 Row 06 -->
+    <tr>
+      <td width="67">rotang2</td>
+      <td width="540">- End angle of rotation</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 53 Row 01 -->
+    <tr>
+      <td width="66">reverse </td>
+      <td width="541">- Controls the parametric directions of the resulting surface</td>
+    </tr>
+    <tr>
+      <td width="66">dir</td>
+      <td width="541">- +1 = Clockwise rotation, -1 = Counterclockwise rotation. Default = +1</td>
+    </tr>
+    <tr>
+      <td width="66"></td>
+      <td width="541">&nbsp;&nbsp;&nbsp;&nbsp; 1 = No reversal of input (default)</td>
+    </tr>
+    <tr>
+      <td width="66"></td>
+      <td width="541">&nbsp;&nbsp;&nbsp; -1 = Input curve (U-direction) reversed</td>
+    </tr>
+    <tr>
+      <td width="66"></td>
+      <td width="541">&nbsp;&nbsp;&nbsp;&nbsp; 2 = Angles and direction (V-direction) reversed</td>
+    </tr>
+    <tr>
+      <td width="66"></td>
+      <td width="541">&nbsp;&nbsp;&nbsp;&nbsp; 3 = Both reversed&nbsp;</td>
+    </tr>
+  </table>
+  <b><p>Attributes<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 54 Row 01 -->
+    <tr>
+      <td width="66">PEN </td>
+      <td width="541">- Pen or colour number</td>
+    </tr>
+<!-- Table 54 Row 02 -->
+    <tr>
+      <td width="66">LEVEL</td>
+      <td width="541">- Level number</td>
+    </tr>
+<!-- Table 54 Row 03 -->
+    <tr>
+      <td width="66">BLANK</td>
+      <td width="541">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 54 Row 04 -->
+    <tr>
+      <td width="66">SDASHL</td>
+      <td width="541">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>sur_rot(#2, #1, vec(0,0,0), vec(0,1,0), 30.0, 90.0);<br>
+  <br>
+  Creates a surface by rotating the curve #1 from angle 30 degrees to 90 degrees (60
+  degrees) clockwise around the positive Y-axis.<br>
+  <br>
+  sur_rot(#2, #1, vec(0,0,0), vec(0,1,0), 30.0, 90.0, -1);<br>
+  <br>
+  The same as above but counterclockwise rotation from 30 to 90 degrees (300 degrees).<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  Creates a LFT_SUR (Conic Lofting Surface) where the spine curve is a straight line defined
+  as the start and end points of the input curve projected on the (infinite) p1-p2 line.<br>
+  <br>
+  The definition of the start and end angle is in accordance with the arc_1pos() definition.
+  Each constant U line becomes a circle in a X/Y plane where the Z axis is the input
+  rotation line.<br>
+  <br>
+  The reverse parameter is not operational in VARKON version 1.15A</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

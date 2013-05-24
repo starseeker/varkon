@@ -1,0 +1,40 @@
+VARKON Error messages for GMPAC
+(C) Microform AB 1999
+
+001  3  Can't create new resultfile "%s"
+002  3  Can't close resultfile
+003  3  Can't read resultfile
+004  3  System error while writing resultfile to disc
+005  2  Resultfile %s incompatible with current version of VARKON
+006  2  An instance of this entity is referenced
+007  4  Illegal operation (gmrdpd) on this *.RES-file
+008  2  Too many levels in global reference
+009  2  Active module refers to "%s"
+010  2  Module "%s" refers to entity "%s"
+011  3  Page-file already closed, cant save GM 
+012  3  Can't malloc logtab-memory for %s pages
+013  3  Can't malloc gmbuf-memory for %s pages
+014  3  Can't malloc fystab-memory for %s pages
+015  2  Can't set GM root, requested root-id does not exist !
+016  2  Can't set GM root, %s is not a part !
+017  1  System is version %s
+018  1  Resultfile %s is version %s
+019  3  Can't malloc for keytable
+020  2  DEL(), trying to delete the active part
+021  3  Version mismatch between application and DB library
+022  3  Resutlfile contains corrupt data
+
+100  3  Surface type not implemented
+101  3  Unknown type of surface
+102  3  **************************************
+103  3  Can't malloc for primary patches
+104  3  Can't malloc for patchtable
+105  3  Can't malloc for %s curve segments
+106  3  Can't malloc for secondary patch
+107  3  Illegal patch-type for gmrdp1()
+108  3  Can't malloc for %s cpts
+109  3  Can't malloc for %s knots
+110  3  Can't malloc for mesh
+
+200  3  Can't malloc() för GETDAT
+201  3  Can't create new key entry for %s

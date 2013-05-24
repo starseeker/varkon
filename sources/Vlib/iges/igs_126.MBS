@@ -1,0 +1,364 @@
+!*******************************************************
+
+ BASIC GEOMETRY MODULE igs_126(
+   VAR FILE infil,logfil;
+   STRING   dl1*80,dl2*80;
+   INT      ps_ptr;
+   VAR INT  status);
+
+!*      Läser Directory Entry Section en
+!*      andra gång och skapar storheterna.
+!*
+!*      In: infil  = Fil att läsa från.
+!*          logfil = Loggfil.
+!*          dl1    = Rad 1 i Directory Entry Section.
+!*          dl2    = Rad 2 i Directory Entry Section.
+!*          ps_ptr = Pekare till Parameter Section.
+!*
+!*      Ut: status = 0 => Ok
+!*                  -1 => Fel
+!*
+!*      (C)microform ab 1998-01-10 G. Liden
+!* 
+!*******************************************************
+
+   INT    iu,iv,radnummer,antal_rader,p,pd;
+   STRING rad*80,fs*80;
+   FLOAT  f;
+
+   CONSTANT INT MAXPTS=600;
+   INT    k1,m1,prop1,prop2,prop3,prop4,
+          uflag,vflag;
+   FLOAT  ku(MAXPTS),w(MAXPTS,2);
+   VECTOR cpts(MAXPTS,2);
+   FLOAT  curve_start_u, curve_end_u;
+   VECTOR curve_plane_normal;
+   INT    n_aver; ! Temporarely for creation of surface
+   INT    k2;     ! Temporarely for creation of surface
+   INT    m2;     ! Temporarely for creation of surface
+   FLOAT  kv(5);  ! Temporarely for creation of surface
+   FLOAT  m_len;  ! Temporarely for creation of surface
+   INT    i_ref;  ! Temporarely for creation of surface
+   VECTOR v_ref;  ! Temporarely for creation of surface
+   FLOAT  z_max;  ! Temporarely for creation of surface
+   INT    n_pen;  ! Temporarely for creation of surface
+
+   INT    w_flag;  ! =0: Not rational =1: Rational
+
+!  Debug and graphic levels (0, 1 or 2)
+   CONSTANT  INT  d_126   = 1;
+   CONSTANT  INT  g_126   = 0;
+
+
+string s1*1;
+ BEGINMODULE
+
+ FOR  iu := 1 TO MAXPTS DO 
+   ku(iu)      := -0.123456789;
+   IF  iu <= 5 THEN
+   kv(iu)      := -0.123456789;
+   ENDIF;
+   w( iu, 1)  := -0.123456789;
+   cpts(iu,1) := VEC(-0.123456789,-0.123456789,-0.123456789);
+   w( iu,2)   := -0.123456789;
+   cpts(iu,2) := VEC(-0.123456789,-0.123456789,-0.123456789);
+ ENDFOR;
+
+!*
+!***Ta fram storhetens radnummer i Parameter
+!***Data Section och positionera filpekaren dit.
+!*
+   radnummer:=round(val(substr(dl1,9,8)));
+!s1:=inpmt("radnummer=",str(radnummer,-1,0),80);
+   antal_rader:=round(val(substr(dl2,25,8)));
+!s1:=inpmt("antal_rader=",str(antal_rader,-1,0),80);
+   seek(infil,ps_ptr+(radnummer-1)*81);
+!*
+!***Läs 1:a raden och ta bort 1:a fältet (126,).
+!*
+   rad:=inlin(infil);
+   rad:=substr(rad,finds(rad,",")+1);
+!*
+!***K1, antal kontrollpunkter i U-led.
+!*
+   part(#50,igs_gint(infil,rad,k1,status):SAVE=0);
+   k1 := k1 + 1;
+
+   if k1 > MAXPTS then
+     IF  d_126 >= 1 THEN
+     outlin(logfil);
+     outstr(logfil,"NURBS-curve (126) failed");
+     outlin(logfil);
+     outstr(logfil,"Number of nodes K1="+str(k1, 4,0)+" ");
+     outstr(logfil,"> MAXPTS= "+str(MAXPTS, 3,0));
+     outlin(logfil);
+     ENDIF;
+     status := -1;
+     exit();
+   endif;
+
+!*
+!***M1, gradtal i U-led (order_u-1).
+!*
+   part(#3,igs_gint(infil,rad,m1,status):SAVE=0);
+
+   IF  d_126 >= 1 THEN
+   outlin(logfil);
+   outstr(logfil,"NURBS-curve (126)");
+   outlin(logfil);
+   outstr(logfil,"Number of nodes K1="+str(k1, 4,0)+", ");
+   outstr(logfil,"Degree M1="+str(m1, 3,0));
+   outlin(logfil);
+   ENDIF;
+
+!*
+!***PROP1 - PROP5.
+!*
+   part(#5,igs_gint(infil,rad,prop1,status):SAVE=0);
+   part(#6,igs_gint(infil,rad,prop2,status):SAVE=0);
+   part(#7,igs_gint(infil,rad,prop3,status):SAVE=0);
+   part(#8,igs_gint(infil,rad,prop4,status):SAVE=0);
+
+!*
+!***Nodvektorn i U-led.
+!*
+
+   for iu:=1 to k1-m1+1+2*m1 do
+     part(#10,igs_gflt(infil,rad,ku(iu),status):SAVE=0);
+   endfor;
+
+! Error if needed   part(#11,igs_rekn(ku,k1-m1+1+2*m1,uflag):SAVE=0);
+
+   IF  d_126 >= 2 THEN
+   outstr(logfil,"Knot vector:");
+   outlin(logfil);
+   for iu:=1 to k1-m1+1+2*m1 do
+     outstr(logfil,"ku("+str(iu,-1,0)+")="+str(ku(iu),-1,14));
+     outlin(logfil);
+   endfor;
+   ENDIF;
+
+
+!*
+!***Rationella vikttermer.
+!*
+   for iu:=1 to k1 do
+       part(#14,igs_gflt(infil,rad,w(iu,1),status):SAVE=0);
+   endfor;
+
+   IF  d_126 >= 2 THEN
+   outstr(logfil,"Weights:");
+   outlin(logfil);
+   for iu:=1 to k1 do
+       outstr(logfil,"w("+str(iu,-1,0)+","+STR( 1,-1,0)+")="
+          +str(w(iu,1),-1,14));
+       outlin(logfil);
+   endfor;
+   ENDIF;
+
+!*
+!***R3-koordinater.
+!*
+   for iu:=1 to k1 do
+       part(#15,igs_gflt(infil,rad,cpts(iu, 1).x,status):SAVE=0);
+       part(#16,igs_gflt(infil,rad,cpts(iu, 1).y,status):SAVE=0);
+       part(#17,igs_gflt(infil,rad,cpts(iu, 1).z,status):SAVE=0);
+   endfor;
+
+
+   IF  d_126 >= 2 THEN
+   outstr(logfil,"Nodes:");
+   outlin(logfil);
+   iv := 1;
+   for iu:=1 to k1 do
+       outstr(logfil,"cpts("+str(iu,-1,0)+","+STR(iv,-1,0)+")="
+          +str(cpts(iu,iv).x,12,4)+" "
+          +str(cpts(iu,iv).y,12,4)+" "
+          +str(cpts(iu,iv).z,12,4) );
+       outlin(logfil);
+   endfor;
+   ENDIF;
+
+!*
+!***Start and end parameter for curve
+!*
+
+  part(#51,igs_gflt(infil,rad,curve_start_u,status):SAVE=0);
+  part(#52,igs_gflt(infil,rad,curve_end_u,  status):SAVE=0);
+
+  IF  d_126 >= 2 THEN
+  outlin(logfil);
+  outstr(logfil,"Curve Start U="+str(curve_start_u,8,4)+", ");
+  outstr(logfil,"End U="+str(curve_end_u, 8,4));
+  outlin(logfil);
+  ENDIF;
+
+!*
+!***Curve plane (unit) normal ( = 0,0,0: not planar)
+!*
+
+  part(#53,igs_gflt(infil,rad,curve_plane_normal.x,status):SAVE=0);
+  part(#54,igs_gflt(infil,rad,curve_plane_normal.y,status):SAVE=0);
+  part(#55,igs_gflt(infil,rad,curve_plane_normal.z,status):SAVE=0);
+
+  IF  d_126 >= 2 OR 
+     (d_126 = 1 AND VECL(curve_plane_normal)> 0.1 ) THEN
+  outlin(logfil);
+  outstr(logfil,"Curve plane=");
+  outstr(logfil," "+str(curve_plane_normal.x, 8,6));
+  outstr(logfil," "+str(curve_plane_normal.y, 8,6));
+  outstr(logfil," "+str(curve_plane_normal.z, 8,6));
+  outlin(logfil);
+  ENDIF;
+
+!*
+!***Visa punkterna.
+!*
+   if k1 > 2 then
+     IF  g_126   >= 2 THEN
+       for iu:=1 to k1 do
+           poi_free(#20,cpts(iu,1));
+       endfor;
+     ENDIF;
+
+     IF  g_126   >= 1 THEN
+       for iu:=1 to k1-1 do
+         IF VECL(cpts(iu,1)-cpts(iu+1,1)) > 0.002 THEN
+           lin_free(#30,cpts(iu,1),cpts(iu+1,1):PEN=2);
+         ELSE
+           POI_FREE(#40,cpts(iu,1):PEN=4);
+         ENDIF;
+       endfor;
+     ENDIF;
+
+    endif;
+
+!*
+!***Check if the NURBS curve is rational
+!*
+
+   w_flag := 0;
+   FOR iu := 1 TO k1 DO
+       IF ABS(w(iu,1)-1.0) > 0.00001 THEN
+         w_flag := 1;
+       ENDIF;
+   ENDFOR;
+
+   IF  w_flag = 1 THEN
+     IF  d_126 >= 1 THEN
+     outlin(logfil);
+     outstr(logfil,"Rational  NURBS-curve (126)");
+     outlin(logfil);
+     outlin(logfil);
+     ENDIF;
+   ENDIF;
+
+!*
+!***Create curve, temporarely as a ruled surface
+!*
+
+     m_len := 0.0;
+     z_max := 0.0;
+     for iu:=1 to k1-1 do
+       IF VECL(cpts(iu,1)-cpts(iu+1,1) ) > m_len THEN
+         m_len := VECL(cpts(iu,1)-cpts(iu+1,1));
+         i_ref := iu;
+         v_ref := VECN(cpts(iu,1)-cpts(iu+1,1));
+       ENDIF;
+       IF ABS(cpts(iu,1).z) > z_max THEN
+         z_max := ABS(cpts(iu,1).z);
+       ENDIF;
+     endfor;
+     IF  z_max < 0.01  THEN  ! Assume U,V curves
+       m_len := 1.0;
+     ELSE
+       m_len := 10.0;
+     ENDIF;
+
+     IF VECL(curve_plane_normal)> 0.1  THEN
+       ;
+     ELSE
+       curve_plane_normal := VEC(0,0,0);
+       n_aver := 0;
+       for iu:=1 to k1-1 do
+         IF VECL(cpts(iu  ,1)-cpts(iu+1,1)) > 0.001 AND
+                   iu <> i_ref THEN
+           n_aver := n_aver + 1;
+           curve_plane_normal := curve_plane_normal +  
+            VECN(VPROD ( cpts(iu  ,1)-cpts(iu+1,1), v_ref));
+         ENDIF;
+         IF  n_aver > 0 THEN
+           curve_plane_normal := (1/n_aver)*curve_plane_normal;
+           curve_plane_normal := VECN(curve_plane_normal);
+         ELSE
+           IF  d_126 >= 1 THEN
+           outlin(logfil);
+           outstr(logfil,"Average plane could not be calculated");
+           outlin(logfil);
+           ENDIF;
+           status := -99;
+           EXIT();
+         ENDIF;
+       endfor;
+     ENDIF;
+
+
+     m2    := 1;
+     k2    := 2;
+     kv(1) := 0.0;
+     kv(2) := 0.0;
+     kv(3) := 1.0;
+     kv(4) := 1.0;
+     for iu:=1 to k1 do
+       w(iu,2) := w(iu,1);
+       cpts(iu,2) := cpts(iu,1) + m_len*curve_plane_normal;
+     endfor;
+
+     IF  g_126   >= 1 THEN
+       for iu:=1 to k1-1 do
+         IF VECL(cpts(iu,2)-cpts(iu+1,2)) > 0.01 THEN
+           lin_free(#38,cpts(iu,2),cpts(iu+1,2):PEN=2);
+         ELSE
+           POI_FREE(#48,cpts(iu,2):PEN=4);
+         ENDIF;
+       endfor;
+     ENDIF;
+
+!    IF   k1  > 100 THEN
+!       IF  d_126 >= 1 THEN
+!       outlin(logfil);
+!       outstr(logfil,"No surface k1 > 100 ");
+!       outlin(logfil);
+!       ENDIF;
+!      status := -97;
+!      EXIT();
+!    ENDIF;
+
+     IF  z_max < 0.01 THEN  ! Assume U,V curves
+       for iu:=1 to k1 do
+         cpts(iu,1) := 100*cpts(iu,1);
+         cpts(iu,2) := 100*cpts(iu,2);
+       endfor;
+       n_pen := 3;
+       IF  d_126 >= 1 THEN
+       outlin(logfil);
+       outstr(logfil,"No surface for U,V curve ");
+       outlin(logfil);
+       ENDIF;
+       status := -97;
+       EXIT();
+     ELSE
+       n_pen := 2;
+     ENDIF;
+
+    sur_nurbsarr(#1,m1+1,m2+1,k1-m1+1+2*m1,k2-m2+1+2*m2,
+               cpts,ku,kv,w:PEN=n_pen);
+
+!*
+!***Slut.
+!*
+   status:=0;
+
+ ENDMODULE
+
+!*******************************************************

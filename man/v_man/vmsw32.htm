@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>MSW32.DLL</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-11-12</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>MSW32.DLL</H3>
+
+<P>VARKON plotter/printer driver for Windows95/NT<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>MSW32.DLL reads VARKON plotfiles and outputs the processed image on
+a printer using the ordinary printer drivers and spooling system of Windows95/NT.
+Plotfiles can either be in .PLT format or in .DXF format.<BR>
+<BR>
+The -raw option can be used to turn off all processing and send input to
+the spooler exactly as it is. This can be used to print an ordinary textfile
+or to send device specific control characters to a printer or plotter.
+<BR>
+<BR>
+<B>Calling convention<BR>
+<BR>
+</B>The name of the entrypoint in MSW32.DLL is &quot;msw32&quot;. Two parameters
+need to be supplied. The first parameter is the name of the file to process
+and the second parameter is one or more options that control the way the
+file is processed. Options are preceeded with a minus sign and separated
+with spaces as follows.<BR>
+<BR>
+-sS -xX -wsL -yY -vN -PPRINTER -raw -FF -d -kK -del<BR>
+<BR>
+<B>Options </B><BR>
+<BR>
+</P>
+</UL>
+
+<TABLE WIDTH="691" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="99">
+<UL>
+<P>file</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- The name of the file to process (not standard input as in UNIX)</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-sS</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Set scale to S. Float value, default = 1.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-wsL</UL>
+</TD>
+
+<TD>
+<UL>- Set linewidthscale to L. Float value, default = S</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-xX</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Set origin.x to X. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-yY</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Set origin.y to Y. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-vN</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Rotate n degrees. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-PPRINTER</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Use PRINTER, if not specified the default printer is used.</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-raw</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Send input to printer spooler without processing</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-FF</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Send trailing formfeed (should only be used with -raw)</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-d</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Show outline of plot area and print statistics</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-kK</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Set curve accuracy to K. Float value, default = 1.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="99">
+<UL>
+<P>-del</P>
+</UL>
+</TD>
+
+<TD width="584">
+<UL>
+<P>- Deletes the file after processing</P>
+</UL>
+</TD>
+</TR>
+</TABLE>
+
+<UL>
+<P><BR>
+<B>Examples<BR>
+<BR>
+</B>call_dll_function(&quot;C:\VARKON\BIN\MSW32.DLL&quot;, &quot;msw32&quot;,
+&quot;plotfile.PLT&quot;, &quot;-v90&quot;);<BR>
+<BR>
+Rotates the image in plotfile.PLT 90 degrees anticlockwise and prints the
+result on the default printer.<BR>
+<BR>
+call_dll_function(&quot;C:\VARKON\BIN\MSW32.DLL&quot;,&quot;msw32&quot;,
+&quot;plotfile.PLT&quot;, &quot;-v90 -PCANON B320&quot;);<BR>
+<BR>
+Same as above but the result is sent to a printer with name = &quot;CANON
+B320&quot;. Note that space characters are allowed in printer names.<BR>
+<BR>
+call_dll_function(&quot;C:\VARKON\BIN\MSW32.DLL&quot;, &quot;msw32&quot;,
+&quot;file.TXT&quot;, &quot;-raw -FF&quot;);<BR>
+<BR>
+Sends file.TXT to the default printer without any processing. A trailing
+formfeed character ASCII-12 is also sent to the printer.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>MSW32 automatically recognizes if the input is in PLT or DXF format.
+The -k option only applies to DXF format.</P>
+
+<P>MSW32 supports the WIDTH attribute introduced in VARKON&nbsp;1.15C and
+uses the PEN attribute only to control color. Penfiles are no longer supported.<BR>
+<BR>
+The declaration of the main entrypoint and its parameters in C-syntax is
+as follows:<BR>
+<BR>
+int msw32(file,params)<BR>
+char *file;<BR>
+char *params;</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm#VAR">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

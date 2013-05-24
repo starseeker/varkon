@@ -1,0 +1,80 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <title>Creating your own user interface </title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.17 1999-05-07</font></center>
+
+<p>
+<hr width="100%" align="center">
+<ul>
+<h3>
+Creating your own user interface</h3>
+The UNIX-version of VARKON is based on the X window system for its user
+interface. The Windows version of VARKON uses the 32-bit WIN32 API currently
+used in Windows95/98 and NT.
+<p>Basic elements of the interface are menus, toolbars, functionkeys, and
+windows. All these are defined in external textfiles called MDF. A standard
+setup is of course included in the system but creating your own interface
+is important if you want to develop a nice application.
+<p>Editing a MDF-file is a simple way of replacing standard menus for menus
+of your own but if you need more detailed control you can also use the
+MBS language to manually program a user dialogue. MBS includes a number
+of high level routines to create windows buttons, icons and edit fields
+and to manage events from these. Here's a simple example.....
+<pre><b>MACRO MODULE</b> show_message(<b>STRING</b> message_text*132);
+
+<b>&nbsp; INT</b> main_id,button1_id,button2_id,event_id;
+
+<b>BEGINMODULE
+
+</b>&nbsp; main_id:=<b>cre_win</b>(vec(20,20),400,200,"APPLICATION MESSAGE");
+&nbsp; button1_id:=<b>cre_button</b>(main_id,vec(10,30),20,350,0,message_text);
+&nbsp; button2_id:=<b>cre_button</b>(main_id,vec(10,150),50,50,5,"Okey");
+<b>&nbsp; show_win</b>(main_id);
+
+&nbsp; loop: event_id:=<b>wait_win</b>(main_id);
+
+<b>&nbsp; if</b> event_id = button2_id <b>then&nbsp;
+&nbsp;&nbsp;&nbsp; del_win</b>(main_id);
+<b>&nbsp;&nbsp;&nbsp; exit</b>();
+<b>&nbsp; else
+&nbsp;&nbsp;&nbsp; goto</b> loop;
+<b>&nbsp; endif;
+
+ENDMODULE</b></pre>
+This simple <b>MACRO</b> program creates a window with a message and a
+button with the label Okey. When the user clicks his mouse in the Okey
+button the program kills the window and exits. Note that this program will
+run without changes (or recompilation) on any UNIX platform as well as
+the Windows 95/98 and NT platforms.
+<p>A <b>MACRO</b> module can also be used to create or update a <b>DRAWING</b>
+or <b>GEOMETRY</b> module! The following routines are used for this purpose...
+<p><b>add_mbs</b>(routine_name,par1,par2....parn); ! Adds a statement to
+active module
+<br><b>parval</b>:=getp_mbs(id,parnum); ! Gets the value of a parameter
+<br><b>updp_mbs</b>(id,parnum,parval,mode); ! Changes a parameter and reevaluates
+<br><b>updpp_mbs</b>(id,parnum,parval,mode); ! Same for part
+<br><b>del_mbs</b>(id); ! Deletes statement
+<br><b>run_mbs</b>(); ! Reevaluates entire module</ul>
+
+<hr width="100%" align="center">
+<center>
+
+
+
+<br>&nbsp;
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm">VARKON Homepage</a></td>
+
+<td><a href="vindex.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

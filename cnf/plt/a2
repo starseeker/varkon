@@ -1,0 +1,5 @@
+! a2 = CALCOMP plottrar. Spooler = c1043
+ nice -19 /usr/v3/bin/cc1043 <
+ | lp -dc1043 -s &
+ /usr/v3/job/test.PLT
+

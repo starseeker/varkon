@@ -1,0 +1,39 @@
+##########################################################
+#
+#   Makefile for DBlib on GNU/Linux
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+distr :     CFLAGS = \
+            -ansi \
+            -pedantic \
+            -Wall \
+            -ffloat-store \
+            -fsigned-char \
+            -fwritable-strings \
+            -O \
+            -DUNIX
+
+            
+debug :      CFLAGS = \
+            -ansi \
+            -Wall \
+            -ffloat-store \
+            -fsigned-char \
+            -fwritable-strings \
+            -g3 \
+            -DDEBUG \
+            -DUNIX
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.DB
+
+
+################################################################

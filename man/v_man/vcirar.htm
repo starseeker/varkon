@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Circular arcs</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Circular arcs</H3>
+
+<P>A circular arc (or just an arc in VARKON) can be a complete circle or
+only a part of a circle. Arc:s are planar curves with constant curvature
+and the sense of direction for an arc is always anticlockwise. This implies
+that an arc must have two ends just like a line or a curve and this is
+true even for a complete circle. The parametrisation along an arc is 0
+where it starts and 1 where it ends and the parameter is relative to arc
+length.<BR>
+<BR>
+There are 5 ways to create an arc....<BR>
+<BR>
+<B>arc_1pos</B>(id,p1,radius,angle_1,angle_2); ! 1 position, radius and
+angles<BR>
+<BR>
+<B>arc_2pos</B>(id,p1,p2,radius); ! 2 positions and radius<BR>
+<BR>
+<B>arc_3pos</B>(id,p1,p2,p3); ! 3 positions<BR>
+<BR>
+<B>arc_offs</B>(id,other_arc,offset); ! Offset to other arc<BR>
+<BR>
+<B>arc_fil</B>(id,other_etity_1,other_entity_2,radius,alternative); ! Fillet<BR>
+<BR>
+Since arcs are planar curves they are always created in the XY-plane of
+the active coordinate system. An arc created using <B>arc_1pos</B> starts
+in angle_1 and turns anticlockwise until angle_2 is reached. An <B>arc_2pos</B>
+starts in p1 and turns anticlockwise until p2 is reached. <B>arc_3pos</B>
+starts in p1, turns anticlockwise through p2 and ends in p3. <BR>
+<BR>
+<B>arc_fil</B> creates an arc tangent to two lines, arcs or curves. The
+result depends on the parameter named alternative which selects one of
+the four possible solutions (corners).<BR>
+<BR>
+An arc can be converted to a curve using <B>cur_comp</B>.<BR>
+</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>add_mbs</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>add_mbs - <small><small>Function</small></small></h2>
+  <p>Adds a statement<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Adds an entity defined by a MBS statement. The result is a new statement linked to the end
+  of the active module.<br>
+  <br>
+  add_mbs() automatically generates the identity to use for the new entity and uses this
+  together with name and parameters to create a line of text (MBS syntax) that defines the
+  new entity. The line of text is then sent to the MBS compiler and the result linked to the
+  active module.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  ad_mbs(name, par1, par2, .....)<br>
+  <br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 26 Row 01 -->
+    <tr>
+      <td width="79">STRING</td>
+      <td width="641">name*31;</td>
+    </tr>
+<!-- Table 26 Row 02 -->
+    <tr>
+      <td width="79">STRING</td>
+      <td width="641">par1*132;</td>
+    </tr>
+<!-- Table 26 Row 03 -->
+    <tr>
+      <td width="79">STRING</td>
+      <td width="641">par2*132</td>
+    </tr>
+<!-- Table 26 Row 04 -->
+    <tr>
+      <td width="79">.</td>
+      <td width="641"></td>
+    </tr>
+<!-- Table 26 Row 05 -->
+    <tr>
+      <td width="79">.</td>
+      <td width="641"></td>
+    </tr>
+  </table>
+  <p><br>
+  The number of parameters actually specified depends on the name of the MBS-procedure to
+  use.<br>
+  <br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 27 Row 01 -->
+    <tr>
+      <td width="66">name</td>
+      <td width="654">- Name of MBS procedure</td>
+    </tr>
+<!-- Table 27 Row 02 -->
+    <tr>
+      <td width="66">par1</td>
+      <td width="654">- First parameter</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 28 Row 01 -->
+    <tr>
+      <td width="64">par2</td>
+      <td width="656">- Second parameter</td>
+    </tr>
+<!-- Table 28 Row 02 -->
+    <tr>
+      <td width="64">.</td>
+      <td width="656"></td>
+    </tr>
+<!-- Table 28 Row 03 -->
+    <tr>
+      <td width="64">.</td>
+      <td width="656"></td>
+    </tr>
+  </table>
+  <p><br>
+  Any number of parameters may be passed.<br>
+  <br>
+  <b>Return value<br>
+  <u><br>
+  </b></u>A REF holding the identity of the new entity.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  poi_id:=add_mbs(&quot;poi_free&quot;, &quot;vec(100,100)&quot;);<br>
+  <br>
+  Adds a poi_free() statement to the active module.<br>
+  <br>
+  text_id:=add_mbs(&quot;text&quot;, &quot;vec(25,25)&quot;, &quot;0&quot;,
+  chr(34)+&quot;ABC&quot;+chr(34));<br>
+  <br>
+  Adds a text() statement. Note the double quoting of ABC, chr(34) is just another way to
+  write a quote.<br>
+  <br>
+  part_id:=add_mbs(&quot;part&quot;, part_name, par1, par2);<br>
+  <br>
+  Adds a part() statement.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="modmindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+!*******************************************************
+
+ BASIC GEOMETRY MODULE igs_106(
+   VAR FILE infil,logfil;
+   STRING   dl1*80,dl2*80;
+   INT      ps_ptr;
+   VAR INT  status);
+
+!*      Läser Directory Entry Section en
+!*      andra gång och skapar storheterna.
+!*
+!*      In: infil  = Fil att läsa från.
+!*          logfil = Loggfil.
+!*          dl1    = Rad 1 i Directory Entry Section.
+!*          dl2    = Rad 2 i Directory Entry Section.
+!*          ps_ptr = Pekare till Parameter Section.
+!*
+!*      Ut: status = 0 => Ok
+!*                  -1 => Fel
+!*
+!*      Remark: Only implemented for 6 tuples
+!*
+!*      (C)microform ab 1999-02-14 G. Liden
+!* 
+!*******************************************************
+
+   INT    iu,iv,radnummer,p,pd;
+   STRING rad*80,fs*80;
+   FLOAT  f;
+
+   INT    i_type;  ! Eq. 1: Planar  Eq. 2: Point X,Y,Z 
+                   ! Eq. 3: Point X, Y, Z and vector i,j,k
+   INT    n_tuple; ! Number of points or points with vectors
+   INT    i_tuple; ! Loop index point
+   INT    n_rows;  ! Number of lines in parameter section
+   FLOAT  z_const; ! Z value for i_type= 1
+   VECTOR poi;     ! Point     X,Y,Z
+   VECTOR dir;     ! Direction i,j,k
+
+
+!Q   INT    k1,m1,prop1,prop2,prop3,prop4,
+!Q          uflag,vflag;
+
+!  Debug and graphic levels (0, 1 or 2)
+   CONSTANT  INT  d_106   = 2;
+   CONSTANT  INT  g_106   = 0;
+
+! For initialization
+  CONSTANT FLOAT  f_undef = -0.123456789;
+  CONSTANT INT    i_undef = -12345;
+
+string s1*1;
+ BEGINMODULE
+
+! Initialization of local parameters
+  i_type   :=  i_undef;
+  n_tuple  :=  i_undef;
+  n_rows   :=  i_undef;
+  z_const  :=  f_undef;
+  poi.x    :=  f_undef;
+  poi.y    :=  f_undef;
+  poi.z    :=  f_undef;
+  dir.x    :=  f_undef;
+  dir.y    :=  f_undef;
+  dir.z    :=  f_undef;
+
+!*
+!***Ta fram storhetens radnummer i Parameter
+!***Data Section och positionera filpekaren dit.
+!*
+   radnummer:=round(val(substr(dl1,9,8)));
+!s1:=inpmt("radnummer=",str(radnummer,-1,0),80);
+   n_rows   :=round(val(substr(dl2,25,8)));
+!s1:=inpmt("n_rows   =",str(n_rows ,-1,0),80);
+   seek(infil,ps_ptr+(radnummer-1)*81);
+!*
+!***Läs 1:a raden och ta bort 1:a fältet (106,).
+!*
+   rad:=inlin(infil);
+   rad:=substr(rad,finds(rad,",")+1);
+!*
+!*** Type of data
+!*
+   part(#50,igs_gint(infil,rad,i_type,status):SAVE=0);
+
+   IF  i_type <> 3 THEN
+     IF  d_106 >= 1 THEN
+     outlin(logfil);
+     outstr(logfil,"Copius entities 106 (point cloud) failed");
+     outlin(logfil);
+     outstr(logfil,"Only type 6 tuples has yet been implemented");
+     outlin(logfil);
+     outstr(logfil,"Not i_type"+str(i_type, 4,0)+" ");
+     outlin(logfil);
+     ENDIF;
+     status := -1;
+     exit();
+   endif;
+
+!*
+!***Number of data
+!*
+   part(#3,igs_gint(infil,rad,n_tuple,status):SAVE=0);
+
+   IF  d_106 >= 1 THEN
+   outlin(logfil);
+   outstr(logfil,"Point cloud (106)");
+   outlin(logfil);
+   outstr(logfil,"Number points and vectors n_tuple= "+str(n_tuple,-1 ,0)+", ");
+   outstr(logfil,"Type i_type= "+str(i_type, 3,0));
+   outlin(logfil);
+   ENDIF;
+
+!*
+!***Create points and vectors
+!*
+
+   IF   i_type = 3 THEN
+     FOR  i_tuple:= 1 TO n_tuple DO
+       PART(#10,igs_gflt(infil,rad,poi.x,status):SAVE=0);
+       PART(#11,igs_gflt(infil,rad,poi.y,status):SAVE=0);
+       PART(#12,igs_gflt(infil,rad,poi.z,status):SAVE=0);
+       PART(#20,igs_gflt(infil,rad,dir.x,status):SAVE=0);
+       PART(#21,igs_gflt(infil,rad,dir.y,status):SAVE=0);
+       PART(#22,igs_gflt(infil,rad,dir.z,status):SAVE=0);
+       POI_FREE(#1, poi);
+       LIN_FREE(#2, poi, poi+dir:PEN=3);
+     ENDFOR;
+   ENDIF;
+
+!*
+!***Slut.
+!*
+   status:=0;
+
+ ENDMODULE
+
+!*******************************************************

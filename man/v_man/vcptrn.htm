@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Copy and transformation</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<H3>Copy and transformation</H3>
+
+<P>Transforming and copying geometry is a two step process in VARKON. First
+you define a transformation and then you use it for copying. Transformations
+are implemented as ordinary geometric objects just like lines or curves
+and used in the same manner. VARKON currently supports translation, rotation,
+scaling and mirroring in 2D or 3D of all implemented geometric entities
+except UV-curves and their offsets. To create a combined translation and
+scaling use.....<BR>
+<BR>
+<B>tform_move</B>(#1,p1,p2,sx,sy,sz);<BR>
+<BR>
+<B>tform_move</B> creates a transformation that moves an object according
+to the translation vector p2-p1 and concurrently scales the object relative
+to p1 with a factor of sx in the X-direction, sy in the Y-direction and
+sz in the Z-direction. <B>tform_rotp</B> and <B>tform_rotl</B> are similarly
+used for rotation and scaling. <B>tform_mirr</B> creates a mirroring transformation
+and <B>tform_comp</B> creates a composite translation and rotation in 3D.<BR>
+<BR>
+Once a transformation is created it can be used any number of times in
+different copying operations. Here's an example...<BR>
+<BR>
+<B>lin_free</B>(#1,vec(0,0,0),vec(100,0,0));<BR>
+<B>tform_move</B>(#2,vec(0,0,0),vec(0,100,0));<BR>
+<B>tcopy</B>(#3,#1,#2);<BR>
+<BR>
+#1 is a line from (0,0,0) to (100,0,0). #2 defines a translation by 100
+units in the Y-direction with no scaling. The <B>tcopy</B>-procedure creates
+a new line #3 by copying #1 and translating the copy by #2. The new line
+will end up going from (0,100,0) to (100,100,0).<BR>
+<BR>
+As an alternative to copying single entities one at the time <B>tcopy </B>can
+also be used to copy a whole <B>part</B> consisting of any number of entities
+in one single operation. <BR>
+<BR>
+<B>part</B>(#1,name(parameters));<BR>
+<B>tform_move</B>(#2,vec(0,0,0),vec(0,100,0));<BR>
+<B>tcopy</B>(#3,#2,#1);<BR>
+<BR>
+In this case <B>tcopy</B> first creates a new part with the same name as
+the original part and then creates transformed copies of all the part members
+while inserting them into the new part with same identities as earlier.
+The procedure is recursive meaning that parts consisting of other parts
+are no problem. VARKON will create copies of these as well and still preserve
+the original owner-membership relation on all part levels.</P>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

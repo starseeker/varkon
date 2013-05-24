@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_cyl </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>sur_cyl - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a surface<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a cylindrical surface by translating (sweeping) a profile (line, arc or curve) a
+  specified distance perpendicular to the plane of the profile. If the profile is not a
+  plane curve or if the profile is a line VARKON automatically creates a &quot;best
+  possible&quot; plane. If this is not satisfactory an arbitrary sweep direction may be
+  specified.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  sur_cyl(id, profile, distance, reverse, dir:attributes);<br>
+  <br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 55 Row 01 -->
+    <tr>
+      <td width="77">REF</td>
+      <td width="530">id;</td>
+    </tr>
+<!-- Table 55 Row 02 -->
+    <tr>
+      <td width="77">REF</td>
+      <td width="530">profile;</td>
+    </tr>
+<!-- Table 55 Row 03 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="530">distance;</td>
+    </tr>
+<!-- Table 55 Row 04 -->
+    <tr>
+      <td width="77">INT</td>
+      <td width="530">reverse;</td>
+    </tr>
+<!-- Table 55 Row 05 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="530">dir;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 56 Row 01 -->
+    <tr>
+      <td width="68">id </td>
+      <td width="539">- Local identity</td>
+    </tr>
+<!-- Table 56 Row 02 -->
+    <tr>
+      <td width="68">profile</td>
+      <td width="539">- Identity of arc or curve</td>
+    </tr>
+<!-- Table 56 Row 03 -->
+    <tr>
+      <td width="68">distance</td>
+      <td width="539">- Length of cylinder (surface V-direction). May be negative.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 57 Row 01 -->
+    <tr>
+      <td width="68">reverse </td>
+      <td width="539">- Controls the parametric directions of the resulting surface </td>
+    </tr>
+<!-- Table 57 Row 01 -->
+    <tr>
+      <td width="68"></td>
+      <td width="539">&nbsp;&nbsp; 1 = No reversal of input (default)</td>
+    </tr>
+<!-- Table 57 Row 01 -->
+    <tr>
+      <td width="68"></td>
+      <td width="539">&nbsp; -1 = The profile curve (U-direction) is reversed</td>
+    </tr>
+<!-- Table 57 Row 01 -->
+    <tr>
+      <td width="68"></td>
+      <td width="539">&nbsp;&nbsp; 2 = The sweep (V-direction) is reversed</td>
+    </tr>
+<!-- Table 57 Row 01 -->
+    <tr>
+      <td width="68"></td>
+      <td width="539">&nbsp;&nbsp; 3 = Both are reversed</td>
+    </tr>
+<!-- Table 57 Row 01 -->
+    <tr>
+      <td width="68">dir</td>
+      <td width="539">- Sweeping direction if not perpendicular to the plane of the curve.
+      Default = (0,0,0)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 58 Row 01 -->
+    <tr>
+      <td width="68">PEN </td>
+      <td width="539">- Pen or colour number</td>
+    </tr>
+<!-- Table 58 Row 02 -->
+    <tr>
+      <td width="68">LEVEL</td>
+      <td width="539">- Level number</td>
+    </tr>
+<!-- Table 58 Row 03 -->
+    <tr>
+      <td width="68">BLANK</td>
+      <td width="539">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 58 Row 04 -->
+    <tr>
+      <td width="68">SDASHL</td>
+      <td width="539">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>sur_cyl(#2, #1, 50);<br>
+  <br>
+  Creates a surface by sweeping #1 50 units in the same direction as the normal of the plane
+  of #1.<br>
+  <br>
+  sur_cyl(#2, #1, 50, -1);<br>
+  <br>
+  Geometrically the same surface but with parametrisation reversed with respect to U.<br>
+  <br>
+  sur_cyl(#2,#1,50,1,vec(2,5,10));<br>
+  <br>
+  Sweeps the curve 50 units in the direction of (2,5,10).<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The parameter of the profile becomes the U-direction of the surface and V is mapped to the
+  sweeping vector. The optional &quot;reverse&quot; parameter can be used to alter this.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

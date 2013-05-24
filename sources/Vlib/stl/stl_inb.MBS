@@ -1,0 +1,143 @@
+!*******************************************************
+
+  GLOBAL GEOMETRY MODULE stl_inb(
+  VAR FILE f;
+  VAR FILE logfil; 
+  FLOAT  X_scale:=1.0 > "Scale X:";
+  FLOAT  Y_scale:=1.0 > "Scale Y:";
+  FLOAT  Z_scale:=1.0 > "Scale Z:";
+  STRING reverse*1:="n" >"Reverse normals ? (y/n)";
+  INT DEC:=2 > "Accuracy in digits behind decimal point:";
+  INT color:=1 > "Color:");
+
+!*      Reads Binary-formatted STL-file.
+!*
+!*      (C)microform ab 1998-09-11 J. Kjellander
+!*      (C) Kastalyse   2001-03-20 R. Kastelein
+!*
+!*******************************************************
+
+ CONSTANT INT START_COUNTER=1000;
+!* Start displaying entity number after START_COUNTER entities
+
+
+ INT    status;        ! Error code
+ STRING path*132;      ! Path to STL-file
+ STRING name*80;       ! First 80 bytes
+ STRING spaces*2;      ! Spaces
+ FLOAT  nx,ny,nz;      ! Normal coordinates
+ FLOAT  x1,y1,z1;      ! Vertex coordinates
+ FLOAT  x2,y2,z2;      ! Vertex coordinates
+ FLOAT  x3,y3,z3;      ! Vertex coordinates
+ VECTOR p1,p2,p3;      ! Vertices
+ INT    nf;            ! Facet count
+ INT    i;             ! Loop counter
+ VECTOR swap;          ! To reverse normals
+
+
+ BEGINMODULE
+
+!*
+!***Create complete path and check accessibility.
+!*
+   status:=0;
+
+
+!*
+!***Eat 80 bytes entity name.
+!*
+   inbin(f,name,80);
+!*
+!***Read number of facets.
+!*
+   inbin(f,nf,4);
+   outlin(logfil);  
+   outstr(logfil,"!* Number of expected factes: "+str(nf,-1,0));
+   outlin(logfil); 
+   outlin(logfil); 
+!*
+!***Read the vertices.
+!*
+   for i:=1 to nf do
+     inbin(f,nx,4);
+     inbin(f,ny,4);
+     inbin(f,nz,4);
+     inbin(f,x1,4);
+     inbin(f,y1,4);
+     inbin(f,z1,4);
+     p1:=vec(x1*X_scale,y1*Y_scale,z1*Z_scale);
+     inbin(f,x2,4);
+     inbin(f,y2,4);
+     inbin(f,z2,4);
+     p2:=vec(x2*X_scale,y2*Y_scale,z2*Z_scale);
+     inbin(f,x3,4);
+     inbin(f,y3,4);
+     inbin(f,z3,4);
+     p3:=vec(x3*X_scale,y3*Y_scale,z3*Z_scale);
+     inbin(f,spaces,2);
+!*
+!***Possible reversal of normal direction.
+!*
+     if reverse = "y"  or  reverse = "Y" then
+       swap:=p1;
+       p1:=p3;
+       p3:=swap;
+     endif;
+!*
+!***Write MBS-code to logfile.
+!*
+     outstr(logfil,"b_plane(#"+str(i,-1,0)+",vec("+
+          str(p1.x,-1,DEC)+","+str(p1.y,-1,DEC)+","+str(p1.z,-1,DEC)+"),vec("+
+          str(p2.x,-1,DEC)+","+str(p2.y,-1,DEC)+","+str(p2.z,-1,DEC)+"),vec("+
+          str(p2.x,-1,DEC)+","+str(p2.y,-1,DEC)+","+str(p2.z,-1,DEC)+"),vec("+
+          str(p3.x,-1,DEC)+","+str(p3.y,-1,DEC)+","+str(p3.z,-1,DEC)+"));");
+     outlin(logfil);
+
+!*
+!***Create the facet.
+!*
+
+     if   i < 32000 then
+       b_plane(#1,p1,p2,p2,p3);
+     elif i < 64000 then
+       b_plane(#2,p1,p2,p2,p3);
+     elif i < 96000 then
+       b_plane(#3,p1,p2,p2,p3);
+     elif i < 128000 then
+       b_plane(#4,p1,p2,p2,p3);
+     elif i < 160000 then
+       b_plane(#5,p1,p2,p2,p3);
+     elif i < 192000 then
+       b_plane(#6,p1,p2,p2,p3);
+     elif i < 224000 then
+       b_plane(#7,p1,p2,p2,p3);
+     elif i < 256000 then
+       b_plane(#8,p1,p2,p2,p3);
+     else
+       pop_pmt();
+       close(f);
+       exit("Cant create more than 256000 facets !");
+     endif;
+!*
+!***Display message with entity number.
+!*
+
+     if i > START_COUNTER then
+        psh_pmt("Reading entity "+str(i,-1,0)+"/"+str(nf,-1,0)+" from STL-file");
+
+     endif;
+ 
+   endfor;
+!*
+!***Close the file and exit.
+!*
+   pop_pmt();
+   close(f);
+   outlin(logfil);  
+   outstr(logfil,"!* "+str(nf,-1,0)+" facets read !");
+   outlin(logfil);   
+   psh_pmt(str(nf,-1,0)+" facets read !");
+
+ ENDMODULE
+
+!*******************************************************

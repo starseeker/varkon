@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>VARKON_MDF</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>VARKON_MDF</H3>
+
+<P>Environment variable<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Environment variable used by VARKON to find the system menu files.
+One of these is varkon.MDF wich is always loaded before any other menus
+are loaded each time the system is started. Other files are for examle
+v318.MDF which is the default menufile for new projects on a UNIX machine
+with X-Windows or v319.MDF which is the default menufile for new projects
+on a PC with Microsoft Windows 95 or NT.<BR>
+<BR>
+VARKON_MDF usually points to $VARKON_ROOT/mdf/swedish or $VARKON_ROOT/mdf/english
+depending on what language is requested.<BR>
+<BR>
+The UNIX version of VARKON also supports serial ASCII based Tektronix/VT300
+compatible graphics terminals of different kind. For this purpose there
+are menu files in VARKON_MDF named v30.MDF through v317.MDF. <BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If VARKON_MDF is not defined a hard coded default will be used instead.
+<BR>
+<BR>
+If VARKON_MDF points to a non existent file an error is reported.<BR>
+<BR>
+The files in $VARKON_MDF should not be altered. Dont edit any files, add
+any files or remove any files. Project specific menu files should be placed
+where the application resides for example in $HOME/app/xxx/mdf if xxx is
+the name of the project. A project specific menu file may #include any
+file from $VARKON_MDF, usually v318.MDF or v319.MDF. The names of these
+files will not be changed in the future.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

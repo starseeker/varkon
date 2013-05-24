@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>GMSIZE</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1999-02-11</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+GMSIZE</H3>
+System variable
+<BR>&nbsp;
+<P><B>Description</B>
+<P>GM is the place where VARKON keeps all entities created by different
+modules. GM is based on a demand page virtual memory handler that keeps
+the recently most used pages in a memory cache while the rest of the data
+is on disc. GMSIZE is the size of the cache area measured in 1Kb pages.
+Default value = 256 pages. GMSIZE can be increased (or decreased) by supplying
+the -gm parameter on the commandline when VARKON is started.
+<P>Example:
+<P>-gm1000
+<P>Sets GMSIZE = 1000 pages = 1Mb
+<P>There is no limitation in VARKON on the total size of GM. GM will expand
+on disc automatically (the RES-file) as it grows eventually untill the
+disc is full.
+<P><B>Comments</B>
+<P>If GM is larger than the cache pages of data will be swapped to disc
+automatically. In that case increasing GMSIZE sufficiently may increase
+the speed of operations like Zoom, Autozoom or Run Active Module.</UL>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

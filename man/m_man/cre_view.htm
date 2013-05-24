@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cre_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cre_view - <small><small>Procedure</small></small></h2>
+  <p>Creates a view<br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a new view either by a viewing position or by a coordinate system. This routine is
+  mainly intended for 3D views but can also be used to create multiple planar views in a 2D
+  job.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cre_view(name, pos/ref)<br>
+  <br>
+  </p>
+  <table width="657" border="0">
+<!-- Table 01 Row 01 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="572">name*15;</td>
+    </tr>
+<!-- Table 01 Row 02 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="572">pos;</td>
+    </tr>
+<!-- Table 01 Row 03 -->
+    <tr>
+      <td width="77">REF</td>
+      <td width="572">ref;</td>
+    </tr>
+  </table>
+  <p><br>
+  Only one of the parameters pos or ref should be used.<br>
+  <br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="657" border="0">
+<!-- Table 02 Row 01 -->
+    <tr>
+      <td width="68">name</td>
+      <td width="581">- The name of the view</td>
+    </tr>
+    <tr>
+      <td width="68">pos</td>
+      <td width="581">- If pos is given it is treated as the viewing position where a person
+      sits and looks into </td>
+    </tr>
+    <tr>
+      <td width="68"></td>
+      <td width="581">&nbsp;&nbsp; X=Y=Z=0 of the basic coordinate system.</td>
+    </tr>
+    <tr>
+      <td width="68">ref</td>
+      <td width="581">- If ref is given it is treated as the identity of a coordinate system
+      whose Z-axis should be</td>
+    </tr>
+    <tr>
+      <td width="68"></td>
+      <td width="581">&nbsp;&nbsp; used as the new viewing direction. In this case the view is
+      rotated around Z so that X</td>
+    </tr>
+    <tr>
+      <td width="68"></td>
+      <td width="581">&nbsp;&nbsp; becomes parallel with the X-axis of the screen (horisontal).</td>
+    </tr>
+  </table>
+  <p><br>
+  &nbsp;&nbsp;&nbsp; <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 03 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  cre_view(&quot;iso&quot;,vec(1,1,1));<br>
+  <br>
+  Creates an iso-view by the use of a position.<br>
+  <br>
+  cre_view(&quot;top&quot;, #5);<br>
+  <br>
+  Creates a view named &quot;top&quot; along the Z-axis of #5.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  cre_view() automatically gives the new view the same scale factor and pan-status as the
+  currently active view. In order to display the model properly in the new view the scale
+  and center must also be set after the view is activated. An easier way is to use
+  rep_view(1) which will perform an autozoom.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

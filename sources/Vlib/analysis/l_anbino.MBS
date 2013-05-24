@@ -1,0 +1,58 @@
+!*******************************************************
+
+ macro module l_anbino(REF   id >"@t12 t268";
+                       FLOAT  u >"t208");
+
+!*      Analyserar en storhets bi-normal.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               anlyseras. t268 = "Ange storhet"
+!*          u  = Var på storheten. t208 = "Ange parametervärde"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 15/11/91 J. Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    typ,nref,blnk,niv,pen;
+   REF    gid(3);
+   VECTOR t,n,b;
+
+ beginmodule
+
+!*
+!***Ta reda på vilken typ av storhet det {r.
+!*
+   gethdr(global_ref(id,1),typ,nref,blnk,niv,pen,gid);
+!*
+!***Beräkna binormalen.
+!*
+   n:=vecn(centre(id,u)-on(id,u));
+   t:=tang(id,u);
+   b:=vprod(t,n);
+!*
+!***Utskrift.
+!*
+   lst_ini(get_tstr(1516));                     ! t1516 = "ANALYS - Binormal"
+
+   if typ = 4 then
+     lst_lin(get_tstr(1514) + get_tstr(127));   ! Storhet     : Cirkel
+   else
+     lst_lin(get_tstr(1514) + get_tstr(139));   ! Storhet     : Kurva
+   endif;
+
+   lst_lin(get_tstr(1515)+str(u,-1,6));         ! Parametervärde
+
+   lst_lin("");
+   lst_lin(get_tstr(1507)+str(b.x,-1,14));       ! X-komponent
+   lst_lin(get_tstr(1508)+str(b.y,-1,14));       ! Y-komponent
+   lst_lin(get_tstr(1509)+str(b.z,-1,14));       ! Z-komponent
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

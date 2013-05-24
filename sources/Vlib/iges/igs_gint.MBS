@@ -1,0 +1,50 @@
+!*******************************************************
+
+ MACRO MODULE igs_gint(
+   VAR FILE   infil;
+   VAR STRING rad*80;
+   VAR INT    i;
+   VAR INT    status);
+
+!*      Läser och avlägsnar nästa heltal från
+!*      aktuell rad. Om raden är slut läses ny rad. 
+!*
+!*      In: infil  = Fil att läsa från.
+!*          rad    = Rad att läsa ifrån.
+!*
+!*      Ut: i      = Det lästa talet.
+!*          status = 0 => Ok
+!*                  -1 => Fel
+!*
+!*      (C)microform ab 1997-12-23 J. Kjellander
+!*
+!*******************************************************
+
+   INT p;
+
+ BEGINMODULE
+
+!*
+!***Sök upp slutet på nästa fält. Om inga mer fält
+!***finns i raden läser vi nästa rad.
+!*
+   p:=finds(rad,",");
+
+   if p = 0 then
+     rad:=inlin(infil);
+     p:=finds(rad,",");
+   endif;
+
+   i:=round(val(substr(rad,1,p-1)));
+!*
+!***Korta av raden.
+!*
+   rad:=substr(rad,p+1);
+!*
+!***Slut.
+!*
+   status:=0;
+
+ ENDMODULE
+
+!*******************************************************

@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cre_icon </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cre_icon - <small><small>Function</small></small></h2>
+  <p>Create icon<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates an icon in a dialogue window. Icons without frames ( frame = 0 ) are regarded as
+  simple bitmaps. An icon with frame generates an event that will be catched if waited for
+  by the wait_win() routine when you click on it.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cre_icon(window, pos, frame, name, bcolor, icolor)<br>
+  <br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 10 Row 01 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="573">window;</td>
+    </tr>
+<!-- Table 10 Row 02 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="573">pos;</td>
+    </tr>
+<!-- Table 10 Row 03 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="573">frame;</td>
+    </tr>
+<!-- Table 10 Row 04 -->
+    <tr>
+      <td width="78">STRING</td>
+      <td width="573">name;</td>
+    </tr>
+<!-- Table 10 Row 05 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="573">bcolor;</td>
+    </tr>
+<!-- Table 10 Row 06 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="573">icolor;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 11 Row 01 -->
+    <tr>
+      <td width="68">window</td>
+      <td width="583">- Dialogue window identity</td>
+    </tr>
+<!-- Table 11 Row 02 -->
+    <tr>
+      <td width="68">pos</td>
+      <td width="583">- Upper left coordinates relative to the dialogue window</td>
+    </tr>
+<!-- Table 11 Row 03 -->
+    <tr>
+      <td width="68">frame</td>
+      <td width="583">- Frame width in pixels</td>
+    </tr>
+<!-- Table 11 Row 04 -->
+    <tr>
+      <td width="68">name</td>
+      <td width="583">- Name of bitmap file. A path may be included</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 12 Row 01 -->
+    <tr>
+      <td width="68">bcolor</td>
+      <td width="583">- Background colour (UNIX only, not used on Microsoft Windows)</td>
+    </tr>
+<!-- Table 12 Row 02 -->
+    <tr>
+      <td width="68">icolor</td>
+      <td width="583">- Icon colour (UNIX only, not used on Microsoft Windows)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  An INT holding the id of the icon created.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  Frame width can be zero or one but the UNIX version of VARKON also honours values greater
+  than one to create thicker frames if needed.<br>
+  <br>
+  The UNIX version of VARKON currently only supports monochrome bitmap files. Such files can
+  be created with the common UNIX &quot;bitmap&quot; program or various versions of
+  &quot;paint&quot;. Note that even if the bitmap is monochrome you can select other colours
+  than black and white for background and foreground.<br>
+  <br>
+  The Microsoft Windows implementation of VARKON supports *.BMP colour bitmaps and therefore
+  doesn't need or use parameters bcolor and icolor.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="dialindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

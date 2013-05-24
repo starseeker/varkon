@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>load_gm</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-04-03</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>load_pm - <FONT SIZE=+0>Procedure</FONT></H2>
+
+<P>Loads a module from disc<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Replaces the current active module with a module loaded from a file.
+The file to load must reside in the jobdirectory of the currently active
+project.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>load_pm(filename)<BR>
+<BR>
+STRING filename*132;<BR>
+<BR>
+<B>Principal parameters</B></P>
+
+<TABLE WIDTH="554" >
+<TR>
+<TD width="55">filename</TD>
+
+<TD width="491">- The name of the modulefile without &quot;.MBO&quot;.</TD>
+</TR>
+</TABLE>
+
+<P><B>Optional parameters</B></P>
+
+<TABLE WIDTH="95%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD>None.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<P><B>Comments</B></P>
+
+<P>load_pm() may only be used in a MACRO module. Any other usage might
+crash the system. The current version of mbsc (1.16) does not check this.</P>
+
+<P>The name of the file must end with the usual &quot;.MBO&quot; for a
+VARKON module and the file must reside in the current jobdirectory. VARKON
+automatically adds the path to the current jobdirectory to the name and
+appends &quot;.MBO&quot;.</P>
+
+<P>If the name of the module loaded is different from the current jobname,
+VARKON automatically changes the name of the loaded copy to that of the
+current job. Saving the job will always create a MBO-file with the same
+name as the current job. Note that this is different from the behaviour
+of load_gm().</P>
+
+<P>Use the run_mbs() procedure if yoy want to run the loaded module.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="gmdbindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

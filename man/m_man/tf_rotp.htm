@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>tform_rotp </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>tform_rotp - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a transformation<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a rotational transformation with optional scaling. This rotation is restricted to
+  the XY-plane of the active coordinate system with a specified position as center.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  tform_rotp(id, p, rot, sx, sy, sz:attributes);<br>
+  <br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 37 Row 01 -->
+    <tr>
+      <td width="77">REF</td>
+      <td width="485">id;</td>
+    </tr>
+<!-- Table 37 Row 02 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="485">p;</td>
+    </tr>
+<!-- Table 37 Row 03 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="485">rot;</td>
+    </tr>
+<!-- Table 37 Row 04 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="485">sx;</td>
+    </tr>
+<!-- Table 37 Row 05 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="485">sy;</td>
+    </tr>
+<!-- Table 37 Row 06 -->
+    <tr>
+      <td width="77">FLOAT </td>
+      <td width="485">sz;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 38 Row 01 -->
+    <tr>
+      <td width="68">id </td>
+      <td width="494">- Local identity</td>
+    </tr>
+<!-- Table 38 Row 02 -->
+    <tr>
+      <td width="68">p</td>
+      <td width="494">- Center of rotation and origin for optional scaling</td>
+    </tr>
+<!-- Table 38 Row 03 -->
+    <tr>
+      <td width="68">rot</td>
+      <td width="494">- Counterclockwise angle of rotation</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 39 Row 01 -->
+    <tr>
+      <td width="68">sx</td>
+      <td width="494">- Scalefactor in X-direction, default = 1</td>
+    </tr>
+<!-- Table 39 Row 02 -->
+    <tr>
+      <td width="68">sy</td>
+      <td width="494">- Scalefactor in Y-direction, default = sx</td>
+    </tr>
+<!-- Table 39 Row 03 -->
+    <tr>
+      <td width="68">sz</td>
+      <td width="494">- Scalefactor in Z-direction, default = sy</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 40 Row 01 -->
+    <tr>
+      <td width="68">PEN </td>
+      <td width="494">- Pen or colour number</td>
+    </tr>
+<!-- Table 40 Row 02 -->
+    <tr>
+      <td width="68">LEVEL</td>
+      <td width="494">- Level number</td>
+    </tr>
+<!-- Table 40 Row 03 -->
+    <tr>
+      <td width="68">BLANK</td>
+      <td width="494">- Visible(0) or invisible(1)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>tform_rotp(#1,vec(100,100),45);<br>
+  <br>
+  An anticlockwise rotation of 45 degrees in the XY-plane with X=Y=100 as centre.<br>
+  <br>
+  tform_rotp(#1,vec(100,100),-20,2.5);<br>
+  <br>
+  A clockwise rotation of 20 degrees around X=Y=100 and simultaneous scaling in X and Y and
+  Z with a factor of 2.5.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  In a 2D module scaling in the Z-direction has no meaning.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

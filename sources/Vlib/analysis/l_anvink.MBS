@@ -1,0 +1,57 @@
+!*******************************************************
+
+ macro module l_anvink(REF id1 > "@t2 t1527";
+                       REF id2 > "@t2 t1528");
+
+!*      Analyserar vinkeln mellan två linjer.
+!*
+!*      In: id1 = 1:a linjen. t1527 = "Ange 1:a linjen"
+!*          id2 = 2:a linjen. t1528 = "Ange 2:a linjen"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 1996-06-04 J.Kjellander
+!*
+!*******************************************************
+
+   INT    typ;
+   FLOAT  strlgd,v1,v2,dfi;
+   VECTOR l1p1,l1p2,l2p1,l2p2;
+
+ beginmodule
+
+   lst_ini(get_tstr(1529));    ! t1529 = "ANALYS  Vinklar"
+!*
+!***Kovertera till globala referenser.
+!*
+   id1:=global_ref(id1,1);
+   id2:=global_ref(id2,1);
+!*
+!***Hämta linjedata.
+!*
+   getlin(id1,typ,strlgd,l1p1,l1p2);
+   getlin(id2,typ,strlgd,l2p1,l2p2);
+!*
+!***Beräkna linjernas respektive vinkel mot BASIC-X.
+!*
+   v1:=angle(l1p2.x - l1p1.x,l1p2.y - l1p1.y);
+   v2:=angle(l2p2.x - l2p1.x,l2p2.y - l2p1.y);
+!*
+!***Beräkna minsta positiva vinkeln mellan linjerna.
+!*
+   dfi:=v2 - v1;
+   if dfi > 180.0 then dfi:=dfi-180.0; endif;
+   if dfi <   0.0 then dfi:=dfi+180.0; endif;
+!*
+!***Skriv ut vinklar.
+!*
+   lst_lin(get_tstr(1530) + str(v1,-1,14));
+   lst_lin(get_tstr(1531) + str(v2,-1,14));
+   lst_lin(get_tstr(1532) + str(dfi,-1,14));
+   lst_lin(get_tstr(1533) + str(180-dfi,-1,14));
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

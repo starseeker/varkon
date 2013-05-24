@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>hide_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>hide_view - <small><small>Procedure</small></small></h2>
+  <p>Removes hidden lines<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Redisplays a view with hidden lines removed and/or writes the image to a plotfile.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  hide_view(name, mode, file, origin)<br>
+  <br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 16 Row 01 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="580">name*15;</td>
+    </tr>
+<!-- Table 16 Row 02 -->
+    <tr>
+      <td width="77">INT</td>
+      <td width="580">mode;</td>
+    </tr>
+<!-- Table 16 Row 03 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="580">file*132;</td>
+    </tr>
+<!-- Table 16 Row 04 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="580">origin;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 17 Row 01 -->
+    <tr>
+      <td width="68">name</td>
+      <td width="589">- Name of view to process</td>
+    </tr>
+    <tr>
+      <td width="68">mode</td>
+      <td width="589">- 1 = Show on display</td>
+    </tr>
+    <tr>
+      <td width="68"></td>
+      <td width="589">&nbsp;&nbsp; 2 = Write to plotfile</td>
+    </tr>
+    <tr>
+      <td width="68"></td>
+      <td width="589">&nbsp;&nbsp; 3 = Both at the same time</td>
+    </tr>
+  </table>
+  <p>&nbsp;<br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 18 Row 01 -->
+    <tr>
+      <td width="68">file</td>
+      <td width="589">- Name of plotfile if mode = 2 or 3</td>
+    </tr>
+<!-- Table 18 Row 02 -->
+    <tr>
+      <td width="68">origin</td>
+      <td width="589">- A model coordinate to be used as the origin of the image in the plotfile</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments<br>
+  </b><br>
+  When used on the display (mode = 1 or 2) hide_view is only capable of displaying images in
+  the window with ID = 0 (the main window). <br>
+  <br>
+  A hidden line image is a &quot;view only&quot; image and can not be used for interactive
+  graphics the same way as the normal wireframe image.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

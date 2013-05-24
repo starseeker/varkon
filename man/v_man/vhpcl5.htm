@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>hp7475</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-11-12</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3><B>hpcl5</B></H3>
+
+<P>VARKON plotter driver<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>hpcl5 translates .PLT or .DXF format to the Hewlett Packard hpcl laserplotter
+format. hpcl5 reads from standard input and writes to standard output.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>hpcl5 -sS -wsL -xX -yY -vN -kK<BR>
+<BR>
+Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.<BR>
+<BR>
+<B>Options </B></P>
+</UL>
+
+<TABLE WIDTH="95%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD>
+<UL>
+<P>-sS</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Set scale to S. Float value, default = 1.0</P>
+</UL>
+</TD>
+</TR>
+
+
+
+<TR>
+<TD>
+<UL>-wsL</UL>
+</TD>
+
+<TD>
+<UL>- Set linewidthscale to L. Float value, default = S</UL>
+</TD>
+</TR>
+
+
+
+
+
+<TR>
+<TD>
+<UL>
+<P>-xX</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Set origin.x to X. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>
+<P>-yY</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Set origin.y to Y. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>
+<P>-vN</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Rotate n degrees. Float value, default = 0.0</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>
+<P>-kK</P>
+</UL>
+</TD>
+
+<TD>
+<UL>
+<P>- Set curve accuracy to K. Float value, default = 1.0</P>
+</UL>
+</TD>
+</TR>
+</TABLE>
+
+<UL>
+<P><B>Examples<BR>
+<BR>
+</B>hpcl &lt;plofile.PLT &gt;plotfile.HP -s0.5<BR>
+<BR>
+Scales the image in plotfile.PLT to half size and writes the result to
+a new file named &quot;plotfile.HP&quot; using the hpcl format.<BR>
+<BR>
+hpcl5 &lt;plofile.PLT -s0.5 | lp<BR>
+<BR>
+Same as above but the result is sent to a spooled plotter.<BR>
+<BR>
+hpcl5 &lt;plofile.PLT -s0.5 &gt;/dev/tty2<BR>
+<BR>
+Same as above but result sent directly to a serial port.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>hpcl5 automatically recognizes if the input is in .PLT or DXF format.
+The -k option only applies to DXF format.</P>
+
+<P>hpcl5 does not support color.</P>
+
+<P>Lines of variable width are supported through the WIDTH attribute. Penfiles
+are still supported but may not be in future releases. hpcl5 reads &quot;$VARKON_PLT/hpcl5.PEN&quot;
+when invoked to establish what dotsize (linewidth) the hardware uses. If
+this file is missing an errormessage is reported and no output is produced.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

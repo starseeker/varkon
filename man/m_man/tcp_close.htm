@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>tcp_close</TITLE>
+<style type="text/css">
+<!--
+p.h{font-weight: bold; line-height: 21pt}
+-->
+</style>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+<p>
+<CENTER><FONT SIZE=-1>VARKON Version 1.17D 2003-03-25</FONT></CENTER>
+</p>
+<HR width="100%" align="center">
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD width="35">
+&nbsp;<BR>
+</TD>
+<TD>
+<H2>
+tcp_close - <FONT SIZE=+0>function</FONT></H2>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD><p class=h>Description</P> 
+</TD></TR><TR><TD>Closes a socket connection formerly established with TCP_connect or TCP_listen.
+</TD></TR></TABLE>&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD><p class=h>Syntax</P> 
+</TD></TR><TR><TD>tcp_close(socket);</TD></TR></TABLE>
+&nbsp;<BR>
+<TABLE BORDER=0 WIDTH="640">
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">socket</TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD colspan=2>
+<p class=h>Principal parameters</P> 
+</TD></TR>
+<TR>
+<TD WIDTH="80" valign="top">socket</TD>
+<TD WIDTH="580" valign="top">- id of the connection to close.</TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD colspan=2>
+<p class=h>Optional parameters</P> 
+</TD></TR>
+<TR><TD colspan=2>none</TR></TD>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>Return value</TD></TR>
+<TR><TD>
+An INT value equal to the current error status as below:
+</TD></TR>
+</TABLE>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD align="right" valign="top" width="40">
+0 =
+</TD width="610">
+<TD>
+Operation was successful.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-2 =
+</TD width="610">
+<TD>
+The descriptor is not a socket or the socket is not connected.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-3  =
+</TD width="610">
+<TD>
+The network subsystem or the associated service provider has failed. 
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-17 =
+</TD width="610">
+<TD>
+Winsock routine closesocket() failed.
+</TD></TR>
+</TABLE>
+&nbsp;<BR>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>See also</P>
+</TD></TR>
+<TR><TD>
+<A HREF="tcp_connect.htm">tcp_connect()</A> &nbsp; &nbsp;
+<A HREF="tcp_listen.htm">tcp_listen()</A> &nbsp; &nbsp;
+<A HREF="tcp_outint.htm">tcp_outint()</A> &nbsp; &nbsp;
+<A HREF="tcp_inint.htm">tcp_inint()</A> &nbsp; &nbsp;
+<A HREF="tcp_outfloat.htm">tcp_outfloat()</A> &nbsp; &nbsp;
+<A HREF="tcp_infloat.htm">tcp_infloat()</A> &nbsp; &nbsp;
+<A HREF="tcp_outvec.htm">tcp_outvec()</A> &nbsp; &nbsp;
+<A HREF="tcp_invec.htm">tcp_invec()</A> &nbsp; &nbsp;
+<A HREF="tcp_getlocal.htm">tcp_getlocal()</A> &nbsp; &nbsp;
+<A HREF="tcp_getremote.htm">tcp_getremote()</A> &nbsp; &nbsp;
+</TABLE>
+</TD>
+<TD width="35">
+&nbsp;<BR>
+</TD>
+</TR>
+</TABLE>
+<HR width="100%" align="center">
+<CENTER>
+<TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+<TD><A HREF="tcpindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+</BODY>
+</HTML>

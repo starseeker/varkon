@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>part </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>part - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a part <br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a part by passing parameters to and execute a named module. If the module has the
+  LOCAL-attribute the identity of a local coordinate system must also be supplied. <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  part(id, name(parameters),csys:attributes);<br>
+  <br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 09 Row 01 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="491">id;</td>
+    </tr>
+<!-- Table 09 Row 02 -->
+    <tr>
+      <td width="71">STRING</td>
+      <td width="491">name;</td>
+    </tr>
+<!-- Table 09 Row 03 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="491">csys;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 10 Row 01 -->
+    <tr>
+      <td width="62">id </td>
+      <td width="500">- Local identity</td>
+    </tr>
+<!-- Table 10 Row 02 -->
+    <tr>
+      <td width="62">name</td>
+      <td width="500">- Name of module</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 11 Row 01 -->
+    <tr>
+      <td width="62">csys</td>
+      <td width="500">- Identity of coordinate system. Not used for a GLOBAL or BASIC module</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 12 Row 01 -->
+    <tr>
+      <td>All VARKON's attributes can be assigned to a part. </td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  part(#2,rectangle(on(#1)+vec(10,10),b+1,10):LFONT=1);<br>
+  <br>
+  Creates a part with name &quot;rectangle&quot; by calling the module &quot;rectangle&quot;
+  supplying one VECTOR parameter and two FLOAT parameters as input. When execution starts
+  the active value of LFONT will be equal to 1.<br>
+  <br>
+  part(#2,hole(r),#1);<br>
+  <br>
+  Creates a part by calling a module named &quot;hole&quot; with one parameter, r. Being a
+  LOCAL module &quot;hole&quot; is also passed the identity of a local coordinate system,
+  #1.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The syntax of the part procedure requiers that name is a literal string. The name of the
+  module can not be a variable or expression to evaluated at runtime. A slightly different
+  syntax should be used for this purpose.<br>
+  <br>
+  The number of parameters supplied in the call to the module must match the number of
+  parameters defined in the module itself and all parameters must be type-compatible.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

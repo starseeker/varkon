@@ -1,0 +1,174 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.2.5-15 i686) [Netscape]">
+   <title>cur_usrdef </title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.17 1999-10-21</font></center>
+
+<p>
+<hr width="100%" align="center">
+<blockquote>
+<h2>
+cur_usrdef - <font size=+0>Geometric procedure</font></h2>
+Creates a curve
+<br>&nbsp;
+<p><b>Description</b>
+<p>Low level routine to create a rational or non rational cubic parametric
+curve by specifying the polynomial coefficients for all segments. Each
+segment is defined by 16 values orderd in a 4 by 4 matrix. By specifying
+an optional surface-id the curve becomes an UV-curve, ie. a curve on the
+surface (in the UV-plane of the surface). The four basic polynomials for
+a rational segment are:
+<p>x(t) = c0x + c1x*t + c2x*t*t + c3x*t*t*t
+<br>y(t) = c0y + c1y*t + c2y*t*t + c3y*t*t*t
+<br>z(t) = c0z + c1z*t + c2z*t*t + c3z*t*t*t
+<br>w(t) = c0w + c1w*t + c2w*t*t + c3w*t*t*t
+<p>For a given segment i the order of the coefficients in segdat should
+be:
+<p>segdat(i,1,1) = c0x segdat(i,2,1) = c1x segdat(i,3,1) = c2x segdat(i,4,1)
+= c3x
+<br>segdat(i,1,2) = c0y segdat(i,2,2) = c1y segdat(i,3,2) = c2y segdat(i,4,2)
+= c3y
+<br>segdat(i,1,3) = c0z segdat(i,2,3) = c1z segdat(i,3,3) = c2z segdat(i,4,3)
+= c3z
+<br>segdat(i,1,4) = c0w segdat(i,2,4) = c1w segdat(i,3,4) = c2w segdat(i,4,4)
+= c3w
+<p><b>Syntax</b>
+<p>cur_usrdef(id, nseg, segdat, sur_id:attributes);
+<br>&nbsp;
+<br>&nbsp;
+<table WIDTH="556" >
+<caption>&nbsp;</caption>
+
+<tr>
+<td WIDTH="65">REF</td>
+
+<td WIDTH="483">id;</td>
+</tr>
+
+<tr>
+<td WIDTH="65">INT</td>
+
+<td WIDTH="483">nseg;</td>
+</tr>
+
+<tr>
+<td WIDTH="65">FLOAT</td>
+
+<td WIDTH="483">segdat(nseg,4,4);</td>
+</tr>
+
+<tr>
+<td>REF</td>
+
+<td>sur_id;</td>
+</tr>
+</table>
+
+<p><b>Principal parameters</b>
+<br>&nbsp;
+<br>&nbsp;
+<table WIDTH="556" >
+<caption>&nbsp;</caption>
+
+<tr>
+<td WIDTH="56">id&nbsp;</td>
+
+<td WIDTH="492">- Local identity</td>
+</tr>
+
+<tr>
+<td WIDTH="56">nseg</td>
+
+<td WIDTH="492">- Number of segments</td>
+</tr>
+
+<tr>
+<td WIDTH="56">segdat</td>
+
+<td WIDTH="492">- Segment coefficients</td>
+</tr>
+</table>
+
+<p><b>Optional parameters</b>
+<br>&nbsp;
+<br>&nbsp;
+<table WIDTH="95%" >
+<caption>&nbsp;</caption>
+
+<tr>
+<td WIDTH="56">sur_id</td>
+
+<td WIDTH="492">- Identity of a surface</td>
+</tr>
+</table>
+
+<p><b>Attributes</b>
+<br>&nbsp;
+<br>&nbsp;
+<table WIDTH="556" >
+<caption>&nbsp;</caption>
+
+<tr>
+<td WIDTH="67">PEN&nbsp;</td>
+
+<td WIDTH="481">- Pen or colour number</td>
+</tr>
+
+<tr>
+<td WIDTH="67">LEVEL</td>
+
+<td WIDTH="481">- Level number</td>
+</tr>
+
+<tr>
+<td WIDTH="67">BLANK</td>
+
+<td WIDTH="481">- Visible(0) or invisible(1)</td>
+</tr>
+
+<tr>
+<td WIDTH="67">CFONT</td>
+
+<td WIDTH="481">- Solid(0), dashed(1) or centerline(2)</td>
+</tr>
+
+<tr>
+<td WIDTH="67">CDASHL</td>
+
+<td WIDTH="481">- Dashlength</td>
+</tr>
+
+<tr>
+<td WIDTH="70">WIDTH</td>
+
+<td WIDTH="554">- Linewidth</td>
+</tr>
+</table>
+
+<p><b>Comments</b>
+<p>If a non rational segment is wanted c0w should be set to 1.0 and c1w,c2w,c3w
+to 0.0.
+<p>If a curve on a surface is wanted ( a UV-curve) use the optional parameter
+sur_id to specify the identity of the surface.</blockquote>
+
+<hr width="100%" align="center">
+<center>
+
+
+
+<br>&nbsp;
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm">VARKON Homepage</a></td>
+
+<td><a href="entiindx.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

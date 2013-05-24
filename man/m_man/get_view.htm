@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>get_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>get_view - <small><small>Procedure</small></small></h2>
+  <p>Returns view data<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Returns information about the view currently active in a certain window.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  get_view(window, name, scale, xmin, ymin, xmax, ymax, tform, dist)<br>
+  <br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 04 Row 01 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="586">window;</td>
+    </tr>
+<!-- Table 04 Row 02 -->
+    <tr>
+      <td width="71">STRING</td>
+      <td width="586">name*15;</td>
+    </tr>
+<!-- Table 04 Row 03 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="586">scale;</td>
+    </tr>
+<!-- Table 04 Row 04 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="586">xmin;</td>
+    </tr>
+<!-- Table 04 Row 05 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="586">ymin;</td>
+    </tr>
+<!-- Table 04 Row 06 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="586">xmax;</td>
+    </tr>
+<!-- Table 04 Row 07 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="586">ymax;</td>
+    </tr>
+<!-- Table 04 Row 08 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="586">tform(4,4);</td>
+    </tr>
+<!-- Table 04 Row 09 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="586">dist;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 05 Row 01 -->
+    <tr>
+      <td width="62">window</td>
+      <td width="595">- The window containing the view to read. The main window is always window
+      0.</td>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      <td width="62">name</td>
+      <td width="595">- View name</td>
+    </tr>
+<!-- Table 05 Row 03 -->
+    <tr>
+      <td width="62">scale</td>
+      <td width="595">- Current scale</td>
+    </tr>
+<!-- Table 05 Row 04 -->
+    <tr>
+      <td width="62">xmin</td>
+      <td width="595">- Left extent</td>
+    </tr>
+<!-- Table 05 Row 05 -->
+    <tr>
+      <td width="62">ymin</td>
+      <td width="595">- Lower extent</td>
+    </tr>
+<!-- Table 05 Row 06 -->
+    <tr>
+      <td width="62">xmax</td>
+      <td width="595">- Right extent</td>
+    </tr>
+<!-- Table 05 Row 07 -->
+    <tr>
+      <td width="62">ymax</td>
+      <td width="595">- Upper extent</td>
+    </tr>
+<!-- Table 05 Row 08 -->
+    <tr>
+      <td width="62">tform</td>
+      <td width="595">- A 4X4 transformation matrix</td>
+    </tr>
+<!-- Table 05 Row 09 -->
+    <tr>
+      <td width="62">dist</td>
+      <td width="595">- Perspective distance. 0 = Parallell projection</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

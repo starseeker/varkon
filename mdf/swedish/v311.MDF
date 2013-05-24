@@ -1,0 +1,7 @@
+
+! För Varkon med vt100 som terminal
+! 
+#include "$VARKON_MDF/vt100.INC"
+#include "$VARKON_MDF/texter.INC"
+#include "$VARKON_MDF/menyer.INC"
+#include "$VARKON_MDF/plott.INC"

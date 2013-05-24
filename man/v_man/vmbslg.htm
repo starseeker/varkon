@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>The MBS language</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>The MBS language</H3>
+
+<P>MBS is based on a general purpose programming language with syntax
+ reminding of PASCAL. An executing unit is called a MODULE in MBS. 
+This is conceptually the same as a program, subroutine or procedure
+ in other languages. MBS is a general purpose programming language but
+ at the same time also a generic (parametric) language for Design and Product
+ Modeling. To give you a first idea of what MBS looks like here's 
+a simple example....
+</UL>
+
+<PRE>
+          MACRO MODULE count_lines(STRING filename*80 &gt;&quot;Enter name of file !&quot;);
+
+          STRING line*132;
+          FILE   f;
+          INT    count;
+
+          BEGINMODULE
+
+          !*
+          !***Open the file for read access.
+          !*
+             open(f,&quot;R&quot;,filename); 
+          !*
+          !***Loop and read lines until end of file.
+          !*
+             count:=0;
+             loop:
+             line:=inlin(f);
+          !*
+          !***If a line was read increase counter and loop again.
+          !*
+             IF iostat(f) = 0 THEN
+             count:=count + 1;
+             GOTO loop;
+          !*
+          !***If no line was read there are no more lines to read. Close the file and
+          !***display the result in a VARKON listwindow.
+          !*
+             ELSE
+             close(f);
+             lst_ini(&quot;Result of linecount for file =&quot;+filename);
+             lst_lin(&quot;Count=&quot;+str(count));
+             lst_exi();
+             ENDIF;
+
+          ENDMODULE
+</PRE>
+
+<UL>
+</B>This module counts the number of lines in a file and displays the result in a window. As you see from the first line a module is always declared with type, name and optional parameters. If called by another module the calling module would have to provide a filename but if called interactively (by a human) the module would halt and prompt for a filename before continuing.</PRE>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

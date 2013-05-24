@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>arc_3pos</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>arc_3pos -<small><small> Geometric</small></small> </h2>
+  <p>Creates an arc<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a circular arc defined by three positions. The arc starts in the first position
+  and turns anticlockwise through the second position and ends in the third position.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  arc_3pos(id, p1, p2 ,p3:attributes);<br>
+  <br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 33 Row 01 -->
+    <tr>
+      <td width="92">REF</td>
+      <td width="552">id;</td>
+    </tr>
+<!-- Table 33 Row 02 -->
+    <tr>
+      <td width="92">VECTOR </td>
+      <td width="552">p1;</td>
+    </tr>
+<!-- Table 33 Row 03 -->
+    <tr>
+      <td width="92">VECTOR</td>
+      <td width="552">p2;</td>
+    </tr>
+<!-- Table 33 Row 04 -->
+    <tr>
+      <td width="92">VECTOR</td>
+      <td width="552">p3;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 34 Row 01 -->
+    <tr>
+      <td width="80">id </td>
+      <td width="564">- Local identity</td>
+    </tr>
+<!-- Table 34 Row 02 -->
+    <tr>
+      <td width="80">p1</td>
+      <td width="564">- Start position</td>
+    </tr>
+<!-- Table 34 Row 03 -->
+    <tr>
+      <td width="80">p2</td>
+      <td width="564">- Mid position</td>
+    </tr>
+<!-- Table 34 Row 04 -->
+    <tr>
+      <td width="80">p3 </td>
+      <td width="564">- End position</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 35 Row 01 -->
+    <tr>
+      <td width="78">None.</td>
+      <td width="566"></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 36 Row 01 -->
+    <tr>
+      <td width="80">PEN </td>
+      <td width="564">- Pen or colour number</td>
+    </tr>
+<!-- Table 36 Row 02 -->
+    <tr>
+      <td width="80">LEVEL</td>
+      <td width="564">- Level number</td>
+    </tr>
+<!-- Table 36 Row 03 -->
+    <tr>
+      <td width="80">BLANK</td>
+      <td width="564">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 36 Row 04 -->
+    <tr>
+      <td width="80">AFONT</td>
+      <td width="564">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 36 Row 05 -->
+    <tr>
+      <td width="80">ADASHL</td>
+      <td width="564">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="72">WIDTH</td>
+      <td width="572">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments<br>
+  </b><br>
+  In a 3D module the resulting arc is restricted to the XY-plane of the active coordinate
+  system. If any of the input positions are not in this plane they will be projected along
+  the Z-axis onto the XY-plane before being used to create the arc. p1, p2 and p3 must not
+  be identical or colinear.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

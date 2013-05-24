@@ -1,0 +1,74 @@
+!*******************************************************
+
+ MACRO MODULE p_chgppa(VAR STRING param*132);
+
+!*      Ändarar parametrar för plottrar.
+!*
+!*       (C)microform ab 4/2/90 R. Svedin
+!*
+!*       1996-06-07 Engelska, J.Kjellander
+!*       1997-01-07 setpar(), J.Kjellander
+!*
+!*******************************************************
+
+ STRING alt*3,s1*1,f*3,d*2,pf*3,s2*80;
+ FLOAT  s,v,x,y,c,h,w;
+ INT    i,p,l;
+
+ BEGINMODULE
+!*
+!***Ta fram plott parametrar.
+!*
+   part(#1,p_getpar(param,s,v,x,y,c,h,p,w,l,f,d,pf,0):SAVE=0);
+!*
+!***Välj.
+!*
+   psh_men(136);
+
+loop:
+   alt:=get_alt("");
+!*
+!***Återställ alla parametrar till defaultvärden.
+!*
+   if   alt = "a1" then
+     s:=1.0; x:=0.0; y:=0.0; v:=0.0;
+!*
+!***Visa Aktuella värden.
+!*
+   elif alt = "a2" then 
+     s1:=inpmt("s="+str(s,1,3)+" v="+str(v,1,3)+
+               " X="+str(x,1,3)+" Y="+str(y,1,3),"");
+!*
+!***Skala.
+!*
+   elif alt = "a3" then
+     s:=val(inpmt(get_tstr(338),str(s,-1,3)));   ! Plottskala :
+!*
+!***Vridning.
+!*
+   elif alt = "a4" then
+     v:=val(inpmt(get_tstr(336),str(v,-1,3)));   ! Vridning
+!*
+!***X-min.
+!*
+   elif alt = "a5" then
+     x:=val(inpmt(get_tstr(339),str(x,-1,3)));   ! Origo X
+!*
+!***Y-min.
+!*
+   elif alt = "a6" then
+     y:=val(inpmt(get_tstr(341),str(y,-1,3)));    ! Origo Y
+!*
+!***Slut.
+!*
+   elif alt = "" then
+     part(#2,p_setpar(param,s,v,x,y):SAVE=0);
+     pop_men();
+     exit();
+   endif;
+
+   goto loop;
+
+ ENDMODULE
+   
+!*******************************************************

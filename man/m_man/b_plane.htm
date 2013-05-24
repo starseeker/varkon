@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>b_plane </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>b_plane -<small><small> Geometric procedure</small></small></h2>
+  <p>Creates a bounded plane<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a plane surface bounded by three or four straight lines. An order set of corner
+  positions are used to define the boundary. B_planes can be used to create faceted images
+  with hidden lines automatically removed. Viewed from its positiv side (the side where the
+  normal points) a b_plane will hide everything behind it. Viewed from its negative side a
+  b_plane does not hide other entities.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  b_plane(id, p1, p2, p3, p4:attributes);<br>
+  <br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 04 Row 01 -->
+    <tr>
+      <td width="80">REF</td>
+      <td width="640">id;</td>
+    </tr>
+<!-- Table 04 Row 02 -->
+    <tr>
+      <td width="80">VECTOR</td>
+      <td width="640">p1;</td>
+    </tr>
+<!-- Table 04 Row 03 -->
+    <tr>
+      <td width="80">VECTOR</td>
+      <td width="640">p2;</td>
+    </tr>
+<!-- Table 04 Row 04 -->
+    <tr>
+      <td width="80">VECTOR</td>
+      <td width="640">p3:</td>
+    </tr>
+<!-- Table 04 Row 05 -->
+    <tr>
+      <td width="80">VECTOR</td>
+      <td width="640">p4;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="728" border="0" height="126">
+<!-- Table 05 Row 01 -->
+    <tr>
+      <td height="21" width="69">id </td>
+      <td height="21" width="651">- Local identity</td>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      <td height="22" width="69">p1</td>
+      <td height="22" width="651">- First corner</td>
+    </tr>
+<!-- Table 05 Row 03 -->
+    <tr>
+      <td height="21" width="69">p2</td>
+      <td height="21" width="651">- Second corner, may be set equal to p3</td>
+    </tr>
+<!-- Table 05 Row 04 -->
+    <tr>
+      <td height="21" width="69">p3</td>
+      <td height="21" width="651">- Third corner, may be set equal to p2</td>
+    </tr>
+<!-- Table 05 Row 05 -->
+    <tr>
+      <td height="21" width="69">p4</td>
+      <td height="21" width="651">- Fourth corner</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td width="69">None.</td>
+      <td width="651"></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 07 Row 01 -->
+    <tr>
+      <td width="69">PEN </td>
+      <td width="651">- Pen or colour number</td>
+    </tr>
+<!-- Table 07 Row 02 -->
+    <tr>
+      <td width="69">LEVEL</td>
+      <td width="651">- Level number</td>
+    </tr>
+<!-- Table 07 Row 03 -->
+    <tr>
+      <td width="69">BLANK</td>
+      <td width="651">- Visible(0) or invisible(1)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  b_plane(#1,vec(0,0,0),vec(100,0,0),vec(100,50,0),vec(0,50,0));<br>
+  <br>
+  Creates a four sided B-plane 100 by 50 units in size located in the XY-plane of the active
+  coordinate system. The normal points in the same direction as the positive Z-axis of the
+  active coordinate system.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  Starting in p1 moving on to p2, p3 and p4 in that order must define a convex polygon. All
+  corners must be in the same (untwisted) plane. If p2 is set equal to p3 a triangular plane
+  is created otherwise the plane will be bounded by four lines. The normal direction of the
+  plane is defined by the side where traveling from p1 to p4 will form an anticlockwise
+  rotation.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

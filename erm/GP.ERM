@@ -1,0 +1,20 @@
+
+VARKON Error messages for GRAPAC.
+(C) Microform AB 1996
+
+001  2  Displayfile full
+002  3  Weight < WTOL
+003  2  Can't find object in displayfile
+004  3  System error while creating GKS Metafile
+005  3  "%s" is an unknown devicetype
+006  4  Can't open CGI, status = "%s"
+007  2  Max number of memory blocks exeeded for plane data
+008  2  Can't malloc for plane data
+009  2  Can't malloc for plane pointers
+010  2  Can't malloc for split parts
+011  2  Can't malloc for displayfile
+012  2  Can't malloc for x,y,z or a
+
+
+201  2  Can't malloc for text font
+202  2  Illegal value for TPMODE

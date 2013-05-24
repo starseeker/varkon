@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>f23 3D line</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>f23 Create 3D offset line</H3>
+
+<P><B>Description<BR>
+<BR>
+</B>Creates a line parallell to another line at a given distance. If the
+old line is picked with the cursor on its left side the new line will be
+created on the left side. With the cursor on the right side of the line
+the new line will be created on the right side.<BR>
+<BR>
+The new line will always be created in the XY-plane of the currently active
+coordinate system. If the old line is not in the XY-plane of the currently
+active coordinate system the old line will first be projected onto the
+XY-plane. The new line will then be created at the specified distance from
+the projected copy of the old line.<BR>
+<BR>
+<B>Available in<BR>
+<BR>
+</B>3D.<BR>
+<BR>
+<B>MBS Correspondence<BR>
+<BR>
+</B>lin_offs(id, ref, distance);<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>The new line gets the same sense of direction as the old line.<BR>
+<BR>
+It is not an error to specify a zero distance. This can be used to &quot;copy&quot;
+a line from one coordinate system to another.<BR>
+</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vbiindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

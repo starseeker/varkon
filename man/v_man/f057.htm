@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>f57 3D circular arc with two positions</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>f57 Create 3D circular arc with two positions</H3>
+
+<P><B>Description<BR>
+<BR>
+</B>Creates a circular arc specified by pos1, pos2 and radius. A positive
+value for radius gives the shorter of the two possible arcs and a negative
+value for radius gives the longer arc. In any case the arc turns in counter
+clockwise direction from pos1 to pos2 with a parametrisation of t=0 in
+pos1 and t=1 in pos2.<BR>
+<BR>
+The resulting 3D arc is always placed in the XY-plane of the active coordinate
+system. If pos1 and/or pos2 are not in this plane (pos1.z &lt;&gt; 0 and/or
+pos2.z &lt;&gt;0) they will automatically be projected to Z=0 before the
+arc is created.<BR>
+<BR>
+<B>Available in<BR>
+<BR>
+</B>3D.<BR>
+<BR>
+<B>MBS Correspondence<BR>
+<BR>
+</B>arc_2pos(id, pos1, pos2, radius);<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If the distance between pos1 and pos2 is more than 2 times the radius
+a circle can not be defined.<BR>
+</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vbiindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

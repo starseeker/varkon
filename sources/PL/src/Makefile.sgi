@@ -1,0 +1,24 @@
+##########################################################
+#
+#   Makefile for PL on SGI workstations
+#
+#  (C)Microform AB 1999-11-04 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = cc
+
+CFLAGS =                    \
+         -mips1             \
+         -signed            \
+         -O                 \
+         -DUNIX             \
+         -DWRK_STAT
+
+COMPILE = $(CC) $(CFLAGS)
+
+include Makefile.PL
+
+##########################################################

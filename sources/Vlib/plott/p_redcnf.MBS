@@ -1,0 +1,105 @@
+!*******************************************************
+
+ macro module p_redcnf(
+ STRING     alt*3;
+ VAR STRING plp(5)*132);
+
+!*      Läser in config filen.
+!*
+!*      In:  alt  = Vald plotter och filnamn till conf.filen.
+!*
+!*      Ut:  plp(1) = Plotterprogram.
+!*           plp(2) = Path till porten.
+!*           plp(3) = Fil att plotta.
+!*           plp(4) = Parametrar.
+!*           plp(5) = Parametern pf = Pennfil.
+!*
+!*      (C)microform ab 4/2/91 R. Svedin
+!*
+!*      1996-01-30 get_environment(), J.Kjellander
+!*      1996-06-07 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ STRING s1*132;
+ INT    i,n;
+ FILE   cf;
+
+ beginmodule
+
+   open(cf,"R",get_environment("VARKON_PLT")+"/"+alt);
+   if iostat(cf) <> 0 then
+     exit("Can't find config file = "+alt);
+   endif;
+   i:=1; n:=4;
+
+LOOP:
+   s1:=inlin(cf);
+!*
+!***Kolla att nödvändiga parametrar är inlästa.
+!*
+   if iostat(cf) <> 0 then 
+     close(cf);
+     if   plp(1) = "" then
+       exit("Syntax error on row 1 in config file = "+alt);
+     elif plp(2) = "" then
+       exit("Syntax error on row 2 in config file = "+alt);
+     elif plp(3) = "" then
+       exit("Syntax error on row 3 in config file = "+alt);
+     elif plp(4) <> "" and finds(plp(4),"-") = 0 then
+       exit("Syntax error on row 4 in config file = "+alt);
+     elif finds(plp(4),"-pf") > 0 and plp(5) = "" then
+       exit("Syntax error on row 5 in config file = "+alt);
+     endif;
+!*
+!***Fixa par. -pf och sträng till pennfilen.
+!*
+     if finds(plp(4),"-pf") > 0 then
+       s1:=substr(plp(4),1,finds(plp(4),"-pf")-1);
+       if finds(plp(4),"-pf ") > 0 then
+         s1:=s1+substr(plp(4),finds(plp(4),"-pf")+4);
+       else
+         s1:=s1+substr(plp(4),finds(plp(4),"-pf")+3);
+       endif;
+
+       if s1 = "-pf" then
+         plp(4):=" "+s1;
+       elif substr(s1,length(s1),1) = " " then
+         plp(4):=s1+"-pf";
+       else
+         plp(4):=s1+" -pf";
+       endif;
+PFIL:
+       if finds(plp(5)," ") = 1 then
+         plp(5):=substr(plp(5),2);
+         goto PFIL;
+       endif;
+     endif;
+   else
+!*
+!***Kommentar-rad.
+!*
+     if finds(s1,"!") = 1 or s1 = "" then
+       goto LOOP;
+!*
+!***Uppdatera vektorn och läs in nästa rad.
+!*
+     else
+       if i < 4 then
+         plp(i):=s1;
+         i:=i+1;
+       else
+         if finds(s1,"-pf") > 0 then n:=n+1; endif;
+         if i > n then
+           exit("Too many rows in config file = "+alt);
+         endif;
+         plp(i):=s1;
+         i:=i+1;
+       endif;
+       goto LOOP;
+     endif; 
+   endif;
+
+ endmodule
+   
+!*******************************************************

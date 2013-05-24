@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>getprt </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>getprt - <small><small>Procedure</small></small></h2>
+  <p>Get part from GM<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads part data from GM.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  getprt(id, name, type, attribute, csys_id, npar, nmem, mem_id)<br>
+  <br>
+  </p>
+  <table width="630" border="0">
+<!-- Table 13 Row 01 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="550">id;</td>
+    </tr>
+<!-- Table 13 Row 02 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="550">name*10;</td>
+    </tr>
+<!-- Table 13 Row 03 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="550">type;</td>
+    </tr>
+<!-- Table 13 Row 04 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="550">attribute;</td>
+    </tr>
+<!-- Table 13 Row 05 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="550">csys_id;</td>
+    </tr>
+<!-- Table 13 Row 06 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="550">npar;</td>
+    </tr>
+<!-- Table 13 Row 07 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="550">nmem;</td>
+    </tr>
+<!-- Table 13 Row 08 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="550">mem_id(nmem);</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="630" border="0">
+<!-- Table 14 Row 01 -->
+    <tr>
+      <td width="62">id</td>
+      <td width="560">- Global identity of a part</td>
+    </tr>
+<!-- Table 14 Row 02 -->
+    <tr>
+      <td width="62">name</td>
+      <td width="560">- Name of part</td>
+    </tr>
+<!-- Table 14 Row 03 -->
+    <tr>
+      <td width="62">type</td>
+      <td width="560">- 2 = DRAWING(2D), 3 = GEOMETRY(3D)</td>
+    </tr>
+<!-- Table 14 Row 04 -->
+    <tr>
+      <td width="62">attribute</td>
+      <td width="560">- 1 = LOCAL, 2 = GLOBAL, 3 = BASIC</td>
+    </tr>
+<!-- Table 14 Row 05 -->
+    <tr>
+      <td width="62">csys_id</td>
+      <td width="560">- Identity of coordinate system if attribute = 1</td>
+    </tr>
+<!-- Table 14 Row 06 -->
+    <tr>
+      <td width="62">npar</td>
+      <td width="560">- Number of parameters</td>
+    </tr>
+<!-- Table 14 Row 07 -->
+    <tr>
+      <td width="62">nmem</td>
+      <td width="560">- Number of members</td>
+    </tr>
+<!-- Table 14 Row 08 -->
+    <tr>
+      <td width="62">mem_id</td>
+      <td width="560">- Identity of all members</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 15 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="gmdbindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

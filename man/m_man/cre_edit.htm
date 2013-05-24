@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cre_edit </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cre_edit - <small><small>Function</small></small></h2>
+  <p>Create edit<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a text edit in a dialogue window. <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cre_edit(window, pos, width, height, frame, str, maxchr)<br>
+  <br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 16 Row 01 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="573">window;</td>
+    </tr>
+<!-- Table 16 Row 02 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="573">pos;</td>
+    </tr>
+<!-- Table 16 Row 03 -->
+    <tr>
+      <td width="78">FLOAT </td>
+      <td width="573">width;</td>
+    </tr>
+<!-- Table 16 Row 04 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="573">height;</td>
+    </tr>
+<!-- Table 16 Row 05 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="573">frame;</td>
+    </tr>
+<!-- Table 16 Row 06 -->
+    <tr>
+      <td width="78">STRING</td>
+      <td width="573">str*132;</td>
+    </tr>
+<!-- Table 16 Row 07 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="573">maxchr;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 17 Row 01 -->
+    <tr>
+      <td width="67">window</td>
+      <td width="584">- Dialogue window identity</td>
+    </tr>
+<!-- Table 17 Row 02 -->
+    <tr>
+      <td width="67">pos</td>
+      <td width="584">- Upper left corner relative to dialogue window</td>
+    </tr>
+<!-- Table 17 Row 03 -->
+    <tr>
+      <td width="67">width</td>
+      <td width="584">- Horisontal size in pixels</td>
+    </tr>
+<!-- Table 17 Row 04 -->
+    <tr>
+      <td width="67">height</td>
+      <td width="584">- Vertical size in pixels</td>
+    </tr>
+<!-- Table 17 Row 05 -->
+    <tr>
+      <td width="67">frame</td>
+      <td width="584">- Frame width in pixels (Only recognized in UNIX)</td>
+    </tr>
+<!-- Table 17 Row 06 -->
+    <tr>
+      <td width="67">str</td>
+      <td width="584">- Default textstring </td>
+    </tr>
+<!-- Table 17 Row 07 -->
+    <tr>
+      <td width="67">maxchr</td>
+      <td width="584">- Sets the maximum number of characters possible to enter</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 18 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  An INT holding the id of the edit created.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  In the UNIX implementation an event is generated when focus leaves an edit. In the
+  Microsoft Windows implementation no events are geneated by edits.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="dialindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

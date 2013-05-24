@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Coordinate systems</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Coordinate systems</H3>
+
+<P>There are two ways to create a coordinate system in VARKON. You can
+use....<BR>
+<BR>
+<B>csys_1p</B>(#1,name,p1,vx,vy,vz);<BR>
+<BR>
+which creates a coordinate system with origin in p1 rotated in order vx
+degrees around the X-axis then vy degrees around the Y-axis and finally
+vz degrees around the Z-axis. The other way is...<BR>
+<BR>
+<B>csys_3p</B>(#1,name,p1,p2,p3);<BR>
+<BR>
+where p1 is the origin, p2 a position on the X-axis and p3 a position in
+the XY-plane indicating the direction of the positive Y-axis. In both cases
+the coordinate system should be given an appropriate name indicating its
+purpose.<BR>
+<BR>
+Coordinate systems created like this are <B>LOCAL</B> systems. A <B>LOCAL
+</B>system is activated using...<BR>
+<BR>
+<B>mode_local</B>(id);<BR>
+<BR>
+where id is the identity of the system to activate. When a <B>LOCAL</B>
+system is activated all coordinates and angles used to create new geometry
+is treated as relative to the <B>LOCAL</B> system. Geometric operations
+requiring a 2D plane also use the XY-plane of the <B>LOCAL</B> system when
+this is active. There is no limit to the number of systems that can be
+created and any system can be activated in any order as often as needed.<BR>
+<BR>
+Every module has a default coordinate system created and activated automatically
+when it starts its execution. This system is called the module's <B>GLOBAL</B>
+system and is always active until a <B>LOCAL</B> system is activated with
+<B>mode_local</B>. To activate the <B>GLOBAL </B>system again use....<BR>
+<BR>
+<B>mode_global</B>();<BR>
+<BR>
+There is also a coordinate system in VARKON called <B>BASIC</B>. The <B>BASIC</B>
+system is the superior main coordinate system that all other systems are
+related to and also the system to which all geometry is transformed when
+saved in the GM database.<B> GLOBAL</B> and <B>BASIC </B>may seem the same
+but <B>GLOBAL</B> systems can change when one module calls another and
+therefore there is also a....<BR>
+<BR>
+<B>mode_basic</B>();<BR>
+<BR>
+in VARKON for those modules who want to be absolutely sure that something
+is done relative to the <B>BASIC</B> system.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

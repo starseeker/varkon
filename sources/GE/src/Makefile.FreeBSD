@@ -1,0 +1,33 @@
+##########################################################
+#
+#   Makefile for GElib on freeBSD
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC ?= gcc
+
+CFLAGS +=                    \
+            -ansi                       \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -O                          \
+            -DUNIX
+
+debug :     CFLAGS += -g
+
+gpl   :     CFLAGS +=                    \
+            -O                          \
+            -DUNIX
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.GE
+
+##########################################################

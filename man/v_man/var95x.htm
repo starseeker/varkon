@@ -1,0 +1,348 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>VARKON95.EXE</title>
+  <meta name="GENERATOR"
+ content="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+  <meta name="Author" content="Microform AB">
+</head>
+<body style="background-color: rgb(153, 204, 255);">
+<center>
+<p><font size="-1">VARKON Version 1.18A 2004-10-15</font></p>
+</center>
+<p>
+</p>
+<hr width="100%" align="center">
+<ul>
+  <h3>VARKON95.EXE<br>
+  </h3>
+  <p>Executable file<br>
+  <br>
+  <br>
+  <b>Description<br>
+  <br>
+  </b>WIN32 version of VARKON for Windows.&nbsp;</p>
+  <p> <b>Syntax<br>
+  <br>
+  </b>VARKON95 project_name job_name -r -v -x -DRAWING -GEOMETRY -LOCAL
+-GLOBAL <br>
+-BASIC -global_ref -pmnbytes -rtsnbytes -gmnpages -iresourcefile -dnl<br>
+  <br>
+Options preceded by a minus sign should be followed by their value
+without
+any separating blank spaces.<br>
+  <br>
+  <b>Options </b></p>
+</ul>
+<table width="95%">
+  <caption><br>
+  </caption><tbody>
+    <tr>
+      <td>
+      <ul>
+        <p>project_name</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Name of project</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>job_name</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Name of job</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-r</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Start in drafting mode instead of the normal mode</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-v</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Report current version information and exit. No X11
+required for this.</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-x</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Execute active module at startup if RES-file is missing</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-DRAWING</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Use DRAWING type for new modules</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-GEOMETRY</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Use GEOMETRY type for new modules </p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-LOCAL</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Use the LOCAL attribute for new modules</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-GLOBAL</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Use the GLOBAL attribute for new modules</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-BASIC</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Use the BASIC attribute for new modules</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-global_ref</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Generate global references in part calls</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-pmnbytes</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Set size of PM to nbytes (VARKON95.EXE only)</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-rtsnbytes</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Set size of RTS to nbytes (VARKON95.EXE only)</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-gmnpages</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Set size of GM buffer to npages</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-iresourcefile</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Include resources from resourcefile at start up</p>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <ul>
+        <p>-dnl</p>
+      </ul>
+      </td>
+      <td>
+      <ul>
+        <p>- Turn debug on for name = n with level = l if available</p>
+      </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<ul>
+  <p><b>Examples<br>
+  <br>
+  </b>VARKON95<br>
+  <br>
+Starts with default values for all options. The system will promt for
+project
+and job name.<br>
+  <br>
+VARKON95 buildings<br>
+  <br>
+Starts with default values for all options except the name of the
+project.
+The system will not promt for project name but will ask for the name of
+the job.<br>
+  <br>
+VARKON95 bearings ball_539 -gm1000 <br>
+  <br>
+Starts a job named ball_539 in project bearings. The memory buffer for
+GM is set to 1000 pages. Default values will be used for all other
+options.<br>
+  </p>
+  <p>VARKON95 -imy_toolbar.ini</p>
+  <p>Starts VARKON and loads resources from "toolbar.ini". </p>
+  <p><br>
+VARKON95 -r<br>
+  <br>
+Starts the system in explicit (non generic) drafting mode.<br>
+  <br>
+  <br>
+  <b>Comments<br>
+  <br>
+  </b>VARKON95 automatically checks for $VARKON_INI\VARKON.INI at
+startup.
+If this resource file exists it is loaded. An additional resourcefile
+may
+be specified on the commandline using the -i option. Resources from
+VARKON.INI
+may not be owerwritten by resources from the file specified with the -i
+option. This behaviour is different from the UNIX version of VARKON.</p>
+  <p>VARKON95.EXE automatically checks the process environment
+variables each
+time
+it is started for the existence of VARKON_ROOT. If VARKON_ROOT is found
+VARKON95 expects the following environment
+variables to be defined as well.</p>
+  <p><code> VARKON_ERM&nbsp; Error
+message files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\ERM<br>
+VARKON_DOC&nbsp; Help files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\DOC<br>
+VARKON_PID&nbsp; Project files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\PID<br>
+VARKON_MDF&nbsp; Menu files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\MDF\ENGLISH<br>
+VARKON_LIB&nbsp; The VARKON library
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\LIB<br>
+VARKON_TMP&nbsp; Temporary files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\TMP<br>
+VARKON_FNT&nbsp; Fonts for graphical text&nbsp;&nbsp;&nbsp;
+C:\VARKON\CNF\FNT<br>
+VARKON_PRD&nbsp; Default project directory&nbsp;&nbsp; C:\VARKON\APP<br>
+VARKON_TOL&nbsp; Tolerance files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\CNF\TOL<br>
+VARKON_PLT&nbsp; Plotter configuration files C:\VARKON\CNF\PLT<br>
+VARKON_INI&nbsp; Init files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\CNF\INI\ENGLISH<br>
+VARKON_SND&nbsp; Sound files
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+C:\VARKON\CNF\SND</code> </p>
+If VARKON_ROOT is not found
+VARKON
+automatically creates all variables above based on the path to the copy
+of VARKON95.EXE currently running and inserts them into the registry
+(HKEY_CURRENT_USER / Environment key).
+This
+is useful for network installations where the VARKON95 installation
+program
+has only been executed once on a server to install the basic system but
+where you want to be able to start the system from any PC in the
+network.
+The first time a user starts VARKON on a PC where VARKON has never been
+started before VARKON&nbsp;will automatically register its environment
+in the local PC.<br>
+  <br>
+Another way of getting the variables into the process environment is to
+let another program (i.e. at batch file), set these variables and also
+start varkon95.exe. In this case varkon recognizes these settings and
+the environment variables in the registry will not be needed (or
+created). See X:\VARKON_XX.X\com\english\varkon.bat.<br>
+</ul>
+<p>
+</p>
+<hr width="100%" align="center">
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="vindex.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</body>
+</html>

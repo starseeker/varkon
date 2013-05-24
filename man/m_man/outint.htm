@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>outint </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>outint - <small><small>Procedure</small></small></h2>
+  <p>Write integer to a file<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Converts an integer to a string, formats the string and writes the result to an open file
+  or pipe.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  outint(f, i, width)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 17 Row 01 -->
+    <tr>
+      <td width="49">FILE</td>
+      <td width="610">f;</td>
+    </tr>
+<!-- Table 17 Row 02 -->
+    <tr>
+      <td width="49">INT</td>
+      <td width="610">i;</td>
+    </tr>
+<!-- Table 17 Row 03 -->
+    <tr>
+      <td width="49">INT</td>
+      <td width="610">width;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 18 Row 01 -->
+    <tr>
+      <td width="40">f</td>
+      <td width="619">- The name of a filevariable accociated with a file open for write, append
+      or update (W, A or U)</td>
+    </tr>
+<!-- Table 18 Row 02 -->
+    <tr>
+      <td width="40">i</td>
+      <td width="619">- The integer to write</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 19 Row 01 -->
+    <tr>
+      <td width="40">width</td>
+      <td width="619">- Controls the amount of padding. If width is less than the actual space
+      required no padding</td>
+    </tr>
+<!-- Table 19 Row 02 -->
+    <tr>
+      <td width="40"></td>
+      <td width="619">&nbsp;&nbsp; is performed. If width is larger than the space required the
+      result is padded with blanks.</td>
+    </tr>
+<!-- Table 19 Row 03 -->
+    <tr>
+      <td width="40"></td>
+      <td width="619">&nbsp;&nbsp; The sign of width controls weather padding is done on the
+      left side of the result (+) or the</td>
+    </tr>
+<!-- Table 19 Row 04 -->
+    <tr>
+      <td width="40"></td>
+      <td width="619">&nbsp;&nbsp; right side (-). If not specified width is set to zero = no
+      padding.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  outint(f,12345 ) = &quot;12345&quot;<br>
+  <br>
+  outint(f, 12345,10) = &quot; 12345&quot;<br>
+  <br>
+  outint(f, 12345, -10) = &quot;12345 &quot;</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="fileindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

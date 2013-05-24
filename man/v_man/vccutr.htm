@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Composite curves and trimming</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Composite curves and trimming</H3>
+
+<P>Straight lines, circular arcs, cubic rational curves, UV-curves, offset
+curves and composite curves can be combined in any order to create new
+composite curves using...<BR>
+<BR>
+<B>cur_comp</B>(#1,cur_id_1,cur_id_2,.......cur_id_n);<BR>
+<BR>
+VARKON checks that C0 continuity is preserved but lets you define a kink
+if that's what you want to. Composite curves act exactly as all other curves
+in VARKON. You can create an offset to a composite, you can use a composite
+for intersects and you can even define a surface using a composite. <BR>
+<BR>
+If you need to reverse the sense of direction for a curve or just need
+to make it shorter then the following method can be used.....<BR>
+<BR>
+<B>cur_trim</B>(#1,cur_id,parval_1,parval_2);<BR>
+<BR>
+<B>cur_trim</B> changes the parametrisation of a curve by making the position
+corresponding to parval_1 its new start and the position corresponding
+to parval_2 its new end. By simply supplying the old end as the new start
+and the old start as the new end a new curve is created with opposite sense
+of direction. By supplying values elsewhere the curve is cut and reparametrised
+on the new interval. This is the same as trimming. Splitting is a similar
+operation (opposite to <B>cur_comp</B>) where <B>cur_trim</B> is used to
+divide a curve in two or more separate pieces each piece being a new curve
+of its own.<BR>
+<BR>
+<B>cur_trim</B> can also be used for extrapolation of the first or last
+segment of a curve. Extrapolation is made by first creating a new segment
+using the same coefficients as the old segment but the new (larger) interval
+for curve parameter and then reparametrise the new (longer) segment to
+the standard interval 0 -&gt; 1.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 HEIGHT="24" >
+<TR>
+<TD height="14"><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD height="14"><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

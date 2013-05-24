@@ -1,0 +1,39 @@
+!*******************************************************
+
+ basic geometry module l_lniv1(
+ INT nivnum:=0 >"Vilken niv} vill du lista ?");
+
+!*      Listar enstaka niv}.
+!*
+!*      (C)microform ab 6/1/90 J. Kjellander
+!*
+!*******************************************************
+
+ INT bl;
+ STRING s*1,bls*10,as*15,namn*30;
+
+ beginmodule
+
+loop:
+   if nivnum < 0 then
+     exit("Niv}nummer kan ej vara mindre {n 0 !");
+   elif nivnum > 1999 then
+     exit("Niv}nummer kan ej vara st|rre {n 1999 !");
+   else
+     get_lev(nivnum,bl,namn);
+     if bl = 0 then bls:="T{nd"; else bls:="Sl{ckt"; endif;
+     if namn<>"" then namn:=", "+namn; endif;
+     if nivnum=act_lev() then as:=" och Aktiv"; else as:=""; endif;
+     psh_pmt("Niv} nummer "+str(nivnum,-1,0)+namn+" {r "+bls+as);
+     s:=inpmt("Vill du se n{sta niv} ? (j/n) ","j",2);
+     pop_pmt();
+   endif;
+
+   if s = "j" then
+     nivnum:=nivnum+1;
+     goto loop;
+   endif;
+
+ endmodule
+
+!*******************************************************

@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>arc_2pos</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>arc_2pos - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates an arc<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a circular arc defined by two positions and radius. The arc starts in the first
+  position and turns anticlockwise to the second position where it ends. A positive value
+  for radius creates the shorter of the two possible arcs (end-start &lt; 180 degrees) and a
+  negative value creates the longer (end-start &gt; 180 degrees).<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  arc_2pos(id, p1, p2, r:attributes);<br>
+  <br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 37 Row 01 -->
+    <tr>
+      <td width="86">REF</td>
+      <td width="634">id;</td>
+    </tr>
+<!-- Table 37 Row 02 -->
+    <tr>
+      <td width="86">VECTOR</td>
+      <td width="634">p1;</td>
+    </tr>
+<!-- Table 37 Row 03 -->
+    <tr>
+      <td width="86">VECTOR</td>
+      <td width="634">p2;</td>
+    </tr>
+<!-- Table 37 Row 04 -->
+    <tr>
+      <td width="86">FLOAT</td>
+      <td width="634">r;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 38 Row 01 -->
+    <tr>
+      <td width="76">id </td>
+      <td width="644">- Local identity</td>
+    </tr>
+<!-- Table 38 Row 02 -->
+    <tr>
+      <td width="76">p1</td>
+      <td width="644">- Start position</td>
+    </tr>
+<!-- Table 38 Row 03 -->
+    <tr>
+      <td width="76">p2</td>
+      <td width="644">- End position</td>
+    </tr>
+<!-- Table 38 Row 04 -->
+    <tr>
+      <td width="76">r</td>
+      <td width="644">- Radius</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 39 Row 01 -->
+    <tr>
+      <td width="77">None.</td>
+      <td width="643"></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="728" border="0">
+<!-- Table 40 Row 01 -->
+    <tr>
+      <td width="77">PEN </td>
+      <td width="643">- Pen or colour number</td>
+    </tr>
+<!-- Table 40 Row 02 -->
+    <tr>
+      <td width="77">LEVEL</td>
+      <td width="643">- Level number</td>
+    </tr>
+<!-- Table 40 Row 03 -->
+    <tr>
+      <td width="77">BLANK</td>
+      <td width="643">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 40 Row 04 -->
+    <tr>
+      <td width="77">AFONT</td>
+      <td width="643">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 40 Row 05 -->
+    <tr>
+      <td width="77">ADASHL</td>
+      <td width="643">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="72">WIDTH</td>
+      <td width="572">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  arc_2pos(#1, vec(1,0),vec(0,1),1);<br>
+  <br>
+  Creates the first quarter of a circle with radius = 1.<b><u><br>
+  </u></b><br>
+  <b>Comments<br>
+  </b><br>
+  In a 3D module the resulting arc is restricted to the XY-plane of the active coordinate
+  system. If p1 or p2 are not in this plane they will be projected along the Z-axis onto the
+  XY-plane before being used to create the arc. The absolute value of r must be larger than
+  half the distance between p1 and p2.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

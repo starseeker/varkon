@@ -1,0 +1,5 @@
+! a6 = FLASHSCAN fotopottrar. Spooler = flash
+ nice -19 /usr/v3/bin/flash4p <
+ | lp -dflash -s &
+ /usr/v3/job/test.PLT
+

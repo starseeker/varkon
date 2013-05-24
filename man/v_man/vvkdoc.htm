@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>varkon</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1998-11-03</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+VARKON_DOC</H3>
+Environment variable
+<BR>&nbsp;
+<P><B>Description</B>
+<P>Environment variable used by VARKON to find the system documentation.
+When a user calls for help VARKON first searches the directory specified
+on the fourth line of the project PID file for the right help file. If
+not found there VARKON searches $VARKON_DOC instead.
+<P>Help files are plain ASCII text files (.txt) or HTML formatted files
+(.htm). The help system in VARKON is context sensitive meaning that when
+you ask for help VARKON will try to give you help related to your exact
+situation. This is done using the following simple rules.
+<P>If you are executing a VARKON function the helpfile used will be the
+one named f<I>nnn</I>.txt or f<I>nnn</I>.htm where <I>nnn</I> is the number
+of the function. The ZOOM function for example is function 100 and the
+help text is found in f100.htm. See the special treatment of f25 below.
+<P>If no function is active VARKON uses the number of the current menu
+to find a help file. Menu 66 for example is the "GRAPHICS" menu and its
+helpfile is m66.htm.
+<P>If you are calling or editing a module interactively (the part statement,
+f25) VARKON uses the name of the module to find a help file. This is a
+powerful way to provide help for modules you create yourself.
+<BR>&nbsp;
+<P><B>Comments</B>
+<P>If VARKON_DOC is not defined a hard coded default will be used.
+<P>If VARKON_DOC points to a non existent directory or if read permission
+to $VARKON_DOC is missing the help files in $VARKON_DOC will not be found.
+<P>The contents of $VARKON_DOC should not be altered. Dont edit any files,
+add any files or remove any files.
+<P>Project specific helpfiles should be placed where the application resides
+for example in $HOME/app/xxx/doc if xxx is the name of the project.
+<P>The concept of an active menu is not readily applicable to the Microsoft
+Windows WIN32 version of VARKON since the treatment of menus is different
+from that of UNIX and X-Windows.
+<P><B>See also</B>
+<P><A HREF="f153.htm">f153</A></UL>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

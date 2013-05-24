@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>tform_comp </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.17 1997-12-06</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>tform_comp - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+
+<P>Creates a transformation<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Creates a 3D composite transformation with simultaneous translation
+and rotation. <BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>tform_comp(id, p1, v2, v3, p4, v5, v6:attributes);<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="570" >
+<CAPTION>
+<P><!-- Table 49 Row 01 --></P>
+
+<P><!-- Table 49 Row 02 --></P>
+
+<P><!-- Table 49 Row 03 --><!-- Table 49 Row 04 --></P>
+
+<P><!-- Table 49 Row 05 --></P>
+
+<P><!-- Table 49 Row 06 --></P>
+
+<P><!-- Table 49 Row 07 --></P>
+</CAPTION>
+
+<TR>
+<TD width="78">REF</TD>
+
+<TD width="484">id;</TD>
+</TR>
+
+<TR>
+<TD width="78">VECTOR</TD>
+
+<TD width="484">p1;</TD>
+</TR>
+
+<TR>
+<TD width="78">VECTOR</TD>
+
+<TD width="484">v2;</TD>
+</TR>
+
+<TR>
+<TD width="78">VECTOR</TD>
+
+<TD width="484">v3;</TD>
+</TR>
+
+<TR>
+<TD width="78">VECTOR</TD>
+
+<TD width="484">p4;</TD>
+</TR>
+
+<TR>
+<TD width="78">VECTOR</TD>
+
+<TD width="484">v5;</TD>
+</TR>
+
+<TR>
+<TD width="78">VECTOR</TD>
+
+<TD width="484">v6;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="570" >
+<CAPTION>
+<P><!-- Table 50 Row 01 --></P>
+
+<P><!-- Table 50 Row 02 --></P>
+
+<P><!-- Table 50 Row 03 --></P>
+
+<P><!-- Table 50 Row 04 --></P>
+
+<P><!-- Table 50 Row 05 --></P>
+
+<P><!-- Table 50 Row 06 --></P>
+
+<P><!-- Table 50 Row 07 --></P>
+</CAPTION>
+
+<TR>
+<TD width="68">id </TD>
+
+<TD width="494">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="68">p1</TD>
+
+<TD width="494">- Position in original plane and original base position</TD>
+</TR>
+
+<TR>
+<TD width="68">v2</TD>
+
+<TD width="494">- First vector in original plane</TD>
+</TR>
+
+<TR>
+<TD width="68">v3</TD>
+
+<TD width="494">- Second vector in original plane</TD>
+</TR>
+
+<TR>
+<TD width="68">p4</TD>
+
+<TD width="494">- Position in transformed plane and new base position</TD>
+</TR>
+
+<TR>
+<TD width="68">v5</TD>
+
+<TD width="494">- First vector in transformed plane</TD>
+</TR>
+
+<TR>
+<TD width="68">v6</TD>
+
+<TD width="494">- Second vector in transformed plane</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="95%" >
+<CAPTION>
+<P><!-- Table 51 Row 01 --></P>
+</CAPTION>
+
+<TR>
+<TD>None.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Attributes</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="570" >
+<CAPTION>
+<P><!-- Table 52 Row 01 --></P>
+
+<P><!-- Table 52 Row 02 --></P>
+
+<P><!-- Table 52 Row 03 --></P>
+</CAPTION>
+
+<TR>
+<TD width="68">PEN </TD>
+
+<TD width="494">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="68">LEVEL</TD>
+
+<TD width="494">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="68">BLANK</TD>
+
+<TD width="494">- Visible(0) or invisible(1)</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Example</B><BR>
+</P>
+
+<P>Coordinates for three points (VECTOR p1, p2, p3) are known in a part
+(a CAD model). Assume that the three points have been measured (VECTOR
+p1_m, p2_m, p3_m) and that is of interest to calculate how the part shall
+be moved to get into the right position. i.e. to calculate the transformation
+matrix that will move the part so that new measurements will result in
+p1_m=p1, p2_m=p2 and p3_m=p3.</P>
+
+<P>tform_comp(#1,p1, p2-p1, p3-p1, p1_m, p2_m-p1_m, p3_m-p1_m);<BR>
+<BR>
+The above statement will calculate the transformation matrix. Note that
+function gettrf can be used to retrieve the matrix.<BR>
+<BR>
+<B>Comment<BR>
+<BR>
+</B>tform_comp may only be used in a 3D module.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>
+

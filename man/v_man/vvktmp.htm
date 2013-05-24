@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>VARKON_TMP</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>VARKON_TMP</H3>
+
+<P>Environment variable<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Environment variable used by VARKON to place temporary files. Files
+created in $VARKON_TMP are normally removed automatically when no longer
+needed. Should any files be found in $VARKON_TMP when VARKON is not running
+it is suggested you remove them.<BR>
+<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If VARKON_TMP is not defined a hard coded default will be used.<BR>
+<BR>
+If VARKON_TMP points to a non existent directory or if read and write permissions
+to $VARKON_TMP are missing the result is unpredictable.<BR>
+<BR>
+It can be a good idea to use /tmp (UNIX) or C:\TEMP (Windows95) for VARKON_TMP
+since these directories are usually on the local macine (not on a networked
+fileserver) and are also used by other programs. Doing this can produce
+less trafic on a network and make it easier to perform periodic clean up
+of unused files.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

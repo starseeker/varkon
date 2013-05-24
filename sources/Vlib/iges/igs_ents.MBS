@@ -1,0 +1,127 @@
+!*******************************************************
+
+ MACRO MODULE igs_ents(
+   VAR FILE infil,logfil;
+   INT      ps_ptr;
+   INT      eolsize;
+   VAR INT  status);
+
+!*      Reads Directory Entry Section a second time
+!*      and creates the entities.
+!*
+!*      In: ps_ptr = Ptr to Parameter Section.
+!*      Ut: status = 0 => Ok
+!*                  -1 => Error.
+!*
+!*      (C)microform ab 1997-12-22 J. Kjellander
+!*
+!*      2004-07-20 eolsize, J.Kjellander, Örebro university
+!*
+!*******************************************************
+
+   CONSTANT INT MAXF=50;
+   STRING rad1*80,rad2*80;
+   INT    i,typ,f(MAXF),fn,n_ok(MAXF),n_error(MAXF),n_notimpl,actpos;
+
+ BEGINMODULE
+
+!*
+!***Init.
+!*
+    n_notimpl:=0;
+    for i:= 1 to MAXF do
+      n_ok(i):=0;
+      n_error(i):=0;
+    endfor;
+!*
+!***Implemented IGES entity types.
+!*
+    fn:=2;
+    f(1):=110;
+    f(2):=128;
+!*
+!***HEADER.
+!*
+    outlin(logfil);
+    outstr(logfil,"Directory Entry Section (Pass 2)");
+    outlin(logfil);
+!*
+!***Read 2 lines/entity.
+!*
+loop:
+    rad1:=inlin(infil);
+    rad2:=inlin(infil);
+!    outstr(logfil,rad1);
+!    outlin(logfil);
+!    outstr(logfil,rad2);
+!    outlin(logfil);
+    if substr(rad1,73,1) = "D" then
+!*
+!***What type of entity ?
+!*
+      typ:=round(val(substr(rad1,1,8)));
+!*
+!***110=Line
+!*
+      if typ = 110  then
+        actpos:=fpos(infil);
+        part(#1,igs_110(infil,logfil,rad1,rad2,ps_ptr,eolsize,status):SAVE=1);
+        seek(infil,actpos);
+        i:=1;
+        if status = 0 then
+          n_ok(i):=n_ok(i)+1;
+        else
+          n_error(i):=n_error(i)+1;
+        endif;
+!*
+!***128=NURB Surface
+!*
+      elif typ = 128  then
+        actpos:=fpos(infil);
+        part(#2,igs_128(infil,logfil,rad1,rad2,ps_ptr,eolsize,status):SAVE=1);
+        seek(infil,actpos);
+        i:=2;
+        if status = 0 then
+          n_ok(i):=n_ok(i)+1;
+        else
+          n_error(i):=n_error(i)+1;
+        endif;
+!*
+!***Not implemented entity type.
+!*
+      else
+        n_notimpl:=n_notimpl+1;
+      endif;
+!*
+!***Next entity.
+!*
+      goto loop;
+    endif;
+!*
+!***Write to logfile.
+!*
+    for i:=1 to fn do
+      if n_ok(i) > 0 then
+        outstr(logfil,"Successfully processed "+
+                       str(n_ok(i),-1,0)+" entities type = "+str(f(i),-1,0));
+        outlin(logfil);
+      endif;
+      if n_error(2) > 0 then
+        outstr(logfil,"Could not process "+
+                       str(n_error(i),-1,0)+" "+str(f(i),-1,0)+" entities");
+        outlin(logfil);
+      endif;
+    endfor;
+
+    if n_notimpl > 0 then
+      outstr(logfil,"Skipped "+str(n_notimpl,-1,0)+" other entities ");
+      outlin(logfil);
+    endif;
+
+ ENDMODULE
+
+!*******************************************************
+
+
+
+

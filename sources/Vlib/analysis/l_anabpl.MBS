@@ -1,0 +1,52 @@
+!*******************************************************
+
+ macro module l_anabpl(REF id);
+
+!*      Skriver ut specifika data för ett B-plan.
+!*
+!*      In : id = Planets identitet.
+!*
+!*      Un : Inget.
+!*
+!*      (C)microform ab 27/8/87 J. Kjellander
+!*
+!*      1996-06-03 Engelska, J.Kjellander
+!*      2004-07-27 Width, J.Kjellander, Örebro university
+!*
+!*******************************************************
+
+   VECTOR p1,p2,p3,p4;
+   FLOAT  w;
+
+ beginmodule
+
+    getbpl(global_ref(id,2),p1,p2,p3,p4);
+
+    w:=getwidth(global_ref(id,2));
+    lst_lin(get_tstr(1620) + str(w,-12,5));   ! t1620 = "Bredd           : "
+    lst_lin("");
+
+    lst_lin(get_tstr(470) + str(p1.x,-12,6));
+    lst_lin(get_tstr(471) + str(p1.y,-12,6));
+    lst_lin(get_tstr(472) + str(p1.z,-12,6));
+
+    lst_lin("");
+    lst_lin(get_tstr(476) + str(p2.x,-12,6));
+    lst_lin(get_tstr(477) + str(p2.y,-12,6));
+    lst_lin(get_tstr(478) + str(p2.z,-12,6));
+
+    lst_lin("");
+    lst_lin(get_tstr(479) + str(p3.x,-12,6));
+    lst_lin(get_tstr(481) + str(p3.y,-12,6));
+    lst_lin(get_tstr(481) + str(p3.z,-12,6));
+
+    lst_lin("");
+    lst_lin(get_tstr(473) + str(p4.x,-12,6));
+    lst_lin(get_tstr(474) + str(p4.y,-12,6));
+    lst_lin(get_tstr(475) + str(p4.z,-12,6));
+
+  endmodule
+
+!*******************************************************
+
+

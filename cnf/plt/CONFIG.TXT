@@ -1,0 +1,121 @@
+
+
+
+                       CONFIG.TXT
+                       ==========
+
+              (C)Microform AB 1998-09-21
+
+This file describes the initial plotter configuration to be done
+when VARKON is installed for the first time. You may also find
+some useful information in the "Printing and plotting" section
+of the VARKON users manual.
+
+ 1: Move all files in this directory to a place where they
+    can rest in peace and don't risk to be owerwritten or replaced
+    when a new version of VARKON is installed. This configuration
+    is not supposed to be repeated each time a new version of
+    VARKON is installed, only when changes are made to your
+    plotting hardware in the future.
+    
+ 2: Change the definition of VARKON_PLT in VARKON's start script
+    to point to the new place so that each time VARKON is started
+    your private copy of m135.INC is loaded instead of the version
+    supplied with the system.
+
+ 3: Edit your private version of m135.INC according to the 
+    following:
+
+    A: If you have only one plotter/printer use the following
+       short version of m135. Edit the title of m135 to name
+       the right configurationfile for your plotter/printer. 
+       a1 = oce/benson, a2 = calcomp and so on. See the full
+       version of m135 below. Also remove the full version of m135.
+
+       VARKON for Windows95/NT uses the file a32 to print through
+       the WIN32 printing system. In this case there is no need
+       to care about what kind of hardware your printer is or if
+       there is more than one since WIN32 takes care of this.
+
+m135 = "a1"
+       "DUMMY",a0;
+
+    B: If you have more than one plotter/printer edit the
+       following version of m135 to include the devices you
+       actually have and remove any devices you dont
+       have. Also remove the short version of m135.
+
+m135 = "PLOTTER"
+       "hp7475",a4
+       "hp laser",a9
+       "epson",a11
+       "ibm proprinter",a13
+       "postscript",a15;
+
+ 4: Finally edit the configurationfile or files included in your
+    version of m135. If for example you have a HP laser printer
+    you would have to edit the configuration file named a9. 
+
+    The file a9 might look something like this on a UNIX system:
+
+! a9 = HP-LASERJET 3 laserwriter. Spooler = laser
+ hpcl5 <
+ | lp -dlaser -s &
+ act_job
+ -s1
+ 
+    The first (uncommented) line of a configuration file shows
+    the name of the driver to be used followed by a "less than"
+    character for input redirection. VARKON uses this line and
+    the following to make up the complete command sent to
+    the shell when a plot job is started. 
+
+    Next line shows how and where to send the output. Usually
+    through a pipe to a printer spooler.
+
+    Line 3 shows the name of the PLT-file to process. act_job is
+    a symbol for a file with the same name as the active job.
+
+    The last line shows the parameters to pass to the driver
+    when processing the PLT-file.
+
+    An optional 5:th line includes the name of an optional PEN-
+    file to use with older plotterdrivers that only support
+    variable penwidth (linewidth) through PEN-files. The new
+    linux drivers and the new driver for WIN32 introduced
+    in VARKON 1.16 all support variable linewidth directly
+    through the WIDTH attribute. Dont't supply the -pf option
+    or the name of a PEN-file (line 5) if you use the WIDTH
+    attribute.
+
+    VARKON includes three interactive functions to start a plot
+    job. The easy ones are "Autoplot" and  "Window" and the more
+    specialized is called "Manual plot". You will find them in
+    the graphics menu under plotting. They will all read your
+    m135 and if it contains more than one plotter (as described
+    above) they will prompt you for which one to use. Once the
+    name of the plotter is known the plotfunction reads the
+    corresponding configuration file (a1, a2.....) and uses
+    its contents to create the appropriate shell-command that
+    will start the actual plot process.
+
+    Here are a few more sample configuration files:
+
+    ! a11 = Monochrome Epson printer using ghostscript.
+     $VARKON_ROOT/bin/postscript -bw <
+     | gs -DEVICE=epson | lp
+     act_job
+     -s1.0 -v90 -x-210
+
+    ! a15 = Genuine postscript color printer.
+     $VARKON_ROOT/bin/postscript <
+     | lp
+     act_job
+     -s1.0
+
+    ! a13 = IBM-Proprinter with custom penfile
+     nice -19 $VARKON_ROOT/bin/ibmpro <
+     | lp -Pibm102
+     act_job
+     -s0 -x-15 -h0 -p24 -w200 -l82 -pf
+     /usr/v3/adm/artikel/pennfile.PEN

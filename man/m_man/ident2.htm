@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>ident </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-04.03</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>ident_2 - <FONT SIZE=+0>Procedure</FONT></H2>
+
+<P>Pick multiple entities with rubberband box<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Interactive pick function. Lets a user identify one or more entities
+with the help of a &quot;rubberband&quot; box. Typemask and mode may be
+used to control which entities to be selected.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>ident_2(typemask, mode, maxid, idarray, numid)</P>
+
+<TABLE WIDTH="659" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="73">INT</TD>
+
+<TD width="578">typemask;</TD>
+</TR>
+
+<TR>
+<TD width="73">INT</TD>
+
+<TD width="578">mode;</TD>
+</TR>
+
+<TR>
+<TD width="73">INT</TD>
+
+<TD width="578">maxid;</TD>
+</TR>
+
+<TR>
+<TD>REF</TD>
+
+<TD>idarray(maxid);</TD>
+</TR>
+
+<TR>
+<TD>INT</TD>
+
+<TD>numid;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+</P>
+
+<TABLE WIDTH="659" >
+<TR>
+<TD width="66">typemask</TD>
+
+<TD width="585">- Type of entitiy to pick. Multiple types can be combined
+to a typemask by adding their</TD>
+</TR>
+
+<TR>
+<TD width="66"></TD>
+
+<TD width="585">&nbsp;&nbsp; type codes. See GET_HDR for the complete list
+of type codes.</TD>
+</TR>
+
+<TR>
+<TD>mode</TD>
+
+<TD>- 0 = Only entities completely inside the box are selected.</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>- 1 = Entities fully or partially inside the box are selected.</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>- 2 = Only entities completely outside the box are selected.</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>- 3 = Entities fully or partially outside the box are selected.</TD>
+</TR>
+
+<TR>
+<TD>maxid</TD>
+
+<TD>- Maximum number of entities to be returned.</TD>
+</TR>
+
+<TR>
+<TD>idarray</TD>
+
+<TD>- REF-array to recieve ID:s of entities picked.</TD>
+</TR>
+
+<TR>
+<TD>numid</TD>
+
+<TD>- Number of entities actually returned or -1.</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B></P>
+
+<TABLE WIDTH="659" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="65">None.</TD>
+
+<TD width="586"></TD>
+</TR>
+</TABLE>
+
+<P><B>Examples</B><BR>
+</P>
+
+<P>REF idarray(100);<BR>
+INT numid;</P>
+
+<P>ident_2(2+4, 0, 100, idarray, numid);<BR>
+<BR>
+Displays the crosshair cursor and lets the user drag the mouse on the screen
+to inscribe in a box the entities he wants to pick. A maximum of 100 lines
+(2) and arcs (4) completely inside (0) the box are selected. If no entities
+are selected numid returns 0. If more than 100 entities are selected numid
+returns 100.</P>
+
+<P><B>Comments</B></P>
+
+<P>It is up to the calling module to ensure that idarray is big enough
+to hold all entities picked. The maximum number returned will in any case
+never be larger than the global system variable IGMAXID which is the maximum
+number of ID:s VARKON can hold in one operation. Current value of IGMAXID
+in VARKON 1.16 is 2000 but may be increased in the future.</P>
+
+<P>Entities with the HIT attribute set to zero can not be picked.</P>
+
+<P>If the pointer button is pressed and then released without moving the
+pointer ident_2 returns the single ID closest to the pointer as if the
+MBS-routine ident() would have been used.</P>
+
+<P>Pressing the middle button or right button returns numid = -1.</P>
+
+<P>If typemask is 16384 only PART ID:s will be returned.<BR>
+</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="dialindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

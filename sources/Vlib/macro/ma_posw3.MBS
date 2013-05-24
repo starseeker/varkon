@@ -1,0 +1,58 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE ma_posw3(INT main_id;
+                               VECTOR p;
+                               INT    b,h;
+                           VAR STRING mbsstr*132);
+
+!*      Interaktiv inmatning av en position ände.
+!*      Om inmatningen avbryts lämnas mbsstr orörd.
+!*
+!*      Ut:  mbsstr = on(id,0/1)
+!*
+!*      (C)microform ab 1996-06-10 J. Kjellander
+!*
+!*******************************************************
+
+ REF   id,grupp(3);
+ INT   end,label,typ,vers,blank,nivå,penna,font,ns_geo,ns_gra;
+ FLOAT sl;
+
+ BEGINMODULE
+
+!*
+!***Promt.
+!*
+   label:=cre_button(main_id,p,b,h,0,get_tstr(331),get_tstr(331));
+!*
+!***Identitet för linje, cirkel eller kurva.
+!*
+   id:=ident(2+4+8,end);
+
+   if id <> #0.1 then
+     gethdr(id,typ,vers,blank,nivå,penna,grupp);
+!*
+!***Linje eller cirkel.
+!*
+     if typ = 2  or  typ = 4 then
+       mbsstr:="on("+rstr(id)+","+str(end,-1,0)+")";
+!*
+!***Kurva.
+!*
+     else
+       if end = 0 then
+         mbsstr:="on("+rstr(id)+",0)";
+       else
+         getcurh(id,font,sl,ns_geo,ns_gra);
+         mbsstr:="on("+rstr(id)+","+str(ns_geo,-1,0)+")";
+       endif;
+     endif;
+   endif;
+!*
+!***Sudda promten.
+!*
+   del_win(main_id,label);
+
+ ENDMODULE
+
+!*******************************************************

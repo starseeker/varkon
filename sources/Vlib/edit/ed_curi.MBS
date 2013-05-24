@@ -1,0 +1,55 @@
+!*******************************************************
+
+ MACRO MODULE ed_curi(REF id);
+
+!*      Editerar CURVE_INT.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               editeras.
+!*
+!*      (C)microform ab 1997-04-12 J. Kjellander
+!*
+!*******************************************************
+
+   CONSTANT INT SUR_TYP=16,CSY_TYP=8192,BPL_TYP=32768;
+
+   INT    pnum;
+   STRING alt*2,par*132;
+
+ beginmodule
+
+!*
+!***Visa meny och läs in svar.
+!*
+    psh_men(123);
+    alt:=get_alt("");
+    pop_men();
+!*
+!***Yta.
+!* 
+    if alt = "a1" then
+      pnum:=1;
+      psh_pmt(get_tstr(1608));
+      par:=rstr(ident(SUR_TYP));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+!*
+!***Plan.
+!*
+    elif alt = "a2" then
+      pnum:=2;
+      psh_pmt(get_tstr(1609));
+      par:=rstr(ident(CSY_TYP+BPL_TYP));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+    else
+      exit();
+    endif;
+!*
+!***Uppdatera.
+!*
+    if par <> "" then updp_mbs(id,pnum,par); endif;
+
+ endmodule
+
+!*******************************************************

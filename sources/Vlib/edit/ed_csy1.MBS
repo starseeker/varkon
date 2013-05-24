@@ -1,0 +1,73 @@
+!*******************************************************
+
+ MACRO MODULE ed_csy1(REF id);
+
+!*      Editerar CSYS_1P.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               editeras.
+!*
+!*      (C)microform ab 6/5/92 J. Kjellander
+!*
+!*      1996-06-11 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    pnum,status;
+   STRING alt*2,par*132;
+
+ beginmodule
+
+!*
+!***Visa meny och läs in svar.
+!*
+    psh_men(117);
+    alt:=get_alt("");
+    pop_men();
+!*
+!***Namn.
+!* 
+    if alt = "a1" then
+      pnum:=1;
+      par:=getp_mbs(id,pnum);
+      par:=inpmt(get_tstr(306),par,132);
+!*
+!***Origo.
+!*
+    elif alt = "a2" then
+      pnum:=2; 
+      par:=getp_mbs(id,pnum);
+      part(#1,ma_posw(par,get_tstr(240),get_tstr(262),status));
+      if status = -1 then par:=""; endif;
+!*
+!***X-vinkel.
+!*
+    elif alt = "a3" then
+      pnum:=3;
+      par:=getp_mbs(id,pnum);
+      par:=inpmt(get_tstr(390),par,40);
+!*
+!***Y-vinkel.
+!*
+    elif alt = "a4" then
+      pnum:=4;
+      par:=getp_mbs(id,pnum);
+      par:=inpmt(get_tstr(391),par,40);
+!*
+!***Z-vinkel.
+!*
+    elif alt = "a5" then
+      pnum:=5;
+      par:=getp_mbs(id,pnum);
+      par:=inpmt(get_tstr(392),par,40);
+    else
+      exit();
+    endif;
+!*
+!***Uppdatera.
+!*
+    if par <> "" then updp_mbs(id,pnum,par); endif;
+
+ endmodule
+
+!*******************************************************

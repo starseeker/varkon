@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>f62 2D circular arc with three positions</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>f62 Create 2D circular arc with three positions</H3>
+
+<P><B>Description<BR>
+<BR>
+</B>Creates a circular arc specified by pos1, pos2 and pos3. The arc will
+turn in counter clocwise direction from pos1 through pos2 and end in pos3.
+If this is not possible VARKON automatically swaps pos1 with pos3 and lets
+the arc start in pos3, go through pos2 and end in pos1. In any case the
+arc turns in counter clockwise direction with a (arclength) parametrisation
+of t=0 where it starts and t=1 where it ends.<BR>
+<BR>
+<B>Available in<BR>
+<BR>
+</B>2D.<BR>
+<BR>
+<B>MBS Correspondence<BR>
+<BR>
+</B>arc_3pos(id, pos1, pos2, pos3);<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If two positions coincide or if all three form a straight line an error
+is reported.<BR>
+</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vbiindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

@@ -1,0 +1,103 @@
+!*******************************************************
+
+ macro module p_savcnf(
+ VAR STRING alt*3;
+ VAR STRING plp(5)*132);
+
+!*      Skriver ut parametrar för plottrar till conf. filen.
+!*
+!*      In:  alt    = Vald plotter och filnamn till conf. fil.
+!*           plp(1) = Plotterprogram.
+!*           plp(2) = Path till porten.
+!*           plp(3) = Fil att plotta.
+!*           plp(4) = Parametrar.
+!*           plp(5) = Parametern pf = Pennfil.
+!*
+!*      Ut:  Inget.
+!*
+!*      (C)microform ab 4/2/91 R. Svedin
+!*
+!*      1996-01-30 get_environment(), J.Kjellander
+!*      1996-06-07 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ STRING s1*132,tmp(21)*132;
+ INT    i,j,n;
+ FILE   cf;
+
+ beginmodule
+
+!*
+!***Initiera.
+!*
+   for i := 1 to 20 do
+     tmp(i):="";
+   endfor;
+!*
+!***Öppna conf. filen. och läs in ev kommentarrader.
+!*
+   open(cf,"R",get_environment("VARKON_PLT")+"/"+alt);
+   if iostat(cf) <> 0 then
+     exit("Can't update config file = "+alt);
+   endif;
+
+   i:=1;
+!*
+!***Läs in och räkna alla rader.
+!*
+LOOP:
+   s1:=inlin(cf);
+   if iostat(cf) <> 0 then 
+     close(cf); goto SKRIV;
+   else
+     if i < 22 then
+       if s1 <> "" then
+         tmp(i):=s1; i:=i+1;
+       endif;
+       goto LOOP;
+     else
+       close(cf); goto SKRIV;
+     endif;
+   endif;
+!*
+!***Skriv ut.
+!*
+SKRIV:
+   if i > 22 then
+     exit("Too many lines i config file = "+alt);
+   endif;
+
+   open(cf,"W",get_environment("VARKON_PLT")+"/"+alt);
+   n:=i; i:=1;
+!*
+!***Fixa plats åt pennfilen.
+!*
+   if finds(plp(4),"-pf") <> 0 then n:=n+1; endif;
+   for j:=1 to n do
+!*
+!***Skriv ut kommentarrad.
+!*
+    if finds(tmp(j),"!") = 1 then
+      outstr(cf,+tmp(j)); outlin(cf);
+!*
+!***Skriv ut Parameterrad.
+!*
+    else
+      if i < 6 then
+        if plp(i) <> "" then
+          if finds(plp(i)," ") = 1 then
+            outstr(cf,+plp(i)); outlin(cf);
+          else
+            outstr(cf,+" "+plp(i)); outlin(cf);
+          endif;
+        endif;
+        i:=i+1;
+      endif;
+    endif;
+   endfor;
+   close(cf);
+
+ endmodule
+   
+!*******************************************************

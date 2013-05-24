@@ -1,0 +1,44 @@
+!*******************************************************
+
+ macro module l_anavst(VECTOR p1 >"t258"; VECTOR p2 >"t259");
+
+!*      Skriver ut avstånd mellan två positioner.
+!*
+!*      In: pos1 = 1:a positionen.
+!*          t258 = "Ange startposition"
+!*          pos2 = 2:a positionen.
+!*          t259 = "Ange slutposition"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 16/10/86 R. Svedin
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   FLOAT  dx,dy,dz,dr;
+
+ beginmodule
+
+   lst_ini(get_tstr(1506));
+   ! t1506 = "ANALYS  Avstånd"
+
+   dx:=abs(p2.x - p1.x);
+   dy:=abs(p2.y - p1.y);
+   dz:=abs(p2.z - p1.z);
+   dr:=sqrt(dx*dx + dy*dy + dz*dz);
+
+   lst_lin(get_tstr(1510) + str(dr,-1,14));
+   ! t1510 = "Totalt avstånd  : "
+
+   lst_lin("");
+   lst_lin(get_tstr(1507) + str(dx,-1,14));    ! Avstånd i X-led
+   lst_lin(get_tstr(1508) + str(dy,-1,14));    ! Avstånd i Y-led
+   lst_lin(get_tstr(1509) + str(dz,-1,14));    ! Avstånd i Z-led
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

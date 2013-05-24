@@ -1,0 +1,129 @@
+!*******************************************************
+
+  GLOBAL DRAWING MODULE dxf_es2D(
+  VAR FILE   infil,logfil;
+  VAR STRING bntab(2000)*32;
+  VAR INT    bptab(2000);
+  INT        nb;
+  FLOAT      s;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  REF        csy;
+  INT        lev);
+
+!*      Läser ENTITIES-sektionen i en AUTOCAD DXF-fil.
+!*
+!*      (C)microform ab 1997-10-06 J. Kjellander
+!*
+!*      1997-11-30 lev, J.Kjellander
+!*
+!*******************************************************
+
+   STRING rad*132;
+   INT    i,npoi,nlin,narc,ntxt,nply,nsol,nins;
+   FILE   levfil;
+
+   INT    npll,npla;     ! Globala för polyline
+
+ BEGINMODULE
+
+!*
+!***Initiering.
+!*
+   npll:=0; npla:=0;
+   npoi:=0; nlin:=0; narc:=0; ntxt:=0; nply:=0; nsol:=0; nins:=0;
+   outlin(logfil);
+   outstr(logfil,"ENTITIES-Section !");
+   outlin(logfil);
+!*
+!***Läs en rad.
+!*
+loop:
+   rad:=inlin(infil);
+   if iostat(infil) = 0 then
+!*
+!***Punkt.
+!*
+     if rad = "POINT" then
+       part(#1,dxf_poi(infil,lev,levant,levnam,lintyp,s,npoi):SAVE=0);
+       goto loop;
+!*
+!***Linje.
+!*
+     elif rad = "LINE" then
+       part(#2,dxf_lin(infil,lev,levant,levnam,lintyp,s,nlin):SAVE=0);
+       goto loop;
+!*
+!***Cirkel.
+!*
+     elif rad = "CIRCLE" or rad = "ARC" then
+       part(#3,dxf_arc2(infil,lev,levant,levnam,lintyp,s,narc):SAVE=0);
+       goto loop;
+!*
+!***Text.
+!*
+     elif rad = "TEXT" then
+       part(#4,dxf_txt(infil,lev,levant,levnam,lintyp,s,ntxt):SAVE=0);
+       goto loop;
+!*
+!***Polyline.
+!*
+     elif rad = "POLYLINE" then
+       part(#5,dxf_ply(infil,lev,levant,levnam,lintyp,s,npll,npla,nply):SAVE=0);
+       goto loop;
+!*
+!***Solid.
+!*
+     elif rad = "SOLID" then
+       part(#6,dxf_sol(infil,lev,levant,levnam,lintyp,s,nsol):SAVE=0);
+       goto loop;
+!*
+!***Insert.
+!*
+     elif rad = "INSERT" then
+       part(#10,dxf_ins2(infil,lev,levant,levnam,lintyp,s,bntab,bptab,nb,nins),csy:SAVE=1);
+       goto loop;
+!*
+!***Slut.
+!*
+     elif rad = "ENDSEC" then goto end;
+!*
+!***Nästa storhet.
+!*
+     else goto loop;
+     endif;
+   endif;
+
+!*
+!***Slut, skriv resultat till logfilen.
+!*
+end:
+   outstr(logfil,"Processed "+str(npoi,5,0)+" POINT records");
+   outlin(logfil);
+   outstr(logfil,"Processed "+str(nlin,5,0)+" LINE records");
+   outlin(logfil);
+   outstr(logfil,"Processed "+str(narc,5,0)+" ARC records");
+   outlin(logfil);
+   outstr(logfil,"Processed "+str(ntxt,5,0)+" TEXT records");
+   outlin(logfil);
+   outstr(logfil,"Processed "+str(nply,5,0)+" POLYLINE records");
+   outlin(logfil);
+   outstr(logfil,"Processed "+str(nsol,5,0)+" SOLID records");
+   outlin(logfil);
+   outstr(logfil,"Processed "+str(nins,5,0)+" INSERT records");
+   outlin(logfil);
+
+   outlin(logfil);
+   outstr(logfil,"Level:0   Is used as default level");
+   outlin(logfil);
+   for i:=1 to levant do
+     outstr(logfil,"Level:"+str(i,-3,0));
+     outstr(logfil," Name="+levnam(i),-25);
+     outstr(logfil," Linetype="+lintyp(i));
+     outlin(logfil);
+   endfor;
+
+ ENDMODULE
+
+!*******************************************************

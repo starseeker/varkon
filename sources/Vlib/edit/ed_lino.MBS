@@ -1,0 +1,54 @@
+!*******************************************************
+
+ MACRO MODULE ed_lino(REF id);
+
+!*      Editerar LIN_OFFS.
+!*
+!*      In: id = Linjens identitet.
+!*
+!*      (C)microform ab 6/5/92 J. Kjellander
+!*
+!*      1996-06-10 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    pnum;
+   STRING alt*2,par*132;
+
+ beginmodule
+
+!*
+!***Visa meny och läs in svar.
+!*
+    psh_men(101);
+    alt:=get_alt("");
+    pop_men();
+!*
+!***Linje.
+!* 
+    if alt = "a1" then
+      pnum:=1;
+      psh_pmt(get_tstr(260));
+      par:=rstr(ident(2));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then 
+        par:="";;
+      endif;
+!*
+!***Avstånd.
+!*
+    elif alt = "a2" then
+      pnum:=2;
+      par:=getp_mbs(id,pnum);
+      par:=inpmt(get_tstr(261),par,40);
+    else
+      exit();
+    endif;
+!*
+!***Uppdatera.
+!*
+    if par <> "" then updp_mbs(id,pnum,par); endif;
+
+ endmodule
+
+!*******************************************************

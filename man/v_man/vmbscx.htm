@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>mbsc and MBSC.EXE</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<P><B>mbsc and MBSC.EXE<BR>
+<BR>
+</B>The MBS compiler<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>mbsc is the UNIX version and MBSC.EXE the Microsoft Windows95/NT version
+of the MBS compiler. The MBS compiler reads source lines frome MBS-files
+and produces binary modules in MBO-files. <BR>
+<BR>
+The MBS compiler may be used as a text based stand alone program if prefered
+but is usually called automatically by VARKON when needed.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>mbsc source -v -l -wn -hn -sn -pmn<BR>
+<BR>
+Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.<BR>
+<BR>
+<B>Options </B><BR>
+<BR>
+</P>
+</UL>
+
+<TABLE WIDTH="691" >
+<CAPTION>
+<UL></UL>
+</CAPTION>
+
+<TR>
+<TD width="66">
+<UL>
+<P>source</P>
+</UL>
+</TD>
+
+<TD width="617">
+<UL>
+<P>- The name of one or more sourcefiles</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="66">
+<UL>
+<P>-v</P>
+</UL>
+</TD>
+
+<TD width="617">
+<UL>
+<P>- Report current version information and exit.</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="66">
+<UL>
+<P>-l</P>
+</UL>
+</TD>
+
+<TD width="617">
+<UL>
+<P>- Create listfile</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="66">
+<UL>
+<P>-wn</P>
+</UL>
+</TD>
+
+<TD width="617">
+<UL>
+<P>- Use linewidth of n characters in listfile</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="66">
+<UL>
+<P>-hn</P>
+</UL>
+</TD>
+
+<TD width="617">
+<UL>
+<P>- Write n lines per page to listfile</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="66">
+<UL>
+<P>-sn</P>
+</UL>
+</TD>
+
+<TD width="617">
+<UL>
+<P>- Set module protection code to n</P>
+</UL>
+</TD>
+</TR>
+
+<TR>
+<TD width="66">
+<UL>
+<P>-pmn</P>
+</UL>
+</TD>
+
+<TD width="617">
+<UL>
+<P>- Set PMSIZE to n bytes</P>
+</UL>
+</TD>
+</TR>
+</TABLE>
+
+<UL>
+<P><BR>
+<B>Comments<BR>
+<BR>
+</B>mbsc and MBSC.EXE need the following environment parameter to be set
+up in order to function properly. If not defined a default value is used
+instead.<BR>
+<BR>
+<FONT FACE="Courier New">VARKON_ERM Error message files<BR>
+<BR>
+Default in UNIX&nbsp; = /usr/v3/erm<BR>
+Default in Win95 = C:\VARKON\ERM<BR>
+<BR>
+</FONT><FONT FACE="Times New Roman">Due to a bug the compiler will not
+report if the size of PM (PMSIZE) is too small to hold the entire module.
+Instead it truncates the module and writes it to disc without notice. </FONT></P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

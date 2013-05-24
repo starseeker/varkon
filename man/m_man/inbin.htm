@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>inbin</title>
+  <meta name="GENERATOR"
+ content="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</head>
+<body bgcolor="#99ccff">
+<center>
+<p><font size="-1">VARKON Version 1.16 1997-09-08</font></p>
+</center>
+<p>
+</p>
+<hr width="100%" align="center">
+<p></p>
+<blockquote>
+  <h2>inbin - <font size="+0">Procedure</font></h2>
+  <p>Read binary data from a file<br>
+  <br>
+  <br>
+  <b>Description<br>
+  <br>
+  </b>Reads unformatted binary data from a file. An optional parameter
+can
+be used to specify conversion between 16/32 bit integers, 32/64 bit
+floats
+and variable length strings.<br>
+  <br>
+  <b>Syntax<br>
+  <br>
+  </b>inbin(f, data, bytecount)</p>
+  <table width="667">
+    <caption><br>
+    </caption><tbody>
+      <tr>
+        <td width="63">FILE</td>
+        <td width="596">f;</td>
+      </tr>
+      <tr>
+        <td width="63">anytype</td>
+        <td width="596">data;</td>
+      </tr>
+      <tr>
+        <td>INT</td>
+        <td>bytecount;</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><b>Principal parameters</b></p>
+  <table width="667">
+    <tbody>
+      <tr>
+        <td width="53">f</td>
+        <td width="606">- The name of a filevariable accociated with a
+file open
+for read or update (R or U)</td>
+      </tr>
+      <tr>
+        <td width="53">data</td>
+        <td width="606">- A variable to recieve the data to be read.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><b>Optional parameters</b></p>
+  <table width="667">
+    <tbody>
+      <tr>
+        <td width="53">bytecount</td>
+        <td width="606">- The number of bytes to be read. Only valid
+for INT/FLOAT
+or STRING variables.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><b>Comments</b></p>
+  <p>If no bytecount is specified inbin() reads as many bytes as needed
+for
+the actual type of the variable ie. 4 bytes for an INT, 8 bytes for a
+FLOAT
+and so on. If a bytecount is specified, inbin() reads the number of
+bytes
+specified and converts the data to the size used by VARKON. An 8 bit
+integer
+(1 byte) or a 16-bit integer (2 bytes) for example may be read into a
+VARKON
+INT which is 32 bits. A 32 bit float (4 bytes) may be read into a
+VARKON
+FLOAT which is 64 bits.<br>
+  </p>
+  <p>Inbin() is curently not reliable in Windows version of varkon.<br>
+  </p>
+</blockquote>
+<p>
+</p>
+<hr width="100%" align="center">
+<p></p>
+<p></p>
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="fileindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</body>
+</html>

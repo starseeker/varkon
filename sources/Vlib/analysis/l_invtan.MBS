@@ -1,0 +1,36 @@
+!*******************************************************
+
+ macro module l_invtan(REF    id >"@t12 t268";
+                      VECTOR  t >"t345");
+
+!*      Analyserar var en kurva har en viss tangent.
+!*
+!*      In: id  = Kurvans identitet.
+!*                t268 = "Ange storhet"
+!*           p  = Önskad position.
+!*                t345 = "Ange tangent"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 19/12/91 J. Kjellander
+!*
+!*       1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   STRING s*1;
+
+ beginmodule
+
+!*
+!***Utskrift.
+!*
+   psh_pmt("Tx,Ty,Tz = ("+str(t.x,-1,5)+","+
+                          str(t.y,-1,5)+","+
+                          str(t.z,-1,5)+")");
+   s:=inpmt(get_tstr(1544) + str(inv_tang(id,t),-1,6),"",1);
+   pop_pmt();
+
+ endmodule
+
+!*******************************************************

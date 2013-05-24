@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>arc_offs</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>arc_offs - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates an arc<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a circular arc with the same origin as another arc but different radius. A
+  positive value for offset creates an arc with larger radius and a negative value creates
+  an arc with smaller radius.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  arc_offs(id, ref, offset:attributes);<br>
+  <br>
+  </p>
+  <table width="646" border="0">
+<!-- Table 59 Row 01 -->
+    <tr>
+      <td width="83">REF</td>
+      <td width="555">id;</td>
+    </tr>
+<!-- Table 59 Row 02 -->
+    <tr>
+      <td width="83">REF </td>
+      <td width="555">ref;</td>
+    </tr>
+<!-- Table 59 Row 03 -->
+    <tr>
+      <td width="83">FLOAT</td>
+      <td width="555">offset;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="646" border="0">
+<!-- Table 60 Row 01 -->
+    <tr>
+      <td width="73">id </td>
+      <td width="565">- Local identity</td>
+    </tr>
+<!-- Table 60 Row 02 -->
+    <tr>
+      <td width="73">ref</td>
+      <td width="565">- Identity of original arc</td>
+    </tr>
+<!-- Table 60 Row 03 -->
+    <tr>
+      <td width="73">offset</td>
+      <td width="565">- Difference in radius</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="646" border="0">
+<!-- Table 61 Row 01 -->
+    <tr>
+      <td width="73">None.</td>
+      <td width="565"></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="646" border="0">
+<!-- Table 62 Row 01 -->
+    <tr>
+      <td width="73">PEN </td>
+      <td width="565">- Pen or colour number</td>
+    </tr>
+<!-- Table 62 Row 02 -->
+    <tr>
+      <td width="73">LEVEL</td>
+      <td width="565">- Level number</td>
+    </tr>
+<!-- Table 62 Row 03 -->
+    <tr>
+      <td width="73">BLANK</td>
+      <td width="565">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 62 Row 04 -->
+    <tr>
+      <td width="73">AFONT</td>
+      <td width="565">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 62 Row 05 -->
+    <tr>
+      <td width="73">ADASHL</td>
+      <td width="565">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="72">WIDTH</td>
+      <td width="572">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>arc_offs(#2,#1,-1);<br>
+  <br>
+  Creates a new arc #2 one unit smaller than an old arc #1.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  In a 3D module the resulting arc is restricted to the XY-plane of the active coordinate
+  system. If the original arc is not in this plane its origin is projected along the Z-axis
+  onto the active XY-plane and used for the new arc. With offset = 0 this feature can be
+  used to create multiple identical arcs in different parallel planes.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

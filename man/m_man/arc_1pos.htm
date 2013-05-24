@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>arc_1pos</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>arc_1pos - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates an arc<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a circular arc with specified origin and radius. An optional start and end angle
+  may be specified.<br>
+  <br>
+  <b><u>Syntax</u><br>
+  </b><br>
+  arc_1pos(id, p, r, start, end:attributes);<br>
+  <br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 41 Row 01 -->
+    <tr>
+      <td width="83">REF</td>
+      <td width="561">id;</td>
+    </tr>
+<!-- Table 41 Row 02 -->
+    <tr>
+      <td width="83">VECTOR</td>
+      <td width="561">p;</td>
+    </tr>
+<!-- Table 41 Row 03 -->
+    <tr>
+      <td width="83">FLOAT</td>
+      <td width="561">r;</td>
+    </tr>
+<!-- Table 41 Row 04 -->
+    <tr>
+      <td width="83">FLOAT</td>
+      <td width="561">start;</td>
+    </tr>
+<!-- Table 41 Row 05 -->
+    <tr>
+      <td width="83">FLOAT</td>
+      <td width="561">end;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 42 Row 01 -->
+    <tr>
+      <td width="73">id </td>
+      <td width="571">- Local identity</td>
+    </tr>
+<!-- Table 42 Row 02 -->
+    <tr>
+      <td width="73">p</td>
+      <td width="571">- Arc centre</td>
+    </tr>
+<!-- Table 42 Row 03 -->
+    <tr>
+      <td width="73">r</td>
+      <td width="571">- Radius</td>
+    </tr>
+  </table>
+  <b><u><p><br>
+  </u>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 43 Row 01 -->
+    <tr>
+      <td width="73">start</td>
+      <td width="571">- Start angle, default = 0</td>
+    </tr>
+<!-- Table 43 Row 02 -->
+    <tr>
+      <td width="73">end</td>
+      <td width="571">- End angle, default = 360</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 44 Row 01 -->
+    <tr>
+      <td width="72">PEN </td>
+      <td width="572">- Pen or colour number</td>
+    </tr>
+<!-- Table 44 Row 02 -->
+    <tr>
+      <td width="72">LEVEL</td>
+      <td width="572">- Level number</td>
+    </tr>
+<!-- Table 44 Row 03 -->
+    <tr>
+      <td width="72">BLANK</td>
+      <td width="572">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 44 Row 04 -->
+    <tr>
+      <td width="72">AFONT</td>
+      <td width="572">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 44 Row 05 -->
+    <tr>
+      <td width="72">ADASHL</td>
+      <td width="572">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="72">WIDTH</td>
+      <td width="572">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>arc_1pos(#1,vec(10,10),20, ,90);<br>
+  <br>
+  Creates the first quarter of a circle with centre in X=Y=10 and radius 20. A default value
+  of 0 is taken for the start angle and 90 is used for the end angle.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The sense of direction for an arc is counterclockwise from start to end. The positive
+  X-axis represents an angle of zero degrees. Angles may be given as negative or positive
+  values but start should always be smaller then end.<br>
+  <br>
+  In a 3D module the resulting arc is restricted to the XY-plane of the active coordinate
+  system. If p is not in this plane ( p.z &lt;&gt; 0) p is projected along the Z-axis (p.z
+  is set to zero) before the arc is created.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

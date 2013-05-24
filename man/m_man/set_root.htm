@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>set_root_gm</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<h2>set_root_gm - Procedure</h2>
+
+<p>Sets the root position in GM<br>
+<br>
+<br>
+<b>Description<br>
+</b><br>
+Used to move the current root position in the GM hierarchy. This routine is intended for
+use together with get_next_gm when traversing the contents in GM. With set_root_gm
+traversals can be restricted to only a specific part or subhierarchy. This can save lots
+of time if GM is large.<br>
+<br>
+<b>Syntax<br>
+</b><br>
+set_root_gm(part_id)<br>
+<br>
+</p>
+
+<table width="666" border="0">
+<!-- Table 02 Row 01 -->
+  <tr>
+    <td width="60">REF</td>
+    <td width="598">part_id;</td>
+  </tr>
+</table>
+
+<p><br>
+<b>Principal parameters<br>
+</b><br>
+None.<br>
+<br>
+<b>Optional parameters<br>
+</b></p>
+
+<table width="666" border="0">
+<!-- Table 02 Row 01 -->
+  <tr>
+    <td width="51">part_id</td>
+    <td width="607">- Global identity of part to act as the new root. If not specified the
+    root is set to the top of&nbsp; GM</td>
+  </tr>
+</table>
+
+<p><b>Examples<br>
+</b><br>
+set_root_gm(#5#3)<br>
+<br>
+Makes the part #5#3 become the new root position in GM. Consecutive calls to GET_NEXT_GM
+will only return entities from the subtree belonging to #5#3.<br>
+<br>
+set_root_gm() or set_root_gm(#0)<br>
+<br>
+Resets the root to the absolute top of the entire GM. This is also default when a new job
+is started.</p>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="gmdbindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

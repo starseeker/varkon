@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>Variables and constants</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h3>Variables and constants</h3>
+  <p>Variables and constants are declared after all parameters but before BEGINMODULE. A
+  variable declaration reminds of a value_parameter_declaration without default_value or
+  prompt_string.<br>
+  <br>
+  INT i,j; ! Two INT variables<br>
+  FLOAT size; ! A FLOAT variable<br>
+  FILE input_data,output_data; ! More than one variable separeted by commas<b><br>
+  </b><br>
+  Variables may be indexed.<br>
+  <br>
+  INT list(100); ! Array of 100 integers<br>
+  FLOAT matrix(20,50) ! A 2-dimensional matrix 20 by 50<br>
+  FLOAT k(10,5,20,6) ! A 4-dimensional matrix<br>
+  <br>
+  and indexed variables may be declared with lower and upper limit...<br>
+  <br>
+  INT list(20:50); ! An array of 31 integers<br>
+  FLOAT matrix(0:3,0:3) ! A 4 by 4 matrix<br>
+  STRING names(0:9)*20; ! An array of 10 names<br>
+  <br>
+  If no lower limit is specified MBS uses a lower limit of 1 as default.<br>
+  <br>
+  A constant is like a variable but may not be indexed and may not have its value changed.
+  Instead its value is defined once and for all in its declaration...<br>
+  <br>
+  CONSTANT FLOAT max_diameter=20.0;<br>
+  CONSTANT STRING error_message=&quot;Diameter is too large !&quot;;<br>
+  <br>
+  The FILE type may not be used as a constant.<br>
+  <br>
+  Here is a module with some variables and constants:<br>
+  <br>
+  !*********************************<br>
+  !*<br>
+  MODULE init_array();<br>
+  !*<br>
+  !*********************************<br>
+  !*<br>
+  INT i;<br>
+  FLOAT k(100);<br>
+  <br>
+  CONSTANT INT min=1,max=100;<br>
+  <br>
+  BEGINMODULE<br>
+  <br>
+  for i:=min to max do<br>
+  k(i):=0.0;<br>
+  endfor;<br>
+  <br>
+  ENDMODULE<br>
+  !*<br>
+  !*********************************</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="mindex.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

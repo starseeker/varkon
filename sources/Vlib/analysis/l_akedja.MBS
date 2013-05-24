@@ -1,0 +1,109 @@
+!*******************************************************
+
+ macro module l_akedja(REF id >"t268");
+
+!*      Analyserar en anropskedja.
+!*
+!*      In : id => Identitet för storhet som skall
+!*                 anlyseras.
+!*                 t268 = "Ange storhet !"
+!*
+!*      Ut : Inget.
+!*
+!*      (C)microform ab 14/2/91 J. Kjellander
+!*
+!*      1996-06-03 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ INT    i,j,k,l,nlev,typ,nref,blnk,pen,niv,att,np,nm;
+ STRING ids*132,tstr*132,ls1*80,ls2*80;
+ STRING idtab(11)*12,namn*10;
+ REF    gid(3),pid,idm(10),kid;
+ VECTOR pos;
+
+ beginmodule
+
+!*
+!***Konvertera referensen id till en sträng och strippa
+!***ett av de inledande #-tecknen, om det finns två.
+!*
+   ids:=rstr(id);
+   tstr:=ids;
+   if substr(tstr,2,1) = "#" then tstr:=substr(tstr,2); endif;
+!*
+!***Plocka isär ID-strängen i sina delar.
+!* 
+   nlev:=1;
+loop:
+   i:=finds(substr(tstr,2),"#");
+   if i > 0 then
+     idtab(nlev):=substr(tstr,1,i);
+     tstr:=substr(tstr,i+1);
+     nlev:=nlev+1;
+     goto loop;
+   else
+     idtab(nlev):=tstr;
+   endif;
+!*
+!***I idtab finns nu nlev referenser.
+!*
+   lst_ini(get_tstr(257)+ids);      ! t257 = "Anropskedja för storheten "
+
+   tstr:="";
+   for i:=1 to nlev do
+     tstr:=tstr+idtab(i);
+     pid:=global_ref(rval(tstr),1);
+     gethdr(pid,typ,nref,blnk,niv,pen,gid);
+     if typ = 16384 then
+       getprt(pid,namn,typ,att,kid,np,nm,idm);
+       ls1:=get_tstr(265)+                        ! t265 = "Nivå "
+            str(i,-1,0)+" = "+namn+"(";
+       l:=length(ls1);
+       ls2:="";
+       for j:=1 to np do
+         typ:=gettyp(pid,j);
+         if typ = 1 then
+           ls2:=ls2+str(getint(pid,j),-1,0)+",";
+         elif typ = 2 then
+           ls2:=ls2+str(getflt(pid,j),-1,2)+",";
+         elif typ = 3 then
+           ls2:=ls2+chr(34)+getstr(pid,j)+chr(34)+",";
+         elif typ = 4 then
+           pos:=getvec(pid,j);
+           ls2:=ls2+"vec("+str(pos.x,-1,2)+","+str(pos.y,-1,2)+","+
+                           str(pos.z,-1,2)+"),";
+         elif typ = 5 then
+           ls2:=ls2+rstr(getref(pid,j))+",";
+         else
+           ls2:=ls2+"-,";
+         endif;
+
+         if length(ls1+ls2) < 75 then
+           ls1:=ls1+ls2;
+           ls2:="";
+         else
+           lst_lin(ls1);
+           ls1:="";
+           for k:=1 to l do ls1:=ls1+" "; endfor;
+           ls1:=ls1+ls2;
+           ls2:="";
+         endif;
+       endfor;
+
+       if substr(ls1,length(ls1),1) = "," then
+         ls1:=substr(ls1,1,length(ls1)-1);
+       endif;
+       lst_lin(ls1+")");
+     else
+       lst_lin(get_tstr(265)+        ! t265 = "Nivå "
+               str(i,-1,0)+
+               get_tstr(280));       ! t280 = " = Den utpekade storheten");
+     endif;
+   endfor;
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

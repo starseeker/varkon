@@ -1,0 +1,7 @@
+! Detta är VARKON:s standard menyfil för WIN32.
+! Denna fil laddas alltid när systemet startas innan
+! någon annan menyfil laddas.
+ 
+#include "$VARKON_MDF\mswin.INC"
+#include "$VARKON_MDF\texter.INC"
+#include "$VARKON_MDF\menyer.INC"

@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cur_conarr </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cur_conarr - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a curve<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a rational cubic parametric segmented curve that interpolates two or more defining
+  positions and tangent positions. This routine does the same job as cur_conic but takes its
+  input in a format more sutiable for applications with large or varying number of defining
+  positions. See cur_conic for more information.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cur_conarr(id, type, npos, p, tp, mpflag, pval, midp:attributes);<br>
+  <br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 01 Row 01 -->
+    <tr>
+      <td width="82">REF</td>
+      <td width="542">id;</td>
+    </tr>
+<!-- Table 01 Row 02 -->
+    <tr>
+      <td width="82">STRING</td>
+      <td width="542">type*4;</td>
+    </tr>
+<!-- Table 01 Row 03 -->
+    <tr>
+      <td width="82">INT</td>
+      <td width="542">npos;</td>
+    </tr>
+<!-- Table 01 Row 04 -->
+    <tr>
+      <td width="82">VECTOR </td>
+      <td width="542">p(npos);</td>
+    </tr>
+<!-- Table 01 Row 05 -->
+    <tr>
+      <td width="82">VECTOR </td>
+      <td width="542">tp(npos);</td>
+    </tr>
+<!-- Table 01 Row 06 -->
+    <tr>
+      <td width="82">STRING</td>
+      <td width="542">mpflag(npos-1)*1;</td>
+    </tr>
+<!-- Table 01 Row 07 -->
+    <tr>
+      <td width="82">FLOAT</td>
+      <td width="542">pval(npos-1);</td>
+    </tr>
+<!-- Table 01 Row 08 -->
+    <tr>
+      <td width="82">VECTOR</td>
+      <td width="542">midp(npos-1);</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 02 Row 01 -->
+    <tr>
+      <td width="72">id </td>
+      <td width="552">- Local identity</td>
+    </tr>
+<!-- Table 02 Row 02 -->
+    <tr>
+      <td width="72">type</td>
+      <td width="552">- The string &quot;FREE&quot; or &quot;PROJ&quot;</td>
+    </tr>
+<!-- Table 02 Row 03 -->
+    <tr>
+      <td width="72">npos</td>
+      <td width="552">- Number of defining positions</td>
+    </tr>
+<!-- Table 02 Row 04 -->
+    <tr>
+      <td width="72">p</td>
+      <td width="552">- Array with npos positions</td>
+    </tr>
+<!-- Table 02 Row 05 -->
+    <tr>
+      <td width="72">tp</td>
+      <td width="552">- Array with npos tangent positions</td>
+    </tr>
+<!-- Table 02 Row 06 -->
+    <tr>
+      <td width="72">mpflag</td>
+      <td width="552">- Array with &quot;P&quot;:s or &quot;M&quot;:s indicating P-value or
+      Midpoint method </td>
+    </tr>
+<!-- Table 02 Row 07 -->
+    <tr>
+      <td width="72">pval</td>
+      <td width="552">- Array with P-values</td>
+    </tr>
+<!-- Table 02 Row 08 -->
+    <tr>
+      <td width="72">midp</td>
+      <td width="552">- Array with Midpoints</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 03 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 04 Row 01 -->
+    <tr>
+      <td width="71">PEN </td>
+      <td width="553">- Pen or colour number</td>
+    </tr>
+<!-- Table 04 Row 02 -->
+    <tr>
+      <td width="71">LEVEL</td>
+      <td width="553">- Level number</td>
+    </tr>
+<!-- Table 04 Row 03 -->
+    <tr>
+      <td width="71">BLANK</td>
+      <td width="553">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 04 Row 04 -->
+    <tr>
+      <td width="71">CFONT</td>
+      <td width="553">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 04 Row 05 -->
+    <tr>
+      <td width="71">CDASHL</td>
+      <td width="553">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="70">WIDTH</td>
+      <td width="554">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments<br>
+  </b><br>
+  If an element of mpflag is &quot;P&quot; the the corresponding element of pval must be a
+  valid P-value. For elements in mpflag that are &quot;M&quot; the corresponding element of
+  midp must also be valid. </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

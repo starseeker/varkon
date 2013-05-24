@@ -1,0 +1,137 @@
+VARKON Error messages for EXEPAC
+(C) Microform AB 1996
+
+130  2  Can't calculate point data
+131  2  Can't save point in GM
+132  2  Can't calculate line data (%s)
+133  2  Can't store line in GM
+134  2  Can't calulate arc data
+135  2  Can't store arc in GM
+136  2  Can't calculate curve data
+137  2  Can't store curve in GM
+138  2  Can't calculate csys data
+139  2  Can't save csys in GM
+140  2  Can't find entity in GM
+141  2  Illegal entity type for this operation (%s)
+142  2  Can't save part in GM
+143  2  Can't save text in GM
+144  2  Can't save linear dimension in GM
+145  2  Can't save diameter dimension in GM
+146  2  Can't save radius dimension in GM
+147  2  Can't save angular dimension in GM
+148  2  Can't save group in GM
+149  2  Entity already member of three groups
+150  2  Can't convert line to curve
+153  2  Can't calculade dimension data
+154  2  Can't save hatch in GM
+155  2  Can't calculate hatch data
+156  2  Csys missing when calling LOCAL MODULE "%s"
+157  2  GEOMETRY MODULE calls DRAWING MODULE "%s"
+158  2  Can't find plotfile %s
+159  2  Illegal argument for GETID
+160  3  Error from gmgtla()
+161  2  Requested parameter does not exist
+162  2  Requested parameter is not of type %s
+163  2  Illegal level number, can't blank/unblank
+164  2  Can't load resultfile %s
+165  2  Can't save resultfile %s
+166  2  Error from MBS-routine OS,  command = %s
+167  2  Max number of views already created
+168  2  View "%s" does not exist
+169  2  Requested scale is too small
+170  2  Can't create window
+171  2  Illegal curve accuracy
+172  2  Fillet radius <= 0.0
+173  2  Attempt to self intersect %s
+174  2  Can't create plotfile, error from OS
+175  2  "%s" is not a csys, PART()
+176  2  Csys "%s" does not exist, PART()
+177  2  Illegal number of reference levels, GLOBAL_REF()
+178  2  String "%s" is not a legal reference, RVAL()
+179  2  CRE_TSTR(), t-string %s is not allowed
+180  2  Maximum memory for t-strings exeeded (txtmem).
+181  2  CRE-MEN(), menu %s is not allowed
+182  2  Can't save menu nr %s, error from malloc()
+184  2  Can't save B_plane in GM
+185  2  PLOT_WIN, Illegal plot area
+186  2  Can't open jobfile "%s"
+187  3  Can't write to jobfile "%s"
+188  3  Can't close jobfile "%s"
+189  3  Error reading jobfile "%s"
+190  2  Jobfile not compatible with current VARKON version
+191  2  LOAD_JOB(), illegal code
+192  2  Viewing distance < 0
+193  2  Trimmed line/arc has no length
+194  2  The two entities do not intersect
+195  2  Can't open part
+196  2  Can't malloc for hatch boundary
+197  2  Intersect between %s and %s not possible (2 planes)
+198  2  Can't intersect %s with %s
+199  2  Intersect solution number is zero
+200  2  Can't extend enteties, alternative < 0
+201  2  CUR_CONIC, P-value > 0.85
+202  2  Can't save transformation in GM
+203  2  TCOPY, instances of other type already exist
+204  2  TCOPY, attribute mode should be 0 or 1
+205  2  Can't malloc for curve segments, error in %s
+206  2  Error executing %s
+207  2  TCOPY, can't transform the requested curve
+208  2  Can't copy entity with ID = %s
+209  2  Error %s from OS(), command = %s
+210  2  Error from %s
+211  2  Can't save mesh in DB
+212  2  %s is an invalid vertex number for this mesh (GETVERTEX)
+213  2  %s is an invalid half edge number for this mesh (GETHEDGE)
+214  2  %s is an invalid face number for this mesh (GETFACE)
+215  2  %s is an invalid extra float index number for this mesh (GETXFLOAT)
+
+
+300  2  DB_BEGIN, "%s" is an illegal mode
+301  2  Database %s is already open
+302  2  Database not opened before calling %s
+303  2  Write transaction not started before calling %s
+304  2  Transaction not started before calling %s
+305  2  Transaction aktive when calling %s
+306  2  Illegal datatype for search when calling %s
+307  2  Illegal datatype when calling %s
+308  2  Can't close database
+309  2  No previous DB_SELECT active when calling %s
+310  2  Illegal column number when calling %s
+311  2  %s can not be used to read the requested column
+312  2  Requested column not within active DB_SELECT, %s
+313  2  Requested column is not of this type, %s
+314  2  Error from RDB in %s, errorcode = %s
+315  3  ODBC support not included in this build of VARKON
+316  2  %s, ODBC datasource not connected
+317  2  ODBC datasource %s already connected
+318  2  %s, No SQL statement has been executed
+
+400  2  Can't read surface from %s - file (SUR_EXDEF)
+401  2  Can't create surface of type = %s (SUR_EXDEF)
+402  2  SUR_EXDEF, Can't open "%s"
+403  2  Can't save surface in GM
+404  2  CUR_SIL, Illegal computation case
+405  2  Error reading surface from file = %s
+406  2  Can't transform surface from file = %s
+407  2  Requested curve branch number is <= 0
+408  2  SUR_EXDEF, U,V-directions can not be swapped for %s surface
+409  2  SUR_EXDEF, Extrapolation not allowed for %s surface
+410  2  SUR_EXDEF, Surface type %s can mot be trimmed
+411  2  SUR_EXDEF, Failed to trim surface of type = %s
+412  2  GET----, Patch nr:%s does not exist
+413  2  GETCUBP, Patch nr:%s is not bicubic
+414  2  SUR_APPROX, %s is an unknown surface type
+415  2  SUR_APPROX, %s is an unknown method
+416  2  CUR_APPROX, %s is an unknown segment type
+417  2  CUR_APPROX, %s is an unknown method
+418  2  GETFACP, Patch nr:%s is not a facet
+419  2  ALL_INT_LIN_MSUR, Can't malloc for %s surfaces
+420  2  ALL_INT_LIN_MSUR, Can't calculate intersect
+421  2  Can't store NURBS curve in DB
+422  2  Can't malloc for NURBS data
+
+600  2  TCP/IP - %s
+601  2  Robot Application Protocol (RAP) is not included in this build of Varkon
+602  2  Returned array size is not same as ordered size (check rapid declaration)
+603  2  RAP write array, cant malloc
+604  2  Routines specific for Örebro University are not included in this build of Varkon

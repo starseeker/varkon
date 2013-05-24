@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cur_offs </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cur_offs - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a curve<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a curve with constant offset to another curve.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cur_offs(id, ref, offset:attributes);<br>
+  <br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 05 Row 01 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="558">id;</td>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="558">ref;</td>
+    </tr>
+<!-- Table 05 Row 03 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="558">offset;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td width="56">id </td>
+      <td width="568">- Local identity</td>
+    </tr>
+<!-- Table 06 Row 02 -->
+    <tr>
+      <td width="56">ref</td>
+      <td width="568">- Identity of other curve</td>
+    </tr>
+<!-- Table 06 Row 03 -->
+    <tr>
+      <td width="56">offset</td>
+      <td width="568">- Offset value, pos. value =&gt; right side, neg. value =&gt; left side</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 07 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 08 Row 01 -->
+    <tr>
+      <td width="69">PEN </td>
+      <td width="555">- Pen or colour number</td>
+    </tr>
+<!-- Table 08 Row 02 -->
+    <tr>
+      <td width="69">LEVEL</td>
+      <td width="555">- Level number</td>
+    </tr>
+<!-- Table 08 Row 03 -->
+    <tr>
+      <td width="69">BLANK</td>
+      <td width="555">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 08 Row 04 -->
+    <tr>
+      <td width="69">CFONT</td>
+      <td width="555">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 08 Row 05 -->
+    <tr>
+      <td width="69">CDASHL</td>
+      <td width="555">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="70">WIDTH</td>
+      <td width="554">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  cur_offs(#4,#2,10);<br>
+  <br>
+  Creates a curve #4 on the right side of and at constant perpendicular distance from #2.
+  Distance = 10.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  In a 3D module the result is always a planar curve in the XY-plane of the active
+  coordinate system. If the original curve is not in this plane it will be projected along
+  the Z-axis onto the XY-plane before the new curve is created.<br>
+  <br>
+  The old curve must be C1 continous. Normally all curves in VARKON are C1 continous but
+  curves with kinks can be created for example with cur_comp.<br>
+  <br>
+  If the original curve has sharp inner corners and the offset value is large loops may
+  result. VARKON tries to detect this and generates an error message if one is found.<br>
+  <br>
+  Note that all curves including UV-curves and other offset curves can be used to create new
+  offset curves.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

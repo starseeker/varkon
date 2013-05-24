@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>ident </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>ident - <small><small>Function</small></small></h2>
+  <p>Pick entity with mouse<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Interactive pick function. Lets a user identify an entity with the mouse and returns its
+  global identity.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  ident(typemask, end, side)<br>
+  <br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 32 Row 01 -->
+    <tr>
+      <td width="73">INT</td>
+      <td width="578">typemask;</td>
+    </tr>
+<!-- Table 32 Row 02 -->
+    <tr>
+      <td width="73">INT</td>
+      <td width="578">end;</td>
+    </tr>
+<!-- Table 32 Row 03 -->
+    <tr>
+      <td width="73">INT</td>
+      <td width="578">side;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b></p>
+  <table width="659" border="0">
+    <tr>
+      <td width="66">typemask</td>
+      <td width="585">- Type of entitiy to pick. Multiple types can be combined to a typemask by
+      adding their</td>
+    </tr>
+    <tr>
+      <td width="66"></td>
+      <td width="585">&nbsp;&nbsp; type codes. See GET_HDR for the complete list of type codes.</td>
+    </tr>
+  </table>
+  <p><b><br>
+  Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 33 Row 01 -->
+    <tr>
+      <td width="65">end</td>
+      <td width="586">- A variable to recieve end information. 0 = Start, 1 = End.</td>
+    </tr>
+<!-- Table 33 Row 02 -->
+    <tr>
+      <td width="65">side</td>
+      <td width="586">- A variable to recieve side information. 0 = Right, 1 = Left.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A REF holding the global identity of the entity picked or #0 if the operation was rejected
+  by the user.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  id:=ident(2+4+8);<br>
+  <br>
+  Turns the pick cursor on and waits for the user to pick a line (2), arc (4) or curve(8). <br>
+  <br>
+  id:=ident(65535);<br>
+  <br>
+  Lets the user pick an entity of any type.<br>
+  <br>
+  id:=ident(4, end, side);<br>
+  <br>
+  Lets the user pick a line. The end variable returns which end of the line that was closest
+  to the cursor when the mouse was clicked. The side variable returns weather the cursor was
+  on the right or left side of the line.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  End or side information is only applicable to lines, arcs and curves.<br>
+  <br>
+  Entities with the HIT attribute set to zero can not be picked.<br>
+  <br>
+  Entities of certain types may be selected interactively by using the keybord instead of
+  the mouse buttons when picking. </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="dialindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_sweep </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>sur_sweep - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a surface<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a surface by sweeping a &quot;base&quot; profile along a spine. The profile and
+  the spine may be any line, arc or curve and they do not need to be planar. To create a
+  surface by sweeping, do the following:<br>
+  <br>
+  1. Create a basic profile in the XY-plane of the BASIC coordinate system.<br>
+  2. Create the actual spine.<br>
+  3. Use sur_sweep() to sweep the profile along the spine.<br>
+  <br>
+  For a given point on the spine VARKON uses the shape of the profile but moves it from its
+  original position so that the origin of the BASIC coordinate system is made equal to the
+  point on the spine and the BASIC Z-direction is equal to the spine tangent. If the spine
+  is a true planar curve the plane normal is used as the BASIC Y-direction. For a non planar
+  spine a temporary plane is automatically created and its normal is used for the
+  Y-direction. In any case an optional dir parameter may be supplied and will then be used
+  instead of the plane normal to control the Y-axis.<br>
+  <br>
+  The function of sur_sweep() makes it possible to use the same basic profile to sweep along
+  many different spines.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  sur_sweep(id, profile, spine, reverse, dir:attributes);<br>
+  <br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 01 Row 01 -->
+    <tr>
+      <td width="78">REF</td>
+      <td width="529">id;</td>
+    </tr>
+<!-- Table 01 Row 02 -->
+    <tr>
+      <td width="78">REF</td>
+      <td width="529">profile;</td>
+    </tr>
+<!-- Table 01 Row 03 -->
+    <tr>
+      <td width="78">REF</td>
+      <td width="529">spine;</td>
+    </tr>
+<!-- Table 01 Row 04 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="529">reverse;</td>
+    </tr>
+<!-- Table 01 Row 05 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="529">dir;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 02 Row 01 -->
+    <tr>
+      <td width="68">id </td>
+      <td width="539">- Local identity</td>
+    </tr>
+<!-- Table 02 Row 02 -->
+    <tr>
+      <td width="68">profile</td>
+      <td width="539">- Identity of line, arc or curve</td>
+    </tr>
+<!-- Table 02 Row 03 -->
+    <tr>
+      <td width="68">spine</td>
+      <td width="539">- Identity of line, arc or curve</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b></p>
+  <table width="615" border="0">
+    <tr>
+      <td width="67">reverse </td>
+      <td width="540">- Controls the parametric directions of the resulting surface </td>
+    </tr>
+    <tr>
+      <td width="67"></td>
+      <td width="540">&nbsp;&nbsp; 1 = No reversal of input (default)</td>
+    </tr>
+    <tr>
+      <td width="67"></td>
+      <td width="540">&nbsp; -1 = The profile curve (U-direction) is reversed</td>
+    </tr>
+    <tr>
+      <td width="67"></td>
+      <td width="540">&nbsp;&nbsp; 2 = The spine curve (V-direction) is reversed</td>
+    </tr>
+    <tr>
+      <td width="67"></td>
+      <td width="540">&nbsp;&nbsp; 3 = The profile and the spine are both reversed</td>
+    </tr>
+    <tr>
+      <td width="67">dir</td>
+      <td width="540">- Controls the direction of the Y-axis, Default = plane normal.</td>
+    </tr>
+  </table>
+  <p><b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 04 Row 01 -->
+    <tr>
+      <td width="68">PEN </td>
+      <td width="539">- Pen or colour number</td>
+    </tr>
+<!-- Table 04 Row 02 -->
+    <tr>
+      <td width="68">LEVEL</td>
+      <td width="539">- Level number</td>
+    </tr>
+<!-- Table 04 Row 03 -->
+    <tr>
+      <td width="68">BLANK</td>
+      <td width="539">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 04 Row 04 -->
+    <tr>
+      <td width="68">SDASHL</td>
+      <td width="539">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>sur_sweep(#3, #1, #2);<br>
+  <br>
+  Creates a surface by sweeping a copy of #1 along #2.<br>
+  <br>
+  sur_sweep(#3,#1,#2,-1);<br>
+  <br>
+  Geometrically the same surface but parametrisation reversed in U-direction.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The parameter of the profile becomes the U-direction of the surface and the parameter of
+  the spine becomes the V-direction. The optional &quot;reverse&quot; parameter can be used
+  to alter this.<br>
+  <br>
+  Remember that profiles should be defined in the BASIC coordinate system and that the same
+  profile can be used for different spines. One way to accomplish this is to set the system
+  in BASIC mode before the profile is created and another way is to create the profile in a
+  module with attribute BASIC.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

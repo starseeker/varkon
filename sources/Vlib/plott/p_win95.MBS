@@ -1,0 +1,61 @@
+!*******************************************************
+
+ MACRO MODULE p_win95(
+ STRING plotfil*132 >"Plottfilens namn";
+ STRING driver*132  >"Alltid msw32";
+ STRING dest*132    >"Printer, tex. -PCanon Fax B320/340";
+ STRING params*132  >"Övriga parametrar";
+ INT    delflag     >"Flagga");
+                     ! 0 = Debug, inget tas bort.
+                     ! 1 = Plotfilen tas bort.
+                     ! 2 = Plotfilen tas ej bort.
+
+!*      Startar plotjobb.
+!*
+!*      (C)microform ab 1997-03-24 J. Kjellander
+!*
+!*******************************************************
+
+ STRING dllnam*132,actpar*132,s*1;
+
+ BEGINMODULE
+
+!*
+!***Ladda DLL:en.
+!*
+   dllnam:=get_environment("VARKON_ROOT")+"\BIN\MSW32.DLL";
+
+   if load_dll(dllnam) < 0 then
+     exit("Cant load "+dllnam);
+!*
+!***Bygg ihop parametersträngen.
+!*
+   else
+     actpar:=params+" "+dest;
+     if delflag = 1 then
+       actpar:=actpar+" -del";
+     endif;
+!*
+!***Ev debugutskrift.
+!*
+     if delflag = 0 then
+       s:=inpmt("dllnam",dllnam);
+       s:=inpmt("plotfil",plotfil);
+       s:=inpmt("actpar",actpar);
+     endif;
+!*
+!***Starta själva plottningen.
+!*
+     call_dll_function(dllnam,"msw32",plotfil,actpar);
+     unload_dll(dllnam);
+   endif;
+
+ ENDMODULE
+   
+!*******************************************************
+
+
+
+
+
+

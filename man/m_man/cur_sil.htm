@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cur_sil </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cur_sil - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a curve<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Input data for the silhouette curve calculation is a surface and an eye point (at a finite
+  distance from the surface) or a viewing direction (eye point at an infinite distance). <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cur_sil(id, ref, eye, type, branch:attributes);<br>
+  <br>
+  </p>
+  <table width="599" border="0">
+<!-- Table 32 Row 01 -->
+    <tr>
+      <td width="74">REF</td>
+      <td width="517">id;</td>
+    </tr>
+<!-- Table 32 Row 02 -->
+    <tr>
+      <td width="74">REF</td>
+      <td width="517">ref;</td>
+    </tr>
+<!-- Table 32 Row 03 -->
+    <tr>
+      <td width="74">VECTOR</td>
+      <td width="517">eye;</td>
+    </tr>
+<!-- Table 32 Row 04 -->
+    <tr>
+      <td width="74">INT</td>
+      <td width="517">type;</td>
+    </tr>
+<!-- Table 32 Row 05 -->
+    <tr>
+      <td width="74">INT</td>
+      <td width="517">branch;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="599" border="0">
+<!-- Table 33 Row 01 -->
+    <tr>
+      <td width="67">id </td>
+      <td width="524">- Local identity</td>
+    </tr>
+<!-- Table 33 Row 02 -->
+    <tr>
+      <td width="67">ref</td>
+      <td width="524">- Surface</td>
+    </tr>
+<!-- Table 33 Row 03 -->
+    <tr>
+      <td width="67">eye</td>
+      <td width="524">- Eye point or viewing direction</td>
+    </tr>
+<!-- Table 33 Row 03 -->
+    <tr>
+      <td width="62">type</td>
+      <td width="562">- Type of silhouette curve</td>
+    </tr>
+<!-- Table 22 Row 02 -->
+    <tr>
+      <td width="62"></td>
+      <td width="562">&nbsp;&nbsp; Eq. 1: Perspective with eye point (at a finite distance)</td>
+    </tr>
+<!-- Table 22 Row 03 -->
+    <tr>
+      <td width="62"></td>
+      <td width="562">&nbsp;&nbsp; Eq. 2: Eye point at an infinite distance</td>
+    </tr>
+<!-- Table 22 Row 03 -->
+    <tr>
+      <td width="62"></td>
+      <td width="562">&nbsp;&nbsp; Eq. 3: Special (infinite distance) silhouette for a surface
+      of type LFT_SUR</td>
+    </tr>
+<!-- Table 22 Row 01 -->
+    <tr>
+      <td width="62">branch </td>
+      <td width="562">- Requested branch of the silhouette curve</td>
+    </tr>
+<!-- Table 22 Row 03 -->
+    <tr>
+      <td width="62"></td>
+      <td width="562">&nbsp;&nbsp; (If 1000 is added will the graphical representation be the UV
+      curve)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 34 Row 01 -->
+    <tr>
+      <td>None</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="599" border="0">
+<!-- Table 35 Row 01 -->
+    <tr>
+      <td width="67">PEN </td>
+      <td width="524">- Pen or colour number</td>
+    </tr>
+<!-- Table 35 Row 02 -->
+    <tr>
+      <td width="67">LEVEL</td>
+      <td width="524">- Level number</td>
+    </tr>
+<!-- Table 35 Row 03 -->
+    <tr>
+      <td width="67">BLANK</td>
+      <td width="524">- Visible (0) or invisible (1)</td>
+    </tr>
+<!-- Table 35 Row 04 -->
+    <tr>
+      <td width="67">CFONT</td>
+      <td width="524">- Solid (0), dashed (1), center line (2)</td>
+    </tr>
+<!-- Table 35 Row 05 -->
+    <tr>
+      <td width="67">CDASHL</td>
+      <td width="524">- Dash length</td>
+    </tr>
+    <tr>
+      <td width="70">WIDTH</td>
+      <td width="554">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  cur_sil( #3, #2, &quot;U&quot;, vec(0.0, 1.3, 1.1), 2, 1);<br>
+  <br>
+  Creates a silhouette curve #3 on surface #2. Eye point is at infinite distance and the
+  viewing direction is vec(0.0, 1.3, 1.1). The first curve branch is requested.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

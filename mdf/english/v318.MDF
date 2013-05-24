@@ -1,0 +1,7 @@
+
+! For Varkon with X-Windows
+ 
+#include "$VARKON_MDF/x11.INC"
+#include "$VARKON_MDF/menus.INC"
+#include "$VARKON_MDF/texts.INC"
+#include "$VARKON_MDF/plott.INC"

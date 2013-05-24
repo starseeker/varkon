@@ -1,0 +1,6 @@
+! This is the default menufile loaded by the Microsoft 
+! windows version of VARKON at startup.
+ 
+#include "$VARKON_MDF\mswin.INC"
+#include "$VARKON_MDF\texts.INC"
+#include "$VARKON_MDF\menus.INC"

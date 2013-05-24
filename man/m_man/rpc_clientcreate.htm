@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+  <title>rpc_clientcreate</title>
+  <style type="text/css">
+<!--
+p.h{font-weight: bold; line-height: 21pt}
+-->
+  </style>
+</head>
+<body style="background-color: rgb(153, 204, 255);">
+<p>
+</p>
+<center><font size="-1">VARKON Version 1.18A 2004-09-07</font></center>
+<hr width="100%" align="center">
+&nbsp;<br>
+<table border="0">
+  <tbody>
+    <tr>
+      <td width="35">&nbsp;<br>
+      </td>
+      <td>
+      <h2>rpc_clientcreate - <font size="+0">function</font></h2>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">Description</p>
+            </td>
+          </tr>
+          <tr>
+            <td>Create client for Remote Procedure calls (RPC)</td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">Syntax</p>
+            </td>
+          </tr>
+          <tr>
+            <td>RPC_CLIENTCREATE(servername,programnumber,versionnumber,client);</td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0" width="640">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;">STRING<br>
+            </td>
+            <td style="vertical-align: top;">servername<br>
+            </td>
+          </tr>
+          <tr>
+            <td width="80">INT</td>
+            <td width="580">programnumber<br>
+            </td>
+          </tr>
+          <tr>
+            <td width="80">INT<br>
+            </td>
+            <td width="580">versionnumber<br>
+            </td>
+          </tr>
+          <tr>
+            <td width="80">INT<br>
+            </td>
+            <td width="580">client<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0" width="640">
+        <tbody>
+          <tr>
+            <td colspan="2">
+            <p class="h">Principal parameters</p>
+            </td>
+          </tr>
+          <tr>
+            <td width="80" valign="top">severname<br>
+            </td>
+            <td width="580" valign="top">- Server to connect, name or
+ip-adress ("servername" or "nnn.nnn.nnn.nnn").</td>
+          </tr>
+          <tr>
+            <td width="80" valign="top">programnumber</td>
+            <td width="580" valign="top">- Program number in server to
+connect<br>
+            </td>
+          </tr>
+          <tr>
+            <td width="80" valign="top">versionnumber</td>
+            <td width="580" valign="top">- Version number of program in
+server<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">client<br>
+            </td>
+            <td style="vertical-align: top;">- variable to retrieve id
+of created client<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0" width="640">
+        <tbody>
+          <tr>
+            <td colspan="2">
+            <p class="h">Optional parameters</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">none</td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">Return value</p>
+            </td>
+          </tr>
+          <tr>
+            <td>An INT value equal to the current error status as
+below: </td>
+          </tr>
+        </tbody>
+      </table>
+      <table border="0" style="width: 640px;">
+        <tbody>
+          <tr>
+            <td style="width: 60px; text-align: right;" valign="top">0=&nbsp;<br>
+            </td>
+            <td>Success, client created </td>
+          </tr>
+          <tr>
+            <td style="width: 60px;" align="right" valign="top">-1= <br>
+            </td>
+            <td>Failed to create client<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">Comments</p>
+            </td>
+          </tr>
+          <tr>
+            <td>To use the RAP variable access routines included in
+varkon, use:<br>
+program number = 300456<br>
+program version = 1<br>
+See RAP protocolspecification (3FAC 7696-1), page 20.<br>
+            <br>
+RPC (and RAP) routines is only available for xvarkon (UNIX
+platforms), the use of RPC/RAP-routines need also to be enabled when
+building xvarkon. See $VARKON_ROOT/sources/makefile.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">See also</p>
+            </td>
+          </tr>
+          <tr>
+            <td><a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rpc_clientcreate.htm">rpc_clientcreate()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rpc_clientdestroy.htm">rpc_clientdestroy()</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+      <td width="35">&nbsp;<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<hr width="100%" align="center">
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="rapindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</body>
+</html>

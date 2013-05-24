@@ -1,0 +1,97 @@
+/**********************************************************************
+*
+*    README
+*    ======
+*
+*    This README-file includes information about
+*    the Varkon plotter/printer "filters/drivers".
+*
+*    (C)Örebro University 2003-03-20    http://www.oru.se/tech/cad
+*
+***********************************************************************/
+
+Plotting or printing is the process of copying some or all
+of the graphics from your display onto paper. The word
+"printing" is usually used for normal desk printers like a
+postscript or HP laser. The word "plotting" is sometimes
+used for bigger size dedicated plotting devices like a
+HP pen plotter ot Gerber photo plotter. From Varkon's
+point of view "printing" or "plotting" is no different
+and both words are used to indicate the same thing.
+
+Plotting/printing in Varkon is a 3-step process. If you use
+any of Varkon's interactive functions for plotting (like
+"autoplot") these 3 steps are done automatically and at once.
+If you want to do it yourself this is what you need to do:
+
+1. First you create a plotfile.
+
+2. Then you convert the format of the plotfile to a
+   format suitable for a specific plotter or printer. 
+   This is where the PL module is involved.
+
+3. Finally you send the formatted data to the plotter or printer.
+   This usually involves using the spooler system of your computer
+   but you could also send the data to a device directly connected
+   to a serial or parallell port.
+
+Exactly how this process works depends on the platform you
+are using and how your platform is configurated. UNIX for
+example is different from Windows95/98/NT.
+
+Step 1 is the same on all platforms. Varkon includes several
+interactive functions as well as support in MBS to create
+plotfiles. A Varkon plotfile is an ASCII text formatted file
+with an ISO-GKS Metafile representation of the image you want
+to plot. Varkon uses the file extension ".PLT" for plotfiles.
+This format is device independant and Varkon uses the
+same format on all supported platforms so you can create PLT-
+files on one platform and send them over a network for processing
+on another platform.
+
+Step 2 and 3 are different on different platforms. With Windows, Varkon
+uses msw32.dll to convert the PLT-file to Windows commands and send
+them to the Windows spooler system for output. The Windows graphics
+system takes care of the conversion needed for the actual device you
+are using. This means that with the Windows version of Varkon you
+normally only need msw32.dll to get your graphics out on paper.
+
+UNIX is slightly different. If you have a postscript printer or
+emulator (ie. ghostscript) you can use the postscript filter
+to convert PLT-files into postscript files. If you dont want to
+use postscript there are several other filters supplied in the
+PL module. In any case what you need to do is to filter the
+contents of the PLT-file into the format you want to use, ie.
+
+   postscript -options < my_plotfile.PLT > my_plotfile.ps
+
+if you want to use postscript, or
+
+  hpcl5 -options < my_plotfile.PLT > my_plotfile.hpcl
+
+if you have a HP laser printer.
+
+When the PLT-file is converted to the right format all you have
+to do is to send it to the printer or plotter. You can use the
+spooler to do this, ie.
+
+   lpr my_plotfile.ps
+
+or you can send it directly to a specific port
+
+   cat my_plotfile.ps >/dev/tty0
+
+How to set up a spooled printer or how to configure handshaking etc.
+for a port will differ on different platforms and is not covered
+in this README.
+
+If none of the supplied filters work with your hardware it's
+usually quite easy to write a new one. What you need to do is
+to write an init, exit, pen_up/move, pen_down/move, select_pen and 
+set_linewidth function for your printer. The rest is taken care
+of by PL. Have a look at the supplied filters (hp7475.c is rather
+well commented) and use one of them as a template. If you get it
+working and want to share it, please send it to us so we can merge
+it into the source distribution.
+
+/**********************************************************************/

@@ -1,0 +1,5 @@
+! a4 = Spooled hp7475 plotter
+ hp7475 <
+ | lpr
+ act_job
+ -s1

@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>The VECTOR datatype and geometric positions </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-09-24</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>The VECTOR datatype and geometric positions</H3>
+
+<P>VECTOR is one of 7 predefined datatypes. Variables of type <B>VECTOR
+</B>have a<B> </B>X, Y and Z component and<B> </B>they are declared as
+follows...<BR>
+<BR>
+<B>VECTOR</B> p1,p2; ! Declares two vector variables with name p1 and p2<BR>
+<BR>
+MBS also includes a number of built in functions returning a <B>VECTOR</B>
+value. One example is the <B>on</B> function which returns the coordinates
+of a position lying somewhere on a geometric entity....<BR>
+<BR>
+p1:=<B>on</B>(#2,0.5);<BR>
+<BR>
+This statement assigns the coordinates of the midpoint of #2 to the variable
+p1. Lines and arcs have a relative arc length parameter ranging from 0
+to 1 representing different positions on the entity. 0.5 is thus the midpoint.
+Entities with no arclength like points and coordinate systems are accessed
+without parameter..<BR>
+<BR>
+p2:=<B>on</B>(#7);<BR>
+<BR>
+if #7 is a point or coordinate system (or a 2D-drafting entity). A curve
+has parameter ranging from 0 to a number equal to the number of segments
+that make the curve. A curve with 5 segments will go from 0 to 5 in parameter.
+For curves this parameter is not relative to arclength as it is for lines
+and arcs. Instead it relates exactly to the internal parameter used in
+the parametric curve representation. If relative arclength parametrisation
+is wanted the function <B>inv_arcl</B> can be used to achieve that with
+the price of extra computation. <BR>
+<BR>
+Positions on b_planes and surfaces are calculated using two parameters
+equal to the U and V parameters in the parametric surface representation.
+Thus if #4 is a surface...<BR>
+<BR>
+p1:=<B>on</B>(#4,<B>vec</B>(0.5,0.5));<BR>
+<BR>
+then this statement would assign the coordinates of the parametric midpoint
+of the first patch of surface #4 to p1. <B>VECTOR</B>:s<B> </B>can also
+be used to hold a value representing a direction. The <B>norm</B> function
+for example, returns the direction of the perpendicular normal for a given
+position on a curve, b_plane or surface as a <B>VECTOR</B>.<BR>
+<BR>
+MBS supports addition, subtraction, multiplication and scalar product in
+expressions. The standard library includes functions for vector product,
+vector length and normalization as well as the calculation of positions,
+tangents, normals, curvatures, arclengths, and intersects. There is also
+a low level eval routine for those who wish to know everything there is
+to know. Inverse functions calculate parameter values for given geometric
+values. <B>inv_arcl</B> for example calculates the parameter value for
+a position with a given distance from the beginning of a curve. Other inverse
+functions are<B> inv_on, inv_tang and inv_curv</B></P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

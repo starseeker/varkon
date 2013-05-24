@@ -1,0 +1,39 @@
+!*******************************************************
+
+ basic geometry module l_tniv1(
+ INT nivnum:=0 >"Vilken niv} vill du t{nda ?");
+
+!*      T{nder enstaka niv}.
+!*
+!*      (C)microform ab 6/1/90 J. Kjellander
+!*
+!*******************************************************
+
+ STRING s*1;
+
+ beginmodule
+
+loop:
+   if nivnum < 0 then
+     exit("Niv}nummer kan ej vara mindre {n 0 !");
+   elif nivnum > 1999 then
+     exit("Niv}nummer kan ej vara st|rre {n 1999 !");
+   else
+     unblank_lev(nivnum);
+     psh_pmt("Niv} nummer "+str(nivnum,-1,0)+" {r nu t{nd !");
+     s:=inpmt("Vill du t{nda {ven n{sta niv} ? (j/n) ","j",2);
+     pop_pmt();
+   endif;
+
+   if s = "j" then
+     nivnum:=nivnum+1;
+     goto loop;
+   endif;
+
+   if inpmt("Vill du rita om sk{rmen ? ","j",2) = "j" then
+     rep_view();
+   endif;
+
+ endmodule
+
+!*******************************************************

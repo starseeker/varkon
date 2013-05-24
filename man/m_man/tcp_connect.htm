@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>tcp_connect</TITLE>
+<style type="text/css">
+<!--
+p.h{font-weight: bold; line-height: 21pt}
+-->
+</style>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+<p>
+<CENTER><FONT SIZE=-1>VARKON Version 1.17D 2003-03-25</FONT></CENTER>
+</p>
+<HR width="100%" align="center">
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD width="35">
+&nbsp;<BR>
+</TD>
+<TD>
+<H2>
+tcp_connect - <FONT SIZE=+0>function</FONT></H2>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD><p class=h>Description</P> 
+</TD></TR><TR><TD>Connect to a specified server via TCP/IP and provide the id of the established socket connection.
+The id is used for successive operations (sending and receiving data).
+Always use TCP_close() to close the connection when session is over.
+</TD></TR></TABLE>&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD><p class=h>Syntax</P> 
+</TD></TR><TR><TD>tcp_connect(server, port, localport, socket );</TD></TR></TABLE>
+&nbsp;<BR>
+<TABLE BORDER=0 WIDTH="640">
+<TR>
+<TD WIDTH="80">STRING</TD>
+<TD WIDTH="580">server*132 </TD>
+</TR>
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">port</TD>
+</TR>
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">localport</TD>
+</TR>
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">socket </TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD colspan=2>
+<p class=h>Principal parameters</P> 
+</TD></TR>
+<TR>
+<TD WIDTH="80" valign="top">server</TD>
+<TD WIDTH="580" valign="top">- Server to connect, name or ip-adress ("servername" or "nnn.nnn.nnn.nnn").</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">port</TD>
+<TD WIDTH="580" valign="top">- port number on server to connect.</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">localport</TD>
+<TD WIDTH="580" valign="top">- local port number to use for connection,if =0, the system will choose a free port for you.</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">socket </TD>
+<TD WIDTH="580" valign="top">- Integer to retrieve the id of the socket connection.</TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD colspan=2>
+<p class=h>Optional parameters</P> 
+</TD></TR>
+<TR><TD colspan=2>none</TR></TD>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>Return value</TD></TR>
+<TR><TD>
+An INT value equal to the current error status as below:
+</TD></TR>
+</TABLE>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD align="right" valign="top" width="40">
+0 =
+</TD width="610">
+<TD>
+Operation was successful.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-3 =
+</TD width="610">
+<TD>
+The network subsystem or the associated service provider has failed. 
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-4 =
+</TD width="610">
+<TD>
+Winsock routine WSAstartup() failed. Could not initiate the use of WS2_32.DLL.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-5 =
+</TD width="610">
+<TD>
+Winsock routine socket() failed. A socket could not be opened.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-6 =
+</TD width="610">
+<TD>
+Local address/port already in use.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-7 =
+</TD width="610">
+<TD>
+The local address/port is not valid.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-8 =
+</TD width="610">
+<TD>
+Winsock routine bind() failed. Could not bind to specified local port. 
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-9 =
+</TD width="610">
+<TD>
+Can not resolve given host adress.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-10 =
+</TD width="610">
+<TD>
+The remote address is not a valid address. 
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-11 =
+</TD width="610">
+<TD>
+The attempt to connect was rejected. 
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-12 =
+</TD width="610">
+<TD>
+Winsock routine connect() failed. Could not connect.
+</TD></TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>Examples</P></TD></TR>
+<TR><TD>
+<code>
+<b>INT</b> status;<br>
+<b>INT</b> socket;<br>
+status:=<b>TCP_connect</b>("COMP22", 5001, 0, socket);<br>
+</code>
+&nbsp;<br>
+We will connect to the computer "COMP22" on port 5001, our local port will be selected by the system. 
+The id of the socket connection will be stored in the variable "socket".
+</TD></TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>See also</P>
+</TD></TR>
+<TR><TD>
+<A HREF="tcp_listen.htm">tcp_listen()</A> &nbsp; &nbsp;
+<A HREF="tcp_close.htm">tcp_close()</A> &nbsp; &nbsp;
+<A HREF="tcp_outint.htm">tcp_outint()</A> &nbsp; &nbsp;
+<A HREF="tcp_inint.htm">tcp_inint()</A> &nbsp; &nbsp;
+<A HREF="tcp_outfloat.htm">tcp_outfloat()</A> &nbsp; &nbsp;
+<A HREF="tcp_infloat.htm">tcp_infloat()</A> &nbsp; &nbsp;
+<A HREF="tcp_outvec.htm">tcp_outvec()</A> &nbsp; &nbsp;
+<A HREF="tcp_invec.htm">tcp_invec()</A> &nbsp; &nbsp;
+<A HREF="tcp_getlocal.htm">tcp_getlocal()</A> &nbsp; &nbsp;
+<A HREF="tcp_getremote.htm">tcp_getremote()</A> &nbsp; &nbsp;
+</TABLE>
+</TD>
+<TD width="35">
+&nbsp;<BR>
+</TD>
+</TR>
+</TABLE>
+<HR width="100%" align="center">
+<CENTER>
+<TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+<TD><A HREF="tcpindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+</BODY>
+</HTML>

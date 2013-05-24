@@ -1,0 +1,67 @@
+!*******************************************************
+
+ BASIC GEOMETRY MODULE igs_110(
+   VAR FILE infil,logfil;
+   STRING   dl1*80,dl2*80;
+   INT      ps_ptr;
+   INT      eolsize;
+   VAR INT  status);
+
+!*      Read Directory Entry Section and
+!*      get values from Parameter Section
+!*      and create a line.
+!*
+!*      In: infil  = File to read from.
+!*          logfil = Logfile.
+!*          dl1    = Read 1st Directory Entry Section.
+!*          dl2    = Read 2nd Directory Entry Section.
+!*          ps_ptr = Pointer to Parameter Section.
+!*
+!*      Out: status = 0 => Ok
+!*                   -1 => Error
+!*
+!*      (C)microform 1997-12-23 J. Kjellander
+!*      (C)kastalyse 2000-04-09 R. Kastelein r.e.f.kastelein@kastalyse.nl 
+!*      2004-07-20, eolsize, J.Kjellander, Örebro university
+!*
+!*******************************************************
+
+   INT    i,radnummer,antal_rader,pd;
+   STRING rad*132,fs*132;
+   FLOAT  f;
+   FLOAT  x(6);
+
+ BEGINMODULE
+
+!*
+!***Get entity line number in Parameter
+!***Data Section and position filepointer.
+!*
+   radnummer:=round(val(substr(dl1,9,8)));
+   antal_rader:=round(val(substr(dl2,25,8)));
+   seek(infil,ps_ptr+(radnummer-1)*(80+eolsize));
+!*
+!***Read 1:st line and strip "110,".
+!*
+   rad:=inlin(infil);
+   rad:=substr(rad,finds(rad,",")+1);
+!*
+!***Read the coordinates of the two points
+!*
+   for i:=1 to 6 do
+     part(#2,igs_gflt(infil,rad,x(i),status):SAVE=0);
+   endfor;
+!*
+!***Draw line between the two points
+!*
+   lin_free(#3,vec(x(1),x(2),x(3)),vec(x(4),x(5),x(6)));
+!*
+!***End.
+!*
+   status:=0;
+
+ ENDMODULE
+
+!*******************************************************
+
+

@@ -1,0 +1,124 @@
+!*******************************************************
+
+ MACRO MODULE dxf_tsec(
+   VAR FILE infil,logfil;
+   VAR STRING levnam(500)*40;
+   VAR INT    levant;
+   VAR STRING lintyp(500)*20);
+
+!*      Läser TABLES-section.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*******************************************************
+
+   STRING rad*132,tabnam*132;
+   INT    i,kod;
+
+ BEGINMODULE
+
+!*
+!***Initiering.
+!*
+   levant:=0;
+!*
+!***TABLES.
+!*
+   outlin(logfil);
+   outstr(logfil,"TABLES-Section");
+   outlin(logfil);
+
+tables:
+   kod:=inint(infil); rad:=inlin(infil);
+
+   if kod = 0 then
+     rad:=inlin(infil);
+!*
+!***En tabell.
+!*
+     if rad = "TABLE" then
+table:
+       kod:=inint(infil); rad:=inlin(infil);
+       if kod = 2 then
+         tabnam:=inlin(infil);
+         outstr(logfil,"TABLE = "+tabnam);
+         outlin(logfil);
+!*
+!***LAYER-Tabellen.
+!*
+         if tabnam = "LAYER" then
+laytab:
+           kod:=inint(infil); rad:=inlin(infil);
+           if kod = 0 then
+             rad:=inlin(infil);
+!*
+!***En specifik layer.
+!*
+             if rad = "LAYER" then
+layer:
+               kod:=inint(infil); rad:=inlin(infil);
+               if kod = 2 then
+                 if levant < 500 then
+                   levant:=levant+1;
+                   levnam(levant):=inlin(infil);
+                 endif;
+               elif kod = 6 then
+                 lintyp(levant):=inlin(infil);
+               elif kod = 0 then
+                 rad:=inlin(infil);
+                 if rad = "ENDTAB" then
+                   outstr(logfil,str(levant,-1,0)+" layers processed");
+                   outlin(logfil);
+                   goto tables;
+                 endif;
+               else
+                 rad:=inlin(infil);
+               endif;
+               goto layer;
+!*
+!***Slut en specifik layer.
+!*
+             elif rad = "ENDTAB" then
+               goto tables;
+             endif;
+           else
+             rad:=inlin(infil);
+           endif;
+           goto laytab;
+!*
+!***Inte layer tabellen. Läs utan att göra nåt.
+!*
+         else
+tabloop:
+           kod:=inint(infil); rad:=inlin(infil);
+           if rad = "ENDTAB" then
+             goto tables;
+           else
+             goto tabloop;
+           endif;
+         endif;
+!*
+!***Slut LAYER-tabellen.
+!*
+       elif kod = 0 then
+         rad:=inlin(infil);
+         if rad = "ENDTAB" then
+           goto tables;
+         endif;
+       else
+         rad:=inlin(infil);
+       endif;
+       goto table;
+     elif rad = "ENDSEC" then
+       exit();
+     else
+       goto tables; 
+     endif;
+   else
+     rad:=inlin(infil);
+     goto tables; 
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

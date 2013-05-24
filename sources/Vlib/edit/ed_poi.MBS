@@ -1,0 +1,34 @@
+!*******************************************************
+
+ MACRO MODULE ed_poi(REF id);
+
+!*      Editerar POI.
+!*
+!*      In: id = Punktens identitet.
+!*
+!*      (C)microform ab 6/5/92 J. Kjellander
+!*
+!*      1996-06-10 ma_posw(), J.Kjellander
+!*
+!*******************************************************
+
+   INT    status;
+   STRING mbsstr*132;
+
+ beginmodule
+
+!*
+!***Editera.
+!*
+   mbsstr:=getp_mbs(id,1);
+   part(#1,ma_posw(mbsstr,get_tstr(41),get_tstr(133),status));
+!*
+!***Uppdatera. Observera att detta kan gå fel på många sätt.
+!***Syntaxfel vid kompilering. Run-time fel vid interpretering
+!***av såväl parametern som hela satsen.
+!*
+    if status = 0 then updp_mbs(id,1,mbsstr); endif;
+
+ endmodule
+
+!*******************************************************

@@ -1,0 +1,292 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>getcubp </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>getcubp - <small><small>Procedure</small></small></h2>
+  <p>Get bicubic patch from GM<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads a non rational bicubic surface patch from GM. <br>
+  <br>
+  <b>Syntax<br>
+  <br>
+  </b>getcubp(sur_id, iu, iv, data,offset)<br>
+  <br>
+  </p>
+  <table width="670" border="0">
+<!-- Table 30 Row 01 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="596">sur_id;</td>
+    </tr>
+<!-- Table 30 Row 02 -->
+    <tr>
+      <td width="66">INT</td>
+      <td width="596">iu;</td>
+    </tr>
+<!-- Table 30 Row 03 -->
+    <tr>
+      <td width="66">INT</td>
+      <td width="596">iv;</td>
+    </tr>
+<!-- Table 30 Row 04 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="596">data(48);</td>
+    </tr>
+<!-- Table 30 Row 05 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="596">offset;</td>
+    </tr>
+  </table>
+  <p><br>
+  <br>
+  <b>Principal parameters<br>
+  <u><br>
+  </b></u></p>
+  <table width="670" border="0">
+<!-- Table 31 Row 01 -->
+    <tr>
+      <td width="56">sur_id</td>
+      <td width="606">- Global identity of surface to which the patch belongs</td>
+    </tr>
+<!-- Table 31 Row 02 -->
+    <tr>
+      <td width="56">iu</td>
+      <td width="606">- Patch number in U direction </td>
+    </tr>
+<!-- Table 31 Row 03 -->
+    <tr>
+      <td width="56">iv</td>
+      <td width="606">- Patch number in V direction</td>
+    </tr>
+<!-- Table 31 Row 04 -->
+    <tr>
+      <td width="56">data</td>
+      <td width="606">- Patch coefficients</td>
+    </tr>
+<!-- Table 31 Row 05 -->
+    <tr>
+      <td width="56">offset</td>
+      <td width="606">- Offset</td>
+    </tr>
+  </table>
+  <p><br>
+  The order of the patch coefficients in array data:<br>
+  <br>
+  </p>
+  <table width="537" border="0" height="473">
+<!-- Table 32 Row 01 -->
+    <tr>
+      <td width="122" align="center" height="17" bgcolor="#C0C0C0">data( 1)= a00x</td>
+      <td width="125" align="center" height="17" bgcolor="#C0C0C0">data( 2)= a00y</td>
+      <td width="125" align="center" height="17" bgcolor="#C0C0C0">data( 3)= a00z</td>
+      <td width="51" align="center" height="17">1.0</td>
+      <td width="25" align="center" height="17">*</td>
+      <td width="53" align="center" height="17">1.0</td>
+    </tr>
+<!-- Table 32 Row 02 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data( 4)= a01x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data( 5)= a01y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data( 6)= a01z</td>
+      <td width="51" align="center" height="19">1.0</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V</td>
+    </tr>
+<!-- Table 32 Row 03 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data( 7)= a02x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data( 8)= a02y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data( 9)= a02z</td>
+      <td width="51" align="center" height="19">1.0</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V**2</td>
+    </tr>
+<!-- Table 32 Row 04 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(10)= a03x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(11)= a03y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(12)= a03z</td>
+      <td width="51" align="center" height="19">1.0</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V**3</td>
+    </tr>
+<!-- Table 32 Row 05 -->
+    <tr>
+      <td width="122" height="19"></td>
+      <td width="125" height="19"></td>
+      <td width="125" height="19"></td>
+      <td width="51" height="19"></td>
+      <td width="25" height="19"></td>
+      <td width="53" height="19"></td>
+    </tr>
+<!-- Table 32 Row 06 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data( 13)= a10x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(14)= a10y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(15)= a10z</td>
+      <td width="51" align="center" height="19">U</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">1.0</td>
+    </tr>
+<!-- Table 32 Row 07 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(16)= a11x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(17)= a11y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(18)= a11z</td>
+      <td width="51" align="center" height="19">U</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V</td>
+    </tr>
+<!-- Table 32 Row 08 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(19)= a12x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(20)= a12y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(21)= a12z</td>
+      <td width="51" align="center" height="19">U</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V**2</td>
+    </tr>
+<!-- Table 32 Row 09 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(22)= a13x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(23)= a13y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(24)= a13z</td>
+      <td width="51" align="center" height="19">U</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V**3</td>
+    </tr>
+<!-- Table 32 Row 10 -->
+    <tr>
+      <td width="122" align="center" height="19"></td>
+      <td width="125" align="center" height="19"></td>
+      <td width="125" align="center" height="19"></td>
+      <td width="51" align="center" height="19"></td>
+      <td width="25" align="center" height="19"></td>
+      <td width="53" align="center" height="19"></td>
+    </tr>
+<!-- Table 32 Row 11 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(25)= a20x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(26)= a20y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(27)= a20z</td>
+      <td width="51" align="center" height="19">U**2</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">1.0</td>
+    </tr>
+<!-- Table 32 Row 12 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(28)= a21x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(29)= a21y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(30)= a21z</td>
+      <td width="51" align="center" height="19">U**2</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V</td>
+    </tr>
+<!-- Table 32 Row 13 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(31)= a22x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(32)= a22y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(33)= a22z</td>
+      <td width="51" align="center" height="19">U**2</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V**2</td>
+    </tr>
+<!-- Table 32 Row 14 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(34)= a23x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(35)= a23y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(36)= a23z</td>
+      <td width="51" align="center" height="19">U**2</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V**3</td>
+    </tr>
+<!-- Table 32 Row 15 -->
+    <tr>
+      <td width="122" align="center" height="19"></td>
+      <td width="125" align="center" height="19"></td>
+      <td width="125" align="center" height="19"></td>
+      <td width="51" align="center" height="19"></td>
+      <td width="25" align="center" height="19"></td>
+      <td width="53" align="center" height="19"></td>
+    </tr>
+<!-- Table 32 Row 16 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(37)= a30x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(38)= a30y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(39)= a30z</td>
+      <td width="51" align="center" height="19">U**3</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">1.0</td>
+    </tr>
+<!-- Table 32 Row 17 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(40)= a31x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(41)= a31y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(42)= a31z</td>
+      <td width="51" align="center" height="19">U**3</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V</td>
+    </tr>
+<!-- Table 32 Row 18 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(43)= a32x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(44)= a32y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(45)= a32z</td>
+      <td width="51" align="center" height="19">U**3</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V**2</td>
+    </tr>
+<!-- Table 32 Row 19 -->
+    <tr>
+      <td width="122" align="center" height="19" bgcolor="#C0C0C0">data(46)= a33x</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(47)= a33y</td>
+      <td width="125" align="center" height="19" bgcolor="#C0C0C0">data(48)= a33z</td>
+      <td width="51" align="center" height="19">U**3</td>
+      <td width="25" align="center" height="19">*</td>
+      <td width="53" align="center" height="19">V**3</td>
+    </tr>
+  </table>
+  <p><br>
+  <br>
+  <b>Optional parameters<br>
+  </b><br>
+  None.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The patch address for the start patch is iu,iv= 1,1 (but the start parameter point is U,V=
+  0.0,0.0).</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="gmdbindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

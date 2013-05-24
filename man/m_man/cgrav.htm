@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cgrav </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cgrav - <small><small>Function</small></small></h2>
+  <p>Geometrical function<br>
+  <br>
+  <br>
+  <u>Description<br>
+  </u><br>
+  Returns the position of the center of gravity for a planar surface bounded by lines, arcs
+  and curves. Optional interior holes or islands are not included. Accuracy is controlled by
+  a step parameter.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cgrav(step, ref1, refn)<br>
+  <br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 01 Row 01 -->
+    <tr>
+      <td width="67">FLOAT</td>
+      <td width="527">step;</td>
+    </tr>
+<!-- Table 01 Row 02 -->
+    <tr>
+      <td width="67">REF</td>
+      <td width="527">ref1;</td>
+    </tr>
+<!-- Table 01 Row 03 -->
+    <tr>
+      <td width="67">REF </td>
+      <td width="527">refn;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 02 Row 01 -->
+    <tr>
+      <td width="56">step</td>
+      <td width="538">- Step length for numerical accuracy</td>
+    </tr>
+<!-- Table 02 Row 02 -->
+    <tr>
+      <td width="56">ref1</td>
+      <td width="538">- Identity of first line, arc or curve in boundary</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 03 Row 01 -->
+    <tr>
+      <td width="56">refn</td>
+      <td width="538">- Identity of additional lines, arcs or curves in exterior or interior
+      boundary</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A VECTOR value equal to the X and Y coordinate of the center of gravity.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  cgrav(0.05, #1, #5, #9)<br>
+  <br>
+  Calculates the center of gravity for an area bounded by #1, #5 and #9. Step length is set
+  to 0.05<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  A small value for step gives a more accurate result but takes longer time to compute.<br>
+  <br>
+  Boundary entities can be specified in any order of choice but must form one or more well
+  defined boundaries where all entities in each boundary are connected in their endpoints.
+  If more than one boundary is defined one of them must enclose all the other. Boundaries
+  should not cross or touch each other.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

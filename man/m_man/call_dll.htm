@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>call_dll_function </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>call_dll_function - <small><small>Procedure</small></small></h2>
+  <p>Calls a dll function<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Calls a function in a previousley loaded dll (Dynamic Link Library). This procedure makes
+  it possible to call programs written in other languages from MBS and optionally pass upp
+  to 3 string parameters as input.<br>
+  <br>
+  call_dll_function() is only useful in VARKON for Windows95. MBS-programs including the
+  call_dll_function() will compile and run without errors on all platforms but not actually
+  call a function on other platforms than Windows95/NT.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  call_dll_function(dll, func, str1, str2, str3)<br>
+  </p>
+  <table width="658" border="0">
+    <tr>
+      <td width="71">STRING</td>
+      <td width="579">dll</td>
+    </tr>
+    <tr>
+      <td width="71">STRING</td>
+      <td width="579">func;</td>
+    </tr>
+    <tr>
+      <td width="71">STRING</td>
+      <td width="579">str1, str2, str3;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b></p>
+  <table width="658" border="0">
+    <tr>
+      <td width="62">dll</td>
+      <td width="588">- The name (and path) of the dll library file. Name must be given in
+      exactly the same</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="588">&nbsp;&nbsp; way as when the library was loaded. Case is
+      significant.&nbsp;</td>
+    </tr>
+<!-- Table 31 Row 01 -->
+    <tr>
+      <td width="62">func</td>
+      <td width="588">- The name of the function in the dll to call.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="658" border="0">
+<!-- Table 32 Row 01 -->
+    <tr>
+      <td width="61">str1</td>
+      <td width="589">- A string (char * in C) that will be sent as parameter 1 to func.</td>
+    </tr>
+<!-- Table 32 Row 02 -->
+    <tr>
+      <td width="61">str2</td>
+      <td width="589">- A string (char * in C) that will be sent as parameter 2 to func.</td>
+    </tr>
+<!-- Table 32 Row 03 -->
+    <tr>
+      <td width="61">str3</td>
+      <td width="589">- A string (char * in C) that will be sent as parameter 3 to func.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  call_dll_function(&quot;C:\MYLIB\MYDLL.DLL&quot;, &quot;my_func&quot;);<br>
+  <br>
+  Calls the my_func function in the MYDLL library previousley loaded from the C:\MYLIB
+  directory. No input is specified.<br>
+  <br>
+  call_dll_function(&quot;C:\MYLIB\MYDLL.DLL&quot;, &quot;my_func&quot;,
+  &quot;my_input&quot;);<br>
+  <br>
+  Calls the same function but with the adress of the string &quot;my_input&quot; as input.<br>
+  <br>
+  <b>Comments</b><br>
+  <br>
+  Naming conventions for functions in dll's differ between different programming languages.
+  Consult your documentation to find out what name to use.<br>
+  <br>
+  No return value is expected from the called function.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="miscindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

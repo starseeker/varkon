@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>mesh_arr</title>
+  <meta name="GENERATOR"
+ content="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</head>
+<body style="background-color: rgb(153, 204, 255);">
+<center>
+<p><font size="-1">VARKON Version 1.18 2004-07-11<br>
+</font></p>
+</center>
+<p>
+</p>
+<hr width="100%" align="center">
+<blockquote>
+  <h2>mesh_arr -<font size="+0"> Geometric procedure</font></h2>
+  <p>Creates a mesh.<br>
+  <br>
+  <br>
+  <b>Description<br>
+  <br>
+  </b>Creates a mesh. Geometry (vertex coordinates) and topology (edges
+and faces) are defined by data in
+arrays. Edges can belong to only one face or join two different
+faces.An edge that joins 2 faces is implemented as a pair of halfedges
+with opposite direction, each belonging to one of the two faces. An
+edge belonging only to one face is also implemented as a pair of
+halfedges. In this case the extra halfedge has no parent face. All
+edges must be represented by two halfedges. Current implementation of
+faces assume all faces are triangular.</p>
+  <p>A mesh can be defined without faces. If faces are missing,
+the mesh becomes a wireframe mesh without any surface. A mesh can even
+be defined without edges. If edges are
+missing the mesh is reduced to a point cloud.<br>
+  </p>
+  <p>An optional array of floats with arbitary length can be saved
+together with the mesh. If for example nxfloats = nvertices, a float
+value can be saved for each vertex.<br>
+  </p>
+  <p> <b>Syntax<br>
+  <br>
+  </b>mesh_arr(id,
+nvertices,p,eh,nhalfedges,ev,oh,nh,pf,nfaces,h,nxfloats,xf:attributes);</p>
+  <table width="722">
+    <caption><br>
+    </caption><tbody>
+      <tr>
+        <td width="78">REF </td>
+        <td width="636">id;</td>
+      </tr>
+      <tr>
+        <td width="78">INT<br>
+        </td>
+        <td width="636">nvertices;</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">VECTOR<br>
+        </td>
+        <td style="vertical-align: top;">p(nvertices);<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">eh(nvertices);<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">nhalfedges;<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">ev(nhalfedges);<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">oh(nhalfedges);<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">nh(nhalfedges);<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">pf(nhalfedges);<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">nfaces;<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">h(nfaces);<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">nxfloats<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">FLOAT<br>
+        </td>
+        <td style="vertical-align: top;">xf(nxfloats)<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><b>Principal parameters</b></p>
+  <table width="722">
+    <caption><br>
+    </caption><tbody>
+      <tr>
+        <td width="68">id </td>
+        <td width="646">- Local identity</td>
+      </tr>
+      <tr>
+        <td width="68">nvertices<br>
+        </td>
+        <td width="646">- Number of vertices<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">p<br>
+        </td>
+        <td style="vertical-align: top;">- Array of vertex coordinates<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">eh<br>
+        </td>
+        <td style="vertical-align: top;">- Array of indexes to
+emanating halfedges (the halfedge that starts in this vertex)<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">nhalfedges<br>
+        </td>
+        <td style="vertical-align: top;">- Number of&nbsp; halfedges
+(may be zero if nfaces is zero)<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">ev<br>
+        </td>
+        <td style="vertical-align: top;">- Array of indexes to end
+vertices (the vertex that ends this halfedge)<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">oh<br>
+        </td>
+        <td style="vertical-align: top;">- Array of indexes to opposite
+halfedges (the other halfedge of this edge)</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">nh<br>
+        </td>
+        <td style="vertical-align: top;">- Array of indexes to next
+halfedges (the next halfedge around the face)</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">pf<br>
+        </td>
+        <td style="vertical-align: top;">- Array of indexes to parent
+faces (the face bounded by this halfedge)<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">nfaces<br>
+        </td>
+        <td style="vertical-align: top;">- Number of faces (may be zero)<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">h<br>
+        </td>
+        <td style="vertical-align: top;">- Array of indexes to
+halfedges (any one of the the halfedges belonging to this face)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><b>Optional parameters<br>
+  </b></p>
+  <table width="722">
+    <tbody>
+      <tr>
+        <td width="68">nxfloats <br>
+        </td>
+        <td width="646">- Number of extra float values<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">xf<br>
+        </td>
+        <td style="vertical-align: top;">- Array of extra float values<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <p><b>Attributes</b></p>
+  <table width="722">
+    <caption><br>
+    </caption><tbody>
+      <tr>
+        <td width="68">PEN </td>
+        <td width="646">- Pen or colour number</td>
+      </tr>
+      <tr>
+        <td width="68">LEVEL</td>
+        <td width="646">- Level number</td>
+      </tr>
+      <tr>
+        <td width="68">BLANK</td>
+        <td width="646">- Visible(0=default) or invisible(1)</td>
+      </tr>
+      <tr>
+        <td>WIDTH</td>
+        <td>- Linewidth</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">MFONT<br>
+        </td>
+        <td style="vertical-align: top;">- Mesh font.&nbsp;
+Auto(0=default),&nbsp; Box(1),&nbsp; Pointcloud(2),&nbsp;
+Edges(3),&nbsp; Faces(4)<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><b><br>
+  </b></p>
+</blockquote>
+<p>
+</p>
+<hr width="100%" align="center">
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="entiindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</body>
+</html>

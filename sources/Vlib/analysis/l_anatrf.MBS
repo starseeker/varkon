@@ -1,0 +1,35 @@
+!*******************************************************
+
+ macro module l_anatrf(REF id);
+
+!*      Skriver ut specifika data för en transformation.
+!*
+!*      In: id = Transformationens identitet.
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 15/12/92 J. Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    i;
+   FLOAT  tmat(4,4);
+
+ beginmodule
+
+   gettrf(global_ref(id,2),tmat);
+
+   lst_lin(get_tstr(111));
+   lst_lin("");
+
+   for i := 1 to 4 do
+     lst_lin("  " +
+             str(tmat(i,1),-12,6) + str(tmat(i,2),-12,6) +
+             str(tmat(i,3),-12,6) + str(tmat(i,4),-12,6));
+   endfor;
+
+ endmodule
+
+!*******************************************************

@@ -1,0 +1,17 @@
+/**********************************************************************
+*
+*    README
+*    ======
+*
+*    This README-file includes information about how to
+*    build the Varkon GP library.
+*
+*    (C)Örebro University 2003-03-20    http://www.oru.se/tech/cad
+*
+***********************************************************************/
+
+1. cd to the GP/src directory
+
+2. Type "make -f Makefile.linux" to build the GP library.
+
+/**********************************************************************/

@@ -1,0 +1,148 @@
+!*******************************************************
+
+ macro module l_anaprt(REF id > "t269");
+
+!*      Skriver ut specifika data för en part.
+!*
+!*      In: id = En storhets identitet.
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 9/10/86 R. Svedin
+!*
+!*      28/12/86   Globala ref, J. Kjellander
+!*      30/4/87    Körs fristående, R. Svedin
+!*      1996-06-03 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   STRING nam*30,sval*35;
+   INT    ptyp,ival,typ,att,np,nm,nref;
+   INT    blnk,niv,pen;
+   REF    refval,kid,idm(100),gid(3);
+   FLOAT  fval;
+   VECTOR vval;
+   STRING pids*80;
+   INT    i,slen;
+
+ beginmodule
+
+!*
+!***En liten rubrik.
+!*
+   lst_ini(get_tstr(307));
+   ! t307 = "ANALYS  En part"
+!*
+!*** Plocka fram partens id. id kan vara partens id eller
+!*** en medlems id.
+!*
+   pids:=rstr(id);
+   i:=finds(substr(pids,3),"#");
+   if i > 0 then pids:=substr(pids,1,i-1); endif;
+
+   id:=global_ref(rval(pids),1);
+   gethdr(id,typ,nref,blnk,niv,pen,gid);
+!*
+!*** Om typ = part, hämta parten.
+!*
+   if typ = 16384 then
+     getprt(id,nam,typ,att,kid,np,nm,idm);
+
+     lst_lin("     Part-data");
+     lst_lin("     ---------");
+     lst_lin("");
+!*
+!***Namn.
+!*
+     lst_lin(get_tstr(482) + nam);
+     ! t482 = "Namn                : "
+!*
+!***Modultyp.
+!*
+     lst_lin("");
+     if typ = 2 then
+       lst_lin(get_tstr(489));
+       ! t489 = "Modultyp            : RITNING (2D)"
+     else
+       lst_lin(get_tstr(490));
+       ! t490 = "Modultyp            : GEOMETRI (3D)"
+     endif;
+!*
+!***Modulattribut.
+!*
+     if att = 1 then
+       lst_lin(get_tstr(491));
+       ! t491 = "Modulattribut       : LOCAL"
+       lst_lin(get_tstr(494) + rstr(kid));
+       ! t494 = "ID för koordinatsys : "
+     elif att = 2 then
+       lst_lin(get_tstr(492));
+       ! t492 = "Modulattribut       : GLOBAL"
+     else
+       lst_lin(get_tstr(493));
+       ! t493 = "Modulattribut       : BASIC"
+     endif;
+!*
+!***Antal medlemmar.
+!*
+     lst_lin("");
+     lst_lin(get_tstr(488) + str(nm,-1,0));
+     ! t488 = "Antal medlemmar     : "
+!*
+!***Antal parametrar.
+!*
+     if np > 0 then
+       lst_lin(get_tstr(495) + str(np,-5,0));
+       ! t495 = "Antal parametrar"
+!*
+!***Parametrars typ och värde.
+!*
+       lst_lin("");
+       lst_lin(get_tstr(496));
+       ! t496 = "                   TYP      VÄRDE"
+       lst_lin("                   ---------------");
+
+       for i := 1 to np do
+         ptyp := gettyp(id,i);
+         if ptyp = 1 then
+           ival := getint(id,i);
+           lst_lin("Parameter " + str(i,-5,0) + "  : " + "INT      "
+                   + str(ival,-7,0));
+         elif ptyp = 2 then
+           fval := getflt(id,i);
+           lst_lin("Parameter " + str(i,-5,0) + "  : " + "FLOAT    "
+                   + str(fval,-12,6));
+         elif ptyp = 3 then
+           sval := getstr(id,i);
+           lst_lin("Parameter " + str(i,-5,0) + "  : " + "STRING   "
+                   + sval);
+         elif ptyp = 4 then
+           vval := getvec(id,i);
+           lst_lin("Parameter " + str(i,-5,0) + "  : " + "VECTOR   "
+                   + str(vval.x,-12,5)
+                   + "," + str(vval.y,-12,5)
+                   + "," + str(vval.z,-12,5));
+         elif ptyp = 5 then
+           refval := getref(id,i);
+           lst_lin("Parameter " + str(i,-5,0) + "  : " + "REF      "
+                   + rstr(refval));
+         else
+           lst_lin("Parameter " + str(i,-5,0) 
+                   + "  : ?");
+         endif;
+       endfor;
+     else
+       lst_lin(get_tstr(495) + "-");
+       ! t495 = "Antal parametrar"
+     endif;
+
+   else
+     lst_lin(get_tstr(497));
+     ! t497 = "Storheten ingår ej i en part !"
+   endif;
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>material_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>material_view - <small><small>Procedure</small></small></h2>
+  <p>Sets material characteristics for shading<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Links a material to a pen number and sets its parameters. Initially no pens are linked to
+  materials and the shader uses the standard color of the pen as set up in the Varkon
+  resource- or ini-file or created with the cre_color() routine. If a material is defined
+  the shader will use the characteristics of the material instead of the ordinary color when
+  the specified pen is used. 8 different materials may be defined and accociated with pens
+  one through eight.<br>
+  <br>
+  A material is defined by 4 different light components each with a red, green and blue
+  (RGB) value. A shininess factor may also be defined, a total of 13 float parameters which
+  all must be set.<br>
+  <br>
+  The ambient component sets how much ambient light the material reflects. The diffuse
+  component sets the amount of diffuse light reflected and the specular component sets the
+  amount of specular light reflected. The emitted component sets the amount of light emitted
+  from the material itself (not reflected). The emitted component may be used to create a
+  luminous material.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  material_view(pen, ar, ag, ab, dr, dg, db, sr, sg, sb, er, eg, eb, sh)<br>
+  <br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 31 Row 01 -->
+    <tr>
+      <td width="66">INT</td>
+      <td width="591">pen;</td>
+    </tr>
+<!-- Table 31 Row 02 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="591">ar, ag, ab;</td>
+    </tr>
+<!-- Table 31 Row 03 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="591">dr, dg, db;</td>
+    </tr>
+<!-- Table 31 Row 04 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="591">sr, sg, sb;</td>
+    </tr>
+<!-- Table 31 Row 05 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="591">er, eg, eb;</td>
+    </tr>
+<!-- Table 31 Row 06 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="591">sh;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 32 Row 01 -->
+    <tr>
+      <td width="56">pen</td>
+      <td width="601">- The pen number to link to the material. 1 - 8</td>
+    </tr>
+<!-- Table 32 Row 02 -->
+    <tr>
+      <td width="56">ar</td>
+      <td width="601">- Ambient red</td>
+    </tr>
+<!-- Table 32 Row 03 -->
+    <tr>
+      <td width="56">ag</td>
+      <td width="601">- Ambient green</td>
+    </tr>
+<!-- Table 32 Row 04 -->
+    <tr>
+      <td width="56">ab</td>
+      <td width="601">- Ambient blue</td>
+    </tr>
+<!-- Table 32 Row 05 -->
+    <tr>
+      <td width="56">dr</td>
+      <td width="601">- Diffuse red</td>
+    </tr>
+<!-- Table 32 Row 06 -->
+    <tr>
+      <td width="56">dg</td>
+      <td width="601">- Diffuse green</td>
+    </tr>
+<!-- Table 32 Row 07 -->
+    <tr>
+      <td width="56">db</td>
+      <td width="601">- Diffuse blue</td>
+    </tr>
+<!-- Table 32 Row 08 -->
+    <tr>
+      <td width="56">sr</td>
+      <td width="601">- Specular red</td>
+    </tr>
+<!-- Table 32 Row 09 -->
+    <tr>
+      <td width="56">sg</td>
+      <td width="601">- Specular green</td>
+    </tr>
+<!-- Table 32 Row 10 -->
+    <tr>
+      <td width="56">sb</td>
+      <td width="601">- Specular blue</td>
+    </tr>
+<!-- Table 32 Row 11 -->
+    <tr>
+      <td width="56">er</td>
+      <td width="601">- Emitted red</td>
+    </tr>
+<!-- Table 32 Row 12 -->
+    <tr>
+      <td width="56">eg</td>
+      <td width="601">- Emitted green</td>
+    </tr>
+<!-- Table 32 Row 13 -->
+    <tr>
+      <td width="56">eb</td>
+      <td width="601">- Emitted blue</td>
+    </tr>
+<!-- Table 32 Row 14 -->
+    <tr>
+      <td width="56">sh</td>
+      <td width="601">- Shininess</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 33 Row 01 -->
+    <tr>
+      <td>None..</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  material_veiw(1, 100, 0, 0, 100, 0, 0, 100, 0, 0, 0, 0, 0, 50);<br>
+  <br>
+  A red material linked to pen 1 equally sensitive to ambient, diffuse and specular light
+  but with no emitted light and medium shininess.<br>
+  <br>
+  material_veiw(1, 50, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0);<br>
+  <br>
+  A darker and less shiny red material.<br>
+  <br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  A complete description of how to use light and material parameters to create different
+  effects is not possible to give here. Please check with the litterature on OpenGL and
+  similar graphics software.<br>
+  <br>
+  A quick guide could be to start with ambient only. Ambient produces no shading but gives
+  the right colors. You could think of it as a sort of background light which is always
+  present everywhere. Add diffuse light to produce more realistic shades. The object now
+  becomes brighter so the ambient level may have to be reduced. Diffuse light reminds of the
+  light you would expect from the sun with some cloudiness. Finally add specular to give a
+  more shiny surface. Use the shininess factor to concentrate or spread the reflected light.
+  Specular light reminds of the very sharp light directly from the sun with no cloudiness.<br>
+  <br>
+  Note that the Varkon resource- or ini-file sets the common ambient, diffuse and specular
+  parameters for all lights but material_view() sets these for each material independantly.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

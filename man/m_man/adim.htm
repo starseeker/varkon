@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>adim</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>adim -<small><small> Geometric procedure</small></small></h2>
+  <p>Creates an angular dimension <br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates an angular dimension with or without text.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  adim(id, ref1, ref2, p, alt:attributes);<br>
+  <br>
+  </p>
+  <table width="646" border="0">
+<!-- Table 55 Row 01 -->
+    <tr>
+      <td width="80">REF</td>
+      <td width="558">id;</td>
+    </tr>
+<!-- Table 55 Row 02 -->
+    <tr>
+      <td width="80">REF</td>
+      <td width="558">ref1;</td>
+    </tr>
+<!-- Table 55 Row 03 -->
+    <tr>
+      <td width="80">REF</td>
+      <td width="558">ref2;</td>
+    </tr>
+<!-- Table 55 Row 04 -->
+    <tr>
+      <td width="80">VECTOR</td>
+      <td width="558">p;</td>
+    </tr>
+<!-- Table 55 Row 05 -->
+    <tr>
+      <td width="80">INT</td>
+      <td width="558">alt;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="646" border="0">
+<!-- Table 56 Row 01 -->
+    <tr>
+      <td width="70">id </td>
+      <td width="568">- Local identity</td>
+    </tr>
+<!-- Table 56 Row 02 -->
+    <tr>
+      <td width="70">ref1</td>
+      <td width="568">- Identity of first line</td>
+    </tr>
+<!-- Table 56 Row 03 -->
+    <tr>
+      <td width="70">ref2</td>
+      <td width="568">- Identity of second line</td>
+    </tr>
+<!-- Table 56 Row 04 -->
+    <tr>
+      <td width="70">p</td>
+      <td width="568">- Text position</td>
+    </tr>
+<!-- Table 56 Row 05 -->
+    <tr>
+      <td width="70">alt</td>
+      <td width="568">- Start on right side of ref1(1), start on left side of ref1(-1)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="646" border="0">
+<!-- Table 57 Row 01 -->
+    <tr>
+      <td width="71">None.</td>
+      <td width="567"></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="646" border="0">
+<!-- Table 58 Row 01 -->
+    <tr>
+      <td width="71">PEN </td>
+      <td width="567">- Pen or colour number</td>
+    </tr>
+<!-- Table 58 Row 02 -->
+    <tr>
+      <td width="71">LEVEL</td>
+      <td width="567">- Level number</td>
+    </tr>
+<!-- Table 58 Row 03 -->
+    <tr>
+      <td width="71">BLANK</td>
+      <td width="567">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 58 Row 04 -->
+    <tr>
+      <td width="71">DTSIZ</td>
+      <td width="567">- Textsize</td>
+    </tr>
+<!-- Table 58 Row 05 -->
+    <tr>
+      <td width="71">DASIZ</td>
+      <td width="567">- Arrowsize</td>
+    </tr>
+<!-- Table 58 Row 06 -->
+    <tr>
+      <td width="71">DNDIG</td>
+      <td width="567">- Number of decimal places</td>
+    </tr>
+<!-- Table 58 Row 07 -->
+    <tr>
+      <td width="71">DAUTO</td>
+      <td width="567">- Automatic text(1) or no text(0)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>adim(#10,#5,#6,vec(10,10),1);<br>
+  <br>
+  An angular dimension less than 180 degrees starting on the right side of ref1 turning
+  anticlockwise to ref2.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  adim can only be used in a 2D module. adim measures the angle in anticlockwise direction
+  starting from the first line turning to the second line. With alt = 1 or -1 the angle
+  chosen is always less then 180 degrees. If the larger angle is wanted set alt to 2 or -2
+  instead.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

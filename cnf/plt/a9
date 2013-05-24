@@ -1,0 +1,6 @@
+! a9 = HP-LASERJET 3 laserskrivare. Spooler = hpl
+ nice -19 /usr/v3/bin/hpcl5 <
+ | lp -dlaser -s &
+ act_job
+ -y-10 -pf
+ act_job

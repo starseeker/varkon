@@ -1,0 +1,64 @@
+##########################################################
+#
+#   Makefile.DB
+#   -----------
+#
+#   Platform independant rules for the DB module.
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+# Include files
+
+INCFILES = ../include/DB.h              \
+           ../include/DBintern.h        \
+           ../include/common.h          \
+           ../include/gmolds.h          \
+           ../include/surdef.h
+
+# The contents of DBlib.a
+
+OBJECTS = ../lib/DBlib.a(db1.o)         \
+          ../lib/DBlib.a(db2.o)         \
+          ../lib/DBlib.a(db3.o)         \
+          ../lib/DBlib.a(db4.o)         \
+          ../lib/DBlib.a(dbarc.o)       \
+          ../lib/DBlib.a(dbbplane.o)    \
+          ../lib/DBlib.a(dbcsys.o)      \
+          ../lib/DBlib.a(dbcurve.o)     \
+          ../lib/DBlib.a(dbdelete.o)    \
+          ../lib/DBlib.a(dbdim.o)       \
+          ../lib/DBlib.a(dbfile.o)      \
+          ../lib/DBlib.a(dbgroup.o)     \
+          ../lib/DBlib.a(dbheader.o)    \
+          ../lib/DBlib.a(dbid.o)        \
+          ../lib/DBlib.a(dbkey.o)       \
+          ../lib/DBlib.a(dbline.o)      \
+          ../lib/DBlib.a(dbmesh.o)      \
+          ../lib/DBlib.a(dbpart.o)      \
+          ../lib/DBlib.a(dbpoint.o)     \
+          ../lib/DBlib.a(dbsurf.o)      \
+          ../lib/DBlib.a(dbtext.o)      \
+          ../lib/DBlib.a(dbtform.o)     \
+          ../lib/DBlib.a(dbtraverse.o)  \
+          ../lib/DBlib.a(dbxhatch.o)
+
+# DBlib.a depends on the objects. 
+
+distr : $(OBJECTS)
+
+debug : $(OBJECTS)
+
+kdebug : $(OBJECTS)
+
+# Objects depend on sources implicitly and sources depend
+# on the following include-files.
+
+$(OBJECTS) : $(INCFILES)
+
+clean:
+	rm ../lib/DBlib.a
+
+
+################################################################

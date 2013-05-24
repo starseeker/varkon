@@ -1,0 +1,57 @@
+!*******************************************************
+
+ MACRO MODULE p_trenv(
+ STRING       in*80;
+ VAR STRING   ut*80);
+
+!*      Konverterar vägbeskrivning med $ENV... i början
+!*      till klartext.
+!*
+!*      (C)microform ab 1996-02-02 J. Kjellander
+!*
+!*      1996-02-23 IN32, J.Kjellander
+!*      1996-06-07 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ INT    i;
+
+ BEGINMODULE
+
+!*
+!***Strippa eventuella inledande blanka.
+!*
+loop:
+   if substr(in,1,1) = " " then
+     in:=substr(in,2);
+     goto loop;
+   endif;
+!*
+!***Om in börjar med ett dollar gör vi översättning
+!***annars inte.
+!*
+   if substr(in,1,1) = "$" then
+     if act_ostype() = "UNIX" then
+       i:=finds(in,"/");
+     elif act_ostype() = "WIN32" then
+       i:=finds(in,"\");
+     else
+       i:=0;
+     endif;
+     if i > 0 then
+       ut:=get_environment(substr(in,2,i-2));
+       if ut = "" then
+         exit("Env-parameter "+substr(in,2,i-2)+" is not defined !");
+       else
+         ut:=ut+substr(in,i);
+       endif;
+     else
+       ut:=get_environment(in);
+     endif;
+   else
+       ut:=in;
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

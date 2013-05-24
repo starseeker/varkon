@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>get_next_gm</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>get_next_gm - <small><small>Function</small></small></h2>
+  <p>Search for entity in GM<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Searches the GM hierarchy for an entity. Four parameters and the set_root_gm() routine can
+  be used to control the search process. get_next_gm() searches (traverses) GM sequentially
+  until a suitable entity is found. Next call continues the search starting in the position
+  of the last entity found. When no more entities can be found an id of #0 is returned.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  get_next_gm(mode, typemask, name, group)<br>
+  <br>
+  </p>
+  <table width="733" border="0">
+<!-- Table 01 Row 01 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="654">mode;</td>
+    </tr>
+<!-- Table 01 Row 02 -->
+    <tr>
+      <td width="71">INT</td>
+      <td width="654">typemask;</td>
+    </tr>
+<!-- Table 01 Row 03 -->
+    <tr>
+      <td width="71">STRING</td>
+      <td width="654">name*20;</td>
+    </tr>
+<!-- Table 01 Row 04 -->
+    <tr>
+      <td width="71">STRING</td>
+      <td width="654">group*20;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  None.<br>
+  <br>
+  <b>Optional parameters<br>
+  </b></p>
+  <table width="733" border="0" height="150">
+    <tr>
+      <td width="62" height="21">mode</td>
+      <td width="663" height="21">- 0 = Full traversal. If next entity is a part this part will
+      also be traversed. Default.</td>
+    </tr>
+    <tr>
+      <td width="62" height="21"></td>
+      <td width="663" height="21">&nbsp;&nbsp; 1 = Restricted (vertical) search. If next entity
+      is a part it will not be entered.</td>
+    </tr>
+    <tr>
+      <td width="62" height="21">typemask</td>
+      <td width="663" height="21">- Search can be restricted to only one entity type or a
+      combination of entity types by </td>
+    </tr>
+    <tr>
+      <td width="62" height="21"></td>
+      <td width="663" height="21">&nbsp;&nbsp; adding their type codes into a single typemask.
+      Default = 65535 = any type.</td>
+    </tr>
+    <tr>
+      <td width="62" height="21">name</td>
+      <td width="663" height="21">- Restricts the search process to entities with a specific
+      name. Entities with name are part, </td>
+    </tr>
+    <tr>
+      <td width="62" height="21"></td>
+      <td width="663" height="21">&nbsp;&nbsp; group and coordinate systems. Wildcards (*) may
+      be included in name. Default = * = </td>
+    </tr>
+    <tr>
+      <td width="62" height="21"></td>
+      <td width="663" height="21">&nbsp;&nbsp; any name.</td>
+    </tr>
+    <tr>
+      <td width="62" height="21">group</td>
+      <td width="663" height="21">- Restricts the search process to entities that are members of
+      a group with specific name.</td>
+    </tr>
+    <tr>
+      <td width="62" height="21"></td>
+      <td width="663" height="21">&nbsp;&nbsp; Wildcards (*) may be included in the name.
+      Default = * = any group.</td>
+    </tr>
+  </table>
+  <p><b><u><br>
+  </u>Return value<br>
+  <u><br>
+  </b></u>The REF identity of the entity found or #0 if no more entities are present.<br>
+  <b><u><br>
+  </u>Examples</b><br>
+  <br>
+  get_next_gm();<br>
+  <br>
+  This is the simplest form of usage. Returns the id of the next entity in GM without
+  respect to type, name or group membership.<br>
+  <br>
+  get_next_gm(0, 655535, &quot;*&quot;, &quot;AB*&quot;)<br>
+  <br>
+  Returns the identity of the next entity that is member of a group named &quot;AB&quot; or
+  &quot;AB&quot; followed by any combination of letters.<br>
+  <br>
+  get_next_gm(1,16384,&quot;WALL&quot;)<br>
+  <br>
+  Returns the identity of the next part on this level with name = &quot;WALL&quot;. </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="gmdbindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

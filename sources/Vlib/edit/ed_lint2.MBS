@@ -1,0 +1,63 @@
+!*******************************************************
+
+ MACRO MODULE ed_lint2(REF id);
+
+!*      Editerar LIN_TAN2.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               editeras.
+!*
+!*      (C)microform ab 6/5/92 J. Kjellander
+!*
+!*      1996-06-11 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    pnum;
+   STRING alt*10,par*132;
+
+ beginmodule
+
+!*
+!***Visa meny och läs in svar.
+!*
+    psh_men(105);
+    alt:=get_alt("");
+    pop_men();
+!*
+!***1:a cirkeln.
+!* 
+    if alt = "a1" then
+      pnum:=1;
+      psh_pmt(get_tstr(268));
+      par:=rstr(ident(4));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+!*
+!***2:a cirkeln.
+!*
+    elif alt = "a2" then
+      pnum:=2;
+      par:=getp_mbs(id,pnum);
+      psh_pmt(get_tstr(268));
+      par:=rstr(ident(4));
+      pop_pmt(); if substr(par,1,2) = "#0" then par:="";
+      endif;
+!*
+!***Alternativ.
+!*
+    elif alt = "a3" then
+      pnum:=3;
+      par:=getp_mbs(id,pnum);
+      par:=inpmt(get_tstr(276),par,20);
+    else
+      exit();
+    endif;
+!*
+!***Uppdatera.
+!*
+    if par <> "" then updp_mbs(id,pnum,par); endif;
+
+ endmodule
+
+!*******************************************************

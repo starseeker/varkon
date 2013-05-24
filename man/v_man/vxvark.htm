@@ -1,0 +1,298 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <title>xvarkon</title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.17 1999-06-13</font></center>
+
+<p>
+<hr width="100%" align="center">
+<ul>
+<h3>
+xvarkon</h3>
+Executable file
+<br>&nbsp;
+<p><b>Description</b>
+<p>X-windows version of VARKON for UNIX. xvarkon can also be configured
+to drive older type serial terminals or emulators with tektronix/VT300
+based graphics.
+<p>The -b option can be used to run Varkon in batch mode. In batch mode
+the name of a project as well as a job must be specified on the commandline.
+Varkon loads the job, runs it silently and exits automatically. Error messages
+etc. are written to a file named jobname.LOG in the active jobdirectory.
+<p><b>Syntax</b>
+<p>xvarkon project_name job_name -r -v -x -DRAWING -GEOMETRY -LOCAL -GLOBAL
+<br>-BASIC -global_ref -pmnbytes -rtsnbytes -gmnpages -iresourcefile -dnl
+-xrmres
+<p>Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.
+<p><b>Options</b></ul>
+
+<table WIDTH="691" >
+<tr>
+<td WIDTH="103">
+<ul>project_name</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Name of project</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>job_name</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Name of job</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-r</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Start in drafting mode instead of the normal mode</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-v</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Report current version information and exit. No X11 required for
+this.</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-x</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Execute active module at startup if RES-file is missing</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-b</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Run VARKON in batch mode, implies -x</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-DRAWING</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Use DRAWING type for new modules</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-GEOMETRY</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Use GEOMETRY type for new modules&nbsp;</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-LOCAL</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Use the LOCAL attribute for new modules</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-GLOBAL</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Use the GLOBAL attribute for new modules</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-BASIC</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Use the BASIC attribute for new modules</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-global_ref</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Generate global references in part calls</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-pmnbytes</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Set size of PM to nbytes</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-rtsnbytes</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Set size of RTS to nbytes</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-gmnpages</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Set size of GM buffer to npages</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-iresourcefile</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Include resources from resourcefile(s) at start up</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-dnl</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Turn debug on for name = n with level = l if available</ul>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="103">
+<ul>-xrmres</ul>
+</td>
+
+<td WIDTH="580">
+<ul>- Merge res with the resource database</ul>
+</td>
+</tr>
+</table>
+
+<ul><b>Examples</b>
+<p>xvarkon
+<p>Starts with default values for all options. The system will promt for
+project and job name.
+<p>xvarkon buildings
+<p>Starts with default values for all options except the name of the project.
+The system will not promt for project name but will ask for the name of
+the job.
+<p>xvarkon bearings ball_539 -gm1000
+<p>Starts a job named ball_539 in project bearings. The memory buffer for
+GM is set to 1000 pages. Default values will be used for all other options.
+<p>xvarkon -icommon_toolbar -imy_toolbar
+<p>Forces VARKON to read resources from "common_toolbar"and "my_toolbar".
+If the same resourcename is defined in both files the resource value from
+the second file owerwrites the value from the first file.
+<p>xvarkon -r
+<p>Starts the system in explicit (non generic) drafting mode.
+<p><b>Comments</b>
+<p>On startup xvarkon always checks for the existence of resource files
+in the following places:
+<p>1: /usr/lib/X11/app-defaults/Varkon
+<br>2: $XENVIRONMENT/.Xdefaults
+<br>3: $HOME/.Xdefaults
+<p>Any resources found in any of these places are loaded automatically.
+Next step is to load any resources explicitly defined on the command line
+using the -xrm option:
+<p>4: -xrmres
+<p>Finally you may specify one or two additional resourcefiles on the commandline
+using the -i option:
+<p>5: -ifile1
+<br>6: -ifile2
+<p>The same resource may be defined in more than one of these places but
+only the latest value merged is left in the database. A value defined in
+file2 will rule out a value defined in file1 or earlier. Note that this
+beahviour is different from VARKON95 for Windows95/NT.
+<p>xvarkon needs the following shell environment parameters to be set up
+in order to function properly. If not defined default values below are
+used instead.
+<p><font face="Courier New">VARKON_ERM&nbsp; Error message files Default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+= /usr/v3/erm</font>
+<br><font face="Courier New">VARKON_DOC&nbsp; Help files Default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+= /usr/v3/doc</font>
+<br><font face="Courier New">VARKON_PID&nbsp; Project files Default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+= /usr/v3/pid</font>
+<br><font face="Courier New">VARKON_MDF&nbsp; Menu files Default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+= /usr/v3/mdf</font>
+<br><font face="Courier New">VARKON_LIB&nbsp; The VARKON library Default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+= /usr/v3/lib</font>
+<br><font face="Courier New">VARKON_TMP&nbsp; Temporary files Default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+= /usr/v3/tmp</font>
+<br><font face="Courier New">VARKON_PRD&nbsp; Default project directory
+Default&nbsp;&nbsp; = /usr/v3/prd</font>
+<br><font face="Courier New">VARKON_FNT&nbsp; Fonts for graphical text
+Default&nbsp;&nbsp;&nbsp; = /usr/v3/cnf/fnt</font>
+<br><font face="Courier New">VARKON_TOL&nbsp; Tolerance files Default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+= /usr/v3/cnf/tol</font>
+<br><font face="Courier New">VARKON_PLT&nbsp; Plotter configuration files
+Default = /usr/v3/cnf/plt</font>
+<br><font face="Courier New">VARKON_ICO&nbsp; Bitmaps for toolbar icons
+Default&nbsp;&nbsp; = /usr/v3/cnf/ico</font>
+<p><font face="Times New Roman">xvarkon also relies on the value of the
+$PATH variable to spawn the MBS-compiler mbsc or drivers for various plotter
+devices. $PATH is usually modified in VARKON's startscript to include $VARKON_ROOT/bin
+where the VARKON executable files are located.</font></ul>
+
+<hr width="100%" align="center">
+<center>
+
+
+
+<p><br>
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm">VARKON Homepage</a></td>
+
+<td><a href="vindex.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

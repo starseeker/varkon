@@ -1,0 +1,5 @@
+!* a12 = FACIT skrivare. Spooler = facit
+ nice -19 /usr/v3/bin/ft4510 <
+ | lp -n1 -dfacit -s &
+ /usr/v3/job/test.PLT
+ -FF

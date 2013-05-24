@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>inflt </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>inflt - <small><small>Function</small></small></h2>
+  <p>Read float from file<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads a float string from an open file or pipe.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  inflt(f, width)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 33 Row 01 -->
+    <tr>
+      <td width="50">FILE</td>
+      <td width="609">f;</td>
+    </tr>
+<!-- Table 33 Row 02 -->
+    <tr>
+      <td width="50">INT</td>
+      <td width="609">width;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 34 Row 01 -->
+    <tr>
+      <td width="41">f</td>
+      <td width="618">- A filevariable accociated with a file open for read or update (R or U)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 35 Row 01 -->
+    <tr>
+      <td width="42">width</td>
+      <td width="617">- Number of characters to read. If not specified inflt reads as many
+      characters as needed.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  The FLOAT value read.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  With the following line of data<br>
+  <br>
+  &quot;1 2345.6 2E3 ABC&quot;<br>
+  <br>
+  consecutive calls to inflt would read as follows.....<br>
+  <br>
+  inflt(f) = 1.0<br>
+  <br>
+  inflt(f, 2) = 2.0<br>
+  <br>
+  inflt(f) = 345.6<br>
+  <br>
+  inflt(f) = 2000.0<br>
+  <br>
+  inflt(f) = Undefined, error code in iostat()</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="fileindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

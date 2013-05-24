@@ -1,0 +1,50 @@
+##########################################################
+#
+#   Makefile for GElib on GNU/Linux
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+distr :     CFLAGS =                    \
+            -ansi                       \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -m486                       \
+            -O                          \
+            -DDEBUG                     \
+            -DUNIX
+
+debug :     CFLAGS =                    \
+            -ansi                       \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -m486                       \
+            -g                          \
+            -DUNIX
+
+gpl   :     CFLAGS =                    \
+            -ansi                       \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -m486                       \
+            -O                          \
+            -DUNIX
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.GE
+
+##########################################################

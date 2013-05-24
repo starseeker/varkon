@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>VARKON_LIB</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>VARKON_LIB</H3>
+
+<P>Environment variable<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Environment variable used by VARKON to find the system module library.
+When a user calls a module interactively or when a module calls another
+module VARKON searches the following directories for the called module:<BR>
+<BR>
+1. The job directory specified on the first row of the project PID file.<BR>
+<BR>
+2. The project specific module libraries specified on the second line of
+the PID file.<BR>
+<BR>
+3. The directory specified by VARKON_LIB.<BR>
+<BR>
+The directories are searched in the order indicated above. This means that
+if a module exists in more than one place the copy found in the first place
+will be used.<BR>
+<BR>
+$VARKON_LIB includes some 100+ modules, mostly MACRO:s used by VARKON for
+functions like edit, analysis and plotting.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If VARKON_LIB is not defined a hard coded default will be used.<BR>
+<BR>
+If VARKON_LIB points to a non existent directory or if read permission
+to $VARKON_LIB is missing the modules in $VARKON_LIB will not be found.<BR>
+<BR>
+The contents of $VARKON_LIB should not be altered. Dont edit any files,
+add any files or remove any files. <BR>
+<BR>
+Project specific MBO files should be placed where the application resides
+for example in $HOME/app/xxx/lib if xxx is the name of the project.<BR>
+<BR>
+Don't create your own modules with the same name as a module in $VARKON_LIB.
+This will make it impossible for the system to find the module in $VARKON_LIB
+when needed.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

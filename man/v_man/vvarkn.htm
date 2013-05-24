@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>varkon</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1998-10-19</FONT></CENTER>
+
+<BR>&nbsp;
+<P><BR>
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+varkon</H3>
+Unix startscript
+<BR>&nbsp;
+<P><B>Description</B>
+<P>Shell script that sets up a number of neccesary environment variables
+and starts the main executable binary, xvarkon. One or two parameters may
+be supplied. The first is always interpreted as a project name and the
+second as a job name. If not supplied VARKON will promt for project and
+job names.
+<P>$VARKON_ROOT/com/english/varkon should be used if you want the system
+to talk english while
+<BR>$VARKON_ROOT/com/swedish/varkon is intended for swedish users.
+<P>The varkon script supplied with the system usually needs editing to
+function properly. This is described in the installation document README
+found in $VARKON_ROOT. Many users prefer to use one or more different copies
+of this script to start the system with different environment or different
+parameters. You are absolutely free to do any way you want. The script
+supplied is only one way to do it.
+<BR>&nbsp;
+<P><B>Syntax</B>
+<P>varkon project_name job_name
+<BR>&nbsp;
+<P><B>Optional parameters</B></UL>
+
+<TABLE WIDTH="691" >
+<CAPTION>&nbsp;</CAPTION>
+
+<TR>
+<TD WIDTH="102">
+<UL>project_name</UL>
+</TD>
+
+<TD WIDTH="581">
+<UL>- Name of project</UL>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="102">
+<UL>job_name</UL>
+</TD>
+
+<TD WIDTH="581">
+<UL>- Name of job</UL>
+</TD>
+</TR>
+</TABLE>
+
+<UL><B>Comments</B>
+<P>Each available project is defined by a project file residing in $VARKON_PID.
+Project files have names ending with ".PID", ie. project_name.PID
+<P>See VARKON_PID for more information on projects and project files.
+<P>Edit the line startting xvarkon at the end of the startscript and add
+an extra ini file if you want to alter any of the X-resources in the standard
+ini file.</UL>
+
+<HR width="100%" align="center">
+<BR>&nbsp;
+<P><BR>
+<CENTER>
+
+
+
+<BR>&nbsp;
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

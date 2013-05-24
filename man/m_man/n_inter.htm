@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>n_intersect </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>n_intersect - <small><small>Function</small></small></h2>
+  <p><br>
+  Geometrical function<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Returns the number of intersects between a line, arc or curve and a line, arc, curve,
+  b_plane, XY-plane or surface. <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  n_intersect(ref1,ref2,alt)<br>
+  <br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 10 Row 01 -->
+    <tr>
+      <td width="43">REF</td>
+      <td width="551">ref1;</td>
+    </tr>
+<!-- Table 10 Row 02 -->
+    <tr>
+      <td width="43">REF</td>
+      <td width="551">ref2;</td>
+    </tr>
+<!-- Table 10 Row 03 -->
+    <tr>
+      <td width="43">INT</td>
+      <td width="551">alt;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 11 Row 01 -->
+    <tr>
+      <td width="34">ref1</td>
+      <td width="560">- Identity of first entity</td>
+    </tr>
+<!-- Table 11 Row 02 -->
+    <tr>
+      <td width="34">ref2</td>
+      <td width="560">- Identity of second entity</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 11 Row 01 -->
+    <tr>
+      <td width="36">alt</td>
+      <td width="558">&nbsp; 1 = Do not extend lines and arcs (default)</td>
+    </tr>
+<!-- Table 11 Row 02 -->
+    <tr>
+      <td width="36"></td>
+      <td width="558">-1 = Extend lines and arcs</td>
+    </tr>
+  </table>
+  <p><b>Return value</b><br>
+  <br>
+  A INT value equal to the number of times ref1 intersects with ref2.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  n_intersect(#1,#2) = The number of times #1 intersects with #2.<br>
+  <br>
+  <b>Comments</b><br>
+  <br>
+  See the intersect() function for the exact rules of how an intersect is calculated.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,207 @@
+##########################################################
+#
+#   Makefile.AN
+#   -----------
+#
+#   Platform independent rules for the MBS compiler, mbsc.
+#
+#  (C)Microform AB 1999-05-03 J.Kjellander
+#
+##########################################################
+
+# Includefiles
+
+INCFILES = ../include/AN.h \
+           ../../PM/include/PM.h \
+           ../../PM/include/formpar.h
+
+# The object library
+
+OBJS = ../lib/mbsclib.a(anascan.o)    \
+       ../lib/mbsclib.a(anlog.o)      \
+       ../lib/mbsclib.a(annaml.o)     \
+       ../lib/mbsclib.a(anpar11.o)    \
+       ../lib/mbsclib.a(anpar12.o)    \
+       ../lib/mbsclib.a(anpar31.o)    \
+       ../lib/mbsclib.a(anpar40.o)    \
+       ../lib/mbsclib.a(anpar51.o)    \
+       ../lib/mbsclib.a(anpar52.o)    \
+       ../lib/mbsclib.a(mbsc.o)       \
+       ../lib/mbsclib.a(inacc.o)      \
+       ../lib/mbsclib.a(ingpar.o)     \
+       ../lib/mbsclib.a(infunc.o)     \
+       ../lib/mbsclib.a(inac10.o)     \
+       ../lib/mbsclib.a(inac11.o)     \
+       ../lib/mbsclib.a(inac19.o)     \
+       ../lib/mbsclib.a(pmac1.o)      \
+       ../lib/mbsclib.a(pmac2.o)      \
+       ../lib/mbsclib.a(pmac5.o)      \
+       ../lib/mbsclib.a(pmallo.o)     \
+       ../lib/mbsclib.a(pmlist.o)     \
+       ../lib/mbsclib.a(evmath.o)     \
+       ../lib/mbsclib.a(evvec.o)      \
+       ../lib/mbsclib.a(evstr.o)      \
+       ../lib/mbsclib.a(stacc.o)      \
+       ../lib/mbsclib.a(stac10.o)     \
+       ../lib/mbsclib.a(ig29.o)       \
+       ../lib/mbsclib.a(ig36.o)
+
+# The actual executable, mbsc. VARKON_ROOT should be set
+# in the users loginfile or elswhere as preferred.
+
+MBSC = $(VARKON_ROOT)/bin/mbsc
+
+# Targets
+
+$(MBSC): $(OBJS)
+	$(CC) $(LDFLAGS) ../lib/mbsclib.a -lm -o $(MBSC)
+
+clean:
+	$(RM) *.o ../lib/mbsclib.a $(MBSC)
+
+test:
+	$(MBSC) -v
+
+# Rules to compile the sources
+
+../lib/mbsclib.a(mbsc.o): mbsc.c $(INCFILES)
+	$(COMPILE) mbsc.c
+	ar r ../lib/mbsclib.a mbsc.o
+	$(RM) mbsc.o
+
+../lib/mbsclib.a(anascan.o): anascan.c $(INCFILES)
+	$(COMPILE) anascan.c
+	ar r ../lib/mbsclib.a anascan.o
+	$(RM) anascan.o
+
+../lib/mbsclib.a(anlog.o): anlog.c $(INCFILES)
+	$(COMPILE) anlog.c
+	ar r ../lib/mbsclib.a anlog.o
+	$(RM) anlog.o
+
+../lib/mbsclib.a(annaml.o): annaml.c $(INCFILES)
+	$(COMPILE) annaml.c
+	ar r ../lib/mbsclib.a annaml.o
+	$(RM) annaml.o
+
+../lib/mbsclib.a(anpar11.o): anpar11.c $(INCFILES)
+	$(COMPILE) anpar11.c
+	ar r ../lib/mbsclib.a anpar11.o
+	$(RM) anpar11.o
+
+../lib/mbsclib.a(anpar12.o): anpar12.c $(INCFILES)
+	$(COMPILE) anpar12.c
+	ar r ../lib/mbsclib.a anpar12.o
+	$(RM) anpar12.o
+
+../lib/mbsclib.a(anpar31.o): anpar31.c $(INCFILES)
+	$(COMPILE) anpar31.c
+	ar r ../lib/mbsclib.a anpar31.o
+	$(RM) anpar31.o
+
+../lib/mbsclib.a(anpar40.o): anpar40.c $(INCFILES)
+	$(COMPILE) anpar40.c
+	ar r ../lib/mbsclib.a anpar40.o
+	$(RM) anpar40.o
+
+../lib/mbsclib.a(anpar51.o): anpar51.c $(INCFILES)
+	$(COMPILE) anpar51.c
+	ar r ../lib/mbsclib.a anpar51.o
+	$(RM) anpar51.o
+
+../lib/mbsclib.a(anpar52.o): anpar52.c $(INCFILES)
+	$(COMPILE) anpar52.c
+	ar r ../lib/mbsclib.a anpar52.o
+	$(RM) anpar52.o
+
+../lib/mbsclib.a(inacc.o): ../../PM/src/inacc.c $(INCFILES)
+	$(COMPILE) ../../PM/src/inacc.c
+	ar r ../lib/mbsclib.a inacc.o
+	$(RM) inacc.o
+
+../lib/mbsclib.a(ingpar.o): ../../PM/src/ingpar.c $(INCFILES)
+	$(COMPILE) ../../PM/src/ingpar.c
+	ar r ../lib/mbsclib.a ingpar.o
+	$(RM) ingpar.o
+
+../lib/mbsclib.a(infunc.o): ../../PM/src/infunc.c $(INCFILES)
+	$(COMPILE) ../../PM/src/infunc.c
+	ar r ../lib/mbsclib.a infunc.o
+	$(RM) infunc.o
+
+../lib/mbsclib.a(inac10.o): ../../PM/src/inac10.c $(INCFILES)
+	$(COMPILE) ../../PM/src/inac10.c
+	ar r ../lib/mbsclib.a inac10.o
+	$(RM) inac10.o
+
+../lib/mbsclib.a(inac11.o): ../../PM/src/inac11.c $(INCFILES)
+	$(COMPILE) ../../PM/src/inac11.c
+	ar r ../lib/mbsclib.a inac11.o
+	$(RM) inac11.o
+
+../lib/mbsclib.a(inac19.o): ../../PM/src/inac19.c $(INCFILES)
+	$(COMPILE) ../../PM/src/inac19.c
+	ar r ../lib/mbsclib.a inac19.o
+	$(RM) inac19.o
+
+../lib/mbsclib.a(pmac1.o): ../../PM/src/pmac1.c $(INCFILES)
+	$(COMPILE) ../../PM/src/pmac1.c
+	ar r ../lib/mbsclib.a pmac1.o
+	$(RM) pmac1.o
+
+../lib/mbsclib.a(pmac2.o): ../../PM/src/pmac2.c $(INCFILES)
+	$(COMPILE) ../../PM/src/pmac2.c
+	ar r ../lib/mbsclib.a pmac2.o
+	$(RM) pmac2.o
+
+../lib/mbsclib.a(pmac5.o): ../../PM/src/pmac5.c $(INCFILES)
+	$(COMPILE) ../../PM/src/pmac5.c
+	ar r ../lib/mbsclib.a pmac5.o
+	$(RM) pmac5.o
+
+../lib/mbsclib.a(pmallo.o): ../../PM/src/pmallo.c $(INCFILES)
+	$(COMPILE) ../../PM/src/pmallo.c
+	ar r ../lib/mbsclib.a pmallo.o
+	$(RM) pmallo.o
+
+../lib/mbsclib.a(pmlist.o): ../../PM/src/pmlist.c $(INCFILES)
+	$(COMPILE) ../../PM/src/pmlist.c
+	ar r ../lib/mbsclib.a pmlist.o
+	$(RM) pmlist.o
+
+../lib/mbsclib.a(evmath.o): ../../PM/src/evmath.c $(INCFILES)
+	$(COMPILE) ../../PM/src/evmath.c
+	ar r ../lib/mbsclib.a evmath.o
+	$(RM) evmath.o
+
+../lib/mbsclib.a(evstr.o): ../../PM/src/evstr.c $(INCFILES)
+	$(COMPILE) ../../PM/src/evstr.c
+	ar r ../lib/mbsclib.a evstr.o
+	$(RM) evstr.o
+
+../lib/mbsclib.a(evvec.o): ../../PM/src/evvec.c $(INCFILES)
+	$(COMPILE) ../../PM/src/evvec.c
+	ar r ../lib/mbsclib.a evvec.o
+	$(RM) evvec.o
+
+../lib/mbsclib.a(stacc.o): ../../PM/src/stacc.c $(INCFILES)
+	$(COMPILE) ../../PM/src/stacc.c
+	ar r ../lib/mbsclib.a stacc.o
+	$(RM) stacc.o
+
+../lib/mbsclib.a(stac10.o): ../../PM/src/stac10.c $(INCFILES)
+	$(COMPILE) ../../PM/src/stac10.c
+	ar r ../lib/mbsclib.a stac10.o
+	$(RM) stac10.o
+
+../lib/mbsclib.a(ig29.o): ../../IG/src/ig29.c $(INCFILES)
+	$(COMPILE) ../../IG/src/ig29.c
+	ar r ../lib/mbsclib.a ig29.o
+	$(RM) ig29.o
+
+../lib/mbsclib.a(ig36.o): ../../IG/src/ig36.c $(INCFILES)
+	$(COMPILE) ../../IG/src/ig36.c
+	ar r ../lib/mbsclib.a ig36.o
+	$(RM) ig36.o
+
+##########################################################

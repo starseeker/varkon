@@ -1,0 +1,136 @@
+!*******************************************************
+
+ global drawing module dxf_blk2(
+  VAR FILE   infil;          !>"DXF-filen.";
+  STRING     namn*32          >"BLOCK-namnet";
+  VECTOR     p                >"INSERT-placering";
+  VECTOR     sxy              >"INSERT-skala";
+  FLOAT      v                >"INSERT-vinkel";
+  INT        levlim           >"Nivå att läsa in eller -1";
+  VAR STRING bntab(2000)*32;  !>"Blocknamntabell";
+  VAR INT    bptab(2000);     !>"Blockpekartabell";
+  INT        nb               >"Antal block i tabell"; 
+  VAR INT    levant;         !>"Antal layers definierade";
+  VAR STRING levnam(500)*40; !>"Nivånamn";
+  VAR STRING lintyp(500)*20; !>"Linjetyper";
+  FLOAT      s);             ! Skala
+
+!*      Utför INSERT i DXF-fil.
+!*
+!*      (C)microform ab 14/2/91 J. Kjellander
+!*
+!*      1996-06-10 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    i,npll,npla,kod,curfp,ppos,dum;
+   VECTOR ip;
+   STRING rad*132;
+
+ BEGINMODULE
+
+!*
+!***Initiering.
+!*
+   dum:=0;
+   npll:=0;
+   npla:=0;
+!*
+!***Skalning.
+!*
+   if sxy.x <> sxy.y then exit();
+   else s:=sxy.x; endif;
+!*
+!***Leta upp blockdefinitionens filposition.
+!*
+   i:=1;
+   curfp:=fpos(infil);
+floop:
+   if bntab(i) = namn then
+     seek(infil,bptab(i));
+   else
+     i:=i+1;
+     if i > 2000 then
+       close(infil);
+       exit(get_tstr(1588)+namn);
+     endif;  ! Hittar ej blocket
+     goto floop;
+   endif;
+!*
+!***Leta upp inplaceringspunkt och läs fram till "  0".
+!*
+iploop:
+   kod:=inint(infil); rad:=inlin(infil);
+   if   kod = 10 then
+     ip.x:=inflt(infil);
+     goto iploop;
+   elif kod = 20 then
+     ip.y:=inflt(infil);
+     goto iploop;
+   elif kod <> 0 then
+     rad:=inlin(infil);
+     goto iploop;
+   endif;
+!*
+!***Placering.
+!*
+   csys_1p(#1,namn,p,,,v:BLANK=1,SAVE=1);
+   mode_local(#1);
+   csys_1p(#2,namn,-ip*s:BLANK=1,SAVE=1);
+   mode_local(#2);
+!*
+!***Läs storheter fram till ENDBLK.
+!*
+loop:
+   rad:=inlin(infil);
+   set(PEN=1);
+!*
+!***Punkt.
+!*
+   if rad = "POINT" then
+     part(#3,dxf_poi(infil,levlim,levant,levnam,lintyp,s,dum):SAVE=0);
+     goto loop;
+!*
+!***Linje.
+!*
+   elif rad = "LINE" then
+     part(#4,dxf_lin(infil,levlim,levant,levnam,lintyp,s,dum):SAVE=0);
+     goto loop;
+!*
+!***Cirkel.
+!*
+   elif rad = "CIRCLE" or rad = "ARC" then
+     part(#5,dxf_arc2(infil,levlim,levant,levnam,lintyp,s,dum):SAVE=0);
+     goto loop;
+!*
+!***Text.
+!*
+   elif rad = "TEXT" then
+     part(#6,dxf_txt(infil,levlim,levant,levnam,lintyp,s,dum):SAVE=0);
+     goto loop;
+!*
+!***Polyline.
+!*
+   elif rad = "POLYLINE" then
+     part(#7,dxf_ply(infil,levlim,levant,levnam,lintyp,s,npll,npla,dum):SAVE=0);
+     goto loop;
+!*
+!***Solid.
+!*
+   elif rad = "SOLID" then
+     part(#8,dxf_sol(infil,levlim,levant,levnam,lintyp,s,dum):SAVE=0);
+     goto loop;
+!*
+!***End of Block ?
+!*
+   elif rad <> "ENDBLK" then
+     goto loop;
+   endif;
+!*
+!***Slut. Återställ filpekaren.
+!*
+   seek(infil,curfp);
+
+ ENDMODULE
+
+!*******************************************************

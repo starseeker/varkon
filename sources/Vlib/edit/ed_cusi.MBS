@@ -1,0 +1,68 @@
+!*******************************************************
+
+ MACRO MODULE ed_cusi(REF id);
+
+!*      Editerar CUR_SIL.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               editeras.
+!*
+!*      (C)microform ab 1998-03-04 G. Liden
+!*
+!*******************************************************
+
+   CONSTANT INT SUR_TYP=16;
+
+   INT    pnum,status;
+   STRING alt*2,par*132;
+
+ beginmodule
+
+!*
+!***Visa meny och läs in svar.
+!*
+    psh_men(127);
+    alt:=get_alt("");
+    pop_men();
+!*
+!***Yta.
+!* 
+    if alt = "a1" then
+      pnum:=1;
+      psh_pmt(get_tstr(1608));
+      par:=rstr(ident(SUR_TYP));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+!*
+!***Betraktelseriktning
+!*
+    elif alt = "a2" then
+      pnum:=2;
+      par:=getp_mbs(id,pnum);
+      part(#1,ma_posw(par,get_tstr(127),get_tstr(49),status));
+      if status = -1 then par:=""; endif;
+!*
+!***Typ
+!*
+    elif alt = "a3" then
+      pnum:=3;
+      par:=getp_mbs(id,pnum);
+      par:=inpmt(get_tstr(1643),par,40);
+!*
+!***Kurvgren
+!*
+    elif alt = "a4" then
+      pnum:=4;
+      par:=getp_mbs(id,pnum);
+      par:=inpmt(get_tstr(1610),par,40);
+    else
+      exit();
+    endif;
+!*
+!***Uppdatera.
+!*
+    if par <> "" then updp_mbs(id,pnum,par); endif;
+
+ endmodule
+
+!*******************************************************

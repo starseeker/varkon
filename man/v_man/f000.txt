@@ -1,0 +1,6 @@
+Sorry, there is no help on this function.
+
+Select one of the alternatives with the mouse or use the
+keyboard to enter a name in the edit-filed.
+
+Click the REJECT-button to exit.

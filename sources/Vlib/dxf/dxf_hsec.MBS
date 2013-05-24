@@ -1,0 +1,43 @@
+!*******************************************************
+
+ MACRO MODULE dxf_hsec(
+   VAR FILE infil,logfil);
+
+!*      Läser HEADER-section.
+!*
+!*      In: infil = Filpekare.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*******************************************************
+
+   STRING rad*132;
+   INT    kod;
+
+ BEGINMODULE
+
+!*
+!***HEADER.
+!*
+    outlin(logfil);
+    outstr(logfil,"HEADER-Section");
+    outlin(logfil);
+
+loop:
+    kod:=inint(infil); rad:=inlin(infil);
+
+    if kod = 0 then
+      rad:=inlin(infil);
+      if rad = "ENDSEC" then
+        exit();
+      else
+        goto loop;
+      endif;
+    else
+      rad:=inlin(infil);
+      goto loop;
+    endif;
+
+ ENDMODULE
+
+!*******************************************************

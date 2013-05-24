@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>act_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>act_view - <small><small>Procedure</small></small></h2>
+  <p>Activates a view<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Makes a named view active. If multiple windows are used the view is only activated in the
+  window indicated by the window-parameter, see below.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  act_view(name, window)<br>
+  <br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 29 Row 01 -->
+    <tr>
+      <td width="73">STRING</td>
+      <td width="571">name*15;</td>
+    </tr>
+<!-- Table 29 Row 02 -->
+    <tr>
+      <td width="73">INT</td>
+      <td width="571">window;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 30 Row 01 -->
+    <tr>
+      <td width="73">name</td>
+      <td width="571">-&nbsp; The name of the view to make active</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 31 Row 01 -->
+    <tr>
+      <td width="73">window</td>
+      <td width="571">-&nbsp; A window ID. Default = 0 = The default (main) window.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  act_view(&quot;iso&quot;)<br>
+  <br>
+  A view named &quot;iso&quot; is activated in the main window with ID = 0.<br>
+  <br>
+  act_view(&quot;left&quot;,1)<br>
+  <br>
+  A view named &quot;left&quot; is activated in a window with ID = 1.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  In order to display the model with respect to the new view use rep_view() with appropriate
+  parameters. act_view() does not update the display automatically.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

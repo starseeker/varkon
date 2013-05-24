@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>tform_mirr </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>tform_mirr - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a transformation<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a 2D or 3D mirroring transformation.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  tform_mirr(id, p1, p2, p3:attributes);<br>
+  <br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 45 Row 01 -->
+    <tr>
+      <td width="78">REF</td>
+      <td width="484">id;</td>
+    </tr>
+<!-- Table 45 Row 02 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="484">p1;</td>
+    </tr>
+<!-- Table 45 Row 03 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="484">p2;</td>
+    </tr>
+<!-- Table 45 Row 04 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="484">p3;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 46 Row 01 -->
+    <tr>
+      <td width="67">id </td>
+      <td width="495">- Local identity</td>
+    </tr>
+<!-- Table 46 Row 02 -->
+    <tr>
+      <td width="67">p1</td>
+      <td width="495">- First position on mirror axis</td>
+    </tr>
+<!-- Table 46 Row 03 -->
+    <tr>
+      <td width="67">p2</td>
+      <td width="495">- Second position on mirror axis</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 47 Row 01 -->
+    <tr>
+      <td width="66">p3</td>
+      <td width="496">- Third position. p1, p2 and p3 define the mirroring plane</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 48 Row 01 -->
+    <tr>
+      <td width="66">PEN </td>
+      <td width="496">- Pen or colour number</td>
+    </tr>
+<!-- Table 48 Row 02 -->
+    <tr>
+      <td width="66">LEVEL</td>
+      <td width="496">- Level number</td>
+    </tr>
+<!-- Table 48 Row 03 -->
+    <tr>
+      <td width="66">BLANK</td>
+      <td width="496">- Visible(0) or invisible(1)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>tform_mirr(#1,vec(0,0),vec(1,0));<br>
+  <br>
+  A mirror transformation in the XY-plane with the X-axis as mirror axis.<br>
+  <br>
+  tform_mirr(#1,vec(0,0,0),vec(0,1,0),vec(0,0,1));<br>
+  <br>
+  A mirror transformation with the YZ-plane as mirroring plane.<br>
+  <br>
+  <b>Comment<br>
+  </b><br>
+  tform_mirr can be used in 2D and 3D but can not be used for scaling.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>Comments</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h3>Comments</h3>
+  <p>The exclamation mark &quot;!&quot; is used to indicate the beginning of a comment and
+  the &quot;end of line&quot; ends a comment. All characters on the rest of the line after
+  an exclamation mark are skipped by the compiler. Here is an example...<br>
+  <br>
+  !******************************************************<br>
+  !*<br>
+  MODULE plate_10X10( ! Creates a plate size 10 by 10<br>
+  FLOAT t); ! Thickness of plate<br>
+  !*<br>
+  !* (C)Microform AB 1996-11-22 J. Kjellander<br>
+  !*<br>
+  !* Revisions: None<br>
+  !*<br>
+  !******************************************************<br>
+  !*<br>
+  BEGINMODULE<br>
+  <br>
+  lin_free(#1,vec(0,0),vec(10,0)); ! The lower horisontal line<br>
+  lin_offs(#2,#1,-10); ! The upper horisontal line<br>
+  lin_free(#3,on(#1),on(#2)); ! A line connecting startpoints<br>
+  lin_free(#4,on(#1,1),on(#2,1)); ! A line connecting endpoints<br>
+  <br>
+  ENDMODULE<br>
+  !*<br>
+  !******************************************************<br>
+  <br>
+  Dont be sparse with comments. You can also increase readability by indenting and using
+  lower and upper characters in a systematic way. A piece of code like the one above is
+  definitely much easier to understand than the following.<br>
+  <br>
+  module plate_10X10(float t);<br>
+  beginmodule<br>
+  lin_free(#1,vec(0,0),vec(10,0));<br>
+  lin_offs(#2,#1,-10);<br>
+  lin_free(#3,on(#1),on(#2));<br>
+  lin_free(#4,on(#1,1),on(#2,1));<br>
+  endmodule</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="mindex.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

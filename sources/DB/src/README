@@ -1,0 +1,25 @@
+/**********************************************************************
+*
+*    README
+*    ======
+*
+*    This README-file includes information about how to
+*    build the Varkon DB library.
+*
+*    (C)Örebro University 2003-03-20    http://www.oru.se/tech/cad
+*
+***********************************************************************/
+
+1. cd to the DB/src directory
+
+2. Type "make -f Makefile.linux" to build the DB library.
+
+3. Note that before using the DB library you
+   may also have to build the Varkon Utility
+   library VUlib.a, see VU/src/README for more
+   info on that.
+
+4. The DB/demo directory includes demo programs that show how
+   to use the DB library.
+
+/**********************************************************************/

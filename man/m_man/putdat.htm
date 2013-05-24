@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+  <title>putdat</title>
+</head>
+<body bgcolor="#99ccff">
+<center><font size="-1">VARKON Version 1.17 1999-01-20</font></center>
+<p>
+</p>
+<hr width="100%" align="center">
+<blockquote>
+  <h2>putdat_gm - <font size="+0">Function</font></h2>
+Stores an array of data in GM
+  <br>
+&nbsp;
+  <p><b>Description</b>
+  </p>
+  <p>Stores an array of data in GM with a unique key name.
+  </p>
+  <p><b>Syntax</b>
+  </p>
+  <p>putdat_gm(key, count, array)
+  <br>
+&nbsp;
+  <table cols="2">
+    <tbody>
+      <tr>
+        <td width="71">STRING</td>
+        <td>key;</td>
+      </tr>
+      <tr>
+        <td width="71">INT</td>
+        <td>count;</td>
+      </tr>
+      <tr>
+        <td width="71">Any_type</td>
+        <td>array();</td>
+      </tr>
+    </tbody>
+  </table>
+  </p>
+  <p><b>Principal parameters</b>
+  <br>
+&nbsp;
+  <table style="width: 80%;" cols="2">
+    <tbody>
+      <tr>
+        <td width="71">key</td>
+        <td>- Unique name to associate with this data</td>
+      </tr>
+      <tr>
+        <td width="71">count</td>
+        <td>- Number of elements of array to store</td>
+      </tr>
+      <tr>
+        <td width="71">array</td>
+        <td>- A 1-dimensional array of INT, FLOAT, VECTOR, REF or STRING</td>
+      </tr>
+    </tbody>
+  </table>
+  </p>
+  <p><b>Optional parameters</b>
+  </p>
+  <p>None.
+  </p>
+  <p><b>Return value</b>
+  </p>
+  <p>0 is returned if the data was successfully stored. -1 otherwise.
+  </p>
+  <p><b>Examples</b>
+  </p>
+  <p>FLOAT k(100);
+  <br>
+INT status;
+  </p>
+  <p>k(1):=10.0;
+  <br>
+k(2):=20.0;
+  <br>
+k(3):=-50.0;
+  <br>
+status:=putdat_gm("My_data", 3, k);
+  </p>
+  <p>Saves the 3 first elements of the FLOAT array k in GM with the
+name
+"My_data".
+  </p>
+  <p><b>Comments</b>
+  </p>
+  <p>Key names must be unique. If an attempt is made to store data with
+a
+name that is already used putdat_gm() returns -1.
+  </p>
+  <p><b>See also</b>
+  </p>
+  <p><a href="getdat.htm">getdat_gm</a> and <a href="deldat.htm">deldat_gm</a></p>
+</blockquote>
+<hr width="100%" align="center">
+<center>
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="gmdbindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</center>
+</body>
+</html>

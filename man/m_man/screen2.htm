@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>pos </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-03-24</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>screen_2 - <FONT SIZE=+0>Procedure</FONT></H2>
+
+<P>2 pointer positions in window coordinates<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Returns 2 positions entered by the user using the pointer (ie. mouse).
+Both positions are relative to X=Y=0 in the current graphical window (pixels).
+First position is recorded when the button is pressed and second position
+when the button is released. Different graphical traces or outlines of
+the pointer motion is available through the mode parameter.</P>
+
+<P><BR>
+<B>Syntax<BR>
+<BR>
+</B>pos_2(win_id, p1, p2, mode)</P>
+
+<TABLE WIDTH="659" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="72">INT</TD>
+
+<TD width="579">win_id;</TD>
+</TR>
+
+<TR>
+<TD>VECTOR</TD>
+
+<TD>p1;</TD>
+</TR>
+
+<TR>
+<TD>VECTOR</TD>
+
+<TD>p2;</TD>
+</TR>
+
+<TR>
+<TD>INT</TD>
+
+<TD>mode;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B></P>
+
+<TABLE WIDTH="50%" >
+<CAPTION></CAPTION>
+
+<TR ALIGN=LEFT>
+<TD>win_id</TD>
+
+<TD ALIGN=LEFT>- ID of window</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>p1</TD>
+
+<TD>- First position</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>p2</TD>
+
+<TD>- Second position</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B></P>
+
+<TABLE WIDTH="659" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="61">mode</TD>
+
+<TD width="590">- 0 = No outline</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>- 1 = Rectangle (Default)</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>- 2 = Dashed line</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>- 3 = Arrow</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Comments<BR>
+<BR>
+</B>If the pointer button is released without having moved the pointer,
+screen_2 returns p1=p2.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="dialindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

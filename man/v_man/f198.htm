@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>f000</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>&nbsp;&nbsp;&nbsp; VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>f198 Display shaded image (Flat)</H3>
+
+<P><B>Description<BR>
+<BR>
+</B>This is the main rendering function in VARKON. Produces a colored and
+shaded image of all visible surfaces of the current view taking any material
+defined or lightsources into account. f198 uses the flat shading model
+in OpenGL which produces the quickest possible result. B_planes are rendered
+as they are but surfaces are facetted (tesselated) by OpenGL before rendering.
+The quality of the tesselation is controlled by the value of VARKON:s current
+curve accuracy factor. A higer value (max=100) ubdivides surfaces into
+more facets and is more CPU intensive. A lower value (min=0.1) produces
+larger facets in a shorter time.</P>
+
+<P><B>Available in</B></P>
+
+<P>3D.<BR>
+<BR>
+<B>MBS Correspondence</B></P>
+
+<P>shade_view();</P>
+
+<P><B>Comments<BR>
+<BR>
+</B>There are currently no interactive functions to create material or
+light sources but MBS includes routines for this.</P>
+
+<P><B>See also</B></P>
+
+<P><A HREF="f199.htm">f199</A></P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vbiindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

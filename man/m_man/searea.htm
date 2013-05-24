@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>area </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-12-22</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>section_area -<FONT SIZE=+0> Function</FONT></H2>
+
+<P>Geometrical function<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Returns the area bounded by a planar curve. If the curve is not closed
+VARKON&nbsp;automatically closes the curve by inserting a straight line
+between its start and end positions. Accuracy is controlled by an optional
+parameter.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>section_area(curve, accuracy)<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="728" >
+<TR>
+<TD width="67">REF</TD>
+
+<TD width="653">curve;</TD>
+</TR>
+
+<TR>
+<TD width="67">FLOAT</TD>
+
+<TD width="653">accuracy;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="728" >
+<TR>
+<TD width="56">curve</TD>
+
+<TD width="664">- Identity of curve or arc</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="728" >
+<TR>
+<TD width="55">accuracy</TD>
+
+<TD width="665">- Maximum relative error of the curve arclength. Default
+is 0.005 = 0.5 % </TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Return value<BR>
+<BR>
+</B>A FLOAT value equal to the calculated area<BR>
+<BR>
+<B>Example<BR>
+<BR>
+</B>a:=section_area(#4);<BR>
+<BR>
+Calculates the area for curve with ID = #4. Default numerical accuracy
+is used.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>The area is computed by numerical integration. The number of calculations
+(iterations) is at least two. Smaller and smaller elements (triangles with
+one side equal to a short straight line, which approximates the curve)
+are used in each iteration and the calculation is ended when the error
+in the approximative arclength (the sum of the short straight lines) is
+less than the given accuracy, i.e. ( Total arclength - approximative arclength
+)/ ( Total arclength ) &lt; accuracy.</P>
+
+<P>The input curve must be a planar curve. The calculation is always made,
+but there will be a warning (with the maximum deviation from a plane) if
+the curve is non-planar. The criterion is 5 X Identical points criterion
+(default 0.01). </P>
+
+<P>The maximum number of iterations is ten (10). </P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="geomindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

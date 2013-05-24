@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>f000</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>&nbsp;&nbsp;&nbsp; VARKON Version 1.16 1998-11-03</FONT></CENTER>
+
+<BLOCKQUOTE>
+<HR width="100%" align="center">
+<H3>
+f153 Display context sensitive help</H3>
+<B>Description</B>
+<P>Displays help on the current context. Each context may have a specific
+helpfile in ASCII plain text (.txt) or HTML (.htm) format. The current
+context can be a menu, a function or a module. If a menu is active VARKON
+uses the menu number to decide what helpfile to display. Menu 48 for example
+will display m48.txt or m48.htm. If a function is active VARKON uses the
+number of the function. Function f127 will display f127.txt or f127.htm.
+If a module is active or being called or edited VARKON uses the name of
+the module. Calling my_module and activating help will display my_module.txt
+or my_module.htm.
+<P>VARKON assumes that helpfiles reside in the DOC-directory of the current
+project. If not found there VARKON also searches the main VARKON_DOC directory,
+usually VARKON_ROOT/man where the VARKON documentation normally is installed
+in subdirectories v_man and m_man.
+<P>In order to display HTML-formatted helpfiles the "html_viewer"-resource
+in the VARKON ini-file must be set to the proper HTML viewer. In the default
+ini-files distributed with VARKON for UNIX this resource is set to use
+Netscape for displaying .htm-files. The Windows95/NT version of VARKON
+defaults to InternetExplorer. You may have to edit the "html_viewer"-line
+in your ini-file if you want to use something else than default or if your
+Netscape- or Explorer-installation path is different from default.
+<P>If the "html_viewer"-resource is not set VARKON can only display .txt
+type help files.
+<P><B>Available in</B>
+<P>2D and 3D.
+<P><B>MBS Correspondence</B>
+<P><B>Comments</B>
+<P>None.
+<P><B>See also</B>
+<P><A HREF="vvkdoc.htm">VARKON_DOC</A></BLOCKQUOTE>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vbiindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

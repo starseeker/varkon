@@ -1,0 +1,46 @@
+!*******************************************************
+
+ MACRO MODULE dxf_xsec(
+   VAR FILE infil,logfil;
+   STRING   secnam*132);
+
+!*      Läser okänd section.
+!*
+!*      In: infil = Filpekare.
+!*
+!*      (C)microform ab 1997-10-22 J. Kjellander
+!*
+!*      1999-09-03 Bugfix, J.Kjellander
+!*
+!*******************************************************
+
+   STRING rad*132;
+   INT    kod;
+
+ BEGINMODULE
+
+!*
+!***Läs till ENDSEC.
+!*
+    outlin(logfil);
+    outstr(logfil,"Skipping "+secnam+"-Section");
+    outlin(logfil);
+
+loop:
+    kod:=inint(infil);
+
+    if kod = 0 then
+      rad:=inlin(infil);
+      if rad = "ENDSEC" then
+        exit();
+      else
+        goto loop;
+      endif;
+    else
+      rad:=inlin(infil);
+      goto loop;
+    endif;
+
+ ENDMODULE
+
+!*******************************************************

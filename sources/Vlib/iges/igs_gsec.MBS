@@ -1,0 +1,75 @@
+!*******************************************************
+
+ MACRO MODULE igs_gsec(
+   VAR FILE infil,logfil;
+       INT  eolsize;
+   VAR INT  status);
+
+!*      Läser Global section.
+!*
+!*      Ut: status = 0 => Ok
+!*                  -1 => Fel
+!*
+!*      (C)microform ab 1997-12-22 J. Kjellander
+!*
+!*     2004-07-20 eolsize, J.Kjellander, Örebro university
+!*
+!*******************************************************
+
+   STRING rad*132;
+   INT    nl;
+
+ BEGINMODULE
+
+!*
+!***HEADER.
+!*
+    outlin(logfil);
+    outstr(logfil,"Global Section");
+    outlin(logfil);
+!*
+!***Läs en 1:a rad och kolla att det är Global section.
+!*
+    rad:=inlin(infil);
+    if length(rad) <> 80 then
+      outstr(logfil,rad);
+      outlin(logfil);
+      outstr(logfil,"Line "+str(length(rad),-1,0)+" columns, should be 80 !");
+      outlin(logfil);
+      status:=-1;
+      exit();
+    elif substr(rad,73,1) <> "G" then
+      outstr(logfil,"This is not a Global Section");
+      outlin(logfil);
+      status:=-1;
+      exit();
+    else
+      status:=0;
+      nl:=1;
+    endif;
+!*
+!***Läs resten av sektionen.
+!*
+loop:
+    rad:=inlin(infil);
+
+    if substr(rad,73,1) = "G" then
+      nl:=nl+1;
+      goto loop;
+    endif;
+!*
+!***Skriv till loggfil.
+!*
+    outstr(logfil,"Processed "+str(nl,-1,0)+" lines");
+    outlin(logfil);
+!*
+!***Läma tillbaks senast lästa rad.
+!*
+    seek(infil,fpos(infil)-(80+eolsize));
+
+ ENDMODULE
+
+!*******************************************************
+
+
+

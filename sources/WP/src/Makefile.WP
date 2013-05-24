@@ -1,0 +1,76 @@
+##########################################################
+#
+#   Makefile.WP
+#   ----------
+#
+#  Make rules for the WP module.
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+# Include files
+
+INCFILES = ../include/WP.h            \
+           ../include/wpdef.h
+
+# The contents of WPlib.a
+
+OBJECTS = ../lib/WPlib.a(wp1.o)        \
+          ../lib/WPlib.a(wp2.o)        \
+          ../lib/WPlib.a(wp3.o)        \
+          ../lib/WPlib.a(wp4.o)        \
+          ../lib/WPlib.a(wp5.o)        \
+          ../lib/WPlib.a(wp6.o)        \
+          ../lib/WPlib.a(wp7.o)        \
+          ../lib/WPlib.a(wp8.o)        \
+          ../lib/WPlib.a(wp9.o)        \
+          ../lib/WPlib.a(wp10.o)       \
+          ../lib/WPlib.a(wp11.o)       \
+          ../lib/WPlib.a(wp12.o)       \
+          ../lib/WPlib.a(wp13.o)       \
+          ../lib/WPlib.a(wp14.o)       \
+          ../lib/WPlib.a(wp15.o)       \
+          ../lib/WPlib.a(wp16.o)       \
+          ../lib/WPlib.a(wp17.o)       \
+          ../lib/WPlib.a(wp18.o)       \
+          ../lib/WPlib.a(wp19.o)       \
+          ../lib/WPlib.a(wp20.o)       \
+          ../lib/WPlib.a(wp21.o)       \
+          ../lib/WPlib.a(wp22.o)       \
+          ../lib/WPlib.a(wp23.o)       \
+          ../lib/WPlib.a(wp24.o)       \
+          ../lib/WPlib.a(wp25.o)       \
+          ../lib/WPlib.a(wp26.o)       \
+          ../lib/WPlib.a(wp27.o)       \
+          ../lib/WPlib.a(wp28.o)       \
+          ../lib/WPlib.a(wp29.o)       \
+          ../lib/WPlib.a(wp30.o)       \
+          ../lib/WPlib.a(wp31.o)       \
+          ../lib/WPlib.a(wp32.o)       \
+          ../lib/WPlib.a(wp33.o)       \
+          ../lib/WPlib.a(wp34.o)
+
+# WPlib.a depends on the objects. 
+
+distr : $(OBJECTS)
+
+debug : $(OBJECTS)
+
+kdebug : $(OBJECTS)
+
+# Objects depend on sources implicitly and sources depend
+# on the following include-files.
+
+$(OBJECTS) : $(INCFILES)
+
+# wp10,wp15 also depends on v3icon.h
+
+../lib/WPlib.a(wp10.o): $(INCFILES) ../include/v3icon.h
+
+../lib/WPlib.a(wp15.o): $(INCFILES) ../include/v3icon.h
+
+clean:
+	rm ../lib/WPlib.a
+
+##########################################################

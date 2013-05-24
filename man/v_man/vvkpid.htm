@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>VARKON_PID</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1998-11-10</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+VARKON_PID</H3>
+Environment variable
+<BR>&nbsp;
+<P><B>Description</B>
+<P>Environment variable used by VARKON to locate project files. Project
+files are small text files describing a specific project having the same
+name but appended with ".PID" ie. shafts.PID is the project file for a
+project named shafts. A PID file contains 6 lines of text describing different
+directories to be used and the MDF-(menu) file to be used.
+<P>Line 1: Job directory
+<BR>Line 2: Module libraries
+<BR>Line 3: Symbol library
+<BR>Line 4: Help libray
+<BR>Line 5: MDF file
+<BR>Line 6: MBS source library
+<P>The job directory is the place where all files related to all jobs within
+the project are placed. A module library is an alternate place automatically
+searched if a module called is not found in the job directory. More than
+one module library may be specified separated with semicolon. VARKON will
+search them in the order they appear on the line. A symbol libray is an
+alternate place automatically searched if a symbol (.PLT file) is not found
+in the job directory. A help library is an alternate place for help files
+(.DOC). The MBS-library is the directory used by the "mbs-part-edit" function
+to locate editable MBS-files.
+<BR>&nbsp;
+<P><B>Example</B>
+<P>$HOME/app/shafts/job
+<BR>$HOME/app/shafts/lib;$HOME/app/common/lib
+<BR>$HOME/app/shafts/sym
+<BR>$HOME/app/shafts/doc
+<BR>$HOME/app/shafts/mdf/shafts.MDF
+<BR>$HOME/app/shafts/mbs
+<P>For a project named shafts this migth be an appropriate PID file. All
+files related to the project are gathered in different directories under
+a common directory named shafts. shafts together with other projects are
+placed in a common directory named app. Line 2 indicates that users of
+this project should have acces to a module libray in $HOME/app/shafts/lib
+but also to a common library named $HOME/app/common/lib
+<P><B>Comments</B>
+<P>If VARKON_PID is not defined a hard coded default will be used instead.
+<P>All users need read and write permissions to the VARKON_PID directory.
+<P>If VARKON_PID points to a non existent directory or if permissions are
+missing the result is unpredictable.
+<P>In order to keep existing projects when a new version of VARKON is installed
+it is wise to place project files in a directory outside the tree defined
+by VARKON_ROOT. $HOME/pid is a good place if projects are personal or some
+common directory if many users need access to the same projects.
+<P>PID-files are created automatically by VARKON if you ask for it but
+may also be created or edited by hand or by scripts or in other ways.
+<P>If the first character of the line in a PID file is a dollar sign the
+string followed until next slash or end of line will be interpreted as
+an environment variable. /usr/$MY_LIBS/lib is not accepted but $MY_LIBS/lib
+is.</UL>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

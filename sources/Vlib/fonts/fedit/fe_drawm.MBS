@@ -1,0 +1,80 @@
+!*******************************************************
+
+ MACRO MODULE fe_drawm(
+  REF id1 >"@t1 Ange startpunkt !");
+
+!*      T{nda f|rflyttningar.
+!*
+!*      (C)microform ab 31/12/92 J. Kjellander
+!*
+!*******************************************************
+
+ INT    onr,nvec;
+ FLOAT  l;
+ VECTOR p1,p2;
+ STRING onrs*10;
+ REF    id2,newid;
+ FILE   f;
+
+ beginmodule
+
+!*
+!***Lite initiering.
+!*
+   nvec:=0;
+   open(f,"r","fedit.ONR");
+   onr:=inint(f);
+   close(f);
+!*
+!***Peka p} n{sta punkt.
+!* 
+loop:
+   psh_pmt("Ange n{sta punkt !");
+   id2:=ident(1);
+   pop_pmt();
+!*
+!***Felkontroll.
+!* 
+   p1:=on(id1);
+   p2:=on(id2);
+   l:=vecl(p2-p1);
+
+   if l < 1.0 then
+     exit("Punkt 1 och 2 har samma koordinater !");
+   endif;
+   if   p1.x < -0.1  or  p1.x > 10000.1 then
+     exit("Startpunkten ej innanf|r mallen !");
+   elif p2.x < -0.1  or  p2.x > 10000 then
+     exit("Slutpunkten ej innanf|r mallen !");
+   elif p1.y < -5000.1  or  p1.y > 12500.1 then
+     exit("Startpunkten ej innanf|r mallen !");
+   elif p2.y < -5000.1  or  p2.y > 12500.1 then
+     exit("Slutpunkten ej innanf|r mallen !");
+   endif;
+!*
+!***Om det {r 1:a vektorn, fr}ga efter ordningsnummer.
+!*
+   if nvec = 0 then
+     onrs:=inpmt("Vilket ordningsnummer ?",str(onr,-1,0),10);
+     onr:=trunc(val(onrs));
+   endif;
+!*
+!***Skapa partanrop.
+!*
+   if id2 <> #0.1 then
+     newid:=add_mbs("part","fe_draw",rstr(id1),rstr(id2),str(onr,-1,0));
+     onr:=onr+1;
+     nvec:=nvec+1;
+     id1:=id2;
+     goto loop;
+   endif;
+!*
+!***Default-v{rde f|r ordningsnummer.
+!*
+   open(f,"u","fedit.ONR");
+   outint(f,onr,-5);
+   close(f);
+
+ endmodule
+
+!*******************************************************

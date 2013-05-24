@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>lin_perp </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-12-29</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>lin_perp - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+
+<P>Creates a line<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Creates a line perpendicular to another line. The line can start in
+any position and have any length but the direction will always be perpendicular
+to the referenced line. With a positive value for length the new line will
+point to the right with respect to the referenced line and with a negative
+value for length the direction of the new line becomes opposite.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>lin_perp(id, p, ref, len:attributes);<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="618" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="78">REF</TD>
+
+<TD width="532">id;</TD>
+</TR>
+
+<TR>
+<TD width="78">VECTOR</TD>
+
+<TD width="532">p;</TD>
+</TR>
+
+<TR>
+<TD width="78">REF</TD>
+
+<TD width="532">ref;</TD>
+</TR>
+
+<TR>
+<TD width="78">FLOAT</TD>
+
+<TD width="532">len;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="618" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="68">id </TD>
+
+<TD width="542">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="68">p</TD>
+
+<TD width="542">- Start position</TD>
+</TR>
+
+<TR>
+<TD width="68">ref</TD>
+
+<TD width="542">- Identity of perpendicular line</TD>
+</TR>
+
+<TR>
+<TD width="68">len</TD>
+
+<TD width="542">- Length</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="95%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD>None.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Attributes</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="618" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="69">PEN </TD>
+
+<TD width="541">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="69">LEVEL</TD>
+
+<TD width="541">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="69">BLANK</TD>
+
+<TD width="541">- Visible(0) or invisible(1)</TD>
+</TR>
+
+<TR>
+<TD width="69">LFONT</TD>
+
+<TD width="541">- Solid(0), dashed(1) or centerline(2)</TD>
+</TR>
+
+<TR>
+<TD width="69">LDASHL</TD>
+
+<TD width="541">- Dashlength</TD>
+</TR>
+
+<TR>
+<TD>WIDTH</TD>
+
+<TD>- Linewidth</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Example<BR>
+<BR>
+</B>lin_perp(#6,vec(0,0),#4,100);<BR>
+<BR>
+Creates a line starting in X=Y=0 perpendicular to the line #4. The direction
+of the new line is to the right with respect of the sense of direction
+for #4.<BR>
+<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>In a 3D module the resulting line is restricted to the XY-plane of
+the active coordinate system. If the start position p or the line ref is
+not in in this plane they will be projected along the Z-axis onto the XY-plane
+before being used to create the new line.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

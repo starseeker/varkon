@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cre_men</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cre_men - <small><small>Procedure</small></small></h2>
+  <p>Creates a menu<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a menu with heading (name) and alternatives. If a menu with the same number
+  already exists it is overwritten (replaced). <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cre_men(number, name, alt1, action1, alt2, action2.........)<br>
+  <br>
+  </p>
+  <table width="654" border="0">
+<!-- Table 09 Row 01 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="574">number;</td>
+    </tr>
+<!-- Table 09 Row 02 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="574">name*132;</td>
+    </tr>
+<!-- Table 09 Row 03 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="574">alt1*132;</td>
+    </tr>
+<!-- Table 09 Row 04 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="574">action1*6;</td>
+    </tr>
+<!-- Table 09 Row 05 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="574">alt2*132;</td>
+    </tr>
+<!-- Table 09 Row 06 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="574">action2*6;</td>
+    </tr>
+<!-- Table 09 Row 07 -->
+    <tr>
+      <td width="72">.</td>
+      <td width="574"></td>
+    </tr>
+<!-- Table 09 Row 08 -->
+    <tr>
+      <td width="72">.</td>
+      <td width="574"></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="654" border="0">
+<!-- Table 10 Row 01 -->
+    <tr>
+      <td width="62">number</td>
+      <td width="584">- The menu number</td>
+    </tr>
+    <tr>
+      <td width="62">name</td>
+      <td width="584">- The menu name. If name = &quot;&quot; (null string) no menu is created
+      and any previous menu </td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="584">&nbsp;&nbsp; with the same number is deleted.</td>
+    </tr>
+<!-- Table 11 Row 01 -->
+    <tr>
+      <td width="61">alt1</td>
+      <td width="585">- The alternative to be displayed as line 1 of the menu</td>
+    </tr>
+<!-- Table 11 Row 02 -->
+    <tr>
+      <td width="61">action1</td>
+      <td width="585">- The action to take place if alt1 is selected</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="578" border="0">
+<!-- Table 12 Row 01 -->
+    <tr>
+      <td width="61">alt2</td>
+      <td width="509">- Line 2 in the menu</td>
+    </tr>
+<!-- Table 12 Row 02 -->
+    <tr>
+      <td width="61">action2</td>
+      <td width="509">- The action to take place if line 2 is selected</td>
+    </tr>
+<!-- Table 12 Row 03 -->
+    <tr>
+      <td width="61">.</td>
+      <td width="509"></td>
+    </tr>
+<!-- Table 12 Row 04 -->
+    <tr>
+      <td width="61">.</td>
+      <td width="509"></td>
+    </tr>
+  </table>
+  <p><br>
+  A menu may consist of any number of alternatives as long as it fits the screen.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  cre_men(250, &quot;MATERIAL&quot;, &quot;steel&quot;, &quot;a1&quot;, &quot;plywood&quot;,
+  &quot;a2&quot;, &quot;GRP&quot;, &quot;a3&quot;, &quot;aluminum&quot;, &quot;a4&quot;);<br>
+  <br>
+  A menu with four alternatives.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  For a complete description of menus and action codes see the documentation of the
+  MDF-file.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="dialindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

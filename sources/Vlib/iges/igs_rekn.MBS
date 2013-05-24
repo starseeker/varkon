@@ -1,0 +1,60 @@
+!*******************************************************
+
+ MACRO MODULE igs_rekn(
+   VAR FLOAT k(100);
+   INT     nk;
+   VAR INT status);
+
+!*      Reorganiserar (vänder) på en knutpunkts-
+!*      vektor om det behövs.
+!*
+!*      Ut: status = 0 => Ej vänd.
+!*                   1 => Vänd.
+!*
+!*      (C)microform ab 1997-12-23 J. Kjellander
+!*
+!*******************************************************
+
+   CONSTANT INT MAXPTS=100;
+
+   INT   i;
+   FLOAT tmp(MAXPTS);
+
+ BEGINMODULE
+
+!*
+!***Felkontroll.
+!*
+   if nk > MAXPTS then
+     exit("igs_rekn(): nk>MAXPTS");
+   endif;
+!*
+!***Initiering.
+!*
+   status:=0;
+!*
+!***Behöver den vändas ?
+!*
+   for i:=1 to nk-1 do
+     if k(i) > k(i+1) then
+       status:=1;
+       goto end;
+     endif;
+   endfor;
+!*
+!***Ev vändning.
+!*
+end:
+   if status = 1 then
+     for i:=1 to nk do
+       tmp(nk+1-i):=k(i);
+     endfor;
+     for i:=1 to nk do
+       k(i):=tmp(i);
+     endfor;
+   endif;
+
+
+ ENDMODULE
+
+!*******************************************************

@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Generic modeling </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Generic modeling</H3>
+
+<P>Generic is Latin for family and a generic model is thus a model that
+describes not only a single member of the family but the entire family
+in more general terms. A generic screw for example has all the properties
+of a screw but no specific length or diameter. A screw with specific length
+and diameter (a member of the family) is an explicit screw. In object oriented
+terminology <I>generic</I> and <I>explicit</I> translates to <I>class </I>and
+<I>instance</I>.<BR>
+<BR>
+VARKON uses the generic model as its primary representation but automatically
+creates and updates an explicit model as well. This process is called evaluation....<BR>
+<BR>
+<B>generic model ---&gt; evaluation ---&gt; explicit model<BR>
+<BR>
+</B>The generic model is based on the MBS modeling language which is unique
+to the VARKON system. Parameters are used to model things that differ between
+members of a family and a <B>MODULE </B>with statements is used to model
+common properties. The length and diameter of a screw for example could
+be modeled with two <B>FLOAT </B>parameters. When an explicit model is
+called for VARKON evaluates (executes) its main <B>MODULE</B> using the
+current values of all parameters and creates the corresponding explicit
+model automatically.<BR>
+<BR>
+VARKON's explicit model is stored in a database called GM (<U>G</U>eometric<U>M</U>odel).
+GM is a structured database of object oriented type where geometry as well
+as parameters and owner-membership relations are stored.<BR>
+<BR>
+VARKON supports interactive generic modeling as well as text based modeling
+using MBS directly. In interactive mode VARKON looks like any modern CAD-system
+with menus, toolbars, multiple graphic windows and so on. All changes made
+to the generic model are evaluated immediately and the impact on the explicit
+model is automatically shown in the graphics window. The user can switch
+to text based modeling at any time by clicking a button in the toolbar.
+VARKON then opens an edit window and presents the model in the form of
+MBS statements. When the user returns to interactive modeling VARKON compiles
+any changes and shows the new result immediately.<BR>
+<BR>
+MBS is the text based form of a <B>MODULE</B> but VARKON's uses a binary
+Abstract Syntax Tree as its internal representation in order to make evaluation
+as fast as possible. The compiling of MBS into its internal form and the
+decompiling of the internal form back to MBS again is fully transparent
+to the user but for those who need a separate compiler one is also included
+in the system.<BR>
+<BR>
+MBS is not only the basic representation of a generic model. It can also
+be used to create one! A <B>MACRO</B> <B>MODULE</B> written in MBS can
+be used to automatically add, update, delete and reevaluate a generic model.
+<BR>
+<BR>
+<B>MACRO MODULE ---&gt; generic model ---&gt; evaluation ---&gt; explicit
+model</B></P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

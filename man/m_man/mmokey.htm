@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>MODULE, keywords and identifiers</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h3>MODULE, keywords and identifiers</h3>
+  <p>The MODULE is obviousley of major importance in the VARKON system. Lets have a closer
+  look at the rules for creating MODULE's in MBS.<br>
+  <br>
+  A module is defined by:<br>
+  <br>
+  [module_attribute] [module_type] MODULE identifier(<br>
+  [parameter_declarations]);<br>
+  module_body<br>
+  <br>
+  where module_body is defined by:<br>
+  <br>
+  declarations<br>
+  BEGINMODULE<br>
+  statements<br>
+  ENDMODULE<br>
+  <br>
+  Words in square brackets like [module_attribute] are optional and may be excluded if the
+  default value is satisfactory. Words in capital letters are MBS keywords and may not be
+  used in any other situation. Here is the complete list of keywords:<br>
+  <br>
+  </p>
+</blockquote>
+
+<table width="703" border="0">
+<!-- Table 01 Row 01 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>AND</p>
+    </blockquote>
+    </td>
+    <td width="145">FILE</td>
+    <td width="347">NOT</td>
+  </tr>
+<!-- Table 01 Row 02 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>BASIC</p>
+    </blockquote>
+    </td>
+    <td width="145">FLOET</td>
+    <td width="347">OR</td>
+  </tr>
+<!-- Table 01 Row 03 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>BEGINMODULE</p>
+    </blockquote>
+    </td>
+    <td width="145">FOR</td>
+    <td width="347">PI</td>
+  </tr>
+<!-- Table 01 Row 04 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>CONSTANT</p>
+    </blockquote>
+    </td>
+    <td width="145">GEOMETRY</td>
+    <td width="347">REF</td>
+  </tr>
+<!-- Table 01 Row 05 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>DRAWING</p>
+    </blockquote>
+    </td>
+    <td width="145">GLOBAL</td>
+    <td width="347">STRING</td>
+  </tr>
+<!-- Table 01 Row 06 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>DO</p>
+    </blockquote>
+    </td>
+    <td width="145">GOTO</td>
+    <td width="347">STEP</td>
+  </tr>
+<!-- Table 01 Row 07 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>ELIF</p>
+    </blockquote>
+    </td>
+    <td width="145">IF</td>
+    <td width="347">THEN</td>
+  </tr>
+<!-- Table 01 Row 08 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>ELSE</p>
+    </blockquote>
+    </td>
+    <td width="145">INT</td>
+    <td width="347">TO</td>
+  </tr>
+<!-- Table 01 Row 09 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>ENDFOR</p>
+    </blockquote>
+    </td>
+    <td width="145">LOCAL</td>
+    <td width="347">VAR</td>
+  </tr>
+<!-- Table 01 Row 10 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>ENDIF</p>
+    </blockquote>
+    </td>
+    <td width="145">MODULE</td>
+    <td width="347">VECTOR</td>
+  </tr>
+<!-- Table 01 Row 11 -->
+  <tr>
+    <td width="193"><blockquote>
+      <p>ENDMODULE</p>
+    </blockquote>
+    </td>
+    <td width="145">MACRO</td>
+    <td width="347"></td>
+  </tr>
+</table>
+
+<blockquote>
+  <p><br>
+  Identifiers are used for things that have names like the name of a module, a parameter, a
+  constant, a variable, a function, a procedure and so on. Identifiers may consist of any
+  number of characters but only 31 are significant. The following characters may be used but
+  the first character of an identifier should always be a letter, not a digit or underscore.<br>
+  <br>
+  Letters:<br>
+  <br>
+  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Å Ä Ö<br>
+  a b c d e f g h i j k l m n o p q r s t u v w x y z å ä ö<br>
+  <br>
+  Digits:<br>
+  <br>
+  0 1 2 3 4 5 6 7 8 9<br>
+  <br>
+  Underscore:<br>
+  <br>
+  -<br>
+  <br>
+  Here are some valid identifiers:<br>
+  <br>
+  D2 wheel_size A12345B_cdefg99<br>
+  <br>
+  Lower and upper case letters are treated as the same letter when used in identifiers.
+  A76BB is thus the same as a76BB or a76bb or A76bB etc. A special restriction applies for
+  the identifier used as the name of a module since this is also the name of the file that
+  holds the module. Module names must conform with the rules for filenames that goes for the
+  operating system being used. UNIX for example treats upper and lower case letters
+  differently while Microsoft Windows makes no difference. Some operating systems may also
+  impose restrictions on the maximum number of characters used in a file name. A safe
+  approach is not to use module names longer than 8 characters and never rely on the fact
+  that upper and lower case are different characters.<br>
+  <br>
+  Module_attribute is either LOCAL, GLOBAL, BASIC or MACRO. If no module_attribute is
+  specified a default of LOCAL will be used. A LOCAL module needs a coordinate system
+  specified when called using the part-statement and will use this coordinate system as its
+  global system. A GLOBAL or BASIC module should not be called with a coordinate system. A
+  GLOBAL module automatically inherits the global system of the caller and a BASIC module
+  uses the basic system. A MACRO module can only be called by another MACRO and is typically
+  used for non modeling purposes like user interfaces, analysis programs, machine control
+  etc.<br>
+  <br>
+  Module_type is either DRAWING or GEOMETRY. DRAWING means 2D and implies that only 2D
+  constructs may be used in the module. GEOMETRY means 3D.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="mindex.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

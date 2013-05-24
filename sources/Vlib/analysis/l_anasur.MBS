@@ -1,0 +1,41 @@
+!*******************************************************
+
+ basic geometry module l_anasur(REF id);
+
+!*      Skriver ut specifika data f|r en yta.
+!*
+!*      IN : Ytans identitet.
+!*
+!*      UT : Inget.
+!*
+!*      (C)microform ab 26/11/92 J. Kjellander
+!*
+!*      1996-01-06 FAC_SUR+CON_SUR, G. Liden
+!*      1996-11-14 POL_SUR+P3_SUR, G. Liden
+!*
+!*******************************************************
+
+   INT typ,font,npatu,npatv;
+   STRING surtyp(15)*10;
+
+ beginmodule
+
+   surtyp(1):="CUB_SUR"; surtyp(2):="RAT_SUR"; surtyp(3):="LFT_SUR";
+   surtyp(4):="FAC_SUR"; surtyp(5):="CON_SUR"; surtyp(6):="POL_SUR";
+   surtyp(7):="P3_SUR" ; surtyp(8):="P5_SUR" ; surtyp(9):="P7_SUR" ;
+  surtyp(10):="P9_SUR" ;surtyp(11):="P21_SUR" ;surtyp(12):="NURB_SUR" ;
+  surtyp(13):="Type 13" ;surtyp(14):="Type 14";surtyp(15):="Type 15" ;
+
+   getsurh(global_ref(id,2),"SUR_TYPE",typ);
+   getsurh(global_ref(id,2),"FONT",font);
+   getsurh(global_ref(id,2),"NPATU",npatu);
+   getsurh(global_ref(id,2),"NPATV",npatv);
+
+   lst_lin("Typ   = "+surtyp(typ));
+   lst_lin("Font  = "+str(font,-1,0));
+   lst_lin("NPATU = "+str(npatu,-1,0));
+   lst_lin("NPATV = "+str(npatv,-1,0));
+
+ endmodule
+
+!*******************************************************

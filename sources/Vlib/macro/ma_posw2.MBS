@@ -1,0 +1,44 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE ma_posw2(INT main_id;
+                               VECTOR p;
+                               INT    b,h;
+                           VAR STRING mbsstr*132);
+
+!*      Interaktiv inmatning av en position med hårkors.
+!*      Om inmatningen avbryts lämnas mbsstr orörd.
+!*
+!*      Ut:  mbsstr = vec(???,???)
+!*
+!*      (C)microform ab 1996-06-10 J. Kjellander
+!*
+!*******************************************************
+
+   VECTOR p1;
+   STRING pektkn*1;
+   INT    label;
+
+ BEGINMODULE
+
+!*
+!***Promt.
+!*
+   label:=cre_button(main_id,p,b,h,0,get_tstr(133),get_tstr(133));
+!*
+!***Hårkors.
+!*
+   p1:=pos(pektkn);
+ 
+   if pektkn = " "  or                 ! Normal pekning
+      pektkn = get_tstr(92)  or        ! Pektecken för hårkors
+      pektkn = get_tstr(93)  then      ! Pektecken för raster
+     mbsstr:="vec("+str(p1.x,-1,15)+","+str(p1.y,-1,15)+")";
+   endif;
+!*
+!***Sudda promten.
+!*
+   del_win(main_id,label);
+
+ ENDMODULE
+
+!*******************************************************

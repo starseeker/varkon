@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Attributes</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-12-29</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Graphic attributes</H3>
+
+<P>All entities in VARKON have a <B>PEN, LEVEL</B> and <B>BLANK</B> attribute.
+Many entities have other attributes as well. The <B>PEN</B> attribute is
+used by VARKON to control color. Pen 1 (default) is usually black, pen
+2 red, pen 3 green etc. Pen colors are defined in the VARKON INI-file(s).
+<B>LEVEL</B> is analogous to levels or layers in other systems. VARKON
+supports a maximum of 2000 levels (level 0 through 1999). Each level can
+be individually blanked (invisible) or unblanked (visible) in each graphical
+window. A line on level 10 for example may be visible in one window but
+invisible in another window. This is useful for showing different kinds
+of information from the same model in different windows. <B>BLANK</B> is
+used to make an entity totally invisible. This saves space and increases
+performance.</P>
+
+<P>Lines, arcs and curves may use the <B>WIDTH</B> attribute to control
+their &quot;thickness&quot;. Default value is 0.0 which means that drawing
+is done with a line as narrow as possible, usually 1 pixel. With a <B>WIDTH</B>
+value &gt; 0 the entity is drawn using the number of pixels required with
+respect to the specified width and current scale.</P>
+
+<P>When a new job is started all attributes have default values and these
+values remain until explicitly changed using....<BR>
+<BR>
+<B>set</B>(attribute=value);<BR>
+<BR>
+The current value of an attribute can be temporarily overridden when an
+entity is created by supplying the name of the attribute and its value
+in the statement that creates the entity. If the current linefont is solid
+(<B>LFONT</B>=0) and we want to create a single dashed line (<B>LFONT</B>=1)
+without changing the global <B>LFONT</B> attribute this is how it would
+be done......<BR>
+<BR>
+<B>lin_free</B>(id,p1,p2<B>:LFONT</B>=1);<BR>
+<BR>
+All entities including <B>part </B>take an optional list of attributes
+as input. An attribute supplied like this is only valid for one entity.
+The global value is not changed.<BR>
+<BR>
+Attribute values are saved and copied on calls between modules. If <B>MODULE</B>
+A calls <B>MODULE</B> B then B will inherit all values from A. If B changes
+an attribute using the<B> set</B> procedure the change will only be valid
+while B executes. When control returns to A again its original values are
+restored. <B>set_basic</B> can be used to override this behavior and change
+an attribute not only in the module currently executing but also in all
+modules earlier in the call chain.<BR>
+<BR>
+A nice way to set attributes and call a module at the same time is the
+following...<BR>
+<BR>
+<B>part</B>(id,name(parameters):<B>LEVEL</B>=5,<B>PEN</B>=10);<BR>
+<BR>
+In this example the <B>LEVEL </B>attribute is set to 5 and the <B>PEN</B>
+attribute is set to 10 when a module is called for. As long as the called
+module doesn't change them they will keep these values while the module
+executes but are restored to their original values when control returns
+back to the caller.<BR>
+<BR>
+A module that needs to know the current value of an attribute can use one
+of many act_xxx functions. There is one for every attribute. The current
+value of <B>LEVEL</B> for example is <B>act_lev</B>() and the current value
+of <B>PEN</B> is <B>act_pen</B>().</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm#VAR">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

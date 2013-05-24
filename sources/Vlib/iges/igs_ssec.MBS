@@ -1,0 +1,95 @@
+!*******************************************************
+
+ MACRO MODULE igs_ssec(
+   VAR FILE infil,logfil;
+   VAR INT  eolsize;
+   VAR INT  status);
+
+!*      Läser Start-section.
+!*
+!*      Ut: status = 0 => Ok
+!*                  -1 => Ej IGES-fil
+!*
+!*      (C)microform ab 1997-12-22 J. Kjellander
+!*
+!*      2004-07-20 eolsiz, J.Kjellander, Örebro university
+!*
+!*******************************************************
+
+   STRING rad*132;
+   INT    nl,nchars,offset;
+
+ BEGINMODULE
+
+!*
+!***HEADER.
+!*
+    outlin(logfil);
+    outstr(logfil,"Start Section");
+    outlin(logfil);
+!*
+!***Läs en 1:a rad och kolla hur många tecken som används
+!***som radslutsmärke.
+!*
+    rad:=inlin(infil);
+    nchars:=length(rad);
+    offset:=fpos(infil);
+    eolsize:=offset-nchars;
+    outstr(logfil,rad);
+    outlin(logfil);
+    outstr(logfil,"First line read is "+str(nchars,-1,0)+" characters long.");
+    outlin(logfil);
+    outstr(logfil,"FPOS after first line is = "+str(offset,-1,0));
+    outlin(logfil);
+    outstr(logfil,"EOL-size "+str(eolsize,-1,0)+" will be used.");
+    outlin(logfil);
+!*
+!***Write to logfile.
+!*
+    if length(rad) <> 80 then
+      outstr(logfil,"This does not seem to be an uncompressed");
+      outlin(logfil);
+      outstr(logfil,"ASCII-formatted IGES-file !");
+      outlin(logfil);
+      status:=-1;
+      exit();
+    elif substr(rad,73,1) <> "S" then
+      outstr(logfil,"This does not seem to be an uncompressed");
+      outlin(logfil);
+      outstr(logfil,"ASCII-formatted IGES-file !");
+      outlin(logfil);
+      status:=-1;
+      exit();
+    else
+      status:=0;
+      nl:=1;
+    endif;
+!*
+!***Läs resten av start-sektionen.
+!*
+loop:
+    rad:=inlin(infil);
+
+    if substr(rad,73,1) = "S" then
+      nl:=nl+1;
+      goto loop;
+    endif;
+!*
+!***Skriv till loggfil.
+!*
+    outstr(logfil,"Processed "+str(nl,-1,0)+" lines");
+    outlin(logfil);
+!*
+!***Ge tillbaks sist lästa rad.
+!*
+    seek(infil,fpos(infil)-(80+eolsize));
+
+ ENDMODULE
+
+!*******************************************************
+
+
+
+
+
+

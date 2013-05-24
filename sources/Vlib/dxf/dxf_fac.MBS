@@ -1,0 +1,70 @@
+!*******************************************************
+
+  GLOBAL GEOMETRY MODULE dxf_fac(
+  VAR FILE   infil;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  VAR INT    nfac);
+
+!*      Läser 3DFACE i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-06 J. Kjellander
+!*
+!*******************************************************
+
+ STRING rad*132;
+ INT    kod,pn,lev;
+ VECTOR p1,p2,p3,p4;
+
+ BEGINMODULE
+
+!*
+!***3DFACE.
+!*
+loop:
+    kod:=inint(infil); rad:=inlin(infil);
+    if kod = 8 then                        ! Nivånamn
+      part(#11,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+      set(LEVEL=lev);
+    elif kod = 62 then                      ! Pennummer
+      pn:=inint(infil); rad:=inlin(infil);
+      if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+    elif kod = 10 then                      ! X-koordinat
+      p1.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 20 then                      ! Y-koordinat
+      p1.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 30 then                      ! Z-koordinat
+      p1.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 11 then                      ! X-koordinat
+      p2.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 21 then                      ! Y-koordinat
+      p2.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 31 then                      ! Z-koordinat
+      p2.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 12 then                      ! X-koordinat
+      p3.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 22 then                      ! Y-koordinat
+      p3.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 32 then                      ! Z-koordinat
+      p3.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 13 then                      ! X-koordinat
+      p4.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 23 then                      ! Y-koordinat
+      p4.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 33 then                      ! Z-koordinat
+      p4.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 0 then                       ! Slut
+      b_plane(#80,p1,p2,p3,p4:SAVE=1);
+      b_plane(#81,p1,p4,p3,p2:SAVE=1);
+      nfac:=nfac+1;
+      exit();
+    else                                    ! Okänt
+      rad:=inlin(infil);
+    endif;
+
+    goto loop;
+
+ ENDMODULE
+
+!*******************************************************

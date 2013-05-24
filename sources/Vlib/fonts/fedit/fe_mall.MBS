@@ -1,0 +1,78 @@
+!*******************************************************
+
+ BASIC DRAWING MODULE fe_mall(
+  INT    anr:=0    >"Vilken ASCII-kod skall detta tecken ha ?";
+  STRING anm*60    >"Vad heter tecknet ?");
+
+!*      Mall f|r tecken.
+!*
+!*      (C)microform ab 21/12/92 J. Kjellander
+!*
+!*******************************************************
+
+  CONSTANT FLOAT MINY=-5000;         ! Minsta Y.
+  CONSTANT FLOAT BASY=0;             ! Baslinjens Y-koord.
+  CONSTANT FLOAT TOPY=10000;         ! Topplinjens Y-koord.
+  CONSTANT FLOAT MAXY=12500;         ! St|rsta Y-koord.
+  CONSTANT FLOAT B60 =6000;          ! 60% av h|jden av "A"
+  CONSTANT FLOAT BTOT=10000;         ! Hela bredden inkl. luft
+
+  FILE f;
+
+ beginmodule
+
+!*
+!***Ytterkonturerna.
+!*
+   lin_free(#1,vec(0,MINY),vec(BTOT,MINY));
+   lin_offs(#2,#1,-(MAXY-MINY));
+   lin_free(#3,on(#1),on(#2));
+   lin_free(#4,on(#1,1),on(#2,1));
+!*
+!***Baslinjen.
+!*
+   set(LFONT=1,LDASHL=1500);
+   lin_free(#5,vec(0,BASY),vec(BTOT,BASY));
+!*
+!***Topplinjen.
+!*
+   lin_free(#6,vec(0,TOPY),vec(BTOT,TOPY));
+!*
+!***Slutlinjen.
+!*
+   lin_free(#7,vec(B60,MINY),vec(B60,MAXY));
+!*
+!***Lite text.
+!*
+   set(TSIZE=500,TSLANT=0,TWIDTH=40);
+   text(#10,vec(BTOT+300,TOPY-4000),0,"ASCII-"+str(anr,-1,0));
+   set(TSIZE=400);
+   text(#12,vec(BTOT+300,TOPY-4600),0,anm);
+   text(#13,vec(BTOT+300,TOPY-6500),0,"Texth|jd: 10000");
+   text(#14,vec(BTOT+300,TOPY-7100),0,"Bredd   : 60%");
+   text(#15,vec(BTOT+300,TOPY-7700),0,"Lutning : 0"+chr(13));
+
+   text(#16,vec(-3000,TOPY-100),0,"TOPPLINJE");
+   text(#17,vec(-3000,BASY-100),0,"BASLINJE");
+
+   text(#18,vec(BTOT+300,MAXY-100),0,"Y = 12500");
+   text(#19,vec(BTOT+300,TOPY-100),0,"Y = 10000");
+   text(#20,vec(BTOT+300,BASY-100),0,"Y = 0");
+   text(#21,vec(BTOT+300,MINY-100),0,"Y = -5000");
+
+   text(#22,vec(-1000,MINY-700),0,"X = 0");
+   text(#23,vec(B60-1000,MINY-700),0,"X = 6000");
+   text(#24,vec(BTOT-1000,MINY-700),0,"X = 10000");
+!*
+!***Default-v{rde f|r ordningsnummer.
+!***Bara vid "skapa part".
+!*
+   if exestat() = 1 then
+     open(f,"w","fedit.ONR");
+     outint(f,1,-5);
+     close(f);
+   endif;
+
+ endmodule
+
+!*******************************************************

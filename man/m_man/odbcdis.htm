@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>odbc_disconnect</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.17D 2003-02-25</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<BLOCKQUOTE>
+<H2>
+odbc_disconnect - <FONT SIZE=+0>Function</FONT></H2>
+Ends an ODBC session
+<BR>&nbsp;
+<P><B>Description</B>
+<P>Closes the connection with the currently connected ODBC datasource.
+<P><B>Syntax</B>
+<P>odbc_disconnect()
+<P><B>Principal parameters</B>
+<TABLE BORDER=0 WIDTH="667" >
+<CAPTION>&nbsp;</CAPTION>
+
+<TR>
+<TD WIDTH="37">None.</TD>
+
+<TD WIDTH="622"></TD>
+</TR>
+</TABLE>
+
+<P><B>Optional parameters</B>
+<TABLE BORDER=0 WIDTH="667" >
+<CAPTION>&nbsp;</CAPTION>
+
+<TR>
+<TD WIDTH="37">None.</TD>
+
+<TD WIDTH="622"></TD>
+</TR>
+</TABLE>
+
+<P><B>Return value</B>
+<P>An INT describing the status of sucess. 0 = Ok, -1 = Error.
+<P><B>Comments</B>
+<P>If negative status (-1) is returned from odbc_disconnect() the operation
+failed and the reason to why the function was not successful can be retrieved
+using odbc_error().
+<P><B>See also</B>
+<P><A HREF="odbccon.htm">odbc_connect(),</A> <A HREF="odbcexe.htm">odbc_execdirect(),</A>
+<A HREF="odbcfet.htm">odbc_fetch(),</A>
+<A HREF="odbcget.htm">odbc_getstring(),</A>
+and <A HREF="odbcerr.htm">odbc_error()</A></BLOCKQUOTE>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<BR>&nbsp;
+<P><BR>
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>&nbsp;
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="odbcindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

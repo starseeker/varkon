@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_conarr </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>sur_conarr - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a surface<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a conic lofting surface. It is the same function as sur_conic() except that the
+  input data is given in arrays.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  sur_conarr(id, ncur, spine, lim, tan, m, mcur:attributes);<br>
+  <br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 41 Row 01 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="595">id;</td>
+    </tr>
+<!-- Table 41 Row 02 -->
+    <tr>
+      <td width="72">INT</td>
+      <td width="595">ncur;</td>
+    </tr>
+<!-- Table 41 Row 03 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="595">spine;</td>
+    </tr>
+<!-- Table 41 Row 04 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="595">lim ( );</td>
+    </tr>
+<!-- Table 41 Row 05 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="595">tan ( );</td>
+    </tr>
+<!-- Table 41 Row 06 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="595">m ( );</td>
+    </tr>
+<!-- Table 41 Row 07 -->
+    <tr>
+      <td width="72">REF</td>
+      <td width="595">mcur ( );</td>
+    </tr>
+  </table>
+  <p><br>
+  <br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 42 Row 01 -->
+    <tr>
+      <td width="61">id </td>
+      <td width="606">- Local identity</td>
+    </tr>
+<!-- Table 42 Row 02 -->
+    <tr>
+      <td width="61">spine</td>
+      <td width="606">- Spine curve</td>
+    </tr>
+<!-- Table 42 Row 03 -->
+    <tr>
+      <td width="61">lim</td>
+      <td width="606">- Array with limit curves</td>
+    </tr>
+<!-- Table 42 Row 04 -->
+    <tr>
+      <td width="61">tan</td>
+      <td width="606">- Array with tangent definition curves</td>
+    </tr>
+<!-- Table 42 Row 04 -->
+    <tr>
+      <td width="61">m</td>
+      <td width="606">- Array with flags defining the type of mid curves</td>
+    </tr>
+<!-- Table 42 Row 04 -->
+    <tr>
+      <td width="61"></td>
+      <td width="606">&nbsp;&nbsp; Eq. M: Mid curve is a R*3 curve</td>
+    </tr>
+<!-- Table 42 Row 04 -->
+    <tr>
+      <td width="61"></td>
+      <td width="606">&nbsp;&nbsp; Eq. M: Mid curve is a R*3 curve</td>
+    </tr>
+<!-- Table 43 Row 01 -->
+    <tr>
+      <td width="60">mcur</td>
+      <td width="607">- Arrar with mid curves</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 44 Row 01 -->
+    <tr>
+      <td>None</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 45 Row 01 -->
+    <tr>
+      <td width="66">PEN </td>
+      <td width="601">- Pen or colour number</td>
+    </tr>
+<!-- Table 45 Row 02 -->
+    <tr>
+      <td width="66">LEVEL</td>
+      <td width="601">- Level number</td>
+    </tr>
+<!-- Table 45 Row 03 -->
+    <tr>
+      <td width="66">BLANK</td>
+      <td width="601">- Visible (0) or invisible (1)</td>
+    </tr>
+<!-- Table 45 Row 04 -->
+    <tr>
+      <td width="66">SFONT</td>
+      <td width="601">- Solid boundary and dashed midcurves (0)</td>
+    </tr>
+<!-- Table 45 Row 05 -->
+    <tr>
+      <td width="66">SDASHL</td>
+      <td width="601">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  REF lim(10), tan(10), mcur(9);<br>
+  STRING m(9)*1;<br>
+  <br>
+  sur_conarr( #10, 4, #1, lim, tan, m, mcur);<br>
+  <br>
+  Creates a conic lofting surface (type LFT_SUR) with spine curve #1. The number of patches
+  in the V direction will be three since the number of limit curves and tangent definition
+  curves is four. <br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The created surface LFT_SUR is of the procedural type. </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

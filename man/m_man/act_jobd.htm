@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>act_jobdir </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>act_jobdir - <small><small>Function</small></small></h2>
+  <b><p><br>
+  </b>Active job directory<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Returns the path to the current job directory and adds a terminating &quot;/&quot; (UNIX)
+  or &quot;\&quot; (Windows).<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  act_jobdir()<br>
+  <br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 17 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 18 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <b><u><br>
+  </u></b>A STRING containining the path.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  The terminating slash is added to make it easier to add a filename to the end of of the
+  path in a way that is portable between UNIX and Windows. The following line for example...<br>
+  <br>
+  complete_path:=act_jobdir() + &quot;myfile&quot;;<br>
+  <br>
+  creates a path to &quot;myfile&quot; on the current job directory.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="statindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

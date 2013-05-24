@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>open </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1998-01-08</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>open - <FONT SIZE=+0>Procedure</FONT></H2>
+
+<P><BR>
+Opens a file<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Used to establish connection with a named file or to create a pipe
+to another program.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>open(f, mode, name)<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="733" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="71">FILE</TD>
+
+<TD width="654">f;</TD>
+</TR>
+
+<TR>
+<TD width="71">STRING</TD>
+
+<TD width="654">mode*2;</TD>
+</TR>
+
+<TR>
+<TD width="71">STRING</TD>
+
+<TD width="654">name*132;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="733" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="62">f</TD>
+
+<TD width="663">- The name of a filevariable to be used for successive
+operations</TD>
+</TR>
+
+<TR>
+<TD width="62">mode</TD>
+
+<TD width="663">- Type of operations to be allowed on the opened file or
+pipe</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="663">&nbsp;&nbsp; R = Read from file</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="663">&nbsp;&nbsp; W = Write to file (if file exists it is overwritten
+otherwise it is created)</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="663">&nbsp;&nbsp; A = Append to file (if no file exists it is
+created)</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="663">&nbsp;&nbsp; U = Update (read, write and seek)</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="663">&nbsp;&nbsp; RP = Read from pipe</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="663">&nbsp;&nbsp; WP = Write to pipe</TD>
+</TR>
+
+<TR>
+<TD width="61">name</TD>
+
+<TD width="664">- Name of file to open or command to create the pipe</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="95%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD>None.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Examples<BR>
+<BR>
+</B>FILE f;<BR>
+<BR>
+open(f, &quot;r&quot; , &quot;/usr/mydir/job.dat&quot;) ! Opens a file
+named job.dat in /usr/mydir for reading only<BR>
+<BR>
+open(f, &quot;w&quot;, &quot;new.dat&quot;) ! Creates a new file named
+new.dat in current directory<BR>
+<BR>
+open(f, &quot;rp&quot;, &quot;cd /usr/mydir;ls&quot;) ! Creates a read-pipe
+to the output of the ls-program<BR>
+<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>The codes for mode may be upper or lower case.<BR>
+<BR>
+open automatically resets the current position within the file to zero.<BR>
+<BR>
+An attempt to open a file more than once without first closing it is treated
+as an error. It is also important to close the file before accessing it
+from other programs.<BR>
+<BR>
+The iostat function can be used to detect any errors.</P>
+
+<P><B>See also</B></P>
+
+<P><A HREF="close.htm">close</A></P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="fileindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

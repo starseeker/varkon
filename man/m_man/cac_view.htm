@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cacc_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cacc_view - <small><small>Procedure</small></small></h2>
+  <p>Sets curve accuracy<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Sets the value of the modal curve accuracy parameter used to determine how accurate to
+  display arcs, curves and surfaces. A low value can produce faster repaints but also makes
+  curved graphics rougher since fewer vectors are used for their display.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cacc_view(accuracy)<br>
+  <br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 13 Row 01 -->
+    <tr>
+      <td width="71">FLOAT</td>
+      <td width="586">accuracy;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 14 Row 01 -->
+    <tr>
+      <td width="63">accuracy</td>
+      <td width="594">- 0.1 &lt;= accuracy &lt;= 100.0 Default = 1.0</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 15 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments<br>
+  </b><br>
+  Plotting routines also honor the curve accuracy parameter when they create a plotfile but
+  automatically use a value twice as big as the value set for the display. A very low curve
+  accuracy may therefore also produce bad plots.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

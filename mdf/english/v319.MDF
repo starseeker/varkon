@@ -1,0 +1,45 @@
+
+! This is VARKON's standard menufile for the
+! Microsoft windows user interface.
+ 
+#include "$VARKON_MDF\mswin.INC"
+#include "$VARKON_MDF\menus.INC"
+#include "$VARKON_MDF\texts.INC"
+#include "$VARKON_MDF\plott.INC"
+
+m2  = "MAIN MENU 2D"
+      "File",m5
+      "create",m13
+      "edit",m15
+      "delete",m22
+      "variation",m34
+      "analysis",m75
+      "graphics",m66
+      "levels",m65
+      "attributes",m14
+      "MBS",m58
+      "Help",f153;
+
+m3  = "MAIN MENU 3D"
+      "File",m5
+      "create",m11
+      "edit",m15
+      "delete",m22
+      "variation",m34
+      "analysis",m75  
+      "graphics",m66 
+      "levels",m65
+      "attributes",m14
+      "MBS",m58
+      "Help",f153;
+
+m4  = "DRAFTING"
+      "File",m6
+      "create",m13
+      "edit",m49
+      "delete",m22
+      "analysis",m75  
+      "graphics",m66 
+      "levels",m65
+      "attributes",m14
+      "Help",f153;

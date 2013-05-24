@@ -1,0 +1,57 @@
+!*******************************************************
+
+  GLOBAL MODULE dxf_poi(
+  VAR FILE   infil;
+  INT        levlim;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  FLOAT      s;
+  VAR INT    npoi);
+
+!*      Läser POINT i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*******************************************************
+
+ STRING rad*132;
+ INT    kod,pn,lev;
+ VECTOR p;
+
+ BEGINMODULE
+
+!*
+!***Punkt.
+!*
+loop:
+    kod:=inint(infil); rad:=inlin(infil);
+    if kod = 8 then                        ! Nivånamn
+      part(#11,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+      if levlim > -1  and lev <> levlim then
+        exit();
+      else
+        set(LEVEL=lev);
+      endif;
+    elif kod = 62 then                      ! Pennummer
+      pn:=inint(infil); rad:=inlin(infil);
+      if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+    elif kod = 10 then                      ! X-koordinat
+      p.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 20 then                      ! Y-koordinat
+      p.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 30 then                      ! Z-koordinat
+      p.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 0 then                       ! Slut
+      poi_free(#20,s*p:SAVE=1);
+      npoi:=npoi+1;
+      exit();
+    else                                    ! Okänt
+      rad:=inlin(infil);
+    endif;
+
+    goto loop;
+
+ ENDMODULE
+
+!*******************************************************

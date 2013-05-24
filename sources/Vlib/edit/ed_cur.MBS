@@ -1,0 +1,48 @@
+!*******************************************************
+
+ MACRO MODULE ed_cur(REF id);
+
+!*      Editerar en kurva.
+!*
+!*      In: id = Identitet för kurva som skall
+!*               editeras.
+!*
+!*      (C)microform ab 6/5/92 J. Kjellander
+!*
+!*      1997-04-21 cur_int, J.Kjellander
+!*      1998-04-17 ytterligare 4, J.Kjellander
+!*
+!*******************************************************
+
+   STRING typ*20;
+
+ beginmodule
+
+!*
+!***Kolla hur kurvan är skapad.
+!*
+   typ:=getp_mbs(id,0);
+!*
+!***Anropa rätt rutin.
+!*
+   if typ = "CUR_CONIC" then
+     part(#1,ed_curc(id));
+   elif typ = "CUR_SPLINE" then
+     part(#2,ed_curs(id));
+   elif typ = "CUR_OFFS" then
+     part(#3,ed_curo(id));
+   elif typ = "CUR_INT" then
+     part(#4,ed_curi(id));
+   elif typ = "CUR_ISO" then
+     part(#5,ed_cuis(id));
+   elif typ = "CUR_APPROX" then
+     part(#6,ed_cuap(id));
+   elif typ = "CUR_TRIM" then
+     part(#7,ed_cutr(id));
+   elif typ = "CUR_SIL" then
+     part(#8,ed_cusi(id));
+   endif;
+
+ endmodule
+
+!*******************************************************

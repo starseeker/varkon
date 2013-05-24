@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>hp7475</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1998-11-12</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+<B>hp7475</B></H3>
+VARKON plotter driver
+<BR>&nbsp;
+<P><B>Description</B>
+<P>hp7475 translates .PLT or .DXF format to the Hewlett Packard hp7475
+plotter format. hp7475 reads from standard input and writes to standard
+output.
+<P><B>Syntax</B>
+<P>hp7475 -sS -wsL -xX -yY -vN -hS -kK
+<P>Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.
+<P><B>Options</B></UL>
+
+<TABLE WIDTH="95%" >
+<CAPTION>&nbsp;</CAPTION>
+
+<TR>
+<TD>
+<UL>-sS</UL>
+</TD>
+
+<TD>
+<UL>- Set scale to S. Float value, default = 1.0</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-wsL</UL>
+</TD>
+
+<TD>
+<UL>- Set linewidthscale to L. Float value, default = S</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-xX</UL>
+</TD>
+
+<TD>
+<UL>- Set origin.x to X. Float value, default = 0.0</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-yY</UL>
+</TD>
+
+<TD>
+<UL>- Set origin.y to Y. Float value, default = 0.0</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-vN</UL>
+</TD>
+
+<TD>
+<UL>- Rotate n degrees. Float value, default = 0.0</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-hS</UL>
+</TD>
+
+<TD>
+<UL>- Pen speed . 0.0 &lt;= S &lt;= 1.0 Default = 0.6</UL>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<UL>-kK</UL>
+</TD>
+
+<TD>
+<UL>- Set curve accuracy to K. Float value, default = 1.0</UL>
+</TD>
+</TR>
+</TABLE>
+
+<UL><B>Examples</B>
+<P>hp7475 &lt;plofile.PLT >plotfile.HP -s0.5
+<P>Scales the image in plotfile.PLT to half size and writes the result
+to a new file named "plotfile.HP" using the hp7475 format.
+<P>hp7475 &lt;plofile.PLT -s0.5 | lp
+<P>Same as above but the result is sent to a spooled plotter.
+<P>hp7475 &lt;plofile.PLT -s0.5 >/dev/tty2
+<P>Same as above but result sent directly to a serial port.
+<P><B>Comments</B>
+<P>hp7475 automatically recognizes if the input is in .PLT or DXF format.
+The -k option only applies to DXF format.
+<P>The pen speed of the hp7475 plotter can only be altered in fixed steps.
+The hp7475 program selects the speed closest to the relative value given
+with the -h option. 1 is the highest and 0 is the lowest speed.
+<P>hp7475 does not support color but if a plotter with more than one pen
+is used the PEN attribute can be used to force the plotter to use different
+pens. If different pens have different colors this will produce a color
+printout.
+<P>Lines of variable width may be produced in the same way as above by
+using a plotter with multiple pens of varying width or through the WIDTH
+attribute. Penfiles are still supported but may not be in future releases.
+<P>hp7475 reads "$VARKON_PLT/hp7475.PEN" when invoked to establish the
+size (width) of the pen(s) actually available. If this file is missing
+an errormessage is reported and no output is produced.</UL>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

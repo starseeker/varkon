@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>rstr </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>rstr - <small><small>Function</small></small></h2>
+  <p>Reference to string conversion<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Converts a reference value to a string of characters with optional formatting.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  rstr(ref, width)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 19 Row 01 -->
+    <tr>
+      <td width="46">REF</td>
+      <td width="613">ref;</td>
+    </tr>
+<!-- Table 19 Row 02 -->
+    <tr>
+      <td width="46">INT</td>
+      <td width="613">width;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 20 Row 01 -->
+    <tr>
+      <td width="37">ref</td>
+      <td width="622">- The value to convert.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 21 Row 01 -->
+    <tr>
+      <td width="37">width</td>
+      <td width="622">- Controls the amount of padding. If width is less than the actual space
+      required no padding</td>
+    </tr>
+<!-- Table 21 Row 02 -->
+    <tr>
+      <td width="37"></td>
+      <td width="622">&nbsp;&nbsp; is performed. If width is larger than the space required the
+      result is padded with blanks.</td>
+    </tr>
+<!-- Table 21 Row 03 -->
+    <tr>
+      <td width="37"></td>
+      <td width="622">&nbsp;&nbsp; The sign of width controls weather padding is done on the
+      left side (+) or the right side (-).</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A STRING of characters.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  If ref = #5.2#7 then<br>
+  <br>
+  rstr(ref) = &quot;#5.2#7&quot;<br>
+  <br>
+  rstr(ref,12) = &quot; #5.2#7&quot;<br>
+  <br>
+  rstr(ref,-12) = &quot;#5.2#7 &quot;</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="striindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

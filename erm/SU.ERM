@@ -1,0 +1,205 @@
+/*sdescr Error messages for surface functions                   */
+
+Revision history: 1996-08-20  Gunnar Liden
+
+120  3  B-plane polygon p1 = p2  (%s)
+121  3  B-plane polygon p3 = p4  (%s)
+122  3  B-plane polygon p1 = p4  (%s)
+123  3  B-plane polygon p1, p2, p3 and p4 is not coplanar (%s)
+124  3  B-plane polygon is self-intersecting (%s)
+125  1  WARNING Y axis for csys not defined (%s) %s
+126  3  ON for B_PLANE: Three B-plane pts %s are on one line (%s)
+127  3  ON for B_PLANE: B-plane is not OK (type %s) (%s)
+128  3  ON for B_PLANE: B-plane is not convex (change pt %s) (%s)
+129  3  ON for B_PLANE: U,V= %s is not between 0-1 (%s)
+
+130  3  Plane cannot be defined (%s)
+
+216  3  Isoparameter with %s too short segment(s) %s
+217  3  Flag for mid curve is %s (not 1, 2 or 3) %s
+218  3  SUR_TRIM For a %s patch are only integer trim values allowed %s     
+219  3  Max. no. of curve segments %s exceeded (change tolerance!) %s
+220  1  WARNING Tolerance problem curve segments %s to %s
+221  3  Only (U,V)=(0,0),(0,1),(1,1) or (0,1) for BOX_SUR %s %s
+222  1  INFO Patch iu,iv=  %s is a point %s
+223  1  INFO Patch iu,iv=  %s is a null tile %s
+224  1  INFO Patch iu,iv=  %s is triangular %s
+225  1  WARNING Normal(s) in triangular patch iu,iv=  %s is not OK %s
+226  1  WARNING Normal(s) in null tile iu,iv=  %s is not OK %s
+227  1  WARNING Normal(s) in patch iu,iv=  %s is not OK %s
+228  3  Curve/surface pt no %s does not exist (No of solutions %s)
+229  3  B-plane intersect line within polygons but no common part %s
+230  3  B-plane intersect line not within polygon %s %s
+231  3  No B-plane intersect line. Planes parallell  %s
+232  2  No three plane intersect point  %s
+233  3  Shooting vector length is zero  %s
+234  3  Solution selection case %s is not implemented %s
+235  3  SUR_SPLARR Temporary maximum of 500 points  %s
+236  3  SUR_SPLARR Splining of %s not yet implemented %s
+237  3  SUR_SPLARR Method %s is not implemented %s
+238  3  SUR_APPROX Input data %s not OK %s
+239  3  SUR_APPROX Approximation case %s not implemented %s
+240  3  SUR_CONIC Surface (UV_SEG) segments not yet implemented %s
+241  3  SUR_CONIC Offset curve segment not yet implemented %s
+242  1  WARNING Surface normal variation %s > %s degrees in patch %s
+243  3  Surface normal variation %s > %s degrees in patch %s
+244  3  EVAL Spine data %s only for a LFT_SUR surface
+245  3  CUR_FANGA Creation of %s silhouette failed
+246  3  There is no file %s (open failed)
+247  3  SUR_CONIC P value curve is not OK. P value %s 
+248  1  WARNING Conic lofting patch iu,iv=  %s is not OK
+249  3  Surface patch iu,iv=  %s is not OK %s
+250  3  %s Max. number of V lines in a surface is 10          
+251  1  %s Parallell straight lines in function %s
+252  3  Parameter point u= %s is outside curve 0 - nu= %s
+253  3  No 2'nd derivatives for planar offset surface curves
+254  3  SUR_TRIM Case %s is not yet implemented %s     
+255  3  SUR_TRIM Pt U,V %s is outside surface nu,nv= %s
+256  3  Isoparameter has %s branches %s
+257  3  SUR_CONIC Plane (nx,ny,nz)= %s D= %s
+258  3  SUR_CONIC Intersect with %s curve %s failed 
+259  3  SUR_CONIC Number of plane/curve intersect points %s (not 1)
+260  3  Spine length %s is less than %s mm
+261  3  Requested closest pt no %s does not exist (No of solutions %s)
+262  3  Requested solution %s is not between 1 and %s (max)
+263  3  Ordering case %s is not implemented %s
+264  3  There is no file %s  %s
+265  3  File %s not OK %s
+266  3  Tangent for point %s in grid is not normalized %s
+267  3  Point %s in grid is not defined   %s
+268  3  No silhouette for vector or pt %s 
+269  3  Point number %s for SUR_POINTS is outside %s
+270  3  Point data code %s for SUR_POINTS is not valid %s
+271  3  Surface curve EVAL case %s not yet implemented %s
+272  3  Curve evaluation failed for t= %s %s
+273  3  Curve EVAL case %s is not valid %s
+274  3  Surface EVAL case %s is not valid %s
+275  3  Conic strip %s is outside surface limits 1 to %s
+276  3  Calculation %s only for surface with spine %s
+277  3  No %s (solution) %s
+278  3  Number of patch entry/exit points is zero %s
+279  3  Calculation case %s not yet implemented %s
+280  3  Spine must be straight line %s %s
+281  3  Start UV pt %s outside surface %s
+282  3  Conic creation failed for mid pt %s  %s
+283  3  Patch iu,iv=  %s of created surface is not OK %s
+284  3  Evaluation failed for u,v= %s   (varkon_sur_eval)
+285  3  Not yet programmed for a surface with curved spine
+286  1  WARNING Patch iu,iv=  %s of surface is not OK %s
+287  3  Poor surface (derivatives) for u= %s v= %s 
+288  2  Number of spine plane intersects with %s is %s (not 1)
+289  3  Isoparameter curve case %s is not implemented           
+290  3  Isoparameter values start %s > end %s is not yet implemented
+291  3  Isoparameter value %s is outside surface limits %s
+292  3  No intersection with the given plane %s
+293  3  Requested crv branch %s does not exist (fctn %s)
+294  3  Called function %s failed in %s                      
+295  3  Patch iu,iv= %s outside surface nu,nv= %s
+296  3  The surface normal is zero for u= %s v= %s 
+297  3  Internal function %s failed in %s                      
+298  3  Illegal computation case= %s for function %s
+299  3  Severe program error %s in function %s.
+
+300  3  %s is not yet implemented for %s
+
+330  3  Ordering case %s  is not allowed %s
+
+360  3  SUR_TRIM Interchange+reverse not implemented %s     
+361  3  SUR_TRIM Interchange %s is not possible %s     
+
+400  3  Maximum number of SUR_COMP surfaces is %s (%s)
+401  3  Minimum number of SUR_COMP surfaces is 2 (not %s) %s
+402  3  SUR_COMP: Surfaces cannot be combined (comp_case %s) %s
+403  3  SUR_COMP: Surface %s and %s are identical
+404  3  SUR_COMP: Adding null patches not yet implemented (case %s) %s
+405  3  SUR_COMP: Trimming patches not yet implemented (case %s) %s
+
+460  3  CUR_SPLARR: Two (or more) points are equal %s
+461  3  CUR_SPLARR: Tangent is not in the direction of chord %s
+462  3  CUR_SPLARR: Minimum number of points is two (2) %s
+
+490  1  WARNING WARNING Poor surface quality WARNING WARNING  %s
+491  1  The number of patches with a poor quality is %s
+492  1  Refer to %s 
+
+500  3  SUR_AFACE: Not four corners (%s) in boundary curve (%s)
+501  3  SUR_AFACE: Number of U and V lines (%s,%s) <  (2,2)     
+502  3  SUR_AFACE: Method %s not OK %s
+503  3  SUR_AFACE: Surface interrogation case %s not OK %s
+504  3  SUR_AFACE: Interrogation failed for %s %s
+505  3  SUR_AFACE: No surfaces defined for %s %s
+506  1  SUR_AFACE WARNING: Interrogation failed for %s %s
+
+550  3  SUR_EXDEF: No VDA-FS file %s
+551  3  SUR_EXDEF: No surface number %s in VDA-FS file %s
+552  3  SUR_EXDEF: Only POL_SUR for VDA-FS. Not %s. %s
+553  3  SUR_EXDEF: Requested surface no. %s not valid %s
+554  3  SUR_EXDEF: Trimming not implemented for %s %s
+
+600  1  CUR_INT: No intersect between %s surfaces %s
+
+650  3  SUR_USRDEF: There is no header part %s  (%s)
+651  3  SUR_USRDEF: There are more than one header part %s (%s)
+652  3  SUR_USRDEF: The number of U patches %s < 1 (%s)
+653  3  SUR_USRDEF: The number of V patches %s < 1 (%s)
+654  3  SUR_USRDEF: Surface type %s not implemented (%s)
+655  3  SUR_USRDEF: No. of topol. parts not nu*nv= %s (%s)
+656  3  SUR_USRDEF: Case %s for topol. patch data not implemented (%s)
+657  3  SUR_USRDEF: Patch address IU %s not between 1 and %s (NPATU)
+658  3  SUR_USRDEF: Patch address IV %s not between 1 and %s (NPATV)
+659  3  SUR_USRDEF: Patch type %s not implemented (%s)
+660  3  SUR_USRDEF: No. of geometric %s parts is 0 (%s)
+
+680  3  CUR_USRDEF: Curve is not in plane Z= 0.0 (%s)
+681  3  CUR_USRDEF: Curve is outside surface definition area (%s)
+
+700  3  NURBS Maximum number of U patches %s exceeded %s
+701  3  NURBS Maximum number of V patches %s exceeded %s
+702  3  NURBS Maximum number of U and V patches %s exceeded %s
+703  3  SUR_NURBSARR U knot value %s > U knot value %s
+704  3  SUR_NURBSARR V knot value %s > V knot value %s 
+705  3  SUR_NURBSARR V knot vector must also be defined %s 
+706  3  SUR_NURBSARR U knot vector must also be defined %s 
+707  3  SUR_NURBSARR Knot vector generation not yet implemented %s 
+708  3  SUR_NURBSARR Rational NURBS not yet fully implemented %s 
+709  3  SUR_NURBSARR Maximum order (degree+1) is %s %s 
+710  3  SUR_NURBSARR One or more weights are less than zero %s 
+711  3  SUR_NURBSARR Start U knot multiplicity > order = %s %s
+712  3  SUR_NURBSARR End U knot multiplicity > order = %s %s
+713  3  SUR_NURBSARR Mid U knot multiplicity > degree = %s %s
+714  3  SUR_NURBSARR Start V knot multiplicity > order = %s %s
+715  3  SUR_NURBSARR End V knot multiplicity > order = %s %s
+716  3  SUR_NURBSARR Mid V knot multiplicity > degree = %s %s
+717  3  SUR_NURBSARR Minimum order (degree+1) is %s %s 
+718  3  SUR_NURBSARR Minimum no. of U knots is %s for order %s 
+719  3  SUR_NURBSARR Minimum no. of V knots is %s for order %s 
+
+740  3  SUR_APPROX No. of added patches per input patch is not OK %s
+
+800  3  SUR_ROT: Length of projected curve on line (= spine) is zero %s
+801  3  SUR_ROT: Curve and rotation points not in the same plane %s
+802  3  SUR_ROT: UV rotation curve segments cannot be transformed %s
+803  3  SUR_ROT: A curve tangent is not in the spine direction %s
+804  3  SUR_ROT: Angles not between -360 and +360 degrees %s
+805  3  SUR_ROT: Rotation direction not +1 or -1 %s
+806  3  SUR_ROT: an angle difference < %s degrees %s
+807  3  SUR_ROT: LFT_SUR rotation data not yet implemented %s
+808  3  SUR_ROT: Positive rotation from %s to %s gives
+809  3  SUR_ROT: Negative rotation from %s to %s gives
+
+810  3  SUR_RULED No. of curve segments must be the same (not %s and %s)
+811  3  SUR_RULED A segment in the %s curve is not of type %s
+812  3  SUR_RULED Requested ruled surface type (%s) not implemented %s
+
+820  3  SUR_CYL Sweeping distance < %s  %s
+821  3  SUR_CYL Sweeping case %s not -1, 1, 2 or 3  %s
+822  3  SUR_CYL Unable to calculate average plane for curve %s
+
+830  3  SUR_SWEEP Unable to calculate average plane for spine %s
+831  3  SUR_SWEEP Spine tangent has zero length for T= %s  %s
+
+840  3  SECTION_AREA Unable to calculate average plane for curve %s
+841  3  SECTION_AREA Section curve is not closed %s
+842  1  SECTION_AREA WARNING Section curve not planar. Deviaton %s
+
+890  3  CUR_GL: Function for %s is not implemented (%s)

@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>light_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>light_view - <small><small>Procedure</small></small></h2>
+  <p>Configures a lightsource<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Sets the gemetric characteristics of a light source. Light sources are numbered from 0 to
+  7. By default only light 0 is on but a lightsource can be configured even when not
+  active.The light_on() and light_off() procedures should be used to turn on or off light
+  sources.<br>
+  <br>
+  A light source can be configured as a distant light or a spotlight. A distant lightsource
+  is thought of as beeing so far away from the scene that the light rays are practically
+  parallell. The direction of a distant light is given by the pos parameter ie. the same
+  direction as from pos to X=Y=Z=0. A distant light has either no spotang or a spotang
+  equals to 180 degrees.<br>
+  <br>
+  A spotlight has a true position given by pos and is always aimed at spotpos. The spreading
+  angle is given by spotang and should be &gt; 0 but not more than 90 degrees. A focus
+  factor can be used to control the attenuation of the light from the center of the spot
+  circle to its edge. A high value concentrates the light towards the center and a low value
+  gives a more even distribution.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  light_view(light, pos, spotpos, spotang, spotfocus)<br>
+  <br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 22 Row 01 -->
+    <tr>
+      <td width="77">INT</td>
+      <td width="580">light;</td>
+    </tr>
+<!-- Table 22 Row 02 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="580">pos;</td>
+    </tr>
+<!-- Table 22 Row 03 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="580">spotpos;</td>
+    </tr>
+<!-- Table 22 Row 04 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="580">spotang;</td>
+    </tr>
+<!-- Table 22 Row 05 -->
+    <tr>
+      <td width="77">FLOAT</td>
+      <td width="580">spotfocus;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 23 Row 01 -->
+    <tr>
+      <td width="68">light</td>
+      <td width="589">- Light number 0 - 7</td>
+    </tr>
+<!-- Table 23 Row 02 -->
+    <tr>
+      <td width="68">pos</td>
+      <td width="589">- Distant light from pos to (0,0,0) or true position of a spotlight</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 24 Row 01 -->
+    <tr>
+      <td width="68">spotpos</td>
+      <td width="589">- The position at which the spotlight is aimed. Default = (0,0,0).</td>
+    </tr>
+<!-- Table 24 Row 02 -->
+    <tr>
+      <td width="68">spotang</td>
+      <td width="589">- The angle of the spot lightcone (0-90) or 180 for a distant light.
+      Default = 180.</td>
+    </tr>
+<!-- Table 24 Row 03 -->
+    <tr>
+      <td width="68">spotfocus</td>
+      <td width="589">- The focus factor, 0 = No focus and 100 equals Full focus. Default = 0 =
+      No focus.</td>
+    </tr>
+  </table>
+  <p><br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  light_view(0, vec(1,1,1));<br>
+  <br>
+  Makes lightsource 0 a distant light shining in the direction from (1,1,1) to (0,0,0).<br>
+  <br>
+  light_view(1, vec(100,50,0), vec(20,20,10), 25, 50);<br>
+  <br>
+  Makes lightsource 1 a spotlight placed in (100,50,0) aimed at (20,20,10) with a spotangle
+  of 25 degrees and 50% focus.<br>
+  <br>
+  light_view(1, vec(100,50,0), vec(20,20,10), 180, 50);<br>
+  <br>
+  Same as above but the light becomes distant because of spotang = 180. Parameters spotpos
+  and spotfocus are left without notice.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  Smooth shading can improve the quality of images with spotlights.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

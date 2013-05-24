@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>The REF datatype </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>The REF datatype</H3>
+
+<P>Each entity in VARKON has a unique identity composed by sequence number
+and order number. The following line for example...<BR>
+<BR>
+<B>lin_free</B>(#5,p1,p2);<BR>
+<BR>
+has a sequence number equal to 5. If the line statement is placed in a
+for-loop and executed more than once....</P>
+
+<PRE><B>for </B>i:=1 <B>to</B> 10 <B>do
+  lin_free</B>(#5,p1,p2);
+<B>endfor</B>;
+</PRE>
+
+<P>then the first line becomes #5.1 the second #5.2 and so on. Ordernumbers
+are created automatically by VARKON at runtime. In order to refer to an
+entity belonging to a specific part we must also know the identity of the
+part. If a module A calls a module B using <B>part</B>(#1,B()) and module
+B creates a line #5 then the global identity of the line is #1#5. Replace
+the #'s with slashes and think of how your files are organized in a tree
+structure on your harddisk. This is almost the same. VARKON includes a
+special datatype called REF used to hold the value of an identity....<BR>
+<BR>
+<B>REF</B> id;<BR>
+<BR>
+id:=#5.2#7#8#2.25;<BR>
+<BR>
+In this example a variable of type REF is declared and assigned a value
+representing a reference to an entity #2.25 in a part #8 belonging to a
+part #7 belonging to the second instance of the part #5.<BR>
+<BR>
+References just like filepaths are normally treated as local meaning they
+are relative to the position in the tree where they are used. A global
+reference though is treated as relative to the absolute top of the tree
+structure. The syntax in MBS is ## for a global and # for a local reference.<BR>
+<BR>
+id:=##5.2#7#8#2.25;<BR>
+<BR>
+This is the global version of the previous example. A REF-parameter is
+a powerful way to express a relation between two objects. The following
+module creates a point in the middle of an arbitrary line.</P>
+
+<PRE>GEOMETRY MODULE mid_point(REF line_id;);
+
+BEGINMODULE
+<B>  </B>poi_free(#1,on(line_id,0.5));
+ENDMODULE
+</PRE>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

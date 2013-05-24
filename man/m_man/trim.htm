@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>trim </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>trim - <small><small>Procedure</small></small></h2>
+  <p>Cuts or extends an entity<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Cuts or extends either end of a 2D line or arc using a line, arc or curve as limit.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  trim(ref1, end, ref2, alt);<br>
+  <br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 37 Row 01 -->
+    <tr>
+      <td width="42">REF</td>
+      <td width="552">ref1;</td>
+    </tr>
+<!-- Table 37 Row 02 -->
+    <tr>
+      <td width="42">INT</td>
+      <td width="552">end;</td>
+    </tr>
+<!-- Table 37 Row 03 -->
+    <tr>
+      <td width="42">REF</td>
+      <td width="552">ref2;</td>
+    </tr>
+<!-- Table 37 Row 04 -->
+    <tr>
+      <td width="42">INT</td>
+      <td width="552">alt;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 38 Row 01 -->
+    <tr>
+      <td width="34">ref1</td>
+      <td width="560">- Identity of line or arc to trim</td>
+    </tr>
+<!-- Table 38 Row 02 -->
+    <tr>
+      <td width="34">end</td>
+      <td width="560">- 0 = Trim start of entity, 1 = Trim end</td>
+    </tr>
+<!-- Table 38 Row 03 -->
+    <tr>
+      <td width="34">ref2</td>
+      <td width="560">- Identity of limiting entity</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 39 Row 01 -->
+    <tr>
+      <td width="33">alt</td>
+      <td width="561">- Alternative, default = 1</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  trim(#5,0,#2);<br>
+  <br>
+  Moves the start of #5 to the position where it intersects with #2 for the first time.<br>
+  <br>
+  trim(#5,1,#2,-2);<br>
+  <br>
+  Moves the end of #5 to the position where an infinitely long #5 would intersect #2 for the
+  second time.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  trim is only allowed in a 2D module.<br>
+  <br>
+  See the intersect() function for exact rules of how intersects are calculated.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

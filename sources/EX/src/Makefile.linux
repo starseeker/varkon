@@ -1,0 +1,62 @@
+##########################################################
+#
+#   Makefile for EXlib on GNU/Linux
+#
+#  (c) Sören Larsson, örebro university 2004-09-02
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+distr :     CFLAGS =                    \
+            -ansi                       \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -O                          \
+            -DUNIX                      \
+            -DV3_X11                    \
+            -DWRK_STAT                  \
+#            -DV3_ODBC                   \
+            -DVARKON
+            
+debug :     CFLAGS =                    \
+            -ansi                       \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -g3                         \
+            -DDEBUG                     \
+            -DUNIX                      \
+            -DV3_X11                    \
+            -DWRK_STAT                  \
+#            -DV3_ODBC                  \
+            -DVARKON
+
+
+distr :     RAPCFLAGS =                 \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -O
+
+debug :      RAPCFLAGS =                \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -g3
+            
+COMPILE = $(CC) -c $(CFLAGS)
+
+RPCGENERATE = rpcgen
+
+include Makefile.EX

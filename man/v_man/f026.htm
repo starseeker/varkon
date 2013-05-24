@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>f026</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>f26 Create 3D B_plane</H3>
+
+<P><B>Description</B></P>
+
+<P>Creates a triangular or four-sided bounded plane (facet) in 3D-space
+by defining four 3D positions. If position2 = position3 the plane becomes
+a triangle. Otherwise the plane is bounded by four straight lines. A b_plane
+has two sides, outside and inside. The outside is defined by following
+the defining positions in anti clockwise order. Viewed from the outside
+a b_plane is solid and hides everything behind it if displayed using the
+&quot;hide&quot; or &quot;shade&quot; function. Viewed from the inside
+a b_plane is transparent.</P>
+
+<P>The default graphical representation of a b_plane is wireframe. </P>
+
+<P><B>Available in</B></P>
+
+<P>3D.<BR>
+<BR>
+<B>MBS Correspondence</B></P>
+
+<P>b_plane(id, p1 ,p2 ,p3 ,p4);</P>
+
+<P><B>Comments</B></P>
+
+<P>B_planes must be convex and all four positions must be coplanar. See
+also the sur_approx routine which can approximate a sculptured surface
+with facets (b_planes).</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vbiindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

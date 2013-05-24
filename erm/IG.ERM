@@ -1,0 +1,192 @@
+VARKON Error messages for IGEPAC
+(C) Microform AB 1996
+
+001  4  Icon missing
+002  4  Menu %s undefined
+003  4  Illegal functiontable
+004  3  Function "f%s" can not be used in this context
+006  3  Error writing to %s
+007  3  Can't open file = "%s"
+008  2  A new resultfile must have a new name
+009  2  No permission, module is owned by somebody else
+010  3  Unknown alternative in system menu
+011  3  Can't load jobfile %s
+012  3  Jobfile %s incompatible with current version of VARKON
+013  3  Can't save jobfile %s
+014  3  Can't create new module
+015  3  Can't load module %s
+017  3  Can't save module %s
+018  3  Can't create resultfile %s
+019  3  Can't save resultatfile %s
+020  2  Helpfile missing (filename = "%s")
+021  2  Can't decompile module with serial %s and pcode %s
+022  2  Can't create file "%s"
+023  2  No project active !
+024  2  Project "%s" does not exist !
+025  2  Sorry, this is a drafting only installation
+026  2  Can't load menufile %s
+027  2  Can't create PID-file "%s", error from OS !
+028  2  Can't init digitizer "%s"
+029  2  Unknown devicetype "%s"
+030  2  There are no files with jobname "%s" !
+031  2  Resultfile "%s" does not exist !
+032  2  Digitizer not connected !
+033  2  Digitizer error, recieved string = %s
+034  2  "%s" is an illegal jobname !
+035  2  %s-error in math routine  %s. Argument = %s
+036  3  Error from malloc(), can't allocate %s bytes memory
+037  3  Error in v3free(), routine = %s
+038  3  Error in v3rall(), routine = %s
+039  2  Menufile %s does not exist
+040  2  Can't create directory %s, error from OS !
+041  2  Can't create menufile %s, error from OS !
+042  2  A job with this name (%s) already exists !
+043  2  "%s" is an illegal project name !
+044  2  Error from OS, pipe_cmd = %s
+045  2  Jobb %s is active, can't delete.
+046  2  This function is not implemented in VARKON for VMS !
+047  2  PID-file %s exists but seems to be damaged
+048  2  Can't rename file %s
+049  2  Can't delete file %s
+050  2  Module has wrong serial number
+051  2  Can't create file %s
+052  2  Can't include menufile %s
+053  2  Illegal recordnumber
+054  2  # followed by %s, not include
+055  3  VARKON Demoversion, testperiod over !
+056  2  Error changing project : %s
+057  2  Can't access MDF-file : %s 
+058  2  Can't change jobdirectory while the project is active !
+059  2  Can't change menufile while the project is active !
+060  2  APPEND_FILE, %s is open !
+061  2  DELETE_FILE, %s is open !
+062  2  COPY_FILE, %s is open !
+063  2  MOVE_FILE, %s is open !
+064  2  Job directory (%s) is write protected !
+065  2  Can't run without job directory !
+
+200  2  Can't create poi_free statement
+201  2  Can't create lin_free statement
+202  2  Can't create lin_offs statement
+203  2  Can't create arc_free statement
+204  2  Can't create arc_2pos statement
+205  2  Can't create arc_3_pos statement
+206  2  Variable does not exist
+207  2  Variable is of wrong type
+208  2  Can't create parameter
+209  2  Can't create part statement
+210  2  Can't create cur_free statement
+211  2  The referenced entity could not be found in GM
+212  2  Can't calculate position
+213  2  Can't create expression node
+214  2  Can't create plan_3p statement
+215  2  Can't create mode_global statement
+216  2  Can't create mode_local statement
+217  2  Can't create level statement
+218  2  Can't execute module
+219  2  Parameter "%s" does not exist
+220  2  Function "f%s" does not exist
+221  2  Syntax or type error in expression
+222  2  Error evaluating expression
+223  2  Expression of wrong type, %s expected
+224  2  Syntax error in ID-string, string = "%s"
+225  2  Parameter "%s" already exists
+226  2  Global csys is already active
+227  2  Entity %s does not exist
+228  2  Function "f%s" can only be called from a window
+229  2  Function "f%s" can only be used with X-Windows
+230  2  Function "f%s" can not be used with X-Windows
+
+300  2  Can't create view
+301  2  View %s does not exist
+303  2  Can't create window
+304  2  Can't decrease scale to requested value
+305  2  View %s is active
+306  2  Can't create plotfile "%s", error from OS
+307  2  Plotfile "%s" does not exist
+308  2  Corner 2 = corner 1
+320  2  Level has no name
+321  2  Illegal level number
+322  2  Maximum number of levels already have names
+323  2  Can't blank active level
+324  2  Level already has a name
+350  2  Entity is member of a part
+351  2  Entity consists of multiple instances
+352  3  System error while deleting part, error from %s
+353  2  Entity is not a member of a part
+354  2  Group does not exist
+355  2  The group has no member with requested identity
+356  2  A selected entity is member of a part
+370  2  Illegal pen number
+371  2  Illegal linetype
+372  2  Illegal arctype
+373  2  Illegal hatchtype
+374  2  Illegal number of decimal digits
+375  2  Illegal value for auto
+376  2  Specified identity does not exist
+377  2  Entity is already member of maximum 3 groups
+378  2  Group has maximum number of members
+379  2  No room for data
+380  2  Can't change dashlength when dash not active
+381  2  Can't change digitsize when auto = on
+382  2  Can't change precision when auto = on
+383  2  Can't change radius to a value less than zero
+384  2  Start and end angles equal !
+385  2  Can't change scale to zero !
+386  2  Smalest dashlength allowed is : 0.002
+387  2  Negative width is not allowed !
+388  2  %s is a forward reference !
+389  2  Error compiling with ADD_MBS(....)
+390  2  MBS-string = %s
+391  2  Error executing with ADD_MBS(....)
+392  2  Error in %s, parameter %s does not exist
+393  2  Error in %s, entity is a part
+394  2  Error compiling with UPDP_MBS
+395  2  Error in UPDP_MBS, parameter of wrong type
+396  2  Error in %s, entity does not exist
+397  2  Error executing with UPDP_MBS
+398  2  Can't change parameter %s to %s
+399  2  Error in UPDPP_MBS, %s does not belong to active module
+
+400  2  Error in UPDPP_MBS, %s is not a part
+401  2  Error in UPDPP_MBS, can't find module %s
+402  2  Error compiling with UPDPP_MBS
+403  2  Error in UPDPP_MBS, parameter of wrong type
+404  2  Error executing with  UPDPP_MBS
+405  2  Error in DEL_MBS, entity %s does not exist
+406  2  Error executing with RUN_MBS
+407  2  Part %s has no parameter !
+
+500  3  Can't create position, error in %s
+501  3  Can't create parameters, error in %s
+502  3  Can't create %s statement
+503  2  Error while interpreting, error in %s
+504  3  Error while linking, error in %s
+505  3  Can't create reference, error in %s
+506  3  Can't create offset, error in %s
+507  3  Can't create radius, error in %s
+508  3  Can't create startangle, error in %s
+509  3  Can't create endangle, error in %s
+510  3  A curve needs at least two defining positions
+511  3  Can't create rotation, error in %s
+512  3  Can't create string, error in %s
+513  3  Can't create angle, error in %s
+514  3  Can't create length, error in %s
+515  3  Can't create alternative, error in %s
+516  2  Entity already selected
+520  3  Error from stlook i igcges, statement=%s
+521  3  Error from pmcges i igcges, statement=%s
+522  2  Error interpreting %s-statement
+523  3  Error from pmlmst in igcges, statement=%s
+524  3  Error from stlook in igcprs, statement=%s
+525  3  Error from pmcprs in igcprs, statement=%s
+526  3  Error from pmlmst in igcprs, statement=%s
+527  2  Can't load module %s
+528  3  Can't read parameters from module
+529  3  Can't create parameterlist
+530  2  Parameter "%s" is of type that can not be changed
+531  2  Part is referenced
+532  2  Can't change PART-ststement
+533  2  Can't find part-statement in PM
+534  2  One of the parameters is "call by reference"
+535  2  Module %s has attribute MACRO but is called like a PART

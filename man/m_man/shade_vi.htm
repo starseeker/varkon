@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>shade_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>shade_view - <small><small>Procedure</small></small></h2>
+  <p>Creates shaded images<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a shaded image of the view in a window. Shading is based on a model where one or
+  more (up to 8) concurrent light sources are used to view the (colored) B-planes or faceted
+  surfaces of a model. The geometry of each lightsource can be configured individually, see
+  light_vew(). Each light source shines with the intensity specified by the light_on()
+  procedure and with the common color characteristics specified in the Varkon resource or
+  ini file.<br>
+  <br>
+  The total light from a light source is composed of ambient, diffuse and specular light.
+  Ambient light hits all surfaces equally independant of their orientation. The reflection
+  of diffuse light depends on the orientation of the surface relative to the direction of
+  the light. A surface with a normal pointing towards the light becomes brighter and a
+  surface with a normal far from the position of the light becomes darker. The reflection of
+  specular light also takes the position of the viewer (eye position) and the material
+  shininess factor into account to produce the effect of directly reflected light. Realistic
+  images depend on good mixing between ambient, diffuse and specular light.<br>
+  <br>
+  The result of shading also depends on the characetristics of the material used for the
+  surfaces. Initially no materials are defined and the shader maps pen numbers to ordinary
+  Varkon colors. The material_view() routine is used to create materials and link them to
+  pen numbers. If a pen is linked to a material the shader will use the characteristics of
+  the material instead of the ordinary color.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  shade_view(window,mode)<br>
+  <br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 19 Row 01 -->
+    <tr>
+      <td width="65">INT</td>
+      <td width="592">window;</td>
+    </tr>
+<!-- Table 19 Row 02 -->
+    <tr>
+      <td width="65">INT</td>
+      <td width="592">mode;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 20 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 21 Row 01 -->
+    <tr>
+      <td width="56">window</td>
+      <td width="601">- Identity of graphical window to render. Default = 0 = main window.</td>
+    </tr>
+<!-- Table 21 Row 02 -->
+    <tr>
+      <td width="56">mode</td>
+      <td width="601">- 0 = flat shading, 1 = smooth shading. Default = 0 = flat</td>
+    </tr>
+  </table>
+  <p><br>
+  <b><u>Comments<br>
+  </u></b><br>
+  Smooth shading can result in better images when spotlights are used but requires more
+  computation.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

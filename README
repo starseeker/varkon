@@ -1,0 +1,248 @@
+
+
+                            README  
+
+                  (C)Örebro University 2004-09-30
+                  ===============================
+
+      Installation guide for binary version of VARKON 1.18A 
+      for GNU/Linux. 
+
+      Contents:
+      --------
+
+      1. Unpacking and installing the files
+      2. Basic configuration
+      3. Linux VARKON and OpenGL
+      4. Linux VARKON and ODBC
+      5. Configuration of the help system
+      6. Configuration of the plotting system
+      7. Compiling VARKON from the sources
+
+
+
+
+      1. Unpacking and installing the files
+      -------------------------------------
+
+      First step is to decide where (in what directory) to place
+      the VARKON-system. A usual place is /usr or /user or /u but
+      any place in a filesystem will do. Make sure you have the 
+      proper priveliges ! If you have an earlier version of VARKON
+      installed you can use the same directory but we recommend that
+      you install the new version in a new diretory.
+
+      Now move yourself to this directory and extract the files
+      using gunzip and tar...
+
+            cd /directory_to_use_for_installation
+            gunzip varkon.tar.gz
+            tar xf varkon.tar
+
+      All files on the distribution will be placed in a subdirectory
+      named varkon_1.18X where X is a different letter  depending
+      on what revision of VARKON you are installing. This directory
+      becomes the root-directory of your installation and is called
+      VARKON_ROOT. If you install varkon 1.18A in /usr VARKON_ROOT
+      is:
+
+                 /usr/varkon_1.18A
+
+      The idea with this installation procedure is to make it
+      possible to install a new version of VARKON at any time 
+      without interfearing with previously installed versions.
+      This way you can easily switch between two versions if you
+      like to.
+
+      If you want to remove a VARKON-installation the only thing
+      you need to do is to remove its root-directory.
+
+      NOTE!!! Varkon version 1.18A is not fully compatible with
+              previous versions of Varkon. You cannot use MBO-
+              or RES-files from 1.17D or earlier. MBS files are
+              compatible.
+
+
+      2. Basic configuration.
+      -----------------------
+
+      Having installed the files in your filesystem the next step
+      is to configure the system to work properly in this location.
+      This is done by editing the startscript template included in 
+      the distribution. Move to VARKON_ROOT/com and edit a file
+      named varkon.
+
+      If your VARKON_ROOT is /usr/varkon_1.18A and your editor is
+      vi this means:
+
+           cd /usr/varkon_1.18A/com/english
+           vi varkon
+
+      for the english verision of VARKON or..
+
+           cd /usr/varkon_1.18A/com/swedish
+           vi varkon
+
+      for the swedish version of the system.
+
+      Later you may want to rename this file to something else or
+      you may want to connect it with an icon on your desktop.
+
+      The first thing to check is the line defining VARKON's root-
+      directory VARKON_ROOT.
+
+      VARKON_ROOT=/usr/varkon_1.18X
+
+      Where X is a letter depending on the current revision.
+      If this is not the place where you installed the system
+      you must modify this line to point to the right location.
+
+      Having done this it is time to start the system for the first
+      time.  Save the file and exit from the editor. Write..
+
+                ./varkon
+
+      If everything is Ok VARKON will now start up without any
+      error messages.
+
+      Things that usually dont work at this stage are either related
+      to X-Windows or to LINUX. Some possible causes of errors are:
+
+        - No X11-server running.
+        - DISPLAY-variable has wrong value.
+        - X-Font is missing.
+        - File ownership or permissions not right.
+        - Shared library module(s) missing or
+        - Wrong version of shared C-library, see below.
+
+      However, if other X-windows applications run on your computer
+      and if you have access rights to all the files in the VARKON-
+      installation there are usually no problems.
+
+      All users running VARKON need read access to all files
+      in the distribution. Users also need write access to the
+      $VARKON_TMP, $VARKON_PID, $VARKON_PRD and $VARKON_PLT
+      directories. Check the comments in the varkon start script
+      for more info on these directories.
+
+      Version 1.18 of VARKON is dynamically linked to the
+      following Linux libray modules:
+
+      libX11.so.6
+      libXext.so.6
+      libGL.so.1
+      libGLU.so.1
+      libm.so.6
+      libc.so.6
+      libdl.so.2
+      libpthread.so.0
+      libXxf86vm.so.1
+      libstdc++.so.5
+      libgcc_s.so.1
+      /lib/ld-linux.so.2
+
+      These files are not included in varkon_1.18X.tar.gz.
+      If you don't have these files on your Linux system we
+      recommend you to download them from your Linux site or
+      try an older version of VARKON. VARKON 1.15C is based
+      on libc.so.5 and might work better if you have an older
+      version of Linux.
+ 
+      In order to make VARKON's start script more available you
+      might want to include the path to $VARKON_ROOT/com/english
+      or $VARKON_ROOT/com/swedish in your PATH-variable. This is
+      usually done in your .profile or .login. (If you connect the
+      start script to an icon on a desktop this is not needed)
+
+
+      3. Linux VARKON and OpenGL
+      --------------------------
+
+      The shading function in VARKON is based on the OpenGL
+      library originally developed by Silicon Graphics. OpenGL is
+      now available from many sources and on many platforms. The
+      original Linux version of VARKON used the Mesa 3D graphics
+      library developed by Brian Paul, distributed under the GNU
+      Library General Public License. You can read more about
+      this or download a free copy of the library with sources
+      at: http://www.mesa3d.org
+
+      The binary version of VARKON 1.18 is comiled and linked on
+      a Linux system with Suse Linux 9.1. This Linux distribution
+      and many others of recent date include support for OpenGL so
+      normally you should not need to do anything to get OpenGL
+      working.
+
+      If your system does not include support for OpenGL you can
+      either try to install OpenGL on your system or you can build
+      your own version of Varkon without support for OpenGL from the
+      sources. How to do this is described in the source distribution
+      of VARKON.
+
+
+      4. Linux VARKON and ODBC
+      ------------------------
+
+      The binary version of VARKON for Linux does not include support
+      for ODBC. If you need ODBC support you must build VARKON from
+      the sources. See README_ODBC in the VARKON sources directory.
+
+ 
+      5. Configuration of help system.
+      --------------------------------
+      VARKON supports context sensitive help by typing <CTRL>a
+      in any situation or clicking a help-button when available.
+      In order to get the help system working you must first:
+
+      1. Download the VARKON documentation and install it in the
+      VARKON_DOC directory as described on the download pages.
+
+      2. Edit the VARKON ini file $VARKON_INI/linux and set
+      the resource "varkon.html_viewer" to whatever viewer
+      you want to use.
+
+      If you don't want to use the help system you don't have
+      to. VARKON will work as usual but will not be able to
+      display help when you request it.
+
+
+      6. Configuration of plotting system.
+      ------------------------------------
+
+      Configuration files for VARKON's plotting system reside in
+      VARKON_PLT usually the same as VARKON_ROOT/cnf/plt. Look
+      at the file CONFIG.TXT for information regarding the setup
+      for different plotters and printers.
+   
+      The following plotter drivers are included in the binary
+      distribution of VARKON:
+
+      epson            24 pin printer
+      gerber           Photo plotter
+      hp7475           Pen plotter
+      hpcl5            Laser printer
+      hpgl2            Laser printer
+      ibmpro           24 pin printer
+      postscript       Works well with ghostscript
+
+
+      7. Compiling VARKON from the sources
+      ------------------------------------
+
+      If you want to compile the varkon binaries from the
+      C-sources, download the sources and install them in
+      $VARKON_ROOT. You will then find further instructions
+      in the README file in  $VARKON_ROOT/sources.
+
+
+
+                                    Good Luck
+
+                                    The CAD research group
+                                    Department of Technology
+                                    Örebro University
+                                    S-70182 Örebro
+                                    SWEDEN
+
+                                    URL:    http://www.oru.se/tech/cad
+                                  

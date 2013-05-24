@@ -1,0 +1,25 @@
+!*******************************************************
+
+ macro module l_formel(FLOAT f >" ");
+
+!*      Beräknar värdet av ett taluttryck.
+!*
+!*      In: Värdet av ett taluttryck.
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 19/11/87 J. Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ STRING s*1;
+
+ beginmodule
+
+   s:=inpmt(get_tstr(1538)+str(f,-1,14),"",1); ! Värde =...
+
+ endmodule
+
+!*******************************************************

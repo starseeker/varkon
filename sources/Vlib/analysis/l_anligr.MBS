@@ -1,0 +1,59 @@
+!*******************************************************
+
+ macro module l_anligr();
+
+!*      Listar grupper.
+!*
+!*      In: Inget.
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 15/10/86 R. Svedin
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    nm,flag,n,i;
+   REF    id,gid(3),idvec(100);
+   STRING gnam*20,pad*30;
+
+ beginmodule
+
+   flag := 0;
+   lst_ini(get_tstr(1522));
+   ! t1522 = "ANALYS - Lista grupper"
+!*
+!***Hämta grupper ur gm.
+!*
+   set_root_gm();
+
+loop:
+   id:=get_next_gm(0,4096);
+
+   if id <> #0 then
+       flag := 1;
+       getgrp(id,gnam,nm,idvec);
+
+       pad:=" ";
+       n:=20 - length(gnam);
+       for i:=1 to n do
+         pad:=pad + "_";
+       endfor;
+       lst_lin(gnam + pad + " " + rstr(id));
+
+       goto loop;       
+     endif;
+!*
+!***Kanske inte fanns några grupper att lista.
+!*
+   if flag = 0 then
+     lst_lin(get_tstr(1523));
+     ! t1523 = "Inga grupper i GM"
+   endif;
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

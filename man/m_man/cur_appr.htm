@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>cur_approx </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-03-24</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>cur_approx -<FONT SIZE=+0> Geometric procedure</FONT></H2>
+
+<P>Creates a curve<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>This procedure approximates a curve with another curve type. <BR>
+<BR>
+The procedure can for instance be used to approximate a surface curve (a
+curve with UV_SEG segments) to a cubic curve (a curve with CUB_SEG segments).
+<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>cur_approx(id, curve, ctype, method, cdata1, cdata2:attributes);</P>
+
+<TABLE WIDTH="632" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="71">REF</TD>
+
+<TD width="553">id;</TD>
+</TR>
+
+<TR>
+<TD width="71">REF</TD>
+
+<TD width="553">curve;</TD>
+</TR>
+
+<TR>
+<TD width="71">STRING</TD>
+
+<TD width="553">ctype*7;</TD>
+</TR>
+
+<TR>
+<TD width="71">INT</TD>
+
+<TD width="553">method;</TD>
+</TR>
+
+<TR>
+<TD width="71">FLOAT</TD>
+
+<TD width="553">cdata1;</TD>
+</TR>
+
+<TR>
+<TD width="71">FLOAT</TD>
+
+<TD width="553">cdata2;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B></P>
+
+<TABLE WIDTH="632" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="62">id </TD>
+
+<TD width="562">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="62">curve</TD>
+
+<TD width="562">- Identity of curve</TD>
+</TR>
+
+<TR>
+<TD width="62">ctype </TD>
+
+<TD width="562">- Curve segment type</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="562">&nbsp;&nbsp;&nbsp;&quot;CUB_SEG&quot; or &quot;CUBIC&quot;
+= Approximate with non rational cubic segments</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="562">&nbsp;&nbsp;&nbsp;&quot;RAT_SEG&quot; or &quot;RATIONAL&quot;
+= Approximate with rational cubic segments</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>&nbsp;&nbsp;&nbsp;&quot;CIR_SEG&quot; = Approximate with circular arcs
+and lines</TD>
+</TR>
+
+<TR>
+<TD width="62">method </TD>
+
+<TD width="562">- Approximation method</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="562">&nbsp;&nbsp;&nbsp;1 = The number of segments is input (no
+tolerances used)</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="562">&nbsp;&nbsp;&nbsp;2 = Reduce and/or add segments respecting
+the given tolerances</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="562">&nbsp;&nbsp; (Implemented for ctype= CIR_SEG)</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="562">&nbsp;&nbsp;&nbsp;3 = Add only segments respecting the
+given tolerances</TD>
+</TR>
+
+<TR>
+<TD width="62">cdata1 </TD>
+
+<TD width="562">- Data 1 for the computation</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="562">&nbsp;&nbsp; Requested number of segments for method= 1</TD>
+</TR>
+
+<TR>
+<TD width="62"></TD>
+
+<TD width="562">&nbsp;&nbsp; Coordinate tolerance for method= 2 and method=3</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+</P>
+
+<TABLE CELLSPACING=0 CELLPADDING=0 >
+<TR>
+<TD>cdata2</TD>
+
+<TD>- Computational tolerance as follows:</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>&nbsp;&nbsp;&nbsp;Tangent (angle) tolerence for method 2 and 3</TD>
+</TR>
+
+<TR>
+<TD></TD>
+
+<TD>&nbsp;&nbsp;&nbsp;Criterion for a straight line (max curvature) for
+method 2 and ctype=&quot;CIR_SEG&quot;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<BR>
+<B>Attributes</B></P>
+
+<TABLE WIDTH="632" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="70">PEN </TD>
+
+<TD width="554">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="70">LEVEL</TD>
+
+<TD width="554">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="70">BLANK</TD>
+
+<TD width="554">- Visible(0) or invisible(1)</TD>
+</TR>
+
+<TR>
+<TD>WIDTH</TD>
+
+<TD>- Linewidth</TD>
+</TR>
+
+<TR>
+<TD width="70">CFONT</TD>
+
+<TD width="554">- Solid (0), dashed (1) or centerline (2)</TD>
+</TR>
+
+<TR>
+<TD width="70">CDASHL</TD>
+
+<TD width="554">- Dash length</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Example<BR>
+<BR>
+</B>cur_approx(#10, #5, &quot;CUBIC&quot;, 1, 4);<BR>
+<BR>
+Creates a new curve (#10) which approximates a previously created curve
+#5. The output curve will have cubic segments and the number of segments
+will be four times the number of segments for the old curve.<BR>
+No tolerances are used in the calculations.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

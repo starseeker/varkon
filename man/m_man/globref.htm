@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>global_ref</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>global_ref - <small><small>Function</small></small></h2>
+  <p>Makes a reference global<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Converts a local reference to a global reference by adding the global identity of the
+  calling module. An optional parameter can be used to exclude one or more levels from the
+  call chain.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  global_ref(ref, level)<br>
+  <br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 43 Row 01 -->
+    <tr>
+      <td width="44">REF</td>
+      <td width="550">ref;</td>
+    </tr>
+<!-- Table 43 Row 02 -->
+    <tr>
+      <td width="44">INT</td>
+      <td width="550">levels;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 44 Row 01 -->
+    <tr>
+      <td width="34">ref</td>
+      <td width="560">- A local reference</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 45 Row 01 -->
+    <tr>
+      <td width="37">levels</td>
+      <td width="557">- Number of levels to skip, default = 0. 0 &lt;= levels &lt;= 9</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A global REF.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  Suppose that a certain module has a global identity of ##1#2#3. This would mean that the
+  active module (topmost) has called a module #1 who has called a module #2 who finally has
+  called a module #3. A call chain in 4 levels. The global_ref() function would then return
+  the following if used in #3 when #3 is executing...<br>
+  <br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 46 Row 01 -->
+    <tr>
+      <td width="117">global_ref(#4)</td>
+      <td width="477">= ##1#2#3#4</td>
+    </tr>
+<!-- Table 46 Row 02 -->
+    <tr>
+      <td width="117">global_ref(#4, 0)</td>
+      <td width="477">= ##1#2#3#4</td>
+    </tr>
+<!-- Table 46 Row 03 -->
+    <tr>
+      <td width="117">global_ref(#4, 1)</td>
+      <td width="477">= ##1#2#4</td>
+    </tr>
+<!-- Table 46 Row 04 -->
+    <tr>
+      <td width="117">global_ref(#4, 2)</td>
+      <td width="477">= ##1#4</td>
+    </tr>
+<!-- Table 46 Row 05 -->
+    <tr>
+      <td width="117">global_ref(#4, 3)</td>
+      <td width="477">= ##4</td>
+    </tr>
+<!-- Table 46 Row 06 -->
+    <tr>
+      <td width="117">global_ref(#4, 9)</td>
+      <td width="477">= ##4</td>
+    </tr>
+  </table>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

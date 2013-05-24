@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>sur_curves</TITLE>
+<style type="text/css">
+<!--
+p.h{font-weight: bold; line-height: 21pt}
+-->
+</style>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+<p>
+<CENTER><FONT SIZE=-1>VARKON Version 1.17D 2003-02-28</FONT></CENTER>
+</p>
+<HR width="100%" align="center">
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD width="35">
+&nbsp;<BR>
+</TD>
+<TD>
+<H2>
+sur_curves - <FONT SIZE=+0>geometric procedure</FONT></H2>
+
+<TABLE BORDER=0>
+<TR><TD>
+<P>Creates a surface</TD></TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD><p class=h>Description</P> 
+</TD></TR><TR><TD>Creates a bicubic surface. Input data is a set of curves. The curves will be approximated.
+</TD></TR></TABLE>&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD><p class=h>Syntax</P> 
+</TD></TR><TR><TD>sur_curves(id, nu, nv, idcurves, twistmethod :attributes);</TD></TR></TABLE>
+&nbsp;<BR>
+<TABLE BORDER=0 WIDTH="640">
+<TR>
+<TD WIDTH="80">REF</TD>
+<TD WIDTH="580">id</TD>
+</TR>
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">nu</TD>
+</TR>
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">nv</TD>
+</TR>
+<TR>
+<TD WIDTH="80">REF</TD>
+<TD WIDTH="580">idcurves( )</TD>
+</TR>
+<TR>
+<TD WIDTH="80">STRING</TD>
+<TD WIDTH="580">twistmethod</TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD colspan=2>
+<p class=h>Principal parameters</P> 
+</TD></TR>
+<TR>
+<TD WIDTH="80" valign="top">id</TD>
+<TD WIDTH="580" valign="top">- Local identity</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">nu</TD>
+<TD WIDTH="580" valign="top">- Number off U lines in the output surface.</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">nv</TD>
+<TD WIDTH="580" valign="top">- Number off input curves, which will become V lines.</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">idcurves( )</TD>
+<TD WIDTH="580" valign="top">- Array with identities of curves</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">twistmethod</TD>
+<TD WIDTH="580" valign="top">- Method to calculate twist vector. Refer to <A HREF="sur_spla.htm">SUR_SPLARR.</A></TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD colspan=2>
+<p class=h>Optional parameters</P> 
+</TD></TR>
+<TR><TD colspan=2>none</TR></TD>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD colspan=2>
+<p class=h>Attributes</P></TD></TR>
+<TR>
+<TD WIDTH="80">PEN</TD>
+<TD WIDTH="580">- Pen or colour number </TD>
+</TR>
+<TR>
+<TD WIDTH="80">LEVEL</TD>
+<TD WIDTH="580">- Level number </TD>
+</TR>
+<TR>
+<TD WIDTH="80">BLANK</TD>
+<TD WIDTH="580">- Visible (0) or invisible (1) </TD>
+</TR>
+<TR>
+<TD WIDTH="80">SFONT</TD>
+<TD WIDTH="580">- Solid boundary and dashed midcurves (0) </TD>
+</TR>
+<TR>
+<TD WIDTH="80">SDASHL</TD>
+<TD WIDTH="580">- Dashlength </TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>Examples</P></TD></TR>
+<TR><TD>
+<code>
+<b>REF</b> idcurves(10);<br>
+<b>sur_curves</b>(#10,6, 10, idcurves,"ZERO_TWIST_1");<br>
+</code>
+&nbsp;<br>
+Creates a bicubic surface (type CUB_SUR). 
+The number of patches in the V direction will be nine since the number of curves is ten.
+The number of patches in U direction will be five.
+</TD></TR>
+</TABLE>
+</TD>
+<TD width="35">
+&nbsp;<BR>
+</TD>
+</TR>
+</TABLE>
+<HR width="100%" align="center">
+<CENTER>
+<TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+<TD><A HREF="tcpindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+</BODY>
+</HTML>

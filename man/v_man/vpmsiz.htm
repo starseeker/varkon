@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>PMSIZE</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1999-02-11</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+PMSIZE</H3>
+System variable
+<BR>&nbsp;
+<P><B>Description</B>
+<P>PMSIZE is the size of the PM memory area in bytes. Default value = 400Kb.
+PMSIZE can be increased (or decreased) by supplying the -pm parameter on
+the commandline when VARKON is started.
+<P>Example:
+<P>-pm800000
+<P>Sets PMSIZE = 0.8Mb
+<P>PM is the place where VARKON keeps the active module and PMSIZE therefore
+sets the maximum size of the active module. VARKON also allocates a second
+memory area of the same size as PM and uses this to keep modules that are
+called by the active module. Subsequently PMSIZE also sets the maximum
+size of a called module.
+<P>The secondary PM is used as a cache. When a module is called for the
+first time it is always loaded from disc but when it is executed it is
+left in the cache. If the module is called again and hasn't left the cache
+it does not need to be read from disc a second time. This process goes
+on until the cache is full of modules and there is no room for another
+module. When this happens the entire cache is cleared and the process is
+started from the beginning again.
+<P><B>Comments</B>
+<P>The cache mechanism of the secondary PM can increase execution speed
+significantly if PMSIZE is large enough to hold all called modules at the
+same time.</UL>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

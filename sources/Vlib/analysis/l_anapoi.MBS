@@ -1,0 +1,38 @@
+!*******************************************************
+
+ macro module l_anapoi(REF id);
+
+!*      Skriver ut specifika data för en punkt.
+!*
+!*      IN : id => Punktens identitet.
+!*
+!*      UT : Inget.
+!*
+!*      (C)microform ab 6/10/86 R. Svedin
+!*
+!*      24/12/86   Globala ref, J. Kjellander
+!*      1996-06-03 Engelska, J.Kjellander
+!*      1998-04-03 Bredd, J.Kjellander
+!*
+!*******************************************************
+
+   VECTOR  pos;
+   FLOAT   w;
+
+ beginmodule
+
+   getpoi(global_ref(id,2),pos);
+   w:=getwidth(global_ref(id,2));
+
+   lst_lin(get_tstr(1620) + str(w,-12,5));   ! t1620 = "Bredd           : "
+!*
+!***Skriv ut koordinater, t314-t316.
+!*
+   lst_lin("");
+   lst_lin(get_tstr(314)+str(pos.x,-12,6));
+   lst_lin(get_tstr(315)+str(pos.y,-12,6));
+   lst_lin(get_tstr(316)+str(pos.z,-12,6));
+
+ endmodule
+
+!*******************************************************

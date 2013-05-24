@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Menufiles</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Menufiles</H3>
+
+<P>VARKON menus usually reside in menufiles having names ending with &quot;.MDF&quot;
+(MenuDefinitionFile). Each time VARKON is started or the active project
+is changed VARKON loads a new menufile. The name of the file is found on
+the last row of the PID-file belonging to the project. Additional files
+can also be loaded from MBS with the load_mdf() procedure.<BR>
+<BR>
+A menufile is an ordinary textfile that can be used to define or redefine
+menus as well as texts (t-strings), function-keys (accelerators) or #include
+other menufiles. For each project we recommend a unique menufile that first
+of all #includes the VARKON system default file $VARKON_MDF/varkon.MDF
+and then adds any project specific definitions. Here is an example....<BR>
+<BR>
+! This is the menufile for the projet named &quot;my_project&quot;<BR>
+! The name of the menufile is &quot;my_project.MDF&quot;<BR>
+! First of all we load the system defaults<BR>
+#include &quot;$VARKON_MDF/varkon.MDF&quot;<BR>
+<BR>
+! Then we create a new menu</P>
+
+<P>m200 = &quot;NEW_MENU&quot;<BR>
+&quot;line 1&quot;,action_1<BR>
+&quot;line 2&quot;,action_2<BR>
+&quot;line 3&quot;,action_3; </P>
+
+<P><BR>
+! Note that the last line is terminated by a semicolon.<BR>
+! We can also define some t-strings......<BR>
+<BR>
+t600 = &quot;text 1&quot;<BR>
+t601 = &quot;text 2&quot;<BR>
+t603 = &quot;text 3&quot;<BR>
+<BR>
+! and program a PF-key to a specific operation.<BR>
+<BR>
+s50 = &quot;%27A&quot;,m201<BR>
+<BR>
+! Finally we may want to indicate that our new menu number 200 above should<BR>
+! be used as the main menu.<BR>
+<BR>
+Main_menu = 200<BR>
+<BR>
+<BR>
+Use menu numbers from 200 and up. Numbers lower than 200 are reserved by
+the system. Numbers higher than 400 are illegal. The exact syntax of a
+menu is:<BR>
+<BR>
+mn = &quot;Menu_name&quot;<BR>
+<BR>
+followed by one or more lines of the following form:<BR>
+<BR>
+&quot;text&quot;,action<BR>
+<BR>
+the last line terminated by a semicolon ;<BR>
+<BR>
+&quot;Menu_name&quot; is an arbitrary heading that will be displayed at
+the top of the menu. &quot;text&quot; is an arbitrary text describing the
+action to take place when this alternative is selected. <BR>
+<BR>
+action is the letter &quot;m&quot;, &quot;f&quot;, &quot;M&quot;, &quot;p&quot;,
+&quot;r&quot;, or &quot;a&quot; followed by a number n. &quot;m&quot; activates
+menu n. &quot;f&quot; activates built in function number n. &quot;M&quot;
+calls a MACRO module named by t-string n. &quot;p&quot; creates a call
+to and executes a LOCAL, GLOBAL or BASIC module named by t-string n. &quot;r&quot;
+is the same as &quot;p&quot; but without saving the call in the active
+module. &quot;a&quot; stands for &quot;alternative&quot; and performs no
+action at all.<BR>
+<BR>
+The following MBS routines apply to menus: CRE_MEN(), GET_MEN(), PSH_MEN(),
+POP_MEN(), GET_ALT().<BR>
+<BR>
+t-strings have the following syntax:<BR>
+<BR>
+tn = &quot;text&quot;<BR>
+<BR>
+where n must be a number from 600 up to 1500. Lower and higher numbers
+are reserved by the system. A t-string is just a text with a number and
+may be used for any purpose you can think of. The &quot;M&quot;, &quot;p&quot;
+and &quot;r&quot; actions in menus rely on t-strings to store the name
+of the module to be called. VARKON itself uses the values of t-strings
+when displaying messages of various kinds. MBS-routines CRE_TSTR() and
+GET_TSTR() can be used to create a t-string and retrieve its value from
+MBS.<BR>
+<BR>
+PF-keys may be define using the following syntax:<BR>
+<BR>
+sn = &quot;%27c&quot;,action<BR>
+<BR>
+where c is a character in the range &quot;A&quot; to &quot;Z&quot; and
+action is the same as described above for menus. &quot;A&quot; to &quot;Z&quot;
+gives a total number of 26 individual PF-keys or accelerators. &quot;%27A&quot;
+is PF1, &quot;%27B&quot; is PF2 and so on. Most keyboards don't have as
+many as 26 PF-keys but might emulate extra keys by the use of &lt;SHIFT&gt;PF1,
+&lt;SHIFT&gt;PF2 etc. s1 to s12 are reserved by VARKON for the standard
+PF-key setup. You may redefine any of these if you wish in your own menufile
+and you may also add new ones.<BR>
+</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

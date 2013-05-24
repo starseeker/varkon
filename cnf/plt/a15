@@ -1,0 +1,5 @@
+! a15 = Postscript till skrivark|.
+ $VARKON_ROOT/bin/ps_mono <
+ | lp
+ act_job
+ -s1.0

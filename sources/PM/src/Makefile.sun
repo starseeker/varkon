@@ -1,0 +1,28 @@
+##########################################################
+#
+#   Makefile for PMlib with Sun and gcc.
+#
+#  (C)Örebro university 2004-03-10 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+distr :     CFLAGS =                    \
+            -I/usr/openwin/include      \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -O                          \
+            -DUNIX                      \
+            -DV3_X11                    \
+            -DVARKON                    \
+            -DWRK_STAT
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.PM
+
+##########################################################

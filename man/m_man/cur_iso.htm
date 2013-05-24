@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cur_iso </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cur_iso - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a curve<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a curve with a constant parameter value on a surface. Such a curve is called an
+  iso-parametric curve.<br>
+  <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cur_iso(id, ref, uv_type, iso_v, s_v, e_v:attributes);<br>
+  <br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 28 Row 01 -->
+    <tr>
+      <td width="65">REF</td>
+      <td width="602">id;</td>
+    </tr>
+<!-- Table 28 Row 02 -->
+    <tr>
+      <td width="65">REF</td>
+      <td width="602">ref;</td>
+    </tr>
+<!-- Table 28 Row 03 -->
+    <tr>
+      <td width="65">STRING</td>
+      <td width="602">uv_type;</td>
+    </tr>
+<!-- Table 28 Row 04 -->
+    <tr>
+      <td width="65">FLOAT</td>
+      <td width="602">iso_v;</td>
+    </tr>
+<!-- Table 28 Row 05 -->
+    <tr>
+      <td width="65">FLOAT</td>
+      <td width="602">s_v;</td>
+    </tr>
+<!-- Table 28 Row 06 -->
+    <tr>
+      <td width="65">FLOAT</td>
+      <td width="602">e_v;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 29 Row 01 -->
+    <tr>
+      <td width="55">id </td>
+      <td width="612">- Local identity</td>
+    </tr>
+<!-- Table 29 Row 02 -->
+    <tr>
+      <td width="55">ref</td>
+      <td width="612">- Surface</td>
+    </tr>
+<!-- Table 29 Row 03 -->
+    <tr>
+      <td width="55">uv_type</td>
+      <td width="612">- Type of iso-parameter curve (U or V)</td>
+    </tr>
+<!-- Table 29 Row 04 -->
+    <tr>
+      <td width="55">iso_v</td>
+      <td width="612">- Parameter value for the iso-parameter</td>
+    </tr>
+<!-- Table 29 Row 05 -->
+    <tr>
+      <td width="55">s_v</td>
+      <td width="612">- Curve start parameter value</td>
+    </tr>
+<!-- Table 29 Row 06 -->
+    <tr>
+      <td width="55">s_e</td>
+      <td width="612">- Curve end parameter value</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 30 Row 01 -->
+    <tr>
+      <td>None</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="675" border="0">
+<!-- Table 31 Row 01 -->
+    <tr>
+      <td width="67">PEN </td>
+      <td width="600">- Pen or colour number</td>
+    </tr>
+<!-- Table 31 Row 02 -->
+    <tr>
+      <td width="67">LEVEL</td>
+      <td width="600">- Level number</td>
+    </tr>
+<!-- Table 31 Row 03 -->
+    <tr>
+      <td width="67">BLANK</td>
+      <td width="600">- Visible (0) or invisible (1)</td>
+    </tr>
+<!-- Table 31 Row 04 -->
+    <tr>
+      <td width="67">CFONT</td>
+      <td width="600">- Solid (0), dashed (1), center line (2)</td>
+    </tr>
+<!-- Table 31 Row 05 -->
+    <tr>
+      <td width="67">CDASHL</td>
+      <td width="600">- Dash length</td>
+    </tr>
+    <tr>
+      <td width="70">WIDTH</td>
+      <td width="554">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  cur_iso(#3, #2, &quot;U&quot;, 4.1, 1.1, 6.7);<br>
+  <br>
+  Creates a curve #3, which has the constant parameter value U= 4.1 on surface #2. The curve
+  starts in V= 1.1 and ends in point V= 6.7.<br>
+  <br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  It is not possible to create an iso-parametric curve with steps between curve segments.
+  All curves in Varkon must be continuous in position. </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>getp_mbs </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>getp_mbs - <small><small>Function</small></small></h2>
+  <p>Get statement<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads name or parameters from a statement in active module.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  getp_mbs(id, parnum)<br>
+  <br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 01 Row 01 -->
+    <tr>
+      <td width="44">REF</td>
+      <td width="607">id;</td>
+    </tr>
+<!-- Table 01 Row 02 -->
+    <tr>
+      <td width="44">INT</td>
+      <td width="607">parnum;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 02 Row 01 -->
+    <tr>
+      <td width="33">id</td>
+      <td width="618">- Identity of the entity whose definition to read</td>
+    </tr>
+    <tr>
+      <td width="33">parnum</td>
+      <td width="618">- Relative position of parameter to read, first = 1. parnum = 0 returns
+      the name of the</td>
+    </tr>
+    <tr>
+      <td width="33"></td>
+      <td width="618">&nbsp;&nbsp; MBS routine.</td>
+    </tr>
+  </table>
+  <p><b><br>
+  Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 03 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A STRING holding the name or parameter in MBS syntax.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  Suppose our active module includes the following statement....<br>
+  <br>
+  lin_free(#5, on(#2), intersect(#1,#3));<br>
+  <br>
+  then<br>
+  <br>
+  getp_mbs(#5, 0) = &quot;lin_free&quot;<br>
+  getp_mbs(#5, 1) = &quot;on(#2)&quot;<br>
+  getp_mbs(#5, 2) = &quot;intersect(#1,#3)&quot;</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="modmindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

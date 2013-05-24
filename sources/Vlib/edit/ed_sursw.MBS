@@ -1,0 +1,70 @@
+!*******************************************************
+
+ MACRO MODULE ed_sursw(REF id);
+
+!*      Editerar SUR_SWEEP.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               editeras.
+!*
+!*      (C)microform ab 1997-04-22 J. Kjellander
+!*
+!*******************************************************
+
+   INT    pnum;
+   STRING alt*2,par*132;
+
+ beginmodule
+
+!*
+!***Visa meny och läs in svar.
+!*
+    psh_men(153);
+    alt:=get_alt("");
+    pop_men();
+!*
+!***Profilkurva.
+!* 
+    if alt = "a1" then
+      pnum:=1;
+      psh_pmt(get_tstr(1611));
+      par:=rstr(ident(2+4+8));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+!*
+!***Styrkurva.
+!*
+    elif alt = "a2" then
+      pnum:=2;
+      psh_pmt(get_tstr(1613));
+      par:=rstr(ident(2+4+8));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+!*
+!***Reversera.
+!*
+    elif alt = "a3" then
+      pnum:=3;
+      par:=getp_mbs(id,pnum);
+      if par = "-1" then
+        par:="1";
+      elif par = "1" then
+        par:="-1";
+      elif par = "2" then
+        par:="3";
+      elif par = "3" then
+        par:="2";
+      else
+        exit("Can't reverse:"+par);
+      endif;
+    else
+      exit();
+    endif;
+!*
+!***Uppdatera.
+!*
+    if par <> "" then updp_mbs(id,pnum,par); endif;
+
+ endmodule
+
+!*******************************************************

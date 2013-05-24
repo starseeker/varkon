@@ -1,0 +1,68 @@
+!*******************************************************
+
+ MACRO  MODULE dxf_bsec(
+   VAR FILE   infil,logfil;
+   VAR STRING bntab(2000)*32;
+   VAR INT    bptab(2000);
+   VAR INT    nb);
+
+!*      Läser BLOCKS-section.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*      1998-01-13 Långa rader, J.Kjellander
+!*
+!*******************************************************
+
+ STRING rad*132;
+ INT    kod;
+
+ BEGINMODULE
+
+!*
+!***Initiering.
+!*
+   nb:=0;
+!*
+!***BLOCKS.
+!*
+   outlin(logfil);
+   outstr(logfil,"BLOCKS-Section");
+   outlin(logfil);
+
+blksloop:
+   kod:=inint(infil); rad:=inlin(infil);
+
+   if kod = 0 then
+     rad:=inlin(infil);
+     if rad = "BLOCK" then
+blkloop:
+       kod:=inint(infil); rad:=inlin(infil);
+       if kod = 2 then 
+         rad:=inlin(infil);
+         nb:=nb+1;
+         bntab(nb):=rad;
+         bptab(nb):=fpos(infil);
+         outstr(logfil,"Block nr:"+str(nb,-1,0)+" "+rad);
+         outlin(logfil);
+endloop:
+         rad:=inlin(infil);
+         if rad = "ENDBLK" then goto blksloop;
+         else goto endloop; endif;
+       else
+         rad:=inlin(infil);
+         goto blkloop;
+       endif;
+     elif rad = "ENDSEC" then
+       exit();
+     else
+       goto blksloop;
+     endif;
+   else
+     rad:=inlin(infil);
+     goto blksloop;
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

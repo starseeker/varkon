@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>RTSSIZE</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1999-02-11</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+RTSSIZE</H3>
+System variable
+<BR>&nbsp;
+<P><B>Description</B>
+<P>RTSSIZE is the size of the RunTimeStack memory area in bytes. Default
+value = 200Kb. RTSSIZE can be increased (or decreased) by supplying the
+-rts parameter on the commandline when VARKON is started.
+<P>Example:
+<P>-rts500000
+<P>Sets RTSSIZE = 0.5Mb
+<P>RTS is the place where VARKON keeps the values of all local variables
+declared in the modules currently executing. A local variable of type FLOAT
+only requires 8 bytes on the RTS but an indexed variable may need much
+more. An array of 1000 4X4 matrixes for example needs 128Kb on the RTS.
+RTS must be big enough to fit all local variables in a call chain. This
+means that if the active module calls module A and A calls B then the size
+of RTS must be big enough for the total sum of local variables in the active
+module and A and B.
+<P><B>Comments</B>
+<P>If VARKON should find the RTS too small en error message is displayed
+stating the actual size needed. If this happens try to increase the size
+of RTS to the stated value as shown above.</UL>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

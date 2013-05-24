@@ -1,0 +1,221 @@
+!*******************************************************
+
+ macro drawing module l_cgrav(
+ REF id1  >"@t30 t268",
+     id2  >"@@t30 t268",
+     id3  >"@@t30 t268",
+     id4  >"@@t30 t268",
+     id5  >"@@t30 t268",
+     id6  >"@@t30 t268",
+     id7  >"@@t30 t268",
+     id8  >"@@t30 t268",
+     id9  >"@@t30 t268",
+     id10 >"@@t30 t268",
+     id11 >"@@t30 t268",
+     id12 >"@@t30 t268",
+     id13 >"@@t30 t268",
+     id14 >"@@t30 t268",
+     id15 >"@@t30 t268",
+     id16 >"@@t30 t268",
+     id17 >"@@t30 t268",
+     id18 >"@@t30 t268",
+     id19 >"@@t30 t268",
+     id20 >"@@t30 t268",
+     id21 >"@@t30 t268",
+     id22 >"@@t30 t268",
+     id23 >"@@t30 t268",
+     id24 >"@@t30 t268",
+     id25 >"@@t30 t268";
+ FLOAT dist:=1 >"t1534");
+
+!*      Beräknar tyngdpunkt.
+!*
+!*      (C)microform ab 26/7/90 J.Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ STRING s*10;
+ VECTOR  tp;
+
+ beginmodule
+start:
+   id1:=global_ref(id1,1);
+   if id2 = #0.1 then
+     tp:=cgrav(dist,id1);
+     goto end;
+   endif;
+
+   id2:=global_ref(id2,1);
+   if id3 = #0.1 then
+     tp:=cgrav(dist,id1,id2);
+     goto end;
+   endif;
+
+   id3:=global_ref(id3,1);
+   if id4 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3);
+     goto end;
+   endif;
+
+   id4:=global_ref(id4,1);
+   if id5 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4);
+     goto end;
+   endif;
+
+   id5:=global_ref(id5,1);
+   if id6 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5);
+     goto end;
+   endif;
+
+   id6:=global_ref(id6,1);
+   if id7 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6);
+     goto end;
+   endif;
+
+   id7:=global_ref(id7,1);
+   if id8 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7);
+     goto end;
+   endif;
+
+   id8:=global_ref(id8,1);
+   if id9 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8);
+     goto end;
+   endif;
+
+   id9:=global_ref(id9,1);
+   if id10 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9);
+     goto end;
+   endif;
+
+   id10:=global_ref(id10,1);
+   if id11 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10);
+     goto end;
+   endif;
+
+   id11:=global_ref(id11,1);
+   if id12 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11);
+     goto end;
+   endif;
+
+   id12:=global_ref(id12,1);
+   if id13 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12);
+     goto end;
+   endif;
+
+   id13:=global_ref(id13,1);
+   if id14 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13);
+     goto end;
+   endif;
+
+   id14:=global_ref(id14,1);
+   if id15 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14);
+     goto end;
+   endif;
+
+   id15:=global_ref(id15,1);
+   if id16 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15);
+     goto end;
+   endif;
+
+   id16:=global_ref(id16,1);
+   if id17 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16);
+     goto end;
+   endif;
+
+   id17:=global_ref(id17,1);
+   if id18 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16,id17);
+     goto end;
+   endif;
+
+   id18:=global_ref(id18,1);
+   if id19 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16,id17,id18);
+     goto end;
+   endif;
+
+   id19:=global_ref(id19,1);
+   if id20 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16,id17,id18,id19);
+     goto end;
+   endif;
+
+   id20:=global_ref(id20,1);
+   if id21 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16,id17,id18,id19,id20);
+     goto end;
+   endif;
+
+   id21:=global_ref(id21,1);
+   if id22 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16,id17,id18,id19,id20,id21);
+     goto end;
+   endif;
+
+   id22:=global_ref(id22,1);
+   if id23 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16,id17,id18,id19,id20,id21,id22);
+     goto end;
+   endif;
+
+   id23:=global_ref(id23,1);
+   if id24 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16,id17,id18,id19,id20,id21,id22,id23);
+     goto end;
+   endif;
+
+   id24:=global_ref(id24,1);
+   if id25 = #0.1 then
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+               id13,id14,id15,id16,id17,id18,id19,id20,id21,id22,id23,id24);
+     goto end;
+   endif;
+
+   id25:=global_ref(id25,1);
+     tp:=cgrav(dist,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10,id11,id12,
+            id13,id14,id15,id16,id17,id18,id19,id20,id21,id22,id23,id24,id25);
+
+end:
+   s:=inpmt(get_tstr(1537)+str(tp.x,-1,6)+","+str(tp.y,-1,6)+")","",1);
+   s:=inpmt(get_tstr(1536),"n",1);
+
+   if s = "j" or s = "J" or s = "y" or s = "Y" then
+     s:="-1.0";
+     s:=inpmt(get_tstr(248),str(dist,-1,1),10);     ! Ange nytt värde
+     if length(s) > 0 then
+       if val(s) > 0.0 then
+         dist:=val(s);
+         goto start;
+       endif;
+     endif;
+   endif;
+
+ endmodule
+
+!*******************************************************

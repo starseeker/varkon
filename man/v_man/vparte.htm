@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>The PART entity</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>The PART entity</H3>
+
+<P>A <B>part </B>is an entity without geometric significance of its own
+but with the ability to host all other kinds of entities including other
+parts. A <B>part </B>reminds of a symbol or a feature in other CAD-systems
+but includes more and plays a very important roll in VARKON. A <B>part
+</B>is created as follows...<BR>
+<BR>
+<B>part</B>(id,name(parameters),coordinate_system);<BR>
+<BR>
+A <B>part</B> needs an identity like all other entities in VARKON. A <B>part</B>
+also needs a name and optional parameters and coordinate system. In VARKON
+all parts are defined generically by a <B>MODULE</B> with the same name
+as the part. Creating a part can thus be seen as calling a subroutine or
+procedure or in object terminology as creating an instance from a certain
+class. Lets look at a simple example.....<BR>
+<BR>
+</P>
+
+<PRE>MODULE two_rectangles();                             MODULE rectangle(VECTOR p;FLOAT h,w);
+
+BEGINMODULE                                          BEGINMODULE
+
+  part(#1,rectangle(vec(0,0),100,50));                 lin_ang(#1,p,0,w);
+
+  part(#2,rectangle(on(#1#2,1)+vec(10,0),25,25));      lin_offs(#2,#1,-h);
+
+ENDMODULE                                              lin_free(#3,on(#1),on(#2));
+
+                                                       lin_free(#4,on(#1,1),on(#2,1));
+
+                                                     ENDMODULE
+
+
+
+</PRE>
+
+<P>In this example <B>MODULE</B> two_rectangles creates two parts with
+the name rectangle by calling or instanciating <B>MODULE </B>rectangle
+twice with different values for its parameters. In the first call the rectangle
+is placed with its lower left corner in (0,0) and given a height of 100
+and a width of 50. In the second call a 25 by 25 rectangle is created with
+its lower left 10 units to the right of the end of line #2 in the part
+#1. This shows how parameters are passed from one module to another and
+it also shows how composite identities can be used to access entities created
+in other modules.<BR>
+<BR>
+The result of one module calling another module is a <B>part</B> stored
+in the GM database. For each<B> part</B> its name, parameters and members
+are stored together as a single object with identity of its own. When two_rectangles
+calls rectangle the <B>part</B> rectangle becomes a member of two_rectangles
+and the 4 lines become members of rectangle. The GM database is specially
+designed to handle this tree structure and reflect the hierarchical owner-membership
+relation in any number of levels.<BR>
+<BR>
+Many VARKON applications use the part entity to describe real life objects
+with name, attributes (parameters) and geometry (member entities). Using
+the get-routines of MBS it is easy to navigate in a GM database and fetch
+any information of interest. </P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm#VAR">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

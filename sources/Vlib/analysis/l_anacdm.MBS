@@ -1,0 +1,60 @@
+!*******************************************************
+
+ macro module l_anacdm(REF id);
+
+!*      Skriver ut specifika data för ett diametermått.
+!*
+!*      In : id => Diametermåttets identitet.
+!*
+!*      Ut : Inget.
+!*
+!*      (C)microform ab 9/10/86 R. Svedin
+!*
+!*      28/12/86 Globala ref, J. Kjellander
+!*      1996-06-03 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    typ,nd,auto;
+   FLOAT  ps,ts;
+   VECTOR p1,p2,p3;
+
+ beginmodule
+
+    getcdm(global_ref(id,2),p1,p2,p3,typ,ps,ts,nd,auto);
+
+    lst_lin(get_tstr(470) + str(p1.x,-12,6));
+    lst_lin(get_tstr(471) + str(p1.y,-12,6));
+
+    lst_lin("");
+    lst_lin(get_tstr(473) + str(p2.x,-12,6));
+    lst_lin(get_tstr(474) + str(p2.y,-12,6));
+
+    lst_lin("");
+    lst_lin(get_tstr(483) + str(p3.x,-12,6));
+    lst_lin(get_tstr(484) + str(p3.y,-12,6));
+
+    lst_lin("");
+    if typ = 0 then
+      lst_lin(get_tstr(485));
+    elif typ = 1 then
+      lst_lin(get_tstr(486));
+    else
+      lst_lin(get_tstr(487));
+    endif;
+
+    lst_lin("");
+    lst_lin(get_tstr(296) + str(ps,-12,6));
+    lst_lin(get_tstr(297) + str(ts,-12,6));
+    lst_lin(get_tstr(298) + str(nd,-1,0));
+
+    if  auto = 0 then
+      lst_lin(get_tstr(299));
+    else
+      lst_lin(get_tstr(300));
+    endif;
+
+  endmodule
+
+!*******************************************************
+

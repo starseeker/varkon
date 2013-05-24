@@ -1,0 +1,167 @@
+!*******************************************************
+
+ BASIC GEOMETRY MODULE igs_128(
+   VAR FILE infil,logfil;
+   STRING   dl1*80,dl2*80;
+   INT      ps_ptr;
+   int      eolsize;
+   VAR INT  status);
+
+!*      Läser Directory Entry Section en
+!*      andra gång och skapar storheterna.
+!*
+!*      In: infil  = Fil att läsa från.
+!*          logfil = Loggfil.
+!*          dl1    = Rad 1 i Directory Entry Section.
+!*          dl2    = Rad 2 i Directory Entry Section.
+!*          ps_ptr = Pekare till Parameter Section.
+!*
+!*      Ut: status = 0 => Ok
+!*                  -1 => Fel
+!*
+!*      (C)microform ab 1997-12-23 J. Kjellander
+!*
+!*******************************************************
+
+   INT    iu,iv,radnummer,antal_rader,p,pd;
+   STRING rad*80,fs*80;
+   FLOAT  f;
+
+   CONSTANT INT MAXPTS=500;
+   INT    k1,k2,m1,m2,prop1,prop2,prop3,prop4,prop5,
+          uflag,vflag;
+   FLOAT  ku(MAXPTS),kv(MAXPTS),w(MAXPTS,MAXPTS);
+   VECTOR cpts(MAXPTS,MAXPTS);
+
+string s1*1;
+ BEGINMODULE
+
+!*
+!***Ta fram storhetens radnummer i Parameter
+!***Data Section och positionera filpekaren dit.
+!*
+   radnummer:=round(val(substr(dl1,9,8)));
+!s1:=inpmt("radnummer=",str(radnummer,-1,0),80);
+   antal_rader:=round(val(substr(dl2,25,8)));
+!s1:=inpmt("antal_rader=",str(antal_rader,-1,0),80);
+   seek(infil,ps_ptr+(radnummer-1)*(80+eolsize));
+!*
+!***Läs 1:a raden och ta bort 1:a fältet (128,).
+!*
+   rad:=inlin(infil);
+   rad:=substr(rad,finds(rad,",")+1);
+!*
+!***K1, antal kontrollpunkter i U-led.
+!*
+   part(#1,igs_gint(infil,rad,k1,status):SAVE=0);
+   k1:=k1+1;
+!*
+!***K2, antal kontrollpunkter i V-led.
+!*
+   part(#2,igs_gint(infil,rad,k2,status):SAVE=0);
+   k2:=k2+1;
+!*
+!***M1, gradtal i U-led (order_u-1).
+!*
+   part(#3,igs_gint(infil,rad,m1,status):SAVE=0);
+!*
+!***M2, gradtal i V-led (order_v-1).
+!*
+   part(#4,igs_gint(infil,rad,m2,status):SAVE=0);
+
+   outlin(logfil);
+   outstr(logfil,"NURBS-yta (128)");
+   outlin(logfil);
+   outstr(logfil,"K1="+str(k1,-1,0)+", ");
+   outstr(logfil,"M1="+str(m1,-1,0));
+   outlin(logfil);
+   outstr(logfil,"K2="+str(k2,-1,0)+", ");
+   outstr(logfil,"M2="+str(m2,-1,0));
+   outlin(logfil);
+!*
+!***PROP1 - PROP5.
+!*
+   part(#5,igs_gint(infil,rad,prop1,status):SAVE=0);
+   part(#6,igs_gint(infil,rad,prop2,status):SAVE=0);
+   part(#7,igs_gint(infil,rad,prop3,status):SAVE=0);
+   part(#8,igs_gint(infil,rad,prop4,status):SAVE=0);
+   part(#9,igs_gint(infil,rad,prop5,status):SAVE=0);
+!*
+!***Nodvektorn i U-led.
+!*
+   for iu:=1 to k1-m1+1+2*m1 do
+     part(#10,igs_gflt(infil,rad,ku(iu),status):SAVE=0);
+   endfor;
+
+   outstr(logfil,"Knutpunkter i U-led:");
+   outlin(logfil);
+   for iu:=1 to k1-m1+1+2*m1 do
+     outstr(logfil,"ku("+str(iu,-1,0)+")="+str(ku(iu),-1,14));
+     outlin(logfil);
+   endfor;
+!*
+!***Nodvektorn i V-led.
+!*
+   for iv:=1 to k2-m2+1+2*m2 do
+     part(#12,igs_gflt(infil,rad,kv(iv),status):SAVE=0);
+   endfor;
+
+   outstr(logfil,"Knutpunkter i V-led:");
+   outlin(logfil);
+   for iv:=1 to k2-m2+1+2*m2 do
+     outstr(logfil,"kv("+str(iv,-1,0)+")="+str(kv(iv),-1,14));
+     outlin(logfil);
+   endfor;
+!*
+!***Rationella vikttermer.
+!*
+   for iv:=1 to k2 do
+     for iu:=1 to k1 do
+       part(#14,igs_gflt(infil,rad,w(iu,iv),status):SAVE=0);
+     endfor;
+   endfor;
+!*
+!***R3-koordinater.
+!*
+   for iv:=1 to k2 do
+     for iu:=1 to k1 do
+       part(#15,igs_gflt(infil,rad,cpts(iu,iv).x,status):SAVE=0);
+       part(#16,igs_gflt(infil,rad,cpts(iu,iv).y,status):SAVE=0);
+       part(#17,igs_gflt(infil,rad,cpts(iu,iv).z,status):SAVE=0);
+     endfor;
+   endfor;
+!*
+!***Visa punkterna.
+!*
+!   if k1+k2 > 2 then
+!     for iu:=1 to k1 do
+!       for iv:=1 to k2 do
+!         poi_free(#20,cpts(iu,iv));
+!       endfor;
+!     endfor;
+!
+!     for iu:=1 to k1-1 do
+!       for iv:=1 to k2-1 do
+!         lin_free(#30,cpts(iu,iv),cpts(iu,iv+1):PEN=2);
+!       endfor;
+!     endfor;
+!
+!     for iu:=1 to k1-1 do
+!       for iv:=1 to k2-1 do
+!         lin_free(#31,cpts(iu,iv),cpts(iu+1,iv):PEN=3);
+!       endfor;
+!     endfor;
+!   endif;
+
+    sur_nurbsarr(#50,m1+1,m2+1,k1-m1+1+2*m1,k2-m2+1+2*m2,
+               cpts,ku,kv:BLANK=0,PEN=2);
+!*
+!***Slut.
+!*
+   status:=0;
+
+ ENDMODULE
+
+!*******************************************************
+
+

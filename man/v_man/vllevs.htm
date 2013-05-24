@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Low level evaluation of curves and surfaces</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Low level evaluation of curves and surfaces</H3>
+
+<P>VARKON includes a low level geometric evaluation routine called <B>eval</B>
+for those who want to know all there is about a curve or surface.<BR>
+<BR>
+For any curve you can evaluate its position, derivatives, normals, curvature
+and torsion anywhere on the curve. The second derivative for example is
+calculated in the following way....<BR>
+<BR>
+<B>eval</B>(curve_id,&quot;<B>D2RDT2</B>&quot;,value); ! Second derivative
+with respect to curve parameter t<BR>
+<BR>
+For UV-curves you can also calculate derivatives with respect to the surface
+U and V parameter and geodesic curvature.<BR>
+<BR>
+For a surface the eval routine can be used to calculate a large number
+of geometric data including all derivatives and curvatures. The Gaussian
+curvature is one example...<BR>
+<BR>
+<B>eval</B>(surface_id,&quot;<B>GAUSSIAN</B>&quot;,value);</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

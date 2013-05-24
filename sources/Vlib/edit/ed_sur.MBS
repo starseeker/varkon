@@ -1,0 +1,47 @@
+!*******************************************************
+
+ MACRO MODULE ed_sur(REF id);
+
+!*      Editerar en yta.
+!*
+!*      In: id = Identitet för kurva som skall
+!*               editeras.
+!*
+!*      (C)microform ab 1997-04-21 J. Kjellander
+!*
+!*      1998-04-17 Nya yttyper, J.Kjellander
+!*
+!*******************************************************
+
+   STRING typ*20;
+
+ beginmodule
+
+!*
+!***Kolla hur ytan är skapad.
+!*
+   typ:=getp_mbs(id,0);
+!*
+!***Anropa rätt rutin.
+!*
+   if typ = "SUR_ROT" then
+     part(#1,ed_surro(id));
+   elif typ = "SUR_OFFS" then
+     part(#2,ed_surof(id));
+   elif typ = "SUR_CYL" then
+     part(#3,ed_surcy(id));
+   elif typ = "SUR_SWEEP" then
+     part(#4,ed_sursw(id));
+   elif typ = "SUR_RULED" then
+     part(#5,ed_surru(id));
+   elif typ = "SUR_TRIM" then
+     part(#6,ed_surtr(id));
+   elif typ = "SUR_EXDEF" then
+     part(#7,ed_surex(id));
+   elif typ = "SUR_CONIC" then
+     part(#8,ed_surc(id));
+   endif;
+
+ endmodule
+
+!*******************************************************

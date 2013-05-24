@@ -1,0 +1,21 @@
+##########################################################
+#
+#   Makefile for GElib on HP workstations
+#
+#  (C)Microform AB 1999-11-04 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = cc
+
+CFLAGS =                    \
+         -O                 \
+         -DUNIX
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.GE
+
+##########################################################

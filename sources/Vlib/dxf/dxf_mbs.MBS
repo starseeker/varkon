@@ -1,0 +1,150 @@
+!*******************************************************
+
+ MACRO MODULE dxf_mbs(
+ STRING filnamn*10 >"Vad skall MBS-filen heta ?");
+
+!*      Skriver ut ritning på MBS-format.
+!*      Parter expanderas.
+!*
+!*      (C)microform ab 1997-11-21 J. Kjellander
+!*
+!*******************************************************
+
+   INT    typ,nref,blnk,niv,actniv,pen,actpen,ns,
+          i,lf,actlf,af,actaf,tf,acttf;
+   REF    id,gid(3);
+   STRING code*1,txt*132,snr*10;
+   FLOAT  r,v1,v2,arcseg(4,4,4),ld,actld,ad,actad,cd,actcd,
+          th,tb,tl,actth,acttb,acttl;
+   VECTOR p1,p2;
+   FILE   utfil;
+
+ BEGINMODULE
+
+!*
+!***Initiering.
+!*
+   actniv:=0; actpen:=1;
+   actlf:=0; actld:=3;
+   actaf:=0; actad:=3;
+   acttf:=0; actth:=5; acttb:=60; acttl:=15;
+!*
+!***Öppna utfill.
+!*
+   open(utfil,"W",act_jobdir()+filnamn+".MBS");
+!*
+!***Deklaration av modul.
+!*
+   outstr(utfil,"BASIC DRAWING MODULE "+filnamn+"();");
+   outlin(utfil); outlin(utfil);
+   outlin(utfil); outlin(utfil);
+   outstr(utfil,"BEGINMODULE"); outlin(utfil); outlin(utfil);
+!*
+!***Hämta storheter ur GM.
+!*
+   snr:="#0";
+   code:="F";
+ next:
+   id:=getid(code);
+   code:="N";
+
+   if id <> #0 then
+     gethdr(id,typ,nref,blnk,niv,pen,gid);
+
+     if niv<>actniv then
+       outstr(utfil,"   set(LEVEL="+str(niv,-1,0)+");");
+       outlin(utfil); actniv:=niv;
+     endif;
+
+     if pen<>actpen then
+       outstr(utfil,"   set(PEN="+str(pen,-1,0)+");");
+       outlin(utfil); actpen:=pen;
+     endif;
+
+     snr:="#"+str(val(substr(snr,2))+1,-1,0);
+!*
+!***Punkt.
+!*
+     if typ=1 then
+       getpoi(id,p1);
+       outstr(utfil,"   poi_free("+snr); 
+       outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+"));");
+       outlin(utfil);
+!*
+!***Linje.
+!*
+     elif typ=2 then
+       getlin(id,lf,ld,p1,p2);
+       if lf<>actlf then
+         outstr(utfil,"   set(LFONT="+str(lf,-1,0)+");");
+         outlin(utfil); actlf:=lf;
+       endif;
+       if ld<>actld then
+         outstr(utfil,"   set(LDASHL="+str(ld,-1,5)+");");
+         outlin(utfil); actld:=ld;
+       endif;
+       outstr(utfil,"   lin_free("+snr); 
+       outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+")");
+       outstr(utfil,",vec("+str(p2.x,-1,5)+","+str(p2.y,-1,5)+"));");
+       outlin(utfil);
+!*
+!***Arc.
+!*
+     elif typ=4 then
+       getarc(id,af,ad,p1,r,v1,v2,ns,arcseg);
+       if af<>actaf then
+         outstr(utfil,"   set(AFONT="+str(af,-1,0)+");");
+         outlin(utfil); actaf:=af;
+       endif;
+       if ad<>actad then
+         outstr(utfil,"   set(ADASHL="+str(ad,-1,5)+");");
+         outlin(utfil); actad:=ad;
+       endif;
+       outstr(utfil,"   arc_1pos("+snr); 
+       outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+"),");
+       outstr(utfil,str(r,-1,5)+","+str(v1,-1,5)+","+str(v2,-1,5)+");");
+       outlin(utfil);
+!*
+!***Text.
+!*
+     elif typ=32 then
+       gettxt(id,p1,tf,th,tb,tl,v1,txt);
+       if tf<>acttf then
+         outstr(utfil,"   set(TFONT="+str(tf,-1,0)+");");
+         outlin(utfil); acttf:=tf;
+       endif;
+       if th<>actth then
+         outstr(utfil,"   set(TSIZE="+str(th,-1,5)+");");
+         outlin(utfil); actth:=th;
+       endif;
+       if tb<>acttb then
+         outstr(utfil,"   set(TWIDTH="+str(tb,-1,5)+");");
+         outlin(utfil); acttb:=tb;
+       endif;
+       if tl<>acttl then
+         outstr(utfil,"   set(TSLANT="+str(tl,-1,5)+");");
+         outlin(utfil); acttl:=tl;
+       endif;
+       outstr(utfil,"   text("+snr); 
+       outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+"),");
+       outstr(utfil,str(v1,-1,5)+","+chr(34)+txt+chr(34)+");");
+       outlin(utfil);
+     endif;
+!*
+!***Nästa storhet.
+!*
+     goto next;
+   endif;
+!*
+!***Slut på filen.
+!*
+   outlin(utfil);
+   outstr(utfil,"ENDMODULE"); outlin(utfil);
+!*
+!***Stäng densamma.
+!*
+   close(utfil);
+
+ ENDMODULE
+
+!*******************************************************

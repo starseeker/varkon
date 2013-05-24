@@ -1,0 +1,578 @@
+! ***************** l_aneval   ****************************
+!
+!s+++
+! EVAL
+! ___
+!
+! Med funktionen EVAL kan man f} reda p} koordinater,
+! derivator, ytnormal och dess derivator, kr|kningar
+! och kr|kningsriktningar, mm
+!
+! Denna analysfunktion (l_aneval) visar all indata och all 
+! utdata fr}n funktionen EVAL.
+!
+! Anrop: EVAL (storhet , fall , uv  )
+!
+! Parametrar:
+!
+! storhet   (REF)    - Tidigare skapad yta eller kurva
+! fall      (STRING) - Kod f|r vad som ska ber{knas
+!                      xyz, drdu, drdv, normal, .....
+!                      Denna analysfuktion visar alla
+!                      m|jliga val.
+! uv        (VECTOR) - Parameter punkt                
+!                      F|rsta komponenten = U
+!                      Andra  komponenten = V (f|r yta)
+!
+! Resultat: (VECTOR) - Ber{knad derivata, ytnormal, ...
+!
+! Exempel:
+!
+! tangent_u := EVAL( #5, "drdu" , VEC(1.5,7.3))
+!
+! Ber{knar tangenten i U riktningen p} ytan #5 i parameter
+! punkten U= 1.5 V= 7.3
+!
+!s---
+!
+!e+++
+! EVAL
+! ___
+!
+! The function EVAL calculates coordinates, derivatives, surface normal 
+! with derivatives, curvature and curvature directions for a 
+! parameter point on a curve or a surface.
+!
+! This analysis function (l_aneval) shows all input and all  
+! output data from the the function EVAL.
+!
+! MBS syntax: EVAL (entity  , case , uv  )
+!
+! Parameters: 
+!
+! entity  (REF)    - Previously created curve or surface
+! case    (STRING) - Code for evaluation case    
+!                    xyz, drdu, drdv, normal, .....
+!                    This analyse function shows all options
+! uv      (VECTOR) - Parameter point                
+!                    First  component = U
+!                    Second component = V (for surface)
+!
+! Result: (VECTOR) - Evaluated derivative, surface normal, ....
+!
+! Example:  
+!
+! tangent_u := EVAL( #5, "drdu" , VEC(1.5,7.3))
+!
+! Evaluates the tangent in the U direction on surface #5 in
+! parameter point U= 1.5 V= 7.3
+!
+!e---
+!
+!
+!
+! Revision history
+! __________________
+!
+! 1994-06-27 Gunnar Liden
+! 1995-01-28 Spine, LFT_SUR curves added, 
+!            english/swedish added                Gunnar Liden
+! 1995-06-23 Undefined curvature directions added Gunnar Liden
+! 1997-03-08 LFT_SUR rotation surface             Gunnar Liden
+!************************************************************
+
+!sdesce Shows all input and output data for function EVAL
+!sdescs Visar all indata och all utdata fr}n funktionen EVAL
+
+BASIC GEOMETRY MODULE l_aneval   (
+
+REF    s_id                  > "@t24 V{lj kurva eller yta";
+VECTOR uv := VEC(0.1,1.2,0)  > "UV punkt");
+
+
+! Interna variabler 
+
+  CONSTANT INT language= 1;  ! 1: English Eq. 2: Swedish
+
+  VECTOR d_a;                ! Utdata vektor fr}n EVAL
+
+  FLOAT  kmin;               ! Minimum kr|kning
+  FLOAT  kmax;               ! Maximum kr|kning
+  FLOAT  rmin;               ! Minimum kr|kningsradie     
+  FLOAT  rmax;               ! Maximum kr|kningsradie     
+
+                             ! F|r funktionen GETHDR:
+  INT    typ;                ! Typ av storhet
+  INT    nref;               !  --
+  INT    blank;              ! Eq. 0: T{nd  Eq. 1: Sl{ckt
+  INT    niv};               ! Storhetens niv}
+  INT    penna;              ! Storhetens pennummer
+  REF    grupp_id(3);        ! Globala identiteter f|r de
+                             ! grupper storheten ing}r i
+
+  FLOAT  f_segtype;          ! Segment type  
+                             ! 1.0: CUB_SEG
+                             ! 2.0:  UV_SEG
+
+  STRING p_surh1*80;         ! Surface header
+  STRING p_surh2*80;         ! 
+  STRING p_surh3*80;         !
+  STRING p_curh1*80;         ! Curve   header
+  STRING p_curh2*80;         ! 
+  STRING p_rad*80;           ! Curvature radius
+  STRING p_loft*80;          ! Loft surface header
+  STRING p_pval*80;          ! P value
+  STRING p_midc*80;          ! Mid curve
+  STRING p_equal1*80;        ! Principal curvatures equal
+  STRING p_equal2*80;        ! 
+
+  STRING ermess1*80;         ! Error message
+
+
+  INT    s_typ;              ! Type of surface
+
+BEGINMODULE
+
+
+!+++
+! Algoritm
+! ________
+!
+! Definiera prompt str{ngar
+! ---
+
+IF   language = 1 THEN           ! English strings
+  ermess1:= "Identity is #0";    !
+  p_surh1:="Coordinates and " +  !
+     "derivatives in surface ";  !
+  p_surh2:=" for U= ";           !
+  p_surh3:=" V= ";               !
+  p_curh1:="Coordinates and " +  !
+     "derivatives for curve ";   !
+  p_curh2:=" for T= ";           !
+  p_rad:="    (Curvat. radius= ";!
+  p_loft :="Input curves to " +  !
+     "a LFT_SUR surface";        !
+  p_pval :="                " +  !
+     "(P value)";                !
+  p_midc :="                " +  !
+     "(Mid curve)";              !
+  p_equal1:= "Directions are " + !
+   "undefined since "+           !
+   "principal curvatures are "+  !
+   "equal (sphere or plane)";    !
+  p_equal2:= "(Output vector " + !
+    "components are equal to " + !
+    "1.23456789)";               !
+ELIF language = 2 THEN           ! Swedish strings
+  ermess1:= "Identitet {r #0";   !
+  p_surh1:="Koordinater och " +  !
+     "derivativor i yta ";       !
+  p_surh2:=" f|r U= ";           !
+  p_surh3:=" V= ";               !
+  p_curh1:="Koordinater och " +  !
+     "derivator f|r kurva ";     !
+  p_curh2:=" f|r T= ";           !
+  p_rad:="    (Kr|kningsradie= ";!
+  p_loft :="Indata kurvor " +    !
+     "till en LFT_SUR yta";      !
+  p_pval :="                " +  !
+     "(P v{rde)";                !
+  p_midc :="                " +  !
+     "(Mitt kurva)";             !
+  p_equal1:= "Odefinierad "+     !
+   "eftersom huvudkr|kningar {r"+!
+   " lika (sf{r eller plan)";    !
+  p_equal2:= "(Utdata vektor" +  !
+    "komponenterna {r satta  " + !
+    " till 1.23456789)";         !
+ELSE                             !
+  EXIT("l_aneval: " +            !
+  "Language error");             !
+ENDIF;                           !
+
+! +++
+! H{mta "header" data f|r indata storheten f|r att ta reda
+! p} om storheten {r en kurva eller en yta.
+!---
+
+IF s_id =  #0 THEN             ! Kontrollera s_id
+  EXIT(ermess1);               !
+ENDIF;                         !
+
+PART(#20,G_REFSEL(s_id));      ! L{gg till # om n|dv{ndigt
+
+GETHDR(s_id,typ,nref,          ! L{s "header" f|r storheten
+  blank,niv},penna,grupp_id);  ! 
+
+IF typ = 8 THEN                ! Hoppa till kurva f|r kurva
+   GOTO  kurva;                !
+ENDIF;                         !
+
+!+++
+! Skriv ut koordinater och derivator f|r en yta.
+!---
+
+LST_INI(p_surh1 + RSTR(s_id) +
+        p_surh2 + STR(uv.x,-12,8) + 
+        p_surh3 + STR(uv.y,-12,8)); 
+
+d_a:= EVAL(s_id,"UVLOCAL",uv);
+LST_LIN( "   " );
+LST_LIN( "uvlocal  "+STR(  d_a.x ,15,8)+
+        "          "+STR(  d_a.y ,15,8)+ "   ");
+
+d_a:= EVAL(s_id,"PATADR",uv);
+LST_LIN( "patadr   "+STR(  d_a.x ,15,8)+
+        "          "+STR(  d_a.y ,15,8)+ "   ");
+
+LST_LIN( "   " );
+
+
+d_a:= EVAL(s_id,"XYZ",uv);
+LST_LIN( "xyz      "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"DRDU",uv);
+LST_LIN( "drdu     "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"DRDV",uv);
+LST_LIN( "drdv     "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"D2RDU2",uv);
+LST_LIN( "d2rdu2   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"D2RDV2",uv);
+LST_LIN( "d2rdv2   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"D2RDUDV",uv);
+LST_LIN( "d2rdudv  "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"NORMAL",uv);
+LST_LIN( "normal   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"DNDU",uv);
+LST_LIN( "dndu     "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"DNDV",uv);
+LST_LIN( "dndv     "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+LST_LIN( "   " );
+
+
+LST_LIN( "   " );
+d_a:= EVAL(s_id,"KAPPAMIN",uv);
+kmin:= d_a.x;
+IF ABS(d_a.x) > 1.0/50000.0 THEN
+    rmin:= 1.0/d_a.x;
+ELSE
+    rmin:= 50000.0;      
+ENDIF;
+LST_LIN("kappamin "+STR(d_a.x,15,8)+
+            p_rad +         "1/kappamin= "+STR(rmin,15,8)+")");
+
+d_a:= EVAL(s_id,"KAPPAMAX",uv);
+kmax:= d_a.x;
+IF ABS(d_a.x) > 1.0/50000.0 THEN
+    rmax:= 1.0/d_a.x;
+ELSE
+    rmax:= 50000.0;      
+ENDIF;
+LST_LIN("kappamax "+STR(d_a.x,15,8)+
+            p_rad +         "1/kappamax= "+STR(rmax,15,8)+")");
+d_a:= EVAL(s_id,"GAUSSIAN",uv);
+LST_LIN("gaussian "+STR(d_a.x,15,8));
+d_a:= EVAL(s_id,"MEAN",uv);
+LST_LIN("mean     "+STR(d_a.x,15,8));
+
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"R3MIN",uv);
+IF ABS(d_a.x-1.23456789) < 0.000001 AND
+   ABS(d_a.y-1.23456789) < 0.000001 AND
+   ABS(d_a.z-1.23456789) < 0.000001     THEN
+LST_LIN(p_equal1);
+LST_LIN(p_equal2);
+LST_LIN( "   " );
+ENDIF;
+
+
+d_a:= EVAL(s_id,"R3MIN",uv);
+LST_LIN( "r3min    "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+
+d_a:= EVAL(s_id,"R3MAX",uv);
+LST_LIN( "r3max    "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"UVMIN",uv);
+
+LST_LIN( "uvmin    "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8));
+
+d_a:= EVAL(s_id,"UVMAX",uv);
+LST_LIN( "uvmax    "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8));
+
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"UVMINDERIV",uv);
+LST_LIN( "uvminderiv"+STR(d_a.x,14,8));
+
+d_a:= EVAL(s_id,"UVMAXDERIV",uv);
+LST_LIN( "uvmaxderiv"+STR(d_a.x,14,8));
+
+d_a:= EVAL(s_id,"ANGKAPPA",uv);
+LST_LIN( "angkappa "+STR(d_a.x ,15,8)+"          "
+                    +STR(d_a.y ,15,8)+ "    ");
+
+LST_LIN( "   " );
+
+GETSURH(s_id ,"SUR_TYPE",s_typ);     ! Retrieve type of surface
+
+IF s_typ = 3 THEN                    ! s_type=3: LFT_SUR
+LST_LIN( "   " );
+LST_LIN( p_loft);
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"M_FLAG"    ,uv);
+IF ABS(d_a.x - 3.0) < 0.00001 THEN
+LST_LIN( "Retrieval of data for a rotation LFT_SUR surface ");
+LST_LIN( "is not yet implemented !");
+LST_LIN( "(m_flag=   "    +STR(d_a.x,15,8)+")");
+GOTO  rot_sur;
+ENDIF;
+
+
+
+d_a:= EVAL(s_id,"SP_XYZ",uv);
+LST_LIN( "sp_xyz   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"SP_DRDU",uv);
+LST_LIN( "sp_drdu  "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"SP_D2RDU2",uv);
+LST_LIN( "sp_d2rdu2"+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"LS_XYZ"   ,uv);
+LST_LIN( "ls_xyz   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"LS_DRDT"  ,uv);
+LST_LIN( "ls_drdt  "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"LS_D2RDT2",uv);
+LST_LIN( "ls_d2rdt2"+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"TS_XYZ"   ,uv);
+LST_LIN( "ts_xyz   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"TS_DRDT"  ,uv);
+LST_LIN( "ts_drdt  "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"TS_D2RDT2",uv);
+LST_LIN( "ts_d2rdt2"+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"M_FLAG"    ,uv);
+IF ABS(d_a.x - 1.0) < 0.00001 THEN
+LST_LIN( "m_flag   "    +STR(d_a.x,15,8) + p_pval);
+d_a:= EVAL(s_id,"M_XYZ"   ,uv);
+LST_LIN( "m_xyz    "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8));
+d_a:= EVAL(s_id,"M_DRDT"  ,uv);
+LST_LIN( "m_drdt   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8));
+d_a:= EVAL(s_id,"M_D2RDT2",uv);
+LST_LIN( "m_d2rdt2 "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8));
+ELSE
+LST_LIN( "m_flag   "    +STR(d_a.x,15,8) + p_midc);
+d_a:= EVAL(s_id,"M_XYZ"   ,uv);
+LST_LIN( "m_xyz    "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"M_DRDT"  ,uv);
+LST_LIN( "m_drdt   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"M_D2RDT2",uv);
+LST_LIN( "m_d2rdt2 "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+ENDIF;
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"LE_XYZ"   ,uv);
+LST_LIN( "le_xyz   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"LE_DRDT"  ,uv);
+LST_LIN( "le_drdt  "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"LE_D2RDT2",uv);
+LST_LIN( "le_d2rdt2"+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"TE_XYZ"   ,uv);
+LST_LIN( "te_xyz   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"TE_DRDT"  ,uv);
+LST_LIN( "te_drdt  "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"TE_D2RDT2",uv);
+LST_LIN( "te_d2rdt2"+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"G_XYZ"   ,uv);
+LST_LIN( "g_xyz    "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"G_DRDT"  ,uv);
+LST_LIN( "g_drdt   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"G_D2RDT2",uv);
+LST_LIN( "g_d2rdt2 "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+LST_LIN( "   " );
+
+ENDIF;                               ! End s_type=3: LFT_SUR
+
+rot_sur:;
+
+GOTO  fini;
+
+! +++
+! Skriv ut koordinater och derivator f|r en kurva
+! ---
+kurva:;
+
+LST_INI(p_curh1 + RSTR(s_id) +
+        p_curh2 + STR(uv.x,-12,8)); 
+
+d_a:= EVAL(s_id,"TLOCAL",uv);
+LST_LIN( "   " );
+LST_LIN( "tlocal   "+STR(  d_a.x ,15,8)+ "   ");
+d_a:= EVAL(s_id,"SEGADR",uv);
+LST_LIN( "segadr   "+STR(  d_a.x ,15,8)+ "   ");
+
+
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"XYZ",uv);
+LST_LIN( "xyz      "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"DRDT",uv);
+LST_LIN( "drdt     "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"D2RDT2",uv);
+LST_LIN( "d2rdt2   "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+
+LST_LIN( "   " );
+
+
+d_a:= EVAL(s_id,"SEGTYPE",uv);
+f_segtype:= d_a.x;
+LST_LIN( "segtype  "+STR(d_a.x,15,8));
+
+
+
+LST_LIN( "   " );
+d_a:= EVAL(s_id,"PRINORMAL",uv);
+LST_LIN( "prinormal"+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+d_a:= EVAL(s_id,"BINORMAL",uv);
+LST_LIN( "binormal "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8)+
+        "          "+STR(d_a.z,15,8));
+
+LST_LIN( "   " );
+
+d_a:= EVAL(s_id,"KAPPA",uv);
+IF ABS(d_a.x) > 1.0/50000.0 THEN
+    rmax:= 1.0/d_a.x;
+ELSE
+    rmax:= 50000.0;      
+ENDIF;
+LST_LIN("kappa    "+STR(d_a.x,15,8)+
+            p_rad +         "1/kappa=     "+STR(rmax,15,8)+")");
+
+IF  f_segtype >=  1.5   THEN
+d_a:= EVAL(s_id,"NORMKAPPA",uv);
+IF ABS(d_a.x) > 1.0/50000.0 THEN
+    rmax:= 1.0/d_a.x;
+ELSE
+    rmax:= 50000.0;      
+ENDIF;
+LST_LIN("normkappa"+STR(d_a.x,15,8)+
+                p_rad +     "1/normkappa= "+STR(rmax,15,8)+")");
+
+d_a:= EVAL(s_id,"GEODESIC",uv);
+IF ABS(d_a.x) > 1.0/50000.0 THEN
+    rmax:= 1.0/d_a.x;
+ELSE
+    rmax:= 50000.0;      
+ENDIF;
+LST_LIN("geodesic "+STR(d_a.x,15,8)+
+             p_rad +        "1/geodesic=  "+STR(rmax,15,8)+")");
+
+LST_LIN( "   " );
+
+
+d_a:= EVAL(s_id,"UV",uv);
+LST_LIN( "uv       "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8));
+d_a:= EVAL(s_id,"DUVDT",uv);
+LST_LIN( "duvdt    "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8));
+d_a:= EVAL(s_id,"D2UVDT2",uv);
+LST_LIN( "d2uvdt2  "+STR(d_a.x,15,8)+
+        "          "+STR(d_a.y,15,8));
+
+LST_LIN( "   " );
+ENDIF;
+
+fini:;
+
+LST_EXI();
+
+ENDMODULE

@@ -1,0 +1,40 @@
+VARKON Error messages for PMPAC
+(C) Microform AB 1996
+
+101  1  No module at PM-base 0, module not saved
+102  1  Trying to delete geometric statement which not is in PM
+103  2  Can't malloc for offset (GETCUR)
+104  2  Segment number : %s does not exist (GETSEG)
+105  2  Unknown window type (CRE_WIN)
+106  1  Can't malloc %s bytes for PM
+
+201  2  File %s not found
+202  2  Error reading file %s
+203  2  No node at PM-pointer == NULL
+204  2  Error creating file %s
+205  2  Error writing file %s
+206  2  Can't find a module with name = %s
+249  2  Can't decompile, line is too long !
+250  2  Can't malloc for serialnumber table ! Error in %s
+251  2  Not a statement node
+252  2  Not an expression node
+253  2  Not a module parameter node
+254  2  Not an module node
+
+301  3  No room for requested block in PM, PM full
+302  3  No room for module %s in PM
+303  3  Illegal PM-pointer
+304  3  Illegal PM base address
+305  3  Not a module header
+306  3  Ilegal serial number on module %s
+307  3  Active module may not be MACRO !
+308  3  Module %s is a MACRO-module !
+309  3  Module %s is version %s, should be 1.18A or later
+
+001  4  PM full, space left is only = %s bytes !
+003  4  Illegal PM-pointer
+004  4  Illegal PM base address
+006  4  Not a list node
+007  4  Not a tconc node
+008  4  Not a statement node
+011  4  Nonexistent part parameter, can't change value.

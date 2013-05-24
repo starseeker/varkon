@@ -1,0 +1,59 @@
+!*******************************************************
+
+ MACRO MODULE ed_hk(REF id >"t268");
+
+!*      Editerar en med hårkors utpekad storhet.
+!*
+!*      In: id = Storhetens identitet.
+!*               t268 = "Ange storhet"
+!*
+!*      (C)microform ab 6/5/92 J.Kjellander
+!*
+!*      1996-06-11 Engelska, J.Kjellander
+!*      1997-04-21 Ytor, J.Kjellander
+!*
+!*******************************************************
+
+   INT    typ,vers,blnk,niv,pen;
+   REF    gid(3);
+
+ beginmodule
+
+!*
+!***Header data.
+!*
+   gethdr(global_ref(id,1),typ,vers,blnk,niv,pen,gid);
+!*
+!***Anropa rätt rutin.
+!*
+   if typ=1 then 
+     part(#1,ed_poi(id));
+   elif typ=2 then
+     part(#2,ed_lin(id));
+   elif typ=4 then
+     part(#3,ed_arc(id));
+   elif typ=8 then
+     part(#4,ed_cur(id));
+   elif typ=16 then
+     part(#5,ed_sur(id));
+   elif typ=32 then
+     part(#6,ed_text(id));
+   elif typ=64 then
+     part(#7,ed_xht(id));
+   elif typ=128 then
+     part(#8,ed_ldm(id));
+   elif typ=256 then
+     part(#9,ed_cdm(id));
+   elif typ=512 then
+     part(#10,ed_rdm(id));
+   elif typ=1024 then
+     part(#11,ed_adm(id));
+   elif typ=8192 then
+     part(#12,ed_csy(id));
+   elif typ=32768 then
+     part(#13,ed_bpl(id));
+   endif;
+
+ endmodule
+
+!*******************************************************

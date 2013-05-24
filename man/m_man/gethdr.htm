@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>gethdr</title>
+  <meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+<body bgcolor="#99ccff">
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+<hr width="100%" align="center">
+<blockquote>
+  <h2>gethdr - <small><small>Procedure</small></small></h2>
+  <p>Get header from GM<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+Reads the header of a specific entity in GM. This routine is common to
+all entity types and is typically used to find out what type (point,
+line, curve, surface...) an entity with specific identity has or what
+level it belongs to etc.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+gethdr(id, type, version, blank, level, pen, groups)<br>
+  <br>
+  </p>
+  <table width="666" border="0">
+<!-- Table 03 Row 01 --> <tbody>
+      <tr>
+        <td width="68">REF</td>
+        <td width="590">id;</td>
+      </tr>
+<!-- Table 03 Row 02 --> <tr>
+        <td width="68">INT</td>
+        <td width="590">type;</td>
+      </tr>
+<!-- Table 03 Row 03 --> <tr>
+        <td width="68">INT</td>
+        <td width="590">version;</td>
+      </tr>
+<!-- Table 03 Row 04 --> <tr>
+        <td width="68">INT</td>
+        <td width="590">blank;</td>
+      </tr>
+<!-- Table 03 Row 05 --> <tr>
+        <td width="68">INT</td>
+        <td width="590">level;</td>
+      </tr>
+<!-- Table 03 Row 06 --> <tr>
+        <td width="68">INT</td>
+        <td width="590">pen;</td>
+      </tr>
+<!-- Table 03 Row 07 --> <tr>
+        <td width="68">REF</td>
+        <td width="590">groups(3);</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="666" border="0">
+<!-- Table 04 Row 01 --> <tbody>
+      <tr>
+        <td width="58">id</td>
+        <td width="600">- Global identity </td>
+      </tr>
+<!-- Table 04 Row 02 --> <tr>
+        <td width="58">type</td>
+        <td width="600">- Entity type code, see below or -1 if the
+entity does not exist</td>
+      </tr>
+<!-- Table 04 Row 03 --> <tr>
+        <td width="58">version</td>
+        <td width="600">- Version number</td>
+      </tr>
+<!-- Table 04 Row 04 --> <tr>
+        <td width="58">blank</td>
+        <td width="600">- 0 = Visible, 1 = Unvisible</td>
+      </tr>
+<!-- Table 04 Row 05 --> <tr>
+        <td width="58">level</td>
+        <td width="600">- Level number 0 &lt;= level &lt; 2000</td>
+      </tr>
+<!-- Table 04 Row 06 --> <tr>
+        <td width="58">pen</td>
+        <td width="600">- Pen or colour number</td>
+      </tr>
+<!-- Table 04 Row 07 --> <tr>
+        <td width="58">groups</td>
+        <td width="600">- An indexed variable to recieve 3 group
+membership identities. </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 05 Row 01 --> <tbody>
+      <tr>
+        <td>None.</td>
+        <td><br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+Version numbers are implemented to make it possible for an application
+to recognize any future changes to the internal representation of an
+entity.<br>
+  <br>
+The following table lists all entity types and their type codes:<br>
+  <br>
+  </p>
+  <table width="254" border="1">
+<!-- Table 06 Row 01 --> <tbody>
+      <tr>
+        <td width="142" bgcolor="#c0c0c0"><b>Entity type</b></td>
+        <td width="100" bgcolor="#c0c0c0"><b>Code</b></td>
+      </tr>
+<!-- Table 06 Row 02 --> <tr>
+        <td width="142">Transformation</td>
+        <td width="100">0</td>
+      </tr>
+<!-- Table 06 Row 03 --> <tr>
+        <td width="142">Point</td>
+        <td width="100">1</td>
+      </tr>
+<!-- Table 06 Row 04 --> <tr>
+        <td width="142">Line</td>
+        <td width="100">2</td>
+      </tr>
+<!-- Table 06 Row 05 --> <tr>
+        <td width="142">Arc</td>
+        <td width="100">4</td>
+      </tr>
+<!-- Table 06 Row 06 --> <tr>
+        <td width="142">Curve</td>
+        <td width="100">8</td>
+      </tr>
+<!-- Table 06 Row 07 --> <tr>
+        <td width="142">Surface</td>
+        <td width="100">16</td>
+      </tr>
+<!-- Table 06 Row 08 --> <tr>
+        <td width="142">Text</td>
+        <td width="100">32</td>
+      </tr>
+<!-- Table 06 Row 09 --> <tr>
+        <td width="142">Xhatch</td>
+        <td width="100">64</td>
+      </tr>
+<!-- Table 06 Row 10 --> <tr>
+        <td width="142">Linear dimension</td>
+        <td width="100">128</td>
+      </tr>
+<!-- Table 06 Row 11 --> <tr>
+        <td width="142">Circular dimension</td>
+        <td width="100">256</td>
+      </tr>
+<!-- Table 06 Row 12 --> <tr>
+        <td width="142">Radius dimension</td>
+        <td width="100">512</td>
+      </tr>
+<!-- Table 06 Row 13 --> <tr>
+        <td width="142">Angular dimension</td>
+        <td width="100">1024</td>
+      </tr>
+<!-- Table 06 Row 14 --> <tr>
+        <td width="142">Mesh<br>
+        </td>
+        <td width="100">2048</td>
+      </tr>
+<!-- Table 06 Row 15 --> <tr>
+        <td width="142">Group</td>
+        <td width="100">4096</td>
+      </tr>
+<!-- Table 06 Row 16 --> <tr>
+        <td width="142">Coordinate system</td>
+        <td width="100">8192</td>
+      </tr>
+<!-- Table 06 Row 17 --> <tr>
+        <td width="142">Part</td>
+        <td width="100">16384</td>
+      </tr>
+<!-- Table 06 Row 18 --> <tr>
+        <td width="142">Bplane</td>
+        <td width="100">32768</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+Any entity can be a member of 0, 1, 2 or maximum 3 different groups.
+The groups variable should be declared as an indexed REF with at least
+3 elements. gethdr returns the first group id in element 1, the second
+group id in element 2 and the third group id in element 3 of the
+indexed variable. A group id = #0 in any of the elements returned
+indicates no membership. If all 3 elements returned are = #0 the entity
+is not member of any group at all.</p>
+</blockquote>
+<hr width="100%" align="center">
+<p></p>
+<div align="center">
+<center>
+<table align="center" cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="gmdbindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</div>
+</body>
+</html>

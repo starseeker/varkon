@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>inint </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>inint - <small><small>Function</small></small></h2>
+  <p>Read integer from file<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads an integer string from an open file or pipe.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  inint(f, width)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 30 Row 01 -->
+    <tr>
+      <td width="48">FILE</td>
+      <td width="611">f;</td>
+    </tr>
+<!-- Table 30 Row 02 -->
+    <tr>
+      <td width="48">INT</td>
+      <td width="611">width;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 31 Row 01 -->
+    <tr>
+      <td width="38">f</td>
+      <td width="621">- A filevariable accociated with a file open for read or update (R or U)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 32 Row 01 -->
+    <tr>
+      <td width="39">width</td>
+      <td width="620">- Number of characters to read. If not specified inint reads as many
+      characters as needed.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  The INT value read.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  With the following line of data<br>
+  <br>
+  &quot;1 2345ABC&quot;<br>
+  <br>
+  consecutive calls to inint would read as follows.....<br>
+  <br>
+  inint(f) = 1<br>
+  <br>
+  inint(f, 2) = 2<br>
+  <br>
+  inint(f) = 345<br>
+  <br>
+  inint(f) = Undefined, error code in iostat()</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="fileindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

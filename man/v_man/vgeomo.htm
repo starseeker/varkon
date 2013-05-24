@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Geometric modeling basics </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-09-24</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Geometric modeling basics</H3>
+
+<P>There are numerous ways of creating and using geometry in VARKON. Basic
+geometric entities are points, lines, arcs, curves, surfaces, coordinate
+systems and transformations. All entities are created using one of several
+methods. A line for example, starting in X=0, Y=0, Z=0 and ending in X=100,
+Y=0, Z=0 could be created the following way...<BR>
+<BR>
+<B>lin_free</B>(#1,<B>vec</B>(0,0,0),<B>vec</B>(100,0,0));<BR>
+<BR>
+The method <B>lin_free</B> indicates that the line is free to go between
+any 2 positions in 3D space. In this case the function <B>vec</B>(x,y,z)
+is used to express the positions. Other methods are <B>lin_ang, lin_offs,
+lin_proj</B>,<B> lin_tan1, lin_tan2</B> and <B>lin_perp</B>. The #1 following
+the first left parenthesis is the unique identity we give the line. Suppose
+now we want to create a line parallel to #1...<BR>
+<BR>
+<B>lin_offs</B>(#2,#1,50);<BR>
+<BR>
+<B>lin_offs</B> creates a new line (#2) offset to an old line (#1) at a
+given distance (50). All modeling operations are relative to a currently
+active coordinate system. <B>BASIC</B> is the default system but any number
+of local coordinate systems can be created at any time and activated in
+any order. The following two statements...<BR>
+<BR>
+<B>csys_1p</B>(#3,&quot;My_system&quot;,<B>vec</B>(25,0,0),0,0,30);<BR>
+<B>mode_local</B>(#3);<BR>
+<BR>
+creates a new coordinate system (#3) in X=25, Y=0, Z=0 rotated 30 degrees
+around the Z-axis and gives it the name &quot;My_system&quot;. <B>mode_local</B>
+activates the system. The XY-plane in the active coordinate system is used
+as the active plane for all operations where a 2D plane is needed. <B>lin_offs</B>
+for example always creates a new line placed in the active XY-plane. If
+the original line doesn't lie in the active plane then the new line is
+made parallel to the projection of the old line into the active plane.<BR>
+<BR>
+All wire frame entities have a sense of direction. #1 above starts in (0,0,0)
+and ends in (100,0,0). Many modeling operations depend on this. <B>lin_offs</B>
+for example uses the sense of direction to decide on what side of the old
+line to place the new line. If you stand in the starting position of #1
+looking towards its end then the right side of the line is treated as positive
+and the left side as negative. A distance of plus 50 then places the new
+line on the right side while a distance of minus 50 places the new line
+on the left side.</P>
+
+<P>The sense of direction for a wireframe object is also used as its parametric
+directions. Lines and arcs always have parameters that range from 0 to
+1. Their parametrisation is true arclength meaning that a value of 0.5
+for example is always the position half way along the entity. Curves have
+native parametrisation ranging from 0 to the integer number of segments
+they have. A curve with 5 segments will have a parameter that ranges from
+0 to 5.</P>
+
+<P>Surfaces and b_planes have two parametric directions, U and V ranging
+from 0 to some integer number equal to the number of patches in that direction.
+A surface with 2 X 5 patches in U and V will have a parameter U that ranges
+from 0 to 2 and V that ranges from 0 to 5. B_planes only have one &quot;patch&quot;
+and their parametrisation is always 0 to 1 in both directions.<BR>
+<BR>
+The idea of an active coordinate system with its XY-plane and entities
+with identity and direction is a powerful feature of MBS that helps in
+making geometric programming simple and concise.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

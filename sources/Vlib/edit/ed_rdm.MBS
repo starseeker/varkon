@@ -1,0 +1,62 @@
+!*******************************************************
+
+ MACRO MODULE ed_rdm(REF id);
+
+!*      Editerar RDIM.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               editeras.
+!*
+!*      (C)microform ab 11/12/92 R. Svedin
+!*
+!*      1996-06-11 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    pnum,status;
+   STRING alt*2,par*132;
+
+ beginmodule
+
+!*
+!***Visa meny och läs in svar.
+!*
+    psh_men(113);
+    alt:=get_alt("");
+    pop_men();
+!*
+!***Cirkel.
+!* 
+    if alt = "a1" then
+      pnum:=1;
+      psh_pmt(get_tstr(277));
+      par:=rstr(ident(4));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+!*
+!***Brytpos.
+!*
+    elif alt = "a2" then
+      pnum:=2;
+      par:=getp_mbs(id,pnum);
+      part(#2,ma_posw(par,get_tstr(236),get_tstr(303),status));
+      if status = -1 then par:=""; endif;
+!*
+!***Textpos.
+!*
+    elif alt = "a3" then
+      pnum:=3;
+      par:=getp_mbs(id,pnum);
+      part(#3,ma_posw(par,get_tstr(236),get_tstr(259),status));
+      if status = -1 then par:=""; endif;
+    else
+      exit();
+    endif;
+!*
+!***Uppdatera.
+!*
+    if par <> "" then updp_mbs(id,pnum,par); endif;
+
+ endmodule
+
+!*******************************************************

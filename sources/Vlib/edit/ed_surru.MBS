@@ -1,0 +1,80 @@
+!*******************************************************
+
+ MACRO MODULE ed_surru(REF id);
+
+!*      Editerar SUR_RULED.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               editeras.
+!*
+!*      (C)microform ab 1997-04-22 J. Kjellander
+!*
+!*******************************************************
+
+   INT    pnum;
+   STRING alt*2,par*132;
+
+ beginmodule
+
+!*
+!***Visa meny och läs in svar.
+!*
+    psh_men(154);
+    alt:=get_alt("");
+    pop_men();
+!*
+!***Kurva 1.
+!* 
+    if alt = "a1" then
+      pnum:=1;
+      psh_pmt(get_tstr(1614));
+      par:=rstr(ident(2+4+8));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+!*
+!***Kurva 2.
+!*
+    elif alt = "a2" then
+      pnum:=2;
+      psh_pmt(get_tstr(1615));
+      par:=rstr(ident(2+4+8));
+      pop_pmt();
+      if substr(par,1,2) = "#0" then par:=""; endif;
+!*
+!***Reversera.
+!*
+    elif alt = "a3" then
+      pnum:=3;
+      par:=getp_mbs(id,pnum);
+      if par = "-1" then
+        par:="1";
+      elif par = "1" then
+        par:="-1";
+      elif par = "2" then
+        par:="3";
+      elif par = "3" then
+        par:="2";
+      else
+        exit("Can't reverse:"+par);
+      endif;
+!*
+!***Båglängd.
+!*
+    elif alt = "a4" then
+      pnum:=4;
+      par:="1";
+!*
+!***Native.
+!*
+    elif alt = "a5" then
+      pnum:=4;
+      par:="2";
+    endif;
+!*
+!***Uppdatera.
+!*
+    if par <> "" then updp_mbs(id,pnum,par); endif;
+
+ endmodule
+
+!*******************************************************

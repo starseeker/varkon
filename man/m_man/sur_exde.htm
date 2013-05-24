@@ -1,0 +1,707 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>sur_exdef </TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.16 1998-11-24</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<BLOCKQUOTE>
+<H2>
+sur_exdef - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+Creates a surface
+<BR>&nbsp;
+<P><B>Description</B>
+<P>Creates a surface from data in a text file. This is a an interface function
+for the import of surfaces from other systems
+<P>The function can handle the following file formats (surfaces):
+<P>- VDA-FS polynomial surfaces (for the moment only bicubic surfaces in
+Win95/NT)
+<BR>- Bicubic surface from the surface definition system Numerical Master
+Geometry (NMG)
+<BR>- Consurf surface from the surface definition system Numerical Master
+Geometry (NMG)
+<BR>&nbsp;
+<P><B>Syntax</B>
+<P>sur_exdef(id, file_name, file_type, sur_type, u1, v1, u2, v2:attributes);
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE WIDTH="539" >
+<TR>
+<TD WIDTH="71">REF</TD>
+
+<TD WIDTH="460">id;</TD>
+</TR>
+
+<TR>
+<TD WIDTH="71">STRING</TD>
+
+<TD WIDTH="460">file_name</TD>
+</TR>
+
+<TR>
+<TD WIDTH="71">STRING</TD>
+
+<TD WIDTH="460">file_type</TD>
+</TR>
+
+<TR>
+<TD WIDTH="71">STRING</TD>
+
+<TD WIDTH="460">sur_type</TD>
+</TR>
+
+<TR>
+<TD WIDTH="71">FLOAT</TD>
+
+<TD WIDTH="460">u1;</TD>
+</TR>
+
+<TR>
+<TD WIDTH="71">FLOAT</TD>
+
+<TD WIDTH="460">v1;</TD>
+</TR>
+
+<TR>
+<TD WIDTH="71">FLOAT</TD>
+
+<TD WIDTH="460">u2;</TD>
+</TR>
+
+<TR>
+<TD WIDTH="71">FLOAT</TD>
+
+<TD WIDTH="460">v2;</TD>
+</TR>
+
+<TR>
+<TD WIDTH="71">INT</TD>
+
+<TD WIDTH="460">surf_no;</TD>
+</TR>
+</TABLE>
+
+<P><B>Principal parameters</B>
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE WIDTH="539" >
+<TR>
+<TD WIDTH="61">id&nbsp;</TD>
+
+<TD WIDTH="470">- Local identity</TD>
+</TR>
+
+<TR>
+<TD WIDTH="61">file_name</TD>
+
+<TD WIDTH="470">- File name</TD>
+</TR>
+
+<TR>
+<TD WIDTH="61">file_type</TD>
+
+<TD WIDTH="470">- Type of file (VDA-FS, NMG_F07)</TD>
+</TR>
+
+<TR>
+<TD WIDTH="61">sur_type</TD>
+
+<TD WIDTH="470">- Surface type (POL_SUR, CUB_SUR, CON_SUR, RAT_SUR, LFT_SUR)</TD>
+</TR>
+</TABLE>
+
+<P><B>Optional parameters</B>
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE WIDTH="539" >
+<TR>
+<TD WIDTH="60">u1</TD>
+
+<TD WIDTH="471">- Surface U parameter start value for trimming</TD>
+</TR>
+
+<TR>
+<TD WIDTH="60">v1</TD>
+
+<TD WIDTH="471">- Surface V parameter start value for trimming</TD>
+</TR>
+
+<TR>
+<TD WIDTH="60">u2</TD>
+
+<TD WIDTH="471">- Surface U parameter end value for trimming</TD>
+</TR>
+
+<TR>
+<TD WIDTH="60">v2</TD>
+
+<TD WIDTH="471">- Surface V parameter end value for trimming</TD>
+</TR>
+
+<TR>
+<TD WIDTH="60">surf_no</TD>
+
+<TD WIDTH="471">- Requested VDA-FS surface (=0 for all surfaces)</TD>
+</TR>
+</TABLE>
+
+<P><B>Attributes</B>
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE WIDTH="539" >
+<TR>
+<TD WIDTH="64">PEN&nbsp;</TD>
+
+<TD WIDTH="467">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD WIDTH="64">LEVEL</TD>
+
+<TD WIDTH="467">- Level number</TD>
+</TR>
+
+<TR>
+<TD WIDTH="64">BLANK</TD>
+
+<TD WIDTH="467">- Visible (0) or invisible (1)</TD>
+</TR>
+
+<TR>
+<TD WIDTH="64">SFONT</TD>
+
+<TD WIDTH="467">- Solid boundary and dashed midcurves (0)</TD>
+</TR>
+
+<TR>
+<TD WIDTH="64">SDASHL</TD>
+
+<TD WIDTH="467">- Dashlength</TD>
+</TR>
+</TABLE>
+
+<P><B>Example</B>
+<P>sur_exdef( #2, "/usr/varkon/app/bmw/surflib/doors.VDA" , "VDA-FS" ,
+"POL_SUR", 0 ,0 ,0 ,0 ,4 );
+<P>Extracts coefficients for surface number four (4) from the VDA-FS file
+doors.VDA and creates a new surface #2.
+<P>sur_exdef( #3, "/usr/varkon/surflib/gripen/wing.F07" , "NMG_F07" , "CUB_SUR"
+);
+<P>Creates a new surface #3 defined by coefficients in file wing.F07 on
+directory /usr/varkon/surflib/gripen/.
+<BR>The format of the file is as an output file from the surface definition
+system NMG.
+<BR>&nbsp;
+<P><B>Description of data in a NMG_F07 file with coefficients for a bicubic
+surface</B>
+<P>The order of the patches:
+<P>U=0.0, V=NV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+U=NU, V=NV
+<BR>&nbsp;
+<TABLE BORDER WIDTH="90%" >
+<TR>
+<TD>Patch 19</TD>
+
+<TD>Patch 20</TD>
+
+<TD>Patch 21</TD>
+
+<TD>Patch 22</TD>
+
+<TD>Patch 23</TD>
+
+<TD>Patch 24</TD>
+</TR>
+
+<TR>
+<TD>Patch 13</TD>
+
+<TD>Patch 14</TD>
+
+<TD>Patch 15</TD>
+
+<TD>Patch 16</TD>
+
+<TD>Patch 17</TD>
+
+<TD>Patch 18</TD>
+</TR>
+
+<TR>
+<TD>Patch 7</TD>
+
+<TD>Patch 8</TD>
+
+<TD>Patch 9</TD>
+
+<TD>Patch 10</TD>
+
+<TD>Patch 11</TD>
+
+<TD>Patch 12</TD>
+</TR>
+
+<TR>
+<TD>Patch 1</TD>
+
+<TD>Patch 2</TD>
+
+<TD>Patch 3</TD>
+
+<TD>Patch 4</TD>
+
+<TD>Patch 5</TD>
+
+<TD>Patch 6</TD>
+</TR>
+</TABLE>
+
+<P>U= 0.0, V=0.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+U=NU, V=0.0
+<BR>&nbsp;
+<BR>&nbsp;
+<P>Surface data header.
+<BR>&nbsp;
+<TABLE BORDER WIDTH="90%" >
+<TR>
+<TD WIDTH="20%">
+<CENTER>Surface name</CENTER>
+</TD>
+
+<TD WIDTH="20%">
+<CENTER>Number of patches</CENTER>
+</TD>
+
+<TD WIDTH="40%">&nbsp;</TD>
+
+<TD WIDTH="20%">
+<CENTER>Line 1</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="20%">
+<CENTER>SUR/1</CENTER>
+</TD>
+
+<TD WIDTH="20%">
+<CENTER>594</CENTER>
+</TD>
+
+<TD WIDTH="40%">&nbsp;</TD>
+
+<TD WIDTH="20%">
+<CENTER>Example</CENTER>
+</TD>
+</TR>
+</TABLE>
+
+<BR>&nbsp;
+<P>Patch data header:
+<BR>&nbsp;
+<TABLE BORDER WIDTH="90%" >
+<TR>
+<TD WIDTH="6%">
+<CENTER>Fixed 0</CENTER>
+</TD>
+
+<TD WIDTH="10%">
+<CENTER>No of records</CENTER>
+</TD>
+
+<TD WIDTH="10%">
+<CENTER>Patch no.</CENTER>
+</TD>
+
+<TD WIDTH="6%">
+<CENTER>Fixed 0</CENTER>
+</TD>
+
+<TD WIDTH="10%">
+<CENTER>Surface type</CENTER>
+</TD>
+
+<TD WIDTH="6%">
+<CENTER>Fixed 0</CENTER>
+</TD>
+
+<TD WIDTH="15%">
+<CENTER>No.of U lines</CENTER>
+</TD>
+
+<TD WIDTH="15%">
+<CENTER>No.of V lines</CENTER>
+</TD>
+
+<TD WIDTH="6%">
+<CENTER>Fixed 0</CENTER>
+</TD>
+
+<TD WIDTH="16%">
+<CENTER>Line 2</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="6%">
+<CENTER>0</CENTER>
+</TD>
+
+<TD WIDTH="10%">
+<CENTER>48</CENTER>
+</TD>
+
+<TD WIDTH="10%">
+<CENTER>1</CENTER>
+</TD>
+
+<TD WIDTH="6%">
+<CENTER>0</CENTER>
+</TD>
+
+<TD WIDTH="10%">
+<CENTER>1001</CENTER>
+</TD>
+
+<TD WIDTH="6%">
+<CENTER>0</CENTER>
+</TD>
+
+<TD WIDTH="15%">
+<CENTER>34</CENTER>
+</TD>
+
+<TD WIDTH="15%">
+<CENTER>19</CENTER>
+</TD>
+
+<TD WIDTH="6%">
+<CENTER>0</CENTER>
+</TD>
+
+<TD WIDTH="16%">
+<CENTER>Example</CENTER>
+</TD>
+</TR>
+</TABLE>
+
+<BR>&nbsp;
+<P>Coefficients:
+<BR>&nbsp;
+<TABLE WIDTH="90%" >
+<CAPTION>&nbsp;</CAPTION>
+
+<TR>
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a00x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a00y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a00z</TD>
+
+<TD WIDTH="10%">
+<CENTER>1.0</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>1.0</CENTER>
+</TD>
+
+<TD WIDTH="10%"></TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a10x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a10y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a10z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>1.0</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a20x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a20y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a20z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U**2</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>1.0</CENTER>
+</TD>
+
+<TD WIDTH="10%"></TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a30x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a30y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a30z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U**3</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>1.0</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a01x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a01y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a01z</TD>
+
+<TD WIDTH="10%">
+<CENTER>1.0</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V</CENTER>
+</TD>
+
+<TD WIDTH="10%"></TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a11x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a11y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a11z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a21x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a21y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a21z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U**2</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V</CENTER>
+</TD>
+
+<TD WIDTH="10%"></TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a31x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a31y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a31z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U**3</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a02x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a02y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a02z</TD>
+
+<TD WIDTH="10%">
+<CENTER>1.0</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V**2</CENTER>
+</TD>
+
+<TD WIDTH="10%"></TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a12x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a12y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a12z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V**2</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a22x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a22y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a22z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U**2</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V**2</CENTER>
+</TD>
+
+<TD WIDTH="10%"></TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a32x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a32y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a32z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U**3</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V**2</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a03x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a03y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a03y</TD>
+
+<TD WIDTH="10%">
+<CENTER>1.0</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V**3</CENTER>
+</TD>
+
+<TD WIDTH="10%"></TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a13x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a13y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a13z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V**3</CENTER>
+</TD>
+</TR>
+
+<TR>
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a23x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a23y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a23z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U**2</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V**3</CENTER>
+</TD>
+
+<TD WIDTH="10%"></TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a33x</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a33y</TD>
+
+<TD WIDTH="7%" BGCOLOR="#C0C0C0">a33z</TD>
+
+<TD WIDTH="10%">
+<CENTER>U**3</CENTER>
+</TD>
+
+<TD WIDTH="3%">*</TD>
+
+<TD WIDTH="10%">
+<CENTER>V**3</CENTER>
+</TD>
+</TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<HR width="100%" align="center">
+<BR>&nbsp;
+<P><BR>
+<CENTER>
+
+
+
+<BR>&nbsp;
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

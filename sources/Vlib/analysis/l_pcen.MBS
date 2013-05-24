@@ -1,0 +1,37 @@
+!
+!***Denna modul skalar bilden p} bildsk{rmen till
+!***skalan 1.0 och flyttar bilden s} att nedre v{nstra
+!***h|rnet hamnar i modellens origo. Konstanterna size_x
+!***och size_y {r bildsk{rmens storlek i millimeter.
+!***Detta {r olika f|r olika terminaler.
+!
+  basic geometry module l_pcen();
+
+!  CONSTANT FLOAT size_x = 370.0;  ! 20 tums Pericom
+!  CONSTANT FLOAT size_y = 280.0;  ! 20 tums Pericom
+
+!  CONSTANT FLOAT size_x = 260.0;  ! 15 tums Pericom
+!  CONSTANT FLOAT size_y = 192.0;  ! 15 tums Pericom
+
+  CONSTANT FLOAT size_x = 200.0;  ! ABC1600
+  CONSTANT FLOAT size_y = 229.0;  ! ABC1600
+
+  beginmodule
+
+!
+!***S{tt skalan i aktiv vy till 1.0
+!
+   scl_view(act_vnam(),1.0);
+!
+!***Flytta punkten size_x/2 och size_y/2 till mitten
+!***p} sk{rmen. Detta medf|r att punkten 0,0 hamnar
+!***exakt i sk{rmens nedre v{nstra h|rn.
+!
+   cen_view(act_vnam(),vec(size_x/2,size_y/2));
+!
+!***Rita om sk{rmen.
+!
+   rep_view();
+
+  endmodule
+

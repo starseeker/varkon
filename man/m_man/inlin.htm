@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>inlin </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>inlin - <small><small>Function</small></small></h2>
+  <p>Reads a line of text<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads characters from the current position of a text file until end of line is found. The
+  end of line character itself is read but not appended to the string returned by inlin().
+  The new current position is set to the first character after the end of the line. <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  inlin(f)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 39 Row 01 -->
+    <tr>
+      <td width="48">FILE</td>
+      <td width="611">f;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 40 Row 01 -->
+    <tr>
+      <td width="38">f</td>
+      <td width="621">- The name of a filevariable accociated with a file open for read or
+      update (R or U)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  None.<br>
+  <br>
+  <b>Return value<br>
+  </b><br>
+  A STRING containing the characters read. If the line is longer than 132 characters the
+  entire line is read but the result truncated to 132 characters by inlin().<br>
+  <br>
+  <b>Errors<br>
+  </b><br>
+  See the iostat() function for proper error handling.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  End of line is the linfeed character ASCII 10 in a UNIX textfile but the combination of
+  linefeed and carriage return in Microsoft Windows, ASCII 10 + ASCII 13. This may cause
+  problems if you try to read a textfile created by Windows95/NT with a VARKON system
+  running under UNIX. The UNIX command tr -d '\r' can be used to strip the extra carriage
+  return characters from a Windows text file. <br>
+  </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="fileindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

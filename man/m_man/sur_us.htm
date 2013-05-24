@@ -1,0 +1,641 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_usrdef </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <b><h2>sur_usrdef - <small><small>Geometric procedure</small></small></h2>
+  <p></b>Creates a surface<b><br>
+  <br>
+  </b><strong>Description</strong><u><b><b><br>
+  </b></u><br>
+  </b>A low level routine for the definition of a surface.<b> <br>
+  <br>
+  </b>Input data is given as attributes to three parts. <br>
+  <br>
+  The attributes to the first part are surface header data. Ex: Number of patches<br>
+  The attributes to the second part are topolological data Ex: Type of patch<br>
+  The attributes to the third part are geometrical patch data. Ex: Bezier polygon points<b><br>
+  <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  </b>SUR_USRDEF (sur_id, tree_id, head_name, top_name, geo_name );<b><br>
+  <br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 01 Row 01 -->
+    <tr>
+      </b><td width="91">REF</td>
+      <td width="549">sur_id;</td>
+      <b>
+    </tr>
+<!-- Table 01 Row 02 -->
+    <tr>
+      </b><td width="91">REF</td>
+      <td width="549">tree_id;</td>
+      <b>
+    </tr>
+<!-- Table 01 Row 03 -->
+    <tr>
+      </b><td width="91">STRING</td>
+      <td width="549">head_name;</td>
+      <b>
+    </tr>
+<!-- Table 01 Row 04 -->
+    <tr>
+      </b><td width="91">STRING</td>
+      <td width="549">top_name</td>
+      <b>
+    </tr>
+<!-- Table 01 Row 05 -->
+    <tr>
+      </b><td width="91">STRING</td>
+      <td width="549">geo_name</td>
+      <b>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<u><br>
+  </b></u><br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 02 Row 01 -->
+    <tr>
+      </b><td width="83">sur_id </td>
+      <td width="557">- Local identity</td>
+      <b>
+    </tr>
+<!-- Table 02 Row 02 -->
+    <tr>
+      </b><td width="83">tree_id</td>
+      <td width="557">- Sub-tree (part) with input data. Whole active module for #0</td>
+      <b>
+    </tr>
+<!-- Table 02 Row 03 -->
+    <tr>
+      </b><td width="83">head_name</td>
+      <td width="557">- Name of part with header data as attributes</td>
+      <b>
+    </tr>
+<!-- Table 02 Row 04 -->
+    <tr>
+      </b><td width="83">top_name</td>
+      <td width="557">- Name of part with topological data as attributes</td>
+      <b>
+    </tr>
+<!-- Table 02 Row 05 -->
+    <tr>
+      </b><td width="83">geo_name</td>
+      <td width="557">- Name of part with geometrical data as attributes</td>
+      <b>
+    </tr>
+  </table>
+  <p><br>
+  </b>The header, topological and geometric data shall be &quot;registered&quot; as parts
+  with names head_name, top_name and geo_name. The attributes will be different for
+  different surface and patch types. <br>
+  <br>
+  head_name ( head_id, npatu, npatv, sur_type);<b><br>
+  <br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 03 Row 01 -->
+    <tr>
+      <td width="68"></b>REF</td>
+      <td width="81">head_id;</td>
+      <td width="487">- Local identity</td>
+    </tr>
+<!-- Table 03 Row 02 -->
+    <tr>
+      <td width="68">INT</td>
+      <td width="81">npatu;</td>
+      <td width="487">- Number of patches in U direction</td>
+    </tr>
+<!-- Table 03 Row 03 -->
+    <tr>
+      <td width="68">INT</td>
+      <td width="81">npatv;</td>
+      <td width="487">- Number of patches in V direction </td>
+    </tr>
+<!-- Table 03 Row 04 -->
+    <tr>
+      <td width="68">INT</td>
+      <td width="81">sur_type;</td>
+      <td width="487">- Surface type (CUB_SUR, LFT_SUR, NURBS, ..... )</td>
+    </tr>
+  </table>
+  <p><br>
+  top_name(top_id, t_case, iu, iv, pat_typ, us, ue, vs, ve );<b><br>
+  <br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 04 Row 01 -->
+    <tr>
+      <td width="68"></b>REF</td>
+      <td width="80">top_id;</td>
+      <td width="488">- Local identity</td>
+    </tr>
+<!-- Table 04 Row 02 -->
+    <tr>
+      <td width="68">INT</td>
+      <td width="80">t_case;</td>
+      <td width="488">- Case Eq. 1: iu and iv is defined</td>
+    </tr>
+  </table>
+  <p>Eq. 2: pat_type also defined<br>
+  Eq. 3: us, ue, vs, ve also defined&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;&nbsp;<br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 05 Row 01 -->
+    <tr>
+      </b><td width="68">INT</td>
+      <td width="79">iu;</td>
+      <td width="489">- Patch address in U direction (iu= 1, 2, 3, ....., or npatu) </td>
+      <b>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      </b><td width="68">INT</td>
+      <td width="79">iv;</td>
+      <td width="489">- Patch address in V direction (iv= 1, 2, 3, ....., or npatv)</td>
+      <b>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<u><br>
+  </b></u><br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td width="68"></b>INT</td>
+      <td width="78">pat_type;</td>
+      <td width="490">- Patch type</td>
+    </tr>
+<!-- Table 06 Row 02 -->
+    <tr>
+      <td width="68">FLOAT</td>
+      <td width="78">us;</td>
+      <td width="490">- Start local U value</td>
+    </tr>
+<!-- Table 06 Row 03 -->
+    <tr>
+      <td width="68">FLOAT</td>
+      <td width="78">uv;</td>
+      <td width="490">- End local U value </td>
+    </tr>
+<!-- Table 06 Row 04 -->
+    <tr>
+      <td width="68">FLOAT</td>
+      <td width="78">vs;</td>
+      <td width="490">- Start local V value</td>
+    </tr>
+<!-- Table 06 Row 05 -->
+    <tr>
+      <td width="68">FLOAT</td>
+      <td width="78">ve;</td>
+      <td width="490">- End local V value</td>
+    </tr>
+  </table>
+  <p><br>
+  <br>
+  geo_name ( geo_id, g_case, iu, iv, pat_type, <br>
+  g_case= 1: a00, a01, a02, a03, a10, a11, a12, a13, a20, a21, a22, a23, a30, a31, a32,
+  a33);<br>
+  g_case= 2: r00, r10, r01, r11, tu00, tu10, tu01, tu11, tv00, tv10, tv01, tv11, tw00, tw10,
+  tw01, tw11);<br>
+  g_case=3: ............. Bezier (not yet implemented ......<b><br>
+  <br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 07 Row 01 -->
+    <tr>
+      </b><td width="67">REF</td>
+      <td width="79">geo_id;</td>
+      <td width="490">- Local identity</td>
+      <b>
+    </tr>
+<!-- Table 07 Row 02 -->
+    <tr>
+      </b><td width="67">INT</td>
+      <td width="79">g_case;</td>
+      <td width="490">- Input format </td>
+      <b>
+    </tr>
+    <tr>
+      </b><td width="67"></td>
+      <td width="79"></td>
+      <td width="490">&nbsp;&nbsp; g_case= 1 for pat_type CUB_PAT: Algebraic format</td>
+      <b>
+    </tr>
+    <tr>
+      </b><td width="67"></td>
+      <td width="79"></td>
+      <td width="490">&nbsp;&nbsp; g_case= 2 for pat_type CUB_PAT: Geometric format</td>
+      <b>
+    </tr>
+    <tr>
+      </b><td width="67"></td>
+      <td width="79"></td>
+      <td width="490">&nbsp;&nbsp; g_case= 3 for pat_type CUB_PAT: Bezier format</td>
+      <b>
+    </tr>
+<!-- Table 08 Row 01 -->
+    <tr>
+      </b><td width="67">INT</td>
+      <td width="78">iu;</td>
+      <td width="491">- Patch address in U direction </td>
+      <b>
+    </tr>
+<!-- Table 08 Row 02 -->
+    <tr>
+      </b><td width="67">INT</td>
+      <td width="78">i_v;</td>
+      <td width="491">- Patch address in V direction</td>
+      <b>
+    </tr>
+<!-- Table 08 Row 03 -->
+    <tr>
+      </b><td width="67">INT</td>
+      <td width="78">pat_type;</td>
+      <td width="491">- Patch type</td>
+      <b>
+    </tr>
+<!-- Table 08 Row 04 -->
+    <tr>
+      <td width="67"></td>
+      <td width="78"></td>
+      <td width="491"></td>
+    </tr>
+  </table>
+  <p><br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 09 Row 01 -->
+    <tr>
+      <td width="83"></td>
+      <td width="63"></td>
+      <td width="207"></td>
+    </tr>
+<!-- Table 09 Row 02 -->
+    <tr>
+      </b><td width="83"></td>
+      <td width="63"></td>
+      <td width="207">CUB_SUR algebraic format</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 03 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a00;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( 1.0 * 1.0 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 04 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a01;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( 1.0 * V )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 05 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a02;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( 1.0 * V**2 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 06 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a03;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( 1.0 * V**3 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 07 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a10;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U * 1.0 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 08 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a11;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U * V )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 09 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a12;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U * V**2 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 10 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a13;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U * V**3 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 11 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a20;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U**2 * 1.0 ) </td>
+      <b>
+    </tr>
+<!-- Table 09 Row 12 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a21;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U**2 * V )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 13 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a22</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U**2 * V**2 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 14 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a23;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U**2 * V**3 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 15 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a30;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U**3 * 1.0 ) </td>
+      <b>
+    </tr>
+<!-- Table 09 Row 16 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a31;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U**3 * V )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 17 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a32;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U**3 * V**2 )</td>
+      <b>
+    </tr>
+<!-- Table 09 Row 18 -->
+    <tr>
+      </b><td width="83">VECTOR</td>
+      <td width="63">a33;</td>
+      <td width="207">- Coefficient for</td>
+      <td width="279">( U**3 * V**3 )</td>
+      <b>
+    </tr>
+  </table>
+  <p><br>
+  <br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 10 Row 01 -->
+    <tr>
+      </b><td width="82"></td>
+      <td width="63"></td>
+      <td width="208"></td>
+      <b>
+    </tr>
+<!-- Table 10 Row 02 -->
+    <tr>
+      </b><td width="82"></td>
+      <td width="63"></td>
+      <td width="208">CUB_SUR geometric format</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 03 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">r00;</td>
+      <td width="208">- Corner point </td>
+      <td width="279">u= 0.0 v= 0.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 04 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">r10;</td>
+      <td width="208">- Corner point</td>
+      <td width="279">u= 1.0 v= 0.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 05 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">r01;</td>
+      <td width="208">- Corner point</td>
+      <td width="279">u= 0.0 v= 1.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 06 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">r11;</td>
+      <td width="208">- Corner point</td>
+      <td width="279">u= 1.0 v= 1.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 07 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tu00;</td>
+      <td width="208">- U tangent</td>
+      <td width="279">u= 0.0 v= 0.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 08 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tu10;</td>
+      <td width="208">- U tangent</td>
+      <td width="279">u= 1.0 v= 0.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 09 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tu01;</td>
+      <td width="208">- U tangent</td>
+      <td width="279">u= 0.0 v= 1.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 10 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tu11;</td>
+      <td width="208">- U tangent</td>
+      <td width="279">u= 1.0 v= 1.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 11 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tv00;</td>
+      <td width="208">- V tangent</td>
+      <td width="279">u= 0.0 v= 0.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 12 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tv10;</td>
+      <td width="208">- V tangent</td>
+      <td width="279">u= 1.0 v= 0.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 13 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tv01</td>
+      <td width="208">- V tangent</td>
+      <td width="279">u= 0.0 v= 1.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 14 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tv11;</td>
+      <td width="208">- V tangent</td>
+      <td width="279">u= 1.0 v= 1.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 15 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tw00;</td>
+      <td width="208">- Twist vector</td>
+      <td width="279">u= 0.0 v= 0.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 16 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tw10;</td>
+      <td width="208">- Twist vector</td>
+      <td width="279">u= 1.0 v= 0.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 17 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tw01;</td>
+      <td width="208">- Twist vector</td>
+      <td width="279">u= 0.0 v= 1.0</td>
+      <b>
+    </tr>
+<!-- Table 10 Row 18 -->
+    <tr>
+      </b><td width="82">VECTOR</td>
+      <td width="63">tw11;</td>
+      <td width="208">- Twist vector</td>
+      <td width="279">u= 1.0 v= 1.0</td>
+      <b>
+    </tr>
+  </table>
+  <p><br>
+  <br>
+  <b>Attributes<u><br>
+  </b></u><br>
+  </p>
+  <table width="648" border="0">
+<!-- Table 11 Row 01 -->
+    <tr>
+      </b><td width="72">PEN </td>
+      <td width="568">- Pen or colour number</td>
+      <b>
+    </tr>
+<!-- Table 11 Row 02 -->
+    <tr>
+      </b><td width="72">LEVEL</td>
+      <td width="568">- Level number</td>
+      <b>
+    </tr>
+<!-- Table 11 Row 03 -->
+    <tr>
+      </b><td width="72">BLANK</td>
+      <td width="568">- Visible(0) or invisible(1)</td>
+      <b>
+    </tr>
+  </table>
+  <p><br>
+  <b><u>Example</u></b><br>
+  <br>
+  </b>! Module for the creation of a CUB_SUR surface with one planar patch<br>
+  <br>
+  ! Header data npatu=1, npatv= 1, sur_type= 1<br>
+  PART(#2, reghead ( 1, 1, 1 ));<br>
+  <br>
+  ! Topological data t_case=1 , iu= 1, iv=1<br>
+  PART (#3, regtop ( 1, 1, 1 ));<br>
+  <br>
+  ! Points and vectors for surface<br>
+  r00 := VEC(0,0,0);<br>
+  r10 := VEC(100,100,0);<br>
+  r01 := ....<br>
+  tu00 := r10 - r00;<b><br>
+  .<br>
+  .<br>
+  </b><br>
+  ! Geometrical data g_case= 2, iu= 1, iu=1, pat_type= 1<br>
+  PART(#4, regcub ( 2, 1, 1, 1, <br>
+  r00, r10, r01, r11, tu00, tu10, tu01, tu11, tv00, tv10, tv01, tv11, tw00, tw10, tw01,
+  tw11));<br>
+  <br>
+  ! Create surface<br>
+  SUR_USRDEF(#1, &quot;reghead&quot;, &quot;regtop&quot;, &quot;regcub&quot; );<b></p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div></b>
+</body>
+</html>

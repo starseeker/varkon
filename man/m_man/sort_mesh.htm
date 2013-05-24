@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>getcurh</title>
+  <meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+<body bgcolor="#99ccff">
+<p align="center"><small>VARKON Version 1.18 2004-08-03<br>
+</small></p>
+<hr width="100%" align="center">
+<blockquote>
+  <h2>sort_mesh - <small><small>Procedure</small></small></h2>
+  <p>Sort mesh faces<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+Returns an array of indexes to mesh faces sorted with respect to their
+largest X, Y or Z-coordinate. The three vertices of each face are
+compared to find the vertex with the largest coordinate. These vertices
+are then sorted in increasing order and the indexes of their faces
+returned. For each face it's max and min coordinate is also computed.
+Sorting and max/min calculation is done relative to theVARKON&nbsp;
+BASIC coordinate system.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+getvertex(id, dir, facelist, min, max)<br>
+  <br>
+  </p>
+  <table width="666" border="0">
+<!-- Table 19 Row 01 --> <tbody>
+      <tr>
+        <td width="66">REF</td>
+        <td width="592">id;</td>
+      </tr>
+<!-- Table 19 Row 02 --> <tr>
+        <td width="66">STRING<br>
+        </td>
+        <td width="592">dir;<br>
+        </td>
+      </tr>
+<!-- Table 19 Row 03 --><!-- Table 19 Row 04 --><!-- Table 19 Row 05 -->
+      <tr>
+        <td width="66">INT<br>
+        </td>
+        <td width="592">facelist(n_faces);</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">FLOAT<br>
+        </td>
+        <td style="vertical-align: top;">min(n_faces);<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">FLOAT<br>
+        </td>
+        <td style="vertical-align: top;">max(n_faces);<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="666" border="0">
+<!-- Table 20 Row 01 --> <tbody>
+      <tr>
+        <td width="56">id</td>
+        <td width="602">- Global identity of a mesh<br>
+        </td>
+      </tr>
+<!-- Table 20 Row 02 --> <tr>
+        <td width="56">dir<br>
+        </td>
+        <td width="602">- "X", "Y" or "Z"<br>
+        </td>
+      </tr>
+<!-- Table 20 Row 03 --> <tr>
+        <td width="56">facelist<br>
+        </td>
+        <td width="602">- Array of integers to recieve the indexes of
+the faces sorted<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">min<br>
+        </td>
+        <td style="vertical-align: top;">- Array of floats to recieve
+the min values<br>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">max<br>
+        </td>
+        <td style="vertical-align: top;">- Array of floats to recieve
+the max values</td>
+      </tr>
+<!-- Table 20 Row 04 --><!-- Table 20 Row 05 -->
+    </tbody>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 21 Row 01 --> <tbody>
+      <tr>
+        <td>None.</td>
+        <td><br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+<hr width="100%" align="center">
+<p></p>
+<div align="center">
+<center>
+<table align="center" cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="gmdbindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</div>
+</body>
+</html>

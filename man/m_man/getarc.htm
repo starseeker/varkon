@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>getarc </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>getarc - <small><small>Procedure</small></small></h2>
+  <p>Get arc from GM<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads arc data from GM. In the case of a 3D arc getarc also returns 1, 2, 3 or 4 arc
+  segments.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  getarc(id, font, dl, p, r, start, end, nseg, segdata)<br>
+  <br>
+  </p>
+  <table width="666" border="0">
+<!-- Table 16 Row 01 -->
+    <tr>
+      <td width="78">REF</td>
+      <td width="580">id;</td>
+    </tr>
+<!-- Table 16 Row 02 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="580">font;</td>
+    </tr>
+<!-- Table 16 Row 03 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="580">dl;</td>
+    </tr>
+<!-- Table 16 Row 04 -->
+    <tr>
+      <td width="78">VECTOR</td>
+      <td width="580">p;</td>
+    </tr>
+<!-- Table 16 Row 05 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="580">r;</td>
+    </tr>
+<!-- Table 16 Row 06 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="580">start;</td>
+    </tr>
+<!-- Table 16 Row 07 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="580">end;</td>
+    </tr>
+<!-- Table 16 Row 08 -->
+    <tr>
+      <td width="78">INT</td>
+      <td width="580">nseg;</td>
+    </tr>
+<!-- Table 16 Row 09 -->
+    <tr>
+      <td width="78">FLOAT</td>
+      <td width="580">segdata(4,4,4);</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="666" border="0">
+<!-- Table 17 Row 01 -->
+    <tr>
+      <td width="68">id</td>
+      <td width="590">- Global identity of an arc</td>
+    </tr>
+<!-- Table 17 Row 02 -->
+    <tr>
+      <td width="68">font</td>
+      <td width="590">- 0 = Solid, 1 = Dashed, 2 = Centerline</td>
+    </tr>
+<!-- Table 17 Row 03 -->
+    <tr>
+      <td width="68">dl</td>
+      <td width="590">- Dashlength if font = 1 or 2</td>
+    </tr>
+<!-- Table 17 Row 04 -->
+    <tr>
+      <td width="68">p</td>
+      <td width="590">- Coordinates of arc center</td>
+    </tr>
+<!-- Table 17 Row 05 -->
+    <tr>
+      <td width="68">r</td>
+      <td width="590">- Arc radius</td>
+    </tr>
+<!-- Table 17 Row 06 -->
+    <tr>
+      <td width="68">start</td>
+      <td width="590">- Start angle</td>
+    </tr>
+<!-- Table 17 Row 07 -->
+    <tr>
+      <td width="68">end</td>
+      <td width="590">- End angle</td>
+    </tr>
+<!-- Table 17 Row 08 -->
+    <tr>
+      <td width="68">nseg</td>
+      <td width="590">- Number of segments. For a 2D arc ns = 0.</td>
+    </tr>
+<!-- Table 17 Row 09 -->
+    <tr>
+      <td width="68">segdata</td>
+      <td width="590">- nseg 4 by 4 matrixes with polynomial segment coefficients</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 18 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments<br>
+  </b><br>
+  Each segment is a rational cubic with 0 to 1 parametrisation and the coefficients ordered
+  as follows:<br>
+  <br>
+  k0x k0y k0z k0w<br>
+  k1x k1y k1z k1w<br>
+  k2x k2y k2z k2w<br>
+  k3x k3y k3z k3w<br>
+  <br>
+  Se for example Faux and Pratt, &quot;Computational Geometry for design and
+  manufacture&quot;, page 144 for a further discussion on rational cubic parametric
+  segments.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="gmdbindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

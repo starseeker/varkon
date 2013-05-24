@@ -1,0 +1,87 @@
+!*******************************************************
+
+  GLOBAL DRAWING MODULE dxf_arc2(
+  VAR FILE   infil;
+  INT        levlim;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  FLOAT      s;
+  VAR INT    narc);
+
+!*      Läser ARC/CIRCLE i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*      1998-03-27 v2 <= 0, J.Kjellander
+!*      1999-06-14 Linewidth, J.Kjellander
+!*
+!*******************************************************
+
+ CONSTANT FLOAT ATOL=0.0001; ! Motsvarar TOL1 i geo300()
+
+ STRING rad*132;
+ INT    kod,pn,lev;
+ VECTOR p;
+ FLOAT  v1,v2,r,wdt;
+
+ BEGINMODULE
+
+!*
+!***Arc.
+!*
+    p:=vec(0,0);
+    v1:=0; v2:=360;
+    set(AFONT=0,ADASHL=3);
+
+loop:
+    kod:=inint(infil); rad:=inlin(infil);
+
+    if kod = 8 then                         ! Nivånamn
+      part(#11,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+      if levlim > -1 and lev <> levlim then
+        exit();
+      else
+        set(LEVEL=lev);
+      endif;
+    elif kod = 62 then                      ! Pennummer
+      pn:=inint(infil); rad:=inlin(infil);
+      if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+    elif kod = 39 then
+      wdt:=inflt(infil); rad:=inlin(infil); ! Linewidth
+      set(WIDTH=wdt);
+    elif kod = 6 then                       ! Linjetyp
+      rad:=instr(infil,3);
+      if   rad="DSH" then set(AFONT=1,ADASHL=s*inflt(infil));
+      elif rad="CEN" then set(AFONT=2,ADASHL=s*inflt(infil)); endif;
+      rad:=inlin(infil);
+    elif kod = 10 then                      ! X-koordinat
+      p.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 20 then                      ! Y-koordinat
+      p.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 30 then                      ! Z-koordinat
+      p.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 40 then                      ! Radie
+      r:=inflt(infil); rad:=inlin(infil);
+    elif kod = 50 then                      ! V1
+      v1:=inflt(infil); rad:=inlin(infil);
+    elif kod = 51 then                      ! V2
+      v2:=inflt(infil); rad:=inlin(infil);
+    elif kod = 0 then                       ! Slut
+      if v1 < 0 then v1:=v1+360; endif;
+      if v2 < ATOL then v2:=v2+360; endif;
+      if s*r > ATOL  and  abs(v2-v1) > ATOL then
+        arc_1pos(#40,s*p,s*r,v1,v2:SAVE=1);
+        narc:=narc+1;
+!        if narc > 32000 then exit("Too many ARC/CIRCLE entities !"); endif;
+      endif;
+      exit();
+    else                                    ! Okänt
+      rad:=inlin(infil);
+    endif;
+
+    goto loop;
+
+ ENDMODULE
+
+!*******************************************************

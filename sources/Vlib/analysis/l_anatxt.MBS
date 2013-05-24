@@ -1,0 +1,57 @@
+!*******************************************************
+
+ macro module l_anatxt(REF id);
+
+!*      Skriver ut specifika data för en text.
+!*
+!*      In: id = Textens identitet.
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 8/10/86 R. Svedin
+!*
+!*      28/12/86   Globala ref, J. Kjellander
+!*      1996-06-04 Engelska, J.Kjellander
+!*      1998-01-01, J.Kjellander
+!*
+!*******************************************************
+
+   VECTOR pos;
+   INT    f;
+   FLOAT  w,h,b,l,v;
+   STRING tstr*70;
+
+ beginmodule
+
+   gettxt(global_ref(id,2),pos,f,h,b,l,v,tstr);
+   w:=getwidth(global_ref(id,2));
+
+   lst_lin(get_tstr(1505) + tstr);
+   ! t1505 = "Text       : "
+
+   lst_lin("");
+   lst_lin(get_tstr(1500) + str(f,-1,0));
+   ! t1500 = "Font       : "
+
+   lst_lin(get_tstr(1501) + str(h,-12,6));
+   ! t1501 = "Höjd       : "
+
+   lst_lin(get_tstr(1502) + str(b,-12,6));
+   ! t1502 = "Bredd      : "
+
+   lst_lin(get_tstr(1503) + str(l,-12,6));
+   ! t1503 = "Lutning    : "
+
+   lst_lin(get_tstr(1504) + str(v,-12,6));
+   ! t1504 = "Riktning   : "
+
+   lst_lin(get_tstr(1621) + str(w,-12,5));   ! t1621 = "Linjebredd      : "
+
+   lst_lin("");
+   lst_lin(get_tstr(314) + str(pos.x,-12,6));       ! X
+   lst_lin(get_tstr(315) + str(pos.y,-12,6));       ! Y
+   lst_lin(get_tstr(316) + str(pos.z,-12,6));       ! Z
+
+ endmodule
+
+!*******************************************************

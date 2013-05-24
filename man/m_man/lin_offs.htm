@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>lin_offs </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-12-29</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>lin_offs -<FONT SIZE=+0> Geometric procedure</FONT></H2>
+
+<P>Creates a line<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Creates a line parallel (offset) to another line at a given constant
+distance. The new line gets the same length as the original line. What
+side of the old line the new line will use depends on the sign of the dist
+parameter, see below. The right side is what you would see to your right
+if you were standing in the beginning of the original line looking along
+in its sense of direction.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>lin_offs(id, ref, dist:attributes);<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="618" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="65">REF</TD>
+
+<TD width="545">id;</TD>
+</TR>
+
+<TR>
+<TD width="65">REF</TD>
+
+<TD width="545">ref;</TD>
+</TR>
+
+<TR>
+<TD width="65">FLOAT</TD>
+
+<TD width="545">dist;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="618" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="55">id </TD>
+
+<TD width="555">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="55">ref</TD>
+
+<TD width="555">- Identity of original line</TD>
+</TR>
+
+<TR>
+<TD width="55">dist</TD>
+
+<TD width="555">- Parallell distance, positiv value =&gt;right side, neg.
+value =&gt;left side</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="95%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD>None.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Attributes</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="618" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="58">PEN </TD>
+
+<TD width="552">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="58">LEVEL</TD>
+
+<TD width="552">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="58">BLANK</TD>
+
+<TD width="552">- Visible(0) or invisible(1)</TD>
+</TR>
+
+<TR>
+<TD width="58">LFONT</TD>
+
+<TD width="552">- Solid(0), dashed(1) or centerline(2)</TD>
+</TR>
+
+<TR>
+<TD width="58">LDAHL</TD>
+
+<TD width="552">- Dashlength</TD>
+</TR>
+
+<TR>
+<TD>WIDTH</TD>
+
+<TD>- Linewidth</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Examples<BR>
+<BR>
+</B>lin_offs(#5,#3,-75);<BR>
+<BR>
+Creates a new line #5 parallel to an old line #3 at the parallell distance
+of 75. The minus sign on 75 indicates that the new line is located on the
+left side of the old line instead of the right side.<BR>
+<BR>
+<B>Comment<BR>
+<BR>
+</B>In a 3D module the resulting line is restricted to the XY-plane of
+the active coordinate system. If the original line is not in the active
+XY-plane then a temporary copy projected along the Z-axis onto the active
+XY-plane is used instead.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+   <TITLE>Built in functions</TITLE>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><FONT SIZE=-1>VARKON Version 1.17 1999-02-02</FONT></CENTER>
+
+<P>
+<HR width="100%" align="center">
+<UL>
+<H3>
+Interactive MBS-functions</H3>
+VARKON also includes a number of functions written in MBS. For the end
+user of a VARKON application it is probably of no interest to know weather
+a function is written in C or MBS but for those who develop applications
+it can be important since the calling convention is different. Here are
+the major modules in the VARKON system library $VARKON_LIB.
+<BR>&nbsp;
+<TABLE BORDER WIDTH="65%" >
+<TR>
+<TD WIDTH="116"><B>Name</B></TD>
+
+<TD WIDTH="568"><B>Description</B></TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">p_plott</TD>
+
+<TD WIDTH="568">Setup and start a plot on a plotter</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">p_autop</TD>
+
+<TD WIDTH="568">Autoplot</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">p_pwin</TD>
+
+<TD WIDTH="568">Plot window</TD>
+</TR>
+
+<TR>
+<TD>ed_hk</TD>
+
+<TD>Edit entity</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">ma_texth</TD>
+
+<TD WIDTH="568">Create text right justified</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">ma_textc</TD>
+
+<TD WIDTH="568">Create text centered</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">ma_text2</TD>
+
+<TD WIDTH="568">Create text between 2 positions</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">dxf_2D</TD>
+
+<TD WIDTH="568">Reads a 2D DXF file</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">dxf_3D</TD>
+
+<TD WIDTH="568">Reads a 3D DXF file</TD>
+</TR>
+
+<TR>
+<TD>stl_txt</TD>
+
+<TD>Reads text formatted STL file</TD>
+</TR>
+
+<TR>
+<TD>stl_bin</TD>
+
+<TD>Reads binary formatted STL file</TD>
+</TR>
+
+<TR>
+<TD>stl_out</TD>
+
+<TD>Creates STL file</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_formel</TD>
+
+<TD WIDTH="568">Evaluate mathematical expression</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_anhk</TD>
+
+<TD WIDTH="568">Analyse single entity</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_anavst</TD>
+
+<TD WIDTH="568">Analyse distance</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_anvink</TD>
+
+<TD WIDTH="568">Analyse angle</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_area</TD>
+
+<TD WIDTH="568">Analyse 2D area</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_cgrav</TD>
+
+<TD WIDTH="568">Analyse 2D center of gravity</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_sysdat</TD>
+
+<TD WIDTH="568">Lists various system info</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_stjobb</TD>
+
+<TD WIDTH="568">List current jobstatus</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_stgrafv</TD>
+
+<TD WIDTH="568">List current graphics parameters</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_stattr</TD>
+
+<TD WIDTH="568">List currently active attributes</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_anaprt</TD>
+
+<TD WIDTH="568">Analyse single part</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_akedja</TD>
+
+<TD WIDTH="568">Analyse call chain</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_annapa</TD>
+
+<TD WIDTH="568">List members in part</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_lisp</TD>
+
+<TD WIDTH="568">List parts</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_anastr</TD>
+
+<TD WIDTH="568">Create structure tree</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_ligm</TD>
+
+<TD WIDTH="568">List entities</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_annagr</TD>
+
+<TD WIDTH="568">List members in group</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_anligr</TD>
+
+<TD WIDTH="568">List groups</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_anlgd</TD>
+
+<TD WIDTH="568">Analyse curve length</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_antang</TD>
+
+<TD WIDTH="568">Analyse tangent</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_annorm</TD>
+
+<TD WIDTH="568">Analyse normal</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_anbino</TD>
+
+<TD WIDTH="568">Analyse binormal</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_ankrok</TD>
+
+<TD WIDTH="568">Analyse curvature</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_invon</TD>
+
+<TD WIDTH="568">Analyse inverse position</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_invtang</TD>
+
+<TD WIDTH="568">Analyse inverse tangent</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_invcur</TD>
+
+<TD WIDTH="568">Analyse inverse curvature</TD>
+</TR>
+
+<TR>
+<TD WIDTH="116">l_inval</TD>
+
+<TD WIDTH="568">Analyse inverse arc length</TD>
+</TR>
+</TABLE>
+</UL>
+
+<HR width="100%" align="center">
+<CENTER>
+
+
+
+<BR>&nbsp;
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

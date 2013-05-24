@@ -1,0 +1,25 @@
+##########################################################
+#
+#   Makefile for EXlib on IBM workstations with AIX
+#
+#  (C)Microform AB 1999-11-04 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = cc
+
+CFLAGS =                    \
+         -qlanglvl=ansi     \
+         -qchars=signed     \
+         -O                 \
+         -DUNIX             \
+         -DV3_X11           \
+         -DWRK_STAT
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.EX
+
+##########################################################

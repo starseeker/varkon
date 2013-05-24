@@ -1,0 +1,160 @@
+!*******************************************************
+
+  GLOBAL DRAWING MODULE dxf_ply(
+  VAR FILE   infil;
+  INT        levlim;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  FLOAT      s;
+  VAR INT    npll,npla,nply);
+
+!*      Läser POLYLINE + VERTEX i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*      1998-01-13, J.Kjellander
+!*
+!*******************************************************
+
+ CONSTANT INT TRUE=1, FALSE=0;
+
+ CONSTANT FLOAT LTOL=0.001;     ! TOL2 i geo200()
+ CONSTANT FLOAT ATOL=0.0001;    ! TOL1 i geo300()
+
+ STRING rad*132;
+ INT    kod,pn,lev,bitkod,fstend,nv,slutflg;
+ REF    fstid;
+ VECTOR p1,p2,p3,p4;
+ FLOAT  r,bukt0,bukt1,bukt2;
+
+ BEGINMODULE
+
+!*
+!***Polyline.
+!*
+    set(LFONT=0); nv:=0; slutflg:=FALSE;
+    bukt0:=0; bukt1:=0; bukt2:=0;
+
+plyloop:
+    kod:=inint(infil); rad:=inlin(infil);
+    if kod = 8 then                        ! Nivånamn
+      part(#11,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+      if levlim > -1 and lev <> levlim then
+        exit();
+      else
+        set(LEVEL=lev);
+      endif;
+      goto plyloop;
+    elif kod = 62 then                      ! Pennummer
+      pn:=inint(infil); rad:=inlin(infil);
+      if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+      goto plyloop;
+    elif kod = 70 then                      ! Bitkod
+      bitkod:=inint(infil); rad:=inlin(infil);
+      if bitkod = 1 then slutflg:=TRUE; endif;
+      goto plyloop;
+    elif kod <> 0 then                      ! Okänt
+      rad:=inlin(infil);
+      goto plyloop;
+    endif;
+!*
+!***Vertex
+!*
+vrtlop1:
+    rad:=inlin(infil);
+!*
+!***VERTEX.
+!*
+    if rad = "VERTEX" then
+    bukt2:=0;
+vrtlop2:
+      kod:=inint(infil); rad:=inlin(infil);
+      if kod = 10 then                        ! X-koordinat
+        p2.x:=s*inflt(infil); rad:=inlin(infil);
+        goto vrtlop2;
+      elif kod = 20 then                      ! Y-koordinat
+        p2.y:=s*inflt(infil); rad:=inlin(infil);
+        goto vrtlop2;
+      elif kod = 42 then                      ! Buktning
+        bukt2:=inflt(infil); rad:=inlin(infil);
+        if nv = 0 then bukt0:=bukt2; endif;
+        goto vrtlop2;
+      elif kod = 0 then   ! Slut på denna vertex
+!* Första vertex:en sparar vi bara på oss.
+        nv:=nv+1;
+        if nv > 1 then
+!*Linje
+          if bukt1 = 0 then
+            if vecl(p1-p2) > LTOL then
+              lin_free(#60,p1,p2:SAVE=1);
+              npll:=npll+1;
+              if nv = 2 then
+                fstid:=refc(60,npll);
+                fstend:=0;
+              endif;
+            else
+              nv:=nv-1;
+            endif;
+!*Cirkel
+          else
+            !*Div med 0 ? if abs(bukt1)-1.0 < ATOL then 1998-01-13 JK
+            if abs(bukt1) < 1.0+ATOL  and  abs(bukt1) > 1.0-ATOL then
+              r:=abs(vecl(p1-p2)/2)+ATOL;
+            else
+              r:=abs((vecl(p1-p2)/2)/sin(2*arctan(bukt1)));
+            endif;
+            if abs(bukt1) > 1.0 then r:=-r; endif;
+            if bukt1 > 0 then p3:=p1; p4:=p2;
+            else p3:=p2; p4:=p1; endif;
+            if vecl(p3-p4) < 2*r then
+              arc_2pos(#61,p3,p4,r:SAVE=1);
+              npla:=npla+1;
+              if nv = 2 then
+                fstid:=refc(61,npla);
+                if bukt1 > 0 then fstend:=0;
+                else fstend:=1; endif;
+              endif;
+            else
+              nv:=nv-1;
+            endif;
+          endif;
+        endif;
+!*Nästa vertex.
+        p1:=p2;
+        bukt1:=bukt2;
+        goto vrtlop1;
+      else                                    ! Okänt
+        rad:=inlin(infil);
+        goto vrtlop2;
+      endif;
+!*
+!***SEQEND.
+!*
+    elif rad = "SEQEND" then
+      if slutflg = TRUE and nv > 2 then
+        p1:=on(fstid,fstend);
+        if bukt0 = 0 then
+          if vecl(p1-p2) > LTOL then
+            lin_free(#62,p2,p1:SAVE=1);
+          endif;
+        else
+          r:=abs((vecl(p1-p2)/2)/sin(2*arctan(bukt0)));
+          if abs(bukt0) > 1.0 then r:=-r; endif;
+          if bukt0 > 0 then p3:=p2; p4:=p1;
+          else p3:=p1; p4:=p2; endif;
+          arc_2pos(#63,p3,p4,r:SAVE=1);
+        endif;
+      endif;
+      nply:=nply+1;
+      exit();
+    else
+      goto vrtlop1;
+    endif;
+
+
+
+ ENDMODULE
+
+!*******************************************************
+

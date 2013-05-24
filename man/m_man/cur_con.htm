@@ -1,0 +1,323 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>cur_conic </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-12-29</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>cur_conic - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+
+<P>Creates a curve<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Creates a rational cubic parametric segmented curve that interpolates
+two or more positions and tangents. cur_conic does not care about the length
+of tangents, only the direction. For every segment a Midpoint or P-value
+must also be specified. A Midpoint is just any intermediate position while
+a P-value is a scalar float that controls the &quot;fullness&quot; of the
+segment.<BR>
+<BR>
+If tangents are chosen in such a way that they intersect and form a nice
+triangle with the segment chord as baseline then the resulting segment
+becomes a classical plane conic segment (quadric rational). If the tangents
+are chosen in such a way that inflexion or twist is forced the resulting
+segment becomes a cubic rational generalized (3D-) conic.<BR>
+<BR>
+A type parameter is used to control whether to project positions and tangents
+onto the XY-plane of the active coordinate system or not before creating
+the curve.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>cur_conic(id, type, p1, tp1, MP, p2, tp2,MPn,pn,tpn:attributes);<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="632" >
+<CAPTION>
+<P><!-- Table 44 Row 01 --></P>
+
+<P><!-- Table 44 Row 02 --></P>
+
+<P><!-- Table 44 Row 03 --></P>
+
+<P><!-- Table 44 Row 04 --></P>
+
+<P><!-- Table 44 Row 05 --></P>
+
+<P><!-- Table 44 Row 06 --></P>
+
+<P><!-- Table 44 Row 07 --></P>
+
+<P><!-- Table 44 Row 08 --></P>
+
+<P><!-- Table 44 Row 09 --></P>
+
+<P><!-- Table 44 Row 10 --></P>
+</CAPTION>
+
+<TR>
+<TD width="131">REF</TD>
+
+<TD width="493">id;</TD>
+</TR>
+
+<TR>
+<TD width="131">STRING</TD>
+
+<TD width="493">type*4;</TD>
+</TR>
+
+<TR>
+<TD width="131">VECTOR</TD>
+
+<TD width="493">p1;</TD>
+</TR>
+
+<TR>
+<TD width="131">VECTOR</TD>
+
+<TD width="493">tp1;</TD>
+</TR>
+
+<TR>
+<TD width="131">VECTOR/FLOAT</TD>
+
+<TD width="493">MP;</TD>
+</TR>
+
+<TR>
+<TD width="131">VECTOR</TD>
+
+<TD width="493">p2;</TD>
+</TR>
+
+<TR>
+<TD width="131">VECTOR</TD>
+
+<TD width="493">tp2;</TD>
+</TR>
+
+<TR>
+<TD width="131">VECTOR/FLOAT</TD>
+
+<TD width="493">MPn;</TD>
+</TR>
+
+<TR>
+<TD width="131">VECTOR</TD>
+
+<TD width="493">pn;</TD>
+</TR>
+
+<TR>
+<TD width="131">VECTOR</TD>
+
+<TD width="493">tpn;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="632" >
+<CAPTION>
+<P><!-- Table 45 Row 01 --></P>
+
+<P><!-- Table 45 Row 02 --></P>
+
+<P><!-- Table 45 Row 03 --></P>
+
+<P><!-- Table 45 Row 04 --></P>
+
+<P><!-- Table 45 Row 05 --></P>
+
+<P><!-- Table 45 Row 06 --></P>
+
+<P><!-- Table 45 Row 07 --></P>
+</CAPTION>
+
+<TR>
+<TD width="121">id </TD>
+
+<TD width="503">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="121">type</TD>
+
+<TD width="503">- The string &quot;FREE&quot; or &quot;PROJ&quot;</TD>
+</TR>
+
+<TR>
+<TD width="121">p1</TD>
+
+<TD width="503">- First position (beginning of first segment)</TD>
+</TR>
+
+<TR>
+<TD width="121">tp1</TD>
+
+<TD width="503">- First tangent position</TD>
+</TR>
+
+<TR>
+<TD width="121">MP</TD>
+
+<TD width="503">- Midpoint or P-value for first segment</TD>
+</TR>
+
+<TR>
+<TD width="121">p2</TD>
+
+<TD width="503">- Second position (end of first segment)</TD>
+</TR>
+
+<TR>
+<TD width="121">tp2</TD>
+
+<TD width="503">- Second tangent position</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="632" >
+<CAPTION>
+<P><!-- Table 46 Row 01 --></P>
+
+<P><!-- Table 46 Row 02 --></P>
+
+<P><!-- Table 46 Row 03 --></P>
+</CAPTION>
+
+<TR>
+<TD width="121">MPn</TD>
+
+<TD width="503">- Additional Midpoints or P-values, one per additional
+segment</TD>
+</TR>
+
+<TR>
+<TD width="121">pn</TD>
+
+<TD width="503">- Additional positions, one per additional segment</TD>
+</TR>
+
+<TR>
+<TD width="121">tpn</TD>
+
+<TD width="503">- Additional tangent positions, one per additional segment</TD>
+</TR>
+</TABLE>
+
+<P><B>Attributes</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="632" >
+<CAPTION>
+<P><!-- Table 47 Row 01 --></P>
+
+<P><!-- Table 47 Row 02 --></P>
+
+<P><!-- Table 47 Row 03 --></P>
+
+<P><!-- Table 47 Row 04 --></P>
+
+<P><!-- Table 47 Row 05 --></P>
+</CAPTION>
+
+<TR>
+<TD width="120">PEN </TD>
+
+<TD width="504">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="120">LEVEL</TD>
+
+<TD width="504">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="120">BLANK</TD>
+
+<TD width="504">- Visible(0) or invisible(1)</TD>
+</TR>
+
+<TR>
+<TD width="120">CFONT</TD>
+
+<TD width="504">- Solid(0), dashed(1) or centerline(2)</TD>
+</TR>
+
+<TR>
+<TD width="120">CDASHL</TD>
+
+<TD width="504">- Dashlength</TD>
+</TR>
+
+<TR>
+<TD width="70">WIDTH</TD>
+
+<TD width="554">- Linewidth</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Example<BR>
+<BR>
+</B>cur_conic(#1,&quot;PROJ&quot;, vec(0, 0), vec(1, 1), 0.4,<BR>
+vec(5, 0), vec(6, -1), vec(8, -1),<BR>
+vec(10, 0), vec(11, 1));<BR>
+<BR>
+Creates a conic curve with two segments. First segment has a P-value of
+0.4 and second segment is defined by a Midpoint position = (8,-1).<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>A true 3D spacecurve can only be defined in a 3D module with type set
+to &quot;FREE&quot;. In a 2D module or with type set to &quot;PROJ&quot;
+a planar curve with torsion = 0 is always created even if defining positions
+are not in the same plane.<BR>
+<BR>
+cur_conic is intended for curves with relatively few defining positions,
+maximum = 50. To interpolate large number of positions use cur_conarr.<BR>
+<BR>
+P-values should be positive values in the range 0 &lt;= P &lt; 0.85. A
+value of zero gives a straight line segment and the cooresponding tangent
+positions are left without notice. Watch out for kinks !</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

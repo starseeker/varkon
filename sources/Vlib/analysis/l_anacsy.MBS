@@ -1,0 +1,42 @@
+!*******************************************************
+
+ macro module l_anacsy(REF id);
+
+!*      Skriver ut specifika data för ett koordinatsystem.
+!*
+!*      In : id = Koordinatsystemets identitet.
+!*
+!*      Ut : Inget.
+!*
+!*      (C)microform ab 9/10/86 R. Svedin
+!*
+!*      28/12/86   Globala ref, J. Kjellander
+!*      1996-06-03 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    i;
+   FLOAT  kdat(4,4);
+   STRING nam*70;
+
+ beginmodule
+
+   getcsy(global_ref(id,2),nam,kdat);
+
+   lst_lin(get_tstr(482) + nam);
+   ! t482 = "Namn            : " 
+
+   lst_lin("");
+   lst_lin(get_tstr(111));
+   ! t111 = "Transformationsmatris :"
+
+   lst_lin("");
+   for i := 1 to 4 do
+     lst_lin("   " +
+             str(kdat(i,1),-12,5) + str(kdat(i,2),-12,5) +
+             str(kdat(i,3),-12,5) + str(kdat(i,4),-12,5));
+   endfor;
+
+ endmodule
+
+!*******************************************************

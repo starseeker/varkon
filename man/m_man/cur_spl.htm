@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (X11; I; Linux 2.2.5-15 i686) [Netscape]"><title>cur_spline</title></head>
+
+<body bgcolor="#99ccff">
+
+<center><font size="-1">VARKON Version 1.18 2006-3-16</font></center>
+
+<hr align="center" width="100%">
+<blockquote>
+<h2>
+cur_spline -<font size="+0"> Geometric procedure</font></h2>
+Creates a curve
+<br>&nbsp;
+<p><b>Description</b>
+</p><p>Creates a non rational cubic parametric segmented curve that interpolates
+two or more positions and optional tangents. Tangents not specified are
+calculated using one of the following spline algorithms.
+</p><p>Ferguson: This algorithm gives a curve with C2 continuity and very gentle
+curvature variation. It is best suited to interpolate evenly spaced positions.
+Use this curve if you want a curvature variation which is as gentle as
+possible.
+</p><p>Chordlengt: This curve is also C2 continous but curvature can change
+rapidly. Positions may be unevenly spaced and you will still get a nice
+curve but with very unevenly spaced positions the curve might produce a
+loop. Use this curve if you want a curve which is equal to the loftmans
+traditional wooden spline.
+</p><p>Variable Stiffness: This curve is only C1 countinous. The algorithm
+is based on a model where each segment of the curve has a bending stiffness
+proportional to the distance between its two end positions.&nbsp; Short
+distance between positions gives a softer segment that may have higer curvature
+than a longer segment which becomes stiffer.Use the variable stiffness
+curve if you have very unevenly spaced positions and want to be sure to
+get a nice curve with no loops.
+</p><p>For each position an optional tangent position may be specified. If
+supplied, tangent positions should be given as true positions relative
+to the corresponding position the curve interpolates (not relative to (0,0,0))
+and with appropriate length. A tangent position of (0,0,0) is treated as
+"no tangent". A long tangent gives a wawier segment and a short tangent
+gives a less wawy segment.
+</p><p>If no tangents are given in the start- and/or end position the result
+will be a curve with a free end(s), ie. with curvature = 0.
+</p><p><b>Syntax</b>
+</p><p>cur_spline(id, type, p1, t1, p2, t2, pn, tn:attributes);
+<table border="0" width="608">
+<caption>&nbsp;</caption>
+
+<tbody><tr>
+<td width="78">REF</td>
+
+<td width="522">id;</td>
+</tr>
+
+<tr>
+<td width="78">STRING</td>
+
+<td width="522">type*4;</td>
+</tr>
+
+<tr>
+<td width="78">VECTOR</td>
+
+<td width="522">p1;</td>
+</tr>
+
+<tr>
+<td width="78">VECTOR</td>
+
+<td width="522">t1;</td>
+</tr>
+
+<tr>
+<td width="78">VECTOR</td>
+
+<td width="522">p2;</td>
+</tr>
+
+<tr>
+<td width="78">VECTOR</td>
+
+<td width="522">t2;</td>
+</tr>
+
+<tr>
+<td width="78">VECTOR</td>
+
+<td width="522">pn;</td>
+</tr>
+
+<tr>
+<td width="78">VECTOR</td>
+
+<td width="522">tn;</td>
+</tr>
+</tbody></table>
+
+</p><p><b>Principal parameters</b>
+<table border="0" width="608">
+<caption>&nbsp;</caption>
+
+<tbody><tr>
+<td width="68">id&nbsp;</td>
+
+<td width="532">- Local identity</td>
+</tr>
+
+<tr>
+<td width="68">type</td>
+
+<td width="532">- The string "FERGUSON", "CHORD" or "STIFFNESS"</td>
+</tr>
+
+<tr>
+<td width="68">p1</td>
+
+<td width="532">- First position (beginning of first segment)</td>
+</tr>
+
+<tr>
+<td width="68">p2</td>
+
+<td width="532">- Second position (end of first segment)</td>
+</tr>
+</tbody></table>
+
+</p><p><b>Optional parameters</b>
+<table border="0" width="608">
+<caption>&nbsp;</caption>
+
+<tbody><tr>
+<td width="67">t1</td>
+
+<td width="533">- Tangent in first defining position</td>
+</tr>
+
+<tr>
+<td width="67">t2</td>
+
+<td width="533">- Tangent in second defining position</td>
+</tr>
+
+<tr>
+<td width="67">pn</td>
+
+<td width="533">- Additional defining positions, one per additional segment</td>
+</tr>
+
+<tr>
+<td width="67">tn</td>
+
+<td width="533">- Tangents in additional defining positions, one per additional
+segment</td>
+</tr>
+</tbody></table>
+
+</p><p><b>Attributes</b>
+<table border="0" width="608">
+<caption>&nbsp;</caption>
+
+<tbody><tr>
+<td width="68">PEN&nbsp;</td>
+
+<td width="532">- Pen or colour number</td>
+</tr>
+
+<tr>
+<td width="68">LEVEL</td>
+
+<td width="532">- Level number</td>
+</tr>
+
+<tr>
+<td width="68">BLANK</td>
+
+<td width="532">- Visible(0) or invisible(1)</td>
+</tr>
+
+<tr>
+<td width="68">CFONT</td>
+
+<td width="532">- Solid(0), dashed(1) or centerline(2)</td>
+</tr>
+
+<tr>
+<td width="68">CDASHL</td>
+
+<td width="532">- Dashlength</td>
+</tr>
+
+<tr>
+<td width="70">WIDTH</td>
+
+<td width="554">- Linewidth</td>
+</tr>
+</tbody></table>
+
+</p><p><b>Examples</b>
+</p><pre>cur_spline(#10,"CHORD",vec(0,0), ,vec(5,5), ,vec(10,0));</pre>
+</p><p>Creates a planar curve with two segments. All tangents are automatically
+calculated (splined) by the system using the chordlength spline algorithm.
+</p><pre>cur_spline(#1,"STIFFNESS",vec(0,0,0),vec(0,10,0), vec(5,5,0),vec(10,0,10),
+vec(10,0,0),vec(0,-10,0), vec(15,0,0),vec(0,10,0));
+</pre><p>Creates a twisted space curve with three segments. Tangent positions
+are supplied for all defining positions. The tangent for the first position
+is 10 units long and has the same direction as the positive Y-axis. Since
+tangents are given for all defining positions the curve is completely defined
+in advance and no internal splining is needed. In that case "STIFFNESS"
+will produce the same result as "FERGUSON" or "CHORD".
+<br>&nbsp;
+
+<pre>
+
+GLOBAL GEOMETRY MODULE curve_spline();
+
+
+BEGINMODULE
+
+  poi_free(#1,vec(92, 93, 0) :WIDTH=1);
+  poi_free(#2,vec(132,141, 0):WIDTH=1);
+  poi_free(#3,vec(136,141, 0):WIDTH=1);
+  poi_free(#4,vec(198, 81, 0):WIDTH=1);
+  
+  cur_spline(#5,"FERGUSON",on(#1),vec(0,0,0),on(#2),vec(0,0,0),on(#3),vec(0,0,0),on(#4),vec(0,0,0):WIDTH=0.25);
+  cur_spline(#6,"STIFFNESS", on(#1),vec(0,0,0),on(#2),vec(0,0,0),on(#3),vec(0,0,0),on(#4),vec(0,0,0):PEN=2,WIDTH=0.25);
+  cur_spline(#7,"CHORD",on(#1),vec(0,0,0),on(#2),vec(0,0,0),on(#3),vec(0,0,0),on(#4),vec(0,0,0):WIDTH=0.25,PEN=4);
+  
+  text(#8,vec(130,150,0), 0.0, "Ferguson":TSIZE=2,TWIDTH=40,TFONT=2,TPMODE=1);
+  text(#9,vec(158,120,0), 0.0, "Stiffness":TSIZE=2,TWIDTH=40,TFONT=2,TPMODE=1,PEN=2);
+  text(#10,vec(115,140,0),0.0, "Chord":TSIZE=2,TWIDTH=40,TFONT=2,TPMODE=1,PEN=4);
+
+ENDMODULE
+</pre><br>
+
+The module listed above will create a planar curves with three segments by using the three algorithms Ferguson,Chord length and Stiffness .The same control points are used.<br>
+Next picture illustrate the differences between the three algorithms.
+<br><br>
+<img SRC="images/Splines-new.png"> <br> <br>
+
+</p><p><b>Comments</b>
+</p><p>The spline type "FREE" and "PROJ" used in Varkon version 1.17A and earlier
+are still supported but removed from the documentation and should not be
+used any more.
+</p><p>cur_spline is intended for curves with relatively few defining positions,
+maximum = 50. To interpolate large number of positions use <a href="http://www.tech.oru.se/cad/varkon/m_man/cur_spla.htm">cur_splarr.</a></p></blockquote>
+
+<hr align="center" width="100%">
+<center>
+
+
+
+<center><table cellpadding="0" cellspacing="10">
+<tbody><tr>
+<td><a href="http://www.tech.oru.se/cad/varkon/index.htm">VARKON Homepage</a></td>
+
+<td><a href="http://www.tech.oru.se/cad/varkon/m_man/entiindx.htm">Index</a></td>
+</tr>
+</tbody></table></center>
+
+</center></body></html>

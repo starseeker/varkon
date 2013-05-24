@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>arc_fil</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>arc_fil - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates an arc<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a circular fillet between two lines, arcs or curves. A fillet between two entites
+  can be constructed in any of the four corners of their intersection. An alt parameter is
+  used to select the right corner using the following rule:<br>
+  <br>
+  The corner on the right side of both entities = 1.<br>
+  The corner on the left side of the first but right side of the second = 2.<br>
+  The corner on the right side of the first but left side of the second = 3.<br>
+  The corner on the left side of both entities = 4.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  arc_fil(id, ref1, ref2, r, alt:attributes);<br>
+  <br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 29 Row 01 -->
+    <tr>
+      <td width="79">REF</td>
+      <td width="565">id;</td>
+    </tr>
+<!-- Table 29 Row 02 -->
+    <tr>
+      <td width="79">REF</td>
+      <td width="565">ref1;</td>
+    </tr>
+<!-- Table 29 Row 03 -->
+    <tr>
+      <td width="79">REF</td>
+      <td width="565">ref2;</td>
+    </tr>
+<!-- Table 29 Row 04 -->
+    <tr>
+      <td width="79">FLOAT</td>
+      <td width="565">r;</td>
+    </tr>
+<!-- Table 29 Row 05 -->
+    <tr>
+      <td width="79">INT</td>
+      <td width="565">alt;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 30 Row 01 -->
+    <tr>
+      <td width="72">id </td>
+      <td width="572">- Local identity</td>
+    </tr>
+<!-- Table 30 Row 02 -->
+    <tr>
+      <td width="72">ref1</td>
+      <td width="572">- First line, arc or curve</td>
+    </tr>
+<!-- Table 30 Row 03 -->
+    <tr>
+      <td width="72">ref2</td>
+      <td width="572">- Second line, arc or curve</td>
+    </tr>
+<!-- Table 30 Row 04 -->
+    <tr>
+      <td width="72">r</td>
+      <td width="572">- Radius</td>
+    </tr>
+<!-- Table 30 Row 05 -->
+    <tr>
+      <td width="72">alt</td>
+      <td width="572">- Alternative, see above</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 31 Row 01 -->
+    <tr>
+      <td width="73">None.</td>
+      <td width="571"></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="652" border="0">
+<!-- Table 32 Row 01 -->
+    <tr>
+      <td width="74">PEN </td>
+      <td width="570">- Pen or colour number</td>
+    </tr>
+<!-- Table 32 Row 02 -->
+    <tr>
+      <td width="74">LEVEL</td>
+      <td width="570">- Level number</td>
+    </tr>
+<!-- Table 32 Row 03 -->
+    <tr>
+      <td width="74">BLANK</td>
+      <td width="570">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 32 Row 04 -->
+    <tr>
+      <td width="74">AFONT</td>
+      <td width="570">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 32 Row 05 -->
+    <tr>
+      <td width="74">ADASHL</td>
+      <td width="570">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="72">WIDTH</td>
+      <td width="572">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  <u><br>
+  </b></u>arc_fil(#10,#5,#6,5,2);<br>
+  <br>
+  Creates an arc tangent to #5 and #6 with radius = 5. The corner defined by the left side
+  of #5 and right side of #6 is selected (alt=2).<br>
+  <b>Comments<br>
+  </b><br>
+  In a 3D module the resulting arc is restricted to the XY-plane of the active coordinate
+  system. If any of the referenced entities are not in this plane they will be projected
+  along the Z-axis onto the XY-plane before being used to create the new arc.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+VARKON Error messages for Interpreter routines
+(C) Microform AB 1998
+
+002  4  Illegal id class for id expression
+003  4  Array base not address
+005  4  Illegal RTS adress
+006  3  Illegal type id for RTS, type = %s
+007  4  Too long reference
+008  4  Illegal component variabel id
+009  4  Not a condition node
+010  4  Illegal function id
+
+101  1  Too many parameters for %s
+121  1  Too many parameters for aritmethical function 
+
+201  2  Too long reference
+202  2  No more activation frames
+204  2  Named Parameter stack overflow
+205  2  Named Parameter stack underflow
+206  2  Using constant expression where VAR-parameter required
+207  2  Ilegal l-value
+208  2  Not compatible types for assignment
+209  2  Illegal value for parameter to %s
+210  2  Illegal value for %s
+211  2  Error when module "%s" calls "%s"
+212  2  %s is an illegal code for GETSURH
+220  2  Error in FLOAT addition (spill)
+221  2  Error in FLOAT subtraction (spill)
+222  2  Error in FLOAT multiply (spill)
+223  2  Error in FLOAT divide (spill)
+224  2  Error in FLOAT exponentiation (spill)
+225  2  Error in geometrical procedure, ID = %s
+226  2  Too few parameters for HIDE_VIEW, filename missing
+227  2  Illegal code to HIDE_VIEW, should be 1, 2 or 3
+228  2  Error in HIDE_VIEW, can't create file = "%s"
+229  2  %s
+230  2  Calling a module with too many parameters
+231  2  Calling a module with too few parameters
+251  2  Not a statement node
+252  2  Not an expression node 
+253  2  Not a module parameter node
+254  2  Not a module node
+255  2  Not named parameter node
+
+301  3  Illegal RTS address
+302  3  Not a literal, unrecognised id
+303  3  RTS full, maximum size = %s bytes
+304  3  Missmatch in argument list for %s 
+305  3  Type missmatch in parameter for %s
+306  3  Missmatch in argument list for called module = %s
+307  3  Illegal RTS base pointer, rtslbas-offset = %s
+308  3  Type missmatch for right operand to %s, INT or FLOAT desired
+309  3  Unknown operator
+310  3  Type missmatch for right operand to %s, STRING desired
+311  3  Type missmatch for right operand to %s, VECTOR desired
+312  3  Illegal type for %s operator
+313  3  Type missmatch for right operand to %s, INT, FLOAT, VECTOR desired
+314  2  RTS needed = %s bytes
+315  3  Illegal exponent type for negativ mantissa, INT desired.
+316  3  Illegal type of exponent, INT or FLOAT desired 
+317  3  Missmatch in argument list for arthmetric function
+318  3  Type missmatch in parameter to arithmetric function
+319  3  Ilegal type for named parameter %s
+320  3  Type mismatch in part parameter
+321  3  Unknown named parameter
+322  3  Array-index outside declared limits
+323  3  "call by reference" parameter can not have default value
+324  3  Type mismatch for logical operator
+325  3  Can't open a file with mode = %s
+326  3  Illegal argument for INBIN(), must be a variabel
+327  3  Illegal type for condition
+329  3  Type mismatch for VAR-parameter in module call
+330  3  Function nesting level exeeded
+331  2  Can't malloc %s bytes memory for RTS.
+333  3  Not implemented
+340  3  Illegal dimension for return variable
+341  3  Array-index outside limits for return value
+342  2  INBIN(), bytecount < 1 or > 132
+343  2  INBIN, Illegal bytecount for this variable
+
+401  4  Error allocating system memory
+
+500  2  Curve should be "free" or "proj" not "%s"
+501  2  CUR_CONIC, P-value < 0. Segment %s
+502  2  CUR_CONIC, P-value should be FLOAT
+503  2  Number of segments must be > 0. CUR_USDEF
+504  2  Can't malloc for segments, CUR_USDEF
+505  2  Too many segments for 4X4-variable, CUR_USDEF
+506  2  CRE_VIEW, Parameter nr:2 has illegal type
+507  2  Can't malloc for RTS, size = %s
+508  2  SUR_CONIC, type should be m/M/p/P not = %s
+509  2  %s, parameter type should be INT/FLOAT or VECTOR
+510  2  Can't malloc for %s pos/tan, SUR_SPLARR
+511  2  Number of positions in %s-direction < 2, SUR_SPLARR
+512  2  SUR_SPLARR, mismatch in declaration of matrix %s
+513  2  Minimum 2 positions required, CUR_SPLARR
+514  2  Number of pos/tan > declared size, CUR_SPLARR
+515  2  Can't malloc for %s pos/tan, CUR_SPLARR
+516  2  Minimum 2 positions required, CUR_CONARR
+517  2  Number of pos/tan > declared size, CUR_CONARR
+518  2  Can't malloc for %s pos/tan, CUR_CONARR
+519  2  CUR_CONARR, type should be m/M/p/P
+520  2  Minimum 2 curves required, SUR_CONARR
+521  2  Number of curves > declared size, SUR_CONARR
+522  2  Can't malloc for %s lim/tan-curves, SUR_CONARR
+523  2  SUR_CONARR, type should be m/M/p/P
+524  2  RANDOM, argument should be within 0 <= arg <= 1
+525  2  LOAD_MDF, Menufile %s does not exist
+526  3  %s is reserved for Microsoft Windows
+528  2  Can't load %s (dlltab full)
+529  2  DLL = %s is not loaded
+530  3  System error, can't unload DLL = %s
+531  3  Can't find DLL-function %s
+532  2  File %s is already open
+533  2  Can't open %s, Max files already open
+534  2  Can't close file, file not open
+535  3  System error, can't close %s
+536  2  OUTLIN, This file is not open !
+537  2  SUR_NURBSARR, mismatch in declaration of matrix %s
+538  2  SUR_NURBSARR, number of knots > declared size
+539  2  SUR_NURBSARR, w is not FLOAT
+540  2  SUR_NURBSARR, cpts not VECTOR
+541  2  Can't malloc, CUR_NURBSARR
+542  2  Too many ID:s for IDENT_2
+543  2  Error calling HIGHLIGHT
+544  2  At least 1 surface required, ALL_INT_LIN_MSUR
+545  2  Number of surfaces > declared size, ALL_INT_LIN_MSUR
+546  2  Can't malloc for %s surfaces, ALL_INT_LIN_MSUR
+547  2  Number of intersects > declared size, ALL_INT_LIN_MSUR
+548  2  CALL_EXTERN, FLOAT count < 0
+549  2  CALL_EXTERN, declared size of FLOAT array < FLOAT count
+550  2  CALL_EXTERN, Can't malloc for %s FLOATS
+551  2  CALL_EXTERN, Can't find  function %s 
+552  2  PUTDAT, mismatch in declaration of array, %s
+553  2  PUTDAT, Can't malloc for %s elements of data
+554  2  PUTDAT, No key name
+555  2  GETDAT, mismatch in declaration of array, %s
+556  2  GET_POINTER, illegal code
+557  2  Knotvector must be non-decreasing, CUR_NURBSARR
+558  2  Minimum 2 control points required, CUR_NURBSARR
+559  2  Required number of controlpoints > declared size, CUR_NURBSARR
+560  2  Required number of knot values > declared size, CUR_NURBSARR
+561  2  Can't malloc for %s controlpoints/weights/knots, CUR_NURBSARR
+562  2  Required number of weights > declared size, CUR_NURBSARR
+563  2  RAP in/out rapid variables, can't malloc 
+564  2  RAP in/out rapid variables , decared size of array is to small 
+565  2  RAP in/out rapid arrays , max transfer array size = 500
+566  2  Illegal value for number of %s in MESH_ARR
+567  2  Illegal declaration of array for %s, MESH_ARR
+568  2  Can't malloc data for MESH_ARR
+569  2  %s is not a valid direction in SORT_MESH, should be X, Y or Z
+570  2  Can't allocate memory for %s faces, SORT_MESH()
+

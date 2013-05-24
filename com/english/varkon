@@ -1,0 +1,126 @@
+#!/bin/sh
+#######################################################
+#
+# Startscript for english version of VARKON.
+#
+# See the comments below for instructions on
+# how to configure your installation.
+#
+# (C)Örebro university 2004
+#
+#######################################################
+
+# Root directory for VARKON installation. Change this
+# line to point to the right location.
+
+VARKON_ROOT=/usr/varkon/varkon_1.18A
+export VARKON_ROOT
+
+# Standard menufiles  (*.MDF, *.INC)
+
+VARKON_MDF=$VARKON_ROOT/mdf/english
+export VARKON_MDF
+
+# Project files  (*.PID)
+# You may change this location to some other place
+# like $HOME/pid if you want PID files from different
+# versions of VARKON to persist in a common place.
+# All users need write access to this directory
+
+VARKON_PID=$VARKON_ROOT/pid
+export VARKON_PID
+
+# Errormessages   (*.ERM)
+
+VARKON_ERM=$VARKON_ROOT/erm
+export VARKON_ERM
+
+# The VARKON documentation (*.htm)
+
+VARKON_DOC=$VARKON_ROOT/man
+export VARKON_DOC
+
+# System module library   (*.MBO)
+
+VARKON_LIB=$VARKON_ROOT/lib
+export VARKON_LIB
+
+# Temporary files
+# This line may be changed to /tmp or wherever you
+# like to keep temporary files. On a network this
+# directory should usually reside on the local machine
+# so you may set it up differently for different users.
+# All users need write access to this directory
+
+VARKON_TMP=$VARKON_ROOT/tmp
+export VARKON_TMP
+
+# Fonts for graphical text
+
+VARKON_FNT=$VARKON_ROOT/cnf/fnt
+export VARKON_FNT
+
+# Plotter configuration
+# You may change this location to some other place
+# like $HOME/cnf/plt if you want to reuse an old
+# configuration when installing a new version of VARKON.
+# All users need write access to this directory
+
+VARKON_PLT=$VARKON_ROOT/cnf/plt
+export VARKON_PLT
+
+# Icon bitmaps for buttons
+
+VARKON_ICO=$VARKON_ROOT/cnf/icons
+export VARKON_ICO
+
+# Tolerances
+
+VARKON_TOL=$VARKON_ROOT/cnf/tol
+export VARKON_TOL
+
+# Standard resources for X-Windows
+
+VARKON_INI=$VARKON_ROOT/cnf/ini/english
+export VARKON_INI
+
+# Default root for VARKON applications
+# This directory should normally be $HOME/app
+# or somewhere else outside the VARKON_ROOT tree
+# directory so that a new version of VARKON will
+# not interfere with old jobs.
+# All users need write access to this directory
+
+VARKON_PRD=$VARKON_ROOT/app
+export VARKON_PRD
+
+# PATH for executables (xvarkon, mbsc, plotterdrivers)
+
+PATH=$VARKON_ROOT/bin:$PATH
+export PATH
+
+# Path to shared ODBC Library. Uncomment these 2 lines
+# and set the path to your ODBC libraries if you have
+# compiled Varkon with ODBC support.
+
+#LD_LIBRARY_PATH=/usr/lib/unixODBC
+#export LD_LIBRARY_PATH
+
+# Start the VARKON executable
+# Add an extra ini-file with your own configuration
+# if you want to. Don't edit the standard file included
+# in the distribution or you will have to do it all
+# over again when updating the system.
+
+xvarkon $1 $2    \
+-i$VARKON_INI/linux
+
+# With an inifile of your own it would look something
+# like the following:
+
+# xvarkon $1 $2    \
+# -i$VARKON_INI/linux -i$HOME/cnf/ini/english/my_own_inifile
+
+# If you want to run the system in pure drafting mode, add
+# "-r" to the command line.
+# xvarkon -r $1 $2 -i$VARKON_INI/linux

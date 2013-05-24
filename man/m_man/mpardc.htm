@@ -1,0 +1,269 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>Parameter declaration</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h3>Parameter declaration</h3>
+  <p>A parameter_declaration is either a value_parameter_declaration or a
+  reference_parameter_declaration.<br>
+  <br>
+  A value_parameter_declaration is:<br>
+  type parameter_definition [:=default_value] [&gt;prompt_string]<br>
+  <br>
+  and a reference_parameter_declaration is:<br>
+  VAR type parameter_definition<br>
+  <br>
+  Value parameters are evaluated at runtime and the actual value of the parameter is
+  transferred from the caller to the called module. A reference parameter is not passed to
+  the called module, only its adress.<br>
+  <br>
+  MBS supports the following types:<br>
+  <br>
+  </p>
+</blockquote>
+
+<table width="686" border="0">
+<!-- Table 02 Row 01 -->
+  <tr>
+    <td width="129"><blockquote>
+      <p>INT</p>
+    </blockquote>
+    </td>
+    <td width="549">- 32 bit integer</td>
+  </tr>
+<!-- Table 02 Row 02 -->
+  <tr>
+    <td width="129"><blockquote>
+      <p>FLOAT</p>
+    </blockquote>
+    </td>
+    <td width="549">- 64 bit float</td>
+  </tr>
+<!-- Table 02 Row 03 -->
+  <tr>
+    <td width="129"><blockquote>
+      <p>VECTOR</p>
+    </blockquote>
+    </td>
+    <td width="549">- 3 floats, .x, .y and .z</td>
+  </tr>
+<!-- Table 02 Row 04 -->
+  <tr>
+    <td width="129"><blockquote>
+      <p>STRING</p>
+    </blockquote>
+    </td>
+    <td width="549">- String of maximum 132 8 bit characters</td>
+  </tr>
+<!-- Table 02 Row 05 -->
+  <tr>
+    <td width="129"><blockquote>
+      <p>REF</p>
+    </blockquote>
+    </td>
+    <td width="549">- Pointer to entity in GM</td>
+  </tr>
+<!-- Table 02 Row 06 -->
+  <tr>
+    <td width="129"><blockquote>
+      <p>FILE</p>
+    </blockquote>
+    </td>
+    <td width="549">- File variable</td>
+  </tr>
+</table>
+
+<blockquote>
+  <p><br>
+  Here are some valid value_parameter_declarations:<br>
+  <br>
+  INT number_of_holes:=5 &gt;&quot;How many holes ?&quot;<br>
+  <br>
+  FLOAT distance &gt;&quot;What distance ?&quot;<br>
+  <br>
+  VECTOR pos:=vec(100,100);<br>
+  <br>
+  STRING name*20 &gt;&quot;What is your name ?&quot;<br>
+  <br>
+  REF id &gt;&quot;Pick a line !&quot;<br>
+  <br>
+  STRING parameters need an extra &quot;*length&quot; after the identifier to indicate the
+  maximum length of the string. MBS supports strings up to 132 characters. The FILE datatype
+  can not be used for a value parameter.<br>
+  <br>
+  Reference_parameter_declarations have the following form:<br>
+  <br>
+  VAR INT number_of_holes<br>
+  <br>
+  VAR FLOAT distance<br>
+  <br>
+  VAR VECTOR pos<br>
+  <br>
+  VAR STRING name*20<br>
+  <br>
+  VAR REF id<br>
+  <br>
+  VAR FILE input_data<br>
+  <br>
+  A reference parameter may also be used to pass an indexed variable from one module to
+  another. Here are some examples of that:<br>
+  <br>
+  VAR INT sizes(100)<br>
+  <br>
+  VAR FLOAT matrix(4,4)<br>
+  <br>
+  VAR STRING name_list(100)*20<br>
+  <br>
+  It is not necessary to declare each parameter of the same type individually. The following
+  style with multiple parameters separated by commas is also possible:<br>
+  <br>
+  VECTOR pos_1 &gt;&quot;First position !&quot;,<br>
+  pos_2 &gt;&quot;Mid position !&quot;,<br>
+  pos_3 &gt;&quot;Last position !<br>
+  <br>
+  A module with only one parameter declaration migth begin as follows:<br>
+  <br>
+  MODULE shaft(FLOAT size);<br>
+  <br>
+  but with multiple parameter declarations they must be separated by semicolons..<br>
+  <br>
+  MODULE shaft(FLOAT size; INT number_of_holes; STRING material*10);<br>
+  <br>
+  MBS is not line oriented. The line above may just as well be written as follows:<br>
+  <br>
+  MODULE shaft(<br>
+  FLOAT size;<br>
+  INT number_of_holes;<br>
+  STRING material*10);<br>
+  <br>
+  A value parameter may be declared with default value and prompt string. This information
+  is displayed to the user by VARKON when the module is called interactively. Functions f25
+  (Create part statement) and f170 (Change part parameter) rely on default values and prompt
+  strings.<br>
+  <br>
+  A parameter without any prompt at all is called a <b><i>hidden parameter</i></b>. Hidden
+  parameters are not prompted for when the module is called. VARKON uses the default value
+  automatically. This mechanism is intended for modules with many parameters but only a few
+  that need to be set by the user initially. f170 can always be used later to change the
+  value also of hidden parametrs.<br>
+  <br>
+  A prompt may be just any string like &quot;How many ?&quot; or &quot;Pick a line !&quot;
+  but may also be preceded by a @-modifier. @-modifiers are used by VARKON to modify the
+  standard behaviour of presenting default values and prompts. A parameter without
+  @-modifier is called a <b><i>normal parameter</i></b>.<br>
+  <br>
+  A parameter with a prompt preceded by a single &quot;@&quot; and a space is called an <b><i>optional
+  parameter</i></b>. Optional parameters can be used to present a varying number of
+  parameters like in the following example:<br>
+  <br>
+  VECTOR p1 &gt;&quot;Give a start position !&quot;;<br>
+  VECTOR p2 &gt;&quot;@ Second position ! (optional)&quot;;<br>
+  VECTOR p3 &gt;&quot;@ Third position ! (optional)&quot;;<br>
+  VECTOR p4 &gt;&quot;@ Fourth position ! (optional)&quot;;<br>
+  VECTOR p5 &gt;&quot;@ Fifth position ! (optional)&quot;;<br>
+  VECTOR p6 &gt;&quot;Last position !&quot;;<br>
+  <br>
+  In the example above VARKON will first prompt for p1 and then for p2. If the user defines
+  a valid position for p2 VARKON goes on with p3, p4 and so on. As long as the user answers
+  the questions he gets positively VARKON will continue to present the next parameter even
+  if it is optional. If the user refuses to input a valid value for an optional parameter
+  and rejects the question VARKON will use the default value for the parameter in question
+  as well as all optional parameters directly following. This mechanism makes it possible to
+  construct dialogues where the user may input a varying number of values from call to call.
+  In the example above the user must always define p1 and will always be prompted for p2. If
+  he rejects p2 VARKON will skip even p3, p4 and p5 but finally prompt for p6. 2, 3, 4, 5 or
+  6 positions are the alternatives in this example. <br>
+  <br>
+  A STRING parameter may get its value from a menu instead of the normal input from the
+  keyboard by the use of the @m-modifier. Such a parameter is called a <b><i>menu parameter</i></b>.
+  <br>
+  <br>
+  STRING type*2 &gt;&quot;@m250 Select a type from the menu !&quot;<br>
+  <br>
+  The parameter above will force VARKON to display menu 250 and prompt the user to make a
+  selection. The anwer is either an empty string &quot;&quot; if the user rejects or the
+  actioncode of the selected alternative. See the getalt()-function for related information.<br>
+  <br>
+  Menu parameters may also be optional as in the following example:<br>
+  <br>
+  STRING type*2 &gt;&quot;@@m250 Select a type from the menu !&quot;<br>
+  <br>
+  A VECTOR parameter usually makes VARKON present the positions-menu in order to give the
+  user a chance to select what method to use to enter the position. If we know in advance
+  what method to use we can specify this with a @-modifier. Here is an example of a <b><i>positions
+  method parameter..</i></b><br>
+  <br>
+  VECTOR p1 &gt;&quot;@a3 Where do you want to start ?&quot;<br>
+  <br>
+  The @a followed by a number forces VARKON to skip the positions menu and go directly to
+  the method indicated by the number. Number 3 is the same as alternative a3 in the
+  positions menu. Positions method parameters may also be optional.<br>
+  <br>
+  A REF parameter can be used to input the identity of all types of entities. The
+  @t-modifier makes it possible to restrict the input to an entity of a certain type (or
+  types). Such a parameter is called a <b><i>typemask parameter...</i></b><br>
+  <br>
+  REF id &gt;&quot;@t6 Pick a line or arc !&quot;<br>
+  <br>
+  The typemask is created by adding the type codes for the valid entity types. In this case
+  2 + 4 for line and arc. See the gethdr() routine for a list of type codes. Typemask
+  parameters may also be optional.<br>
+  <br>
+  An INT, FLOAT or STRING parameter can have its default value fetched from a textfile by
+  the use of the @f-modifier. This makes it possible to present new default values each time
+  the module is called and such a parameter is therefore called a <b><i>dynamic default
+  parameter.</i></b> Here are some examples:<b><i><br>
+  </i></b><br>
+  INT number &gt;&quot;@ffilename Enter next number !&quot;<br>
+  <br>
+  Reads default value from the first line in the file with the name filename. A path may be
+  included.<br>
+  <br>
+  INT number &gt;&quot;@fact_job Enter next number !&quot;<br>
+  <br>
+  If the special filename &quot;act_job&quot; is used VARKON replaces this with
+  act_jobdir()+act_jobnam(). This is a way to dynamically link individual default values to
+  different jobs. ( act_job is actully the value of t-string 119 and may be redefined if
+  prefered).<br>
+  <br>
+  INT number &gt;&quot;@defvals.dat(5) Enter next number !&quot;<br>
+  <br>
+  Reads the default value from line 5 in the file defvals.dat. An extra @ makes the
+  parameter optional in the same way as all other parameters.<br>
+  <br>
+  A normal prompt string is static but may be linked to a t-string using a slightly
+  different syntax than the @-modifier described above. <br>
+  <br>
+  INT n &gt;&quot;t625&quot;<br>
+  <br>
+  A prompt beginning with lower case &quot;t&quot; directly followed by a number is treated
+  as a <b><i>dynamic prompt parameter. </i></b>A dynamic prompt parameter may be optional
+  but may not be combined with other @-modifiers.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="mindex.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

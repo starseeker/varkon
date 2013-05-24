@@ -1,0 +1,60 @@
+!*******************************************************
+
+ MACRO MODULE p_unix(
+ STRING plotfil*132 >"Plottfilens namn";
+ STRING driver*132  >"Plotterprogram";
+ STRING dest*132    >"Destination";
+ STRING params*132  >"Övriga parametrar";
+ INT    rmflag      >"0=Debug, inget tas bort");
+                    ! 1=Ta bort plotfil efteråt
+                    ! 2=Ta ej bort plotfilen
+
+!*      Startar plotjobb.
+!*
+!*      (C)microform ab 1997-03-24 J. Kjellander
+!*
+!*******************************************************
+
+ STRING sfnamn*132,tmpdir*132;
+ FILE   sf;
+
+ BEGINMODULE
+
+!*
+!***Skapa scriptfil = XXXXXX.sh
+!*
+   tmpdir:=get_environment("VARKON_TMP")+"/";
+   sfnamn:=tmpdir+unique_filename()+".sh";
+   open(sf,"W",sfnamn);
+   if iostat(sf) < 0 then
+     exit("Can't create sfnam !");
+   endif;
+!*
+!***Skriv ut plot-kommandot till filen.
+!*
+   outstr(sf,driver);
+   outstr(sf," "+plotfil);
+   outstr(sf," "+params);
+   outstr(sf," "+dest);
+!*
+!***Skall plotfilen tas bort efteråt ?.
+!*
+   if rmflag = 1 then
+     outlin(sf);
+     outstr(sf,"rm "+plotfil);
+   endif;
+!*
+!***Stäng sh-filen och starta jobbet.
+!*
+   close(sf);
+   os("chmod +x "+sfnamn,0);
+
+   if rmflag = 0 then
+     os("("+sfnamn+")&",2);
+   else
+     os("("+sfnamn+";rm "+sfnamn+")&",2);
+   endif;
+
+ ENDMODULE
+   
+!*******************************************************

@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>Statements</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h3>Statements</h3>
+  <p>Statements are the things that actually do the job in a module. There are 5 basic types
+  of statements in MBS. Assignment, if, for, goto, and procedure call. An assignment<br>
+  has the following form:<br>
+  <br>
+  variable:=expression;<br>
+  <br>
+  where expression is any valid expression for the type of variable to recieve its value.<br>
+  <br>
+  An if statement has the following form:<br>
+  <br>
+  IF condition THEN<br>
+  statements<br>
+  [ELIF condition THEN<br>
+  statements]<br>
+  [ELSE<br>
+  statements]<br>
+  ENDIF;<br>
+  <br>
+  The ELIF and ELSE keywords are optional. A condition is a logical expression including
+  relational operators and keywords AND, OR and NOT.<br>
+  <br>
+  Here is an example:<br>
+  <br>
+  IF a &lt; min OR a &gt; max THEN<br>
+  statements<br>
+  ELSE<br>
+  statements<br>
+  ENDIF;<br>
+  <br>
+  A for statement has the following form:<br>
+  <br>
+  FOR loop_variable:=start TO stop [STEP increment] DO<br>
+  statements<br>
+  ENDFOR;<br>
+  <br>
+  The loop_variable is an ordinary INT variable while start, stop and increment are any
+  integer expressions. Evaluation of these is done only once before the loop is entered and
+  their values can not be altered from within the loop. The STEP value may be positive or
+  negative.<br>
+  <br>
+  A sample for loop:<br>
+  <br>
+  FOR i:=1 to 10 DO<br>
+  poi_free(#1,vec(i,0)); ! 10 Points on a row<br>
+  ENDFOR;<br>
+  <br>
+  A goto statement is used to jump to a label as in the following example:<br>
+  <br>
+  IF a &gt; max then<br>
+  GOTO error;<br>
+  ENDIF;<br>
+  <br>
+  error: <br>
+  <br>
+  As you see from this example a label is just an identifier followed by a colon.<br>
+  <br>
+  There are four kinds of procedures in MBS with different syntax in their calls. Ordinary
+  procedures are called as follows:<br>
+  <br>
+  identifier([expressions]);<br>
+  <br>
+  A call to a geometric procedure has the following form:<br>
+  <br>
+  identifier(#integer, [expressions] [:attributes]);<br>
+  <br>
+  The #integer is something like #1 or #2 or #15000 but not more than #32768. It is used to
+  give an identity to the entity created. Attributes have names and values, see below.<br>
+  <br>
+  The part procedure has two forms:<br>
+  <br>
+  part(#integer, part_name([parameters]) [,reference_expression] [:attributes]);<br>
+  <br>
+  or<br>
+  <br>
+  part(#integer, string_expression, ([parameters]) [,reference_expression]);<br>
+  <br>
+  In the first form the part name is a constant while the other form accepts an expression.<br>
+  <br>
+  The last kind of procedure call is used when calling the set and set_basic procedures.<br>
+  <br>
+  set(attributes); and set_basic(attributes);<br>
+  <br>
+  Attributes are things like LEVEL=1, TFONT=0 or LDASHL=10/s. More than one attribute may be
+  specified in one call by separating them with commas.<br>
+  <br>
+  set(LEVEL=1, TFONT=0, LDASHL=10/s);<br>
+  <br>
+  For a complete list of attributes see the set procedure.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="mindex.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

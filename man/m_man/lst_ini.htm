@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>lst_ini </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>lst_ini - <small><small>Procedure</small></small></h2>
+  <b><p><br>
+  </b>Init list window<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates and initializes a new list window. Lines of text are added with lst_lin(). The
+  window is not displayed until lst_exi() is called.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  lst_ini(heading)<br>
+  <br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 24 Row 01 -->
+    <tr>
+      <td width="71">STRING</td>
+      <td width="580">heading*80;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="659" border="0">
+<!-- Table 25 Row 01 -->
+    <tr>
+      <td width="62">heading</td>
+      <td width="589">- An arbitrary text or a null string &quot;&quot;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 26 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  lst_ini(&quot;HEADING&quot;);<br>
+  lst_lin(&quot;Line 1&quot;);<br>
+  lst_lin(&quot;Line2&quot;);<br>
+  lst_lin(&quot;Line3&quot;);<br>
+  lst_exi();<br>
+  <br>
+  This example shows how to create and display a list window.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  It is important to understand that when a new list window is initialized by lst_ini() it
+  is not possible to initialize a second list window without first closing the previous
+  window with lst_exi(). Many windows may be displayed at the same time but each one must be
+  created and closed individually.<br>
+  <br>
+  The text displayed in the list window is kept in a temporary file on the VARKON_TMP
+  directory during the time the window exists. When the list window is killed by the user
+  its temporary file is removed automatically.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="dialindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

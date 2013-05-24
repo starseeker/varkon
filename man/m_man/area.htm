@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>area </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-24</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>area -<FONT SIZE=+0> Function</FONT></H2>
+
+<P>Geometrical function<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Returns the area of a planar region bounded by 2D lines, arcs and curves.
+Optional interior holes or islands are not included. Accuracy is controlled
+by a step parameter.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>area(step, ref1, refn)<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="728" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="67">FLOAT</TD>
+
+<TD width="653">step;</TD>
+</TR>
+
+<TR>
+<TD width="67">REF</TD>
+
+<TD width="653">ref1;</TD>
+</TR>
+
+<TR>
+<TD width="67">REF </TD>
+
+<TD width="653">refn;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="728" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="56">step</TD>
+
+<TD width="664">- Step length for numerical accuracy</TD>
+</TR>
+
+<TR>
+<TD width="56">ref1</TD>
+
+<TD width="664">- Identity of first line, arc or curve in boundary</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="728" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="55">refn</TD>
+
+<TD width="665">- Identity of additional lines, arcs or curves in exterior
+or interior boundary</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Return value<BR>
+<BR>
+</B>A FLOAT value equal to the calculated area<BR>
+<BR>
+<B>Example<BR>
+<BR>
+</B>area(0.01, #4, #5, #19)<BR>
+<BR>
+Calculates the area bounded by #4, #5 and #19. Step length is set to 0.01<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>The area is computed by numerical integration along the positive X-axis
+in steps equal to parameter step. A small value for step gives a more accurate
+result but takes longer time to compute. For a circle with radius = 1 a
+step of 0.1 gives an area = 3.15. A step of 0.01 gives an area of 3.1419.
+The exact area is PI = 3.1415927...<BR>
+<BR>
+Boundary entities can be specified in any order of choice but must form
+one or more well defined boundaries where all entities in each boundary
+are connected in their endpoints. If more than one boundary is defined
+one of them must enclose all the other. Boundaries should not cross or
+touch each other.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="geomindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

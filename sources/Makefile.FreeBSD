@@ -1,0 +1,40 @@
+##########################################################
+#
+#   Makefile.FreeBSD
+#   --------------
+#
+#   Top level makefile for xvarkon with FreeBSD
+#
+#  (C)Microform AB 1999-05-03 J.Kjellander
+#
+##########################################################
+
+# The varkon object libraies
+
+LIBS  = $(VARKON_ROOT)/sources/IG/lib/IGlib.a \
+        $(VARKON_ROOT)/sources/PM/lib/PMlib.a \
+        $(VARKON_ROOT)/sources/EX/lib/EXlib.a \
+        $(VARKON_ROOT)/sources/GP/lib/GPlib.a \
+        $(VARKON_ROOT)/sources/DB/lib/DBlib.a \
+        $(VARKON_ROOT)/sources/WP/lib/WPlib.a \
+        $(VARKON_ROOT)/sources/GE/lib/GElib.a
+
+# Xlibs 
+
+XLIBS = -lX11
+
+# OpenGL libs (currently not supported on Sun's)
+
+GLIBS = -IGL -IGLU
+
+# The actual executable, xvarkon.
+
+XVARKON = $(VARKON_ROOT)/bin/xvarkon
+
+# Targets
+
+$(XVARKON): $(LIBS)
+	cc $(LIBS) $(XLIBS) -lm -o $(XVARKON)
+
+
+##########################################################

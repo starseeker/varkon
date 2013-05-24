@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>str </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>str - <small><small>Function</small></small></h2>
+  <p>Float to string conversion<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Converts a float value to a string of characters with optional formatting.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  str(x, width, precision)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 13 Row 01 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="593">x;</td>
+    </tr>
+<!-- Table 13 Row 02 -->
+    <tr>
+      <td width="66">INT</td>
+      <td width="593">width;</td>
+    </tr>
+<!-- Table 13 Row 03 -->
+    <tr>
+      <td width="66">INT</td>
+      <td width="593">precision;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 14 Row 01 -->
+    <tr>
+      <td width="55">x</td>
+      <td width="604">- The float number to convert. Integer numbers are automatically converted
+      to float.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 15 Row 01 -->
+    <tr>
+      <td width="58">width</td>
+      <td width="601">- Controls the amount of padding. If width is less than the actual space
+      required no padding</td>
+    </tr>
+<!-- Table 15 Row 02 -->
+    <tr>
+      <td width="58"></td>
+      <td width="601">&nbsp;&nbsp; is performed. If width is larger than the space required the
+      result is padded with blanks.</td>
+    </tr>
+<!-- Table 15 Row 03 -->
+    <tr>
+      <td width="58"></td>
+      <td width="601">&nbsp;&nbsp; The sign of width controls weather padding is done on the
+      left side of the result (+) or the</td>
+    </tr>
+<!-- Table 15 Row 04 -->
+    <tr>
+      <td width="58"></td>
+      <td width="601">&nbsp;&nbsp; right side (-).</td>
+    </tr>
+<!-- Table 15 Row 05 -->
+    <tr>
+      <td width="58">precision</td>
+      <td width="601">- Controls the number of decimal places. A value of -1 gives E-notation.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A STRING of characters.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  str(12345,1,0) = &quot;12345&quot;<br>
+  <br>
+  str(12345,10,0) = &quot; 12345&quot;<br>
+  <br>
+  str(12345,-10,0) = &quot;12345 &quot;<br>
+  <br>
+  str(12345,-10,2) = &quot;12345.00 &quot;<br>
+  <br>
+  str(12345,-15,-1) = &quot;1.2345 e+004 &quot;<br>
+  <br>
+  &quot;The value of PI is &quot;+str(pi,1,5) = &quot;The value of PI is 3.14159&quot;</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="striindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

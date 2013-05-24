@@ -1,0 +1,299 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>sur_approx </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-24</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>sur_approx - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+
+<P>Creates a surface<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>The function approximates a given surface (for instance a Consurf surface)
+to a new surface type (for instance to a bicubic surface or to facettes).
+<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>sur_approx(id, ref, s_type, method, extra1, extra2:attributes);<BR>
+<BR>
+</P>
+
+<TABLE WIDTH="615" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="71">REF</TD>
+
+<TD width="536">id;</TD>
+</TR>
+
+<TR>
+<TD width="71">REF</TD>
+
+<TD width="536">ref;</TD>
+</TR>
+
+<TR>
+<TD width="71">STRING</TD>
+
+<TD width="536">s_type;</TD>
+</TR>
+
+<TR>
+<TD width="71">INT</TD>
+
+<TD width="536">method;</TD>
+</TR>
+
+<TR>
+<TD width="71">FLOAT</TD>
+
+<TD width="536">extra1;</TD>
+</TR>
+
+<TR>
+<TD width="71">FLOAT</TD>
+
+<TD width="536">extra2;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="615" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="60">id </TD>
+
+<TD width="547">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="60">ref</TD>
+
+<TD width="547">- Surface that shall be approximated</TD>
+</TR>
+
+<TR>
+<TD width="60">s_type</TD>
+
+<TD width="547">- Output surface type</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; CUB_SUR Bicubic surface</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; FAC_SUR Facettes (B-planes)</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; RAT_SUR Not yet implemented ....</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; LFT_SUR Not yet implemented ....</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; BOX_SUR Bounding box (six FAC_PAT's) for the surface</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; BOX_PAT Patch bounding boxes</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; NURB_SUR 4:th order B-spline surface</TD>
+</TR>
+
+<TR>
+<TD width="60">method</TD>
+
+<TD width="547">- Approximation method</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; Eq. 1:&nbsp;&nbsp; Number of patches is defined
+by extra1 and extra2</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; Eq. 2:&nbsp;&nbsp; The function calculates the necessary
+number of patches for the</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+tolerances extra1 and extra2</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; Eq. 3:&nbsp;&nbsp; Number of patches is defined
+by extra1 and offset by extra2</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(only implemented for the FAC_SUR approximation)</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; Eq. 11: As method= 1 but with double facettes</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; Eq. 12: As method= 2 but with double facettes</TD>
+</TR>
+
+<TR>
+<TD width="60"></TD>
+
+<TD width="547">&nbsp; Eq. 13: As method= 3 but with double</TD>
+</TR>
+
+<TR>
+<TD width="59">extra1</TD>
+
+<TD width="548">- Number of facettes in U direction, in U and V direction
+or coordinate tolerance</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="615" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="58">extra2</TD>
+
+<TD width="549">- Number of facettes in V direction, offset distance or
+surface normal tolerance</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Attributes</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="615" >
+<CAPTION>
+<P><!-- Table 23 Row 01 --></P>
+
+<P><!-- Table 23 Row 02 --></P>
+
+<P><!-- Table 23 Row 03 --></P>
+
+<P><!-- Table 23 Row 04 --></P>
+
+<P><!-- Table 23 Row 05 --></P>
+</CAPTION>
+
+<TR>
+<TD width="66">PEN </TD>
+
+<TD width="541">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="66">LEVEL</TD>
+
+<TD width="541">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="66">BLANK</TD>
+
+<TD width="541">- Visible (0) or invisible (1)</TD>
+</TR>
+
+<TR>
+<TD width="66">SFONT</TD>
+
+<TD width="541">- Solid boundary and dashed midcurves (0)</TD>
+</TR>
+
+<TR>
+<TD width="66">SDASHL</TD>
+
+<TD width="541">- Dashlength</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Example<BR>
+<BR>
+</B>sur_approx(#3, #2, &quot;CUB_SUR&quot;, 1, 5);<BR>
+<BR>
+Creates a new bicubic surface #3, with five new patches in the U direction
+and in the V direction, i.e. there will be 25 new patches for each patch
+in the original surface #2. There are no checks of tolerances for this
+case.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

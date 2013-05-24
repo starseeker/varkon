@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>xhatch </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>xhatch - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates hatching<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Hatches an area bounded by lines, arcs or curves optionally with interior holes or
+  islands.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  xhatch(id, dist, angle, ref1, refn:attributes);<br>
+  <br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 37 Row 01 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="496">id;</td>
+    </tr>
+<!-- Table 37 Row 02 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="496">dist;</td>
+    </tr>
+<!-- Table 37 Row 03 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="496">angle;</td>
+    </tr>
+<!-- Table 37 Row 04 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="496">ref1;</td>
+    </tr>
+<!-- Table 37 Row 05 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="496">refn;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 38 Row 01 -->
+    <tr>
+      <td width="57">id </td>
+      <td width="505">- Local identity</td>
+    </tr>
+<!-- Table 38 Row 02 -->
+    <tr>
+      <td width="57">dist</td>
+      <td width="505">- Distance between hatchlines</td>
+    </tr>
+<!-- Table 38 Row 03 -->
+    <tr>
+      <td width="57">angle</td>
+      <td width="505">- Anticlockwise angle between hatchlines and positive X-axis</td>
+    </tr>
+<!-- Table 38 Row 04 -->
+    <tr>
+      <td width="57">ref1</td>
+      <td width="505">- Identity of first line, arc or curve in boundary</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 39 Row 01 -->
+    <tr>
+      <td width="56">refn</td>
+      <td width="506">- Identity of additional entities in exterior or interior boundary</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 40 Row 01 -->
+    <tr>
+      <td width="68">PEN </td>
+      <td width="494">- Pen or colour number</td>
+    </tr>
+<!-- Table 40 Row 02 -->
+    <tr>
+      <td width="68">LEVEL</td>
+      <td width="494">- Level number</td>
+    </tr>
+<!-- Table 40 Row 03 -->
+    <tr>
+      <td width="68">BLANK</td>
+      <td width="494">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 40 Row 04 -->
+    <tr>
+      <td width="68">XFONT</td>
+      <td width="494">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 40 Row 05 -->
+    <tr>
+      <td width="68">XDASHL</td>
+      <td width="494">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>xhatch(#10,2,45,#2,#5,#3,#6);<br>
+  <br>
+  Hatches an area bounded by #2,#5,#3 and #6 with parallel lines 2 units apart at 45 degrees
+  of angle.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  Referenced entities can be specified in any order of choice but must form one or more well
+  defined boundaries where all entities in each boundary are connected in their endpoints.
+  If more than one boundary is defined one of them must enclose all the other. Boundaries
+  should not cross or touch each other.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+! a14 = CANON FAX-B320 skrivare.
+ epson <
+ | lpr -Ppp1
+ act_job
+ -y0. -x0. -v0. -s1. -h0 -p24 -l82 -FF -pf
+ $VARKON_PLT/varkon.PEN

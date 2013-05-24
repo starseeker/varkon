@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>inpmt </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-04-01</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>infname - <FONT SIZE=+0>Function</FONT></H2>
+
+<P>Filename selection dialogue<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Displays the filename selection dialogue box and waits for input from
+the mouse or the keyboard.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>infname(prompt, default, path, pattern)</P>
+
+<TABLE WIDTH="654" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="72">STRING</TD>
+
+<TD width="574">prompt;</TD>
+</TR>
+
+<TR>
+<TD width="72">STRING</TD>
+
+<TD width="574">default:</TD>
+</TR>
+
+<TR>
+<TD width="72">STRING</TD>
+
+<TD width="574">path;</TD>
+</TR>
+
+<TR>
+<TD>STRING</TD>
+
+<TD>pattern;</TD>
+</TR>
+</TABLE>
+
+<P><B>Principal parameters</B></P>
+
+<P>None.<BR>
+</P>
+
+<P><B>Optional parameters</B></P>
+
+<TABLE WIDTH="654" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="61">prompt</TD>
+
+<TD width="585">- A string to display in the window header. Default = no
+prompt.</TD>
+</TR>
+
+<TR>
+<TD width="61">default</TD>
+
+<TD width="585">- A default value to display in the input field. Default
+= no value.</TD>
+</TR>
+
+<TR>
+<TD>path</TD>
+
+<TD>- The name of the directory to search. Default = current directory.</TD>
+</TR>
+
+<TR>
+<TD>pattern</TD>
+
+<TD>- Wildcardstring to restrict selection. Default = all files.</TD>
+</TR>
+</TABLE>
+
+<P><B>Return value<BR>
+<BR>
+</B>A STRING of characters. If input is finished by clicking the Okey button
+infname() will return the contents of the input field. Clicking the Reject
+button returns a null string &quot;&quot;.<BR>
+<BR>
+<B>Example<BR>
+<BR>
+</B>name:=infname(&quot;Select datafile !&quot;, &quot;file1&quot;, act_jobdir(),
+&quot;*.DAT&quot;);</P>
+
+<P>Displays a list of &quot;.DAT&quot;-files in the currently active job
+directory. A default value of &quot;file1&quot; is displayed in the editfield.
+<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>infname() does not check that the file returned exists or is accessible.
+Use <A HREF="test_fil.htm">test_file()</A> to check for existence or accessability.</P>
+
+<P>If the number of files found is larger than what is possible to display
+in a single window the file list is truncated and a file named &quot;?????&quot;
+is added to the end of the list. 100 files or more is usually no problem.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="dialindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

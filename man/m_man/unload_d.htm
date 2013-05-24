@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>unload_dll </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>unload_dll - <small><small>Procedure</small></small></h2>
+  <p>Unloads a dynamic link library <br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Unloads a dll library previously loaded by the load_dll() function. Unloading a dll frees
+  the memory occupied by the dll and makes it impossible to call functions in it without
+  first loading it again.<br>
+  <br>
+  unload_dll() is only useful in VARKON for Windows95. MBS-programs including calls to
+  unload_dll() will compile and run without errors on all platforms but not actually unload
+  a dll on other platforms than Windows95/NT.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  unload_dll(name)<br>
+  </p>
+  <table width="582" border="0">
+    <tr>
+      <td width="73">STRING</td>
+      <td width="501">name;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b></p>
+  <table width="582" border="0">
+    <tr>
+      <td width="62">name</td>
+      <td width="512">- The name (and path) of the dll library file. Name must be given in
+      exactly the</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="512">&nbsp;&nbsp; same way as when the library was loaded. Case is significant.</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 33 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  unload_dll(&quot;C:\MYLIB\MYDLL.DLL&quot;);<br>
+  <br>
+  Unloads the MYDLL library previousley loaded from the C:\MYLIB directory.<br>
+  <br>
+  <b>Comments</b><br>
+  <br>
+  Varkon automatically unloads any loaded dll's when exiting.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="miscindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

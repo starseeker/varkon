@@ -1,0 +1,39 @@
+!*******************************************************
+
+ MACRO MODULE ed_arc(REF id);
+
+!*      Editerar en cirkel.
+!*
+!*      In: id = Identitet för cirkel som skall
+!*               editeras.
+!*
+!*      (C)microform ab 6/5/92 J. Kjellander
+!*
+!*******************************************************
+
+   STRING typ*20;
+
+ beginmodule
+
+!*
+!***Kolla hur cirkeln är skapad.
+!*
+   typ:=getp_mbs(id,0);
+!*
+!***Anropa rätt rutin.
+!*
+   if typ = "ARC_1POS" then
+     part(#1,ed_arc1p(id));
+   elif typ = "ARC_2POS" then
+     part(#2,ed_arc2p(id));
+   elif typ = "ARC_3POS" then
+     part(#3,ed_arc3p(id));
+   elif typ = "ARC_OFFS" then
+     part(#4,ed_arco(id));
+   elif typ = "ARC_FIL" then
+     part(#5,ed_arcf(id));
+   endif;
+
+ endmodule
+
+!*******************************************************

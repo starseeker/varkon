@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>mode_local</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>mode_local - <small><small>Procedure</small></small></h2>
+  <p>Activates a coordinate system<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Activates a local coordinate system defined by a coordinate system entity.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  mode_local(ref);<br>
+  <br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 30 Row 01 -->
+    <tr>
+      <td width="43">REF</td>
+      <td width="551">ref;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 31 Row 01 -->
+    <tr>
+      <td width="33">ref</td>
+      <td width="561">- Identity of coordinate system to activate</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 32 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Examples<br>
+  </b><br>
+  mode_local(#7.2);<br>
+  <br>
+  Activates a coordinate system with identity = #7.2<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  When a module starts to execute its global coordinate system is always active by default.
+  With mode_local any coordinate system so far created can be made active instead. All
+  positions, tangents, directions, angles, rotations and so on in VARKON are always
+  interpreted as being relative to the coordinate system currently active.<br>
+  <br>
+  The activated coordinate system continues to be in effect until another system is
+  activated or until the module exits.<br>
+  <br>
+  See also mode_global() and mode_basic().</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

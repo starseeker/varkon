@@ -1,0 +1,43 @@
+##########################################################
+#
+#   Makefile for WPlib on GNU/Linux
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+distr :     CFLAGS =                    \
+            -ansi                       \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -O                          \
+            -DUNIX                      \
+            -DV3_X11                    \
+            -DV3_OPENGL                 \
+            -DWRK_STAT
+            
+debug :     CFLAGS =                    \
+            -ansi                       \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -fwritable-strings          \
+            -g3                         \
+            -DDEBUG                     \
+            -DUNIX                      \
+            -DV3_X11                    \
+            -DV3_OPENGL                 \
+            -DWRK_STAT
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.WP
+
+##########################################################

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>outbin</title>
+  <meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+<body bgcolor="#99ccff">
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+<hr width="100%" align="center">
+<blockquote>
+  <h2>outbin - <small><small>Procedure</small></small></h2>
+  <p>Write binary data to a file<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+Writes unformatted binary data to a file without any conversion. <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+outbin(f, data)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 28 Row 01 --> <tbody>
+      <tr>
+        <td width="62">FILE</td>
+        <td width="597">f;</td>
+      </tr>
+<!-- Table 28 Row 02 --> <tr>
+        <td width="62">anytype</td>
+        <td width="597">data;</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 29 Row 01 --> <tbody>
+      <tr>
+        <td width="53">f</td>
+        <td width="606">- The name of a filevariable accociated with a
+file open for write, append or update (W, A or U)</td>
+      </tr>
+<!-- Table 29 Row 02 --> <tr>
+        <td width="53">data</td>
+        <td width="606">- The data to write. A variable, possibly
+indexed or any expression is allowed.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  <u><br>
+  </u></b>None.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+How many bytes of data that are written depends on the size of data. If
+data is an indexed variable (array) the entire array is written.<br>
+  </p>
+  <p>Outbin() is curently not reliable in Windows version of varkon.</p>
+</blockquote>
+<hr width="100%" align="center">
+<p></p>
+<div align="center">
+<center>
+<table align="center" cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="fileindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</div>
+</body>
+</html>

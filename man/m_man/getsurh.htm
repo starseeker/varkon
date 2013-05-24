@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>getsurh </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>getsurh - <small><small>Procedure</small></small></h2>
+  <p>Get surface data header from GM<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Reads a surface data header from GM.<br>
+  <br>
+  <b>Syntax<br>
+  <br>
+  </b>getsurh (id, code, data)<br>
+  <br>
+  </p>
+  <table width="670" border="0">
+<!-- Table 25 Row 01 -->
+    <tr>
+      <td width="71">REF</td>
+      <td width="591">id;</td>
+    </tr>
+<!-- Table 25 Row 02 -->
+    <tr>
+      <td width="71">STRING</td>
+      <td width="591">code*10;</td>
+    </tr>
+<!-- Table 25 Row 03 -->
+    <tr>
+      <td width="71">*</td>
+      <td width="591">data;</td>
+    </tr>
+  </table>
+  <p><br>
+  * Output type for data is INT for all cases except for code = &quot;SDASHL&quot; when data
+  should be FLOAT. <br>
+  <br>
+  <b>Principal parameters<br>
+  <u><br>
+  </b></u></p>
+  <table width="670" border="0">
+<!-- Table 26 Row 01 -->
+    <tr>
+      <td width="62">id</td>
+      <td width="600">- Global identity of a surface</td>
+    </tr>
+    <tr>
+      <td width="62">code</td>
+      <td width="600">- Defines the data to be read</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp; Eq. NPATU:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Get
+      number of topological patches in U-direction</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp; Eq. NPATV:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Get
+      number of topological patches in V-direction</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp; Eq.
+      FONT:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Get font for the surface</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp; Eq. SDASHL:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Get dash
+      length for SFONT= 0</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp; Eq. SUR_TYPE:&nbsp;&nbsp; Get surface type</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; Eq. 0: MIX_SUR Surface with different kinds of patches</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp; &nbsp;&nbsp; Eq. 1: CUB_SUR Surface with only CUB_PAT patches</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp; &nbsp; Eq. 2: RAT_SUR Surface with only RAT_PAT patches</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp; &nbsp; Eq. 3: LFT_SUR Surface with only LFT_PAT patches</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp; &nbsp; Eq. 4: FAC_SUR Surface with only FAC_PAT facettes</td>
+    </tr>
+    <tr>
+      <td width="62"></td>
+      <td width="600">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp; &nbsp; Eq. 5: CON_SUR Surface with only CON_PAT patches&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="62">data</td>
+      <td width="600">- A variable to recieve the data</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  None.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="gmdbindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

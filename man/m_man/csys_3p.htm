@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>csys_3p</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>csys_3p -<small><small> Geometric procedure</small></small></h2>
+  <p>Creates a coordinate system<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a local coordinate system defined by two or three positions. <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  csys_3p(id, name, p1, p2, p3:attributes);<br>
+  <br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 05 Row 01 -->
+    <tr>
+      <td width="77">REF</td>
+      <td width="485">id;</td>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="485">name*10;</td>
+    </tr>
+<!-- Table 05 Row 03 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="485">p1;</td>
+    </tr>
+<!-- Table 05 Row 04 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="485">p2;</td>
+    </tr>
+<!-- Table 05 Row 05 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="485">p3;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td width="68">id </td>
+      <td width="494">- Local identity</td>
+    </tr>
+<!-- Table 06 Row 02 -->
+    <tr>
+      <td width="68">name</td>
+      <td width="494">- User defined name</td>
+    </tr>
+<!-- Table 06 Row 03 -->
+    <tr>
+      <td width="68">p1</td>
+      <td width="494">- Position of origin</td>
+    </tr>
+<!-- Table 06 Row 04 -->
+    <tr>
+      <td width="68">p2</td>
+      <td width="494">- Position on X-axis</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 07 Row 01 -->
+    <tr>
+      <td width="68">p3</td>
+      <td width="494">- Position near Y-axis </td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="570" border="0">
+<!-- Table 08 Row 01 -->
+    <tr>
+      <td width="67">PEN </td>
+      <td width="495">- Pen or colour number</td>
+    </tr>
+<!-- Table 08 Row 02 -->
+    <tr>
+      <td width="67">LEVEL</td>
+      <td width="495">- Level number</td>
+    </tr>
+<!-- Table 08 Row 03 -->
+    <tr>
+      <td width="67">BLANK</td>
+      <td width="495">- Visible(0) or invisible(1)</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  <u><br>
+  </b></u>csys_3p(#1,vec(10,0,0), vec(11,0,0),vec(10,1,0));<br>
+  <br>
+  Creates a coordinate system with origin in X=10 and Y=0. The direction of its axes are the
+  same as the active coordinate system (no rotation).<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  If specified the third position p3 is used by the system to rotate the Y and Z axes around
+  X so that the XY-plane will include p3. If p3 is not specified the system will do
+  something anyway but the user has no way of knowing what the result will be. This method
+  should only be used when the exact direction of the Y and Z-axes is not important.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

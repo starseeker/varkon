@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+  <title>rap_outfloat</title>
+  <style type="text/css">
+<!--
+p.h{font-weight: bold; line-height: 21pt}
+-->
+  </style>
+</head>
+<body style="background-color: rgb(153, 204, 255);">
+<p>
+</p>
+<center><font size="-1">VARKON Version 1.18A 2004-09-07</font></center>
+<hr width="100%" align="center">
+&nbsp;<br>
+<table border="0">
+  <tbody>
+    <tr>
+      <td width="35">&nbsp;<br>
+      </td>
+      <td>
+      <h2>rap_outfloat - <font size="+0">function</font></h2>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">Description</p>
+            </td>
+          </tr>
+          <tr>
+            <td>Write varkon float to rapid 'num' variable </td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">Syntax</p>
+            </td>
+          </tr>
+          <tr>
+            <td>RAP_OUTFLOAT(client,var_name,data)</td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0" width="640">
+        <tbody>
+          <tr>
+            <td width="80">INT</td>
+            <td width="580">client</td>
+          </tr>
+          <tr>
+            <td width="80">STRING</td>
+            <td width="580">var_name<br>
+            </td>
+          </tr>
+          <tr>
+            <td width="80">FLOAT</td>
+            <td width="580">data</td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0" width="640">
+        <tbody>
+          <tr>
+            <td colspan="2">
+            <p class="h">Principal parameters</p>
+            </td>
+          </tr>
+          <tr>
+            <td width="80" valign="top">client</td>
+            <td width="580" valign="top">- id of the created RPC
+connection to use</td>
+          </tr>
+          <tr>
+            <td width="80" valign="top">var_name</td>
+            <td width="580" valign="top">- the name of the rapid 'num'
+variable to set<br>
+            </td>
+          </tr>
+          <tr>
+            <td width="80" valign="top">data</td>
+            <td width="580" valign="top">- the data to be sent.</td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0" width="640">
+        <tbody>
+          <tr>
+            <td colspan="2">
+            <p class="h">Optional parameters</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">none</td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">Return value</p>
+            </td>
+          </tr>
+          <tr>
+            <td>An INT value equal to the current error status as
+below: </td>
+          </tr>
+        </tbody>
+      </table>
+      <table border="0" style="width: 640px;">
+        <tbody>
+          <tr>
+            <td style="width: 60px;" align="right" valign="top">&gt;=0 </td>
+            <td>RAP variable handling status: operation was successfull
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 60px;" align="right" valign="top">-1&nbsp;<br>
+            </td>
+            <td>Remote procedure call failed.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 60px;" align="right" valign="top">&lt;-1&nbsp;<br>
+            </td>
+            <td>RAP variable handling error message, see RAP service
+specification (3HAC 7697-1) page 127<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">Comments</p>
+            </td>
+          </tr>
+          <tr>
+            <td>RAP routines is only available for xvarkon (UNIX
+platforms), the use of RAP-routines need also to be enabled when
+building xvarkon. See $VARKON_ROOT/sources/makefile.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+&nbsp;<br>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td>
+            <p class="h">See also</p>
+            </td>
+          </tr>
+          <tr>
+            <td><a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_infloat.htm">rap_infloat()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_outfloat.htm">rap_outfloat()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_inint.htm">rap_inint()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_outint.htm">rap_outint()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_inrobtarget.htm">rap_inrobtarget()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_outrobtarget.htm">rap_outrobtarget()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_inspeed.htm">rap_inspeed()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_outspeed.htm">rap_outspeed()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_infloatarr.htm">rap_infloatarr()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_outfloatarr.htm">rap_outfloatarr()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_inrobtarr.htm">rap_inrobtarr()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rap_outrobtarr.htm">rap_outrobtarr()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rpc_clientcreate.htm">rpc_clientcreate()</a>&nbsp;
+&nbsp; <a
+ href="file:///usr/varkon/varkon_1.18A/man/m_man/rpc_clientdestroy.htm">rpc_clientdestroy()</a>&nbsp;&nbsp;<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+      <td width="35">&nbsp;<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<hr width="100%" align="center">
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="rapindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</body>
+</html>

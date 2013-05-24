@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>eval </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>eval - <small><small>Function</small></small></h2>
+  <p>Evaluation of coordinates and derivatives<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Returns coordinates, derivatives, curvature or curvature directions for a given point on a
+  surface or a curve.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  eval(ref, case, uv)<br>
+  <br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 04 Row 01 -->
+    <tr>
+      <td width="77">REF</td>
+      <td width="517">ref;</td>
+    </tr>
+<!-- Table 04 Row 02 -->
+    <tr>
+      <td width="77">STRING</td>
+      <td width="517">case;</td>
+    </tr>
+<!-- Table 04 Row 03 -->
+    <tr>
+      <td width="77">VECTOR</td>
+      <td width="517">uv;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="602" border="0">
+<!-- Table 05 Row 01 -->
+    <tr>
+      <td width="68">ref</td>
+      <td width="526">- Identity curve or surface</td>
+    </tr>
+<!-- Table 05 Row 02 -->
+    <tr>
+      <td width="68">case</td>
+      <td width="526">- Evaluation case (XYZ, DRDT, .... See below)</td>
+    </tr>
+<!-- Table 05 Row 03 -->
+    <tr>
+      <td width="68">uv</td>
+      <td width="526">- Parameter point on surface or curve</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 06 Row 01 -->
+    <tr>
+      <td>None</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A VECTOR equal to the requested coordinates or derivatives.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  eval(#5, &quot;DNDU&quot;, VEC(0.4,5.9))<br>
+  <br>
+  Calculates the derivatives with respect to U for the (normalized) surface normal in UV
+  point (0.4,5.9) in surface #5.<br>
+  <br>
+  <b>All eval cases for a surface<br>
+  </b><br>
+  Coordinates and derivatives in surface ##5.1 for U= 0.40000000 V= 5.90000000 <br>
+  <br>
+  uvlocal 0.40000000 0.90000000 <br>
+  patadr 1.00000000 6.00000000 <br>
+  <br>
+  xyz 4078.00145392 295.32866409 3416.25431755 <br>
+  drdu 19.29846079 0.80655928 -4.98459269 <br>
+  drdv -7.74898318 -58.25466669 -60.27168128 <br>
+  d2rdu2 0.05825836 0.00713980 0.22878794 <br>
+  d2rdv2 1.60996519 -12.13643325 12.52153948 <br>
+  d2rdudv -0.02015290 -0.17994164 -0.15624331 <br>
+  <br>
+  normal -0.20225782 0.71704103 -0.66704118 <br>
+  dndu 0.00776220 0.00049559 -0.00182089 <br>
+  dndv -0.03046975 -0.14385945 -0.14540389 <br>
+  <br>
+  kappamin -0.00040019 <br>
+  kappamax -0.00246216 <br>
+  gaussian 0.00000099 <br>
+  mean -0.00143117 <br>
+  <br>
+  r3min 0.96649653 0.03623213 -0.25410960 <br>
+  r3max 0.15803869 0.69608864 0.70034590 <br>
+  uvmin 0.99999897 0.00143358 <br>
+  uvmax 0.27544280 -0.96131746 <br>
+  <br>
+  uvminderiv 0.00143358 <br>
+  uvmaxderiv -3.49008014 <br>
+  angkappa 90.00000000 74.09373413<br>
+  <br>
+  <b>All eval cases for a surface curve<br>
+  </b><br>
+  Coordinates and derivatives in curve ##12.1#1.1 for T= 6.90000000 <br>
+  <br>
+  <br>
+  tlocal 0.90000000 <br>
+  segadr 7.00000000 <br>
+  <br>
+  xyz 4302.12594840 416.49613604 3618.10169318 <br>
+  drdt 52.45042503 0.30346851 -27.72882897 <br>
+  d2rdt2 -0.09881610 -1.15718075 -0.09402066 <br>
+  <br>
+  segtype 2.00000000 <br>
+  <br>
+  prinormal -0.04741811 -0.99379938 -0.10056995 <br>
+  binormal -0.46498396 0.11107038 -0.87832414 <br>
+  <br>
+  kappa 0.00033072 <br>
+  normkappa -0.00032219 <br>
+  geodesic 0.00007463 <br>
+  <br>
+  uv 5.90009346 3.58649697 <br>
+  duvdt 0.99916330 0.25249137 <br>
+  d2uvdt2 -0.00197147 0.00773156 <br>
+  <br>
+  <br>
+  <br>
+  <b>All eval cases for a free curve<br>
+  </b><br>
+  Coordinates and derivatives in curve ##15.1#1.1 for T= 13.80000000 <br>
+  <br>
+  tlocal 0.80000000 <br>
+  segadr 14.00000000 <br>
+  <br>
+  xyz 4302.12503127 416.49612945 3618.10217769 <br>
+  drdt 26.22877602 0.15177467 -13.86629445 <br>
+  d2rdt2 -0.01417528 -0.28931755 -0.02908306 <br>
+  <br>
+  segtype 1.00000000 <br>
+  <br>
+  prinormal -0.04741914 -0.99379899 -0.10057334 <br>
+  binormal -0.46498375 0.11107386 -0.87832381 <br>
+  <br>
+  kappa 0.00033073 </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

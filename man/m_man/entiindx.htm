@@ -1,0 +1,287 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>Entity creation routines</title>
+  <meta name="GENERATOR"
+ content="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</head>
+<body bgcolor="#99ccff">
+<center>
+<p><font size="-1">VARKON Version 1.15 1997-10-24</font></p>
+</center>
+<hr width="100%" align="center">
+<blockquote>
+  <h1>Entity creation routines<br>
+  </h1>
+</blockquote>
+<blockquote>
+  <table width="686" height="1419">
+    <tbody>
+      <tr>
+        <td><a href="poi_free.htm">poi_free</a></td>
+        <td width="564" height="21">Point free</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="poi_proj.htm">poi_proj</a></td>
+        <td width="564" height="21">Point projected</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="lin_free.htm">lin_free</a></td>
+        <td width="564" height="21">Line free</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="lin_proj.htm">lin_proj</a></td>
+        <td width="564" height="21">Line projected</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="lin_offs.htm">lin_offs</a></td>
+        <td width="564" height="21">Line offset</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="lin_ang.htm">lin_ang</a></td>
+        <td width="564" height="21">Line with angle</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="lin_perp.htm">lin_perp</a></td>
+        <td width="564" height="21">Line perpendicular</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="lin_tan1.htm">lin_tan1</a></td>
+        <td width="564" height="21">Line tangent</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="lin_tan2.htm">lin_tan2</a></td>
+        <td width="564" height="21">Line tangent</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="arc_1pos.htm">arc_1pos</a></td>
+        <td width="564" height="21">Arc with 1 position</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="arc_2pos.htm">arc_2pos</a></td>
+        <td width="564" height="21">Arc with 2 positions</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="arc_3pos.htm">arc_3pos</a></td>
+        <td width="564" height="21">Arc with 3 positions</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="arc_offs.htm">arc_offs</a></td>
+        <td width="564" height="21">Arc offset</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="arc_fil.htm">arc_fil</a></td>
+        <td width="564" height="21">Arc fillet</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_appr.htm">cur_approx</a></td>
+        <td width="564" height="21">Curve approximate</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_comp.htm">cur_comp</a></td>
+        <td width="564" height="21">Curve composite</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_cona.htm">cur_conarr</a></td>
+        <td width="564" height="21">Curve conic</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_con.htm">cur_conic</a></td>
+        <td width="564" height="21">Curve conic</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_int.htm">cur_int</a></td>
+        <td width="564" height="21">Curve intersect</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_iso.htm">cur_iso</a></td>
+        <td width="564" height="21">Curve isoparameter</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_nurbsarr.htm">cur_nurbsarr</a></td>
+        <td width="564" height="21">NURBS curve</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_offs.htm">cur_offs</a></td>
+        <td width="564" height="21">Curve offset</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_sil.htm">cur_sil</a></td>
+        <td width="564" height="21">Curve silhouette</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_spla.htm">cur_splarr</a></td>
+        <td width="564" height="21">Curve spline</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_spl.htm">cur_spline</a></td>
+        <td width="564" height="21">Curve spline</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_trim.htm">cur_trim</a></td>
+        <td width="564" height="21">Curve trimmed</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cur_us.htm">cur_usrdef</a></td>
+        <td width="564" height="21">Curve user defined</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_appr.htm">sur_approx</a></td>
+        <td width="564" height="21">Surface approximate</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_comp.htm">sur_comp</a></td>
+        <td width="564" height="21">Surface composite</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_cona.htm">sur_conarr</a></td>
+        <td width="564" height="21">Conic surface</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_coni.htm">sur_conic</a></td>
+        <td width="564" height="21">Conic surface</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_curves.htm">sur_curves</a></td>
+        <td width="564" height="21">Surface defined by curves</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_cyl.htm">sur_cyl</a></td>
+        <td width="564" height="21">Cylindrical surface</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_exde.htm">sur_exdef</a></td>
+        <td width="564" height="21">Surface externally defined</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_nurb.htm">sur_nurbsarr</a></td>
+        <td width="564" height="21">NURBS surface</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_offs.htm">sur_offs</a></td>
+        <td width="564" height="21">Surface offset</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_rot.htm">sur_rot</a></td>
+        <td width="564" height="21">Rotational surface</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_rule.htm">sur_ruled</a></td>
+        <td width="564" height="21">Ruled surface</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_spla.htm">sur_splarr</a></td>
+        <td width="564" height="21">Spline surface</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_swee.htm">sur_sweep</a></td>
+        <td width="564" height="21">Swept surface</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_trim.htm">sur_trim</a></td>
+        <td width="564" height="21">Surface trimmed</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="sur_us.htm">sur_usrdef</a></td>
+        <td width="564" height="21">Surface user defined</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="tf_move.htm">tform_move</a></td>
+        <td width="564" height="21">Transform move</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="tf_rotp.htm">tform_rotp</a></td>
+        <td width="564" height="21">Transform rotate</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="tf_rotl.htm">tform_rotl</a></td>
+        <td width="564" height="21">Transform rotate</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="tf_mirr.htm">tform_mirr</a></td>
+        <td width="564" height="21">Transform mirror</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="tf_comp.htm">tform_comp</a></td>
+        <td width="564" height="21">Transform composite</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="tf_us.htm">tform_usrdef</a></td>
+        <td width="564" height="21">Transform user defined</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="tcopy.htm">tcopy</a></td>
+        <td width="564" height="21">Transform and copy</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="csys_1p.htm">csys_1p</a></td>
+        <td width="564" height="21">Coordinate system wit one position</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="csys_3p.htm">csys_3p</a></td>
+        <td width="564" height="21">Coordinate system with 2 or 3
+positions</td>
+      </tr>
+      <tr>
+        <td width="114" height="15"><a href="b_plane.htm">b_plane</a></td>
+        <td width="564" height="15">Bounded plane</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;"><a href="mesh_arr.htm">mesh_arr</a><br>
+        </td>
+        <td style="vertical-align: top;">Mesh<br>
+        </td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="part.htm">part</a></td>
+        <td width="564" height="21">Part</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="symb.htm">symb</a></td>
+        <td width="564" height="21">Static symbol</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="group.htm">group</a></td>
+        <td width="564" height="21">Group</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="ldim.htm">ldim</a></td>
+        <td width="564" height="21">Linear dimension</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="cdim.htm">cdim</a></td>
+        <td width="564" height="21">Circular dimension</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="rdim.htm">rdim</a></td>
+        <td width="564" height="21">Radius dimension</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="adim.htm">adim</a></td>
+        <td width="564" height="21">Angular dimension</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="text.htm">text</a></td>
+        <td width="564" height="21">Text</td>
+      </tr>
+      <tr>
+        <td width="114" height="21"><a href="xhatch.htm">xhatch</a></td>
+        <td width="564" height="21">Hatcing</td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+<p>&nbsp;</p>
+<hr width="100%" align="center">
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="mfupindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</body>
+</html>

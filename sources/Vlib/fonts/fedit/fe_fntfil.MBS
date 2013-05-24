@@ -1,0 +1,117 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE fe_fntfil(
+ INT fntnum:=10  >"Vilket nummer skall fonten ha ?");
+
+!*      Skapar en fontfil fntnum.FNT p} aktiv jobkatalog.
+!*
+!*      (C)microform ab 21/12/92 J. Kjellander
+!*
+!*******************************************************
+
+   CONSTANT STRING FNTDIR = "/usr/v3/cnf/fnt/";
+
+   INT    i,nv,ntkn,nvtot;
+   STRING s*1,rad*80;
+   FILE   ff,tf;
+
+ beginmodule
+
+!*
+!***Initiering.
+!*
+   ntkn:=0;
+   nvtot:=0;
+!*
+!***Kolla att fntnum {r vettigt.
+!*
+   if fntnum < 0 then
+     exit("Fontnummer f}r ej vara < 0 !");
+   elif fntnum > 19 then
+     exit("Fontnummer f}r ej vara > 19 !");
+   elif fntnum < 10 then
+     psh_pmt("Fontnummer < 10 {r reserverade f|r microform !");
+     s:=inpmt("Vill du forts{tta ? (j/n)","n",1);
+     pop_pmt();
+     if s <> "j" then
+       exit();
+     endif;
+   endif;
+!*
+!***\ppna fil med namnet fntnum.FNT.
+!*
+   open(ff,"r",FNTDIR+str(fntnum,-1,0)+".FNT");
+   if iostat(ff) = 0 then
+     psh_pmt("Fontfilen "+str(fntnum,-1,0)+".FNT finns redan !");
+     s:=inpmt("Vill du skriva |ver ? (j/n)","j",1);
+     pop_pmt();
+     if s <> "j" then exit(); endif;
+   endif;
+
+   open(ff,"w",FNTDIR+str(fntnum,-1,0)+".FNT");
+   if iostat(ff) < 0 then
+     exit("Kan ej |ppna fontfil !");
+   endif;
+!*
+!***Skriv ut ntkn och nvtot. Verkliga v{rden skrivs dit senare.
+!*
+   outint(ff,ntkn,-5);
+   outlin(ff);
+   outint(ff,nvtot,-5);
+   outlin(ff);
+!*
+!***Prova att |ppna teckenfiler.
+!*
+   psh_pmt("Fontfil skapas, v{nta....");
+   for i:=0 to 255 do
+     open(tf,"r",act_jobdir()+"ASCII."+str(i,-1,0));
+!*
+!***Fil nr:i finns.
+!*
+     if iostat(tf) = 0 then
+     psh_pmt("L{ser tecken nr:"+str(i,-1,0));
+     ntkn:=ntkn+1;
+     nv:=inint(tf);
+     rad:=inlin(tf);
+     nvtot:=nvtot+nv;
+     outint(ff,nv,-1);
+     outlin(ff);
+loop:
+     rad:=inlin(tf);
+     if iostat(tf) = 0 then
+       outstr(ff,rad);
+       outlin(ff);
+       goto loop;
+     else
+       close(tf);
+       pop_pmt();
+     endif;
+!*
+!***Fil nr:i finns inte.
+!*
+     else
+       outstr(ff,"0");
+       outlin(ff);
+     endif;
+   endfor;
+!*
+!***St{ng fontfilen.
+!*
+   close(ff);
+!*
+!***Uppdatera ntkn och nvtot.
+!*
+   open(ff,"u",FNTDIR+str(fntnum,-1,0)+".FNT");
+   outint(ff,ntkn,-5);
+   outlin(ff);
+   outint(ff,nvtot,-5);
+   outlin(ff);
+!*
+!***Slut.
+!*
+   pop_pmt();
+   close(ff);
+
+ endmodule
+
+!*******************************************************

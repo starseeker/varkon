@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>cur_comp </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-12-29</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>cur_comp - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates a curve<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates a curve by copying one or many lines, arcs or curves into a new
+  &quot;composite&quot; curve. cur_comp requires that the entities used to create the new
+  curve are connected in the order they are specified. The first entity must be connected in
+  either end to an end the second entity and the other end of the second entity must be
+  connected to either end of the third entity and so on. Entities may be connected
+  start-to-end or end-to-end or end-to-start or start-to-start (any of the 4 possible ways).
+  Varkon automatically reverses all entities with the wrong sense of direction so that the
+  parametrisation of the resulting new curve becomes continous. Continuity in slope (tangent
+  direction) is not required.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  cur_comp(id, ref1, ref2,...refn:attributes);<br>
+  <br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 13 Row 01 -->
+    <tr>
+      <td width="44">REF</td>
+      <td width="580">id;</td>
+    </tr>
+<!-- Table 13 Row 02 -->
+    <tr>
+      <td width="44">REF</td>
+      <td width="580">ref1;</td>
+    </tr>
+<!-- Table 13 Row 03 -->
+    <tr>
+      <td width="44">REF</td>
+      <td width="580">ref2;</td>
+    </tr>
+<!-- Table 13 Row 04 -->
+    <tr>
+      <td width="44">REF</td>
+      <td width="580">refn;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 14 Row 01 -->
+    <tr>
+      <td width="34">id </td>
+      <td width="590">- Local identity</td>
+    </tr>
+<!-- Table 14 Row 02 -->
+    <tr>
+      <td width="34">ref1</td>
+      <td width="590">- Identity of line, arc or curve</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 15 Row 01 -->
+    <tr>
+      <td width="34">ref2</td>
+      <td width="590">- Identity of second line, arc or curve</td>
+    </tr>
+<!-- Table 15 Row 02 -->
+    <tr>
+      <td width="34">refn</td>
+      <td width="590">- Identity of last line, arc or curve</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="632" border="0">
+<!-- Table 16 Row 01 -->
+    <tr>
+      <td width="67">PEN </td>
+      <td width="557">- Pen or colour number</td>
+    </tr>
+<!-- Table 16 Row 02 -->
+    <tr>
+      <td width="67">LEVEL</td>
+      <td width="557">- Level number</td>
+    </tr>
+<!-- Table 16 Row 03 -->
+    <tr>
+      <td width="67">BLANK</td>
+      <td width="557">- Visible(0) or invisible(1)</td>
+    </tr>
+<!-- Table 16 Row 04 -->
+    <tr>
+      <td width="67">CFONT</td>
+      <td width="557">- Solid(0), dashed(1) or centerline(2)</td>
+    </tr>
+<!-- Table 16 Row 05 -->
+    <tr>
+      <td width="67">CDASHL</td>
+      <td width="557">- Dashlength</td>
+    </tr>
+    <tr>
+      <td width="70">WIDTH</td>
+      <td width="554">- Linewidth</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><u><br>
+  </u>cur_comp(#5,#4,#3,#2);<br>
+  <br>
+  Combines #4, #3 and #2 into a new curve #5.<br>
+  <br>
+  cur_comp(#2,#1);<br>
+  <br>
+  Creates a new curve #2 equal to #1.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  If lines or arcs are used in a cur_comp they will be converted to curve segments. One
+  segment for a line and maximum four segments for an arc.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

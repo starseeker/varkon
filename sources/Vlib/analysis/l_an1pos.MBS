@@ -1,0 +1,30 @@
+!*******************************************************
+
+ macro module l_an1pos(VECTOR p > "t264");
+
+!*      Skriver ut data för en position.
+!*
+!*      In : p    = Position
+!*           t264 = "Ange position"
+!*
+!*      Ut : Inget.
+!*
+!*      (C)microform ab 17/10/86 R. Svedin
+!*
+!*      1996-06-03 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+ beginmodule
+
+   lst_ini(get_tstr(281));   ! t281 = "  ANALYS  1 position"
+
+   lst_lin(get_tstr(201)+" " + str(p.x,-12,6)); ! t201 = "X :"
+   lst_lin(get_tstr(202)+" " + str(p.y,-12,6)); ! t202 = "Y :"
+   lst_lin(get_tstr(203)+" " + str(p.z,-12,6)); ! t203 = "Z :"
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

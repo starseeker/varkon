@@ -1,0 +1,258 @@
+!*******************************************************
+
+  GLOBAL GEOMETRY MODULE stl_ina(
+  VAR FILE f;
+  VAR FILE logfil; 
+  FLOAT  X_scale:=1.0 > "Scale X:";
+  FLOAT  Y_scale:=1.0 > "Scale Y:";
+  FLOAT  Z_scale:=1.0 > "Scale Z:";
+  STRING reverse*1:="n" >"Reverse normals ? (y/n)";
+  INT DEC:=2 > "Accuracy in digits behind decimal:";
+  INT color:=1 > "Color:");
+
+!*      Reads ASCII-formatted STL-file.
+!*
+!*      (C)microform ab 1998-09-11 J. Kjellander
+!*      (C) Kastalyse   2001-03-20 R. Kastelein
+!*
+!*******************************************************
+
+ CONSTANT INT START_COUNTER=1000;
+!* Start displaying entity number after START_COUNTER entities
+
+
+ INT    status;        ! Error code
+ STRING path*132;      ! Path to STL-file
+ STRING line*132;      ! Line read
+ VECTOR p1,p2,p3;      ! Vertex coordinates
+ INT    n;             ! Character count
+ INT    nf;            ! Facet count
+ VECTOR swap;          ! For normal reversal
+
+ BEGINMODULE
+
+!*
+!***Initialization.
+!*
+   nf:=0;
+!*
+!***Create complete path and check acessibility.
+!*
+   status:=0;
+
+
+!*
+!***Eat lines until "solid" found.
+!*
+findsolid:
+   line:=inlin(f);
+   if iostat(f) = 0 then
+     if finds(line,"solid") = 0 then
+       goto findsolid;
+     endif;
+   else
+     pop_pmt();
+     close(f);
+     exit("This doesn't seem to be an ASCII-formatted STL-file !");
+   endif;
+!*
+!***If "endsolid" is found but no "solid" something
+!***is wrong.
+!*
+   if finds(line,"endsolid") > 0 then
+     pop_pmt();
+     close(f);
+     exit("Found endsolid but no solid !");
+   endif;
+!*
+!***Eat lines until "facet" found.
+!*
+findfacet:
+   line:=inlin(f);
+   if iostat(f) = 0 then
+     if finds(line,"facet") = 0 then
+       goto findfacet;
+     endif;
+   else
+     goto end;
+   endif;
+!*
+!***Eat lines until "outer loop" found.
+!*
+findouterloop:
+   line:=inlin(f);
+   if iostat(f) = 0 then
+     if finds(line,"outer loop") = 0 then
+       goto findouterloop;
+     endif;
+   else
+     pop_pmt();
+     close(f);
+     exit("This doesn't seem to be an ASCII-formatted STL-file !");
+   endif;
+!*
+!***Eat lines until first "vertex" found.
+!*
+findvertex1:
+   line:=inlin(f);
+   if iostat(f) = 0 then
+     n:=finds(line,"vertex");
+     if n = 0 then
+       goto findvertex1;
+     else
+       line:=substr(line,n+6);
+       p1.x:=fval(line,status,n)*X_scale;
+       line:=substr(line,n+1);
+       p1.y:=fval(line,status,n)*Y_scale;
+       line:=substr(line,n+1);
+       p1.z:=fval(line,status,n)*Z_scale;
+     endif;
+   else
+     pop_pmt();
+     close(f);
+     exit("Unvalid STL-file, keyword vertex missing !");
+   endif;
+!*
+!***Eat lines until second "vertex" found.
+!*
+findvertex2:
+   line:=inlin(f);
+   if iostat(f) = 0 then
+     n:=finds(line,"vertex");
+     if n = 0 then
+       goto findvertex2;
+     else
+       line:=substr(line,n+6);
+       p2.x:=fval(line,status,n)*X_scale;
+       line:=substr(line,n+1);
+       p2.y:=fval(line,status,n)*Y_scale;
+       line:=substr(line,n+1);
+       p2.z:=fval(line,status,n)*Z_scale;
+     endif;
+   else
+     pop_pmt();
+     close(f);
+     exit("Unvalid STL-file, keyword vertex missing !");
+   endif;
+!*
+!***Eat lines until last "vertex" found.
+!*
+findvertex3:
+   line:=inlin(f);
+   if iostat(f) = 0 then
+     n:=finds(line,"vertex");
+     if n = 0 then
+       goto findvertex3;
+     else
+       line:=substr(line,n+6);
+       p3.x:=fval(line,status,n)*X_scale;
+       line:=substr(line,n+1);
+       p3.y:=fval(line,status,n)*Y_scale;
+       line:=substr(line,n+1);
+       p3.z:=fval(line,status,n)*Z_scale;
+     endif;
+   else
+     pop_pmt();
+     close(f);
+     exit("Unvalid STL-file, keyword vertex missing !");
+   endif;
+!*
+!***Possible reversal of normal.
+!*
+   if reverse = "y"  or  reverse = "Y" then
+     swap:=p1;
+     p1:=p3;
+     p3:=swap;
+   endif;
+
+!*
+!***Display message with entity number.
+!*
+   if nf > START_COUNTER then
+     psh_pmt("Reading entity "+str(nf,-1,0)+" from STL-file");
+!     pop_pmt();
+   endif;
+
+!*
+!***Create facet.
+!*
+   nf:=nf+1;
+   if   nf < 32000 then
+     b_plane(#1,p1,p2,p2,p3);
+   elif nf < 64000 then
+     b_plane(#2,p1,p2,p2,p3);
+   elif nf < 96000 then
+     b_plane(#3,p1,p2,p2,p3);
+   elif nf < 128000 then
+     b_plane(#4,p1,p2,p2,p3);
+   elif nf < 160000 then
+     b_plane(#5,p1,p2,p2,p3);
+   elif nf < 192000 then
+     b_plane(#6,p1,p2,p2,p3);
+   elif nf < 224000 then
+     b_plane(#7,p1,p2,p2,p3);
+   elif nf < 256000 then
+     b_plane(#8,p1,p2,p2,p3);
+   else
+     close(f);
+     exit("Cant create more than 256000 facets !");
+   endif;
+
+!*
+!***Write MBS-code to logfile.
+!*
+   outstr(logfil,"b_plane(#"+str(nf,-1,0)+",vec("+
+          str(p1.x,-1,DEC)+","+str(p1.y,-1,DEC)+","+str(p1.z,-1,DEC)+"),vec("+
+          str(p2.x,-1,DEC)+","+str(p2.y,-1,DEC)+","+str(p2.z,-1,DEC)+"),vec("+
+          str(p2.x,-1,DEC)+","+str(p2.y,-1,DEC)+","+str(p2.z,-1,DEC)+"),vec("+
+          str(p3.x,-1,DEC)+","+str(p3.y,-1,DEC)+","+str(p3.z,-1,DEC)+"));");
+   outlin(logfil);
+
+
+!*
+!***Eat lines until "endloop" found.
+!*
+findendloop:
+   line:=inlin(f);
+   if iostat(f) = 0 then
+     if finds(line,"endloop") = 0 then
+       goto findendloop;
+     endif;
+   else
+     pop_pmt();
+     close(f);
+     exit("Unvalid STL-file, keyword endloop missing !");
+   endif;
+!*
+!***Eat lines until "endfacet" found.
+!*
+findendfacet:
+   line:=inlin(f);
+   if iostat(f) = 0 then
+     if finds(line,"endfacet") = 0 then
+       goto findendfacet;
+     endif;
+   else
+     pop_pmt();
+     close(f);
+     exit("Unvalid STL-file, keyword endfacet missing !");
+   endif;
+
+!*
+!***Try next facet.
+!*
+   goto findfacet;
+!*
+!***Close the file and exit.
+!*
+end:
+   pop_pmt();
+   close(f);
+   outlin(logfil);  
+   outstr(logfil,"!* "+str(nf,-1,0)+" facets read !");
+   outlin(logfil);   
+   psh_pmt(str(nf,-1,0)+" facets read !");
+
+ ENDMODULE
+
+!*******************************************************

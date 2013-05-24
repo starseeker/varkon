@@ -1,0 +1,36 @@
+!*******************************************************
+
+ macro module l_invon(REF    id >"@t14 t268";
+                      VECTOR  p >"t264");
+
+!*      Analyserar var en kurva är närmast en viss position.
+!*
+!*      In: id  = Kurvans identitet.
+!*                t268 = "Ange storhet"
+!*           p  = Önskad position.
+!*                t264 = "Ange position"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 19/12/91 J. Kjellander
+!*
+!*       1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   STRING s*1;
+
+ beginmodule
+
+!*
+!***Utskrift.
+!*
+   psh_pmt("x,y,z = ("+str(p.x,-1,5)+","+
+                        str(p.y,-1,5)+","+
+                        str(p.z,-1,5)+")");
+   s:=inpmt(get_tstr(1544) + str(inv_on(id,p,1),-1,6),"",1);
+   pop_pmt();
+
+ endmodule
+
+!*******************************************************

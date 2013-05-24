@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>os </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>os - <small><small>Procedure</small></small></h2>
+  <p>Operating system command<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Sends a command to the operating system.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  os(command, mode)<br>
+  <br>
+  </p>
+  <table width="658" border="0">
+<!-- Table 19 Row 01 -->
+    <tr>
+      <td width="75">STRING</td>
+      <td width="575">command*132;</td>
+    </tr>
+<!-- Table 19 Row 02 -->
+    <tr>
+      <td width="75">INT</td>
+      <td width="575">mode;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="658" border="0">
+<!-- Table 20 Row 01 -->
+    <tr>
+      <td width="65">command</td>
+      <td width="585">- The operating system command</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b></p>
+  <table width="658" border="0">
+    <tr>
+      <td width="65">mode</td>
+      <td width="585">- 0 = Wait for command to finish, default</td>
+    </tr>
+    <tr>
+      <td width="65"></td>
+      <td width="585">&nbsp;&nbsp; 1 = Run command in separate window</td>
+    </tr>
+    <tr>
+      <td width="65"></td>
+      <td width="585">&nbsp;&nbsp; 2 = Do not wait for command to finish</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>UNIX-Examples<br>
+  </b><br>
+  os(&quot;grep pattern files &gt;file.txt&quot;);<br>
+  <br>
+  Searches files for pattern and writes the result to file.txt.<br>
+  <br>
+  os(&quot;vi textfile&quot;, 1);<br>
+  <br>
+  Creates a new window and starts a texteditor.<br>
+  <br>
+  os(&quot;postscript &lt;plotfile.PLT | lp&quot;, 2);<br>
+  <br>
+  Sends a plot to a poscript printer and continues execution without waiting for the plot to
+  finish.<br>
+  <br>
+  <b>Windows95/NT-Examples<br>
+  </b><br>
+  os(&quot;COMMAND.COM /C DIR &gt;dirfile.txt&quot;);<br>
+  <br>
+  Executes the DIR-command in DOS and sends the output to a file. No DOS-window is created.<br>
+  <br>
+  os(&quot;program.exe&quot;,1);<br>
+  <br>
+  A program is started and the result displayed in a DOS-window.<br>
+  <br>
+  <b>Comments</b><br>
+  <br>
+  The UNIX-version of VARKON passes the command string to the shell through the
+  system()-routine.<br>
+  <br>
+  In Windows95/NT VARKON sends the command to the CreateProcess() routine.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="miscindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

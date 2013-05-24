@@ -1,0 +1,56 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE ma_posw5(INT main_id;
+                               VECTOR p;
+                               INT    b,h;
+                           VAR STRING mbsstr*132);
+
+!*      Interaktiv inmatning av en position centrum.
+!*      Om inmatningen avbryts lämnas mbsstr orörd.
+!*
+!*      Ut:  mbsstr = centre(id,value)
+!*
+!*      (C)microform ab 1996-06-10 J. Kjellander
+!*
+!*******************************************************
+
+ REF    id,grupp(3);
+ INT    label,typ,vers,blank,nivå,penna;
+ STRING fltstr*40;
+
+ BEGINMODULE
+
+!*
+!***Promt.
+!*
+   label:=cre_button(main_id,p,b,h,0,get_tstr(53),get_tstr(53));
+!*
+!***Id för cirkel eller kurva.
+!*
+   id:=ident(4+8);
+   if id <> #0.1 then
+     gethdr(id,typ,vers,blank,nivå,penna,grupp);
+!*
+!***Cirkel.
+!*
+     if typ = 4 then
+       mbsstr:="centre("+rstr(id)+",0)";
+!*
+!***Kurva.
+!*
+     else   
+       fltstr:="";
+       fltstr:=inpmt(get_tstr(208),"0.5",40);
+       if fltstr <> "" then
+         mbsstr:="centre("+rstr(id)+","+fltstr+")";
+       endif;
+     endif;
+   endif;
+!*
+!***Sudda promten.
+!*
+   del_win(main_id,label);
+
+ ENDMODULE
+
+!******************************************************

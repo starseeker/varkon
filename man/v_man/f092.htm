@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>f000</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>f92 Create DXF file</H3>
+
+<P><B>Description<BR>
+<BR>
+</B>Writes all or part of a 2D model to file in DXF-format. VARKON entities
+are mapped to DXF entities as follows:</P>
+
+<UL>
+<LI>VARKON point to POINT</LI>
+
+<LI>VARKON line to LINE</LI>
+
+<LI>VARKON arc to ARC or CIRCLE</LI>
+
+<LI>VARKON&nbsp;text to TEXT</LI>
+
+<LI>All other VARKON&nbsp;entities to POLYLINE</LI>
+</UL>
+
+<P>VARKON&nbsp;pen numbers are mapped directly to DXF pen numbers.</P>
+
+<P>VARKON&nbsp;levels (0-1999) are translated to DXF layer names by preceeding
+the level number with the text &quot;LAY&quot;. VARKON&nbsp;level 15 will
+be written as &quot;LAY15&quot;.</P>
+
+<P>VARKON&nbsp;linefonts are mapped to corresponding linetypes by preceeding
+the dashlength with the text &quot;DSH&quot; for font 1 and &quot;CEN&quot;
+for font2. A dashed linetype with 5 mm. dashlength will be written as &quot;DSH5.0&quot;.</P>
+
+<P>Other systems may not know what &quot;LAY15&quot; or &quot;DSH5.0&quot;
+is but VARKON&nbsp;recognizes this convention and uses it if the file is
+imported back to VARKON again.</P>
+
+<P><B>Available in<BR>
+<BR>
+</B>2D.</P>
+
+<P><B>MBS Correspondence<BR>
+<BR>
+</B>plot_view() and plot_win().</P>
+
+<P><B>Comments<BR>
+<BR>
+</B>A macro module in the VARKON library can be used to write 3D data to
+file in DXF-format.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vbiindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

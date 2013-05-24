@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>inv_curv </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>inv_curv - <small><small>Function</small></small></h2>
+  <p>Geometrical function<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Returns the parameter value of a position on a curve having a specified curvature.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  inv_curv(ref,curv,alt)<br>
+  <br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 25 Row 01 -->
+    <tr>
+      <td width="66">REF</td>
+      <td width="495">ref;</td>
+    </tr>
+<!-- Table 25 Row 02 -->
+    <tr>
+      <td width="66">FLOAT</td>
+      <td width="495">curv;</td>
+    </tr>
+<!-- Table 25 Row 03 -->
+    <tr>
+      <td width="66">INT</td>
+      <td width="495">alt;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 26 Row 01 -->
+    <tr>
+      <td width="56">ref</td>
+      <td width="505">- Identity of curve</td>
+    </tr>
+<!-- Table 26 Row 02 -->
+    <tr>
+      <td width="56">curv</td>
+      <td width="505">- Curvature</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="569" border="0">
+<!-- Table 27 Row 01 -->
+    <tr>
+      <td width="56">alt</td>
+      <td width="505">- Alternative, default = 1</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  A FLOAT value equal to the parameter value of the requested position.<br>
+  <br>
+  <b>Example<br>
+  </b><br>
+  inv_curv(#5,0.01)<br>
+  <br>
+  The parameter value of a position on #5 where curvature is equal to 1/100.<br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  If more than one position on the entity has the specified curvature alt can be used to
+  select the right solution.<br>
+  <br>
+  Curvature is equal to the inverse of curvature radius.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="geomindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

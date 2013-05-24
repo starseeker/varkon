@@ -1,0 +1,19 @@
+##########################################################
+#
+#   Makefile for WPlib on Cray T3E
+#
+#  (C)Microform AB 1999-03-30 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = cc
+
+CFLAGS = -DUNIX -DV3_X11 -DWRK_STAT
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.WP
+
+##########################################################

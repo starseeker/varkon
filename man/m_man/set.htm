@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.5 [en] (X11; I; Linux 2.0.31 i586) [Netscape]">
+  <title>set</title>
+</head>
+<body bgcolor="#99ccff">
+<center><font size="-1">VARKON Version 1.17 1999-04-14</font></center>
+<p>
+</p>
+<hr width="100%" align="center">
+<blockquote>
+  <h2>set - <font size="+0">Procedure</font></h2>
+Sets an attribute <br>
+&nbsp;
+  <p><b>Description</b> </p>
+  <p>Changes the current value for one or more attributes. The new
+value
+will continue to be in effect as long as execution continues within
+this
+module or any modules called by this module. </p>
+  <p><b>Syntax</b> </p>
+  <p>set(attribute = value, attribute = value,.......) </p>
+  <p>One or more attributes with value may be specified in the same
+call. </p>
+  <p><b>Attributes</b>
+  <table border="1" width="485">
+    <caption>&nbsp;</caption> <tbody>
+      <tr>
+        <td width="75" bgcolor="#c0c0c0"><b>Name</b></td>
+        <td width="64" bgcolor="#c0c0c0"><b>Type</b></td>
+        <td width="55" bgcolor="#c0c0c0"><b>Max</b></td>
+        <td width="43" bgcolor="#c0c0c0"><b>Min</b></td>
+        <td width="65" bgcolor="#c0c0c0"><b>Default</b></td>
+        <td width="147" bgcolor="#c0c0c0"><b>Description</b></td>
+      </tr>
+      <tr>
+        <td width="75">PEN</td>
+        <td width="64">INT</td>
+        <td width="55">32768</td>
+        <td width="43">0</td>
+        <td width="65">1</td>
+        <td width="147">Pen or colour number</td>
+      </tr>
+      <tr>
+        <td width="75">LEVEL</td>
+        <td width="64">INT</td>
+        <td width="55">1999</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Level number</td>
+      </tr>
+      <tr>
+        <td width="75">BLANK</td>
+        <td width="64">INT</td>
+        <td width="55">1</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Visible/unvisible</td>
+      </tr>
+      <tr>
+        <td width="75">HIT</td>
+        <td width="64">INT</td>
+        <td width="55">1</td>
+        <td width="43">0</td>
+        <td width="65">1</td>
+        <td width="147">Hitable/unhitable</td>
+      </tr>
+      <tr>
+        <td width="75">SAVE</td>
+        <td width="64">INT</td>
+        <td width="55">1</td>
+        <td width="43">0</td>
+        <td width="65">1</td>
+        <td width="147">Save/no save</td>
+      </tr>
+      <tr>
+        <td width="75">LFONT</td>
+        <td width="64">INT</td>
+        <td width="55">2</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Linefont</td>
+      </tr>
+      <tr>
+        <td width="75">AFONT</td>
+        <td width="64">INT</td>
+        <td width="55">2</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Arcfont</td>
+      </tr>
+      <tr>
+        <td width="75">CFONT</td>
+        <td width="64">INT</td>
+        <td width="55">2</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Curvefont</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;">MFONT<br>
+        </td>
+        <td style="vertical-align: top;">INT<br>
+        </td>
+        <td style="vertical-align: top;">4<br>
+        </td>
+        <td style="vertical-align: top;">0<br>
+        </td>
+        <td style="vertical-align: top;">0<br>
+        </td>
+        <td style="vertical-align: top;">Meshfont<br>
+        </td>
+      </tr>
+      <tr>
+        <td width="75">SFONT</td>
+        <td width="64">INT</td>
+        <td width="55">0</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Surfacefont</td>
+      </tr>
+      <tr>
+        <td width="75">TFONT</td>
+        <td width="64">INT</td>
+        <td width="55">-</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Textfont</td>
+      </tr>
+      <tr>
+        <td width="75">XFONT</td>
+        <td width="64">INT</td>
+        <td width="55">2</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Hatchfont</td>
+      </tr>
+      <tr>
+        <td width="75">LDASHL</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">3.0</td>
+        <td width="147">Dashlengt for lines</td>
+      </tr>
+      <tr>
+        <td width="75">ADASHL</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">3.0</td>
+        <td width="147">Dashlengt for arcs</td>
+      </tr>
+      <tr>
+        <td width="75">CDASHL</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">3.0</td>
+        <td width="147">Dashlengt for curves</td>
+      </tr>
+      <tr>
+        <td width="75">SDASHL</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">3.0</td>
+        <td width="147">Dashlengt for surfaces</td>
+      </tr>
+      <tr>
+        <td width="75">XDASHL</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">3.0</td>
+        <td width="147">Dashlengt for hatching</td>
+      </tr>
+      <tr>
+        <td>WIDTH</td>
+        <td>FLOAT</td>
+        <td>-</td>
+        <td>0.0</td>
+        <td>0.0</td>
+        <td>Line/arc/curve width</td>
+      </tr>
+      <tr>
+        <td width="75">TSIZE</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">5.0</td>
+        <td width="147">Text size</td>
+      </tr>
+      <tr>
+        <td width="75">TWIDTH</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">60</td>
+        <td width="147">Text width</td>
+      </tr>
+      <tr>
+        <td width="75">TSLANT</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">-</td>
+        <td width="65">15</td>
+        <td width="147">Text slant</td>
+      </tr>
+      <tr>
+        <td>TPMODE</td>
+        <td>INT</td>
+        <td>1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>Text 3D mode</td>
+      </tr>
+      <tr>
+        <td width="75">DTSIZ</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">5.0</td>
+        <td width="147">Dim. text size</td>
+      </tr>
+      <tr>
+        <td width="75">DASIZ</td>
+        <td width="64">FLOAT</td>
+        <td width="55">-</td>
+        <td width="43">&gt;0.0</td>
+        <td width="65">5.0</td>
+        <td width="147">Dim. arrow size</td>
+      </tr>
+      <tr>
+        <td width="75">DNDIG</td>
+        <td width="64">INT</td>
+        <td width="55">15</td>
+        <td width="43">0</td>
+        <td width="65">0</td>
+        <td width="147">Dim. precision</td>
+      </tr>
+      <tr>
+        <td width="75">DAUTO</td>
+        <td width="64">INT</td>
+        <td width="55">1</td>
+        <td width="43">0</td>
+        <td width="65">1</td>
+        <td width="147">Dim. text on/off</td>
+      </tr>
+    </tbody>
+  </table>
+  </p>
+  <p><b>Example</b> </p>
+  <p>set(LFONT=1, LDASHL=15); </p>
+  <p>Activates linefont 1 (dashed) and sets its dashlength to 15
+millimeters. </p>
+  <p><b>Comments</b> </p>
+  <p>See also <a href="set_basi.htm">set_basic().</a></p>
+</blockquote>
+<hr width="100%" align="center">
+<center>
+<center>
+<table cellspacing="10" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="../index.htm">VARKON Homepage</a></td>
+      <td><a href="miscindx.htm">Index</a></td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</center>
+</body>
+</html>

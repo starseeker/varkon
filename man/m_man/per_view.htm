@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>perp_view </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>perp_view - <small><small>Procedure</small></small></h2>
+  <p>Sets perspective<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Changes the viewing distance for named view. Viewing distance is used to create true 3D
+  perspective projections. A viewing distance of zero turns true perspective off and
+  switches to parallel projection. This is also the default when a new view is created<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  perp_view(name, dist)<br>
+  <br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 37 Row 01 -->
+    <tr>
+      <td width="72">STRING</td>
+      <td width="585">name*15;</td>
+    </tr>
+<!-- Table 37 Row 02 -->
+    <tr>
+      <td width="72">FLOAT</td>
+      <td width="585">dist;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="665" border="0">
+<!-- Table 38 Row 01 -->
+    <tr>
+      <td width="62">name</td>
+      <td width="595">- The name of the view</td>
+    </tr>
+<!-- Table 38 Row 02 -->
+    <tr>
+      <td width="62">dist</td>
+      <td width="595">- The new viewing distance</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 39 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Comments<br>
+  </b><br>
+  Viewing distance is measured as the true distance between the observer and X=Y=Z=0 in the
+  view coordinate system. It is therefore important to assure that the distance is large
+  enough to place the observer well outside the model. A viewing distance smaller than the
+  size of the model would mean entering into the model and looking at it from the inside
+  out. Currently VARKON does not support that.<br>
+  <br>
+  In order to display the model with respect to the new viewing distance use rep_view() with
+  appropriate parameters. perp_view() does not update the display automatically.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="grapindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

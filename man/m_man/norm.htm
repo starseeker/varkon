@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>norm </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-04-27</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>norm -<FONT SIZE=+0> Function</FONT></H2>
+
+<P>Geometrical function<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Returns the (normalised) normal vector of a curve, surface, b_plane
+or coordiante system. If used on a coordinate system, the direction of
+the Z-axis is returned.<BR>
+<BR>
+<B>Syntax</B><BR>
+</P>
+
+<P>norm(ref)</P>
+
+<TABLE CELLSPACING=0 CELLPADDING=0 >
+<TR>
+<TD WIDTH="70">REF</TD>
+
+<TD>ref;</TD>
+</TR>
+</TABLE>
+
+<P>This syntax is used for b_planes and coordinate systems.</P>
+
+<P><BR>
+norm(ref, t)</P>
+
+<TABLE WIDTH="722" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD WIDTH="70">REF</TD>
+
+<TD width="644">ref;</TD>
+</TR>
+
+<TR>
+<TD width="70">FLOAT</TD>
+
+<TD width="644">t;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+This syntax is used for curves.<BR>
+<BR>
+norm(ref, uv)</P>
+
+<TABLE WIDTH="722" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="70">REF</TD>
+
+<TD width="644">ref;</TD>
+</TR>
+
+<TR>
+<TD width="70">VECTOR</TD>
+
+<TD width="644">uv;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+This syntax is used for surfaces. X- and Y-components of uv are used to
+hold the U- and V-values. The Z-component of uv is not used.<BR>
+<BR>
+<B>Principal parameters</B></P>
+
+<TABLE WIDTH="722" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="61">ref</TD>
+
+<TD width="653">- ID of entity.</TD>
+</TR>
+</TABLE>
+
+<P><B>Optional parameters</B></P>
+
+<TABLE WIDTH="722" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="60">t</TD>
+
+<TD width="654">- Parameter value for curve, default = 0</TD>
+</TR>
+
+<TR>
+<TD width="60">uv</TD>
+
+<TD width="654">- UV-value for surface. uv.x = U-value and uv.y = V-value</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Return value<BR>
+<BR>
+</B>A VECTOR value equal to the normalised normal in the position specified.<BR>
+<BR>
+<B>Examples</B><BR>
+</P>
+
+<P>n:=norm(#10);</P>
+
+<P>The normal of a b_plane or coordinate system.</P>
+
+<P><BR>
+n:=norm(#5,0.5);<BR>
+<BR>
+The normal vector of a position equal to t = 0.5 on a curve.<BR>
+<BR>
+<BR>
+n:=norm(#5,vec(1.5,0.8));<BR>
+<BR>
+The normal vector of a position equal to U=1.5 and V=0.8 on a surface.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="geomindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

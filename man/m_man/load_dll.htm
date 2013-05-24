@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>load_dll </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>load_dll - <small><small><small>Function</small></small></small></h2>
+  <p>Loads a dynamic link library <br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Loads the named library into memory and links it to VARKON so that functions within the
+  library can be called with the call_dll_function() routine. After a library is loaded it
+  remains in memory and need not be loaded again unless it is unloaded using the
+  unload_dll() routine. Multiple libraries may be loaded at the same time.<br>
+  <br>
+  load_dll() is only useful in VARKON for Windows95. MBS-programs including calls to
+  load_dll() will compile and run without errors on all platforms but not actually load a
+  dll on other platforms than Windows95/NT.<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  load_dll(name)<br>
+  <br>
+  STRING name;<br>
+  <b><u><br>
+  </u>Principal parameters<br>
+  </b><br>
+  name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- The name of the dll library file. If
+  a path is not included the Windows standard<br>
+  directories will be searched. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+  <br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 30 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  An INT equal to zero if the library was loaded or -1 if an error occured. 1 is returned if
+  the library was already loaded.<br>
+  <br>
+  <b>Examples<br>
+  </b><br>
+  status:=load_dll(&quot;C:\MYLIB\MYDLL.DLL&quot;);<br>
+  <br>
+  Loads the MYDLL library in the C:\MYLIB directory. If successful status = 0. If not
+  successful status = -1. If the library already is loaded status = 1.<br>
+  <br>
+  <b>Comments</b><br>
+  <br>
+  load_dll() can be used to load libraries written in any language and compiled with any
+  compiler as long as they conform to the rules of a standard Microsoft Dynamic Link
+  Library. See the call_dll_function() for more information about using dll's.<br>
+  <br>
+  The maximum number possible to load at the same time (without unloading) is currently set
+  to 25.<br>
+  <br>
+  It is not regarded as an error to load the same library two or more times without
+  unloading it first. If a library is already loaded load_dll does nothing and returns 1.<br>
+  </p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="miscindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

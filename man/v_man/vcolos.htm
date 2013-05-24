@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>The Conic Lofting surface</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>The Conic Lofting surface</H3>
+
+<P>A major problem in surface modeling is often that the number of constraints
+you impose on the shape of a surface is larger than the mathematical representation
+of the surface really accepts. A simple bicubic patch for example is uniquely
+defined by 48 numbers and nothing more. If this amount of freedom is not
+enough to describe a certain shape you can either use more patches or you
+can raise the order of the basic polynomial from 3 to 5 or even higher
+or you can use rational polynomials.<BR>
+<BR>
+None of these solutions are particularly good however. Defining a surface
+with many patches requires more data and increases the risk of introducing
+oscillations or other errors. Raising the order of the polynomial is a
+well documented way of introducing oscillations and unstable numerical
+behavior. Rational polynomials are better then non rational but the difference
+is relatively small.<BR>
+<BR>
+The VARKON Conic Lofting surface was developed with many years of bad experience
+from current modeling techniques in mind and is therefore based on a completely
+new concept. The representation of <B>LFT_SUR</B> is analytically defined
+by a section of parametric rational cubic segments in the V-direction and
+by a procedural method in the U-direction. Each conic in the section is
+controlled by 2 limit curves, 2 tangent curves and a midpoint curve or
+P-value curve (MP). The 6:th curve is called the spine.<BR>
+<BR>
+<B>sur_conic</B>(id,spine,lim1,tan1,mpflag1,MP1,lim2,tan2.......limn,tann);<BR>
+<BR>
+To evaluate the surface VARKON first uses the parametric U-value to calculate
+a corresponding position on the spine and then sets up a plane with the
+spine tangent as normal. The plane is then used to intersect the 5 curves
+that define the conic and use this data to create the conic which in the
+end is evaluated for the parametric V-value. The result is a surface that
+has the characteristics of the conic in the V-direction and the characteristics
+of the limit and tangent curves in the U-direction. The spine controls
+the parametrisation in the V-direction.<BR>
+<BR>
+Surfaces based on <B>LFT_SUR</B> are automatically smooth in the U-direction
+since a conic can not oscillate. The quality of the surface in the V-direction
+depends on the shape of the limiting curves but is independent of their
+parametrisation. This gives the <B>LFT_SUR</B> a large amount of built
+in smoothness. <B>LFT_SUR</B> also has a unique degree of freedom to be
+formed with a minimum of input data. A <B>CUB_SUR</B> may need 100 patches
+or more to approximate the shape of one <B>LFT_SUR</B> patch within acceptable
+limits. <BR>
+<BR>
+Evaluation of a <B>LFT_SUR</B> can require heavy computations but saves
+a lot of memory compared to traditional surfaces. </P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

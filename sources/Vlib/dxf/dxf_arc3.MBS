@@ -1,0 +1,75 @@
+!*******************************************************
+
+  GLOBAL GEOMETRY MODULE dxf_arc3(
+  VAR FILE   infil;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  FLOAT      s;
+  VAR INT    narc);
+
+!*      Läser ARC/CIRCLE i ENTITIES-sektionen.
+!*
+!*      (C)microform ab 1997-10-03 J. Kjellander
+!*
+!*******************************************************
+
+ CONSTANT FLOAT ATOL=0.0001; ! Motsvarar TOL1 i geo300()
+
+ STRING rad*132;
+ INT    kod,pn,lev;
+ VECTOR p;
+ FLOAT  v1,v2,r;
+
+ BEGINMODULE
+
+!*
+!***Arc.
+!*
+    p:=vec(0,0,0);
+    v1:=0; v2:=360;
+    set(AFONT=0,ADASHL=3);
+
+loop:
+    kod:=inint(infil); rad:=inlin(infil);
+
+    if kod = 8 then                         ! Nivånamn
+      part(#11,dxf_lev(infil,levant,levnam,lintyp,lev):SAVE=0);
+      set(LEVEL=lev);
+    elif kod = 62 then                      ! Pennummer
+      pn:=inint(infil); rad:=inlin(infil);
+      if pn >0 then set(PEN=pn); else set(PEN=1); endif;
+    elif kod = 6 then                       ! Linjetyp
+      rad:=instr(infil,3);
+      if   rad="DSH" then set(AFONT=1,ADASHL=s*inflt(infil));
+      elif rad="CEN" then set(AFONT=2,ADASHL=s*inflt(infil)); endif;
+      rad:=inlin(infil);
+    elif kod = 10 then                      ! X-koordinat
+      p.x:=inflt(infil); rad:=inlin(infil);
+    elif kod = 20 then                      ! Y-koordinat
+      p.y:=inflt(infil); rad:=inlin(infil);
+    elif kod = 30 then                      ! Z-koordinat
+      p.z:=inflt(infil); rad:=inlin(infil);
+    elif kod = 40 then                      ! Radie
+      r:=inflt(infil); rad:=inlin(infil);
+    elif kod = 50 then                      ! V1
+      v1:=inflt(infil); rad:=inlin(infil);
+    elif kod = 51 then                      ! V2
+      v2:=inflt(infil); rad:=inlin(infil);
+    elif kod = 0 then                       ! Slut
+      if v1 < 0 then v1:=v1+360; endif;
+      if v2 < 0 then v2:=v2+360; endif;
+      if s*r > ATOL  and  abs(v2-v1) > ATOL then
+        arc_1pos(#40,s*p,s*r,v1,v2:SAVE=1);
+        narc:=narc+1;
+      endif;
+      exit();
+    else                                    ! Okänt
+      rad:=inlin(infil);
+    endif;
+
+    goto loop;
+
+ ENDMODULE
+
+!*******************************************************

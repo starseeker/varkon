@@ -1,0 +1,160 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE ma_posw1(STRING rubrik*132;
+                           VAR STRING mbsstr*132;
+                               INT    mode);
+
+!*      Interaktiv inmatning av en position med absoluta
+!*      koordinater.
+!*
+!*      In: rubrik = Fönstertitel.
+!*          mode   = 2/3 för 2D eller 3D.
+!*
+!*      Ut: mbsstr = "vec(???,???)" eller "vec(???,???,???)"
+!*
+!*      (C)microform ab 1996-06-10 J. Kjellander
+!*
+!*******************************************************
+
+   STRING promt*40,x*40,y*40,z*40,ok*40,avbryt*40;
+   INT    ol,al,th,dxm,dym,dxb,dyb,lx,ly,label,
+          wid,bid_ok,bid_avbryt,bidx,edx,edy,edz;
+
+ BEGINMODULE
+
+!*
+!***Textsträngar.
+!*
+   promt:=get_tstr(287);
+   x:=get_tstr(201);
+   y:=get_tstr(202);
+   z:=get_tstr(203);
+   ok:=get_tstr(458);
+   avbryt:=get_tstr(1586);
+!*
+!***Hur stora är dom ?
+!*
+   ol:=textl_win(ok);
+   al:=textl_win(avbryt);
+
+   th:=texth_win();
+!*
+!***Hur stora skall tryckknapparna vara ?
+!***Den längsta texten bestämmer.
+!*
+   dxb:=ol;
+   if al > dxb then dxb:=al; endif;
+
+   dxb:=trunc(1.4*dxb);
+   dyb:=2*th;
+!*
+!***Luft mellan knapparna = 1 texthöjd.
+!*
+   lx:=th;
+   ly:=th;
+!*
+!***Hur brett skall huvudfönstret vara ?
+!***Minst 2 knappar brett och en edit på 20 tkn.
+!*
+   dxm:=2*dxb + 3*lx;
+
+   if textl_win("01234567890123456789")+2*lx > dxm then
+     dxm:=textl_win("01234567890123456789")+2*lx;
+   endif;
+
+   if textl_win(rubrik)+2*lx > dxm then
+     dxm:=textl_win(rubrik)+2*lx;
+   endif;
+
+   if textl_win(promt)+2*lx > dxm then
+     dxm:=textl_win(promt)+2*lx;
+   endif;
+!*
+!***Hur högt skall huvudfönstret vara ?
+!*
+   if mode = 2 then
+     dym:=6*dyb + 5*ly;
+   else
+     dym:=8*dyb + 6*ly;
+   endif;
+!*
+!***I WIN32 hamnar fönsterramar inuti fönstren.
+!*
+   if act_ostype() = "WIN32" then
+     dxm:=dxm+6;
+     dym:=dym+6;
+   endif;
+!*
+!***Först ett huvudfönster.
+!*
+   wid:=cre_win(vec(100,100),dxm,dym,rubrik);
+!*
+!***Promt.
+!*
+   label:=cre_button(wid,vec(lx,ly),dxm-2*lx,dyb,0,promt,promt);
+!*
+!***X-koordinaten.
+!*
+   label:=cre_button(wid,vec(lx,dyb+2*ly),textl_win(x),dyb,0,x,x);
+   edx:=cre_edit(wid,vec(lx,2*dyb+2*ly),dxm-2*lx,dyb,1,"0.0",132);
+!*
+!***Y-koordinaten.
+!*
+   label:=cre_button(wid,vec(lx,3*dyb+3*ly),textl_win(x),dyb,0,y,y);
+   edy:=cre_edit(wid,vec(lx,4*dyb+3*ly),dxm-2*lx,dyb,1,"0.0",132);
+!*
+!***Z-koordinaten.
+!*
+   if mode = 3 then
+     label:=cre_button(wid,vec(lx,5*dyb+4*ly),textl_win(x),dyb,0,z,z);
+     edz:=cre_edit(wid,vec(lx,6*dyb+4*ly),dxm-2*lx,dyb,1,"0.0",132);
+   endif;
+!*
+!***Å så knapparna längs ned.
+!*
+   if mode = 2 then
+     bid_ok:=cre_button(wid,vec(lx,5*dyb+4*ly),dxb,dyb,2,ok,ok);
+     bid_avbryt:=cre_button(wid,vec(dxb+2*lx,5*dyb+4*ly),dxb,dyb,2,
+                                                          avbryt,avbryt);
+   else
+     bid_ok:=cre_button(wid,vec(lx,7*dyb+5*ly),dxb,dyb,2,ok,ok);
+     bid_avbryt:=cre_button(wid,vec(dxb+2*lx,7*dyb+5*ly),dxb,dyb,2,
+                                                          avbryt,avbryt);
+   endif;
+!*
+!***Visa resultatet på skärmen.
+!*
+   show_win(wid);
+!*
+!***Nu lägger vi oss i en loop och väntar på att användaren gör
+!***något.
+!*
+loop:
+   bidx:=wait_win(wid);
+!*
+!***Ok !
+!*
+   if bidx = bid_ok then
+     mbsstr:="vec("+get_edit(wid,edx)+","+get_edit(wid,edy);
+     if mode = 3 then
+       mbsstr:=mbsstr+","+get_edit(wid,edz);
+     endif;
+     mbsstr:=mbsstr+")";
+     del_win(wid);
+     exit();
+!*
+!***Avbryt !
+!*
+   elif bidx = bid_avbryt then
+     del_win(wid);
+     exit();
+!*
+!***Editar bryr vi oss inte om.
+!*
+   else
+     goto loop;
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

@@ -1,0 +1,33 @@
+!*******************************************************
+
+ macro module l_inval(REF   id    >"@t8 t1539";
+                      FLOAT längd >"t1540");
+
+!*      Analyserar invers båglängd på kurva.
+!*
+!*      In: id    = Kurvans identitet.
+!*                  t1539 = "Ange kurva"
+!*          längd = Önskad båglängd.
+!*                  t1540 = "Ange önskad båglängd !"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 19/12/91 J. Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   STRING s*1;
+
+ beginmodule
+
+!*
+!***Utskrift.
+!*
+     s:=inpmt(get_tstr(1541)+str(längd,-1,5)+" => u = " +
+               str(inv_arcl(id,längd),-1,5),"",1);
+
+ endmodule
+
+!*******************************************************

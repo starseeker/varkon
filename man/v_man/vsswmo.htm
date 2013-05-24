@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Selecting solutions when there is more than one</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Selecting solutions when there is more than one</H3>
+
+<P>There are many geometrical problems that have more than one solution.
+A line tangent to a curve (<B>lin_tan1</B> in MBS) is one example. If the
+curve oscillates then it is probably easy to find many lines starting in
+the same position but joining the curve with tangency in different places.
+Intersect is another example. If a line intersects a curve or if a curve
+intersects another curve (or arc) then it's clearly possible to end up
+with more than one solution.<BR>
+<BR>
+In interactive CAD-systems it is common practice to supply routines like
+<B>lin_tan1</B> or <B>intersect</B> with a hint in the form of an approximate
+position. This gives the underlying mathematical algorithm a good starting
+value for the numerical solution and makes it unnecessary to calculate
+more than one solution which saves time.<BR>
+<BR>
+In VARKON all solutions are always calculated and the user only supplies
+a relative number to select which one he's interested in. This approach
+takes more CPU-time of course but also makes it possible to solve problems
+without having to supply approximate solutions. In parametric design this
+is important since changes to parameters may change the corresponding geometry
+significantly and thereby move points of tangency or intersect to completely
+new positions.<BR>
+<BR>
+Other routines based on the same principle are <B>lin_tan2, arc_fil, inv_on,</B>
+<B>inv_on_sur, inv_tang</B> and <B>inv_curv.</B></P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

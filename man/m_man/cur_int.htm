@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>cur_int </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-09-21</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>cur_int - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+
+<P>Creates a curve<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Creates the curve of intersect between a surface and a plane or between
+two planes. The plane can be defined as a b_plane or as the XY-plane of
+a coordinate system.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>cur_int(id, surf, plane, branch:attributes);</P>
+
+<TABLE WIDTH="675" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="56">REF</TD>
+
+<TD width="611">id;</TD>
+</TR>
+
+<TR>
+<TD width="56">REF</TD>
+
+<TD width="611">surf;</TD>
+</TR>
+
+<TR>
+<TD width="56">REF</TD>
+
+<TD width="611">plane;</TD>
+</TR>
+
+<TR>
+<TD width="56">INT</TD>
+
+<TD width="611">branch;</TD>
+</TR>
+</TABLE>
+
+<P><B>Principal parameters</B></P>
+
+<TABLE WIDTH="675" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="47">id </TD>
+
+<TD width="620">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="47">surf</TD>
+
+<TD width="620">- ID of surface (or first coordinate system/b_plane)</TD>
+</TR>
+
+<TR>
+<TD width="47">plane</TD>
+
+<TD width="620">- ID of coordinate system or b_plane</TD>
+</TR>
+</TABLE>
+
+<P><B>Optional parameters</B></P>
+
+<TABLE WIDTH="675" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="47">branch</TD>
+
+<TD width="620">- Requested curve branch. Default value = 1.</TD>
+</TR>
+</TABLE>
+
+<P><B>Attributes</B></P>
+
+<TABLE WIDTH="675" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="67">PEN </TD>
+
+<TD width="600">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="67">LEVEL</TD>
+
+<TD width="600">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="67">BLANK</TD>
+
+<TD width="600">- Visible (0) or invisible (1)</TD>
+</TR>
+
+<TR>
+<TD width="67">CFONT</TD>
+
+<TD width="600">- Solid (0), dashed (1), center line (2)</TD>
+</TR>
+
+<TR>
+<TD width="67">CDASHL</TD>
+
+<TD width="600">- Dash length</TD>
+</TR>
+
+<TR>
+<TD width="70">WIDTH</TD>
+
+<TD width="554">- Linewidth</TD>
+</TR>
+</TABLE>
+
+<P><B>Example<BR>
+<BR>
+</B>cur_int(#3, #2, #1, 2);<BR>
+<BR>
+Creates a curve #3 which is the intersect between #2 and #1. Requested
+curve branch is branch 2.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>When both surfaces are of type FAC_SUR the resulting curve will be
+an unordered set of straight lines.<BR>
+<BR>
+When both surfaces are bounded planes the output intersect becomes a straight
+line. The limits of the line will be defined by the polygons of the B-planes,
+i.e. the output line will be the common part of both planes. As options
+the first plane (branch= -1) or the second plane (branch= -2) define the
+limits. <BR>
+<BR>
+If 1000 is added to the value of the branch parameter, ie. 1001 for branch
+1 or 1002 for branch 2 etc. the UV-representation of the curve is displayed
+instead of the real R3 curve.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

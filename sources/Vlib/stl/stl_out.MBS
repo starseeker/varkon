@@ -1,0 +1,145 @@
+!********************************************************
+!*
+
+     MACRO MODULE stl_out();
+
+!*   Writes facetsurfaces, Mesh and B-planes to disc
+!*   STL-ASCII-formatted.
+!*
+!*   (C)Microform AB 1998-09-08 J.Kjellander
+!*
+!*   bugfix: blanked items skipped 2001-08-15 R.Kastelein
+!*   2004-07-20 Mesh added, J.Kjellander, Örebro university
+!*
+!*******************************************************
+
+   CONSTANT INT SURFACE=16,B_PLANE=32768,MESH=2048,FAC_SUR=4;
+   CONSTANT FLOAT VTOL=0.001;
+
+   REF    id;                   ! ID of current surface
+   INT    type;                 ! Surface type
+   INT    nu,nv;                ! Number of facets in U and V
+   INT    nvertex,nhedge,nface; ! Mesh data
+   INT    h,ev,oh,nh,pf,eh;     ! Mesh data
+
+   INT    iu,iv,i;              ! Loop counters
+   INT    version,blank,
+          level,pen;            ! Entity header data
+   INT    nf;                   ! Number of facets
+   REF    groups(3);            ! Entity header data
+   VECTOR p1,p2,p3,p4,n;        ! Facet/b_plane data
+   FILE   f;                    ! Output file
+
+BEGINMODULE
+
+!*
+!***Initialization.
+!*
+   nf:=0;
+!*
+!***Create file and write start section.
+!*
+   psh_pmt("Creating "+act_jobnam()+".STL");
+   open(f,"W",act_jobdir()+act_jobnam()+".STL");
+   outstr(f,"solid Created by VARKON"); outlin(f);
+!*
+!***Start at the top of the GM tree structure.
+!*
+   set_root_gm(#0);
+!*
+!***Traverse all levels of GM database (0).
+!*
+loop:
+   id:=get_next_gm(0,SURFACE+B_PLANE+MESH);
+   if id <> #0 then
+!*
+!***Get the entity header and check what type it is.
+!*
+     gethdr(id,type,version,blank,level,pen,groups);
+!*
+!*** Bugfix 2001-08-15 by Roy Kastelein: blanked items skipped.
+!*
+     if blank = 1 then
+       goto loop;
+     endif;
+!*
+!***A surface.
+!*
+     if type = SURFACE then
+       getsurh(id,"SUR_TYPE",type);
+!*
+!***If its a facet surface write the facets to disc.
+!*
+       if type = FAC_SUR then
+         getsurh(id,"NPATU",nu);
+         getsurh(id,"NPATV",nv);
+         for iu:=1 to nu do
+           for iv:=1 to nv do
+             getfacp(id,iu,iv,p1,p2,p3,p4);
+             n:=vprod(p2-p1,p4-p1);
+             if vecl(p2-p3) < VTOL then
+               part(#1,stl_wfac(f,n,p1,p2,p4):SAVE=0);
+               nf:=nf+1;
+             else
+               part(#2,stl_wfac(f,n,p1,p2,p3):SAVE=0);
+               part(#3,stl_wfac(f,n,p1,p3,p4):SAVE=0);
+               nf:=nf+2;
+             endif;
+           endfor;
+         endfor;
+       endif;
+!*
+!***A b_plane.
+!*
+     elif type = B_PLANE then
+       getbpl(id,p1,p2,p3,p4);
+       n:=norm(id);
+       if vecl(p2-p3) < VTOL then
+         part(#4,stl_wfac(f,n,p1,p2,p4):SAVE=0);
+         nf:=nf+1;
+       else
+         part(#5,stl_wfac(f,n,p1,p2,p3):SAVE=0);
+         part(#6,stl_wfac(f,n,p1,p3,p4):SAVE=0);
+         nf:=nf+2;
+       endif;
+!*
+!***A Mesh.
+!*
+     elif type = MESH then
+       getmshh(id,nvertex,nhedge,nface,p1,p2,i);
+       for i:=1 to nface do
+         getface(id,i,h);
+         gethedge(id,h,ev,oh,nh,pf);
+         getvertex(id,ev,p1,eh);
+         gethedge(id,nh,ev,oh,nh,pf);
+         getvertex(id,ev,p2,eh);
+         gethedge(id,nh,ev,oh,nh,pf);
+         getvertex(id,ev,p3,eh);
+         n:=vprod(p2-p1,p3-p1);
+         part(#7,stl_wfac(f,n,p1,p2,p3):SAVE=0);
+         nf:=nf+1;
+       endfor;
+
+     endif;
+!*
+!***Next entity.
+!*
+     goto loop;
+   endif;
+!*
+!***Write end section and close the file.
+!*
+   outstr(f,"endsolid");     outlin(f);
+
+   close(f);
+
+!*
+!***Exit.
+!*
+   pop_pmt();
+   psh_pmt(str(nf,-1,0)+" facets written !");
+
+ENDMODULE
+
+!*************************************************
+

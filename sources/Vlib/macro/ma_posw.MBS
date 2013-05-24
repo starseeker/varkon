@@ -1,0 +1,35 @@
+!*******************************************************
+
+ MACRO MODULE ma_posw(VAR STRING mbsstr*132;
+                      STRING     rubrik*132;
+                      STRING     promt*132;
+                      VAR INT    status);
+
+!*      Interaktiv inmatning av en position.
+!*
+!*      In:  mbsstr = Initial position. (används fn. ej)
+!*           rubrik = Fönstertitel.     (används fn. ej)
+!*           promt  = Som det låter
+!*
+!*      Ut:  status =  0 => OK.
+!*                    -1 => Avbryt.
+!*
+!*      (C)microform ab 1996-06-10 J. Kjellander
+!*
+!*      1997-04-21 pos_mbs(), J.Kjellander
+!*
+!*******************************************************
+
+ BEGINMODULE
+
+   mbsstr:=pos_mbs(promt);
+
+   if mbsstr = "" then
+      status:=-1;
+   else
+      status:=0;
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

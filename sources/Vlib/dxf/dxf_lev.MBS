@@ -1,0 +1,77 @@
+!*******************************************************
+
+ GLOBAL DRAWING MODULE dxf_lev(
+  VAR FILE   infil;
+  VAR INT    levant;
+  VAR STRING levnam(500)*40;
+  VAR STRING lintyp(500)*20;
+  VAR INT    lev);
+
+!*      Hanterar nivånamn-nummer.
+!*
+!*      (C)microform ab 20/2/90 J. Kjellander
+!*
+!*      1996-06-09 Engelska, J.Kjellander
+!*      1997-10-10 Bug for i:=0 -> for i:=1, J.Kjellander
+!*
+!*******************************************************
+
+   INT    i;
+   STRING rad*132;
+
+ BEGINMODULE
+
+!*
+!***Initiering.
+!*
+    lev:=0;
+!*
+!***Läs nivånamnet.
+!*
+    rad:=inlin(infil);
+!*
+!***Om DXF-filen kommer från VARKON skrivs nivåer ut
+!***som "LAY"+nivånummer.
+!*
+    if substr(rad,1,3)="LAY" then
+      lev:=round(val(substr(rad,4)));
+!*
+!***Om inte kan nivån ha ett namn eller ett nummer. Kolla om
+!***den finns i tabellen levnam.
+!*
+    else
+      for i:=1 to levant do
+!*
+!***Nivån finns i levnam-tabellen.
+!*
+        if rad=levnam(i) then 
+          lev:=i;
+!*
+!***Vad är motsvarande LTYPE.
+!*
+          if lintyp(i) = "HIDDEN" then
+            set_basic(LFONT=1,AFONT=1,CFONT=1);
+          elif lintyp(i) = "CENTER" then
+            set_basic(LFONT=2,AFONT=2,CFONT=2);
+          else
+            set_basic(LFONT=0,AFONT=0,CFONT=0);
+          endif;
+          exit();
+        endif;
+      endfor;
+!*
+!***Nivånamnet finns inte i levnam. Då stoppar vi in det.
+!*
+      levant:=levant+1;
+      if levant>500 then
+        exit("Max 500 layers !");
+      endif;
+      lev:=levant;
+      levnam(lev):=rad;
+      lintyp(lev):="DEFAULT";
+    endif;
+
+ ENDMODULE
+
+!*******************************************************
+

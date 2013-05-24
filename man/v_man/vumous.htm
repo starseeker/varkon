@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Using the mouse</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<UL>
+<P>
+<HR width="100%" align="center"></P>
+
+<H3>Using the mouse</H3>
+
+<P>VARKON assumes a mouse with two or three buttons. The left button is
+always used to make selections and the right button is used to quit the
+current operation. If a middle button is present it is used to quit the
+current operation and return to the main menu. <BR>
+<BR>
+Many VARKON operations include the use of the mouse to indicate or outline
+something in a view window. The ZOOM-operation for example where you first
+press the left button, then move the mouse with the button still down and
+finally release the button. Entity selection is another example where you
+use the mouse and its left button or the keyboard to indicate a certain
+entity. Whenever VARKON wants you to use the mouse in a view window the
+shape of the cursor changes from the normal pointer to a crosshair. <BR>
+<BR>
+VARKON also supports the use of the keyboard together with the mouse. Here
+is a complete list of keys that can be used instead of the mouse buttons.
+Each key is actually configured through a t-string in $VARKON_MDF/texts.INC.<BR>
+<BR>
+</P>
+
+<TABLE BORDER=1 WIDTH="65%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="99"><B>Key</B></TD>
+
+<TD width="100"><B>t-string</B></TD>
+
+<TD width="471"><B>Description</B></TD>
+</TR>
+
+<TR>
+<TD width="99"><B>p</B></TD>
+
+<TD width="100">t80</TD>
+
+<TD width="471">Nearest point</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>l</B></TD>
+
+<TD width="100">t81</TD>
+
+<TD width="471">Nearest line</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>a</B></TD>
+
+<TD width="100">t82</TD>
+
+<TD width="471">Nearest arc</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>c</B></TD>
+
+<TD width="100">t83</TD>
+
+<TD width="471">Nearest curve</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>s</B></TD>
+
+<TD width="100">t84</TD>
+
+<TD width="471">Nearest surface</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>C</B></TD>
+
+<TD width="100">t85</TD>
+
+<TD width="471">Nearest coordinate system</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>t</B></TD>
+
+<TD width="100">t86</TD>
+
+<TD width="471">Nearest text</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>L</B></TD>
+
+<TD width="100">t87</TD>
+
+<TD width="471">Nearest linear dimension</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>D</B></TD>
+
+<TD width="100">t88</TD>
+
+<TD width="471">Nearest diameter dimension</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>R</B></TD>
+
+<TD width="100">t89</TD>
+
+<TD width="471">Nearest radius dimension</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>A</B></TD>
+
+<TD width="100">t90</TD>
+
+<TD width="471">Nearest angular dimension</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>X</B></TD>
+
+<TD width="100">t91</TD>
+
+<TD width="471">Nearest xhatch</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>c</B></TD>
+
+<TD width="100">t92</TD>
+
+<TD width="471">Same as left mousebutton</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>g</B></TD>
+
+<TD width="100">t93</TD>
+
+<TD width="471">Nearest position in active grid</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>P</B></TD>
+
+<TD width="100">t95</TD>
+
+<TD width="471">Nearest part</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>b</B></TD>
+
+<TD width="100">t96</TD>
+
+<TD width="471">Nearest b_plane</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>i</B></TD>
+
+<TD width="100">t97</TD>
+
+<TD width="471">Enter identity from keyboard</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>w</B></TD>
+
+<TD width="100">t98</TD>
+
+<TD width="471">Use window mode</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>SPACE</B></TD>
+
+<TD width="100">t99</TD>
+
+<TD width="471">Same as left mousebutton</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>o</B></TD>
+
+<TD width="100">t102</TD>
+
+<TD width="471">Outside window</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>c</B></TD>
+
+<TD width="100">t103</TD>
+
+<TD width="471">Completely inside/outside</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>RETURN</B></TD>
+
+<TD width="100">-</TD>
+
+<TD width="471">Quit the operation</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>TAB</B></TD>
+
+<TD width="100">- </TD>
+
+<TD width="471">Quit and return to main menu</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>ctrl-a</B></TD>
+
+<TD width="100">-</TD>
+
+<TD width="471">Display help</TD>
+</TR>
+
+<TR>
+<TD width="99"><B>ctrl-b</B></TD>
+
+<TD width="100">- </TD>
+
+<TD width="471">Show position-menu</TD>
+</TR>
+</TABLE>
+
+</UL>
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

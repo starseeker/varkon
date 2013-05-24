@@ -1,0 +1,65 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE ma_posw6(INT main_id;
+                               VECTOR p;
+                               INT    b,h;
+                           VAR STRING mbsstr*132);
+
+!*      Interaktiv inmatning av en position skärning.
+!*      Om inmatningen avbryts lämnas mbsstr orörd.
+!*
+!*      Ut:  mbsstr = intersect(id1,id2,onr)
+!*
+!*      (C)microform ab 1996-06-10 J. Kjellander
+!*
+!*******************************************************
+
+ REF    id1,id2,grupp(3);
+ INT    label,typ1,typ2,vers,blank,nivå,penna;
+ STRING intstr*20;
+
+ BEGINMODULE
+
+!*
+!***Promt storhet 1.
+!*
+   label:=cre_button(main_id,p,b,h,0,get_tstr(324),get_tstr(324));
+!*
+!***Id1.
+!*
+   id1:=ident(14);
+   if id1 <> #0.1 then
+!*
+!***Promt storhet 2.
+!*
+     del_win(main_id,label);
+     label:=cre_button(main_id,p,b,h,0,get_tstr(325),get_tstr(325));
+     id2:=ident(14);
+     if id2 <> #0.1 then
+!*
+!***Vilken typ av storheter ?
+!*
+       gethdr(id1,typ1,vers,blank,nivå,penna,grupp);
+       gethdr(id2,typ2,vers,blank,nivå,penna,grupp);
+!*
+!***Linje/linje klarar sig utan ordningsnummer.
+!*
+       if typ1 = 2  and  typ2 = 2 then
+         mbsstr:="intersect("+rstr(id1)+","+rstr(id2)+",-1)";
+       else
+         intstr:="";
+         intstr:=inpmt(get_tstr(327),"1",40);
+         if intstr <> "" then
+           mbsstr:="intersect("+rstr(id1)+","+rstr(id2)+","+intstr+")";
+         endif;
+       endif;
+     endif;
+   endif;
+!*
+!***Sudda sista promten.
+!*
+   del_win(main_id,label);
+
+ ENDMODULE
+
+!******************************************************

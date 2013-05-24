@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Static 2D symbols</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>Static 2D symbols</H3>
+
+<P>A static symbol is a 2D shape without parametrisation. When a symbol
+is inserted on a drawing VARKON uses the name of the symbol to locate a
+corresponding symbol file defining the shape of the symbol. If found, VARKON
+copies the contents of the file, makes necessary transformations (move,scale,rotate)
+and stores the result in its internal database.<BR>
+<BR>
+VARKON can create and insert symbols in DXF and GKS format. DXF is an industry
+standard originating from the AutoCAD system and GKS is an ISO standard
+for 2D-graphics. Both are ASCII text formats. DXF can represent geometric
+entities like lines, arcs and text but the GKS format only uses polylines.<BR>
+<BR>
+There are three ways to create a symbol in MBS...<BR>
+<BR>
+<B>plot_win</B>(p1,p2,filename,origin); ! Plot selected area<BR>
+<B>plot_view</B>(viewname,filename); ! Plot named view<BR>
+<B>hide_view</B>(viewname,screen and/or file,filename,origin); ! Plot with
+hidden lines removed<BR>
+<BR>
+<B>plot_win</B> and <B>plot_view</B> creates files on DXF or GKS format
+depending on the filename parameter. A filename ending with .DXF implies
+DXF format and filenames ending with .PLT are used for GKS format.<B> hide_view</B>
+creates an image with hidden lines removed and writes the image to a .PLT
+file on GKS format. <BR>
+<BR>
+Symbols on DXF-format are inserted using a MODULE from the system library...<BR>
+<BR>
+<B>part</B>(id,dxf_in(filename,p1,scale,rotation));<BR>
+<BR>
+and symbols on GKS format are inserted using....<BR>
+<BR>
+<B>symb</B>(id,filename,p1,scale,rotation);<BR>
+<BR>
+In both cases the result is a part with the same name as the file and the
+contents of the file as the part members. For DXF files this can be points,
+lines, arcs or texts. INSERT-BLOCK is supported but other entities like
+PLINE or SOLID are converted to lines and arcs. For GKS files all members
+become lines.<BR>
+<BR>
+Symbols are also used by VARKON for plotting or printing. The VARKON system
+includes a large number of hardware specific plotter/printer drivers that
+read .PLT or .DXF files and convert the contents to native commands. Popular
+drivers are HP7475, HP-CL, Postscript, IBM Proprinter, Epson, Tektronix
+etc. The Windows95/NT version of VARKON includes a driver for WIN32 that
+can print on any hardware installed under Windows95/NT.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

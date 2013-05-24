@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=iso-8859-1">
+<TITLE>tcp_outvec</TITLE>
+<style type="text/css">
+<!--
+p.h{font-weight: bold; line-height: 21pt}
+-->
+</style>
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+<p>
+<CENTER><FONT SIZE=-1>VARKON Version 1.17D 2003-03-25</FONT></CENTER>
+</p>
+<HR width="100%" align="center">
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD width="35">
+&nbsp;<BR>
+</TD>
+<TD>
+<H2>
+tcp_outvec - <FONT SIZE=+0>function</FONT></H2>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD><p class=h>Description</P> 
+</TD></TR><TR><TD>Send vector on specified socket connection.
+A parameter can be used to specify conversion between 32/64 bit floats.
+This function is equivalent to 3 succesive calls to TCP_outfloat.
+</TD></TR></TABLE>&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD><p class=h>Syntax</P> 
+</TD></TR><TR><TD>tcp_outvec(socket, bytecount, byteorder, timeout, data);</TD></TR></TABLE>
+&nbsp;<BR>
+<TABLE BORDER=0 WIDTH="640">
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">socket</TD>
+</TR>
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">bytecount</TD>
+</TR>
+<TR>
+<TD WIDTH="80">INT</TD>
+<TD WIDTH="580">byteorder</TD>
+</TR>
+<TR>
+<TD WIDTH="80">FLOAT</TD>
+<TD WIDTH="580">timeout</TD>
+</TR>
+<TR>
+<TD WIDTH="80">VECTOR</TD>
+<TD WIDTH="580">data</TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD colspan=2>
+<p class=h>Principal parameters</P> 
+</TD></TR>
+<TR>
+<TD WIDTH="80" valign="top">socket</TD>
+<TD WIDTH="580" valign="top">- id of the socket connection to use for send</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">bytecount</TD>
+<TD WIDTH="580" valign="top">- The number of bytes to send for each component(x,y,z). The only valid values are 4 and 8. </TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">byteorder</TD>
+<TD WIDTH="580" valign="top">- If = 1 conversion is made from local to network byteorder.  0 = no conversion.</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">timeout</TD>
+<TD WIDTH="580" valign="top">- Time to wait when host is blocked.</TD>
+</TR>
+<TR>
+<TD WIDTH="80" valign="top">data</TD>
+<TD WIDTH="580" valign="top">- The data to be sent.</TD>
+</TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD colspan=2>
+<p class=h>Optional parameters</P> 
+</TD></TR>
+<TR><TD colspan=2>none</TR></TD>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>Return value</TD></TR>
+<TR><TD>
+An INT value equal to the current error status as below.
+</TD></TR>
+</TABLE>
+
+<TABLE BORDER=0 WIDTH="640">
+<TR><TD align="right" valign="top" width="40">
+24 =
+</TD width="610">
+<TD>
+Operation was successful, 24 bytes sent (3 x 8).
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+12 =
+</TD width="610">
+<TD>
+Operation was successful, 12 bytes sent (3 x 4).
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-1 =
+</TD width="610">
+<TD>
+Timeout value is expired.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-2 =
+</TD width="610">
+<TD>
+The descriptor is not a socket or the socket is not connected.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-3 =
+</TD width="610">
+<TD>
+The network subsystem or the associated service provider has failed.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-18 =
+</TD width="610">
+<TD>
+Winsock routine select() failed before sending.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-19 =
+</TD width="610">
+<TD>
+Winsock routine send() failed.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-22 =
+</TD width="610">
+<TD>
+The virtual circuit was reset by the remote side executing a "hard" or "abortive" close.
+</TD></TR>
+<TR><TD align="right" valign="top" width="40">
+-23 =
+</TD width="610">
+<TD>
+The connection has been dropped because of a network failure or because the system on the other end went down without notice.
+</TD></TR>
+</TABLE>
+&nbsp;<BR>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>Comments</P></TD></TR>
+<TR><TD>
+Conversion from local to network byteorder is only possible for 4-byte floats.
+</TD></TR>
+</TABLE>
+&nbsp;<BR>
+
+<TABLE BORDER=0>
+<TR><TD>
+<p class=h>See also</P>
+</TD></TR>
+<TR><TD>
+<A HREF="tcp_connect.htm">tcp_connect()</A> &nbsp; &nbsp;
+<A HREF="tcp_listen.htm">tcp_listen()</A> &nbsp; &nbsp;
+<A HREF="tcp_close.htm">tcp_close()</A> &nbsp; &nbsp;
+<A HREF="tcp_outint.htm">tcp_outint()</A> &nbsp; &nbsp;
+<A HREF="tcp_inint.htm">tcp_inint()</A> &nbsp; &nbsp;
+<A HREF="tcp_infloat.htm">tcp_infloat()</A> &nbsp; &nbsp;
+<A HREF="tcp_outfloat.htm">tcp_outfloat()</A> &nbsp; &nbsp;
+<A HREF="tcp_invec.htm">tcp_invec()</A> &nbsp; &nbsp;
+<A HREF="tcp_getlocal.htm">tcp_getlocal()</A> &nbsp; &nbsp;
+<A HREF="tcp_getremote.htm">tcp_getremote()</A> &nbsp; &nbsp;
+</TABLE>
+</TD>
+<TD width="35">
+&nbsp;<BR>
+</TD>
+</TR>
+</TABLE>
+<HR width="100%" align="center">
+<CENTER>
+<TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+<TD><A HREF="tcpindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+</BODY>
+</HTML>

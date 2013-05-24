@@ -1,0 +1,58 @@
+!*******************************************************
+
+ macro module l_antang(REF   id >"@t14 t268";
+                       FLOAT  u >"t208");
+
+!*      Analyserar en storhets tangent.
+!*
+!*      In: id = Identitet för storhet som skall
+!*               anlyseras. t268 = "Ange storhet"
+!*          u  = Var på storheten. t208 = "Ange parametervärde"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 15/11/91 J. Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    typ,nref,blnk,niv,pen;
+   REF    gid(3);
+   VECTOR t;
+
+ beginmodule
+
+!*
+!***Ta reda på vilken typ av storhet det {r.
+!*
+   gethdr(global_ref(id,1),typ,nref,blnk,niv,pen,gid);
+!*
+!***Beräkna tangenten.
+!*
+   t:=tang(id,u);
+!*
+!***Utskrift.
+!*
+   lst_ini(get_tstr(1526));                     ! t1525 = "ANALYS - Tangent"
+
+   if typ = 2 then
+     lst_lin(get_tstr(1514) + get_tstr( 42));   ! Storhet     : Linje
+   elif typ = 4 then
+     lst_lin(get_tstr(1514) + get_tstr(127));   ! Storhet     : Cirkel
+   else
+     lst_lin(get_tstr(1514) + get_tstr(139));   ! Storhet     : Kurva
+   endif;
+
+   lst_lin(get_tstr(1515)+str(u,-1,6));         ! Parametervärde
+
+   lst_lin("");
+   lst_lin(get_tstr(1507)+str(t.x,-1,14));       ! X-komponent
+   lst_lin(get_tstr(1508)+str(t.y,-1,14));       ! Y-komponent
+   lst_lin(get_tstr(1509)+str(t.z,-1,14));       ! Z-komponent
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

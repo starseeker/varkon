@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>sur_offs </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>sur_offs - <small><small>Geometric procedure</small></small></h2>
+  <p>Creates an offset surface.<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Creates an offset surface, which is a surface at a constant distance to a previously
+  defined surface. The offset surface is an exact, analytically defined, surface (no
+  approximations). <br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  sur_offs(id, ref, offset:attributes);<br>
+  <br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 08 Row 01 -->
+    <tr>
+      <td width="65">REF</td>
+      <td width="542">id;</td>
+    </tr>
+<!-- Table 08 Row 02 -->
+    <tr>
+      <td width="65">REF</td>
+      <td width="542">ref;</td>
+    </tr>
+<!-- Table 08 Row 03 -->
+    <tr>
+      <td width="65">FLOAT</td>
+      <td width="542">offset;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 09 Row 01 -->
+    <tr>
+      <td width="56">id </td>
+      <td width="551">- Local identity</td>
+    </tr>
+<!-- Table 09 Row 02 -->
+    <tr>
+      <td width="56">ref</td>
+      <td width="551">- Surface</td>
+    </tr>
+<!-- Table 09 Row 03 -->
+    <tr>
+      <td width="56">offset</td>
+      <td width="551">- Offset distance</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 10 Row 01 -->
+    <tr>
+      <td>None</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Attributes<br>
+  </b><br>
+  </p>
+  <table width="615" border="0">
+<!-- Table 11 Row 01 -->
+    <tr>
+      <td width="64">PEN </td>
+      <td width="543">- Pen or colour number</td>
+    </tr>
+<!-- Table 11 Row 02 -->
+    <tr>
+      <td width="64">LEVEL</td>
+      <td width="543">- Level number</td>
+    </tr>
+<!-- Table 11 Row 03 -->
+    <tr>
+      <td width="64">BLANK</td>
+      <td width="543">- Visible (0) or invisible (1)</td>
+    </tr>
+<!-- Table 11 Row 04 -->
+    <tr>
+      <td width="64">SFONT</td>
+      <td width="543">- Solid boundary and dashed midcurves (0)</td>
+    </tr>
+<!-- Table 11 Row 05 -->
+    <tr>
+      <td width="64">SDASHL</td>
+      <td width="543">- Dashlength</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Example<br>
+  </b><br>
+  sur_offs(#3, #2, -2.3);<br>
+  <br>
+  Creates an offset surface #3, which will be at the constant distance -2.3 from surface #2.<br>
+  <br>
+  <br>
+  <b>Comments<br>
+  </b><br>
+  A check that the offset distance is less than the minimum principal curvature is not yet
+  implemented.</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="entiindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

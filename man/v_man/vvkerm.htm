@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>VARKON_ERM</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>VARKON_ERM</H3>
+
+<P>Environment variable<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Environment variable used by VARKON to locate files with error messages.
+Error messages are kept in files named XX.ERM where XX is a two letter
+combination describing what part of the system the file is related to.<BR>
+GE.ERM for example includes error messages related to geometrical routines.<BR>
+<BR>
+When an error occurs the routine involved pushes an error code onto the
+error stack and returns to its caller with negative status. This may cause
+the calling routine to push another error code onto the stack and so on.
+When control finally returns to the user a number of error codes may be
+in the error stack and VARKON will then report them all together with texts
+from their ERM-files in a list-window. The idea is to give the user not
+only a message about where the error initially occured but also some sort
+of error traceback describing the error in more and more general terms.<BR>
+<BR>
+Error codes consist of two letters followed by four digits. GE7152 is an
+error code from a geometrical routine. The corresponding error message
+file is $VARKON_ERM/GE.ERM. In this file there is a line named 715 2 with
+the text &quot;No intersect, lines are parallell&quot; describing the error.
+The last digit in the error code is used as a severity code. There are
+four levels of severity 1 - 4.<BR>
+<BR>
+Severity 1 are warnings only and are pushed to the error stack without
+any notice (not reported).<BR>
+Severity 2 are normal recoverable errors and are reported to the user.<BR>
+Severity 3 are more serious but usually recoverable errors also reported
+to the user.<BR>
+Severity 4 are unrecoverable errors and usually make the system exit or
+even crash<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>setenv VARKON_ERM path ! UNIX C-shell (csh)<BR>
+<BR>
+or<BR>
+<BR>
+VARKON_ERM=path ! UNIX shell (sh)<BR>
+export VARKON_ERM<BR>
+<BR>
+or<BR>
+<BR>
+SET VARKON_ERM=path ! DOS shell<BR>
+<BR>
+Where path is a valid directory specification.<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If VARKON_ERM is not defined a hard coded default will be used instead.
+<BR>
+<BR>
+If no ERM-files are found in $VARKON_ERM the error code is reported but
+no message text.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

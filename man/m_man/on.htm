@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>on </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-09-24</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>on - <FONT SIZE=+0>Function</FONT></H2>
+
+<P>Returns a position<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Returns a 2D or 3D position related to an entity. The position returned
+is always relative to the active coordinate system.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>on(ref)<BR>
+VECTOR p;<BR>
+<BR>
+This syntax is used for 0-dimensional entities like points or text.<BR>
+<BR>
+on(ref, t)<BR>
+VECTOR p;<BR>
+FLOAT t;<BR>
+<BR>
+This syntax is used for 1-dimensional entities like lines, arcs or curves.
+If t is not specified a default value of zero is used.<BR>
+<BR>
+on(ref, uv)<BR>
+VECTOR p;<BR>
+VECTOR uv;<BR>
+<BR>
+This syntax is used for b_planes and surfaces. X- and Y-components of uv
+are used to hold the U- and V-values. The Z-component of uv is not used.<BR>
+<BR>
+<B>Principal parameters</B></P>
+
+<TABLE WIDTH="646" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="34">ref</TD>
+
+<TD width="604">- Referenced entity</TD>
+</TR>
+
+<TR>
+<TD width="34">t</TD>
+
+<TD width="604">- Parameter value for wireframe entity</TD>
+</TR>
+
+<TR>
+<TD width="34">uv</TD>
+
+<TD width="604">- UV-value for surface entity. uv.x = U-value and uv.y
+= V-value</TD>
+</TR>
+</TABLE>
+
+<P><B>Optional parameters</B></P>
+
+<TABLE WIDTH="95%" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD>See above.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<P><B>Return value<BR>
+<BR>
+</B>The position specified.<BR>
+<BR>
+<B>Examples<BR>
+<BR>
+</B>p:=on(#5);<BR>
+<BR>
+The position of #5. If #5 is a line, arc or curve the start of the entity
+is used, t=0.<BR>
+<BR>
+<BR>
+p:=on(#5,0.5);<BR>
+<BR>
+The mid of a line or arc or the mid of the first segment of a curve.<BR>
+<BR>
+<BR>
+p:=on(#5,1);<BR>
+<BR>
+The end of a line or arc or the end of the first segment of a curve.<BR>
+<BR>
+<BR>
+p:=on(#5,vec(1.5,0.8));<BR>
+<BR>
+The position on a surface corresponding to U=1.5 and V=0.8.</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="geomindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

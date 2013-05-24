@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>iostat </title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body bgcolor="#99CCFF">
+
+<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+
+<hr width="100%" align="center">
+
+<blockquote>
+  <h2>iostat - <small><small>Function</small></small></h2>
+  <p>File error routine<br>
+  <br>
+  <br>
+  <b>Description<br>
+  </b><br>
+  Returns the error status of the latest operation performed on a file or pipe. The result
+  depends on what type of operation it was but a value of zero always indicates success (no
+  error).<br>
+  <br>
+  <b>Syntax<br>
+  </b><br>
+  iostat(f)<br>
+  <br>
+  </p>
+  <table width="667" border="0">
+<!-- Table 14 Row 01 -->
+    <tr>
+      <td width="48">FILE</td>
+      <td width="611">f;</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Principal parameters<br>
+  </b><u><br>
+  </u></p>
+  <table width="667" border="0">
+<!-- Table 15 Row 01 -->
+    <tr>
+      <td width="39">f</td>
+      <td width="620">- The name of a filevariable accociated with an open file or pipe</td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Optional parameters<br>
+  </b><br>
+  </p>
+  <table width="95%" border="0">
+<!-- Table 16 Row 01 -->
+    <tr>
+      <td>None.</td>
+      <td></td>
+    </tr>
+  </table>
+  <p><br>
+  <b>Return value</b><br>
+  <br>
+  An INT value equal to the current error status as below:<br>
+  <br>
+  &nbsp; 0 = Operation was successful<br>
+  -1 = End of file<br>
+  -2 = Can't open the file<br>
+  -3 = Can't close the file<br>
+  -4 = File not opened for write (W)<br>
+  -5 = File not opened for read (R)<br>
+  -6 = Write error<br>
+  -7 = Read error<br>
+  -8 = Seek error<br>
+  -9 = File not opened for update (U)<br>
+  -10 = File not open<br>
+  -11 = Item not read</p>
+</blockquote>
+
+<hr width="100%" align="center">
+
+
+
+</small></p>
+<div align="center"><center>
+
+<table align="ABSCENTER" cellspacing="10" cellpadding="0">
+  <tr>
+    <td><a href="../index.htm">VARKON Homepage</a></td>
+    <td><a href="fileindx.htm">Index</a></td>
+  </tr>
+</table>
+</center></div>
+</body>
+</html>

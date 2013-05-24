@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>val </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-09-04</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>ival - <FONT SIZE=+0>Function</FONT></H2>
+
+<P>String to int conversion<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Converts a string of characters to an integer value. Leading blanks
+are ignored but counted together with the number of characters actually
+used for conversion. If conversion is not possible a value of zero is returned.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>ival(str, status, nchars)</P>
+
+<TABLE WIDTH="667" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="72">STRING</TD>
+
+<TD width="587">str*132;</TD>
+</TR>
+
+<TR>
+<TD>INT</TD>
+
+<TD>status;</TD>
+</TR>
+
+<TR>
+<TD>INT</TD>
+
+<TD>nchars;</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B></P>
+
+<TABLE WIDTH="667" >
+<TR>
+<TD width="61">str</TD>
+
+<TD width="598">- The string to convert</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Optional parameters</B></P>
+
+<TABLE WIDTH="667" >
+<CAPTION></CAPTION>
+
+<TR>
+<TD width="61">status</TD>
+
+<TD width="598">- 0 =&gt; Conversion succsessful, -1 =&gt; No conversion
+possible</TD>
+</TR>
+
+<TR>
+<TD>nchars</TD>
+
+<TD>- Number of characters from str used for conversion</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Return value<BR>
+<BR>
+</B>An INT value equal to the converted integer or zero if conversion was
+unsuccessful.<BR>
+<BR>
+<B>Example<BR>
+<BR>
+</B>i:=ival(&quot; -12345 &quot;);</P>
+
+<P>Returns i = -12345.<BR>
+<BR>
+i:=ival(&quot; ABC &quot;);</P>
+
+<P>Returns zero.</P>
+
+<P>i:=ival(&quot;12345&quot;,status);</P>
+
+<P>Retuns i = 12345 and status = 0.</P>
+
+<P>i:=ival(&quot;ABC&quot;,status);</P>
+
+<P>Returns i = 0 and sets status to -1.</P>
+
+<P>i:=ival(&quot;12345 ABC&quot;,status,n);</P>
+
+<P>Returns i = 12345, status = 0 and sets n to 5.</P>
+
+<P><B>See also</B></P>
+
+<P><A HREF="fval.htm">fval()</A> <A HREF="rval.htm">rval()</A></P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="striindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

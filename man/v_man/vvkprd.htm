@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>VARKON_PRD</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-16</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<UL>
+<H3>VARKON_PRD</H3>
+
+<P>Environment variable<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Environment variable used by VARKON as default root directory for new
+projects. Each project is defined by a PID-file located in $VARKON_PID
+listing different directories to be used within the project. It's good
+practice to place these directories in a common directory with the same
+name as the project. For a project named &quot;shafts&quot; this means
+that directories like job, code, lib, mbs, sym, doc, mdf and so on should
+be placed in a common directory named shafts and that the shafts directory
+together with other project directories should be placed in $VARKON_PRD.
+<BR>
+<BR>
+It is strongly adviced to gather projects in a common (root) directory
+outside the directory tree of the VARKON system. Dont use VARKON_ROOT/something
+for VARKON_PRD. Use $HOME/app or some other directory that is not involved
+when a new version of VARKON is installed (and an old version removed).
+See VARKON_PID for the same reason.<BR>
+<BR>
+<BR>
+<B>Example<BR>
+<BR>
+</B>If VARKON_PRD is set to $HOME/app this means that job files for the
+&quot;shafts&quot; project will be placed in $HOME/app/shafts/job.<BR>
+<BR>
+<BR>
+<B>Comments<BR>
+<BR>
+</B>If VARKON_PRD is not defined a hard coded default will be used.<BR>
+<BR>
+The organization of projects and directories suggested above is only a
+suggestion. Other ways to organize your files may work just as well.</P>
+</UL>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="vindex.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

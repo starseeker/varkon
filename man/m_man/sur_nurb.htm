@@ -1,0 +1,301 @@
+<BASE HREF="/usr/v3/slask5/sur_nurb_new.htm">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>sur_splarr </TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-09-12</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>sur_nurbsarr - <FONT SIZE=+0>Geometric procedure</FONT></H2>
+
+<P>Creates a surface<BR>
+<BR>
+<BR>
+<B>Description<BR>
+<BR>
+</B>Creates a NURBS surface from knots and control points. Input data is
+given in arrays. Any order can be used in the U-direction and V-direction
+respectively. If you dont know what order to use we recommend order = 4.
+Knots may be uniformly spaced or non uniformly.</P>
+
+<P><BR>
+<B>Syntax<BR>
+<BR>
+</B>sur_nurbsarr(id, order_u, order_v, nk_u, nk_v, cpts, uknots, vknots,
+w:attributes);<BR>
+</P>
+
+<TABLE WIDTH="675" >
+<TR>
+<TD>REF</TD>
+
+<TD width="590">id;</TD>
+</TR>
+
+<TR>
+<TD width="77">INT</TD>
+
+<TD width="590">order_u;</TD>
+</TR>
+
+<TR>
+<TD width="77">INT</TD>
+
+<TD width="590">order_v;</TD>
+</TR>
+
+<TR>
+<TD width="77">INT</TD>
+
+<TD width="590">nk_u;</TD>
+</TR>
+
+<TR>
+<TD width="77">INT</TD>
+
+<TD width="590">nk_v;</TD>
+</TR>
+
+<TR>
+<TD width="77">VECTOR</TD>
+
+<TD width="590">cpts( , );</TD>
+</TR>
+
+<TR>
+<TD width="77">FLOAT</TD>
+
+<TD width="590">uknots( );</TD>
+</TR>
+
+<TR>
+<TD width="77">FLOAT</TD>
+
+<TD width="590">vknots( );</TD>
+</TR>
+
+<TR>
+<TD width="77">FLOAT</TD>
+
+<TD width="590">w( );</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="675" >
+<TR>
+<TD>id </TD>
+
+<TD width="600">- Local identity</TD>
+</TR>
+
+<TR>
+<TD width="67">order_u</TD>
+
+<TD width="600">- The bspline order in the U-direction</TD>
+</TR>
+
+<TR>
+<TD width="67">order_v</TD>
+
+<TD width="600">- The bspline order in the V-direction</TD>
+</TR>
+
+<TR>
+<TD width="67">nk_u</TD>
+
+<TD width="600">-&nbsp;Number of knots in U-direction. Note that nk_u=npts_u+order_u
+where npts_u= no. of control pts in U direction</TD>
+</TR>
+
+<TR>
+<TD width="67">nk_v</TD>
+
+<TD width="600">- Number of knots in V-direction. Note that nk_v=npts_v+order_v
+where npts_v= no. of control pts in V direction</TD>
+</TR>
+
+<TR>
+<TD width="67">cpts</TD>
+
+<TD width="600">- Control points</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<BR>
+<B>Optional parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="675" >
+<TR>
+<TD>uknots</TD>
+
+<TD width="601">- Knots in U-direction. If not specified a uniform knotvector
+is used.</TD>
+</TR>
+
+<TR>
+<TD width="66">vknots</TD>
+
+<TD width="601">- Knots in V-direction. If not specified a uniform knotvector
+is used.</TD>
+</TR>
+
+<TR>
+<TD width="66">w</TD>
+
+<TD width="601">- Homogenous coordinate. If not specified w=1.0 (non rational).</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Attributes</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="675" >
+<TR>
+<TD>PEN </TD>
+
+<TD width="602">- Pen or colour number</TD>
+</TR>
+
+<TR>
+<TD width="65">LEVEL</TD>
+
+<TD width="602">- Level number</TD>
+</TR>
+
+<TR>
+<TD width="65">BLANK</TD>
+
+<TD width="602">- Visible (0) or invisible (1)</TD>
+</TR>
+
+<TR>
+<TD width="65">SFONT</TD>
+
+<TD width="602">- Solid boundary and dashed midcurves (0)</TD>
+</TR>
+
+<TR>
+<TD width="65">SDASHL</TD>
+
+<TD width="602">- Dashlength</TD>
+</TR>
+</TABLE>
+
+<P><BR>
+<B>Example<BR>
+<BR>
+</B>VECTOR cpts(5,4);<BR>
+<BR>
+sur_nurbsarr(#3, 4, 4, 5+4, 4+4, cpts);<BR>
+<BR>
+Creates a new NURBS surface #3 defined by control points in array cpts.
+Uniform knot distribution will be used and coordinates are non rational.</P>
+
+<P>The number of knot values will be npts+order in order to make the surface
+pass through the boundary points of the input grid. In the example 5+4
+and 4+4. The generated knot vectors will be: uknots= 1,1,1,1,2,3,3,3,3
+vknots=1,1,1,1,2,2,2,2. The same surface will be the result with FLOAT
+uknots(9), vknots(8) and sur_nurbsarr(#3,4,4,9,8,cpts,uknots,vknots);<BR>
+<BR>
+The order of the points in the array poi should be:<BR>
+<BR>
+U= 0.0, V= 3.0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+U=4.0, V= 3.0</P>
+
+<TABLE WIDTH="82%" >
+<TR>
+<TD width="12%" bgcolor="#C0C0C0">poi(1,4)=-2,0.0,0</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(2,4)= 0,0.0,0</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(3,4)= 2,0.0,0</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(4,4)=7,0.0,0</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(5,4)= 9,0.0,0</TD>
+</TR>
+
+<TR>
+<TD width="12%" bgcolor="#C0C0C0">poi(1,3)=-2,0.0,1</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(2,3)= 0,2.5,1</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(3,3)= 2,3.5,1</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(4,3)= 7,1.0,1</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(5,3)= 9,0.0,1</TD>
+</TR>
+
+<TR>
+<TD width="12%" bgcolor="#C0C0C0">poi(1,2)=-2,0.0,2</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(2,2)= 0,2.5,2</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(3,2)= 2,3.5,2</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(4,2)=7,1.0,2</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(5,2)= 9,0.5,1</TD>
+</TR>
+
+<TR>
+<TD width="12%" bgcolor="#C0C0C0">poi(1,1)=-2,0.0,3</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(2,1)= 0,0.0,3</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(3,1)= 2,0.0,3</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(4,1)= 7,0.0,3</TD>
+
+<TD width="12%" bgcolor="#C0C0C0">poi(5,1)= 9,0.0,3</TD>
+</TR>
+</TABLE>
+
+<P>U= 0.0, V=0.0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+U= 4.0, V= 0.0</P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="entiindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

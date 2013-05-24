@@ -1,0 +1,56 @@
+!*******************************************************
+
+ basic geometry module l_sniv1(
+ INT nivnum:=0 >"Vilken niv} vill du sl{cka ?");
+
+!*      Sl{cker enstaka niv}.
+!*
+!*      (C)microform ab 6/1/90 J. Kjellander
+!*
+!*******************************************************
+
+ STRING s*1;
+
+ beginmodule
+
+loop:
+   if nivnum < 0 then
+     exit("Niv}nummer kan ej vara mindre {n 0 !");
+   elif nivnum > 1999 then
+     exit("Niv}nummer kan ej vara st|rre {n 1999 !");
+   else
+     if nivnum = act_lev() then
+       psh_pmt("Niv} nummer "+str(nivnum,-1,0)+" {r aktiv !!!");
+       s:=inpmt("Vill du sl{cka {nd} ? ","j",2); pop_pmt();
+       if s <> "j" then
+         psh_pmt("Niv} nummer "+str(nivnum,-1,0)+" har inte sl{ckts !");
+         s:=inpmt("Vill du sl{cka n{sta niv} ? (j/n) ","j",2);
+         pop_pmt();
+         if s = "j" then
+           nivnum:=nivnum+1;
+           goto loop;
+         else
+           goto end;
+         endif;
+       endif;
+     endif;
+
+     blank_lev(nivnum);
+     psh_pmt("Niv} nummer "+str(nivnum,-1,0)+" {r nu sl{ckt !");
+     s:=inpmt("Vill du sl{cka {ven n{sta niv} ? (j/n) ","j",2);
+     pop_pmt();
+   endif;
+
+   if s = "j" then
+     nivnum:=nivnum+1;
+     goto loop;
+   endif;
+
+end:
+   if inpmt("Vill du rita om sk{rmen ? ","j",2) = "j" then
+     rep_view();
+   endif;
+
+ endmodule
+
+!*******************************************************

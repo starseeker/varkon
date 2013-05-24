@@ -1,0 +1,18 @@
+VARKON Error messages for Symbol Table routines
+(C) Microform AB 1996
+
+001  3  Inconsistent module names
+002  4  Not a module reference
+003  4  It is not permitted to allocate array's with "stdtyp"
+004  4  Unknown type
+005  2  Variable "%s" already declared
+006  2  Multiple definition of "%s"
+007  4  NULL pointer reference
+008  4  Not a variable reference
+009  4  Stack (Base address) overflow
+010  4  Not a function or procedure reference
+011  4  Unknown constant type
+012  2  Constant "%s" already declared
+013  2  Label "%s" already declared
+014  4  Not a label reference
+015  4  Not a constant reference

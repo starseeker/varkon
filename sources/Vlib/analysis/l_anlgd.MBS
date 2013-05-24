@@ -1,0 +1,46 @@
+!*******************************************************
+
+macro module l_anlgd(REF id >"@t14 t268");
+
+!*      Analyserar en storhets längd.
+!*
+!*      In: id = Storhetens identitet. t268 = "Ange storhet"
+!*
+!*      Ut: Inget.
+!*
+!*      (C)microform ab 15/11/91 J. Kjellander
+!*
+!*      1996-06-04 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    typ,nref,blnk,niv,pen;
+   REF    gid(3);
+
+ beginmodule
+
+!*
+!***Ta reda på vilken typ av storhet det är.
+!*
+   gethdr(global_ref(id,1),typ,nref,blnk,niv,pen,gid);
+!*
+!***Skriv ut.
+!*
+   lst_ini(get_tstr(1521));                     ! t1521 = "ANALYS - Längd"
+
+   if typ = 2 then
+     lst_lin(get_tstr(1514) + get_tstr( 42));   ! Storhet     : Linje
+   elif typ = 4 then
+     lst_lin(get_tstr(1514) + get_tstr(127));   ! Storhet     : Cirkel
+   else
+     lst_lin(get_tstr(1514) + get_tstr(139));   ! Storhet     : Kurva
+   endif;
+
+   lst_lin("");
+   lst_lin(get_tstr(1520)+str(arcl(id),-1,14));  ! Längd
+
+   lst_exi();
+
+ endmodule
+
+!*******************************************************

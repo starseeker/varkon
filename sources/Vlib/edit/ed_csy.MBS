@@ -1,0 +1,33 @@
+!*******************************************************
+
+ MACRO MODULE ed_csy(REF id);
+
+!*      Editerar ett koordinatsystem.
+!*
+!*      In: id = Identitet för system som skall
+!*               editeras.
+!*
+!*      (C)microform ab 6/5/92 J. Kjellander
+!*
+!*******************************************************
+
+   STRING typ*20;
+
+ beginmodule
+
+!*
+!***Kolla hur koordinatsystemet är skapad.
+!*
+   typ:=getp_mbs(id,0);
+!*
+!***Anropa rätt rutin.
+!*
+   if typ = "CSYS_1P" then
+     part(#1,ed_csy1(id));
+   elif typ = "CSYS_3P" then
+     part(#2,ed_csy3(id));
+   endif;
+
+ endmodule
+
+!*******************************************************

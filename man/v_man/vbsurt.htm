@@ -1,0 +1,75 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (X11; I; Linux 2.2.5-15 i686) [Netscape]">
+   <title>Basic surface types</title>
+</head>
+<body bgcolor="#99CCFF">
+
+<center><font size=-1>VARKON Version 1.15 1997-10-16</font></center>
+
+<p>
+<hr width="100%" align="center">
+<ul>
+<h3>
+Basic surface representations</h3>
+VARKON supports several basic types of parametric surfaces. The first is
+the common bicubic parametric surface <b>CUB_SUR</b>. This surface can
+be used to interpolate positions and tangents or it can be used to approximate
+other surfaces. Due to the fact that many other systems also support the
+bicubic it is also well suited for import and export of surface data. VARKON
+also supports the rational form of the bicubic, <b>RAT_SUR</b>.
+<p>The second type of surface is a special type of conic lofting surface
+implemented in Varkon by G. Liden for SAAB Military Aircraft. <b>LFT_SUR</b>
+is based on the idea of a varying conic section moving along some curves
+while generating or sweeping the surface. 5 curves of any type are used
+to control the shape of each conic in the section and a 6:th curve called
+the spine is used to control how the section moves.
+<p><b>LFT_SUR</b> is a surface of extremely high quality with a lot of
+built in smoothness. It is also very flexible since its mathematical formulation
+is totally independent of the mathematical representation of the defining
+curves. Any curves can be used, splines, conics, offsets or UV-curves.
+<p>Next surface type is the <b>NURBS</b> surface. NURBS <b>surfaces</b>
+can be created in MBS by specifying the control polygon or imported from
+external files or created by approximation of a surface of other type.
+<p>VARKON also includes a faceted surface. <b>FAC_SUR</b> is used to approximate
+other surfaces. Each patch in the surface is a planar triangle with the
+same property as a B-plane. This means that faceted surfaces can be used
+to produce images with hidden lines automatically removed. <b>FAC_SUR</b>
+can also be used to produce approximations suited for export to other systems.
+<p>An offset surface <b>sur_offs</b> is implemented in much the same way
+as the offset curve <b>cur_offs</b>. An offset surface is not a surface
+type of its own but rather an ordinary extension to any other surface.
+As for curves this means that no approximation is involved in the evaluation
+of an offset surface. VARKON does it the hard way by first evaluating the
+original surface and then "add" the offset.
+<p>The default graphical representation of a surface is based on four solid
+boundary curves and two dashed mid curves. The <b>SDASHL</b> attribute
+can be used to control the dashlength for the 2 mid curves. The VARKON
+shading functions based on OpenGL can be used to produce more realistic
+images of surfaces when required.
+<p>VARKON is a system based on a true parametric evaluator. This is important
+for the quality of different algorithms and also for the possibility of
+adding new curve and surface representations in the future. This has already
+been done at SAAB Military Aircraft with very good results. A new surface
+type was implemented in only a few days with practically no changes to
+existing code. A new evaluation routine was added of course but old routines
+for intersects, closest point, graphics and so on did not need any changes.</ul>
+
+<hr width="100%" align="center">
+<center>
+
+
+
+<br>&nbsp;
+<center><table CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td><a href="../index.htm">VARKON Homepage</a></td>
+
+<td><a href="vindex.htm">Index</a></td>
+</tr>
+</table></center>
+
+</body>
+</html>

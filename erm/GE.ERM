@@ -1,0 +1,238 @@
+
+VARKON Error messages for GEOPAC
+(C) Microform AB 1996
+
+100  3  %s The pointer pseq is not pointing to valid data geo107 has failed
+101  2  %s Dist between start and end point of the segment is < 10.0*TOL2
+101  3  %s Dist between start and end point of the segment is < 10.0*TOL2
+102  2  %s Start and end tangents indicate an abnormal segment
+102  3  %s Start and end tangents indicate an abnormal segment
+103  3  %s The plane is not defined
+104  2  %s The number of restarts is (nstart) is less than two (2)
+105  3  %s Transformation of the rational segment (geo608) failed
+106  2  %s Program error. Report ! (The parabola gives a max pt )
+107  1  %s No parabola interpolation. Middle point is choosen.
+108  2  %s The point is undefined. The dominator is < TOL1
+109  2  %s The derivatives dr/du is zero ( <TOL1 )
+110  1  %s Curvature < TOL1 Bi- and princ normal are not defined
+111  3  %s Input parameter values are not between 0-1
+112  3  %s Not the right type of input curves
+113  3  %s Function geo902 or geo120 failed
+114  2  %s Dist between start and end point < 10*TOL1
+115  2  %s Dist between start and tang point < 10*TOL1
+116  2  %s Dist between end and tang point < 10*TOL1
+117  2  %s The p value is not between 0 and 1
+118  2  %s Alpha+beta = 90 degrees
+119  3  %s Radius of curvature for projected line < TOL2
+120  3  %s The offset distance is greater than the radius of curvature
+121  3  %s Program error. Report !
+122  3  %s Function geo141 failed (coefficients to Consurf)
+123  3  %s Denominator zero for Consurf polygon
+124  3  %s Function geo142 failed (Generalized Conic Plane)
+125  3  %s Parameter interval too short for extrapolation
+126  3  %s Function geo133 failed (Create rational with p value)
+127  3  %s Can't calculate segment arclength (geo120)
+128  3  geo110(), entity type = %s
+129  3  geo110(), segment type = %s
+130  3  geo110(), evltyp = %s
+199  3  %s Program error !
+
+200  3  %s
+200  4  %s
+201  2  %s No distance between input points
+202  3  %s Not a valid coordinate system. geo606 failed
+203  2  %s No distance between points after projection
+204  4  %s Programming error. Report ! (geo606 611 failed)
+205  1  %s Input matrix is not orthogonal
+206  3  %s Program error ! Cross product tangent zaxis = 0
+207  3  %s Program error ! Normalisation of voff failed
+208  3  %s Program error ! Function GE200 failed
+209  2  %s Projected line has zero length
+210  3  %s Pointer plout is not pointing to a line type structure
+211  3  %s Not valid data in the transformation matrix
+212  3  %s Programming error. Report ! The called function ( ) failed
+212  4  %s Programming error. Report ! The called function ( ) failed
+213  1  %s The input transformation matrix is not orthogonal
+214  2  %s The input length is less than zero (=TOL2)
+215  2  %s The input angle is not between -360 and +360 degrees
+216  2  %s The tangent point is equal to the external point
+217  2  %s The requested tangent line does not exist
+218  3  %s Tangents to the circles do not exist
+219  2  %s Requested tangent is not between start and end angles 
+220  3  LIN_TAN2 Arcs must be defined in the same coord. system %s
+221  3  LIN_TAN2 The full circles intersect Only two lines exist %s
+222  3  LIN_TAN2 Circles are not in the same plane %s
+294  3  Called function %s failed in %s
+299  3  Severe program error %s in function %s. Report !
+
+300  2  %s
+301  2  %s End angle or start angle > 360 deg
+302  2  %s End - start angle >360 deg
+303  2  %s Error from geo601
+304  2  %s Zero tangent vector length
+305  2  %s Circle center and point not in same ref. plane
+306  2  %s a and c not in same plane, z-komp of ta tc =! 0
+307  2  %s From xprod operation
+308  2  %s From lengv operation
+309  2  %s From triscl operation
+310  2  %s a and c to close together
+311  2  %s Unsuccesful xprod cd x ad
+312  2  %s Unsuccesful triscl calc of area
+313  2  %s Zero or negative area
+314  2  %s pvalue not between 0 and 1
+315  2  %s Error from geo602
+316  2  %s Two points equal
+317  2  %s All three points on a straight line
+318  2  %s Trying to divide by zero
+319  2  %s poi1 and poi2 are equal
+320  2  %s Zero radius
+321  2  %s Trying to take the root of neg. number
+322  4  %s Tolerance problem in angle determination
+323  2  %s The input radius is to small (or negative)
+324  4  %s Determinant less than tolerance
+325  2  %s The input coordinate system is not orthogonal
+326  2  %s Function geo601() failed
+327  2  %s Function geo351() failed
+328  2  %s Function geo609() failed
+329  2  %s Function geo608() failed for the upper circle
+330  2  %s Function geo608() failed for the lower circle
+331  3  %s The origin z coordinate in the local system is not zero (TOL2)
+332  3  %s The angles are not between 0 and 360 degrees
+333  3  %s The called function ( ) failed
+334  3  %s Program errror. Report !
+335  3  %s Functon is not yet implemented
+336  3  %s Not the right type of input curve(s)
+337  2  Equal start and end angles
+338  3  %s Conic midpoint outside triangle
+339  3  %s Midpoint implies P-value > 0.85
+
+400  3  %s
+401  3  %s Pointer ppout is not pointing to a point type structure
+402  3  %s Not valid data in the transformation matrix
+403  4  %s Programming error. Report ! (geo601, 602 or 902 failed)
+404  1  %s The input transformation matrix is not orthogonal
+405  3  %s Program error ! A called function failed
+406  3  %s Not the right type of input curve(s)
+407  2  %s The requested solution does not exist
+
+600  2  %s
+600  3  %s
+601  2  %s The first input vector (xaxis) is zero
+602  2  %s The second input vector(approx. yaxis) is zero
+603  2  %s Input vectors are parallell. No plane !
+604  4  %s Program error. normv or geo605 failed Report !
+605  3  %s pc is not pointing to a valid data (det = 0)
+606  3  %s Programming error. (Denominator < TOL3) Report !
+607  1  %s The transformation matrix is not orthogonal (det # +1 +/-TOL1)
+608  3  %s geo607 failed in geo602
+609  3  %s geo601 failed in geo602
+610  3  %s Input pointers pc < 0 or pvin , pvout <=0
+611  3  %s geo607 failed in geo604
+612  3  %s geo603 failed in geo604
+613  3  %s Input pointer(s) is (are) less or equal to zero
+614  4  %s The determinant (geo606)  of the matrix is zero ( < TOL1 )
+615  3  %s No inverse matrix exist (det = 0). geo606 failed
+616  3  %s Program error. (geo612 failed)
+617  1  %s The matrix is not orthogonal (det # +1 +/-TOL1)
+618  4  %s Program error. (geo605 failed) Report !
+619  1  %s The determinant (geo606) of the matrix is # +1
+620  4  %s Program error. (geo605 or 607 failed) Report !
+621  3  %s Not valid data in the transformation matrix
+622  2  %s Distnance between points to small. geo200 failed
+623  4  %s Program error. (geo601 failed) Report !
+624  4  %s Program error. (geo602 failed) Report !
+625  3  %s The bottom row is not ( 0 0 0 1 )
+626  2  Can't create transformation, %s
+627  2  Transformation of surfacetype = %s not implemented
+628  2  Segment nr:%s is an UV-segment
+629  3  Evaluation of NURBS with offset not yet implemented (GEevalnc failed)
+630  3  Can't malloc %s floats for GEsort_mesh
+
+700  2  %s
+701  2  Can't find intersect number %s
+702  3  %s Not valid data in the transformation matrix
+703  3  %s intnr, which defines the output point, is not between 1 and INTMAX
+704  3  %s Funktion geo601, geo602, geo701, geo902 or geo107 failed
+705  4  %s Program error Report !
+706  1  %s The input transformatin matrix is not orthogonal
+707  3  %s Function geo902 failed
+708  2  Can't intersect two lines
+709  2  Can't intersect line with arc/curve
+710  2  Can't intersect arc/curve with arc/curve
+711  2  Can't intersect line with surface
+712  3  %s Input curves are not both lines
+713  3  %s Function geo610 failed
+714  3  %s All quotiens < 0, no intersection
+715  2  No intersect, lines are parallell
+716  3  %s uout2 calculation failed, gei706
+717  3  %s Intersectional point outside lines, gei707
+718  2  %s line 1 is a point in view X/Y of coord system pc
+719  2  %s line 2 is a point in view X/Y of coord system pc
+720  3  %s Not the right type of input curves
+721  3  %s Function geo902 or geo101 failed
+722  2  %s The line is a point in the XY-plane of the active coord system
+723  3  %s Program error. Report ! ( All denominators for s = 0 )
+724  3  %s Program error. Report ! ( Check of z values (TOL2) )
+725  3  %s Curve 1 is not a LINE
+726  3  %s There is no distance between the end points of the line
+727  3  %s Function geo102, geo902 or geo904 failed
+728  3  %s Input tangent direction is a zero vector
+729  3  %s Find given tangent point for a line not possible
+730  2  %s There are no points with the given tangent
+731  3  %s The function geo140, geo902 or lengv failed
+732  3  %s The 2D circle is not allowed (not yet implemented)
+733  3  %s Can't find the requested tangent
+734  3  %s Function geo712 failed 
+735  3  %s Relative arclength less than zero (<0.0)
+736  3  %s Relative arclengt greater than one (>1.0)
+737  3  %s Illegal curvetype
+738  3  %s Illegal parameter value
+739  3  %s Can't find the requested curvature
+740  3  %s Can't find the requested (INV_ON) position
+741  2  Can't intersect curve with surface
+742  2  Can't intersect surface with this type of entity
+760  3  %s  Microform
+799  3  %s Program error. Report !
+
+802  4  %s Unknown type of entity
+803  2  Can't malloc (geo812)
+810  2  %s Illegal number of defining positions
+811  2  %s Chord = 0
+812  2  %s No intersect
+813  2  %s Illegal value for alternative
+820  2  %s Maximum number of hatch lines exeeded
+821  2  %s Distance between hatchlines is too small
+822  2  %s Maximum number of intersects exeeded
+823  2  Error in geo710
+824  3  %s Can't calculate total arclength (geo803)
+825  2  Offset too large in segment %s, loop
+826  2  Discontinuity in tangent between segment %s and %s
+827  2  Entities %s and %s are not connected
+828  2  Non planar curve with UV-segment !
+829  3  CUR_TRIM, UV-curves can not be extended %s
+830  2  NORM, b_plane is not well defined, d = 0.
+831  2  XHATCH-boundary is not connected !
+899  3  %s Fatal programming error. Report to Microform.
+
+900  1  %s The input vector to normv() has zero length (TOL1)
+901  1  %s First input vector to scalar() has zero length (TOL1)
+902  1  %s Second input vector to scalar() has zero length (TOL1)
+903  1  %s The input vector to lengv() has zero length (TOL1)
+904  1  %s First input vector to exprod() has zero length (TOL1)
+905  1  %s Second input vector to xprod() has zero length (TOL1)
+906  1  %s Function xprod failed in nxprod
+907  1  %s Function normv failed in nxprod
+908  1  %s First input vector to triscl() has zero length (TOL1)
+909  1  %s Second input vector to triscl() has zero length (TOL1)
+910  1  %s Third input vector to triscl() has zero length (TOL1)
+911  1  %s First input vector to angr() has zero length (TOL1)
+912  1  %s Second input vector to angr() has zero length (TOL1)
+913  1  %s Function angr failed in angd()
+914  4  %s The curvetype is unknown
+915  2  %s One or more elements in uin is > TOL6
+916  2  %s Input numbers of element are not between two and 100
+917  2  %s One or more elements in uin1 or uin2 is > TOL6
+918  3  %s The function nxprod failed (norm. vector cross product)
+
+998  3  %s Fatal programming error, report to Microform 
+999  1  %s has been entered

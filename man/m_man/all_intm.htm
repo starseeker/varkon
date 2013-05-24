@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>all_int_lin_sur</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
+</HEAD>
+<BODY BGCOLOR="#99CCFF">
+
+<CENTER><P><FONT SIZE=-1>VARKON Version 1.16 1998-04-27</FONT></P></CENTER>
+
+<P>
+<HR width="100%" align="center"></P>
+
+<BLOCKQUOTE>
+<H2>all_int_lin_msur - <FONT SIZE=+0>Function</FONT></H2>
+
+<P>Calculates all intersects between a line and multiple surfaces<BR>
+<BR>
+<BR>
+<B>Description</B>. <BR>
+<BR>
+This function calculates all intersects between a line and multiple surfaces.
+It is basically the same routine as all_int_lin_sur() but with the difference
+that it operates on a set of surfaces instead of one single surface. </P>
+
+<P>all_int_lin_sur() should be used when only one surface is involved and
+you want to speed up computations by supplying an approximate start value.
+all_int_lin_msur() does not take a start value as input.</P>
+
+<P>all_int_lin_msur() should be used when multiple surfaces are involved.
+It will then compute faster than if all_int_lin_sur() was called indivudually
+for each surface.<BR>
+<BR>
+<B>Syntax<BR>
+<BR>
+</B>all_int_lin_msur(sur_in, nsur, p, v, order, nint, uv, xyz, sur_out)<BR>
+</P>
+
+<TABLE WIDTH="646" >
+<TR>
+<TD>REF</TD>
+
+<TD width="554">sur_in();</TD>
+</TR>
+
+<TR>
+<TD>INT</TD>
+
+<TD width="554">nsur;</TD>
+</TR>
+
+<TR>
+<TD width="84">VECTOR</TD>
+
+<TD width="554">p;</TD>
+</TR>
+
+<TR>
+<TD width="84">VECTOR</TD>
+
+<TD width="554">v:</TD>
+</TR>
+
+<TR>
+<TD width="84">INT</TD>
+
+<TD width="554">order;</TD>
+</TR>
+
+<TR>
+<TD width="84">INT</TD>
+
+<TD width="554">nint;</TD>
+</TR>
+
+<TR>
+<TD width="84">VECTOR</TD>
+
+<TD width="554">uv( );</TD>
+</TR>
+
+<TR>
+<TD width="84">VECTOR</TD>
+
+<TD width="554">xyz( );</TD>
+</TR>
+
+<TR>
+<TD>REF</TD>
+
+<TD width="554">sur_out( );</TD>
+</TR>
+</TABLE>
+
+<P><B>Principal parameters</B><BR>
+<BR>
+</P>
+
+<TABLE WIDTH="646" >
+<TR>
+<TD>su_in</TD>
+
+<TD width="564">- Array of surface id:s</TD>
+</TR>
+
+<TR>
+<TD>nsur</TD>
+
+<TD width="564">- Number of surfaces </TD>
+</TR>
+
+<TR>
+<TD width="74">p</TD>
+
+<TD width="564">- Line start position</TD>
+</TR>
+
+<TR>
+<TD width="74">v</TD>
+
+<TD width="564">- Direction of the line</TD>
+</TR>
+
+<TR>
+<TD width="74">order</TD>
+
+<TD width="564">- Method for the ordering of intersect points.</TD>
+</TR>
+
+<TR>
+<TD width="74"></TD>
+
+<TD width="564">&nbsp;&nbsp; Ordering is always with respect to the distance
+to the input R*3 point p <BR>
+&nbsp;&nbsp; but solution points will be omitted for the different cases.
+<BR>
+&nbsp;&nbsp; Eq. 1: All intersect points&nbsp; <BR>
+&nbsp;&nbsp; Eq. 2: Only intersect points in the v (shooting) direction
+<BR>
+&nbsp;&nbsp; Eq. 3: As 2 but only intersect points with surface normals
+that have the same direction as<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the v vector (the shooting direction) <BR>
+&nbsp;&nbsp; Eq. 4: As 2 but only intersect points with surface normals
+that are in the opposite<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+direction as the v vector (the shooting direction) <BR>
+&nbsp;&nbsp; Eq. 5: As 3 but the number of solutions will be zero ( 0 )
+if the first solution &nbsp; point has a<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+surface normal that is in the opposite direction compared to vector v (the
+shooting<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+direction) <BR>
+&nbsp;&nbsp; Eq. 6: As 3 but the number of solutions will be zero ( 0 )
+if the first solution point has a<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+surface normal that is in the same direction as the vector v&nbsp;</TD>
+</TR>
+</TABLE>
+
+<TABLE WIDTH="646" >
+<TR>
+<TD>nint</TD>
+
+<TD width="565">- Number of output intersects.</TD>
+</TR>
+</TABLE>
+
+<P><B>Optional parameters</B></P>
+
+<TABLE WIDTH="646" >
+<TR>
+<TD>uv</TD>
+
+<TD>- Array with output (U,V)-values</TD>
+</TR>
+
+<TR>
+<TD width="73">xyz</TD>
+
+<TD width="565">- Array with corresponding R*3 (X,Y,Z)-values</TD>
+</TR>
+
+<TR>
+<TD width="73">sur</TD>
+
+<TD width="565">- Array with corresponding surface id:s</TD>
+</TR>
+</TABLE>
+
+<P><B>Example</B></P>
+
+<P>REF sur_in(2);<BR>
+INT nint;<BR>
+VECTOR uv (10);</P>
+
+<P>sur_in(1) := #5;<BR>
+sur_in(2) := #35;</P>
+
+<P><BR>
+all_int_lin_sur_m(sur_in, 2, vec(100,20,30), vec(1,0,0), 2, nint, uv);<BR>
+<BR>
+Calculates all intersects between the line defined by point (100,20,30)
+and the vector (1,0,0)<BR>
+and the surfaces #5 and #35. All nint intersects in the shooting direction
+are returned in uv. </P>
+</BLOCKQUOTE>
+
+<P>
+<HR width="100%" align="center"></P>
+
+
+
+</FONT></P></CENTER>
+
+<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
+<TR>
+<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+
+<TD><A HREF="geomindx.htm">Index</A></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

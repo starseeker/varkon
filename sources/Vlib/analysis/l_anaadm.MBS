@@ -1,0 +1,67 @@
+!*******************************************************
+
+ macro module l_anaadm(REF id);
+
+!*      Skriver ut specifika data för ett vinkelmått.
+!*
+!*      IN : id => Vinkelmåttets identitet.
+!*
+!*      UT : Inget.
+!*
+!*      (C)microform ab 9/10/86 R. Svedin
+!*
+!*      28/12/86   Globala ref, J. Kjellander
+!*      1996-06-03 Engelska, J.Kjellander
+!*
+!*******************************************************
+
+   INT    nd,auto;
+   FLOAT  r,v1,r1,v2,r2,tv,ps,ts;
+   VECTOR p;
+
+ beginmodule
+
+    getadm(global_ref(id,2),p,r,v1,r1,v2,r2,tv,ps,ts,nd,auto);
+
+    lst_lin(get_tstr(282) + str(p.x,-12,5));
+    ! t282 = "Centrumposition X       : "
+
+    lst_lin(get_tstr(289) + str(p.y,-12,5));
+    ! t289 = "Centrumposition Y       : "
+
+    lst_lin(get_tstr(290) + str(r,-12,5));
+    ! t290 = "Radie                   : "
+
+    lst_lin(get_tstr(291) + str(v1,-12,5));
+    ! t291 = "Vinkel måttgränslinje 1 : "
+
+    lst_lin(get_tstr(292) + str(r1,-12,5));
+    ! t292 = "Radie måttgränslinje  1 : "
+
+    lst_lin(get_tstr(293) + str(v2,-12,5));
+    ! t293 = "Vinkel måttgränslinje 2 : "
+
+    lst_lin(get_tstr(294) + str(r2,-12,5));
+    ! t294 = "Radie måttgränslinje  2 : "
+
+    lst_lin(get_tstr(295) + str(tv,-12,5));
+    ! t295 = "Textens vinkel          : "
+
+    lst_lin(get_tstr(296) + str(ps,-12,5));
+    ! t296 = "Pilstorlek              : "
+
+    lst_lin(get_tstr(297) + str(ts,-12,5));
+    ! t297 = "Textstorlek             : "
+
+    lst_lin(get_tstr(298) + str(nd,-5,0));
+    ! t298 = "Antal decimaler         : "
+
+    if  auto = 0 then
+      lst_lin(get_tstr(299)); ! t299 = "Man./Auto.              : Manuell"
+    else
+      lst_lin(get_tstr(300)); ! t300 = "Man./Auto.              : Automatisk"
+    endif;
+
+  endmodule
+
+!*******************************************************
