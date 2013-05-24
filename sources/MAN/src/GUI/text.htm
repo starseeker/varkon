@@ -1,0 +1,36 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Text})
+define({_INDEXLINK_},{<a href="entities.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Text</h1>
+
+<p>
+When you create a text, you can control it's origin and angle
+relative to the active X axis but the text by default is
+automatically oriented to the XY plane of the active coordinate
+system. The TPMODE attribute can be used to alter this behaviour.
+</p>
+
+<p>
+Varkon text is based on scalable vector fonts. This means that
+you can set slant, size and width to any float value. The maximum
+length of a text is 132 characters.
+</p>
+
+<h2>Methods</h2>
+
+<ul>
+<li><a href="../MBS/text.htm">Left justified</a></li>
+<li>Right justified (macro)</li>
+<li>Centered (macro)</li>
+<li>Start and end position (macro)</li>
+</ul>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)
+

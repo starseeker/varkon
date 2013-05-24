@@ -1,0 +1,36 @@
+<PLAINTEXT>
+
+
+      Varkon documentation sources README
+      ===================================
+
+The Varkon documentation sources are located in the
+VARKON_ROOT/sources/MAN/src directory. The documentation
+included in the distribution packages is automatically
+created from the sources with the Makfile included in the
+VARKON_ROOT/sources/MAN/src directory.
+
+All documentation (except this README) is in html format.
+
+Documentation source pages usually #include a header and a
+footer located in VARKON_ROOT/sources/MAN/include. The footer
+depends the file svnversion.inc to include the current SVN version
+number on each page.
+
+Each page also depends on a stylesheet, see
+VARKON_ROOT/sources/MAN/src/varkonstyle.css
+
+Conventions used in the Varkon documentation are:
+
+1. Use <p> rather than <P> (lower case letters between brackets)
+2. All pages eventually displayed on the SourceForge web server
+   must include the SourceForge logo. Do this by using the appropriate
+   header and/or footer.
+3. Use <code>path/filename</code> to highligt paths or file names
+   used in examples.
+4. Use <h1>Major heading</h1> or <h2>Minor heading</h2> for headlines.
+5. Use <img class="center" src="image_file"></img> for images.
+6. Use <pre class="box">Some text</pre> for MBS code examples etc.
+7. Use <code>alt1/alt2/alt3</code> to refer to menu selections.
+8. When refering to Varkon always use Uppercase "V" and lower case "arkon".
+9. Use menu/create/line/offset etc. when referring to menu selections

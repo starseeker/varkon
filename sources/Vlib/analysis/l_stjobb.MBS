@@ -2,17 +2,14 @@
 
    macro module l_stjobb();
 
-!*      Skriver ut jobb status.
-!*
-!*      IN : Inget.
-!*
-!*      UT : Inget.
+!*      Display job status.
 !*
 !*      (C)microform ab 3/11/86 R. Svedin
 !*
 !*      6/2/94     Aktivt koordinatsystem, J. Kjellander
 !*      13/9/95    Aktivt projekt, J. Kjellander
 !*      1996-06-04 Engelska, J.Kjellander
+!*      2007-22-24 2.0, J.Kjellander
 !*
 !*******************************************************
 
@@ -23,16 +20,10 @@
 
    lst_ini(get_tstr(1551));                    ! ANALYS - Jobbdata
 
-   lst_lin(get_tstr(1552) + act_pid());        ! Projekt.....
-   lst_lin(get_tstr(1553) + act_jobnam());     ! Jobbnamn....
-   lst_lin(get_tstr(1554) + act_jobdir());     ! Jobbibliotek....
+   lst_lin(get_tstr(1554) + act_jobdir());     ! Jobbibliotek
+   lst_lin(get_tstr(1553) + act_jobnam());     ! Jobbnamn
 
    lst_lin("");
-   if act_mtype() = 3 then
-     lst_lin(get_tstr(490));                    ! Modultyp : GEOMETRY
-   else 
-     lst_lin(get_tstr(489));                    ! Modultyp : DRAWING
-   endif;
 
    if act_mattr() = 1 then
      lst_lin(get_tstr(491));                     ! Modulattribut : LOCAL

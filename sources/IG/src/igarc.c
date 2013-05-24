@@ -14,7 +14,7 @@
 /*  IGcar2();    Explicit edit arc end angle                        */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -41,7 +41,7 @@
 #include "../../WP/include/WP.h"
 #include "../../EX/include/EX.h"
 
-extern short v3mode;                 /* System mode */
+extern short sysmode;                 /* System mode */
 
 static char  rdstr[V3STRLEN+1] ="";  /* Default radius */
 
@@ -454,7 +454,7 @@ loop:
 /*
 ***Check for part membership.
 */
-    if ( (v3mode & BAS_MOD)  &&  (idvek[0].p_nextre != NULL) )
+    if ( (sysmode & GENERIC)  &&  (idvek[0].p_nextre != NULL) )
       {
       erpush("IG3502","");
       errmes();
@@ -547,7 +547,7 @@ loop:
 /*
 ***Kolla att storheten inte ingår i en part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -643,7 +643,7 @@ loop:
 /*
 ***Kolla att storheten inte ingår i en part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();

@@ -11,7 +11,7 @@
 *    EXname_level();    Interface-routine for NAME_LEVEL
 *
 *    This file is part of the VARKON Execute Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -259,7 +259,7 @@ static struct
 ***Level name.
 */
    if ( level_names[levnum].allocated )  strcpy(name,level_names[levnum].name);
-   else                                 *name = '\0';                       
+   else                                 *name = '\0';
 /*
 ***The end.
 */
@@ -267,7 +267,7 @@ static struct
   }
 
 /********************************************************/
-/*!******************************************************/;
+/*!******************************************************/
 
         short EXname_level(
         DBint levnum,

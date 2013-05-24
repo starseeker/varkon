@@ -1,0 +1,190 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- cre_material - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>cre_material - Procedure</h1>
+
+<h2>Description</h2>
+
+<p>
+Links a material to a pen number and sets its parameters. Materials can only
+be visualized in graphics windows based on OpenGL. A graphics window based
+on X11 will only display the ambient color of the material.
+</p>
+
+<p>
+Initially no pens are linked to materials and Varkon uses the standard colors
+of pens as set up in the ini-file or created interactively or with the cre_color()
+MBS routine. If a material is defined Varkon will use the characteristics of
+the material instead of the ordinary color when the specified pen is used.
+It is not reccommended to change the color of pen 0 and pen 1.
+</p>
+
+<p>
+A material is defined by 4 different light components each with a red, green and blue
+(RGB) value between 0 and 255. A shininess factor may also be defined, a total of 13 int
+parameters which must all be set.
+</p>
+
+<p>
+The ambient component sets how much ambient light the material reflects. The diffuse
+component sets the amount of diffuse light reflected and the specular component sets the
+amount of specular light reflected. The emitted component sets the amount of light emitted
+from the material itself (not reflected). The emitted component may be used to create a
+luminous material. Shininess is used to make the material dull or shiny.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  cre_material(pen, ar, ag, ab, dr, dg, db,
+                    sr, sg, sb, er, eg, eb, sh);
+
+  int pen;
+  int ar,ag,ab;
+  int dr,dg,db;
+  int sr,sg,sb;
+  int er,eg,eb;
+  int s;
+</pre>
+
+<h2>Principal parameters<h2>
+
+<table>
+<tr>
+<td>pen</td>
+<td>- The pen number to link to the material. 2 - 255</td>
+</tr>
+
+<tr>
+<td>ar</td>
+<td>- Ambient red, 0 - 255</td>
+</tr>
+
+<tr>
+<td>ag</td>
+<td>- Ambient green, 0 - 255</td>
+</tr>
+
+<tr>
+<td>ab</td>
+<td>- Ambient blue, 0 - 255</td>
+</tr>
+
+<tr>
+<td>dr</td>
+<td>- Diffuse red, 0 - 255</td>
+</tr>
+
+<tr>
+<td>dg</td>
+<td>- Diffuse green, 0 - 255</td>
+</tr>
+
+<tr>
+<td>db</td>
+<td>- Diffuse blue, 0 - 255</td>
+</tr>
+
+<tr>
+<td>sr</td>
+<td>- Specular red, 0 - 255</td>
+</tr>
+
+<tr>
+<td>sg</td>
+<td>- Specular green, 0 - 255</td>
+</tr>
+
+<tr>
+<td>sb</td>
+<td>- Specular blue, 0 - 255</td>
+</tr>
+
+<tr>
+<td>er</td>
+<td>- Emitted red, 0 - 255</td>
+</tr>
+
+<tr>
+<td>eg</td>
+<td>- Emitted green, 0 - 255</td>
+</tr>
+
+<tr>
+<td>eb</td>
+<td>- Emitted blue, 0 - 255</td>
+</tr>
+
+<tr>
+<td>sh</td>
+<td>- Shininess, 0 - 255</td>
+</tr>
+</table>
+
+
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Examples</h2>
+
+<pre>
+  cre_material(1, 100, 0, 0, 100, 0, 0, 100, 0, 0, 0, 0, 0, 50);
+</pre>
+
+<p>
+A red material linked to pen 1 equally sensitive to ambient, diffuse and specular light
+but with no emitted light and relatively low shininess.
+</p>
+
+<pre>
+  cre_material(1, 50, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+</pre>
+
+<p>
+A dark and dull red material.
+</p>
+
+<h2>Comments</h2>
+
+<p>
+A complete description of how to use light and material parameters to create different
+effects is not possible to give here. Please check with the litterature on OpenGL and
+similar graphics software.
+</p>
+
+<p>
+A quick guide could be to start with ambient only. Ambient produces no shading but gives
+the right colors. You could think of it as a sort of background light which is always
+present everywhere. Add diffuse light to produce more realistic shades. The object now
+becomes brighter so the ambient level may have to be reduced. Diffuse light reminds of the
+light you would expect from the sun with some cloudiness. Finally add specular to give a
+more shiny surface. Use the shininess factor to concentrate or spread the reflected light.
+Specular light reminds of the very sharp light directly from the sun with no cloudiness.
+</p>
+
+<p>
+Note that the Varkon ini-file sets the common ambient, diffuse and specular
+parameters for all light sources but material_view() sets these for each material
+independantly.
+</p>
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="get_mat.htm">get_material()</a>,
+<a href="cre_col.htm">cre_color()</a>,
+<a href="cre_light.htm">cre_light()</a>,
+<a href="get_col.htm">get_color()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

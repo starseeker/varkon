@@ -8,7 +8,7 @@
 *    EXdirl();      Returns "dir"-list
 *
 *    This file is part of the VARKON Execute  Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -30,18 +30,13 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#ifdef UNIX
 #include "../../WP/include/WP.h"
-#endif
 #include "../include/EX.h"
 #include <string.h>
 
 #ifdef WIN32
 #include <io.h>
 #endif 
-
-
-extern short ialy,ialx;
 
 #ifdef WIN32
 extern int msilse();
@@ -159,7 +154,7 @@ extern int msilse();
         char  *strarr,
         DBint *nf)
 
-/*      Gör "ls" på en filkatalog. Denna rutin hette 
+/*      Gör "ls" på en filkatalog. Denna rutin hette
  *      tidigare igdir().
  *
  *      In:

@@ -63,8 +63,8 @@ OBJECTS = ../lib/EXlib.a(exarc.o)      \
 ifeq ($(DV3RAP),TRUE)
 RAPOBJECTS = ../lib/EXlib.a(rap_clnt.o) \
              ../lib/EXlib.a(rap_xdr.o)
-endif  
-            
+endif
+
 # EXlib.a depends on the objects. 
 
 distr : $(OBJECTS) $(RAPOBJECTS)
@@ -79,7 +79,7 @@ clean:
 # on the following include-files.
 
 $(OBJECTS) : $(INCFILES)
- 
+
 
 # Special rules needed for RAP-RPC
 #-----------------------------------
@@ -110,15 +110,12 @@ endif
 
 # Special rules for ORU specific routines
 #------------------------------------------
-        
+
 ifeq ($(DV3ORU),TRUE)
 
 ../lib/EXlib.a(exoru.o): exoru.c $(INCFILES)
 	$(CC) -c $(CFLAGS) -DV3ORU exoru.c
 	ar r ../lib/EXlib.a exoru.o
 	$(RM) exoru.o
- 
-endif  
 
-
-
+endif

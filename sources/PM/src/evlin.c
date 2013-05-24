@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    evlifr();     Evaluerar LIN_FREE
 *    evlipr();     Evaluerar LIN_PROJ
@@ -35,8 +35,6 @@
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
 #include "../../EX/include/EX.h"
-
-extern short  modtyp;
 
 extern V2REFVA *geop_id; /* ingeop.c *identp  Storhetens ID */
 extern PMPARVA *geop_pv; /* ingeop.c *pv Access structure for MBS routines */

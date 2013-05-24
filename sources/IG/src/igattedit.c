@@ -4,27 +4,28 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*   IGcpen();   Edit pen                                           */
-/*   IGcniv();   Edit level                                         */
-/*   IGcwdt();   Edit linewidth                                     */
-/*   IGcdal();   Edit dashlength                                    */
-/*   IGcfs();    Set font to solid                                  */
-/*   IGcfd();    Set font to dashed                                 */
-/*   IGcfc();    Set font to centreline                             */
-/*   IGcff();    Set font to filled                                 */
-/*   IGctsz();   Edit text size                                     */
-/*   IGctwd();   Edit text width                                    */
-/*   IGctsl();   Edit text slant                                    */
-/*   IGctfn();   Edit text font                                     */
-/*   IGctpm();   Edit text planemode                                */
-/*   IGcdts();   Edit dimension digitsize                           */
-/*   IGcdas();   Edit dimension arrowsize                           */
-/*   IGcdnd();   Edit dimension number of digits                    */
-/*   IGcda0();   Edit dimension auto = off                          */
-/*   IGcda1();   Edit dimension auto = on                           */
+/*   IGset_actatts(); Set active attributes                         */
+/*   IGcpen();        Edit pen                                      */
+/*   IGclevel();      Edit level                                    */
+/*   IGcwdt();        Edit linewidth                                */
+/*   IGcdal();        Edit dashlength                               */
+/*   IGcfs();         Set font to solid                             */
+/*   IGcfd();         Set font to dashed                            */
+/*   IGcfc();         Set font to centreline                        */
+/*   IGcff();         Set font to filled                            */
+/*   IGctsz();        Edit text size                                */
+/*   IGctwd();        Edit text width                               */
+/*   IGctsl();        Edit text slant                               */
+/*   IGctfn();        Edit text font                                */
+/*   IGctpm();        Edit text planemode                           */
+/*   IGcdts();        Edit dimension digitsize                      */
+/*   IGcdas();        Edit dimension arrowsize                      */
+/*   IGcdnd();        Edit dimension number of digits               */
+/*   IGcda0();        Edit dimension auto = off                     */
+/*   IGcda1();        Edit dimension auto = on                      */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -51,13 +52,37 @@
 #include "../../EX/include/EX.h"
 #include "../../WP/include/WP.h"
 
-extern short   v3mode;
+extern short   sysmode;
 extern DBptr   lsysla;
 
 static short igcfnt(int font);
 static short igcdau(int dauto);
 
-/*!******************************************************/
+/********************************************************/
+
+        short IGset_actatts()
+
+/*      Interactive function "Set active attributes".
+ *
+ *      Return: 0  = OK
+ *
+ *      (C)2007-11-14 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+/*
+***Call the attributes dialog in WP.
+*/
+   WPatdi();
+/*
+***The end.
+*/
+   return(0);
+  }
+
+/********************************************************/
+/********************************************************/
 
         short IGcpen()
 
@@ -73,7 +98,7 @@ static short igcdau(int dauto);
  *      (C)microform ab 12/4/86 J. Kjellander
  *
  *      6/10/86  GOMAIN, B. Doverud
- *      11/11/86 Test om storhet ingï¿½r i part, J. Kjellander
+ *      11/11/86 Test om storhet ingår i part, J. Kjellander
  *      15/3/88  Ritpaketet, J. Kjellander
  *      18/11/88 IGgmid(), J. Kjellander
  *      2007-08-10 1.19, J.Kjellander
@@ -104,7 +129,7 @@ loop:
 /*
 ***In generic mode entities may not belong to a part.
 */
-    if ( v3mode & BAS_MOD )
+    if ( sysmode & GENERIC )
       {
       for ( i=0; i<nid; ++i )
         if ( idmat[i][0].p_nextre != NULL )
@@ -147,7 +172,7 @@ loop:
 /*
 ***In generic mode update PM.
 */
-      if ( v3mode & BAS_MOD ) pmchnp(idmat[i],PMPEN,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idmat[i],PMPEN,exnpt,&retla);
 /*
 ***Always update DB and WPGWIN's.
 */
@@ -182,7 +207,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-        short IGcniv()
+        short IGclevel()
 
 /*      Interactive function "Edit level".
  *
@@ -229,7 +254,7 @@ loop:
 /*
 ***In generic mode entities may not belong to a part.
 */
-    if ( v3mode & BAS_MOD )
+    if ( sysmode & GENERIC )
       {
       for ( i=0; i<nid; ++i )
         if ( idmat[i][0].p_nextre != NULL )
@@ -272,7 +297,7 @@ loop:
 /*
 ***In generic mode update PM.
 */
-      if ( v3mode & BAS_MOD ) pmchnp(idmat[i],PMLEVEL,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idmat[i],PMLEVEL,exnpt,&retla);
 /*
 ***Update DB and WPGWIN's.
 */
@@ -324,6 +349,7 @@ exit:
  *      1999-03-09, Bugfix pen, J.Kjellander
  *      2004-07-27 B_plane, J.Kjellander, ï¿½rebro university
  *      2007-08-10 1.19, J.Kjellander
+ *      2007-09-01 Hatch and Dims, J.Kjellander
  *
  ******************************************************!*/
 
@@ -341,6 +367,11 @@ exit:
     DBCurve  cur;
     DBSurf   sur;
     DBText   txt;
+    DBHatch  xht;
+    DBLdim   ldm;
+    DBCdim   cdm;
+    DBRdim   rdm;
+    DBAdim   adm;
     DBBplane bpl;
     PMREFVA  idmat[IGMAXID][MXINIV];
     DBHeader hed;
@@ -353,13 +384,14 @@ exit:
 */
 loop:
     WPaddmess_mcwin(IGgtts(1633),WP_PROMPT);
-    typvek[0] = POITYP+LINTYP+ARCTYP+CURTYP+SURTYP+TXTTYP+BPLTYP;
+    typvek[0] = POITYP+LINTYP+ARCTYP+CURTYP+SURTYP+TXTTYP+XHTTYP+LDMTYP+
+                CDMTYP+RDMTYP+ADMTYP+BPLTYP;
     nid = IGMAXID;
     if ( (status=IGgmid(idmat,typvek,&nid)) < 0 ) goto exit;
 /*
 ***In generic mode entities may not belong to a part.
 */
-    if ( v3mode & BAS_MOD )
+    if ( sysmode & GENERIC )
       {
       for ( i=0; i<nid; ++i )
         if ( idmat[i][0].p_nextre != NULL )
@@ -406,7 +438,7 @@ askwdt:
 /*
 ***In generic mode update PM.
 */
-      if ( v3mode & BAS_MOD ) pmchnp(idmat[i],PMWIDTH,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idmat[i],PMWIDTH,exnpt,&retla);
 /*
 ***Update DB and graphical windows.
 */
@@ -449,6 +481,36 @@ askwdt:
         DBread_text(&txt,NULL,la);
         txt.wdt_tx = width;
         DBupdate_text(&txt,NULL,la);
+        }
+      else if ( typ == XHTTYP )
+        {
+        DBread_xhatch(&xht,NULL,NULL,la);
+        xht.wdt_xh = width;
+        DBupdate_xhatch(&xht,NULL,la);
+        }
+      else if ( typ == LDMTYP )
+        {
+        DBread_ldim(&ldm,NULL,la);
+        ldm.wdt_ld = width;
+        DBupdate_ldim(&ldm,la);
+        }
+      else if ( typ == CDMTYP )
+        {
+        DBread_cdim(&cdm,NULL,la);
+        cdm.wdt_cd = width;
+        DBupdate_cdim(&cdm,la);
+        }
+      else if ( typ == RDMTYP )
+        {
+        DBread_rdim(&rdm,NULL,la);
+        rdm.wdt_rd = width;
+        DBupdate_rdim(&rdm,la);
+        }
+      else if ( typ == ADMTYP )
+        {
+        DBread_adim(&adm,NULL,la);
+        adm.wdt_ad = width;
+        DBupdate_adim(&adm,la);
         }
       else if ( typ == BPLTYP )
         {
@@ -528,7 +590,7 @@ loop:
 /*
 ***In generic mode the entity may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -559,7 +621,7 @@ loop:
       }
     else
       {
-      DBread_xhatch(&xht,NULL,la);
+      DBread_xhatch(&xht,NULL,NULL,la);
       font = xht.fnt_xh;
       dashl = xht.lgt_xh;
       }
@@ -609,25 +671,25 @@ askdsh:
 
     if ( typ == LINTYP )
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMLDASHL,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMLDASHL,exnpt,&retla);
       lin.lgt_l = dashl;
       DBupdate_line(&lin,la);
       }
     else if ( typ == ARCTYP )
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMADASHL,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMADASHL,exnpt,&retla);
       arc.lgt_a = dashl;
       DBupdate_arc(&arc,NULL,la);
       }
     else if ( typ == CURTYP )
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMCDASHL,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMCDASHL,exnpt,&retla);
       cur.lgt_cu = dashl;
       DBupdate_curve(&cur,NULL,la);
       }
     else
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMXDASHL,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMXDASHL,exnpt,&retla);
       xht.lgt_xh = dashl;
       DBupdate_xhatch(&xht,NULL,la);
       }
@@ -767,7 +829,7 @@ loop:
 /*
 ***In generic mode the entity may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -786,36 +848,36 @@ loop:
 
     if       ( typ == POITYP )
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMPFONT,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMPFONT,exnpt,&retla);
       DBread_point(&poi,la);
       poi.fnt_p = font;
       DBupdate_point(&poi,la);
       }
     else if ( typ == LINTYP )
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMLFONT,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMLFONT,exnpt,&retla);
       DBread_line(&lin,la);
       lin.fnt_l = font;
       DBupdate_line(&lin,la);
       }
     else if ( typ == ARCTYP )
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMAFONT,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMAFONT,exnpt,&retla);
       DBread_arc(&arc,NULL,la);
       arc.fnt_a = font;
       DBupdate_arc(&arc,NULL,la);
       }
     else if ( typ == CURTYP )
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMCFONT,exnpt,&retla);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMCFONT,exnpt,&retla);
       DBread_curve(&cur,NULL,NULL,la);
       cur.fnt_cu = font;
       DBupdate_curve(&cur,NULL,la);
       }
     else
       {
-      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMXFONT,exnpt,&retla);
-      DBread_xhatch(&xht,NULL,la);
+      if ( sysmode & GENERIC ) pmchnp(idvek,PMXFONT,exnpt,&retla);
+      DBread_xhatch(&xht,NULL,NULL,la);
       xht.fnt_xh = font;
       DBupdate_xhatch(&xht,NULL,la);
       }
@@ -886,7 +948,7 @@ loop:
 /*
 ***In generic mode it may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -920,7 +982,7 @@ loop:
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
-    if ( v3mode & BAS_MOD ) pmchnp(idvek,PMTSIZE,exnpt,&retla);
+    if ( sysmode & GENERIC ) pmchnp(idvek,PMTSIZE,exnpt,&retla);
     if ( val.lit_type == C_INT_VA ) txt.h_tx = val.lit.int_va;
     else txt.h_tx = val.lit.float_va;
     DBupdate_text(&txt,str,la);
@@ -993,7 +1055,7 @@ loop:
 /*
 ***In generic mode the text may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -1026,7 +1088,7 @@ loop:
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
-    if ( v3mode & BAS_MOD ) pmchnp(idvek,PMTWIDTH,exnpt,&retla);
+    if ( sysmode & GENERIC ) pmchnp(idvek,PMTWIDTH,exnpt,&retla);
     if ( val.lit_type == C_INT_VA ) txt.b_tx = val.lit.int_va;
     else txt.b_tx = val.lit.float_va;
     DBupdate_text(&txt,str,la);
@@ -1097,7 +1159,7 @@ loop:
 /*
 ***In generic mode the text may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -1130,7 +1192,7 @@ loop:
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
-    if ( v3mode & BAS_MOD ) pmchnp(idvek,PMTSLANT,exnpt,&retla);
+    if ( sysmode & GENERIC ) pmchnp(idvek,PMTSLANT,exnpt,&retla);
     if ( val.lit_type == C_INT_VA ) txt.l_tx = val.lit.int_va;
     else txt.l_tx = val.lit.float_va;
     DBupdate_text(&txt,str,la);
@@ -1201,7 +1263,7 @@ loop:
 /*
 ***In generic mode the text may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -1240,7 +1302,7 @@ loop:
     val.lit.int_va = font;
     pmclie(&val,&exnpt);
 
-    if ( v3mode & BAS_MOD ) pmchnp(idvek,PMTFONT,exnpt,&retla);
+    if ( sysmode & GENERIC ) pmchnp(idvek,PMTFONT,exnpt,&retla);
     txt.fnt_tx = font;
     DBupdate_text(&txt,NULL,la);
 
@@ -1310,7 +1372,7 @@ loop:
 /*
 ***In generic mode the text may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -1349,7 +1411,7 @@ loop:
     val.lit.int_va = pmode;
     pmclie(&val,&exnpt);
 
-    if ( v3mode & BAS_MOD ) pmchnp(idvek,PMTPMODE,exnpt,&retla);
+    if ( sysmode & GENERIC ) pmchnp(idvek,PMTPMODE,exnpt,&retla);
     txt.pmod_tx = pmode;
     DBupdate_text(&txt,NULL,la);
 
@@ -1424,7 +1486,7 @@ loop:
 /*
 ***In generic mode the dim may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -1437,25 +1499,25 @@ loop:
 
     if ( typ == LDMTYP )
       {
-      DBread_ldim(&ldm,la);
+      DBread_ldim(&ldm,NULL,la);
       dauto = ldm.auto_ld;
       tsiz = ldm.tsiz_ld;
       }
     else if ( typ == CDMTYP )
       {
-      DBread_cdim(&cdm,la);
+      DBread_cdim(&cdm,NULL,la);
       dauto = cdm.auto_cd;
       tsiz = cdm.tsiz_cd;
       }
     else if ( typ == RDMTYP )
       {
-      DBread_rdim(&rdm,la);
+      DBread_rdim(&rdm,NULL,la);
       dauto = rdm.auto_rd;
       tsiz = rdm.tsiz_rd;
       }
     else
       {
-      DBread_adim(&adm,la);
+      DBread_adim(&adm,NULL,la);
       dauto = adm.auto_ad;
       tsiz = adm.tsiz_ad;
       }
@@ -1490,7 +1552,7 @@ loop:
 ***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
-    if ( v3mode & BAS_MOD ) pmchnp(idvek,PMDTSIZE,exnpt,&retla);
+    if ( sysmode & GENERIC ) pmchnp(idvek,PMDTSIZE,exnpt,&retla);
 
     if ( typ == LDMTYP )
       {
@@ -1582,7 +1644,7 @@ loop:
 /*
 ***In generic mode the dim may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -1595,22 +1657,22 @@ loop:
 
     if ( typ == LDMTYP )
       {
-      DBread_ldim(&ldm,la);
+      DBread_ldim(&ldm,NULL,la);
       asiz = ldm.asiz_ld;
       }
     else if ( typ == CDMTYP )
       {
-      DBread_cdim(&cdm,la);
+      DBread_cdim(&cdm,NULL,la);
       asiz = cdm.asiz_cd;
       }
     else if ( typ == RDMTYP )
       {
-      DBread_rdim(&rdm,la);
+      DBread_rdim(&rdm,NULL,la);
       asiz = rdm.asiz_rd;
       }
     else
       {
-      DBread_adim(&adm,la);
+      DBread_adim(&adm,NULL,la);
       asiz = adm.asiz_ad;
       }
 /*
@@ -1637,7 +1699,7 @@ loop:
 ***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
-    if ( v3mode & BAS_MOD ) pmchnp(idvek,PMDASIZE,exnpt,&retla);
+    if ( sysmode & GENERIC ) pmchnp(idvek,PMDASIZE,exnpt,&retla);
 
     if ( typ == LDMTYP )
       {
@@ -1731,7 +1793,7 @@ loop:
 /*
 ***In generic mode the dim may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -1744,25 +1806,25 @@ loop:
 
     if ( typ == LDMTYP )
       {
-      DBread_ldim(&ldm,la);
+      DBread_ldim(&ldm,NULL,la);
       dauto = ldm.auto_ld;
       ndig = ldm.ndig_ld;
       }
     else if ( typ == CDMTYP )
       {
-      DBread_cdim(&cdm,la);
+      DBread_cdim(&cdm,NULL,la);
       dauto = cdm.auto_cd;
       ndig = cdm.ndig_cd;
       }
     else if ( typ == RDMTYP )
       {
-      DBread_rdim(&rdm,la);
+      DBread_rdim(&rdm,NULL,la);
       dauto = rdm.auto_rd;
       ndig = rdm.ndig_rd;
       }
     else
       {
-      DBread_adim(&adm,la);
+      DBread_adim(&adm,NULL,la);
       dauto = adm.auto_ad;
       ndig = adm.ndig_ad;
       }
@@ -1797,7 +1859,7 @@ loop:
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
-    if ( v3mode & BAS_MOD ) pmchnp(idvek,PMDNDIG,exnpt,&retla);
+    if ( sysmode & GENERIC ) pmchnp(idvek,PMDNDIG,exnpt,&retla);
 
     if ( typ == LDMTYP )
       {
@@ -1916,7 +1978,7 @@ loop:
 /*
 ***In generic mode the dim may not belong to a part.
 */
-    if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
+    if ( sysmode & GENERIC  &&  idvek[0].p_nextre != NULL )
       {
       erpush("IG3502","");
       errmes();
@@ -1929,7 +1991,7 @@ loop:
 
     EXdren(la,typ,FALSE,GWIN_ALL);
 
-    if ( v3mode & BAS_MOD )
+    if ( sysmode & GENERIC )
       {
       val.lit_type = C_INT_VA;
       val.lit.int_va = dauto;
@@ -1939,25 +2001,25 @@ loop:
 
     if ( typ == LDMTYP )
       {
-      DBread_ldim(&ldm,la);
+      DBread_ldim(&ldm,NULL,la);
       ldm.auto_ld = dauto;
       DBupdate_ldim(&ldm,la);
       }
     else if ( typ == CDMTYP )
       {
-      DBread_cdim(&cdm,la);
+      DBread_cdim(&cdm,NULL,la);
       cdm.auto_cd = dauto;
       DBupdate_cdim(&cdm,la);
       }
     else if ( typ == RDMTYP )
       {
-      DBread_rdim(&rdm,la);
+      DBread_rdim(&rdm,NULL,la);
       rdm.auto_rd = dauto;
       DBupdate_rdim(&rdm,la);
       }
     else
       {
-      DBread_adim(&adm,la);
+      DBread_adim(&adm,NULL,la);
       adm.auto_ad = dauto;
       DBupdate_adim(&adm,la);
       }

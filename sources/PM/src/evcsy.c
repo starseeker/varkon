@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    evcs3p();     Evaluerar CSYS_3P
 *    evcs1p();     Evaluerar CSYS_1P

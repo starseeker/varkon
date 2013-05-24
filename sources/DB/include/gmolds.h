@@ -290,34 +290,73 @@ short   nlin_xh;
 DBptr   lptr_xh;
 } GMXHT0;
 
+typedef struct
+{
+DBHeader hed_xh;
+DBshort  fnt_xh;
+DBfloat  lgt_xh;
+DBfloat  dist_xh;
+DBfloat  ang_xh;
+DBshort  nlin_xh;
+DBptr    lptr_xh;
+DBptr    pcsy_xh;
+} GMXHT1;
 /*
 ***Dimensions.
 */
 typedef struct
 {
-GMRECH  hed_ld;
-DBVector   p1_ld;
-DBVector   p2_ld;
-DBVector   p3_ld;
-short   dtyp_ld;
-gmflt   asiz_ld;
-gmflt   tsiz_ld;
-short   ndig_ld;
-tbool   auto_ld;
+GMRECH   hed_ld;
+DBVector p1_ld;
+DBVector p2_ld;
+DBVector p3_ld;
+short    dtyp_ld;
+gmflt    asiz_ld;
+gmflt    tsiz_ld;
+short    ndig_ld;
+tbool    auto_ld;
 } GMLDM0;
 
 typedef struct
 {
-GMRECH  hed_cd;
-DBVector   p1_cd;
-DBVector   p2_cd;
-DBVector   p3_cd;
-short   dtyp_cd;
-gmflt   asiz_cd;
-gmflt   tsiz_cd;
-short   ndig_cd;
-tbool   auto_cd;
+GMRECH   hed_ld;
+DBVector p1_ld;
+DBVector p2_ld;
+DBVector p3_ld;
+short    dtyp_ld;
+gmflt    asiz_ld;
+gmflt    tsiz_ld;
+short    ndig_ld;
+tbool    auto_ld;
+DBptr    pcsy_ld;
+} GMLDM1;
+
+typedef struct
+{
+GMRECH   hed_cd;
+DBVector p1_cd;
+DBVector p2_cd;
+DBVector p3_cd;
+short    dtyp_cd;
+gmflt    asiz_cd;
+gmflt    tsiz_cd;
+short    ndig_cd;
+tbool    auto_cd;
 } GMCDM0;
+
+typedef struct
+{
+GMRECH   hed_cd;
+DBVector p1_cd;
+DBVector p2_cd;
+DBVector p3_cd;
+short    dtyp_cd;
+gmflt    asiz_cd;
+gmflt    tsiz_cd;
+short    ndig_cd;
+tbool    auto_cd;
+DBptr    pcsy_cd;
+} GMCDM1;
 
 typedef struct
 {
@@ -334,16 +373,47 @@ tbool   auto_rd;
 
 typedef struct
 {
-GMRECH  hed_ad;
-DBVector   pos_ad;
-gmflt   r_ad;
-gmflt   v1_ad;
-gmflt   r1_ad;
-gmflt   v2_ad;
-gmflt   r2_ad;
-gmflt   tv_ad;
-gmflt   asiz_ad;
-gmflt   tsiz_ad;
-short   ndig_ad;
-tbool   auto_ad;
+GMRECH   hed_rd;
+DBVector p1_rd;
+DBVector p2_rd;
+DBVector p3_rd;
+gmflt    r_rd;
+gmflt    asiz_rd;
+gmflt    tsiz_rd;
+short    ndig_rd;
+tbool    auto_rd;
+DBptr    pcsy_rd;
+} GMRDM1;
+
+typedef struct
+{
+GMRECH   hed_ad;
+DBVector pos_ad;
+gmflt    r_ad;
+gmflt    v1_ad;
+gmflt    r1_ad;
+gmflt    v2_ad;
+gmflt    r2_ad;
+gmflt    tv_ad;
+gmflt    asiz_ad;
+gmflt    tsiz_ad;
+short    ndig_ad;
+tbool    auto_ad;
 } GMADM0;
+
+typedef struct
+{
+GMRECH   hed_ad;
+DBVector pos_ad;
+gmflt    r_ad;
+gmflt    v1_ad;
+gmflt    r1_ad;
+gmflt    v2_ad;
+gmflt    r2_ad;
+gmflt    tv_ad;
+gmflt    asiz_ad;
+gmflt    tsiz_ad;
+short    ndig_ad;
+tbool    auto_ad;
+DBptr    pcsy_ad;
+} GMADM1;

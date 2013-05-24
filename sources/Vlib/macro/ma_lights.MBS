@@ -1,0 +1,182 @@
+!*******************************************************
+
+ MACRO MODULE ma_lights();
+
+!*      Interactive configuration of light sources.
+!*
+!*      (C)2008-01-23 J. Kjellander
+!*
+!*******************************************************
+
+  STRING rubrik*40,ls*1,ps*40,is*20,ok*40,avbryt*40,
+         list*40,os*20,fs*20;
+  INT    ol,al,el,ll,th,dxm,dym,dxb,dyb,lx,ly,label,fstate,
+         status,wid,bid_ok,bid_avbryt,bid_list,bidx,edl,s,
+         edi,edf,light,on,follow_model;
+  FLOAT  old_intensity,new_intensity;
+
+ BEGINMODULE
+
+ !*
+ !***Promts.
+ !*
+   rubrik:="Light settings";
+   ok:=get_tstr(458);
+   avbryt:=get_tstr(334);
+   list:=get_tstr(112);
+!*
+!***Light source number and intensity default input strings.
+!*
+   ls:="0";
+   status:=get_light(0,on,old_intensity,follow_model);
+   is:=str(old_intensity,-8,1);
+   fs:=str(follow_model,-1,0);
+!*
+!***Text sizes.
+!*
+   ol:=textl_win(ok);
+   al:=textl_win(avbryt);
+   ll:=textl_win(list);
+   el:=textl_win("0123456789");
+   th:=texth_win();
+!*
+!***Ok, reject and list buttons, which one is longest ?
+!*
+   dxb:=ol;
+   if al > dxb then dxb:=al; endif;
+   if ll > dxb then dxb:=ll; endif;
+
+   dxb:=trunc(1.4*dxb);
+   dyb:=2*th;
+!*
+!***Air between windows.
+!*
+   lx:=th;
+   ly:=th;
+!*
+!***Total window width.
+!*
+   dxm:=3*el + 4*lx;
+!*
+!**Total window height.
+!*
+   dym:=4*dyb + 6*ly;
+!*
+!***Microsoft correction.
+!*
+   if act_ostype() = "WIN32" then
+     dxm:=dxm+6;
+     dym:=dym+6;
+   endif;
+!*
+!***Create main window.
+!*
+   wid:=cre_win(vec(100,100),dxm,dym,rubrik);
+!*
+!***Light number edit.
+!*
+   ps:="Light number (0-7)";
+   label:=cre_button(wid,vec(lx,ly),textl_win(ps),dyb,0,ps,ps);
+   edl:=cre_edit(wid,vec(lx+textl_win(ps)+lx,0*dyb+1*ly),el,dyb,1,ls,3);
+!*
+!***Intensity edit.
+!*
+   ps:="Intensity  (0-100)";
+   label:=cre_button(wid,vec(lx,1*dyb+2*ly),textl_win(ps),dyb,0,ps,ps);
+   edi:=cre_edit(wid,vec(lx+textl_win(ps)+lx,1*dyb+2*ly),el,dyb,1,is,8);
+!*
+!***Follow model edit.
+!*
+   ps:="Follow model (0/1)";
+   label:=cre_button(wid,vec(lx,2*dyb+3*ly),textl_win(ps),dyb,0,ps,ps);
+   edf:=cre_edit(wid,vec(lx+textl_win(ps)+lx,2*dyb+3*ly),el,dyb,1,fs,1);
+!*
+!***Ok, Reject and List buttons.
+!*
+   bid_ok:=cre_button(wid,vec(lx,3*dyb+5*ly),dxb,dyb,2,ok,ok);
+   bid_avbryt:=cre_button(wid,vec(dxb+2*lx,3*dyb+5*ly),dxb,dyb,2,avbryt,avbryt);
+   bid_list:=cre_button(wid,vec(dxm-dxb-lx,3*dyb+5*ly),dxb,dyb,2,list,list);
+!*
+!***Display window.
+!*
+   show_win(wid);
+!*
+!***Wait for user action.
+!*
+loop:
+   bidx:=wait_win(wid);
+!*
+!***Ok, read light source number, intensity and follow edits.
+!*
+   if bidx = bid_ok then
+
+     ls:=get_edit(wid,edl);
+     light:=ival(ls,status);
+     if status < 0 then goto loop; endif;
+     if light < 0  or  light > 7 then goto loop; endif;
+
+     status:=get_light(light,on,old_intensity,follow_model);
+
+     if status = 0 and on = 1 then
+       is:=get_edit(wid,edi);
+       new_intensity:=fval(is,status);
+       if status < 0 then goto loop; endif;
+       if new_intensity < 0  or  new_intensity > 100 then goto loop; endif;
+
+       fs:=get_edit(wid,edf);
+       follow_model:=ival(fs,status);
+       if status < 0 then goto loop; endif;
+       if follow_model < 0  or  follow_model > 1 then goto loop; endif;
+
+       light_on(light,new_intensity,follow_model);
+     endif;
+
+     del_win(wid);
+     exit();
+!*
+!***Close.
+!*
+   elif bidx = bid_avbryt then
+     del_win(wid);
+     exit();
+!*
+!***List.
+!*
+   elif bidx = bid_list then
+     lst_ini(" Light  On    Intensity  Follow_model");
+     for light:= 0 to 7 do
+       status:=get_light(light,on,old_intensity,follow_model);
+       if status = 0 then
+         if on = 0 then os:="      No    ";
+         else           os:="      Yes   ";
+         endif;
+         if follow_model = 0 then fs:="No";
+         else                     fs:="Yes";
+         endif;
+         lst_lin(str(light,2,0)+os+str(old_intensity,-11,1)+fs);
+       endif;
+     endfor;
+     lst_exi();
+     goto loop;
+!*
+!***Light source number.
+!*
+   elif bidx = edl then
+     ls:=get_edit(wid,edl);
+     light:=ival(ls,status);
+     if status < 0 then goto loop; endif;
+     if light < 0  or  light > 7 then goto loop; endif;
+     status:=get_light(light,on,old_intensity,follow_model);
+     upd_edit(wid,edi,str(old_intensity,-1,1));
+     upd_edit(wid,edf,str(follow_model,-1,1));
+     goto loop;
+!*
+!***Unknown event (should not happen ?).
+!*
+   else
+     goto loop;
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

@@ -1,0 +1,40 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Circular arcs})
+define({_INDEXLINK_},{<a href="entities.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Circular arcs</h1>
+
+<p>A circular arc (or just arc in Varkon) can be a complete circle or
+only a part of a circle. Arc:s are planar curves with constant curvature
+and the sense of direction of an arc is always anticlockwise. An arc always
+has two ends just like a line or a curve and this is true even if the arc
+is a complete circle. The parametrisation along an arc is 0 to 1 and the
+parameter is relative to arc length.
+</p>
+
+<h2>Methods</h2>
+
+<ul>
+<li><a href="../MBS/arc_1pos.htm">Centre position radius and angles</a></li>
+<li><a href="../MBS/arc_2pos.htm">Two positions and radius</a></li>
+<li><a href="../MBS/arc_3pos.htm">Three positions</a></li>
+<li><a href="../MBS/arc_offs.htm">Offset to another arc</a></li>
+<li><a href="../MBS/arc_fil.htm">Fillet</a></li>
+</ul>
+
+<p>
+Since arcs are planar curves they are always created in the XY-plane of
+the active coordinate system.
+</p>
+
+<p>
+An arc can be converted to a curve using the composite curve method.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

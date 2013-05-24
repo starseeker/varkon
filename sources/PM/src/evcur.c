@@ -4,10 +4,8 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
-*    vcufr();      Evaluerar CUR_FREE
-*    vcupr();      Evaluerar CUR_PROJ
 *    evcurs();     Evaluerar CUR_SPLINE
 *    evcusa();     Evaluerar CUR_SPLARR
 *    evcuna();     Evaluerar CUR_NURBSARR
@@ -45,7 +43,6 @@
 *
 ***********************************************************************/
 
-
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
 #include "../../EX/include/EX.h"
@@ -59,100 +56,6 @@ extern PMPARVA *geop_pv; /* ingeop.c *pv Access structure for MBS routines */
 extern short    geop_pc; /* ingeop.c parcount Number of actual parameters */
 extern V2NAPA  *geop_np; /* ingeop.c *npblock Pekare till namnparameterblock.*/
 
-/*!******************************************************/
-
-        short evcufr()
-
-/*      Evaluerar geometri-proceduren CUR_FREE.
- *
- *      In: extern *geop_id   => Storhetens ID.
- *          extern *geop_pv   => Pekare till array med parametervärden.
- *          extern  geop_pc   => Antal parametrar.
- *          extern *geop_np   => Pekare till namnparameterblock.
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar anropade rutiners status.
- *
- *      (C)microform ab 26/12/86 J. Kjellander
- *
- *      2001-02-02 In-Param utbytta till Globla variabler, R Svedin
- *
- ******************************************************!*/
-
-{
-   short   npoi = 0;          /* Number of points */ 
-   short   i;                 /* loop variable */
-   V2VECVA poiarr[V2PARMAX];  /* point array */
-   V2VECVA tanarr[V2PARMAX];  /* tangent array */
-
-/*
-***Skapa poiarr och tanarr.
-*/
-   for( i = 1; i <= geop_pc; i+=2 )
-     { 
-     poiarr[ npoi ].x_val = geop_pv[ i ].par_va.lit.vec_va.x_val;
-     poiarr[ npoi ].y_val = geop_pv[ i ].par_va.lit.vec_va.y_val;
-     poiarr[ npoi ].z_val = geop_pv[ i ].par_va.lit.vec_va.z_val;
-     tanarr[ npoi ].x_val = geop_pv[ i+1 ].par_va.lit.vec_va.x_val;
-     tanarr[ npoi ].y_val = geop_pv[ i+1 ].par_va.lit.vec_va.y_val;
-     tanarr[ npoi ].z_val = geop_pv[ i+1 ].par_va.lit.vec_va.z_val;
-     npoi++;
-     }
-/*
-***Exekvera CUR_FREE.
-*/
-   return(EXcufr( geop_id, (DBVector *)poiarr, (DBVector *)tanarr, npoi, geop_np));
-}
-
-/********************************************************/
-/*!******************************************************/
-
-        short evcupr()
-
-/*      Evaluerar geometri-proceduren CUR_PROJ.
- *
- *      In: extern *geop_id   => Storhetens ID.
- *          extern *geop_pv   => Pekare till array med parametervärden.
- *          extern  geop_pc   => Antal parametrar.
- *          extern *geop_np   => Pekare till namnparameterblock.
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar anropade rutiners status.
- *
- *      (C)microform ab 26/12/86 J. Kjellander
- *
- *      2001-02-02 In-Param utbytta till Globla variabler, R Svedin
- *
- ******************************************************!*/
-
-{
-   short   npoi = 0;          /* Number of points */ 
-   short   i;                 /* loop variable */
-   V2VECVA poiarr[V2PARMAX];  /* point array */
-   V2VECVA tanarr[V2PARMAX];  /* tangent array */
-
-/*
-***Skapa poiarr och tanarr.
-*/
-   for( i = 1; i <= geop_pc; i+=2 )
-     { 
-     poiarr[ npoi ].x_val = geop_pv[ i ].par_va.lit.vec_va.x_val;
-     poiarr[ npoi ].y_val = geop_pv[ i ].par_va.lit.vec_va.y_val;
-     poiarr[ npoi ].z_val = geop_pv[ i ].par_va.lit.vec_va.z_val;
-     tanarr[ npoi ].x_val = geop_pv[ i+1 ].par_va.lit.vec_va.x_val;
-     tanarr[ npoi ].y_val = geop_pv[ i+1 ].par_va.lit.vec_va.y_val;
-     tanarr[ npoi ].z_val = geop_pv[ i+1 ].par_va.lit.vec_va.z_val;
-     npoi++;
-     }
-/*
-***Exekvera CUR_PROJ.
-*/
-   return(EXcupr( geop_id, (DBVector *)poiarr, (DBVector *)tanarr, npoi, geop_np));
-}
-
-/********************************************************/
 /*!******************************************************/
 
         short evcurs()

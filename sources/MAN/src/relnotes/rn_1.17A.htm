@@ -1,0 +1,103 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>VARKON - A Parametric CAD-tool</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
+	<META NAME="AUTHOR" CONTENT="Johan Kjellander">
+	<META NAME="CREATED" CONTENT="20070816;13092700">
+	<META NAME="CHANGEDBY" CONTENT="Johan Kjellander">
+	<META NAME="CHANGED" CONTENT="20070823;10330800">
+	<META NAME="DESCRIPTION" CONTENT="The homepage of the VARKON system">
+	<META NAME="KEYWORDS" CONTENT="CAD, parametric design, geometric modeling, variation, visualization">
+	<META HTTP-EQUIV="expires" CONTENT="Tue, 10 Aug 1996 14:26:12 CET">
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P ALIGN=RIGHT><A HREF="http://sourceforge.net/"><IMG SRC="http://sflogo.sourceforge.net/sflogo.php?group_id=195464&amp;type=4" NAME="graphics1" ALT="SourceForge.net Logo" ALIGN=BOTTOM WIDTH=125 HEIGHT=37 BORDER=0></A>
+</P>
+<hr>
+<center><p><b><font size=+1>Release notes for VARKON version 1.17A</font></b></center>
+
+<p>The old SYMBOL entity type is now removed completely from the system.
+The SYMBOL as an entity type has not been supported for many many years
+but very old RES- or RIT files may still exist with SYMBOL entities in
+them. Such files will not work with Varkon version 1.17A and later. Note
+that this has nothing to do with the MBS SYMB() procedure which of course
+works as normal. We have waited many years to remove the last support for
+SYMBOL's to minimize the risc that users would run into problems. We now
+think the time is right and want to get rid of some old code thats making
+it difficult to implement new functions.
+<p>Function f200 "Dynamic rendering" now has a new controlbutton in its
+toolbar that can be used to activate z-clipping. With z-clipping active
+you can use the mouse to move an "invisible" clippingplane through the
+model and display only the part of the model behind the plane. This can
+be used to "look into" the inside of a model which is otherwise coverd
+by exterior surfaces.
+<p>A minor bug has been corrected in the "list views" function in the graphics/view/list
+menu. The current perspective distance shown for the active view was not
+always correct.
+<p>Three new MBS-routines have been added to store/retrieve and delete
+1-dim arrays of FLOAT, INT or STRING data in GM. These routines can be
+used to store application specific data with a unique name and from any
+module in the application retrive or delete the data by its name. The data
+becomes global for the entire application. In many cases these 3 new routines
+will replace external files or special parts used only to save simple INT,
+FLOAT or STRING values.
+<p>A bug in the PERP_VIEW() MBS routine has been fixed. In some situations
+this routine didn't update the graphics window as it should.
+<p>A bug in the DEL() procedure has been fixed. If you (by some reason)
+tried to delete the part that was currently executing, ie. tried to delete
+"yourself" the system crashed. Now you get a proper errormessage.
+<p>Default values for GMSIZE is now 256 pages on all systems. Default value
+for PMSIZE is 400Kb and default value for RTSSIZE is 200Kb on all systems.
+<p>The "Create/part/plotfile/import" function (SYMB in MBS) now supports
+the WIDTH attribute.
+<p>A bug in the MBS function UNIQUE_FILENAME() has been corrected. On repeated
+calls it always returned the same temporary name.
+<p>An unusual bug in the "Edit Part" dialog window has been corrected.
+In multi page mode and parameters of type VECTOR the wrong promts were
+sometimes displayed when the "arrow down" button to the right of the edit
+window was used to edit the parameter. This is now corrected. Further,
+the default width of the window has been increased by 10 characters.
+<p>A bug in the MBS routine ASCII() has been corrected. For ASCII values
+greater than 127 it returned the wrong value.
+<p>4 new fonts for graphical text has been added. TFONT=2 and 3 are non
+serif and serif versions conforming to the ISO8859 characterset. TFONT=4
+and 5 are non serif and serif version conforming to the PC characterset.
+National characters for Norweigan and Dansish language have been added.
+See the docs on the TEXT procedure for more infor and pictures of all 6
+fonts.
+<p>A bug in the MBS-routine INV_ON_SUR() has been corrected. INV_ON_SUR()
+did not work correctly in 1.16E and could crash the system.
+<p>A bug in the keyboard routine for the CRE_EDIT() window that prevented
+it from displaying 8-bit ASCII characters has been corrected.
+<p>The MBS routine TEXTL() is now also available in 3D.
+<p>The preparation of the Varkon sources for release under the GPL license
+has also resulted in various optimizations that has increased the speed
+of the system. MBS code now runs 10 % (average) faster than in version
+1.16. Note that 1.16 was10 % faster than 1.15 ! There is still some to
+do so Varkon will eventually be even faster !
+<p>Varkon has now been ported to the 64-bit DEC Alpha processor.
+<p>Running Varkon in batch mode is now easier. By specifying a project,
+a jobname and-b on the command line, Varkon loads the job, runs it silently
+(without any interactive input/output) and then exits. Errors or informational
+messages are written to a LOG-file. Batch mode can be used to create applications
+where other systems use Varkon to automatically create drawings, 3D images
+or other information.
+<p>Varkon now uses the latest version 3.0 of the Mesa graphics library.
+Version 3.0 is faster than the previous version 2.6 distributed with earlier
+versions of varkon.
+<p>The DXF export function now writes a comment line to the beginning of
+the DXF file stating the current Varkon version. It also adds a $ACADVER
+value of AC009 to the HEADER section. AC009 means that the DXF file conforms
+to Autocad version R11 or later. DXF import has been updated to support
+these changes.
+<p>DXF import and export functions now support linewidth for lines and
+arcs/circles.
+<center>
+<p>
+<hr WIDTH="100%">
+<p><a href="../index.htm">VARKON homepage</a></center>
+</body>
+</html>

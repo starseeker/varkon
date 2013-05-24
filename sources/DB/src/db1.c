@@ -16,7 +16,7 @@
 *
 *
 *    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -31,8 +31,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
 *
 *********************************************************/
 
@@ -301,7 +299,7 @@ GMMDAT metdat;
 /*
 ***Dont try to save a DB that is not initiated.
 */
-    if ( gmpfpk == NULL ) return(erpush("GM0113",""));
+    if ( gmpfpk == NULL ) return(erpush("DB0113",""));
 /*
 ***Write the keytable cache to pf.
 */
@@ -379,7 +377,7 @@ GMMDAT metdat;
 ***Error exit.
 */
 error:
-    return(erpush("GM0043",""));
+    return(erpush("DB0043",""));
     }
      
 /********************************************************/
@@ -467,13 +465,13 @@ error:
 */
 read_error:
    gmclpf();
-   return(erpush("GM0033",""));
+   return(erpush("DB0033",""));
 /*
 ***Corrupt data.
 */
 data_error:
    gmclpf();
-   return(erpush("GM0223",""));
+   return(erpush("DB0223",""));
   }
 
 /********************************************************/
@@ -515,7 +513,7 @@ data_error:
      nkeys = (DBint)part.hed_pt.g_ptr[1];
      nbytes = nkeys*sizeof(KEYDATA);
      keytab = (KEYDATA *)v3mall(nbytes,"gmldkt");
-     if ( keytab == NULL ) return(erpush("GM0193",""));
+     if ( keytab == NULL ) return(erpush("DB0193",""));
      if ( nbytes <= PAGSIZ ) rddat1((char *)keytab,keytab_ptr,nbytes);
      else                    rddat2((char *)keytab,keytab_ptr,nbytes);
      }
@@ -614,7 +612,7 @@ data_error:
 */
    part.hed_pt.g_ptr[0] = keytab_ptr;
    part.hed_pt.g_ptr[1] = keytab_size;
- 
+
    updata((char *)&part,huvprt,sizeof(GMPRT));
 /*
 ***End.
@@ -673,12 +671,12 @@ data_error:
       if ( (gmbuf=(char *)v3mall(fystsz*PAGSIZ,"gmbuf")) == NULL )
         {
         sprintf(buf,"%d",(int)fystsz);
-        return(erpush("GM0133",buf));
+        return(erpush("DB0133",buf));
         }
       if ( (fystab=(FTBSTR *)v3mall(fystsz*sizeof(FTBSTR),"fystab")) == NULL )
         {
         sprintf(buf,"%d",(int)fystsz);
-        return(erpush("GM0143",buf));
+        return(erpush("DB0143",buf));
         }
       }
 /*
@@ -700,7 +698,7 @@ data_error:
     if ( (logtab=(LTBSTR *)v3mall(logmax*sizeof(LTBSTR),"logtab")) == NULL )
       {
       sprintf(buf,"%d",(int)logmax);
-      return(erpush("GM0123",buf));
+      return(erpush("DB0123",buf));
       }
 
     for ( i=0; i<logmax; ++i)
@@ -800,7 +798,7 @@ data_error:
       (unsigned)(newmax*sizeof(LTBSTR)),"gmgrow")) == NULL )
      {
      sprintf(buf,"%d",(int)newmax);
-     return(erpush("GM0123",buf));
+     return(erpush("DB0123",buf));
      }
 /*
 ***Initiera de nya sidorna.
@@ -856,7 +854,7 @@ data_error:
 ***Fel.
 */
 error:
-       return(erpush("GM0013",pagfil));
+       return(erpush("DB0013",pagfil));
   }
 
 /********************************************************/
@@ -886,7 +884,7 @@ error:
 ***Prova att stänga.
 */
     if ( fclose(gmpfpk) == EOF )
-       return(erpush("GM0023",""));
+       return(erpush("DB0023",""));
 /*
 ***Om det gick bra, sätt gmpfpk = NULL vilket betyder att 
 ***page-filen är stängd, deallokera minne för logtab och

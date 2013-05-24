@@ -1,32 +1,27 @@
 ##########################################################
 #
-#   Makefile for GElib on freeBSD
+#   Makefile for GE on FreeBSD
 #
-#  (C)Microform AB 1999-03-30 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
 RM = rm -f
 
-CC ?= gcc
+CC ?= cc
 
 CFLAGS +=                    \
-            -ansi                       \
-            -pedantic                   \
-            -Wall                       \
-            -ffloat-store               \
-            -fsigned-char               \
-            -fwritable-strings          \
-            -O                          \
-            -DUNIX
+            -ansi            \
+            -pedantic        \
+            -Wall            \
+            -ffloat-store    \
+            -fsigned-char    \
+            -O               \
+            -DUNIX -I/usr/local/include
 
 debug :     CFLAGS += -g
 
-gpl   :     CFLAGS +=                    \
-            -O                          \
-            -DUNIX
-
-COMPILE = $(CC) -c $(CFLAGS)
+COMPILE = $(CC) -c $(CFLAGS) $(XINC) 
 
 include Makefile.GE
 

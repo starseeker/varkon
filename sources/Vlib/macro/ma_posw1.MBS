@@ -1,8 +1,8 @@
 !*******************************************************
 
- MACRO DRAWING MODULE ma_posw1(STRING rubrik*132;
-                           VAR STRING mbsstr*132;
-                               INT    mode);
+ MACRO MODULE ma_posw1(STRING rubrik*132;
+                       VAR STRING mbsstr*132;
+                       INT    mode);
 
 !*      Interaktiv inmatning av en position med absoluta
 !*      koordinater.

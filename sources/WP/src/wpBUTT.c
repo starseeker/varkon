@@ -4,13 +4,17 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
-*    WPcrfb();      Create WPBUTT, CRE_FBUTTON in MBS
-*    WPmcbu();      Create WPBUTT, CRE_BUTTON in MBS
-*    WPwcbu();      Create WPBUTT, wpw-version
+*    WPcrlb();      Create a LABELBUTTON
+*    WPcrtb();      Create a TEXTBUTTON
+*    WPcrpb();      Create a PUSHBUTTON
+*    WPcrsb();      Create a STATEBUTTON
+*    WPcrfb();      Create a FUNCBUTTON
+*
+*    WPwcbu();      Create WPBUTT
 *    WPxpbu();      Expose routine for WPBUTT
 *    WPscbu();      Set button color
 *    WPbtbu();      Button routine for WPBUTT
@@ -18,6 +22,7 @@
 *    WPgtbu();      Get routine for WPBUTT, GET_BUTTON in MBS
 *    WPdlbu();      Kills WPBUTT
 *    WPgcbu();      Returns button color
+*    WPupbu();      Replaces button text
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -41,124 +46,162 @@
 
 /*!******************************************************/
 
-        short WPcrfb(
+        short  WPcrlb(
         int    pid,
         short  x,
         short  y,
         short  dx,
         short  dy,
         char  *butstr,
-        char  *akod,
-        short  anum,
         DBint *bid)
 
-/*      Create button in graphical window.
+/*      Create a LABELBUTTON in a WPIWIN window.
  *
- *      In: pid    = ID fï¿½r grafiskt fï¿½nster.
- *          x,y    = Placering.
- *          dx,dy  = Storlek.
- *          butstr = Knapptext.
- *          akod   = Aktionskod.
- *          anum   = Aktionsnummer.
- *          bid    = Pekare till resultat.
+ *      In: pid    = Parent window ID.
+ *          x,y    = Position.
+ *          dx,dy  = Size.
+ *          butstr = Text.
  *
- *      Ut: *bid = Button ID.
+ *      Out: *bid = Button ID.
  *
- *      Felkod: 
- *              WP1512 = %s ï¿½r en otillï¿½ten aktionskod.
- *              WP1482 = Fï¿½nstret %s finns ej
- *              WP1492 = Fï¿½nstret %s ï¿½r av fel typ
- *              WP1502 = Fï¿½nster %s ï¿½r fullt
- *
- *      (C)microform ab 1996-05-20 J. Kjellander
+ *      (C)2007-10-22 J. Kjellander
  *
  ******************************************************!*/
 
   {
-    short    status,action;
+    short    status;
     int      i;
-    char     errbuf[80];
     WPWIN   *winptr;
-    WPGWIN  *gwinpt;
+    WPIWIN  *iwinpt;
     WPBUTT  *butptr;
 
 /*
-***Vilken aktionskod ?
+***Get a C ptr to the WPIWIN.
 */
-    if ( akod[1] != '\0' ) return(erpush("WP1512",akod));
-
-    switch ( akod[0] )
-      {
-      case 'f': action = CFUNC; break;
-      case 'm': action = MENU;  break;
-      case 'p': action = PART;  break;
-      case 'r': action = RUN;   break;
-      case 'M': action = MFUNC; break;
-  
-      default: return(erpush("WP1512",akod));
-      break;
-      }
+    winptr = WPwgwp(pid);
+    iwinpt = (WPIWIN *)winptr->ptr;
 /*
-***Fixa C-pekare till det grafiska fï¿½nstrets entry i wpwtab.
-*/
-    if ( (winptr=WPwgwp(pid)) == NULL )
-      {
-      sprintf(errbuf,"%d",(int)pid);
-      return(erpush("WP1482",errbuf));
-      }
-/*
-***Kolla att det ï¿½r ett WPGWIN och fixa en pekare till
-***fï¿½rï¿½lder-fï¿½nstret sjï¿½lvt.
-*/
-    if ( winptr->typ != TYP_GWIN )
-      {
-      sprintf(errbuf,"%d",(int)pid);
-      return(erpush("WP1492",errbuf));
-      }
-    else gwinpt = (WPGWIN *)winptr->ptr;
-/*
-***Skapa ID fï¿½r den nya knappen, dvs fixa
-***en ledig plats i fï¿½rï¿½lderns fï¿½nstertabell.
+***Allocate an ID for the new button.
 */
     i = 0;
-    while ( i < WP_GWSMAX  &&  gwinpt->wintab[i].ptr != NULL ) ++i;
+    while ( i < WP_IWSMAX  &&  iwinpt->wintab[i].ptr != NULL ) ++i;
 
-    if ( i == WP_GWSMAX )
-      {
-      sprintf(errbuf,"%d",(int)pid);
-      return(erpush("WP1502",errbuf));
-      }
+    if ( i == WP_IWSMAX ) return(-3);
     else *bid = i;
 /*
-***Prova att skapa en tryckknapp.
+***Create the button.
 */
-    status = WPwcbu(gwinpt->id.x_id,x,y,dx,dy,(short)1,
-                        butstr,butstr,"",WP_BGND2,WP_FGND,&butptr);
+    status = WPwcbu(iwinpt->id.x_id,x,y,dx,dy,(short)0,
+                        butstr,butstr,"",WP_BGND1,WP_FGND,&butptr);
 
     if ( status < 0 ) return(status);
 /*
-***Lï¿½nka in den i WPGWIN-fï¿½nstret.
+***A label can not recieve any events.
 */
-    gwinpt->wintab[*bid].typ = TYP_BUTTON;
-    gwinpt->wintab[*bid].ptr = (char *)butptr;
-
-    butptr->id.w_id = *bid;
-    butptr->id.p_id =  pid;
-
-    XMapWindow(xdisp,butptr->id.x_id);
+    XSelectInput(xdisp,butptr->id.x_id,0);
 /*
-***Aktion.
+***Add the button to the WPIWIN.
 */
-    butptr->acttyp = action;
-    butptr->actnum = anum;
+   iwinpt->wintab[*bid].typ = TYP_BUTTON;
+   iwinpt->wintab[*bid].ptr = (char *)butptr;
 
-    return(0);
+   butptr->id.w_id = *bid;
+   butptr->id.p_id =  pid;
+
+   XMapWindow(xdisp,butptr->id.x_id);
+/*
+***Type.
+*/
+   butptr->type = LABELBUTTON;
+/*
+***The end.
+*/
+   return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short WPmcbu(
+        short  WPcrtb(
+        int    pid,
+        short  x,
+        short  y,
+        char  *butstr,
+        DBint *bid)
+
+/*      Create a TEXTBUTTON in a WPIWIN window.
+ *
+ *      In: pid    = Parent window ID.
+ *          x,y    = Position.
+ *          butstr = Text.
+ *
+ *      Out: *bid = Button ID.
+ *
+ *      (C)2007-10-24 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    short    status,dx,dy;
+    int      i;
+    WPWIN   *winptr;
+    WPIWIN  *iwinpt;
+    WPBUTT  *butptr;
+
+/*
+***Get a C ptr to the WPIWIN.
+*/
+    winptr = WPwgwp(pid);
+    iwinpt = (WPIWIN *)winptr->ptr;
+/*
+***Allocate an ID for the new button.
+*/
+    i = 0;
+    while ( i < WP_IWSMAX  &&  iwinpt->wintab[i].ptr != NULL ) ++i;
+
+    if ( i == WP_IWSMAX ) return(-3);
+    else *bid = i;
+/*
+***Button size.
+*/
+    dx = WPstrl(butstr);
+    dy = WPstrh();
+/*
+***Create the button.
+*/
+    status = WPwcbu(iwinpt->id.x_id,x,y,dx,dy,(short)0,
+                        butstr,butstr,"",WP_BGND1,WP_FGND,&butptr);
+
+    if ( status < 0 ) return(status);
+/*
+***Set the input mask.
+*/
+   XSelectInput(xdisp,butptr->id.x_id,ButtonPressMask | ButtonReleaseMask |
+                                      EnterWindowMask | LeaveWindowMask);
+/*
+***Add the button to the WPIWIN.
+*/
+   iwinpt->wintab[*bid].typ = TYP_BUTTON;
+   iwinpt->wintab[*bid].ptr = (char *)butptr;
+
+   butptr->id.w_id = *bid;
+   butptr->id.p_id =  pid;
+
+   XMapWindow(xdisp,butptr->id.x_id);
+/*
+***Type.
+*/
+   butptr->type = TEXTBUTTON;
+/*
+***The end.
+*/
+   return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        short   WPcrpb(
         wpw_id  pid,
         short   x,
         short   y,
@@ -172,93 +215,335 @@
         short   cf,
         DBint  *bid)
 
-/*      Skapar WPBUTT-fï¿½nster och lï¿½nkar in i ett WPIWIN.
- *      CRE_BUTTON i MBS.
+/*      Creates a PUSHBUTTON and links it to a WPIWIN.
  *
- *      In: pid   = Fï¿½rï¿½lder.
- *          x     = Lï¿½ge i X-led.
- *          y     = Lï¿½ge i Y-led.   
- *          dx    = Storlek i X-led.
- *          dy    = Storlek i Y-led.
+ *      In: pid   = Parent window ID.
+ *          x     = X position.
+ *          y     = Y position.
+ *          dx    = X size.
+ *          dy    = Y size.
  *          bw    = Border-width.
- *          str1  = Text i lï¿½ge off/FALSE.
- *          str2  = Text i lï¿½ge on/TRUE.
- *          fstr  = Fontnamn eller "" (default).
- *          cb    = Bakgrundsfï¿½rg.
- *          cf    = Fï¿½rgrundsfï¿½rg.
- *          bid   = Pekare till utdata.
+ *          str1  = Text for off/FALSE.
+ *          str2  = Text for on/TRUE.
+ *          fstr  = Fontname or "" (default).
+ *          cb    = Background color.
+ *          cf    = Forground color.
  *
- *      Ut: *bid = Giltigt entry i fï¿½rï¿½lderns wintab.
+ *      Out: *bid = Button ID (relative to parent).
  *
- *      Felkod: WP1072 = Fï¿½rï¿½ldern %s finns ej.
- *              WP1082 = Fï¿½rï¿½ldern %s ï¿½r ej ett WPIWIN.
- *              WP1092 = Fï¿½r mï¿½nga subfï¿½nster i %s.
+ *      Error: WP1072 = Parent does not exist.
+ *             WP1082 = Parent is not a WPIWIN.
+ *             WP1092 = Parent window table full.
  *
- *      (C)microform ab 6/12/93 J. Kjellander
+ *      (C)2007-10-22 J.Kjellander
  *
  ******************************************************!*/
 
   {
-    char                 errbuf[80];
-    short                i,status;
-    WPWIN               *winptr;
-    WPIWIN              *iwinptr;
-    WPBUTT              *butptr;
+   char    errbuf[80];
+   short   i,status;
+   WPWIN  *winptr;
+   WPIWIN *iwinptr;
+   WPBUTT *butptr;
 
 /*
-***Fixa C-pekare till fï¿½rï¿½lderns entry i wpwtab.
+***Get a C pointer to the parent's entry in wpwtab.
 */
-    if ( (winptr=WPwgwp(pid)) == NULL )
-      {
-      sprintf(errbuf,"%d",(int)pid);
-      return(erpush("WP1072",errbuf));
-      }
+   if ( (winptr=WPwgwp(pid)) == NULL )
+     {
+     sprintf(errbuf,"%d",(int)pid);
+     return(erpush("WP1072",errbuf));
+     }
 /*
-***Kolla att det ï¿½r ett WPIWIN och fixa en pekare till
-***fï¿½rï¿½lder-fï¿½nstret sjï¿½lvt.
+***Check that it is a WPIWIN and get a C pointer to the parent
+***itself.
 */
-    if ( winptr->typ != TYP_IWIN )
-      {
-      sprintf(errbuf,"%d",(int)pid);
-      return(erpush("WP1082",errbuf));
-      }
-    else iwinptr = (WPIWIN *)winptr->ptr;
+   if ( winptr->typ != TYP_IWIN )
+     {
+     sprintf(errbuf,"%d",(int)pid);
+     return(erpush("WP1082",errbuf));
+     }
+   else iwinptr = (WPIWIN *)winptr->ptr;
 /*
-***Skapa ID fï¿½r den nya knappen, dvs fixa
-***en ledig plats i fï¿½rï¿½lderns fï¿½nstertabell.
+***Allocate a free ID for the new button.
 */
-    i = 0;
-    while ( i < WP_IWSMAX  &&  iwinptr->wintab[i].ptr != NULL ) ++i;
+   i = 0;
+   while ( i < WP_IWSMAX  &&  iwinptr->wintab[i].ptr != NULL ) ++i;
 
-    if ( i == WP_IWSMAX )
-      {
-      sprintf(errbuf,"%d",(int)pid);
-      return(erpush("WP1092",errbuf));
-      }
-    else *bid = i;
+   if ( i == WP_IWSMAX )
+     {
+     sprintf(errbuf,"%d",(int)pid);
+     return(erpush("WP1092",errbuf));
+     }
+   else *bid = i;
 /*
-***Skapa knappen.
+***Create the button.
 */
-    if ( (status=WPwcbu(iwinptr->id.x_id,x,y,dx,dy,bw,
-                        str1,str2,fstr,cb,cf,&butptr)) < 0 ) return(status);
+   if ( (status=WPwcbu(iwinptr->id.x_id,x,y,dx,dy,bw,
+                       str1,str1,"",cb,cf,&butptr)) < 0 ) return(status);
 /*
-***Lï¿½nka in den i WPIWIN-fï¿½nstret.
+***Set the input mask.
 */
-    iwinptr->wintab[*bid].typ = TYP_BUTTON;
-    iwinptr->wintab[*bid].ptr = (char *)butptr;
+   XSelectInput(xdisp,butptr->id.x_id,ButtonPressMask | ButtonReleaseMask |
+                                      EnterWindowMask | LeaveWindowMask);
+/*
+***Link it to the WPIWIN window.
+*/
+   iwinptr->wintab[*bid].typ = TYP_BUTTON;
+   iwinptr->wintab[*bid].ptr = (char *)butptr;
 
-    butptr->id.w_id = *bid;
-    butptr->id.p_id =  pid;
+   butptr->id.w_id = *bid;
+   butptr->id.p_id =  pid;
 /*
-***Om WPIWIN-fï¿½nstret redan ï¿½r mappat skall knappen mappas nu.
+***If the parent WPIWIN is mapped, map the buton now.
 */
-    if ( iwinptr->mapped ) XMapWindow(xdisp,butptr->id.x_id);
-
-    return(0);
+   if ( iwinptr->mapped ) XMapWindow(xdisp,butptr->id.x_id);
+/*
+***Button type.
+*/
+   butptr->type = PUSHBUTTON;
+/*
+***The end.
+*/
+   return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
+
+        short   WPcrsb(
+        wpw_id  pid,
+        short   x,
+        short   y,
+        short   dx,
+        short   dy,
+        short   bw,
+        char   *str1,
+        char   *str2,
+        char   *fstr,
+        short   cb,
+        short   cf,
+        DBint  *bid)
+
+/*      Creates a STATEBUTTON and links it to a WPIWIN.
+ *      CRE_BUTTON in MBS.
+ *
+ *      In: pid   = Parent window ID.
+ *          x     = X position.
+ *          y     = Y position.
+ *          dx    = X size.
+ *          dy    = Y size.
+ *          bw    = Border-width.
+ *          str1  = Text for off/FALSE.
+ *          str2  = Text for on/TRUE.
+ *          fstr  = Fontname or "" (default).
+ *          cb    = Background color.
+ *          cf    = Forground color.
+ *
+ *      Out: *bid = Button ID (relative to parent).
+ *
+ *      Error: WP1072 = Parent does not exist.
+ *             WP1082 = Parent is not a WPIWIN.
+ *             WP1092 = Parent window table full.
+ *
+ *      (C)2007-10-22 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   char    errbuf[80];
+   short   i,status;
+   WPWIN  *winptr;
+   WPIWIN *iwinptr;
+   WPBUTT *butptr;
+
+/*
+***Get a C pointer to the parent's entry in wpwtab.
+*/
+   if ( (winptr=WPwgwp(pid)) == NULL )
+     {
+     sprintf(errbuf,"%d",(int)pid);
+     return(erpush("WP1072",errbuf));
+     }
+/*
+***Check that it is a WPIWIN and get a C pointer to the parent
+***itself.
+*/
+   if ( winptr->typ != TYP_IWIN )
+     {
+     sprintf(errbuf,"%d",(int)pid);
+     return(erpush("WP1082",errbuf));
+     }
+   else iwinptr = (WPIWIN *)winptr->ptr;
+/*
+***Allocate a free ID for the new button.
+*/
+   i = 0;
+   while ( i < WP_IWSMAX  &&  iwinptr->wintab[i].ptr != NULL ) ++i;
+
+   if ( i == WP_IWSMAX )
+     {
+     sprintf(errbuf,"%d",(int)pid);
+     return(erpush("WP1092",errbuf));
+     }
+   else *bid = i;
+/*
+***Create the button.
+*/
+   if ( (status=WPwcbu(iwinptr->id.x_id,x,y,dx,dy,bw,
+                       str1,str2,fstr,cb,cf,&butptr)) < 0 ) return(status);
+/*
+***Set the input mask.
+*/
+   XSelectInput(xdisp,butptr->id.x_id,ButtonPressMask | ButtonReleaseMask |
+                                      EnterWindowMask | LeaveWindowMask);
+/*
+***Link it to the WPIWIN window.
+*/
+   iwinptr->wintab[*bid].typ = TYP_BUTTON;
+   iwinptr->wintab[*bid].ptr = (char *)butptr;
+
+   butptr->id.w_id = *bid;
+   butptr->id.p_id =  pid;
+/*
+***If the parent WPIWIN is mapped, map the buton now.
+*/
+   if ( iwinptr->mapped ) XMapWindow(xdisp,butptr->id.x_id);
+/*
+***Button type.
+*/
+   butptr->type = STATEBUTTON;
+/*
+***The end.
+*/
+   return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        short  WPcrfb(
+        int    pid,
+        short  x,
+        short  y,
+        short  dx,
+        short  dy,
+        char  *butstr,
+        char  *akod,
+        short  anum,
+        DBint *bid)
+
+/*      Create FBUTTON in a WPGWIN window.
+ *      CRE_FBUTTON in MBS.
+ *
+ *      In: pid    = WPGWIN window ID.
+ *          x,y    = Position.
+ *          dx,dy  = Size.
+ *          butstr = Text.
+ *          akod   = Action code.
+ *          anum   = Action number.
+ *
+ *      Out: *bid = Button ID.
+ *
+ *      Error:  WP1512 = %s is an illegal action code.
+ *              WP1482 = Window %s does not exist.
+ *              WP1492 = Window %s has illegal type.
+ *              WP1502 = Window %s is full.
+ *
+ *      (C)2007-10-22 J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    short    status,action;
+    int      i;
+    char     errbuf[80];
+    WPWIN   *winptr;
+    WPGWIN  *gwinpt;
+    WPBUTT  *butptr;
+
+/*
+***Check action code ?
+*/
+    if ( akod[1] != '\0' ) return(erpush("WP1512",akod));
+
+    switch ( akod[0] )
+      {
+      case 'f': action = CFUNC; break;
+      case 'm': action = MENU;  break;
+      case 'p': action = PART;  break;
+      case 'r': action = RUN;   break;
+      case 'M': action = MFUNC; break;
+
+      default: return(erpush("WP1512",akod));
+      break;
+      }
+/*
+***Get a C ptr to the WPGWIN.
+*/
+    if ( (winptr=WPwgwp(pid)) == NULL )
+      {
+      sprintf(errbuf,"%d",(int)pid);
+      return(erpush("WP1482",errbuf));
+      }
+
+    if ( winptr->typ != TYP_GWIN )
+      {
+      sprintf(errbuf,"%d",(int)pid);
+      return(erpush("WP1492",errbuf));
+      }
+    else gwinpt = (WPGWIN *)winptr->ptr;
+/*
+***Allocate an ID for the new button.
+*/
+    i = 0;
+    while ( i < WP_GWSMAX  &&  gwinpt->wintab[i].ptr != NULL ) ++i;
+
+    if ( i == WP_GWSMAX )
+      {
+      sprintf(errbuf,"%d",(int)pid);
+      return(erpush("WP1502",errbuf));
+      }
+    else *bid = i;
+/*
+***Create the button.
+*/
+    status = WPwcbu(gwinpt->id.x_id,x,y,dx,dy,(short)1,
+                        butstr,butstr,"",WP_BGND2,WP_FGND,&butptr);
+
+    if ( status < 0 ) return(status);
+/*
+***Set the input mask.
+*/
+   XSelectInput(xdisp,butptr->id.x_id,ButtonPressMask | ButtonReleaseMask |
+                                      EnterWindowMask | LeaveWindowMask);
+/*
+***Add the button to the WPGWIN window.
+*/
+   gwinpt->wintab[*bid].typ = TYP_BUTTON;
+   gwinpt->wintab[*bid].ptr = (char *)butptr;
+
+   butptr->id.w_id = *bid;
+   butptr->id.p_id =  pid;
+
+   XMapWindow(xdisp,butptr->id.x_id);
+/*
+***Action.
+*/
+   butptr->acttyp = action;
+   butptr->actnum = anum;
+/*
+***Button type.
+*/
+   butptr->type = FUNCBUTTON;
+/*
+***The end.
+*/
+   return(0);
+  }
+
+/********************************************************/
+/********************************************************/
 
         short    WPwcbu(
         Window   px_id,
@@ -274,24 +559,23 @@
         short    cf,
         WPBUTT **outptr)
 
-/*      Skapar WPBUTT-fï¿½nster.
+/*      Create a WPBUTT.
  *
- *      In: px_id  = Fï¿½rï¿½ldra fï¿½nstrets X-id.
- *          x      = Lï¿½ge i X-led.
- *          y      = Lï¿½ge i Y-led.   
- *          dx     = Storlek i X-led.
- *          dy     = Storlek i Y-led.
- *          bw     = Border-width.
- *          str1   = Text i lï¿½ge off/FALSE.
- *          str2   = Text i lï¿½ge on/TRUE.
- *          fstr   = Fontnamn eller "".
- *          cb     = Bakgrundsfï¿½rg.
- *          cf     = Fï¿½rgrundsfï¿½rg.
- *          outptr = Pekare till utdata.
+ *      In: px_id    = Parent window ID.
+ *          x        = X position.
+ *          y        = Y position.
+ *          dx       = X size.
+ *          dy       = Y size.
+ *          bw       = Border width.
+ *          str1     = Text for off/FALSE.
+ *          str2     = Text for on/TRUE.
+ *          fstr     = Fontname or "".
+ *          cb       = Background color.
+ *          cf       = Foreground color.
  *
- *      Ut: *outptr = Pekare till WPBUTT.
+ *      Out: *outptr = Pointer to WPBUTT.
  *
- *      Felkod: WP1102 = Fonten %s finns ej.
+ *      Error: WP1102 = Can't activate font %s.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -307,7 +591,7 @@
     WPBUTT              *butptr;
 
 /*
-***Skapa fï¿½nstret i X.
+***Create the X window.
 */
     xwina.background_pixel  = WPgcbu(WPwfpx(px_id),cb);
     xwina.border_pixel      = WPgcbu(WPwfpx(px_id),WP_BGND1);
@@ -320,14 +604,7 @@
     xwin_id = XCreateWindow(xdisp,px_id,x,y,dx,dy,bw,CopyFromParent,
                             InputOutput,CopyFromParent,xwinm,&xwina);
 /*
-***Om knappen har ram skall den ocksï¿½ kunna clickas i och
-***highligtas.
-***Utan ram ï¿½r den bara en "label".
-*/
-    if ( bw > 0 ) XSelectInput(xdisp,xwin_id,ButtonPressMask | ButtonReleaseMask |
-                                             EnterWindowMask | LeaveWindowMask);
-/*
-***Skapa en WPBUTT.
+***Crete the WPBUTT.
 */
     if ( (butptr=(WPBUTT *)v3mall(sizeof(WPBUTT),"WPwcbu")) == NULL )
        return(erpush("WP1112",str1));
@@ -336,11 +613,11 @@
     butptr->id.p_id = (wpw_id)NULL;
     butptr->id.x_id = xwin_id;
 
-    butptr->geo.x =  x;
-    butptr->geo.y =  y;
-    butptr->geo.dx =  dx;
-    butptr->geo.dy =  dy;
-    butptr->geo.bw =  bw;
+    butptr->geo.x  = x;
+    butptr->geo.y  = y;
+    butptr->geo.dx = dx;
+    butptr->geo.dy = dy;
+    butptr->geo.bw = bw;
 
     butptr->color.bckgnd = cb;
     butptr->color.forgnd = cf;
@@ -353,7 +630,7 @@
     butptr->status = FALSE;
     butptr->hlight = FALSE;
 
-    if ( fstr[0] == '\0' ) butptr->font = 0;
+    if ( fstr[0] == '\0' ) butptr->font = WP_FNTNORMAL;
     else if ( (butptr->font=WPgfnr(fstr)) < 0 )
                          return(erpush("WP1102",fstr));
 /*
@@ -382,76 +659,99 @@
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
- *      1996-12-12 Vï¿½nsterjust. lablar, J.Kjellander
- *      1998-03-27 OpenGL fï¿½r AIX, J.Kjellander
+ *      1996-12-12 Vänsterjust. lablar, J.Kjellander
+ *      1998-03-27 OpenGL för AIX, J.Kjellander
+ *      2007-10-23 Button types, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    int          x,y;
-    char         text[81];
-    GC           but_gc;
-    WPRWIN      *rwinpt;
-    XFontStruct *xfs;
+   int          x,y;
+   char         text[81];
+   GC           but_gc;
+   WPRWIN      *rwinpt;
+   XFontStruct *xfs;
 
 /*
-***Vilken text skall fï¿½nstret innehï¿½lla ?
+***A button in an OpenGL window must use the same
+***visual as the OpenGL window. Other windows can
+***use xgc.
 */
-    if ( butptr->status ) strcpy(text,butptr->stron);
-    else                  strcpy(text,butptr->stroff);
-/*
-***Om det ï¿½r en knapp med ram, berï¿½kna textens lï¿½ge sï¿½
-***att den hamnar mitt i fï¿½nstret.
-*/
-    x = (butptr->geo.dx - WPstrl(text))/2;
-    y =  WPftpy(butptr->geo.dy);
-/*
-***Vilket GC skall anvï¿½ndas ? Om knappen sitter i
-***ett WPRWIN mï¿½ste vi anvï¿½nda  dess GC eftersom
-***knappen isï¿½fall delar dess visual. Knappar i
-***ï¿½vriga typer av fï¿½nster kan anvï¿½nda xgc.
-*/
-    switch ( wpwtab[butptr->id.p_id].typ )
-      {
-      case TYP_RWIN:
-      rwinpt = (WPRWIN *)wpwtab[butptr->id.p_id].ptr;
-      but_gc = rwinpt->win_gc;
-      xfs = WPgfnt(0);       /*****ny****/
-      XSetFont(xdisp,but_gc,xfs->fid);    /*******ny*******/
-      break;
 
-      default:
-      but_gc = xgc;
-      WPsfnt(butptr->font);       /*****ny****/
-      break;
-      }
-/*
-***Set the button backgrund color and the background for writing.
-*/
-    XSetWindowBackground(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,butptr->color.bckgnd));
-    XSetBackground(xdisp,but_gc,WPgcbu(butptr->id.p_id,butptr->color.bckgnd));
-/*
-***Set the forground color for writing and write.
-*/
-    XSetForeground(xdisp,but_gc,WPgcbu(butptr->id.p_id,butptr->color.forgnd));
-    XDrawImageString(xdisp,butptr->id.x_id,but_gc,x,y,text,strlen(text));
-/*
-***Tills vidare ï¿½terstï¿½ller vi aktiv font och
-***fï¿½rger till default igen.
-*/
-    WPsfnt(0);
+/* NOTE wrong font used here */
 
-    if ( butptr->color.bckgnd != WP_BGND2 )
-      XSetBackground(xdisp,but_gc,WPgcbu(butptr->id.p_id,WP_BGND2));
-    if ( butptr->color.forgnd != WP_FGND )
-      XSetForeground(xdisp,but_gc,WPgcbu(butptr->id.p_id,WP_FGND));
+   switch ( wpwtab[butptr->id.p_id].typ )
+     {
+     case TYP_RWIN:
+     rwinpt = (WPRWIN *)wpwtab[butptr->id.p_id].ptr;
+     but_gc = rwinpt->win_gc;
+     xfs    = WPgfnt(WP_FNTNORMAL);
+     XSetFont(xdisp,but_gc,xfs->fid);
+     break;
+
+     default:
+     but_gc = xgc;
+     WPsfnt(butptr->font);
+     break;
+     }
 /*
-***Test av 3D-ram.
+***What type of button ?
 */
-    if ( butptr->geo.bw > 0 )
-      WPd3db((char *)butptr,TYP_BUTTON);
+   switch ( butptr->type )
+     {
+     case LABELBUTTON:
+     x = (butptr->geo.dx - WPstrl(butptr->stron))/2;
+     y =  WPftpy(butptr->geo.dy);
+     XSetBackground(xdisp,but_gc,WPgcol(butptr->color.bckgnd));
+     XSetForeground(xdisp,but_gc,WPgcol(butptr->color.forgnd));
+     XDrawImageString(xdisp,butptr->id.x_id,but_gc,x,y,
+                      butptr->stron,strlen(butptr->stron));
+     return(TRUE);
+
+     case TEXTBUTTON:
+     x = 0;
+     y =  WPftpy(butptr->geo.dy);
+     XSetBackground(xdisp,but_gc,WPgcol(butptr->color.bckgnd));
+     XSetForeground(xdisp,but_gc,WPgcol(butptr->color.forgnd));
+     XDrawImageString(xdisp,butptr->id.x_id,but_gc,x,y,
+                      butptr->stron,strlen(butptr->stron));
+     return(TRUE);
+
+     case PUSHBUTTON:
+     x = (butptr->geo.dx - WPstrl(butptr->stron))/2;
+     y =  WPftpy(butptr->geo.dy);
+     XSetBackground(xdisp,but_gc,WPgcol(butptr->color.bckgnd));
+     XSetForeground(xdisp,but_gc,WPgcol(butptr->color.forgnd));
+     XDrawImageString(xdisp,butptr->id.x_id,but_gc,x,y,
+                      butptr->stron,strlen(butptr->stron));
+     if ( butptr->geo.bw > 0 ) WPd3db((char *)butptr,TYP_BUTTON);
+     return(TRUE);
+
+     case STATEBUTTON:
+     if ( butptr->status ) strcpy(text,butptr->stron);
+     else                  strcpy(text,butptr->stroff);
+     x = (butptr->geo.dx - WPstrl(text))/2;
+     y =  WPftpy(butptr->geo.dy);
+     XSetBackground(xdisp,but_gc,WPgcol(butptr->color.bckgnd));
+     XSetForeground(xdisp,but_gc,WPgcol(butptr->color.forgnd));
+     XDrawImageString(xdisp,butptr->id.x_id,but_gc,x,y,text,strlen(text));
+     if ( butptr->geo.bw > 0 ) WPd3db((char *)butptr,TYP_BUTTON);
+     return(TRUE);
+
+     case FUNCBUTTON:
+     x = (butptr->geo.dx - WPstrl(butptr->stron))/2;
+     y =  WPftpy(butptr->geo.dy);
+     XSetWindowBackground(xdisp,butptr->id.x_id,
+                          WPgcbu(butptr->id.p_id,butptr->color.bckgnd));
+     XSetBackground(xdisp,but_gc,WPgcol(butptr->color.bckgnd));
+     XSetForeground(xdisp,but_gc,WPgcol(butptr->color.forgnd));
+     XDrawImageString(xdisp,butptr->id.x_id,but_gc,x,y,
+                      butptr->stron,strlen(butptr->stron));
+     if ( butptr->geo.bw > 0 ) WPd3db((char *)butptr,TYP_BUTTON);
+     return(TRUE);
+     }
 /*
-***Slut.
+***The end.
 */
     return(TRUE);
   }
@@ -491,37 +791,39 @@
 /********************************************************/
 /*!******************************************************/
 
-        bool WPbtbu(
+        bool    WPbtbu(
         WPBUTT *butptr)
 
 /*      Button handler for WPBUTT.
  *
  *      In: buttptr = C ptr to WPBUTT.
  *
- *      (C)microform ab 6/12/93 J. Kjellander
+ *      (C)microform ab 6/12/93 J.Kjellander
+ *
+ *      2007-10-23 Button types, J.Kjellander
  *
  ******************************************************!*/
 
   {
 
 /*
-***Toggle the button status.
+***The only button type that needs to react on
+***a button event is the STATEBUTTON.
 */
-    if ( butptr->status == FALSE )
-      {
-      butptr->status = TRUE;
-/*      WPscbu(butptr,WP_BGND3); */
-      }
-    else
-      {
-      butptr->status = FALSE;
-/*      WPscbu(butptr,WP_BGND2); */
-      }
-/*
-***Erase window and expose again.
-*/
-    XClearWindow(xdisp,butptr->id.x_id);
-    WPxpbu(butptr);
+   if ( butptr->type == STATEBUTTON )
+     {
+     if ( butptr->status == FALSE )
+       {
+       butptr->status = TRUE;
+       }
+     else
+       {
+       butptr->status = FALSE;
+       }
+
+     XClearWindow(xdisp,butptr->id.x_id);
+     WPxpbu(butptr);
+     }
 /*
 ***The end.
 */
@@ -546,18 +848,43 @@
  *      (C)microform ab 6/12/93 J. Kjellander
  *
  *      2007-03-08 Tooltips, J.Kjellander
+ *      2007-10-22 Button types, J.Kjellander
  *
  ******************************************************!*/
 
  {
-   int x,y;
+   int    x,y,orgcol;
 
 /*
+***LABELBUTTON's dont react on crossing events.
+*/
+   if ( butptr->type == LABELBUTTON ) return(TRUE);
+/*
+***All others do.
 ***Enter => Change color of window border to WP_NOTI.
 */
-   if ( enter == TRUE )
+   if ( enter == TRUE  &&  !butptr->hlight )
      {
-     XSetWindowBorder(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,WP_NOTI));
+     switch ( butptr->type )
+       {
+       case TEXTBUTTON:
+       orgcol = butptr->color.bckgnd;
+       butptr->color.bckgnd = WP_NOTI;
+       XSetWindowBackground(xdisp,butptr->id.x_id,WPgcol(WP_NOTI));
+       WPxpbu(butptr);
+       XFlush(xdisp);
+       butptr->color.bckgnd = orgcol;
+       break;
+
+       case PUSHBUTTON:
+       case STATEBUTTON:
+       case FUNCBUTTON:
+       XSetWindowBorder(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,WP_NOTI));
+       break;
+       }
+/*
+***Button is now highlighted.
+*/
      butptr->hlight = TRUE;
 /*
 ***Order a tooltip in a few seconds if there is one to display.
@@ -569,11 +896,27 @@
        }
      }
 /*
-***Leave => Reset window border color to WP_BGND.
+***Leave => Reset window border color.
 */
-   else                            
+   else if ( butptr->hlight )
      {
-     XSetWindowBorder(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,WP_BGND1));
+     switch ( butptr->type )
+       {
+       case TEXTBUTTON:
+       XSetWindowBackground(xdisp,butptr->id.x_id,WPgcol(butptr->color.bckgnd));
+       WPxpbu(butptr);
+       XFlush(xdisp);
+       break;
+
+       case PUSHBUTTON:
+       case STATEBUTTON:
+       case FUNCBUTTON:
+       XSetWindowBorder(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,WP_BGND1));
+       break;
+       }
+/*
+***Button is no longer highlighted.
+*/
      butptr->hlight = FALSE;
 /*
 ***Remove ordered or active tooltip.
@@ -587,22 +930,20 @@
 /********************************************************/
 /*!******************************************************/
 
-        short WPgtbu(
+        short  WPgtbu(
         DBint  iwin_id,
         DBint  butt_id,
         DBint *status)
 
-/*      Get-rutin fï¿½r WPBUTT.
+/*      Get routine for WPBUTT.
  *
- *      In: iwin_id = Huvudfï¿½nstrets id.
- *          butt_id = Button-fï¿½nstrets id.
+ *      In: iwin_id = Parent WPIWIN window id.
+ *          butt_id = Button id.
  *
- *      Ut: Inget.   
- *
- *      Felkod: WP1122 = Fï¿½rï¿½ldern %s finns ej.
- *              WP1132 = Fï¿½rï¿½ldern %s ej WPIWIN.
- *              WP1142 = Knappen %s finns ej.
- *              WP1152 = %s ï¿½r ej en knapp.
+ *      Error: WP1122 = Parent %s does not exist.
+ *             WP1132 = Parent %s is not a WPIWIN.
+ *             WP1142 = Button %s does not exist.
+ *             WP1152 = %s is not a button.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -664,16 +1005,12 @@
 /********************************************************/
 /*!******************************************************/
 
-        short WPdlbu(
+        short   WPdlbu(
         WPBUTT *butptr)
 
-/*      Dï¿½dar en WPBUTT.
+/*      Delete a WPBUTT.
  *
  *      In: buttptr = C-pekare till WPBUTT.
- *
- *      Ut: Inget.   
- *
- *      Felkod: .
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -740,6 +1077,105 @@
      default:
      return(WPgcol(colnum));
      }
+  }
+
+/********************************************************/
+/********************************************************/
+
+        short  WPupbu(
+        DBint  iwin_id,
+        DBint  but_id,
+        char  *new_str,
+        short  new_dx)
+
+/*      Replaces the text and changes the length of a WPBUTT.
+ *      This function is not yet available from MBS but
+ *      could easily be added since error processing etc.
+ *      is there.
+ *
+ *      In: iwin_id = Parent (WPIWIN) window
+ *          but_id  = Child (WPBUTT) window
+ *          new_str = New string
+ *          new_dx  = New length
+ *
+ *      Return: WP1782 = Parent %s does not exist.
+ *              WP1792 = Parent %s is not a WPIWIN.
+ *              WP1802 = Button %s does not exist.
+ *              WP1812 = %s is not a button.
+ *
+ *      (C)2008-02-03 J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   int     ntkn;
+   char    errbuf[80];
+   WPWIN  *winptr;
+   WPIWIN *iwinptr;
+   WPBUTT *butptr;
+
+/*
+***Get a C-ptr to the parent entry in wpwtab[].
+*/
+   if ( (winptr=WPwgwp((wpw_id)iwin_id)) == NULL )
+     {
+     sprintf(errbuf,"%d",(int)iwin_id);
+     return(erpush("WP1782",errbuf));
+     }
+/*
+***Is it a WPIWIN.
+*/
+   if ( winptr->typ != TYP_IWIN )
+     {
+     sprintf(errbuf,"%d",(int)iwin_id);
+     return(erpush("WP1792",errbuf));
+     }
+/*
+***Get a C-ptr to the WPIWIN.
+*/
+   iwinptr = (WPIWIN *)winptr->ptr;
+/*
+***Check for the existence of the WPBUTT.
+*/
+   if ( iwinptr->wintab[(wpw_id)but_id].ptr == NULL )
+     {
+     sprintf(errbuf,"%d",(int)but_id);
+     return(erpush("WP1802",errbuf));
+     }
+
+   if ( iwinptr->wintab[(wpw_id)but_id].typ != TYP_BUTTON )
+     {
+     sprintf(errbuf,"%d",(int)but_id);
+     return(erpush("WP1812",errbuf));
+     }
+/*
+***Get a C-ptr to the WPBUTT.
+*/
+   butptr = (WPBUTT *)iwinptr->wintab[(wpw_id)but_id].ptr;
+/*
+***Check string length.
+*/
+    ntkn = strlen(new_str);
+    if ( ntkn < 0 ) ntkn = 0;
+    if ( ntkn > V3STRLEN ) ntkn = V3STRLEN;
+    new_str[ntkn] = '\0';
+/*
+***Update the WPBUTT.
+*/
+    strncpy(butptr->stron,new_str,V3STRLEN);
+
+    if ( new_dx > 0 )
+      {
+      butptr->geo.dx = new_dx;
+      XResizeWindow(xdisp,butptr->id.x_id,butptr->geo.dx,butptr->geo.dy);
+      }
+
+    XClearWindow(xdisp,butptr->id.x_id);
+    WPxpbu(butptr);
+/*
+***The end.
+*/
+    return(0);
   }
 
 /********************************************************/

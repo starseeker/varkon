@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -70,8 +70,8 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 ***Execute LDIM.
 */
    return(EXldim( geop_id,(DBVector *)&geop_pv[1].par_va.lit.vec_va, /* pos1 */
-                          (DBVector *)&geop_pv[2].par_va.lit.vec_va, /* pos2 */
-                          (DBVector *)&geop_pv[3].par_va.lit.vec_va, /* pos3 */
+                           (DBVector *)&geop_pv[2].par_va.lit.vec_va, /* pos2 */
+                           (DBVector *)&geop_pv[3].par_va.lit.vec_va, /* pos3 */
                                 (short)geop_pv[4].par_va.lit.int_va, /* alt */
                                        geop_np));
  }

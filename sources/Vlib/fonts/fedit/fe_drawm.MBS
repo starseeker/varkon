@@ -56,7 +56,7 @@ loop:
 !*
    if nvec = 0 then
      onrs:=inpmt("Vilket ordningsnummer ?",str(onr,-1,0),10);
-     onr:=trunc(val(onrs));
+     onr:=trunc(fval(onrs));
    endif;
 !*
 !***Skapa partanrop.

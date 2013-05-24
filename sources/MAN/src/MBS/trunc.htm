@@ -1,0 +1,55 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- trunc - Function})
+define({_INDEXLINK_},{<a href="mathindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>trunc - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Returns the integer part of an argument (truncates).
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  i:=trunc(x);
+
+  int   i;
+  float x;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>x</td>
+<td>- A value.</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>
+An INT value equal to the (truncated) integer part of x.
+</p>
+
+<h2>Example</h2>
+
+<pre>
+   i:=trunc(10.75);   ! Returns  10
+   i:=trunc(10.25);   ! Returns  10
+   i:=trunc(0.0);     ! Returns   0
+   i:=trunc(-10.25);  ! Returns -10
+   i:=trunc(-10.75);  ! Returns -10
+</pre>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

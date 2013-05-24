@@ -1,0 +1,100 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- External databases with ODBC})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>External databases with ODBC</h1>
+
+<p>
+Varkon includes MBS functions that can be used
+to establish a connection with a database or datasource through an ODBC
+interface. ODBC is a vendor independant interface to database systems like
+Oracle, Sybase, Informix, DB2 etc. You can even use ODBC to access data
+in files created with Microsoft Excel.
+</p>
+
+<p>
+To use the ODBC functions in MBS be sure that your Varkon system
+is built with support for ODBC. Consult the installation README
+or the system administrators manual for more info.
+</p>
+
+<p>
+The purpose of the ODBC interface is to make it possible to integrate
+Varkon applications with traditional database applications. A Varkon application
+could for example automatically fetch parameter values for a specific design,
+automatically generate a drawing or module, calculate new data and put that
+data back into the database.
+</p>
+
+<p>Here is a short example:</p>
+
+<pre class=box>
+MACRO MODULE show_price(INT dnr >"Detail number !");
+
+STRING sql_statement*132,price*10;
+INT    status;
+
+BEGINMODULE
+!*
+!***Connect to the database.
+!*
+   status:=odbc_connect("My_database", "My_name", "My_password");
+
+   if status &lt; 0 then
+     exit(odbc_error());
+   endif;
+!*
+!***Build SELECT statement.
+!*
+   sql_statement:="SELECT price FROM My_table WHERE dnr="+str(dnr,-1,0));
+!*
+!***Execute.
+!*
+   status:=odbc_execdirect(sql_statement);
+
+   if status &lt; 0 then
+     exit(odbc_error());
+   endif;
+!*
+!***Get first line of result.
+!*
+   status:=odbc_fetch();
+
+   if status &lt; 0 then
+     exit(odbc_error());
+   endif;
+!*
+!***Get first data on this line.
+!*
+   status:=getstring(price);
+
+   if status &lt; 0 then
+     exit(odbc_error());
+   endif;
+!*
+!***Close the connection.
+!*
+   odbc_disconnect();
+!*
+!***Display result.
+!*
+   lst_ini();
+   lst_lin("Price is:"+price);
+   lst_exi();
+
+ENDMODULE
+</pre>
+
+<p>
+This macro module connects to the database, searches for the price of a detail
+with a specific detail number and displays the result. The error handling could
+be improved to check if the detail exists, and if not, ask for a new detail number.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

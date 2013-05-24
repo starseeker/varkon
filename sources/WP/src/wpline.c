@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -241,7 +241,7 @@ static short drawli(WPGWIN *gwinpt, DBLine *linpek, DBptr la, bool draw);
 
 /*      Creates the graphical 3D polyline representation 
  *      for a line.
- *      
+ *
  *      In:  linept  = C-ptr to DBLine.
  *           n+1     = Offset to polyline start.
  *
@@ -309,7 +309,7 @@ static short drawli(WPGWIN *gwinpt, DBLine *linpek, DBptr la, bool draw);
            dx = x2 - x1;
            dy = y2 - y1;
            dz = z2 - z1;
-             
+
            len = SQRT(dx*dx + dy*dy + dz*dz);
            c1 = linept->lgt_l;
            c2 = c1*DASHRATIO;
@@ -324,7 +324,7 @@ static short drawli(WPGWIN *gwinpt, DBLine *linpek, DBptr la, bool draw);
              dxc2 = c2*dx/len;
              dyc2 = c2*dy/len;
              dzc1 = c1*dz/len;
-	     dzc2 = c2*dz/len;
+             dzc2 = c2*dz/len;
              }
 
            dlen = 0.0;
@@ -368,7 +368,7 @@ static short drawli(WPGWIN *gwinpt, DBLine *linpek, DBptr la, bool draw);
            break;
 /*
 ***Stop.
-*/ 
+*/
            case 3:
            x1 = x2;
            y1 = y2;

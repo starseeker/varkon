@@ -1,0 +1,171 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Grid})
+define({_INDEXLINK_},{<a href="gwins.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Colors, materials and light</h1>
+
+<p>
+When created, each single entity in Varkon gets an individual
+PEN number ranging from 0 to 255.
+You can set the currently active PEN number with the PEN button
+in the middle section of the menu window and you can edit the
+pen of a single entity in the edit menu. Varkon uses the PEN
+number to display an entity with a specific color or OpenGL
+material.
+</p>
+
+<p>
+Note that the color or material specification of an entity is not
+saved in the module that creates the entity, only the PEN number.
+If you save a job and load it again, your entities will get the
+same colors and materials but if you use the module in another
+job the entities will get the colors and materials defined with
+that job.
+</p>
+
+<h2>Colors</h2>
+
+<p>
+The Varkon ini-file by default defines the following 12 colors:
+</p>
+
+<table>
+<tr>
+<th>PEN</th>
+<th>Color</th>
+<th>Note</th>
+</tr>
+
+<tr>
+<td>0</td>
+<td>White</td>
+<td>Default background color</td>
+</tr>
+
+<tr>
+<td>1</td>
+<td>Black</td>
+<td>Default PEN number</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>Light red</td>
+<td>Also used for active coordinate system</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>Light green</td>
+<td></td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>Light blue</td>
+<td></td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>Dark red</td>
+<td></td>
+</tr>
+
+<tr>
+<td>6</td>
+<td>Dark green</td>
+<td></td>
+</tr>
+
+<tr>
+<td>7</td>
+<td>Dark blue</td>
+<td></td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>Brown</td>
+<td></td>
+</tr>
+
+<tr>
+<td>9</td>
+<td>Yellow</td>
+<td></td>
+</tr>
+
+<tr>
+<td>10</td>
+<td>Orange</td>
+<td></td>
+</tr>
+
+<tr>
+<td>11</td>
+<td>Gray</td>
+<td></td>
+</tr>
+</table>
+
+<p>
+You can assign your own colors with the color
+dialog in <code>menu/view/colors</code>. Colors are specified
+as RGB (Red, Green, Blue) value triplets in the range of 0 to 255.
+You can also define a color with the
+<a href="../MBS/cre_col.htm">cre_color()</a> procedure in MBS.
+</p>
+
+<h2>Materials</h2>
+
+<p>
+A material is a full OpenGL material specification including the
+RGB values for ambient, diffuse, specular and emitted light and
+also the shininess. To read more about OpenGL materials, see the
+<a href="../MBS/cre_mat.htm">cre_material()</a> procedure in the
+MBS programmers manual.
+</p>
+
+<p>
+Materials can only be displayed in OpenGL windows. In X11 windows
+materials will be displayed using the ambient RGB color values of
+the material.
+</p>
+
+<h2>Light</h2>
+
+<p>
+Light in Varkon is equal to OpenGL light sources. When an OpenGL
+window is opened Varkon automatically creates a light source located
+at infinite distance along the positive Z-axis shining in the direction
+of the negative Z-axis (BASIC coordinate system). To create additional
+light sources (including spotlights) or to edit the default light, see the
+<a href="../MBS/cre_light.htm">cre_light()</a> procedure in the MBS
+programmers manual. You can create and turn on up to a maximum of 8
+light sources at the same time.
+</p>
+
+<p>
+Note that although OpenGL supports colored light, Varkon light sources
+are always white. Once defined, use <code>menu/view/lights</code>
+to set the intensity of a light source or to list basic light source data.
+You can also set the transformation behaviour of a light source. By default,
+light sources are static. If you switch to follow_model, the light source
+will follow the model if you pan, scale or rotate it interactively.
+</p>
+
+<p>
+Note also that Varkon does not save your light sources when
+you exit your job. When you load an old job Varkon creates
+the default light automatically but if you have created your
+own light sources in MBS, run your module to update their status.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

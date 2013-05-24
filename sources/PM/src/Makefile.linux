@@ -1,8 +1,8 @@
 ##########################################################
 #
-#   Makefile for PMlib on GNU/Linux
+#   Makefile for PM on GNU/Linux
 #
-#  (C)Microform AB 1999-03-30 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
@@ -19,7 +19,7 @@ distr :     CFLAGS =                    \
             -O                          \
             -DUNIX                      \
             -DVARKON
-            
+
 debug :      CFLAGS =                   \
             -ansi                       \
             -Wall                       \
@@ -33,6 +33,5 @@ debug :      CFLAGS =                   \
 COMPILE = $(CC) -c $(CFLAGS)
 
 include Makefile.PM
-
 
 ################################################################

@@ -1,0 +1,27 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- The init, exit and newjob macro})
+define({_INDEXLINK_},{<a href="macroindex.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The init, exit and newjob macro</h1>
+
+<p>
+The Varkon ini-file can be used to specify the name of
+a macro that should execute automatically when you start
+or exit Varkon. It is also possible to specify a macro to
+be executed each time a new job is loaded. This is the syntax
+to use in the ini-file:
+</p>
+
+<p><pre class=box>
+varkon.init_macro:   the_name_of_my_init_macro
+varkon.exit_macro:   the_name_of_my_exit_macro
+varkon.newjob_macro: the_name_of_my_newjob_macro
+</pre></p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

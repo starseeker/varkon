@@ -8,7 +8,7 @@
 *    EXmsini();   Reset modstk
 *
 *    This file is part of the VARKON Execute  Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -142,10 +142,10 @@ DBptr   msysla;      /* DB pointer to current module coordinate system */
     tmspek += sizeof(DBptr);
 /*
 ***Test av modtyp.
-*/
+*
     if ( modtyp == 3 && datpek->mtyp_pd == 2 )
         return(erpush("EX1572",prtpek->name_pt));
-/*
+*
 ***Om den anropade modulen har attributet "LOCAL",
 ***hämta det refererade koordinatsystemet från GM och
 ***lagra i modsys. Inget lokalt system aktivt när

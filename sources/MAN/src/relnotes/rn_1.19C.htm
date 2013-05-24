@@ -1,0 +1,161 @@
+changequote({,})
+define({_TITLE_},{Release notes 1.19C})
+define({_SUBTITLE_},{- index})
+define({_INDEXLINK_},{<a href="index.htm">Release notes</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>Release notes for Varkon 1.19C</h1>
+
+<p>
+Varkon 1.19C is a further step in the same direction as 1.19B with focus
+to make Varkon easier to use. Major developments compared to 1.19B are:
+</p>
+
+<ul>
+<li>System moved to SourceForge and sources under svn control.</li>
+<li>Many GUI enhancements and fixes. Scrollbars, file selector etc.</li>
+<li>Module type 2D and 3D merged (2D removed).</li>
+<li>PID files removed.</li>
+<li>Explicit/generic mode from new (optional) start window.</li>
+<li>Context sensitive help system updated.</li>
+<li>Tutorial added to docs.</li>
+<li>Updated Interactive systems manual.</li>
+<li>Updated MBS programmers manual.</li>
+<li>New Application developers manual.</li>
+<li>New System administrators manual.</li>
+<li>Support (makefiles) for Linux, Macintosh OSX and FreeBSD.</li>
+<li>Colors, materials and light sources updated.</li>
+<li>MBS procedures hsv_to_rgb() and rgb_to_hsv() added.</li>
+<li>TIFF output from OpenGL windows.</li>
+</ul>
+
+<h2>
+Note ! If you have used earlier versions of Varkon please read the
+following before you start 1.19C.
+</h2>
+
+
+<h3>1. Very old MBS routines removed</h3>
+
+<p>
+There is a small group of MBS routines that became outdated many years ago. For the sake of backward compatibility they have still existed in the system but users have not been encouraged to use them. Most of them were removed from the documentation a long time ago. We have now decided to remove them completely. This means that very old MBS programs or modules may need to be updated. The procedures that are removed are:
+</p>
+
+<ul>
+<li>CUR_FREE() and CUR_PROJ().  Use CUR_SPLINE() instead.</li>
+<li>VAL(). Use IVAL() and FVAL() instead.</li>
+<li>GETID(). Use GET_NEXT_GM() instead.</li>
+<li>GETCUR(). Use GETCURH() and GETSEG() instead.</li>
+<li>PLOT_VIEW(). Use PLOT_WIN() instead.</li>
+<li>All 13 DB_*() routines for VAX/VMS RDB database communication. Use ODBC instead.</li>
+</ul>
+
+<h3>2. MBS routines recently changed or removed.</h3>
+
+<ul>
+<li>BLANK_LEV() is removed. Use BLANK_LEVEL().</li>
+<li>UNBLANK_LEV() is removed. Use UNBLANK_LEVEL().</li>
+<li>ACT_LEV() is removed. Use ACT_LEVEL().</li>
+<li>GET_LEV() is removed. Use GET_LEVEL(). Note: parameter (window ID) is added.</li>
+<li>ACT_DSCL() is removed. Drawing scale is no longer supported.</li>
+<li>ACT_MTYPE() is removed. Module type (DRAWING or GEOMETRY) is no longer supported.</li>
+<li>ACT_PID() is removed. The PID concept is no longer used.</li>
+<li>ACT_VARKON_SERIAL() is removed. No longer used.</li>
+</ul>
+
+<p>
+Trying to compile a MBS program with any of the removed routines will now result in an error message. Trying to run a module that was compiled with an older compiler will also result in an error mesage (this module needs to be compiled with a newer compiler). Users with MBS programs or modules using the above routines will have to update their files. This means that Varkon is not 100% backward compatible but sometimes you just have to get rid of old stuff or the system will slowly degrade into a mess of different things with no structure.
+</p>
+
+<h3>3. Module type removed.</h3>
+
+<p>
+The concept of DRAWING (2D) and GEOMETRY (3D) is no longer used in Varkon. All modules are implicitly GEOMETRY (3D). If you compile a MBS program which uses the keyword DRAWING or GEOMETRY in the module declaration the compiler will issue a warning but
+not exit. A valid module will be created so there is no need to edit all MBS programs that use the keywords DRAWING or GEOMETRY now. Users are encouraged however not to use the keywords in new modules and to remove them from older MBS programs when they find the time for it.
+</p>
+
+<h3>4. PID files removed.</h3>
+
+<p>
+Varkon 1.19B and all earlier versions of Varkon are based on a concept of a project as a holder of a group of jobs that are somehow related. A Varkon project was defined as follows (stored in the project PID-file):
+</p>
+
+<ul>
+<li>A job directory where you have the JOB, MBO and RES files.</li>
+<li>A mbs directory where you have your MBS programs.</li>
+<li>A lib directory where you have your compiled MBS programs (MBO-files).</li>
+<li>A sym directory where you have your symbols (PLT-files).</li>
+<li>A doc directory where you have your documentation.</li>
+<li>A MDF file that defines your menus etc.</li>
+</ul>
+
+<p>
+The word project should not be used any more. You can delete all PID files. Instead we use the concept of a job directory and a sub directory of the job directory named lib. The job directory is the directory from which you load your job (could be any directory). You select your job directory with the new File selector dialog. Varkon now assumes:
+</p>
+
+<ul>
+<li>That your JOB, MBO and RES files are in your job directory</li>
+<li>That your MBS programs are in a subdirectory "lib" of the job directory.</li>
+<li>That your compiled MBS programs are also in the lib directory.</li>
+<li>That your symbols are in the job directory.</li>
+<li>That your documentation is in the job directory.</li>
+<li>That the menufile to use is specified in the start script.</li>
+</ul>
+
+<p>
+The lib subdirectory is created automatically by Varkon if you edit an MBS program.
+</p>
+
+<p>
+The default job directory (used by the file selector) can be specified in the start script.
+</p>
+
+<h3>5. How to update.</h3>
+
+<p>
+The above changes will need to be attended to by users wanting to update from an earlier version of Varkon. New users don't need to care at all.
+</p>
+
+<p>
+Here is a short update HOWTO:
+</p>
+
+<ol>
+<li>Install the new version of Varkon in a new directory.</li>
+<li>For each old Varkon project:</li>
+<ol>
+<li>Move all files in doc and sym to the job directory.
+    Remove the empty doc and sym directories.</li>
+<li>In the job directory, create a new directory named "lib".
+    Move all files in the mbs directory to the new lib directory.
+    Remove the old mbs and lib directory. All old MBO files will then
+    be deleted. You will need to recompile your MBS code anyway.</li>
+<li>If you have made any changes to the files in your mdf directory,
+    move the changed files to the job directory.
+    Remove the mdf directory.</li>
+</ol>
+</ol>
+
+<p>
+For each old project there is now only the job directory left. You can now start Varkon and use the file selector to navigate to any of your old job directories and load a job to verify that things work as the should. Don't forget to use "Compile all" on your old MBS programs if you have any. If you get error messages, check above on how to replace old MBS routines.
+</p>
+
+<p>
+Finally, it is probably nice to rearrange your job directories and give them new names so that you end up with a directory similar to the old app directory where each sub directory represents a job directory. How you do this is entirely up to you however. Varkon does not any longer assume any specific organisation expect for what is said above ( any number of job directories each with a lib sub directory).
+</p>
+
+
+<p>
+<br><br>
+Good Luck<br><br>
+The CAD research group<br>
+Department of Technology<br>
+Orebro University<br>
+S-70182 Orebro<br>
+SWEDEN
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

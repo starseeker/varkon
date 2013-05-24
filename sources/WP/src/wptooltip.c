@@ -4,7 +4,7 @@
 *    ===========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -75,7 +75,7 @@ static Window tooltip_id = 0;   /* Tooltip window X-id */
 /*
 ***Order an alarm a short time from now.
 */
-   alarm(2);
+   alarm(1);
  }
 
 /*********************************************************/
@@ -139,7 +139,7 @@ static Window tooltip_id = 0;   /* Tooltip window X-id */
    xwina.save_under        = False;
 
    xwinm = ( CWBackPixel        | CWBorderPixel |
-             CWOverrideRedirect | CWSaveUnder );  
+             CWOverrideRedirect | CWSaveUnder );
 
    tooltip_id = XCreateWindow(xdisp,DefaultRootWindow(xdisp),x,y,dx,dy,1,CopyFromParent,
                               InputOutput,CopyFromParent,xwinm,&xwina);

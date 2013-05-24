@@ -1,0 +1,53 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- round - Function})
+define({_INDEXLINK_},{<a href="mathindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>round - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Rounds a FLOAT argument to the nearest (lower or higher) INT.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  i:=round(x);
+
+  int   i;
+  float x;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>x</td>
+<td>- A value.</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>The INT value closest to x.</p>
+
+<h2>Example</h2>
+
+<pre>
+  i:=round(10.25);  ! Returns  10
+  i:=round(10.75)   ! Returns  11
+  i:=round(0);      ! Returns   0
+  i:=round(-10.25); ! Returns -10
+  i:=round(-10.75); ! Returns -11
+</pre>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

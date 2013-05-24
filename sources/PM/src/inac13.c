@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -189,82 +189,88 @@ V3MOME((char *)&defnap,(char *)&tmpblk,sizeof(V2NAPA));
    return( 0 );
   }
 
-/*!******************************************************/
-/*!******************************************************/
+/********************************************************/
+/********************************************************/
 
         short inpunp(
         V2NAPA *newdefnp)
 
-/*      Push default named parameter block and put new valus in "defnap" .
+/*      Push default named parameter block and put new
+ *      values in "defnap" .
  *
- *      In:  *newdefnp  =>  New default values for named parameters
+ *      In: *newdefnp => New default values for named parameters
  *
- *      Out: 
+ *      Return - error severity code
  *
- *      FV:   return - error severity code
+ *      (C)2007-11-26 J.Kjellander
  *
- *      (C)microform ab 1985-10-23 Per-Ove Agne'
- *
- *      1999-11-12 Rewritten, R. Svedin
- *
- ******************************************************!*/
+ ********************************************************/
 
   {
+   char errbuf[V3STRLEN];
+
+/*
+***Increase stack pointer.
+*/
    npstp ++;
+
    if ( npstp > PARTNIMX - 1 )
 /*
-***NP stack overflow
+***NP stack overflow.
 */
      {
-     return( erpush( "IN2042", "" ) );
+     sprintf(errbuf,"%d",PARTNIMX);
+     erpush("IN2032",errbuf);
+     return(erpush("IN2042",""));
      }
 /*
-***copy "defnap" to NP stack
+***Copy "defnap" to NP stack.
 */
-   V3MOME( (char *)&defnap, (char *)&npstack[ npstp ], sizeof( V2NAPA ) );
+   V3MOME((char *)&defnap,(char *)&npstack[npstp],sizeof(V2NAPA));
 /*
-***copy new values to "defnap"
+***Copy new values to "defnap".
 */
-   V3MOME( (char *)newdefnp, (char *)&defnap, sizeof( V2NAPA ) );
-
-   return( 0 );
+   V3MOME((char *)newdefnp,(char *)&defnap,sizeof(V2NAPA));
+/*
+***The end.
+*/
+   return(0);
   }
 
-/*!******************************************************/
-/*!******************************************************/
+/********************************************************/
+/********************************************************/
 
         short inponp()
 
-/*      Pop default named parameter block and put in "defnap" .
+/*      Pop default named parameter block and put in "defnap".
  *
- *      In:  
+ *      Return - error severity code
  *
- *      Out: 
- *
- *      FV:   return - error severity code
- *
- *      (C)microform ab 1985-10-23 Per-Ove Agne'
- *
- *      1999-11-12 Rewritten, R. Svedin
+ *      (C)2007-11-26 J.Kjellander
  *
  ******************************************************!*/
 
   {
-   if ( npstp < 0 )
+
 /*
-***NP stack underflow
+***Check for NP stack underflow.
 */
+   if ( npstp < 0 )
      {
      return( erpush( "IN2052", "" ) );
      }
 /*
-***copy from NP stack to "defnap"
+***Copy from NP stack to "defnap".
 */
-   V3MOME( (char *)&npstack[ npstp ], (char *)&defnap, sizeof( V2NAPA ) );
-
-   npstp --;
-
+   V3MOME((char *)&npstack[npstp],(char *)&defnap,sizeof(V2NAPA));
+/*
+***Decrease stack pointer.
+*/
+   npstp--;
+/*
+***The end.
+*/
    return( 0 );
   }
 
-/*!******************************************************/
+/********************************************************/

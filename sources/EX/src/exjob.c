@@ -11,7 +11,7 @@
 *    EXsvgm();       Interface-routine for SAVE_GM
 *
 *    This file is part of the VARKON Execute Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -39,22 +39,16 @@
 #include <string.h>
 
 extern V3MDAT  sydata;
-extern short   posmode;
-extern char    actcnm[];
+extern int     sysmode;
+extern int     posmode;
+extern bool    relpos,igbflg;
+extern char    jobnam[],jobdir[],tmpres[],actcnm[],svnversion[];
 extern DBTmat *lsyspk;
 extern DBptr   lsysla;
 extern DBTmat  lklsys;
 extern V2NAPA  defnap;
 extern WPVIEW  wpviewtab[];
-extern char    jobnam[];
-
-
-
-extern char    jobdir[],tmprit[];
 extern V3MSIZ  sysize;
-extern short   modtyp,modatt;
-extern bool    tmpref;
-
 
 static short write_VYTRF(FILE *jf, VYTRF *matrix);
 static short read_VYTRF(FILE *jf,VYTRF *matrix);
@@ -67,6 +61,7 @@ static short get_Coordinate_system(FILE *jf);
 static short get_Attributes(FILE *jf);
 static short get_Viewtable(FILE *jf);
 static short get_Leveltable(FILE *jf);
+static short get_Pentable(FILE *jf);
 
 /*!******************************************************/
 
@@ -82,13 +77,18 @@ static short get_Leveltable(FILE *jf);
  *
  *      (C)2007-03-31 1.19, J.Kjellander
  *
+ *      2007-09-05 SVN_version added, J.Kjellander
+ *      2007-09-09 relpos added, J.Kjellander
+ *      2008-01-19 Pentable added, J.Kjellander
+ *
  ******************************************************!*/
 
   {
-    int     i,y,m,d,h,min,s;
+    int     i,y,m,d,h,min,s,r,g,b,ar,ag,ab,dr,dg,db,
+            sr,sg,sb,er,eg,eb;
     char    idstr[V3STRLEN],name[V3STRLEN+1];
     double  curacc;
-    bool    blank;
+    bool    blank,defined;
     DBId    id[MXINIV];
     FILE   *jf;
 
@@ -106,6 +106,7 @@ static short get_Leveltable(FILE *jf);
     if ( fprintf(jf,"Version=%d\n",(int)sydata.vernr)        < 0 ) goto werror;
     if ( fprintf(jf,"Revision=%d\n",(int)sydata.revnr)       < 0 ) goto werror;
     if ( fprintf(jf,"Level=%c\n",sydata.level)               < 0 ) goto werror;
+    if ( fprintf(jf,"SVN_version=%s\n",svnversion)           < 0 ) goto werror;
     if ( fprintf(jf,"Jobname=%s\n",jobnam)                   < 0 ) goto werror;
     if ( fprintf(jf,"Creation_date=%d-%d-%d\n",y,m,d)        < 0 ) goto werror;
     if ( fprintf(jf,"Creation_time=%d:%d\n",h,min)           < 0 ) goto werror;
@@ -117,6 +118,7 @@ static short get_Leveltable(FILE *jf);
 */
     if ( fprintf(jf,"\n#Expressions\n")                      < 0 ) goto werror;
     if ( fprintf(jf,"Position_method=%d\n",(int)posmode)     < 0 ) goto werror;
+    if ( relpos && fprintf(jf,"Relative=On\n")               < 0 ) goto werror;
     if ( fprintf(jf,"#End\n")                                < 0 ) goto werror;
 /*
 ***Data related to the currently active coordinate system.
@@ -195,9 +197,39 @@ static short get_Leveltable(FILE *jf);
     for ( i=0; i<WP_NIVANT; ++i )
       {
       EXget_level(i,0,&blank,name);
-      if ( name[0] != '\0')
+      if ( name[0] != '\0' )
         {
         if ( fprintf(jf,"%d=%s\n",i,name)                    < 0 ) goto werror;
+        }
+      }
+
+    if ( fprintf(jf,"#End\n"));
+/*
+***Colors and materials.
+*/
+    if ( fprintf(jf,"\n#Pentable\n")                         < 0 ) goto werror;
+
+    for ( i=0; i<WP_NPENS; ++i )
+      {
+      WPgmat(i,&defined,&ar,&ag,&ab,&dr,&dg,&db,
+                        &sr,&sg,&sb,&er,&eg,&eb,&s);
+      if ( defined )
+        {
+        if ( fprintf(jf,"%d:Material\n",i)                   < 0 ) goto werror;
+        if ( fprintf(jf,"Ambient=%d %d %d 255\n",ar,ag,ab)   < 0 ) goto werror;
+        if ( fprintf(jf,"Diffuse=%d %d %d 255\n",dr,dg,db)   < 0 ) goto werror;
+        if ( fprintf(jf,"Specular=%d %d %d 255\n",sr,sg,sb)  < 0 ) goto werror;
+        if ( fprintf(jf,"Emitted=%d %d %d 255\n",er,eg,eb)   < 0 ) goto werror;
+        if ( fprintf(jf,"Shininess=%d\n",s)                  < 0 ) goto werror;
+        }
+      else
+        {
+        WPgpen(i,&defined,&r,&g,&b);
+        if ( defined )
+          {
+          if ( fprintf(jf,"%d:Color\n",i)                    < 0 ) goto werror;
+          if ( fprintf(jf,"RGB=%d %d %d\n",r,g,b)            < 0 ) goto werror;
+          }
         }
       }
 
@@ -235,6 +267,8 @@ werror:
  *
  *      (C)2007-04-10 1.19 J.Kjellander
  *
+ *      2008-01-19 Pentable added, J.Kjellander
+ *
  ******************************************************!*/
 
   {
@@ -255,7 +289,7 @@ werror:
 ***Read lines until EOF.
 ***fgets() stops reading AFTER newline or EOF and then adds a \0.
 ***fgets() returns NULL on EOF or error.
-*/ 
+*/
    while ( fgets(line,V3STRLEN,jf) != NULL )
      {
 /*
@@ -302,23 +336,30 @@ werror:
 /*
 ***#Leveltable
 */
-       else if ( strncmp(line,"#Leveltable",10) == 0 )
+       else if ( strncmp(line,"#Leveltable",11) == 0 )
          {
          if ( get_Leveltable(jf) < 0 ) return(erpush("EX1893",filename));
+         }
+/*
+***#Pentable
+*/
+       else if ( strncmp(line,"#Pentable",9) == 0 )
+         {
+         if ( get_Pentable(jf) < 0 ) return(erpush("EX1893",filename));
          }
 /*
 ***#WPGWIN
 */
        else if ( strncmp(line,"#WPGWIN",7) == 0 )
          {
-         if ( WPload_WPGWIN(jf) < 0 ) return(erpush("EX1893",filename));
+         if ( !igbflg  &&  WPload_WPGWIN(jf) < 0 ) return(erpush("EX1893",filename));
          }
 /*
 ***#WPRWIN
 */
        else if ( strncmp(line,"#WPRWIN",7) == 0 )
          {
-         if ( WPload_WPRWIN(jf) < 0 ) return(erpush("EX1893",filename));
+         if ( !igbflg  &&  WPload_WPRWIN(jf) < 0 ) return(erpush("EX1893",filename));
          }
        }
      }
@@ -435,7 +476,7 @@ werror:
 /*
 ***Om vi kör bas-moulen heter pagefilen någonting.RES.
 */
-    if ( sydata.opmode == BAS_MOD )
+    if ( sysmode == GENERIC )
       {
       strcpy(resfil,jobdir);
       strcat(resfil,jobnam);
@@ -444,7 +485,7 @@ werror:
 /*
 ***Om vi kör ritmodulen heter den något temporärt.
 */
-    else strcpy(resfil,tmprit);
+    else strcpy(resfil,tmpres);
 /*
 ***Kopiera den lagrade resultatfilen till en fil med det nya namnet.
 */ 
@@ -665,12 +706,21 @@ werror:
  *
  *      (C)2007-03-19 J. Kjellander
  *
+ *      2007-09-09 relpos, J.Kjellander
+ *
  ******************************************************!*/
 
   {
    char line[V3STRLEN+1];
 
-
+/*
+***Init posmode and relpos.
+*/
+   posmode = 2;
+   relpos = FALSE;
+/*
+***Read file.
+*/
    while ( fgets(line,V3STRLEN,jf) != NULL )
      {
 /*
@@ -685,8 +735,14 @@ werror:
 */
      else if ( strncmp(line,"Position_method=",16) == 0 )
        {
-       posmode = 2;
-       if ( sscanf(&line[16],"%hd",&posmode) == 0 ) return(-1);
+       if ( sscanf(&line[16],"%d",&posmode) == 0 ) return(-1);
+       }
+/*
+***Relative=On
+*/
+     else if ( strncmp(line,"Relative=On",11) == 0 )
+       {
+       relpos = TRUE;
        }
      }
 /*
@@ -938,6 +994,68 @@ werror:
        nl = strlen(line) - 1;
        if ( line[nl] == '\n' ) line[nl] = '\0';
        EXname_level(level,&line[n_chars]);
+       }
+     }
+/*
+***If we reach here something went wrong.
+*/
+   return(-1);
+  }
+
+/******************************************************!*/
+/*!******************************************************/
+
+ static short get_Pentable(FILE *jf)
+
+/*      Reads a #Pentable record from a jobfile.
+ *
+ *      In: jf = C Ptr to open file
+ *
+ *      (C)2008-01-19 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   char line[V3STRLEN+1];
+   int  pen,n,r,g,b,ar,ag,ab,aa,dr,dg,db,da,sr,sg,sb,sa,
+        er,eg,eb,ea,s;
+
+
+   while ( fgets(line,V3STRLEN,jf) != NULL )
+     {
+/*
+***Read until next "#End".
+*/
+     if ( strncmp(line,"#End",4) == 0 )
+       {
+       return(0);
+       }
+/*
+***Pennumber:Color or Pennumber:Material
+*/
+     else
+       {
+       if ( sscanf(line,"%d%n",&pen,&n) < 1 ) return(-1);
+       if ( strncmp(&line[n],":Color",6) == 0 )
+         {
+         if ( fgets(line,V3STRLEN,jf) == NULL ) return(-1);
+         if ( sscanf(&line[4],"%d%d%d",&r,&g,&b) < 3 ) return(-1);
+         WPccol(pen,r,g,b);
+         }
+       else if ( strncmp(&line[n],":Material",9) == 0 )
+         {
+         if ( fgets(line,V3STRLEN,jf) == NULL ) return(-1);
+         if ( sscanf(&line[8],"%d%d%d%d",&ar,&ag,&ab,&aa) < 4 ) return(-1);
+         if ( fgets(line,V3STRLEN,jf) == NULL ) return(-1);
+         if ( sscanf(&line[8],"%d%d%d%d",&dr,&dg,&db,&da) < 4 ) return(-1);
+         if ( fgets(line,V3STRLEN,jf) == NULL ) return(-1);
+         if ( sscanf(&line[9],"%d%d%d%d",&sr,&sg,&sb,&sa) < 4 ) return(-1);
+         if ( fgets(line,V3STRLEN,jf) == NULL ) return(-1);
+         if ( sscanf(&line[8],"%d%d%d%d",&er,&eg,&eb,&ea) < 4 ) return(-1);
+         if ( fgets(line,V3STRLEN,jf) == NULL ) return(-1);
+         if ( sscanf(&line[10],"%d",&s) < 1 ) return(-1);
+         WPcmat(pen,ar,ag,ab,dr,dg,db,sr,sg,sb,er,eg,eb,s);
+         }
        }
      }
 /*

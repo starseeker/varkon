@@ -12,7 +12,7 @@
 /*  IGials();   Input alternative with C-strings                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -43,12 +43,13 @@ extern short  mant;          /* Antal aktiva menyer */
 /*!*******************************************************/
 
      short IGssip(
-     char *ps,                     /* promptstrï¿½ng */
-     char *is,                     /* inputstrï¿½ng */
-     char *ds,                     /* defaultstrï¿½ng */
-     short ml)                     /* maximal strï¿½nglï¿½ngd */
+     char *prompt,                 /* Main prompt */
+     char *ps,                     /* promptsträng */
+     char *is,                     /* inputsträng */
+     char *ds,                     /* defaultsträng */
+     short ml)                     /* maximal stränglängd */
 
-/*   Lï¿½s in en strï¿½ng med redigering och snabbval.
+/*   Single string input.
  *
  *   FV:       0 = OK
  *        REJECT = Operationen avbruten.
@@ -62,7 +63,7 @@ extern short  mant;          /* Antal aktiva menyer */
  *******************************************************!*/
 
 {
-    return(IGmsip(&ps,&is,&ds,&ml,1));
+    return(IGmsip(prompt,&ps,&is,&ds,&ml,1));
 }
 
 /*********************************************************/
@@ -92,7 +93,7 @@ extern short  mant;          /* Antal aktiva menyer */
 
     do
       {
-      if ( (retsmb = IGssip(ps,is,"",MAXDTXT)) == REJECT ||
+      if ( (retsmb = IGssip("",ps,is,"",MAXDTXT)) == REJECT ||
               retsmb == GOMAIN ) break;
 
       is[strlen(is)] = '\b';
@@ -135,7 +136,7 @@ extern short  mant;          /* Antal aktiva menyer */
 
     do
       {
-      if ( (retsmb=IGssip(ps,is,"",MAXLITXT)) == REJECT ||
+      if ( (retsmb=IGssip("",ps,is,"",MAXLITXT)) == REJECT ||
               retsmb == GOMAIN ) break;
 
       is[strlen(is)] = '\b';
@@ -154,46 +155,41 @@ extern short  mant;          /* Antal aktiva menyer */
 /*!*******************************************************/
 
      short IGmsip(
-     char *ps[],                   /* promptstrï¿½ngar */
-     char *is[],                   /* inputstrï¿½ngar */
-     char *ds[],                   /* defaultstrï¿½ngar */
-     short ml[],                   /* maximala strï¿½nglï¿½ngder */
-     short as)                     /* antal strï¿½ngar att lï¿½sa in */
+     char *prompt,                 /* Main prompt */
+     char *ps[],                   /* input prompts */
+     char *is[],                   /* input strings */
+     char *ds[],                   /* default strings */
+     short ml[],                   /* max string lengths */
+     short as)                     /* number of strings to get */
 
-/*   Lï¿½s in flera strï¿½ngar med redigering och snabbval.
+/*   Get one or more strings.
  *
- *   FV:       0 = OK
- *        REJECT = Operationen avbruten.
- *        GOMAIN = ï¿½tervï¿½nd till huvudmenyn.
+ *   Return:   0 = OK
+ *        REJECT = Operationen cancelled.
+ *        GOMAIN = Back to main menu.
  *
  *   16/9-85  Snabbval, Ulf Johansson
  *   6/10/86  GOMAIN, J. Kjellander
  *   13/10/86 SMBMAIN, J. Kjellander
  *   8/11/88  snabb till getsmb(), J. Kjellander
  *   1996-12-12 typarr, J.Kjellander
+ *   2007-09-09 prompt, J.Kjellander
  *
  *******************************************************!*/
 {
-    int   typarr[V2MPMX];
-    short i;
+    int   i,typarr[V2MPMX];
+    short status;
 
 /*
-***X11.
+***Use WPmsip(). All inputs are strings.
 */
-#ifdef UNIX
     for ( i=0; i<as; ++i ) typarr[i] = C_STR_VA;
-    return(WPmsip(IGqema(),ps,ds,is,ml,typarr,as));
-#endif
-/*
-***WIN32
-*/
-#ifdef WIN32
-    for ( i=0; i<as; ++i ) typarr[i] = C_STR_VA;
-    if ( as < 4 )return((short)msdl03(IGqema(),ps,ds,is,ml,(int)as));
-    else         return((short)msmsip(IGqema(),ps,ds,is,ml,typarr,as));
-#endif
 
-   return(0);
+    status = WPmsip(prompt,ps,ds,is,ml,typarr,as);
+/*
+***The end.
+*/
+   return(status);
 }
 
 /**************************************************************/

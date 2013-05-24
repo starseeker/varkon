@@ -1,0 +1,43 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Copy and transformation})
+define({_INDEXLINK_},{<a href="entities.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Copy and transformation</h1>
+
+<p>
+Transforming and copying geometry is a two step process in Varkon. First
+you define a transformation and then you use it for copying. Transformations
+are implemented as ordinary geometric entities and used in the same manner.
+Varkon supports translation, rotation, scaling and mirroring of all entities
+except UV-curves and their offsets.
+</p>
+
+<p>
+Transformations have no graphical representation and are therefore not
+visible on the display. To use a transformation you have to know it's ID.
+</p>
+
+<h2>Methods</h2>
+
+<ul>
+<li><a href="../MBS/tf_move.htm">Translation</a></li>
+<li><a href="../MBS/tf_rotl.htm">Rotation</a></li>
+<li><a href="../MBS/tf_mirr.htm">Mirroring</a></li>
+<li><a href="../MBS/tcopy.htm">Copying</a></li>
+</ul>
+
+<p>
+MBS includes additional methods. See the <a href="../MBS/entiindx.htm">
+MBS entity creation</a> index for more info.
+</p>
+
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)
+

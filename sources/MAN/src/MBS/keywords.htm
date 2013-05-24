@@ -1,0 +1,134 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- index})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Keywords and identifiers</h1>
+
+<p>
+A keyword is a word that has a special meaning in MBS. The word MODULE
+is a keyword. Lets have a closer look at the rules for MODULE's in MBS.
+</p>
+
+<p>
+A module is defined by:
+</p>
+
+<pre>
+ [module_attribute] MODULE identifier(
+    [parameter_declarations]);
+
+  [declarations]
+
+  BEGINMODULE
+    statements
+  ENDMODULE
+</pre>
+
+<h2>Keywords</h2>
+
+<p>
+Words in square brackets like <code>[module_attribute]</code> are optional and
+may be excluded if the default is satisfactory. Words in capital letters like
+<code>MODULE</code> are keywords and may not be used in other situations.
+Here is the complete list of keywords:
+</p>
+
+<pre>
+  AND           FILE     NOT
+  BASIC         FLOAT    OR
+  BEGINMODULE   FOR      REF
+  CONSTANT      GLOBAL   STRING
+  DO            GOTO     STEP
+  ELIF          IF       THEN
+  ELSE          INT      TO
+  ENDFOR        LOCAL    VAR
+  ENDIF         MODULE   VECTOR
+  ENDMODULE     MACRO
+</pre>
+
+<h2>Identifiers</h2>
+
+<p>
+Identifiers are used for things that you want to give a name, like the name of
+a module or a parameter. MBS also has a large number of predefined identifiers.
+Identifiers may consist of any number of characters but only 31 are significant.
+The following characters may be used but the first character of an identifier
+should always be a letter, not a digit or underscore.
+</p>
+
+<p>
+Letters:
+</p>
+
+<pre>
+  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Å Ä Ö
+  a b c d e f g h i j k l m n o p q r s t u v w x y z å ä ö
+</pre>
+
+<p>
+Digits:
+</p>
+
+<pre>
+  0 1 2 3 4 5 6 7 8 9
+</pre>
+
+<p>
+Underscore:
+</p>
+
+<pre>
+  -
+</pre>
+
+<p>
+Here are some valid identifiers:
+</p>
+
+<pre>
+  D2 wheel_size A12345B_cdefg99
+</pre>
+
+<p>
+Lower or upper case letters in identifiers are normally not significant.
+<code>A76BB</code> is the same as <code>a76BB</code> or <code>a76bb</code>.
+Note however, that the identifier used as the name of a module is also the name
+of a (MBO-)file on disc. On Unix systems where case is significant in file
+names case becomes significant also for names of modules. On Microsoft
+Windows systems where case is not significant in file names we still recommend
+that you differ between upper and lower case in module names. One day you might
+want to run your modules on a system where case is significant. Note also that
+when you compile a MBS program, the MBO file created by the compiler will get
+the same name as the identifier in the module declaration, not the same name
+as the MBS file, if they differ.
+</p>
+
+<p>
+All names of functions and procedures in MBS are predefined identifiers. The
+<code>FLOAT</code> constant <code>pi</code> is also a predefined identifier.
+Note that if you declare a variable of your own with the same name as a predefined
+identifier, your own declaration will overrule the original declaration. It is
+therefore recommended that you are careful not to use the names of built in
+functions and procedures for your own declarations.
+</p>
+
+<h2>The module_attribute</h2>
+
+<p>
+A module_attribute is either LOCAL, GLOBAL, BASIC or MACRO. If no module_attribute is
+specified a default of GLOBAL will be used. A LOCAL module needs a coordinate system
+specified when called and will use this coordinate system as its
+global system. A GLOBAL or BASIC module should not be called with a coordinate system. A
+GLOBAL module automatically inherits the global system of the caller and a BASIC module
+uses the basic system. A MACRO module can only be called by another MACRO and is typically
+used for non modeling purposes like user interfaces, analysis programs, machine control
+etc.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,9 +1,9 @@
 !*******************************************************
 
- MACRO DRAWING MODULE ma_posw3(INT main_id;
-                               VECTOR p;
-                               INT    b,h;
-                           VAR STRING mbsstr*132);
+ MACRO MODULE ma_posw3(INT main_id;
+                       VECTOR p;
+                       INT    b,h;
+                       VAR STRING mbsstr*132);
 
 !*      Interaktiv inmatning av en position ände.
 !*      Om inmatningen avbryts lämnas mbsstr orörd.

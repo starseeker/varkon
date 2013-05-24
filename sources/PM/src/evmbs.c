@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -43,7 +43,7 @@
 #include <string.h>
 
 extern char     jobnam[];
-extern short    v3mode,modtyp,tmpref;
+extern short    sysmode,modtyp,tmpref;
 extern pm_ptr   actmod;
 extern struct   ANSYREC sy;
 extern V2NAPA   defnap;
@@ -210,7 +210,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 ***Länka in satsen i modulen.
 ***retla = Den nya satsen som den kommer från anunst().
 */
-    if ( v3mode & BAS_MOD )
+    if ( sysmode & GENERIC )
       {
       status = pmlmst(actmod,retla);
       if ( status < 0 ) goto exit;
@@ -319,7 +319,7 @@ exit:
 /*
 ***I ritmodulen finns ingen aktiv modul att köra !
 */
-    if ( v3mode == RIT_MOD ) return(0);
+    if ( sysmode == EXPLICIT ) return(0);
 /*
 ***Vad heter nuvarande modul. Måste vi veta för att
 ***kunna anropa pmgeba() på slutet.
@@ -817,7 +817,7 @@ exit:
 /*
 ***I ritmodulen måste vi först återskapa ett part-anrop i PM.
 */
-    if ( v3mode == RIT_MOD )
+    if ( sysmode == EXPLICIT )
       {
       if ( (status=IGgnps(id)) < 0 ) goto exit;
       else dstflg = TRUE;
@@ -953,7 +953,7 @@ exit:
 /*
 ***Framåt-referens ?
 */
-      if ( v3mode & BAS_MOD  &&  pmarex(id,newexp) )
+      if ( sysmode & GENERIC  &&  pmarex(id,newexp) )
         {
         status = erpush("IG3882",proc_pv[3].par_va.lit.str_va);
         goto exit;
@@ -978,7 +978,7 @@ exit:
 ***när remode = 2. Då måste vi också hantera typ-
 ***konvertering här.
 */
-      if ( v3mode == RIT_MOD  &&  remode == 2 )
+      if ( sysmode == EXPLICIT  &&  remode == 2 )
         {
         if ( ftype.kind_ty == ST_FLOAT  &&  atype.kind_ty == ST_INT )
           valp.lit.float_va = (v2float)valp.lit.int_va;
@@ -1009,7 +1009,7 @@ exit:
 ***Om storheten är refererad kanske vi ska köra hela modulen ?
 ***Isåfall kan den globala variabeln modtyp behöva sättas.
 */
-        if ( remode == 0  &&  v3mode & BAS_MOD  &&  pmamir(id)  &&
+        if ( remode == 0  &&  sysmode & GENERIC  &&  pmamir(id)  &&
                                                IGialt(175,67,68,FALSE) )
           {
           insrtb(oldrsp);

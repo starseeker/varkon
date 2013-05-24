@@ -1,0 +1,207 @@
+This file is a copy of e-mails exchanged between J.Kjellander
+and Armin Faltl during the development of a Varkon print function
+for WPGWIN's using TIFF format.
+
+
+_________________________________Mail 1
+
+Hello Johan,
+
+> I understand. So, can I please ask you about the arguments to
+> gl_plot(),
+>
+> int gl_plot(void (*draw)(void),	/* drawing callback */
+> 		GLdouble projMatrix[16],
+> 	        GLdouble mdvwMatrix[16],
+> 		CameraSet_t *cs,
+> 		double dpi, 	/* resolution, dpi */
+> 		double width,	/* at the front, millimeters */			                double
+> height,  /*           "               */
+> 		double nearVal,	/* millimeters, front depth of frustum */
+> 		double farVal,	/* millimeters, back depth of frustum */
+> 		char *fileName)
+>
+> 1. The drawing callback will be the name of my rendering function
+>    ie. void my_rendering_function(void *data) ?
+>   
+
+For me now it's 'void my_drawfunc()', cause I was lazy, but you should
+modify this as you intended to pass a handle to your application data.
+I will do this in the demo, because the only alternative is a global variable
+- a bad  approach.
+
+> 2. projMatrix[16] Which matrix is this ? (not used ?)
+>   
+
+can/shall be removed
+
+> 3. mdvwMatrix[16] Which matrix is this ? (Modelview matrix ?)
+>   
+
+yes - in the demo it's used for defining the view direction and translation
+by the mouse and other handlers.
+
+> 4. cs Is this used ?
+>
+
+yes, the projection matrix is computed from these values inside the driver
+and it made the projMatrix parameter obsolete. If you use projMatrix instead
+of the driver-computed projection, you get an image of the entire scene
+in every tile.
+
+> 5. dpi What values are reasonable, screen=72, papaer=?
+>
+
+
+I use 300dpi as a compromise of good printing and small filesize.
+Unless one actively tries to see the pixels on paper or uses a
+magnifying glass, the image appears smooth for that or higher
+resolutions.
+
+> 6. width Is this the frustum width in mm ?
+>
+> 7. height Is this the frustum height in mm ?
+>   
+
+
+Yes and no: it's mm on paper. The frustum is solely defined in model space
+units. There is a plane, where the mm-value is identical to the width
+in model units, but it's usually not the near or far plane of the frustum.
+This also applies to the "total frustum" of the scene, the frustums
+actually used in the driver are the portions of this pyramide(-stump) that
+correlate to the sub-images (frames) created in one render & read-back pass.
+The connection is built by the combination of a computed pixel-size
+in model-units and the viewport-transformation (pseudocode):
+
+    image_edge_length[pixes] = height[mm] / 25.4 * dpi;
+
+    viewport_height = frame_length[pixels];
+		/* up to programmer, 1024 in the implemetation */
+
+    => pixel_size[model-units] = scene_height_at_near_plane[model-units]
+                               / image_edge_length[pixels];
+		/* computed differently because of rounding to pixels */
+
+The scene_height_at_near_plane is computed from 'orthoRadius' and the relation
+of nearVal and the camera-point to scene-center distance.
+The rounding mentioned above is because pixels must be a natural number,
+so I choose to compute the image max. 1 pixel larger than the exact mm-value
+while preserving the exact scale. The top-left corner of the image is exact,
+and the scene center is projected exactly to the center of the specified
+rectangle on paper, while the raster image may extend a fraction of a pixel
+to the lower-right and the rectangle-center will normally not be a pixel
+center or -border.
+
+width has same properties as height
+
+> 8. nearVal Is this the frustum near limit in mm ?
+> 9. farVal Is this the frustum far limit in mm ?
+>   
+
+These are near and far limit in model units, because this influences
+the depth buffer computation and the clipping of the scene.
+They augment the values in cs and have the same unit.
+In the application, nearVal and farVal are computed from the
+camera - scene center distance, so this could be repeated in the
+driver and the parameters omitted. But since the method of this
+computation may change outside the driver, e.g. because the near
+plane can be used as clipping plane by the user to cut the model
+to see interior parts, I choose to make them explicit parameters.
+If above possible change is realized one will want to store the
+position of the front and back frustum culling planes in saved
+views which would mean, they become part of the CameraSet_t
+structure.
+
+> 10. fileName TIFF file I suppose. Should/can path be included ?
+>   
+
+Yes a path is valid.
+
+I hope I expressed myself clear. If not, I'll generate a sketch
+showing the process and geometrical relations.
+
+Best Regards, Armin
+
+___________________________________Mail 2
+
+Hello Johan,
+
+sorry for the late reply.
+
+> I have spent some time with the GL print function today.
+> I now have a print icon in the GL window that calls
+> WPprint_GL() (my own function) which will set up the
+> nessecary data and call your gl_print(). Se attachment.
+> It compiles into the system as it is but I have not
+> yet included your stuff.
+>
+> I got stuck with the cs parameter. How do I set it up ?
+>   
+My camera is defined by:
+.) the position of the camera in model space (camX, camY, camZ)
+.) the point in model space that is in the middle of the scene (cenX, 
+cenY, cenZ)
+.) the direction in model space, that shall be upwards in the image 
+(altX, ... like altitude)
+.) a measure for the width or height of the scene: orthoRadius is the length
+   in model space, orthogonal to the view direction, from the scene center
+   to the upper (or lower) edge of the display.
+.) mode describes several handling flags for the camera. Relevant in this
+   context is only (mode & CAMMODE_PRJ_BIT). If this bit is set
+   (see #define ORTHOGONAL), then the camera is at infinity instead of 
+(camX, camY, camZ),
+   but the vectors of the view- and up  direction are still valid, as is 
+the height
+   of scene in model space.
+To be valid, (altX, altY, altZ) must not be colinear to (cenX - camX, 
+cenY - camY, cenZ - camZ).
+The way I use it can be seen in class CDisplay.
+> Another question is about the name of your files
+> and where to put them in the Varkon source tree.
+> I suppose you are going to make changes to them sooner
+> or later (removing the projMatrix parameter for example ?)
+> and how do we handle that practically ?  svn, email.. ?
+>   
+As the implementation is probably stable appart from a few glitches,
+I think transfer of new versions via e-mail is sufficient.
+> >From my perspective it would be nice if we could have all
+> your TIFF stuff in 2 files, GL_to_TIFF.c and GL_to_TIFF.h
+> for example, and put them in sources/WP/src and sources/WP/include
+> respectively. The gl_plot() function might also need a name that
+> ensures that it will not clutter the Varkon namespace.
+> GL_to_TIFF_file() is a possibility. Would this work for you
+> or does this mean that you can not use the same files in the
+> demo application. If so, please suggest something that works for
+> you.
+>   
+Actually I thought of that name but didn't choose it, because TIFF is a very
+good raster format, but not the only possibility. PNG would probably work
+as well, as would a direct feed to a printer in PCL format (may be necessary
+for huge outputs). For that reason we may add a parameter outputType
+and define eg. GLRASTERIZE_TIFF_FILE, GLRASTERIZE_TIFF_PIPE and
+GLRASTERIZE_PCL_PIPE, that is just ignored in the current implementation.
+'gl_rasterize(...)' or 'GL_rasterize(...)' is a name I could live with.
+About namespaces, I think all Varkon functions have an uppercase prefix,
+so this shouldn't be a problem.
+
+CameraSet_t was originally a part of CDisplay.hh and the class in my
+opinion should not depend on the existence of this raster-stuff, so
+I broke it out and gave it it's own header file, because a C implementation
+can't include a C++ header.
+The most clean way to handle it may be to do away with the structure
+and pass all the contents as built in typed parameters. This has the
+downside of duplicate definitions for the mode or some
+'mode translation'.
+> I'm sure Varkon users will benefit from your contribution and
+> I hope that future improvements to gl_plot() from your side
+> will compile in Varkon as well as the demo application without
+> changes
+As I'm not using any obscure constructs anywhere in my code, I'm convinced
+it will always be trivial to compile. So I don't see a problem related 
+to the
+compatibility with Varkon. Since the code is contributed the right place
+in Varkon may be .../varkon/CONTRIB/... or iirc your utility function 
+directory.
+
+Regards, Armin
+

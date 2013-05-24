@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac  Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    WPmkpf();             Make GKS meta plot file
 *    WPgksm_header();      GKS Metafile output
@@ -60,7 +60,8 @@ extern V3MDAT  sydata;
  *
  *      (C)2006-12-25 Johan Kjellander
  *
- *      2007-01-09 pborder, piso,   Sören L
+ *      2007-01-09 pborder, piso,Sören L
+ *      2007-09-13 WIDTH for dims, J.Kjellander
  *
  ******************************************************!*/
 {
@@ -69,9 +70,8 @@ extern V3MDAT  sydata;
    int       k;
    DBptr     la;
    DBetype   type;
-   char      buf[MAXMETA];
+   char      str[V3STRLEN+1],buf[MAXMETA];
    short     status,curpen;
-   char      str[V3STRLEN+1];
    double    width,curwdt,tmpcn;
    DBId      dummy;
    DBAny     gmpost;
@@ -79,6 +79,7 @@ extern V3MDAT  sydata;
    DBSeg    *segptr,arcseg[4];
    DBSegarr *pborder,*piso;
    DBfloat   xhcrds[4*GMXMXL];
+   DBCsys    csy;
    METADEF   md;
 
 /*
@@ -88,8 +89,8 @@ extern V3MDAT  sydata;
     if ( 3*tmpcn < 100 ) WPset_cacc(3*tmpcn);
     else                 WPset_cacc(100.0);
 /*
-***Current scale factor in this "window" cant be established
-***at this moment since there is no "window" and we don't know
+***Current scale factor in this "window" can't be established
+***in this situation since there is no "window" and we don't know
 ***what size the final output media will be. A good guess is that
 ***the "window" is a paper size A4 or A3, say 400 mm in X-dir.
 ***Point and Csys size is not scaled.
@@ -205,43 +206,48 @@ loop:
 */
         case TXTTYP:
         DBread_text(&gmpost.txt_un,str,la);
-        WPpltx(&gmpost.txt_un,str,&k,x,y,z,a);
+        WPpltx(&gmpost.txt_un,(unsigned char *)str,&k,x,y,z,a);
         width = gmpost.txt_un.wdt_tx;
         break;
 /*
 ***Linear dimension.
 */
         case LDMTYP:
-        DBread_ldim(&gmpost.ldm_un,la);
-        WPplld(&gmpost.ldm_un,&k,x,y,z,a);
+        DBread_ldim(&gmpost.ldm_un,&csy,la);
+        WPplld(&gmpost.ldm_un,&csy,&k,x,y,z,a);
+        width = gmpost.ldm_un.wdt_ld;
         break;
 /*
 ***Diameter dimension.
 */
         case CDMTYP:
-        DBread_cdim(&gmpost.cdm_un,la);
-        WPplcd(&gmpost.cdm_un,&k,x,y,z,a);
+        DBread_cdim(&gmpost.cdm_un,&csy,la);
+        WPplcd(&gmpost.cdm_un,&csy,&k,x,y,z,a);
+        width = gmpost.cdm_un.wdt_cd;
         break;
 /*
 ***Radius dimension.
 */
         case RDMTYP:
-        DBread_rdim(&gmpost.rdm_un,la);    
-        WPplrd(&gmpost.rdm_un,&k,x,y,z,a);
+        DBread_rdim(&gmpost.rdm_un,&csy,la); 
+        WPplrd(&gmpost.rdm_un,&csy,&k,x,y,z,a);
+        width = gmpost.rdm_un.wdt_rd;
         break;
 /*
 ***Angular dimension.
 */
         case ADMTYP:
-        DBread_adim(&gmpost.adm_un,la);
-        WPplad(&gmpost.adm_un,scale,&k,x,y,z,a);
+        DBread_adim(&gmpost.adm_un,&csy,la);
+        WPplad(&gmpost.adm_un,&csy,scale,&k,x,y,z,a);
+        width = gmpost.adm_un.wdt_ad;
         break;
 /*
 ***Hatch.
 */
         case XHTTYP:
-        DBread_xhatch(&gmpost.xht_un,xhcrds,la);
-        WPplxh(&gmpost.xht_un,xhcrds,&k,x,y,z,a);
+        DBread_xhatch(&gmpost.xht_un,xhcrds,&csy,la);
+        WPplxh(&gmpost.xht_un,xhcrds,&csy,&k,x,y,z,a);
+        width = gmpost.xht_un.wdt_xh;
         break;
 /*
 ***Part and group.

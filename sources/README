@@ -4,19 +4,19 @@
 *    ======
 *
 *    This README-file includes information about how
-*    to build and install Varkon 1.19B from the C-
+*    to build and install Varkon 1.19C from the C-
 *    and MBS sources.
 *
-*    2007-08-04 J.Kjellander
+*    2008-03-01 J.Kjellander
 *
-*    http://www.tech.oru.se/cad/varkon 
+*    URL: http://varkon.sourceforge.net
 *
 ******************************************************************/
 
 1.  Select a directory where to install the Varkon system
     and unzip and untar the distribution file into this
     directory. The distribution file tree has a top
-    directory named varkon_1.19B. This will become
+    directory named Varkon_1.19C. This will become
     the varkon root directory, VARKON_ROOT.
 
 2.  Make sure you have read and write privileges to all
@@ -24,41 +24,56 @@
 
 3.  cd to $VARKON_ROOT/sources
 
-4.  You might need to edit the makefile named "makefile"
+4.  You might need to edit the makefile named "Makefile"
     to reflect the name of your UNIX platform. "linux" is
     default so if you have a GNU/linux system  with gcc you
     don't need to change anything.  If you are running another
     UNIX system you have to change the PLATFORM variable in the
-    makefile  accordingly.
+    makefile  accordingly. Varkon 1.19C supports linux, FreeBSD
+    and MacOSX.
 
 5.  The makefiles, by default, assume you have X11 and OpenGL
-    installed. It is not possible to build Varkon 1.19B and
+    installed. It is not possible to build Varkon 1.19C and
     later versions without X11 and OpenGL. If the compiler
     complains about missing X11/OpenGL includefiles or libs
     you must install them. If they are installed and it still
     doesn't work you might have to edit your makefile to point
     to their exact location.
 
-6.  If you want to build Varkon with support for ODBC,
+6.  The makefiles by default assume that you have TIFF libraies
+    and include files installed. If this is not the case you
+    will get an error during the build process. You can then
+    try to build the system without TIFF support by editing
+    the Makefile above. Add a comment sign "#" before the
+    line: DV3TIFF=TRUE This will build the system without TIFF
+    and you will not be able to use the print button in the
+    OpenGL window. Vector based printing using one of the
+    supplied plotter drivers will work as usual though.
+    The TIFF output uses LZW compression. If your TIFF library
+    does not support this kind of compression the system will
+    build without errors but the print button in the OpenGL
+    windows will not produce a proper TIFF output.
+
+7.  If you want to build Varkon with support for ODBC,
     follow the instructions in the file README_ODBC in the
     sources directory. See the MBS manual pages for i"ODBC
     database routines" for instructions how to communicate
     with an external database.
- 
-7.  Run make by just typing 'make' in a terminal window
+
+8.  Run make by just typing 'make' in a terminal window
     while you are positioned in the sources directory.
     Make will then build and install the new binaries. You
     might need a cup of coffe meanwhile....
 
-8.  If this doesn't work, please contact us with a description
+9.  If this doesn't work, please contact us with a description
     of your problem. If you can supply us with a printout
     from make it helps a lot.
 
-9.  Finally, follow the instructions in VARKON_ROOT/README
+10. Finally, follow the instructions in VARKON_ROOT/README
     to configure the system for your environment.
 
     Good luck,
 
-    http://www.tech.oru.se/cad/varkon 
+    The Varkon development team
 
 /**********************************************************************/

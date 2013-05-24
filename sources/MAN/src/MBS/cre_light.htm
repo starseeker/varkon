@@ -1,0 +1,139 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- cre_light - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>cre_light - Procedure</h1>
+
+<h2>Description</h2>
+
+<p>
+Creates a light source. Light sources are numbered from 0 to 7. When a new job is
+started Varkon automatically creates one light source (0) and turns it on. With
+cre_light() you can create 7 additional light sources. Once a light source is
+created you can alter it's characteristics by calling cre_light() on that light
+source again (including the default light source 0).
+</p>
+
+<p>
+Too see the effect of a light source you must turn it on. Use
+<a href="light_on.htm">light_on()</a> to turn lights on and
+<a href="light_off.htm">light_off()</a> to turn lights off.
+</p>
+
+<p>
+A light source can be configured as a distant light or a spotlight. A distant light
+is thought of as being so far away from the scene that the light rays are practically
+parallell. The direction of a distant light is given by the pos parameter ie. the same
+direction as from pos to BASIC coordinates (0,0,0). A distant light has either no spotang
+at all or a spotang equal to 180 degrees.
+</p>
+
+<p>
+A spotlight has a true position given by pos and is always aimed at spotpos. The spreading
+angle is given by spotang and should be &gt; 0 but not more than 90 degrees. A focus
+factor can be used to control the attenuation of the light from the center of the spot
+circle to its edge. A high value concentrates the light towards the center and a low value
+gives a more even distribution.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  cre_light(light, pos, spotpos, spotang, spotfocus);
+
+  int    light;
+  vector pos;
+  vector spotpos;
+  float  spotang;
+  float  spotfocus;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>light</td>
+<td>- Light number 0 - 7</td>
+</tr>
+
+<tr>
+<td>pos</td>
+<td>- Distant light from pos to (0,0,0) or true position of a spotlight</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>spotpos</td>
+<td>- The position at which the spotlight is aimed. Default = (0,0,0).</td>
+</tr>
+
+<tr>
+<td>spotang</td>
+<td>- The angle of the spot light cone (0-90) or 180 for a distant light. Default = 180.</td>
+</tr>
+
+<tr>
+<td>spotfocus</td>
+<td>- The focus factor, 0 = No focus and 100 equals full focus. Default = 0 = No focus.</td>
+</tr>
+</table>
+
+<h2>Examples</h2>
+
+<pre>
+  cre_light(0, vec(1,1,1));
+</pre>
+
+<p>
+Makes lightsource 0 a distant light shining in the direction from (1,1,1) to (0,0,0).
+</p>
+
+<pre>
+  cre_light(1, vec(100,50,0), vec(20,20,10), 25, 50);
+</pre>
+
+<p>
+Makes lightsource 1 a spotlight placed in (100,50,0) aimed at (20,20,10) with a spotangle
+of 25 degrees and 50% focus.
+</p>
+
+<pre>
+  cre_light(1, vec(100,50,0), vec(20,20,10), 180, 50);
+</pre>
+
+<p>
+Same as above but the light becomes distant because of spotang = 180. Parameters spotpos
+and spotfocus are left without notice.
+</p>
+
+<h2>Comments</h2>
+
+<p>
+The quality of images with spotlights depends on the number of triangles used by
+OpenGL to render the model. You can increase the number of triangels by increasing
+the <a href="../GUI/cacc.htm">curve accuracy factor.</a>
+</p>
+
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="get_light.htm">get_light()</a>,
+<a href="light_on.htm">light_on()</a>,
+<a href="light_off.htm">light_off()</a>,
+<a href="cre_col.htm">cre_color()</a>,
+<a href="cre_mat.htm">cre_material()</a>,
+<a href="cac_view.htm">cacc_view()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -33,16 +33,15 @@
 !*
 !***Deklaration av modul.
 !*
-   outstr(utfil,"BASIC DRAWING MODULE "+rn+"();");
+   outstr(utfil,"BASIC MODULE "+rn+"();");
    outlin(utfil); outlin(utfil);
    outstr(utfil,"BEGINMODULE"); outlin(utfil); outlin(utfil);
 !*
 !***H{mta storheter ur GM.
 !*
-   code:="F";
+   set_root_gm();
  next:
-   id:=getid(code);
-   code:="n";
+   id:=get_next_gm();
 
    if id <> #0 then
      gethdr(id,typ,nref,blnk,niv,pen,gid);

@@ -11,7 +11,7 @@
 /*     IGgmmu();         Returns number of main menu                */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -43,7 +43,7 @@ short mant = 0;                 /* Number of menus on the stack */
 static short mmain;             /* Current number of the main menu */
 
 extern MNUDAT  mnutab[];        /* All menus */
-extern short   v3mode;          /* Current system mode */
+extern short   sysmode;          /* Current system mode */
 
 /*!****************************************************************/
 
@@ -279,36 +279,33 @@ gomain:
 
         int IGgmmu()
 
-/*      Returns the number of the main menu.
+/*      Returns the number of the main menu to use.
  *
- *      In: Inget.
+ *      Return: menu number.
  *
- *      FV: menynummer.
- *
- *      (C)microform 1996-02-26  J.Kjellander
+ *      (C)2007-11-07 J.Kjellander
  *
  ****************************************************************!*/
 
   {
 
 /*
-***If mmain = 0 use the system main menu, ie. 2, 3 or 4
-***depending on v3mode. Otherwise the user has specified
+***If mmain = 0 use the system main menu, ie. 3 or 4
+***depending on sysmode. Otherwise the user has specified
 ***a custom menu in his MDF-file and then we use that.
 */
    if ( mmain == 0 )
      {
-     switch ( v3mode )
+     switch ( sysmode )
        {
-       case BAS2_MOD: return(2);
-       case BAS3_MOD: return(3);
-       case RIT_MOD:  return(4);
+       case EXPLICIT: return(1);
+       case GENERIC:  return(2);
        default:       return(-1);
        }
      }
 /*
-***Om mmain <> 0 har denna huvudmeny angetts som huvudmeny
-***i den aktuella menyfilen.  main_menu = nnn.
+***If mmain <> 0 the mani menu number has explicitly been
+***defined by the user in his menufile.  main_menu = nnn.
 */
    else return(mmain);
   }

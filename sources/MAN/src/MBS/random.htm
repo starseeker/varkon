@@ -1,0 +1,60 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- random - Function})
+define({_INDEXLINK_},{<a href="mathindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>random - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Generates a pseudo random number x in the range 0.0 &lt;= x &lt;= 1.0.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  x:=random(seed);
+
+  float x;
+  float seed;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<p>None.</p>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>seed</td>
+<td>- A start value 0.0 &lt;= seed &lt;= 1.0</td>
+</tr>
+</table>
+
+<h2>Return value</h2>
+
+<p>
+A random FLOAT value x in the range 0.0 &lt;= x &lt;= 1.0.
+
+<h2>Comment</h2>
+
+<p>
+If no seed is given, each call to random() will return a new random value based
+on a default seed of zero. If a seed is supplied in the first call to random(),
+consecutive calls (without seed) will return a different series of random
+numbers. Note that a seed should only be supplied once as each call to random()
+with the same seed will return the same random number.
+</p>
+
+<p>
+For a given seed, random() will always return the same series of random numbers.
+One way to make random "more random" is to use something "really random" as a seed.
+The time of the day is one possibility.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,4 +1,4 @@
-/*!******************************************************************/
+/********************************************************************/
 /*  File: newrout.h                                                 */
 /*  ===============                                                 */
 /*                                                                  */
@@ -28,15 +28,13 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C) J. Kjellander, �ebro university                            */
-/*                                                                  */
 /********************************************************************/
 
 #ifdef VARKON
 
 {"CRE_MATERIAL",      ST_PROC,     FALSE,  ST_ORD,    VCRMAT},
-{"LIGHT_VIEW",        ST_PROC,     FALSE,  ST_ORD,    VLTVIEW},
-{"GET_COLOR",         ST_PROC,     FALSE,  ST_ORD,    VGTCOL},
+{"CRE_LIGHT",         ST_PROC,     FALSE,  ST_ORD,    VLTVIEW},
+{"GET_COLOR",         ST_FUNC,     FALSE,  ST_ORD,    VGTCOL},
 {"CRE_COLOR",         ST_PROC,     FALSE,  ST_ORD,    VCRCOL},
 {"LIGHT_ON",          ST_PROC,     FALSE,  ST_ORD,    VLTON},
 {"LIGHT_OFF",         ST_PROC,     FALSE,  ST_ORD,    VLTOFF},
@@ -124,6 +122,11 @@
 {"GET_LEVEL",         ST_PROC,     FALSE,  ST_ORD,    VGTLEVEL},
 {"ACT_LEVEL",         ST_FUNC,     FALSE,  ST_ORD,    VACLEVEL},
 {"NAME_LEVEL",        ST_PROC,     FALSE,  ST_ORD,    VNMLEVEL},
+{"ACT_SVN_VERS",      ST_FUNC,     FALSE,  ST_ORD,    VASVNVERS},
+{"GET_MATERIAL",      ST_FUNC,     FALSE,  ST_ORD,    VGETMAT},
+{"GET_LIGHT",         ST_FUNC,     FALSE,  ST_ORD,    VGETLIGHT},
+{"RGB_TO_HSV",        ST_PROC,     FALSE,  ST_ORD,    VRGBHSV},
+{"HSV_TO_RGB",        ST_PROC,     FALSE,  ST_ORD,    VHSVRGB},
 /*
 ***The global symbol table ends here.
 */

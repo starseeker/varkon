@@ -1,0 +1,139 @@
+changequote({,})
+define({_TITLE_},{Release notes 1.19B})
+define({_SUBTITLE_},{- index})
+define({_INDEXLINK_},{<a href="index.htm">Release notes</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>Release notes for Varkon 1.19B</h1>
+
+<p>
+Varkon 1.19B is a big step towards a completely new graphical user
+interface (GUI) with new functionality and new &quot;feel and look&quot;.
+The new GUI is based on new dialog windows and new types of graphical
+windows. Varkon 1.19B is released in order to get feedback on the
+changes made so far. We hope to continue the development of the new
+GUI and aim on a new major release Varkon 2.0 later on. This means
+that Varkon 1.19B will only be available for Unix/Linux. We do not
+plan to release 1.19B for Microsoft Windows. It also means that the
+documentation is not 100% updated. We do feel however that 1.19B is
+much easier to use than previous versions of Varkon and we hope that
+you will not hesitate to try it out. Please give us all feedback you
+can, it's a great help in the development.</p>
+
+<p>Here are some features of the new GUI:</p>
+
+<ul>
+<LI><P STYLE="margin-bottom: 0in">A new color theme with different
+colors for button's, backgrounds and highlighted buttons. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">A new menu window with buttons for
+different ways to enter positions etc. <A HREF="menu.jpg">(click
+here for screen dump)</A> 
+</P>
+<LI><P STYLE="margin-bottom: 0in">A new view dialog window with
+enhanced view handling. <A HREF="views.jpg">(click here for screen
+dump)</A> 
+</P>
+<LI><P STYLE="margin-bottom: 0in">A new grid dialog window to set,
+blank or unblank the grid. <A HREF="grid.jpg">(click here for screen
+dump)</A> 
+</P>
+<LI><P STYLE="margin-bottom: 0in">A new levels dialog window to
+list, name, blank or unblank levels. <A HREF="levels.jpg">(click
+here for screen dump)</A> 
+</P>
+<LI><P STYLE="margin-bottom: 0in">A new attributes dialog window to
+set all active attributes. <A HREF="attributes.jpg">(click here for
+screen dump)</A> 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Tooltips for all buttons and icons
+in the new windows 
+</P>
+<LI><P STYLE="margin-bottom: 0in">A new print dialog with
+easy_to_use printer configuration/setup 
+</P>
+<LI><P STYLE="margin-bottom: 0in">A new create part dialog</P>
+<LI><P STYLE="margin-bottom: 0in">An optional Message_and_Command
+window that displays Varkon messages and can be used to execute
+macro's. <A HREF="Swheel1.jpg">(click here for screen dump)</A>
+<A HREF="Swheel2.jpg">(here is another picture with the
+Message_and_Command window pulled up to show the command history)</A></P>
+<LI><P STYLE="margin-bottom: 0in">A new interactive graphical window
+(WPRWIN) based on OpenGL</P>
+<LI><P STYLE="margin-bottom: 0in">Enhanced graphical window (WPGWIN)
+window based on X-Windows with 2D- or 3D-grid that can be used as a
+help to enter positions. The 3D-grid is automatically aligned to the
+XY-plane of the currently active coordinate system</P>
+<LI><P STYLE="margin-bottom: 0in">Surfaces can be visualized shaded
+with light or as wireframes</P>
+<LI><P STYLE="margin-bottom: 0in">New graphical attributes NULINES
+and NVLINES control the number of curves used for wireframe display
+of surfaces</P>
+<LI><P STYLE="margin-bottom: 0in">New graphical attributes PFONT and
+PSIZE control the font and size of points</P>
+<LI><P STYLE="margin-bottom: 0in">Buttons replaced with icons
+(contributed by Maciek) in graphical windows</P>
+</ul>
+
+<p>Varkon 1.19B also includes:</p>
+
+<ul>
+<li><P STYLE="margin-bottom: 0in">A new text oriented file format
+for JOB-files. JOB-files are now compatible over all platforms. The
+new JOB-files are however not compatible with earlier versions of
+Varkon. This means that if you load a job created with an earlier
+version of Varkon all JOB settings (views, levels etc) you may have
+done will be reset to their default values.</P>
+
+<LI><P STYLE="margin-bottom: 0in">A new plotter/printer
+configuration system. Configuration is interactive and settings are
+stored in a text file.</P>
+
+<LI><P STYLE="margin-bottom: 0in">Basic support for trimmed
+surfaces. Trimcurves are either cubic/rational or NURBS curves in
+the UV-plane of the surface. A new MBS routine CUR_COMP_ARR can be
+used to create trimcurves. A new MBS routine SUR_TRIM_USRDEF can be
+used to create a surface with trimcurves.</P>
+</ul>
+
+<p>Here are some things we have removed from the system:</p>
+
+<UL>
+<LI><P STYLE="margin-bottom: 0in">Support for &quot;Drawing scale&quot;.
+MBS routine ACT_DSCL is removed. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Support for old type
+Tektronix/VT100 graphical displays. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">MBS routine SHADE_VIEW is replaced
+by the functionality of the new graphics window. 
+</P>
+<LI><P>MBS routine MATERIAL_VIEW changes to CRE_MATERIAL in order to
+be analogous with CRE_PEN.</P>
+</UL>
+
+<p>And finally a few known bugs:</p>
+
+<UL>
+<LI><P STYLE="margin-bottom: 0in">The HIDE function (hidden line
+removal) is not working. This will be fixed in the next release.</P>
+<LI><P STYLE="margin-bottom: 0in">User defined materials may be
+defined but have no effect. This will be fixed in the next release.</P>
+<LI><P STYLE="margin-bottom: 0in">User defined light sources may be
+defined but have no effect. This will be fixed in the next release.</P>
+</UL>
+
+<p><BR></p>
+
+<p>Good Luck<BR><BR>
+The CAD research group<BR>
+Department of Technology<BR>
+Orebro University<BR>
+S-70182 Orebro<BR>
+SWEDEN
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,0 +1,72 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- get_light - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>get_light - Function</h1>
+
+
+<h2>Description</h2>
+
+<p>
+Returns information about a light source.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  status:=get_light(light, on, intensity, mode);
+
+  int   light;
+  int   on;
+  float intensity;
+  int   mode;
+  int   status;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>light</td>
+<td>- The lightsource number. A number from 0 to 7.</td>
+</tr>
+
+<tr>
+<td>on</td>
+<td>- Returns 1 if the lightsource is turned on, or 0 if turned off.</td>
+</tr>
+
+<tr>
+<td>intensity</td>
+<td>- Returns the intensity of the lightsource, 0 - 100%.</td>
+</tr>
+
+<tr>
+<td>mode</td>
+<td>- Returns the transformation mode. 0 = Static, 1 = Follow_model.</td>
+</tr>
+</table>
+
+<h2>Return value</h2>
+
+<p>
+Returns 0 if the lightsource is defined and -1 if not defined.
+</p>
+
+<h2>Comments</h2>
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="cre_light.htm">cre_light()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

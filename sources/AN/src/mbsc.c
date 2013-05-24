@@ -4,7 +4,7 @@
 *    ======
 *
 *    This file is part of the VARKON Analyzer Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    main function for the MBS analyser.
 *
@@ -26,8 +26,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    Updated 2005-08-02 Johan Kjellander, Örebro university
 *
 ***********************************************************************/
 
@@ -57,12 +55,12 @@ V3MDAT sydata = {                  /* System constants */
                 1000,              /* Serienummer      */
                 1,                 /* Version          */
                 19,                /* Revision         */
-                'B',               /* "upplaga"        */
+                'C',               /* "upplaga"        */
                 0, 0, 0, 0, 0,     /* tider            */
                 0, 0, 0, 0, 0,
                 "",                /* Sysname          */
-                "",                /* Dummy            */
-                BAS_MOD,           /* opmode           */
+                "",                /* Not used         */
+                GENERIC,           /* opmode           */
                 0,                 /* Skyddskod MN860610 */
                 "",                /* Release          */
                 "",                /* Version          */
@@ -70,7 +68,7 @@ V3MDAT sydata = {                  /* System constants */
                 };
 
 char jobdir[] = {"./"};            /* output file directory */
-char amodir[] = {"./"};            /* dummy, 4f */
+char libdir[] = {"./"};            /* dummy, 4f */
 static bool dbgflg = FALSE;        /* debug flag */
 short modtyp;                      /* module type 2 = _2D, 3 = _3D */
 short modatt;                      /* module attribute LOCAL, GLOBAL etc. */
@@ -80,11 +78,11 @@ static void init_sydata();
 
 /*!******************************************************/
 
-        int main(
-        int argc, 
+        int   main(
+        int   argc,
         char *argv[])
 
-/*      MBS analyser main function
+/*      MBS compiler main entry point.
  *      analyses the MBS source file specified by 1:st argument.
  *
  *      *.MBS --> ANALYZER -- > *.MBO, object file (if no severe errors)
@@ -98,6 +96,7 @@ static void init_sydata();
  *      (C)microform ab 1985-09-17 Mats Nelson
  *
  *      1999-04-27 Rewritten, R. Svedin
+ *      2007-12-23 2.0, J.Kjellander
  *
  ******************************************************!*/
 
@@ -282,7 +281,7 @@ static void init_sydata();
              printf("%s : illegal -pm value\n",argv[0]);
              exit(-1);
              }
-           else sysize.pm = ival;
+           else sysize.pm = ival*1024;
            }
            break;
 /*
@@ -290,8 +289,8 @@ static void init_sydata();
 */
            case 'V':
            case 'v':
-           printf("VARKON-3D/S %d.%d%c Serial number : %d\n",
-             sydata.vernr,sydata.revnr,sydata.level,sydata.sernr);
+           printf("VARKON %d.%d%c\n",
+             sydata.vernr,sydata.revnr,sydata.level);
            exit(V3EXOK);
            break;
 /*

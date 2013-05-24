@@ -1,0 +1,183 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- cre_button - Function})
+define({_INDEXLINK_},{<a href="dialindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>cre_button - Function</h1>
+
+<h2>Description<h2>
+
+<p>
+Creates a button in a dialogue window. Buttons without frames ( frame = 0 ) are regarded
+as simple text labels. A button without frame and with str1 = str2 = &quot;&quot; (null
+string) appear as simple rectangles and may be used for decoration.
+</p>
+
+<p>
+Buttons with frame may toggle between two states if str1 is different from str2 or may not
+toggle if str1 = str2.
+</p>
+
+<p>
+Clicking a button with frame generates an event that will be catched if waited for by the
+wait_win() routine.
+</p>
+
+
+<h2>Syntax</h2>
+
+<pre>
+  cre_button(window, pos, width, height, frame, str1, str2, font, bcolor, tcolor);
+
+  int    window;
+  vector pos;
+  float  width;
+  float  height;
+  float  frame;
+  string str1*132;
+  string str2*132;
+  string font*132;
+  int    bcolor;
+  int    tcolor;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>window</td>
+<td>- Identity of parent dialog window</td>
+</tr>
+
+<tr>
+<td>pos</td>
+<td>- Upper left coordinates relative to the parent window</td>
+</tr>
+
+<tr>
+<td>width</td>
+<td>- Horisontal size in pixels</td>
+</tr>
+
+<tr>
+<td>height</td>
+<td>- Vertical size in pixels</td>
+</tr>
+
+<tr>
+<td>frame</td>
+<td>- Frame width in pixels</td>
+</tr>
+
+<tr>
+<td>str1</td>
+<td>- Default button text</td>
+</tr>
+
+<tr>
+<td>str2</td>
+<td>- Toggle text</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>font</td>
+<td>- Textfont (UNIX, with Microsoft Windows font = Size, see below)</td>
+</tr>
+
+<tr>
+<td>bcolor</td>
+<td>- Background color (UNIX only, not supported on Microsoft Windows)</td>
+</tr>
+
+<tr>
+<td>tcolor</td>
+<td>- Text color (UNIX only, not supported on Microsoft Windows)</td>
+</tr>
+</table>
+
+
+<h2>Return value</h2>
+
+<p>An INT holding the id of the button created.</p>
+
+<h2>Example</h2>
+
+<pre>
+  button_id:=cre_button(dia_win, vec(10,20), 5, 5, 0, &quot;&quot;,&quot;&quot;,&quot;&quot;,2);
+</pre>
+
+<p>
+Creates a rectangle 5 by 5 pixels in poisition X=10, Y=20 filled with color number 2,
+usually red. No text is displayed.
+</p>
+
+<pre>
+  button_id:=cre_button(dia_win, vec(10,20), 5, 5, 0, &quot;Text&quot;,&quot;&quot;);
+</pre>
+
+<p>
+Creates a text label.
+</p>
+
+<pre>
+  button_id:=cre_button(dia_win, vec(10,20), 5, 5, 1, &quot;OKEY&quot;, &quot;OKEY&quot;);
+</pre>
+
+<p>
+Creates a non toggling button.
+</p>
+
+<pre>
+  button_id:=cre_button(dia_win, vec(10,20), 5, 5, 1, &quot;ON&quot;, &quot;OFF&quot;);
+</pre>
+
+<p>
+Creates a toggle button.
+</p>
+
+<h2>Comments</h2>
+
+<p>
+The Microsoft Windows implementation of VARKON is different from the UNIX implementation
+when it comes to fonts for text. In UNIX where X-Windows (X11) is used fonts of different
+sizes have different names but in Microsoft Windows a font with a certain name may be
+displayed in many different sizes.
+</p>
+
+<br>
+The font parameter in cre_button() is treated as the name of a X11 font if UNIX is used
+but treated as the size of the currently active font set by VARKON.INI if Windows is used.
+</p>
+
+<p>
+Frame width can be zero or one but the UNIX version of VARKON also honours values greater
+than one to create thicker frames if needed.
+</p>
+
+<p>
+The Microsoft Windows implementation of VARKON currently does not support parameters
+bcolor and tcolor.
+</p>
+
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="cre_fbut.htm">cre_fbutton()</a>,
+<a href="cre_win.htm">cre_win()</a>,
+<a href="cre_edit.htm">cre_edit()</a>,
+<a href="cre_icon.htm">cre_icon()</a>,
+<a href="cre_fico.htm">cre_ficon()</a>,
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

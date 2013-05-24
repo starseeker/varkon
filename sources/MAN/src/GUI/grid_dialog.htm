@@ -1,0 +1,56 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Grid})
+define({_INDEXLINK_},{<a href="gwins.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The grid dialog</h1>
+
+<p>
+In Varkon, you can use a 2D grid to simplify input of positions.
+If you display the grid, you will see the grid as a rectangular pattern
+of small grey dots. The space between the dots is set in model units.
+This means that if you zoom the model you will zoom the grid as well.
+You will therefore only see the grid if the display scale is within
+reasonable limits. The distance between dots (DX, DY) defaults to 10 mm
+in both directions so with the scale set to 1.0 you should have no
+problems seeing it.
+</p>
+
+<p>
+The grid is planar and always oriented in the XY-plane
+of the currently active coordinate system. To use the grid, activate the
+<code>grid</code> alternative in the lower section of the menu window and
+then use the mouse to enter your position. When you press the left mouse
+button, Varkon will snap to the closest dot in the grid.
+</p>
+
+<p>
+In Varkon 1.19 grid is only supported in the old type graphics window
+based on X11.
+</p>
+
+<img class="center" src="grid_dialog.jpg"></img>
+
+<p>
+Use <code>Show grid</code> to display the grid.
+Use <code>Hide grid</code> to make the grid invisible.
+</p>
+
+<p>
+Use <code>Move</code> to move the grid to any position in the XY plane of
+the curently active coordinate system. Use <code>Edit</code> to set the
+distance between grid dots.
+</p>
+
+<p>
+To close the grid dialog press <code>Close</code>.
+To display this help press <code>Help</code> 
+</p>
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

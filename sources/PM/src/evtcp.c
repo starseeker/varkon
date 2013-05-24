@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    evtcco();      Evaluerar TCP_CONNECT
 *    evtcli();      Evaluerar TCP_LISTEN

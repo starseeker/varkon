@@ -3,7 +3,7 @@
 #  Compile the MBS source modules and install the
 #  MBO-files in $VARKON_ROOT/lib
 #
-#  2004 Sören Larsson, Örebro University
+#  2008-02-27 J.Kjellander
 #
 #####################################################################
 
@@ -11,11 +11,13 @@
 
 distr :
 	mkdir -p ../../lib
-	@make -C analysis   -f Makefile
-	@make -C dxf   -f Makefile
-	@make -C edit   -f Makefile
-	@make -C fonts  -C fedit  -f Makefile
-	@make -C iges   -f Makefile
-	@make -C macro   -f Makefile
-	@make -C stl   -f Makefile
+	$(MAKE) -C analysis -f Makefile
+	$(MAKE) -C dxf      -f Makefile
+	$(MAKE) -C edit     -f Makefile
+	$(MAKE) -C fonts    -C fedit  -f Makefile
+	$(MAKE) -C iges     -f Makefile
+	$(MAKE) -C macro    -f Makefile
+	$(MAKE) -C stl      -f Makefile
 
+clean :
+	rm -f -r ../../lib

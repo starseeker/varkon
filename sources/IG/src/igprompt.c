@@ -12,7 +12,7 @@
 /*    *IGqema();         Return current t-string                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -123,7 +123,7 @@ static char  pstack[MXMLEV+1][81];  /* Prompt stack */
 ***använder vi winpac:s meddelandefönster.
 */
 #ifdef UNIX
-    if ( mode == IG_MESS ) WPwlma(s);
+    if ( mode == IG_MESS ) WPaddmess_mcwin(s,WP_MESSAGE);
     return(0);
 #endif
 

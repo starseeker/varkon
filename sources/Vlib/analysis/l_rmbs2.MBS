@@ -42,7 +42,7 @@
 !*
 !***Deklaration av modul.
 !*
-   outstr(utfil,"BASIC DRAWING MODULE "+rn+"();");
+   outstr(utfil,"BASIC MODULE "+rn+"();");
    outlin(utfil); outlin(utfil);
    outstr(utfil,"   FLOAT segdat(100,4,4);");
    outlin(utfil); outlin(utfil);
@@ -52,7 +52,7 @@
 !*
    snr:="#0";
 
-   set_root_gm();   
+   set_root_gm();
  next:
    id:=get_next_gm();
 
@@ -84,7 +84,7 @@
 !*
      if typ=1 then
        getpoi(id,p1);
-       snr:="#"+str(val(substr(snr,2))+1,-1,0);
+       snr:="#"+str(ival(substr(snr,2))+1,-1,0);
        outstr(utfil,"   poi_free("+snr); 
        outstr(utfil,",vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+"));");
        outlin(utfil);
@@ -93,7 +93,7 @@
 !*
      elif typ=2 then
        getlin(id,lf,ld,p1,p2);
-       snr:="#"+str(val(substr(snr,2))+1,-1,0);
+       snr:="#"+str(ival(substr(snr,2))+1,-1,0);
        if lf<>actlf then
          outstr(utfil,"   set(LFONT="+str(lf,-1,0)+");");
          outlin(utfil); actlf:=lf;
@@ -111,7 +111,7 @@
 !*
      elif typ=4 then
        getarc(id,af,ad,p1,r,v1,v2,ns,arcseg);
-       snr:="#"+str(val(substr(snr,2))+1,-1,0);
+       snr:="#"+str(ival(substr(snr,2))+1,-1,0);
        if af<>actaf then
          outstr(utfil,"   set(AFONT="+str(af,-1,0)+");");
          outlin(utfil); actaf:=af;
@@ -129,7 +129,7 @@
 !*
      elif typ=8 then
        getcurh(id,cf,cd,ns_geo,ns_gra);
-       snr:="#"+str(val(substr(snr,2))+1,-1,0);
+       snr:="#"+str(ival(substr(snr,2))+1,-1,0);
        if cf<>actcf then
          outstr(utfil,"   set(CFONT="+str(cf,-1,0)+");");
          outlin(utfil); actcf:=cf;
@@ -198,7 +198,7 @@
 !*
      elif typ=32 then
        gettxt(id,p1,tf,th,tb,tl,v1,txt);
-       snr:="#"+str(val(substr(snr,2))+1,-1,0);
+       snr:="#"+str(ival(substr(snr,2))+1,-1,0);
        if tf<>acttf then
          outstr(utfil,"   set(TFONT="+str(tf,-1,0)+");");
          outlin(utfil); acttf:=tf;
@@ -223,7 +223,7 @@
 !***L{ngdm}tt.
 !*
      elif typ=128  or  typ=256 then
-       snr:="#"+str(val(substr(snr,2))+1,-1,0);
+       snr:="#"+str(ival(substr(snr,2))+1,-1,0);
        if typ = 128 then
          getldm(id,p1,p2,p3,dimtyp,dps,dts,dnd,auto);
        else

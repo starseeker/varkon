@@ -6,7 +6,7 @@
 *    This file is part of the VARKON Graphics  Library.
 *    URL: http://www.varkon.com
 *
-*    WPgrid_dialogue();  The grid dialogue
+*    WPgrid_dialog();    The grid dialog
 *    WPdraw_grid();      Display grid
 *    WPdelete_grid();    Undisplay grid
 *    WPget_grid();       Get grid data
@@ -38,15 +38,12 @@
 
 #include <math.h>
 
-extern DBTmat   lklsyi,*lsyspk;
+extern DBTmat lklsyi,*lsyspk;
+extern int    actfunc;            /* For the help system */
 
-#ifdef UNIX
-extern Display *xdisp;
-#endif
-
-static bool   premiere = TRUE;               /* True only for the first invocation */
-static int    iwin_x;                        /* The current position of the window */
-static int    iwin_y;                        /* even after a user move */
+static bool   premiere = TRUE;    /* True only for the first invocation */
+static int    iwin_x;             /* The current position of the window */
+static int    iwin_y;             /* even after a user move */
 
 /*
 ***Prototypes for internal functions.
@@ -56,8 +53,8 @@ static short get_resolution(WPGWIN *gwinpt, double *pdx, double *pdy);
 
 /*!******************************************************/
 
-         short WPgrid_dialogue(DBint grw_id)
-        
+         short WPgrid_dialog(DBint grw_id)
+
 /*      The grid dialogue.
  *
  *      In: grw_id = ID of WPGWIN that called us.
@@ -69,9 +66,10 @@ static short get_resolution(WPGWIN *gwinpt, double *pdx, double *pdy);
   {
    char     rubrik[81],close[81],help[81],edit[81],pos[81],
             res[81],show[81],hide[81],move[81],movett[81],
-            edittt[81],showtt[81],hidett[81],bs1[81],bs2[81];
+            edittt[81],showtt[81],hidett[81],bs1[81],bs2[81],
+            closett[81],helptt[81];
    char    *typ[20];
-   int      bh,wm_x1,wm_y1,wm_x2,wm_y2,butlen,bl1,bl2;
+   int      bh,wm_x1,wm_y1,wm_x2,wm_y2,butlen,bl1,bl2,actfunc_org;
    short    status,main_dx,main_dy,alt_x,alt_y,butlen1,butlen2,ly,lm;
    DBint    iwin_id,move_id,edit_id,show_id,hide_id,close_id,
             help_id,but_id;
@@ -84,6 +82,11 @@ static short get_resolution(WPGWIN *gwinpt, double *pdx, double *pdy);
    XEvent   event;
    XrmValue value;
 
+/*
+***Set actfunc during user action, see IG/include/futab.h.
+*/
+   actfunc_org = actfunc;
+   actfunc = 103;
 /*
 ***Is this the first time this function is called ?
 ***Initial window position.
@@ -114,19 +117,21 @@ start:
 ***Window title, position, resolution, move, edit, show, hide,
 ***close and help from the ini-file.
 */
-   if ( !WPgrst("varkon.grid.title",rubrik) )        strcpy(rubrik,"Grid");
-   if ( !WPgrst("varkon.grid.position.text",pos) )   strcpy(pos,"Position");
-   if ( !WPgrst("varkon.grid.resolution.text",res) ) strcpy(res,"Resolution");
-   if ( !WPgrst("varkon.grid.show.text",show) )      strcpy(show,"Show");
-   if ( !WPgrst("varkon.grid.show.tooltip",showtt) ) strcpy(showtt,"");
-   if ( !WPgrst("varkon.grid.hide.text",hide) )      strcpy(hide,"Hide");
-   if ( !WPgrst("varkon.grid.hide.tooltip",hidett) ) strcpy(hidett,"");
-   if ( !WPgrst("varkon.grid.move.text",move) )      strcpy(move,"Move");
-   if ( !WPgrst("varkon.grid.move.tooltip",movett) ) strcpy(movett,"");
-   if ( !WPgrst("varkon.grid.edit.text",edit) )      strcpy(edit,"Edit");
-   if ( !WPgrst("varkon.grid.edit.tooltip",edittt) ) strcpy(edittt,"");
-   if ( !WPgrst("varkon.input.close",close) )        strcpy(close,"Close");
-   if ( !WPgrst("varkon.input.help",help) )          strcpy(help,"Help");
+   if ( !WPgrst("varkon.grid.title",rubrik) )           strcpy(rubrik,"Grid");
+   if ( !WPgrst("varkon.grid.position.text",pos) )      strcpy(pos,"Position");
+   if ( !WPgrst("varkon.grid.resolution.text",res) )    strcpy(res,"Resolution");
+   if ( !WPgrst("varkon.grid.show.text",show) )         strcpy(show,"Show");
+   if ( !WPgrst("varkon.grid.show.tooltip",showtt) )    strcpy(showtt,"");
+   if ( !WPgrst("varkon.grid.hide.text",hide) )         strcpy(hide,"Hide");
+   if ( !WPgrst("varkon.grid.hide.tooltip",hidett) )    strcpy(hidett,"");
+   if ( !WPgrst("varkon.grid.move.text",move) )         strcpy(move,"Move");
+   if ( !WPgrst("varkon.grid.move.tooltip",movett) )    strcpy(movett,"");
+   if ( !WPgrst("varkon.grid.edit.text",edit) )         strcpy(edit,"Edit");
+   if ( !WPgrst("varkon.grid.edit.tooltip",edittt) )    strcpy(edittt,"");
+   if ( !WPgrst("varkon.input.close",close) )           strcpy(close,"Close");
+   if ( !WPgrst("varkon.input.close.tooltip",closett) ) strcpy(closett,"");
+   if ( !WPgrst("varkon.input.help",help) )             strcpy(help,"Help");
+   if ( !WPgrst("varkon.input.help.tooltip",helptt) )   strcpy(helptt,"");
 /*
 ***What is the 1.2*length of the longest text ?
 ***Don't include the title, it will fit anyhow.
@@ -172,21 +177,16 @@ start:
 */
    alt_x  = ly + butlen1 + ly;
    alt_y  = ly + lm;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,1,4*bh + 2*ly - 2*lm,(short)0,
-                           "","","",WP_TOPS,WP_TOPS,&but_id);
-   status = WPmcbu((wpw_id)iwin_id,alt_x-1,alt_y,1,4*bh + 2*ly - 2*lm,(short)0,
-                           "","","",WP_BOTS,WP_BOTS,&but_id);
+   WPcreate_3Dline(iwin_id,alt_x,alt_y,alt_x,alt_y + 4*bh + 2*ly - 2*lm);
 /*
 ***Position and resolution texts.
 */
    alt_x  = ly;
    alt_y  = ly;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)0,
-                           pos,pos,"",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,pos,&but_id);
 
    alt_x  = ly + butlen1 + ly + ly;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)0,
-                           res,res,"",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,res,&but_id);
 /*
 ***X, Y, DX and DY texts.
 */
@@ -199,12 +199,10 @@ start:
 
    alt_x  = (ly + butlen1 + ly - butlen)/2;
    alt_y  = ly + bh + lm;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,bl1,bh,(short)0,
-                           bs1,bs1,"",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,alt_x,alt_y,bl1,bh,bs1,&but_id);
 
    alt_y  = ly + bh + lm + bh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,bl2,bh,(short)0,
-                           bs2,bs2,"",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,alt_x,alt_y,bl2,bh,bs2,&but_id);
 
    sprintf(bs1,"DX = %g",gwinpt->grid_dx);
    bl1 = WPstrl(bs1);
@@ -215,24 +213,22 @@ start:
 
    alt_x  = ly + ly + butlen1 + (ly + butlen1 + ly - butlen)/2;
    alt_y  = ly + bh + lm;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,bl1,bh,(short)0,
-                           bs1,bs1,"",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,alt_x,alt_y,bl1,bh,bs1,&but_id);
 
    alt_y  = ly + bh + lm + bh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,bl2,bh,(short)0,
-                           bs2,bs2,"",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,alt_x,alt_y,bl2,bh,bs2,&but_id);
 /*
 ***Move and edit.
 */
    alt_x  = ly;
    alt_y += bh + lm;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)2,
                            move,move,"",WP_BGND2,WP_FGND,&move_id);
    butptr = (WPBUTT *)iwinpt->wintab[move_id].ptr;
    strcpy(butptr->tt_str,movett);
 
    alt_x  = ly + butlen1 + ly + ly;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)2,
                            edit,edit,"",WP_BGND2,WP_FGND,&edit_id);
    butptr = (WPBUTT *)iwinpt->wintab[edit_id].ptr;
    strcpy(butptr->tt_str,edittt);
@@ -241,13 +237,13 @@ start:
 */
    alt_x  = ly;
    alt_y  += bh + bh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)2,
                            show,show,"",WP_BGND2,WP_FGND,&show_id);
    butptr = (WPBUTT *)iwinpt->wintab[show_id].ptr;
    strcpy(butptr->tt_str,showtt);
 
    alt_x  = ly + butlen1 + ly + ly;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen1,bh,(short)2,
                            hide,hide,"",WP_BGND2,WP_FGND,&hide_id);
    butptr = (WPBUTT *)iwinpt->wintab[hide_id].ptr;
    strcpy(butptr->tt_str,hidett);
@@ -256,21 +252,22 @@ start:
 */
    alt_x  = main_dx/8;
    alt_y  += bh + bh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,6*main_dx/8,1,(short)0,
-                           "","","",WP_TOPS,WP_TOPS,&but_id);
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y-1,6*main_dx/8,1,(short)0,
-                           "","","",WP_BOTS,WP_BOTS,&but_id);
+   WPcreate_3Dline(iwin_id,alt_x,alt_y,alt_x + 6*main_dx/8,alt_y);
 /*
 ***Close and help.
 */
    alt_x  = ly;
    alt_y += bh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen2,bh,(short)3,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen2,bh,(short)3,
                            close,close,"",WP_BGND2,WP_FGND,&close_id);
+   butptr = (WPBUTT *)iwinpt->wintab[close_id].ptr;
+   strcpy(butptr->tt_str,closett);
 
    alt_x  = main_dx - ly - butlen2;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen2,bh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen2,bh,(short)2,
                            help,help,"",WP_BGND2,WP_FGND,&help_id);
+   butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
+   strcpy(butptr->tt_str,helptt);
 /*
 ***Show the dialogue.
 */
@@ -377,9 +374,10 @@ update:
    WPwdel(iwin_id);
    goto start;
 /*
-***Time to exit. Remeber the current position.
+***Time to exit. Reset global actfunc. Remeber current position.
 */
 exit:
+   actfunc = actfunc_org;
    WPgtwp(iwinpt->id.x_id,&wm_x2,&wm_y2);
    iwin_x = iwin_x + wm_x2 - wm_x1;
    iwin_y = iwin_y + wm_y2 - wm_y1;
@@ -671,13 +669,13 @@ exit:
 */
    if ( gwinpt->grid_dx <= 0.0 )
      {
-     WPwlma("Illegal grid dx !");
+     WPaddmess_mcwin("Illegal grid dx !",WP_MESSAGE);
      return;
      }
 
    if ( gwinpt->grid_dy <= 0.0 )
      {
-     WPwlma("Illegal grid dy !");
+     WPaddmess_mcwin("Illegal grid dy !",WP_MESSAGE);
      return;
      }
 /*
@@ -795,7 +793,7 @@ exit:
    dy_y = gridmat.g22*gwinpt->grid_dy;
 /*
 ***If the distance between gridpoints as seen on the screen is
-***less than a few pixels (8), there is no meaning to display the grid.
+***less than a few pixels (5), there is no meaning to display the grid.
 */
    ix1 = gwinpt->vy.k1x + gwinpt->vy.k2x*xs;
    iy1 = gwinpt->vy.k1y + gwinpt->vy.k2y*ys;
@@ -804,9 +802,9 @@ exit:
    idx = ix2 - ix1;
    idy = iy2 - iy1;
 
-   if ( (pix_dx=SQRT(idx*idx + idy*idy)) < 8.0 )
+   if ( (pix_dx=SQRT(idx*idx + idy*idy)) < 5.0 )
      {
-     WPwlma("Grid dx too small !");
+     WPaddmess_mcwin("Grid dx too small !",WP_MESSAGE);
      return;
      }
 
@@ -815,9 +813,9 @@ exit:
    idx = ix2 - ix1;
    idy = iy2 - iy1;
 
-   if ( SQRT(idx*idx + idy*idy) < 8.0 )
+   if ( SQRT(idx*idx + idy*idy) < 5.0 )
      {
-     WPwlma("Grid dy too small !");
+     WPaddmess_mcwin("Grid dy too small !",WP_MESSAGE);
      return;
      }
 /*
@@ -1052,8 +1050,7 @@ restart:
 ***Get DX and DY values.
 */
 loop:
-    IGptma(45,IG_INP);
-    status = IGmsip(psarr,isarr,dsarr,ml,(short)2);
+    status = IGmsip(IGgtts(45),psarr,isarr,dsarr,ml,(short)2);
     IGrsma();
     if ( status < 0 ) return(status);
 /*

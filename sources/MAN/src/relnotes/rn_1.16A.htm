@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>VARKON - A Parametric CAD-tool</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
+	<META NAME="AUTHOR" CONTENT="Johan Kjellander">
+	<META NAME="CREATED" CONTENT="20070816;13092700">
+	<META NAME="CHANGEDBY" CONTENT="Johan Kjellander">
+	<META NAME="CHANGED" CONTENT="20070823;10330800">
+	<META NAME="DESCRIPTION" CONTENT="The homepage of the VARKON system">
+	<META NAME="KEYWORDS" CONTENT="CAD, parametric design, geometric modeling, variation, visualization">
+	<META HTTP-EQUIV="expires" CONTENT="Tue, 10 Aug 1996 14:26:12 CET">
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P ALIGN=RIGHT><A HREF="http://sourceforge.net/"><IMG SRC="http://sflogo.sourceforge.net/sflogo.php?group_id=195464&amp;type=4" NAME="graphics1" ALT="SourceForge.net Logo" ALIGN=BOTTOM WIDTH=125 HEIGHT=37 BORDER=0></A>
+</P>
+
+<HR WIDTH="100%"></P></CENTER>
+
+<CENTER><P>
+<B><FONT SIZE=+1>Release notes for VARKON version 1.16A </FONT></B></P></CENTER>
+
+<P>A minor bug in the MBS-routine cur_comp() has been corrected.</P>
+
+<P>A minor bug in the MBS-routine add_mbs() has been corrected.</P>
+
+<P>Max width of list windows has been increased from 80 characters to 132.</P>
+
+<P>VARKON now supports inclusion of two different ini-files at startup.
+This feature can be used to load an application specific ini-file &quot;on
+top&quot; of the standard ini-file delivered with the system. Resources
+from both files are merged and a resource defined in the second file rules
+out a resource with the same name defined in the first file.</P>
+
+<P>VARKON now supports automatic execution of 3 different MACRO modules
+when 1: a job is loaded, 2: a new job is created and 3: VARKON exits from
+a job. The names of the modules are defined through the following resources:</P>
+
+<OL>
+<LI>&quot;varkon.init_macro&quot; in UNIX or just &quot;init_macro&quot;
+in Windows. If the resource is defined VARKON will automatically execute
+this MACRO module each time an old job is loaded or a new job is created.</LI>
+
+<LI>&quot;varkon.newjob_macro&quot; in UNIX or just &quot;newjob_macro&quot;
+in Windows. If the resource is defined VARKON will automatically execute
+this MACRO module only when a new job is created.</LI>
+
+<LI>&quot;varkon.exit_macro&quot; in UNIX or just &quot;exit_macro&quot;
+in Windows. If the resource is defined VARKON will automatically execute
+this MACRO module each time VARKON exits from a job.</LI>
+</OL>
+
+<P>The Mesa 3D Graphics library modules (OpenGL) distributed with VARKON
+for Linux have been updated to version 2.6 which are faster than version
+2.2 distributed with earlier versions of VARKON.</P>
+
+<P>A bug related to the ZOOM-function in VARKON95 for Windows95/NT has
+been corrected. Sometimes the mouse cursor would not reach the entire graphics
+window.</P>
+
+<P>Preferred color- and Z-depth for shading with OpenGL can now be set
+through resources in the ini-file. varkon.shade.redbits, varkon.shade.greenbits,
+varkon.shade.bluebits and varkon.shade.zbits.</P>
+
+<P>A new MBS-routine GET_POINTER() returns the position of the mouse immediately
+without waiting for user action.</P>
+
+<P>A new MBS-routine IDENT_2() enables you to interactively select all
+entities inside or outside a &quot;rubber band&quot; rectangle.</P>
+
+<P>A new MBS-routine HIGHLIGHT() can be used to highlight or unhighlight
+selected entities.</P>
+
+<P>A new MBS-routine POS_2() can be used to enter 2 positions in model
+space using the mouse with &quot;rubber banding&quot;. A similar routine
+SCREEN_2() returns 2 positions relative to the window (pixels).</P>
+
+<P>The postscript driver now takes a new option &quot;-bw&quot; which forces
+the output to become truly black and white. This is useful if you have
+a model displayed with color but want to print it without color. Some non
+color postscript printers emulate color by using grayscales which may produce
+funny results. Even if you have a color printer it might sometimes be useful
+to get truly black and white output.</P>
+
+<P>Entering &quot;free hand&quot; positions with the pointer (mouse) is
+now possible also in 3D. The Z-coordinate is taken from the intersection
+of the Z-axis of the current view and the XY-plane of the currently active
+coordinate system.</P>
+
+<P>A new MBS-routine to faciliate interactive filename selction and input
+has been added. INFNAME() displays a list of files in a specified directory
+and lets the user make a selection with the mouse or enter a name from
+the keyboard. Wildcards may be used to restrict what files to display.</P>
+
+<P>A minor bug in the MBS routine get_next_gm() has been corrected. Part-
+or group-name searching with wildcards on rare occasions did not work correctly.</P>
+
+<P>The WIDTH attribute introduced in VARKON 1.15C may now also be used
+on points and text.</P>
+
+<P>A new MACRO procedure LOAD_PM() makes it possible to load a module from
+disc into PM and thus replace the active module.</P>
+
+<P>A minor bug in the MBS routine DEL_MBS() has been corrected. If a global
+ref was used the statement was not deleted.</P>
+
+<P>A total of 13 new interactive functions have been added to create curves,
+surfaces and transformations that were previousley only available through
+MBS. The create-curve menu now also supports CUR_TRIM, CUR_ISO, CUR_SIL
+and CUR_APPROX. The create-surface menu now also supports SUR_CONIC, SUR_TRIM,
+SUR_COMP, SUR_APPROX and SUR_EXDEF. A new menu create-tcopy includes TFORM_MOVE,
+TFORM_ROTL, TFORM_MIRR and TCOPY. Although some of these functions are
+primarily intended for MBS programmers they may be handy to have also in
+the interactive system.</P>
+
+<P>A minor bug in the X-Windows version of the user interface has been
+corrected. International 8-bit characters entered from the keyboard were
+sometimes mapped to 7-bit codes ie &quot;&aring;&quot; became &quot;{&quot;
+etc.</P>
+
+<P>A new geometrical routine ALL_INT_LIN_MSUR() has been added to MBS.
+Basically the same as the old &quot;raytracing&quot;- routine ALL_INT_LIN_SUR()
+but designed to operate on a set of surfaces instead of a single surface.
+Faster than calling ALL_INT_LIN_SUR() individually for each surface. All
+the raytracing-code has bee overlooked with respect to speed and now executes
+10% - 30% faster than in previous versions of VARKON.</P>
+
+<P>The NORM()-function in MBS may now also be used on b_planes and coordinate
+systems.</P>
+
+<P>A new errormessage has been added to the XHATCH-function. GE8312 is
+reported if the XHATCH-boundary is not well defined ie. not closed or not
+connected end-to-end.</P>
+
+<P>Some low-level code in the system has been reviewed and optimized for
+speed resulting in 5%- 10% faster execution of most MBS-programs. </P>
+
+<P>A minor bug in the DXF-import function has been corrected. A 2D SOLID
+entity with zero-length sides caused a VARKON error. VARKON now checks
+all sides in a solid and only dislpays sides with length &gt; 0.</P>
+
+<P>The documentation is updated to reflect the changes from 1.15C. </P>
+
+<CENTER><P>
+<HR WIDTH="100%"></P></CENTER>
+
+<CENTER><P><A HREF="../index.htm">VARKON homepage</A><BR>
+</P></CENTER>
+
+</BODY>
+</HTML>

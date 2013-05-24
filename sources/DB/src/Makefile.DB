@@ -33,6 +33,7 @@ OBJECTS = ../lib/DBlib.a(db1.o)         \
           ../lib/DBlib.a(dbgroup.o)     \
           ../lib/DBlib.a(dbheader.o)    \
           ../lib/DBlib.a(dbid.o)        \
+          ../lib/DBlib.a(dbjob.o)       \
           ../lib/DBlib.a(dbkey.o)       \
           ../lib/DBlib.a(dbline.o)      \
           ../lib/DBlib.a(dbmesh.o)      \
@@ -56,7 +57,7 @@ debug : $(OBJECTS)
 $(OBJECTS) : $(INCFILES)
 
 clean:
-	rm ../lib/DBlib.a
+	rm -f ../lib/DBlib.a
 
 
 ################################################################

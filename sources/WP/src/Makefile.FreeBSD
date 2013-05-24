@@ -2,7 +2,7 @@
 #
 #   Makefile for WPlib on FreeBSD
 #
-#  (C)Microform AB 1999-03-30 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
@@ -16,7 +16,8 @@ CFLAGS +=   -ansi                       \
             -ffloat-store               \
             -fsigned-char               \
             -O                          \
-            -DUNIX -I/usr/X11R6/include
+            -DUNIX                      \
+            -I/usr/X11R6/include
 
 debug :     CFLAGS += -g -DDEBUG
 

@@ -4,7 +4,7 @@
 *    ==========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -54,8 +54,8 @@ DBint   nxt_id;            /* Blï¿½ddra-knappens ID */
 DBint   ed_id[V2MPMX];     /* Inmatningsfï¿½ltens ID */
 DBint   pmt_id[V2MPMX];    /* Promtars ID */
 DBint   but_id[V2MPMX];    /* Pos-knappars ID */
-short   max_ed;            /* Max antal inmatningsfï¿½lt som fï¿½r plats */
-short   start_ed;          /* 1:a inmatnigsfï¿½lt pï¿½ aktiv sida */
+short   max_ed;            /* Max antal inmatningsfält som får plats */
+short   start_ed;          /* 1:a inmatnigsfält på aktiv sida */
 short   ant_ed;            /* Aktivt antal inmatningsfï¿½lt */
 short   actpag,pagant;     /* Aktiv sida och antal sidor */
 } MSIDAT;
@@ -108,8 +108,8 @@ static short crepag(MSIDAT *md, char *ips[], char *is[], short maxtkn[],
  *   Om antalet stï¿½ngar ï¿½r stï¿½rre ï¿½n vad som fï¿½r plats
  *   pï¿½ skï¿½rmen skapas flera sidor.
  *
- *   In: dps    = Dialogboxens Promptstrï¿½ng
- *       ips    = Inmatningsfï¿½ltens Promtstrï¿½ngar
+ *   In: dps    = Dialogboxens Promptsträng
+ *       ips    = Inmatningsfältens Promtsträngar
  *       ds     = Default-strï¿½ngar
  *       is     = Pekare till resultat.
  *       maxtkn = Max lï¿½ngder pï¿½ inmatat resultat.
@@ -201,7 +201,7 @@ loop2:
 /*
 ***...eller klickning i pos-knapp i menyfï¿½nstret.
 */
-    if ( status == SMBPOSM ) goto loop2;
+    if ( status == SMBPOSM ) goto end;
 /*
 ***Klickning i OK-knapp. Med bara ett inmatningsfï¿½lt och
 ***inget svar (tomt) betyder detta REJECT. Annars OK.
@@ -330,6 +330,7 @@ loop2:
 ***flyttat fï¿½nstret. Fï¿½r att denna fï¿½rflyttning skall bestï¿½
 ***uppdaterar vi iwin_x och iwin_y i motsvarande grad.
 */
+end:
     WPgtwp(md.iwinpt->id.x_id,&wm_x2,&wm_y2);
     iwin_x = iwin_x + wm_x2 - wm_x1;
     iwin_y = iwin_y + wm_y2 - wm_y1;
@@ -407,19 +408,19 @@ loop2:
 */
     for ( i=0; i<nstr; ++i )
       if ( WPstrl(ips[i]) > max ) max = WPstrl(ips[i]);
-      
+
     if ( 50*WPstrl("w") > max ) max = 50*WPstrl("w");
 /*
 ***Berï¿½kna huvudfï¿½nstrets verkliga bredd = dx. Om platsbehovet fï¿½r
 ***texterna och inmatningsfï¿½nstret ï¿½r mindre ï¿½n halva skï¿½rmen gï¿½r
 ***vi dialogboxen mindre men minst 40 tecken.
-*/  
+*/
     max   = md->lx + max + md->lx;
     md->iwin_dx = md->lx + md->iwin_dx + md->lx;
     if ( md->iwin_dx > max ) md->iwin_dx = max;
 /*
 ***Main window size in Y-direction.
-*/  
+*/
     md->max_ed = nstr;
 loop:
     md->iwin_dy = md->ly + md->tdy + md->lm + 
@@ -470,14 +471,11 @@ loop:
     if ( *str1 != '\0' )
       {
       if ( *str2 == '\0' )
-        WPmcbu((wpw_id)md->iwin_id,x,y,md->tdx,md->tdy,(short)0,
-                                str1,"","",WP_BGND1,WP_FGND,&pmt_id);
+        WPcrlb((wpw_id)md->iwin_id,x,y,md->tdx,md->tdy,str1,&pmt_id);
       else
         {
-        WPmcbu((wpw_id)md->iwin_id,x,y,md->tdx,md->tdy/2,(short)0,
-                                str1,"","",WP_BGND1,WP_FGND,&pmt_id);
-        WPmcbu((wpw_id)md->iwin_id,x,y+md->tdy/2,md->tdx,md->tdy/2,(short)0,
-                                str2,"","",WP_BGND1,WP_FGND,&pmt_id);
+        WPcrlb((wpw_id)md->iwin_id,x,y,md->tdx,md->tdy/2,str1,&pmt_id);
+        WPcrlb((wpw_id)md->iwin_id,x,y+md->tdy/2,md->tdx,md->tdy/2,str2,&pmt_id);
         }
       }
 /*
@@ -486,8 +484,7 @@ loop:
    x = md->iwin_dx/8;
    y = md->ly + md->tdy + md->lm +
                 md->max_ed*(WPstrh() + md->lm + md->ih + md->lm) + md->ly;
-   WPmcbu(md->iwin_id,x,y-1,6*md->iwin_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&pmt_id);
-   WPmcbu(md->iwin_id,x,y  ,6*md->iwin_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&pmt_id);
+   WPcreate_3Dline(md->iwin_id,x,y,x+6*md->iwin_dx/8,y);
 /*
 ***Berï¿½kna Ok-fï¿½nstrets storlek och placering och skapa.
 */
@@ -501,7 +498,7 @@ loop:
     md->ok_y  = md->ly + md->tdy + md->lm +
                 md->max_ed*(WPstrh() + md->lm + md->ih + md->lm) + md->ly + md->ly;
 
-    WPmcbu((wpw_id)md->iwin_id,md->ok_x,md->ok_y,md->ok_dx,md->ok_dy,
+    WPcrpb((wpw_id)md->iwin_id,md->ok_x,md->ok_y,md->ok_dx,md->ok_dy,
                         (short)2,okey,okey,"",WP_BGND2,WP_FGND,&md->ok_id);
    butptr = (WPBUTT *)(md->iwinpt->wintab[md->ok_id].ptr);
    strcpy(butptr->tt_str,okeytt);
@@ -513,7 +510,7 @@ loop:
     md->av_x  = md->lx + md->ok_dx + md->lx;
     md->av_y  = md->ok_y;
 
-    WPmcbu((wpw_id)md->iwin_id,md->av_x,md->av_y,md->av_dx,md->av_dy,
+    WPcrpb((wpw_id)md->iwin_id,md->av_x,md->av_y,md->av_dx,md->av_dy,
                   (short)2,reject,reject,"",WP_BGND2,WP_FGND,&md->av_id);
    butptr = (WPBUTT *)(md->iwinpt->wintab[md->av_id].ptr);
    strcpy(butptr->tt_str,rejecttt);
@@ -527,7 +524,7 @@ loop:
       x  = md->lx + md->ok_dx + md->lx + md->av_dx + md->lx;
       y  = md->ok_y;
 
-      WPmcbu((wpw_id)md->iwin_id,x,y,dx,dy,
+      WPcrpb((wpw_id)md->iwin_id,x,y,dx,dy,
                (short)2,next,next,"",WP_BGND2,WP_FGND,&md->nxt_id);
       }
 /*
@@ -538,7 +535,7 @@ loop:
     md->hlp_x  = md->iwin_dx - md->lx - md->hlp_dx;
     md->hlp_y  = md->ok_y;
 
-    WPmcbu((wpw_id)md->iwin_id,md->hlp_x,md->hlp_y,md->hlp_dx,md->hlp_dy,
+    WPcrpb((wpw_id)md->iwin_id,md->hlp_x,md->hlp_y,md->hlp_dx,md->hlp_dy,
                 (short)2,help,help,"",WP_BGND2,WP_FGND,&md->hlp_id);
    butptr = (WPBUTT *)(md->iwinpt->wintab[md->hlp_id].ptr);
    strcpy(butptr->tt_str,helptt);
@@ -654,18 +651,17 @@ loop:
 */
       if ( *ips[i] != '\0' ) pdx = WPstrl(ips[i]);
       else                   pdx = 1;
-      WPmcbu(md->iwin_id,x,y-WPstrh()-md->ly,pdx,WPstrh(),
-                 (short)0,ips[i],"","",WP_BGND1,WP_FGND,&md->pmt_id[j]);
+      WPcrlb(md->iwin_id,x,y-WPstrh()-md->ly,pdx,WPstrh(),ips[i],&md->pmt_id[j]);
 /*
 ***Sjï¿½lva edit-fï¿½ltet.
-*/     
+*/
       if ( maxtkn[i] < 1 ) maxtkn[i] = 1;
       WPmced(md->iwin_id,x,y,dx,dy,(short)2,is[i],maxtkn[i],&md->ed_id[j]);
 /*
 ***Ev. pos/ref-knapp.
 */
       if ( typarr[i] == C_VEC_VA  ||  typarr[i] == C_REF_VA )
-        WPmcbu(md->iwin_id,x+dx+2,y,md->ih+1,md->ih+1,
+        WPcrpb(md->iwin_id,x+dx+2,y,md->ih+1,md->ih+1,
                  (short)1,"V","V","",WP_BGND2,WP_FGND,&md->but_id[j]);
       else md->but_id[j] = -1;
 /*

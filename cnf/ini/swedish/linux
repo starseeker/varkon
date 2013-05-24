@@ -2,7 +2,7 @@
 !*
 !*    Resursfil för VARKON 1.19 för Linux.
 !*
-!*    (C)2007 J.Kjellander
+!*    (C)2008 J.Kjellander
 !*
 !*
 !*    Vid uppstart laddar UNIX-versionen av VARKON resurser i
@@ -46,16 +46,14 @@
 !**************************************************************
 
 !*
-!***varkon.font är namnet på den font som skall användas
-!***av VARKON i menyer, inmatningsfönster, listfönster
-!***osv. och som default font i fönster skapade i MBS.
+!***Fonter.
 !*
-!varkon.font:                   fixed
-!varkon.font:                   6x13
-!varkon.font:                   7x13
-varkon.font:                   9x15
-!varkon.font:                   10x20
-!varkon.font:                   12x24
+!varkon.font.normal:             fixed
+!varkon.font.small:              6x13
+varkon.font.small:              7x13
+varkon.font.normal:             9x15
+varkon.font.big:                10x20
+!varkon.font.big:                12x24
 !*
 !***varkon.mbsedit är resurser för funktionen "editera aktiv
 !***modul", f216. När funktionen aktiveras skapar VARKON ett
@@ -64,21 +62,39 @@ varkon.font:                   9x15
 !***andra subprocess för kompilering och slutligen, om autoexec
 !***är satt till True, körs aktiv modul om automatiskt.
 !*
-varkon.mbsedit.emulator:          xterm -title MBS-Edit -e
-varkon.mbsedit.editor:            vi
+varkon.mbsedit.emulator:        xterm -title MBS-Edit -e
+varkon.mbsedit.editor:          vi
 !varkon.mbsedit.emulator:
-!varkon.mbsedit.editor:           kwrite
-varkon.mbsedit.compiler:          mbsc
-varkon.mbsedit.autocompile:       True
-varkon.mbsedit.autoexec:          True
+!varkon.mbsedit.editor:          kwrite
+varkon.mbsedit.compiler:        mbsc
+varkon.mbsedit.autocompile:     True
+varkon.mbsedit.autoexec:        True
 !*
 !***varkon.html_viewer används av hjälpsystemet för att starta en
 !***HTML-browser. Om denna resurs är definierad skickar VARKON
 !***aktuell hjälpfil till den angivna browsern. Om den inte är
-!***definierad listar VARKON filen i ett listfönster.
+!***definierad listar VARKON ett felmeddelande i ett listfönster.
 !*
-!varkon.html_viewer:               konqueror
-!varkon.html_viewer:               netscape
+!***Suse Linux med KDE kan använda Konqueror
+!varkon.html_viewer:             konqueror
+!
+!***Många Linux system använder också firefox eller seamonkey
+!varkon.html_viewer:             firefox
+!varkon.html_viewer:             seamonkey
+!
+!***Mozilla kan fungera
+!varkon.html_viewer:             mozilla
+!
+!***På MacOSX system kan man prova följande
+!varkon.html_viewer:             open
+!*
+!***Texter för mode-dialogen.
+!*
+varkon.mode.what:               Vad vill du göra nu ?
+varkon.mode.explicit:           - Ändra eller skapa en RES-fil
+varkon.mode.generic:            - Ändra eller skapa en modul
+varkon.mode.learnmore:          - Veta mer om VARKON
+varkon.mode.exit:               - Avsluta
 !*
 !***varkon.grawin_1.geometry styr det grafiska huvud-fönstrets
 !***storlek och placering på vanligt X-Windows maner.
@@ -98,21 +114,21 @@ varkon.grawin_1.geometry:       700x500+200
 !***Grafiska fönster kan förses med en osynlig marginal så
 !***att plats reserveras för tryckknappar/ikoner om man vill.
 !*
-varkon.margin_up:                32
+varkon.margin_up:               32
 !varkon.margin_down:             22
 !varkon.margin_left:             70
 !varkon.margin_right:            50
 !*
-!***Med varkon.title kan man ändra den text som skrivs ut i det grafiska
-!***huvud-fönstrets ram. Om varkon.title.project är True skrivs aktuellt
-!***projektnamn ut. Om varkon.title.jobnam är satt till True läggs
-!***dessutom aktuellt jobnamn till automatiskt. Om varkon.title.viewname
-!***är True skrivs även vynamnet ut i fönsterramen.
+!***Med varkon.title kan man ändra den text som skrivs ut i grafiska
+!***fönstrens ram. Om varkon.title.jobdir är satt till True skrivs
+!***vägbeskrivninget till aktuell jobkatalog ut. Om varkon.title.jobnam
+!***är satt till True läggs dessutom aktuellt jobnamn till automatiskt.
+!***Om varkon.title.viewname är True skrivs även vynamnet ut i fönsterramen.
 !*
-!varkon.title:                  VARKON-3D
-varkon.title.project:          True
-varkon.title.jobname:          True
-varkon.title.viewname:         True
+!varkon.title:                   Din egen titel
+varkon.title.jobdir:            True
+varkon.title.jobname:           True
+varkon.title.viewname:          True
 !*
 !***Snabbvalsknappar kan placeras var som helst i de grafiska
 !***fönstren. Läge och storlek ges av resursen varkon.button_n.geometry
@@ -217,6 +233,11 @@ varkon.rwin.icon_6.geometry:    +190+0
 varkon.rwin.icon_6.name:        Varkon_levels.xpm
 varkon.rwin.icon_6.action:      f197
 varkon.rwin.icon_6.tooltip:     Tänd, släck och lista nivåer
+
+varkon.rwin.icon_7.geometry:    +228+0
+varkon.rwin.icon_7.name:        Varkon_printer.xpm
+varkon.rwin.icon_7.action:      f150
+varkon.rwin.icon_7.tooltip:     Skapa TIFF fil (Beta test funktion)
 !*
 !***Partnamn dialogen
 !*
@@ -257,7 +278,7 @@ varkon.menu.button_9.text:       rast
 varkon.menu.button_9.tooltip:    Ange positioner med raster
 varkon.menu.level.tooltip:       Byt aktivt nivånummer
 varkon.menu.pen.tooltip:         Byt aktivt pennummer (färg)
-varkon.menu.width.tooltip:       Sätt aktiv linjebredd (för alla sorts storheter)
+varkon.menu.width.tooltip:       Sätt aktiv linjebredd
 varkon.menu.csy.tooltip:         Byt aktivt koordinatsystem
 varkon.menu.csy.title:           Aktivera ksys
 varkon.menu.local.tooltip:       Välj ett koordinatsystem att aktivera, MODE_LOCAL(#n); i MBS
@@ -289,9 +310,11 @@ varkon.print.command.tooltip:    Kommando som skickar utskriften till skrivaren
 varkon.print.mediasize:          Mediastorlek
 varkon.print.media_x.tooltip:    Mediastorlek i horisontell riktning (A4 = 210 mm)
 varkon.print.media_y.tooltip:    Mediastorlek i vertikal riktning (A4 = 297 mm)
-varkon.print.auto_manual:        Utskriftens storlek och placering
+varkon.print.orientation:        Utskriftens orientering
 varkon.print.auto:               Auto
 varkon.print.auto.tooltip:       Gör utskriften så stor som möjligt
+varkon.print.select:             Markera
+varkon.print.select.tooltip:     Markera med musen vad som skall skrivas ut
 varkon.print.manual:             Manuell
 varkon.print.manual.tooltip:     Konfigurera utskriftens placering och storlek manuellt
 varkon.print.manual.title:       Utskriftens placering och storlek
@@ -304,45 +327,42 @@ varkon.print.manual.scale:       Skala
 !***och texter i knapparna. Resursen printer styr vilken
 !***skrivare som skall användas.
 !*
-varkon.list.title:             Listning - 
-varkon.list.geometry:          +200+100
-varkon.list.title.jobnam:      True
-varkon.list.row:               Rad
-varkon.list.page:              Sida
-varkon.list.save:              Spara
-varkon.list.kill:              Stäng
-varkon.list.printer:           lpr
-!*
-!***Listfönster används också för felrapportering.
-!***Följande resurs styr fellistans rubrik.
-!*
-varkon.error.title:            -----------------FELRAPPORT-----------------
+varkon.list.title:              Listning - 
+varkon.list.geometry:           +200+100
+varkon.list.title.jobnam:       True
+varkon.list.printer:            lpr
 !*
 !***Inmatningsfönstrets placering och storlek kan inte
 !***påverkas härifrån. Däremot följande texter.
 !*
-varkon.input.title:            Inmatning
-varkon.input.geometry:         +250+200
-varkon.input.page:             Sida
-varkon.input.okey:             Ok
-varkon.input.okey.tooltip:     Acceptera ändringar och verkställ
-varkon.input.reject:           Avbryt
-varkon.input.reject.tooltip:   Avbryt denna funktion utan att verkställa ändringar
-varkon.input.on:               På
-varkon.input.off:              Av
-varkon.input.next:             Bläddra
-varkon.input.help:             Hjälp
-varkon.input.help.tooltip:     Visa manualsidan för denna funktion
-varkon.input.close:            Stäng
-varkon.input.close.tooltip:    Stäng detta fönster
-varkon.input.save:             Spara
-varkon.input.delete:           Ta bort
-varkon.input.apply:            Verkställ
+varkon.input.title:             Inmatning
+varkon.input.geometry:          +250+200
+varkon.input.page:              Sida
+varkon.input.okey:              Ok
+varkon.input.okey.tooltip:      Acceptera ändringar och verkställ
+varkon.input.reject:            Avbryt
+varkon.input.reject.tooltip:    Avbryt denna funktion utan att verkställa ändringar
+varkon.input.on:                På
+varkon.input.off:               Av
+varkon.input.next:              Bläddra
+varkon.input.help:              Hjälp
+varkon.input.help.tooltip:      Visa manualsidan för denna funktion
+varkon.input.close:             Stäng
+varkon.input.close.tooltip:     Stäng detta fönster
+varkon.input.save:              Spara
+varkon.input.delete:            Ta bort
+varkon.input.apply:             Verkställ
+varkon.input.up.tooltip:        Gå en nivå uppåt i filstrukturen
+varkon.input.new.tooltip:       Skapa en ny filkatalog
+varkon.input.new.title:         Skapa filkatalog
+varkon.input.new.prompt:        Skapa ny filkatalog i:
+varkon.input.file:              Filnamn:
+varkon.input.file.tooltip:      Ange ett filnamn och tryck på OK
 !*
 !***Alternativfönstrets placering och titel.
 !*
 varkon.alternative.title:      Alternativ 
-varkon.alternative.geometry:   +200+250 
+varkon.alternative.geometry:   +250+250 
 !*
 !***Vydialogen
 !*
@@ -462,9 +482,9 @@ varkon.act_csys_pen:           2
 !*
 !***Systemfärger.
 !*
-varkon.background:               gray84
-varkon.buttonColor:              gray90
-varkon.selectedButtonColor:      gray75
+varkon.background:               gray82
+varkon.buttonColor:              gray88
+varkon.selectedButtonColor:      gray70
 varkon.highlightedButtonColor:   SteelBlue
 varkon.foreground:               Black
 varkon.topShadowColor:           White
@@ -505,20 +525,8 @@ varkon.shade.doublebuffer:     True
 !varkon.shade.bluebits:        8
 !varkon.shade.zbits:           16
 !*
-!***Ljuskällors bakgrundskomponent.
+!***Default ljusstyrka i OpenGL-fönster.
 !*
-varkon.shade.ambient.red:      40
-varkon.shade.ambient.blue:     40
-varkon.shade.ambient.green:    40
+varkon.light.intensity:        50
 !*
-!***Ljuskällors diffusa komponent.
-!*
-varkon.shade.diffuse.red:      100
-varkon.shade.diffuse.blue:     100
-varkon.shade.diffuse.green:    100
-!*
-!***Ljuskällors reflex komponent.
-!*
-varkon.shade.specular.red:     100
-varkon.shade.specular.blue:    100
-varkon.shade.specular.green:   100
+!**************************************************************

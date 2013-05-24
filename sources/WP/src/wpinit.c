@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -67,18 +67,14 @@ extern WPVIEW wpviewtab[];
         char *inifil_1,
         char *inifil_2)
 
-/*      Opens winpac. Förutsätter att resursdatabasen
- *      är skapad av andra rutiner tidigare.
+/*      Init X11 and WinPac.
  *
- *      In: inifil_1 = Ev. ytterligare resursfil.
- *          inifil_2 = Ev. ytterligare resursfil.
+ *      In: inifil_1 = Optional inifile.
+ *          inifil_2 = Optional second inifile.
  *
- *      Ut: Inget.
- *
- *      Felkod: WP1042 = Kan ej öppna dislay.
- *              WP1032 = Kan ej initiera fonter på display %s
- *              WP1252 = Kan ej skapa meny-fönster på %s
- *              WP1442 = Hittar ej resursfilen %s
+ *      Error: WP1042 = Can't open dislay.
+ *             WP1032 = Can't init fonts on display %s
+ *             WP1442 = Can't open inifile %s
  *
  *      (C)microform ab 23/6/92 U.Andersson
  *
@@ -87,6 +83,7 @@ extern WPVIEW wpviewtab[];
  *      8/1/95   Multifönster, J. Kjellander
  *      21/12/95 Ytterligare resursfil, J. Kjellander
  *      1998-03-12 Ytterligare resursfil igen, J. Kjellander
+ *      2007-11-11 2.0, J.Kjellander
  *
  ******************************************************!*/
 
@@ -97,8 +94,7 @@ extern WPVIEW wpviewtab[];
     XrmDatabase xdfDB;
 
 /*
-***Innan nåt annat görs mergar vi ev. initfiler med den redan
-***skapade resursdatabasen.
+***Merge ini files with the Xrm database.
 */
     if ( strlen(inifil_1) > 0  )
       {
@@ -120,27 +116,24 @@ extern WPVIEW wpviewtab[];
       else return(erpush("WP1442",inifil_2));
       }
 /*
-***Öppna display.
+***Init X11.
 */
     if ( (xdisp=XOpenDisplay(NULL)) == NULL )
       return(erpush("WP1042",XDisplayName(NULL)));
+
+    xscr = DefaultScreen(xdisp);
 /*
-***Initiera V3:s fönsterhanterare.
+***Init WinPac.
 */
     WPwini();
 /*
-***Ta reda på skärm och antal bitplan.
-*/
-    xscr = DefaultScreen(xdisp);
-/*
-***Initiera färger.
+***Init colors.
 */
     WPcini();
 /*
-***Skapa graphic context GC för winpac-fönster.
-***Sätt graphics_exposures till False så att inte
-***onödiga event typ GraphicsExpose eller NoExpose
-***genereras i onödan.
+***Create the default graphics context. Turn off
+***graphics_exposure to prevent unneccesary 
+***GraphicsExpose and NoExpose events.
 */
     xgc = DefaultGC(xdisp,xscr);
     values.graphics_exposures = False;
@@ -148,7 +141,7 @@ extern WPVIEW wpviewtab[];
     XSetBackground(xdisp,xgc,WPgcol(WP_BGND1));
     XSetForeground(xdisp,xgc,WPgcol(WP_FGND));
 /*
-***Initiera text-fonter.
+***Load text fonts.
 */
     status = WPfini();
     if ( status < 0 ) return(erpush("WP1032",XDisplayName(NULL)));
@@ -159,10 +152,6 @@ extern WPVIEW wpviewtab[];
     xgcur2 = XCreateFontCursor(xdisp,52);   /* Zoom and Pan */
     xgcur3 = XCreateFontCursor(xdisp,116);  /* Resize of WPMCWIN */
     xwcur  = XCreateFontCursor(xdisp,150);  /* Wait */
-/*
-***Init menu handler.
-*/
-    if ( (status=WPinit_menu()) < 0 ) return(status);
 /*
 ***Init fonts for graphical TEXT.
 */
@@ -399,7 +388,7 @@ extern WPVIEW wpviewtab[];
         int      *ac,
         char     *av[])
 
-/*      Skapar resursdatabas. Anropas av main()->igppar() och
+/*      Skapar resursdatabas. Anropas av main() och
  *      lagrar pekare till datbasen i den globala variabeln
  *      xresDB.
  *
@@ -465,29 +454,21 @@ static XrmOptionDescRec opttab[] = {
     appDB = XrmGetFileDatabase("/usr/lib/X11/app-defaults/Varkon");
 #endif
 
-#ifdef VMS
-    appDB = XrmGetFileDatabase("V3$APP-DEFAULTS:Varkon");
-#endif
-
     XrmMergeDatabases(appDB,&xresDB);
 /*
 ***Merga med ev. ".Xdefaults" på i första hand "XENVIRONMENT"-
 ***directoryt och i andra hand "HOME"-directoryt.
 */
 #ifdef UNIX
-    if ( IGenv3("XENVIRONMENT") != NULL )
-      strcpy(path,IGenv3("XENVIRONMENT"));
+    if ( getenv("XENVIRONMENT") != NULL )
+      strcpy(path,getenv("XENVIRONMENT"));
     else
       {
-      strcpy(path,IGenv3("HOME"));
+      strcpy(path,getenv("HOME"));
       strcat(path,"/.Xdefaults");
       }
 
     xdfDB = XrmGetFileDatabase(path);
-#endif
-
-#ifdef VMS
-    xdfDB = XrmGetFileDatabase("SYS$LOGIN:.Xdefaults");
 #endif
 
     XrmMergeDatabases(xdfDB,&xresDB);

@@ -11,7 +11,7 @@
 *     DBget_free_id();     Return free ID sequence number
 *
 *    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -26,8 +26,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
 *
 ***********************************************************************/
 
@@ -352,7 +350,7 @@ notfnd:
 
     if ( actprt == huvprt )
       {
-      erpush("GM0092",idstr);
+      erpush("DB0092",idstr);
       }
     else
       {
@@ -360,7 +358,7 @@ notfnd:
       gmidst(pid,pidstr);
       strcat(pidstr,"%");
       strcat(pidstr,idstr);
-      erpush("GM0102",pidstr);
+      erpush("DB0102",pidstr);
       }
 
     return(status);

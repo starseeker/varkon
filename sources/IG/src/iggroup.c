@@ -8,7 +8,7 @@
 /*  IGchgr();    Change group by name                               */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -155,8 +155,7 @@ error:
 /*
 ***Läs in gruppnamn.
 */
-    IGptma(318,IG_INP);
-    status = IGssip(IGgtts(267),grpnam,"",JNLGTH);
+    status = IGssip(IGgtts(318),IGgtts(267),grpnam,"",JNLGTH);
     IGrsma();
     if ( status < 0 ) return(status);
 
@@ -239,11 +238,9 @@ start:
 ***Byt namn.
 */
       case 3:
-      IGptma(135,IG_INP);
-      status = IGssip(IGgtts(267),str,"",JNLGTH);
-      IGrsma();
+      status = IGssip(IGgtts(135),IGgtts(267),str,"",JNLGTH);
       if ( status < 0 ) break;
-/* 
+/*
 ***Hämta LA och typ för huvud_parten. 
 */
       DBget_pointer('F',id,&la,&typ);        

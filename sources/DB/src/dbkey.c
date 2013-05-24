@@ -11,7 +11,7 @@
 *
 *
 *    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -27,8 +27,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 #include "../include/DB.h"
@@ -38,6 +36,7 @@
 ***Some internal defines.
 */
 #define DEFKTSIZE 10     /* Default size and increment for keytab */
+
 /*
 ***Internal functions.
 */
@@ -87,7 +86,7 @@ static KEYDATA *new_entry();
 /*
 ***Check that count is positive.
 */
-   if ( count <= 0 ) return(erpush("GM2022",key));
+   if ( count <= 0 ) return(erpush("DB2022",key));
 /*
 ***Check that the key is unique.
 */
@@ -95,7 +94,7 @@ static KEYDATA *new_entry();
 /*
 ***Ok, create a new entry in keytab.
 */
-   if ( (keyptr=new_entry()) == NULL ) return(erpush("GM2013",key));
+   if ( (keyptr=new_entry()) == NULL ) return(erpush("DB2013",key));
 /*
 ***Write the bulk data to GM.
 */
@@ -165,7 +164,7 @@ static KEYDATA *new_entry();
    nbytes = keyptr->count*keyptr->size;
 
    if ( (*datptr=v3mall(nbytes,"DBread_named_data")) == NULL )
-     return(erpush("GM2003",""));
+     return(erpush("DB2003",""));
 /*
 ***Read data from GM.
 */

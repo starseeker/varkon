@@ -5,9 +5,9 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
-*    Program memory allocation and administration routines.
+*    PM memory allocation and administration routines.
 *
 *    short pmibuf()    Skapar PM:s minnesareor.
 *    short pmallo()    allocate and return a block in PM
@@ -26,7 +26,7 @@
 *    void  pmgstp()    Returnerar PM:s stackpekare
 *    void  pmsstp()    Sätter om PM:s stackpekare
 *    void  pmstat()    Returnerar div data om PM
-* 
+*
 *    Local routines:
 *    short clheap()    clears the heap and the module table
 *    pm_ptr loadmo()   loads a parted module into PM 
@@ -45,8 +45,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -59,7 +57,6 @@
 #include <unistd.h>
 #endif
 
-
 #ifdef WIN32
 #include <io.h>
 #include <sys\stat.h>
@@ -68,7 +65,7 @@
 #define NUPART    80                    /* Max Number of parted modules in PM */
 
 extern char jobdir[];
-extern char amodir[];
+extern char libdir[];
 extern V3MDAT sydata;
 extern V3MSIZ sysize;
 
@@ -89,6 +86,9 @@ static struct motabt
     pm_ptr size;                        /* Memory size for an module in PM */
     } motab[ NUPART ];
 
+/*
+***Internal function prototypes.
+*/
 static pm_ptr loadmo(char *moname);
 
 /********************************************************/
@@ -184,14 +184,15 @@ static pm_ptr loadmo(char *moname);
 /********************************************************/
 /*!******************************************************/
 
-        short pmgeba(
+        short   pmgeba(
         char   *moname,
         pm_ptr *retla)
 
 /*      Get base address for module.
  *      Checks if the module is in PM and returnes a base pointer to it if
- *      it is in PM. If it not is in PM the PM_heap will be erased and the
- *      required module is loaded into PM.                    
+ *      it is in PM. If it is not in PM it will be loaded to PM from file.
+ *      If there is no room in PM the PM_heap will be erased and the
+ *      required module is loaded into PM.
  *
  *      In:    moname  =>  Module name
  *
@@ -216,16 +217,16 @@ static pm_ptr loadmo(char *moname);
    while ( i < pa_count && strcmp(motab[i].modulena, moname) ) i++;
 
    if ( i < pa_count )
-      {  
+      {
       *retla = motab[i].basep;             /* Module is in PM */
       }
    else
-      {  
+      {
 /*
 ***Module is not in PM
 */
       if ( pa_count < NUPART )
-         {  
+         {
 /*
 ***room for more modules in module table
 */
@@ -236,31 +237,31 @@ static pm_ptr loadmo(char *moname);
 */
             clheap();
             if (( *retla = loadmo( moname )) == (pm_ptr)NULL )
-               { 
+               {
                return( erpush( "PM3023", moname ) );  /* Error, no room for MODULE in PM */
                }
             else if ( *retla == -1 )
-               {  
+               {
                return( erpush( "PM2062", moname ) );  /* module not found */
                }
             }
          else if ( *retla == -1 )
-            {  
+            {
             return( erpush( "PM2062", moname ) );     /* module not found */
             }
          }
       else
-         {  
+         {
 /*
 ***no room for more modules in module table, clear heap and load
 */
          clheap();
          if (( *retla = loadmo( moname )) == (pm_ptr)NULL )
-            {  
+            {
             return( erpush( "PM3023", moname ) );     /* Error, no room for MODULE in PM */
             }
          else if ( *retla == -1 )
-            {  
+            {
             return( erpush( "PM2062", moname ) );     /* module not found */
             }
          }
@@ -909,22 +910,26 @@ static pm_ptr loadmo(char *moname);
 /********************************************************/
 /*!******************************************************/
 
-      static pm_ptr loadmo(
-      char  *moname)
+      static pm_ptr loadmo(char *moname)
 
-/*    Loads a parted module into PM is room for it.
+/*    Loads a module from disc into PM.
 *
-*     In: pnm    =>  module name to be loaded
+*     In: moname => Name of MBO file to be loaded.
+*
+*     Return: PM ptr to module in PM or
+*              0 if there is no room in PM or
+*             -1 if file is not found
 *
 *     (C)microform ab 870423 J. Kjellander
 *
-*     LIBDIR, JK 7/10/86      
+*     LIBDIR, JK 7/10/86
 *     Läsning i 32K block för VAX och IBM, 30/9/86 JK 
-*     Anrop till pmstpr() 9/12/86            
-*     VARKON_LIB 15/2/95 JK               
-*     IGgenv(),  1997-01-15 JK      
+*     Anrop till pmstpr() 9/12/86
+*     VARKON_LIB 15/2/95 JK
+*     IGgenv(),  1997-01-15 JK
 *     1999-11-18 Rewritten, R. Svedin
 *     2004-07-14 1.18A, J.Kjellander, Örebro university
+*     2007-11-20 2.0, J.Kjellander
 *
 ********************************************************!*/
 
@@ -934,162 +939,153 @@ static pm_ptr loadmo(char *moname);
    int    fd;                 /* file descriptor */
    char   fname[V3PTHLEN];    /* for file name */
    char  *buffer;             /* buffer for file transfer */
-   pm_ptr newheapp;  
+   pm_ptr newheapp;
    PMMONO *np;                /* c-pointer to module header structure */
    int    readsize;
    pm_ptr currpmba;
    int n;
 
-   strcpy( fname, jobdir );   /* Put string for dir in fname */
-   strcat( fname, moname );   /* Concatenate the module name */
-   strcat( fname, MODEXT );   /* Put string for extention in fname to 
-                                           create the total file name */
-
 /*
-***open the file for read and test if ok
+***First look for the file in jobdir.
 */
+   strcpy(fname,jobdir);
+   strcat(fname,moname);
+   strcat(fname,MODEXT);
+
 #ifdef WIN32
    if ( (fd=open(fname,O_BINARY | O_RDONLY)) < 0 )
 #else
    if ( (fd=open(fname,0)) < 0 )
 #endif
-      {
+     {
 /*
-***file not found, try to open on amodir
+***File not found in jobdir, try to open on jobdir/lib.
 */
-      if ( (fd=IGfopr(amodir,moname,MODEXT)) < 0 )
-         { 
-/*
-***file not found, try to open on libdir
-*/
-         sprintf(fname,"%s%s%s",IGgenv(VARKON_LIB),moname,MODEXT);
+     strcpy(fname,jobdir);
+     strcat(fname,"lib/");
+     strcat(fname,moname);
+     strcat(fname,MODEXT);
 
 #ifdef WIN32
-         fd = open(fname,O_BINARY | O_RDONLY);
+     if ( (fd=open(fname,O_BINARY | O_RDONLY)) < 0 )
 #else
-         fd = open(fname,0);
+     if ( (fd=open(fname,0)) < 0 )
 #endif
-        }
-      }
-
-   if ( fd >= 0 )
-      {  
+       {
 /*
-***OK ! file open correctly
+***File not found on jobdir/lib, try with libdir.
+***If not successful, return -1.
 */
-      buffer = (char *)&fsize;    /* convert and make s char pointer to fsize,
-                                     which will be the buffer the file size is
-                                                         read to from the file */
-/*
-***read file size and check if error
-*/ 
-      if (read(fd, buffer, sizeof(fsize)) < 0 )
+       if ( (fd=IGfopr(libdir,moname,MODEXT)) < 0 )
          {
-         close( fd );
-         return( (pm_ptr)NULL );   /* error("error reading file %s", moname); */
+         return(-1);
          }
+       }
+     }
+/*
+***File found. Read file size.
+*/
+   buffer = (char *)&fsize;
 
+   if ( read(fd,buffer,sizeof(fsize)) < 0 )
+     {
+     close(fd);
+     return((pm_ptr)NULL);
+     }
 /*
-***check if room in PM
+***Check for room in PM
 */
-      newheapp = heapp - fsize;
+   newheapp = heapp - fsize;
 
-      if ( newheapp > sysize.pm )
-         {
+   if ( newheapp > sysize.pm )
+     {
 /*
-***there is room in PM, load module into PM and update module table
+***There is room in PM, load module into PM and update module table
 */
-         buffer = pmb + (newheapp-sysize.pm);    /* convert and make
-                                                    a char pointer to
-                                                    where the new heap
-                                                        pointer points */
+     buffer = pmb + (newheapp-sysize.pm);    /* convert and make
+                                                a char pointer to
+                                                where the new heap
+                                                    pointer points */
+/*
+***Read module header into PM and check if legal to use
+*/
+     readsize = sizeof(PMMONO);
+/*
+***Read module header from file and check if error
+*/
+     if ( (n=read(fd,buffer,(int)readsize) ) != readsize  )
+       {
+       close(fd);
+       return((pm_ptr)NULL);   /* Error("error reading file %s", moname); */
+       }
 
+     currpmba = pmbasla;
+     pmsbla(newheapp);          /* set new PM-base pointer */
+     pmgmod((pm_ptr)0,&np);     /* get c-pointer to module header in PM */
+     pmsbla(currpmba);          /* reset PM base to current */
 /*
-***read module header into PM and check if legal to use
+***Check serial number.
 */
-         readsize = sizeof( PMMONO );
-/*
-***read module header from file and check if error
-*/
-         if ( ( n = read(fd, buffer, (int)readsize) ) != readsize  )
-            {
-            close( fd );
-            return( (pm_ptr)NULL );   /* Error("error reading file %s", moname); */
-            }
-
-         currpmba = pmbasla;
-         pmsbla( newheapp );          /* set new PM-base pointer */
-         pmgmod((pm_ptr)0, &np );     /* get c-pointer to module header in PM */
-         pmsbla( currpmba );          /* reset PM base to current */
-/*
-***check serial number in module with systems
-*/
-         if ( ( np->sysdat.mpcode != 0 ) &&           /* MN 860610 */
-            ( np->sysdat.sernr != sydata.sernr ) &&
-            ( np->sysdat.mpcode != sydata.sernr ) &&
-            ( np->sysdat.revnr > 1 ) )
-             {  
-             close( fd );
-             erpush( "PM3063", moname );   /* ilegal to use don't load the module */
-             return( (pm_ptr)NULL );
-             }
+     if ( ( np->sysdat.mpcode != 0 ) &&           /* MN 860610 */
+        ( np->sysdat.sernr != sydata.sernr ) &&
+        ( np->sysdat.mpcode != sydata.sernr ) &&
+        ( np->sysdat.revnr > 1 ) )
+        {
+        close(fd);
+        erpush("PM3063",moname);   /* ilegal to use don't load the module */
+        return((pm_ptr)NULL);
+        }
 /*
 ***Check that the module is 1.18A or later.
 */
-          if ( np->sysdat.revnr < 18 )
-             {
-             close(fd);
-             sprintf(errbuf,"%s%%%d.%c",moname,np->sysdat.revnr,np->sysdat.level);
-             erpush("PM3093", errbuf);
-             return((pm_ptr)NULL);
-             }
+     if ( np->sysdat.revnr < 18 )
+       {
+       close(fd);
+       sprintf(errbuf,"%s%%%d.%c",moname,np->sysdat.revnr,np->sysdat.level);
+       erpush("PM3093", errbuf);
+       return((pm_ptr)NULL);
+       }
 /*
-***read the rest of the module from file
+***Read the rest of the module from file.
 */
-         buffer +=  (int)readsize;
-         readsize = fsize - readsize;
+     buffer +=  (int)readsize;
+     readsize = fsize - readsize;
 
-         while ( readsize > 32000 )
-            {
-            if ( ( n = read(fd, buffer, (int)32000) ) != 32000 )
-               {  
-               close( fd );
-               return( (pm_ptr)NULL );   /* Error reading file moname */
-               }
-            readsize -= 32000;
-            buffer  += (int)32000;
-            }
-
-         if ( ( n = read(fd, buffer, (int)readsize) ) != readsize  )
-            { 
-            close( fd );
-            return( (pm_ptr)NULL );      /* error reading file moname */
-            }
-
-
-/*
-***update heap pointer and module table
-*/
-         heapp = newheapp;
-         strcpy( motab[pa_count].modulena, moname );
-         motab[pa_count].basep = heapp;
-         motab[pa_count].size = fsize;
-       
-         pa_count++;               /* update number of modules in PM */
-         pmstpr(heapp);            /* tillagt pga. bug vid partanrop */
-
-         close( fd );
-         return( heapp );          /* return pointer to module in PM */
+     while ( readsize > 32000 )
+       {
+       if ( (n=read(fd,buffer,(int)32000) ) != 32000 )
+         {
+         close(fd);
+         return((pm_ptr)NULL);   /* Error reading file moname */
          }
-      else
-        {  
-        close( fd );
-        return( (pm_ptr)NULL );    /* no room in PM */
-        }
-      }
- 
-   else /* file not found */
-   return( -1 );
+       readsize -= 32000;
+       buffer  += (int)32000;
+       }
+
+     if ( (n=read(fd,buffer,(int)readsize) ) != readsize  )
+       {
+       close(fd);
+       return((pm_ptr)NULL);      /* error reading file moname */
+       }
+/*
+***Update heap pointer and module table
+*/
+     heapp = newheapp;
+     strcpy( motab[pa_count].modulena, moname );
+     motab[pa_count].basep = heapp;
+     motab[pa_count].size = fsize;
+
+     pa_count++;               /* update number of modules in PM */
+     pmstpr(heapp);            /* tillagt pga. bug vid partanrop */
+
+     close(fd);
+     return(heapp);          /* return pointer to module in PM */
+     }
+   else
+     {
+     close(fd);
+     return((pm_ptr)NULL);    /* no room in PM */
+     }
   }
 
 /********************************************************/

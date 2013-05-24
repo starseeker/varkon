@@ -175,6 +175,7 @@ Revision history: 1996-08-20  Gunnar Liden
 719  3  SUR_NURBSARR Minimum no. of V knots is %s for order %s 
 
 740  3  SUR_APPROX No. of added patches per input patch is not OK %s
+741  1  SECTION_AREA/SECTION_CGRAV curve is not planar, deviation =%s
 
 800  3  SUR_ROT: Length of projected curve on line (= spine) is zero %s
 801  3  SUR_ROT: Curve and rotation points not in the same plane %s

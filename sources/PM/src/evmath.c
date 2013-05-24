@@ -3,7 +3,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -407,7 +407,7 @@ extern pm_ptr  stflop;
         func_vp->lit.int_va = (DBint)( func_pv[1].par_va.lit.float_va - 0.5 );
    else
         func_vp->lit.int_va = (DBint)( func_pv[1].par_va.lit.float_va + 0.5 );
-    
+
    return(0);
  }
 

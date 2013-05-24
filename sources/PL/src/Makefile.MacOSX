@@ -1,0 +1,29 @@
+##########################################################
+#
+#   Makefile for PL on MacOSX
+#
+#  (C)2008-01-12 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+# Options to CC
+
+CFLAGS =                             \
+         -ansi                       \
+         -Wall                       \
+         -pedantic                   \
+         -ffloat-store               \
+         -fsigned-char               \
+         -O                          \
+         -DUNIX                      \
+         -I/usr/X11R6/include
+
+COMPILE = $(CC) $(CFLAGS)
+
+include Makefile.PL
+
+##########################################################

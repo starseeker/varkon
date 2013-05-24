@@ -1,0 +1,89 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- all_inv_on_sur - Procedure})
+define({_INDEXLINK_},{<a href="geomindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>all_inv_on_sur - Procedure</h1>
+
+<h2>Description<h2>
+
+<p>
+Returns all the positions on a surface which are close to a given point in R3.
+</p>
+
+<h2>Syntax<h2>
+
+<pre>
+  all_inv_on_sur(surface, pos, order, n_pos, uv, xyz);
+
+  ref    surface;
+  vector pos;
+  int    order;
+  int    n_pos;
+  vector uv();
+  vector xyz();
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+
+<tr>
+<td>surface</td>
+<td>- Identity of the surface</td>
+</tr>
+
+<tr>
+<td>pos</td>
+<td>- Position in R3</td>
+</tr>
+
+<tr>
+<td>order</td>
+<td>- Method for the ordering of closest points (the solutions)</td>
+</tr>
+
+<tr>
+<td></td>
+<td>&nbsp; Eq. 1: With respect to the distance to the input R*3 point</td>
+</tr>
+
+<tr>
+<td></td>
+<td>&nbsp; Eq. 2: With respect to the input UV start point&nbsp;</td>
+</tr>
+
+<tr>
+<td>n_pos</td>
+<td>- Output number of solutions</td>
+</tr>
+
+</table>
+
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>uv</td>
+<td>- (u,v) solution values</td>
+</tr>
+
+<tr>
+<td>xyz</td>
+<td>- (x,y,z) solution values</td>
+</tr>
+</table>
+
+<h2>Comments</h2>
+
+<p>
+See <a href="inv_onsu.htm">inv_on_sur</a> for related information.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

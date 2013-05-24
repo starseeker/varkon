@@ -1,0 +1,36 @@
+##########################################################
+#
+#   Makefile for GE on MacOSX
+#
+#  (C)2008-01-12 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+distr :     CFLAGS =                    \
+            -ansi                       \
+            -pedantic                   \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -O                          \
+            -DUNIX                      \
+            -I/usr/X11R6/include
+
+debug :     CFLAGS =                    \
+            -ansi                       \
+            -Wall                       \
+            -ffloat-store               \
+            -fsigned-char               \
+            -g3                         \
+            -DUNIX                      \
+            -I/usr/X11R6/include
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.GE
+
+##########################################################

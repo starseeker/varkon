@@ -165,7 +165,7 @@ short hour_u;                   /* Hour updated */
 short min_u;                    /* Minute updated */
 char  sysname[9];               /* OS or host name */
 char  dummy[5];                 /* Not used */
-short opmode;                   /* BAS_MOD/RIT_MOD */
+short opmode;                   /* GENERIC/EXPLICIT */
 short mpcode;                   /* Module protection code */
 char  release[9];               /* OS release */
 char  version[9];               /* OS version */

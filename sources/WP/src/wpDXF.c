@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    WPdxf_out();    Create plotfile on DXF format
 *
@@ -47,10 +47,10 @@ static short dxfocs(FILE *filpek, DBCsys *csypek, DBTmat *pmat, DBVector *origo)
 static short dxfobp(FILE *filpek, DBBplane *bplpek, DBVector *origo);
 static short dxfoms(FILE *filpek, DBMesh *mshpek, DBVector *origo);
 static short dxfotx(FILE *filpek, DBText *txtpek, char str[], DBVector *origo);
-static short dxfold(FILE *filpek, DBLdim *ldmpek, DBVector *origo);
-static short dxfocd(FILE *filpek, DBCdim *cdmpek, DBVector *origo);
-static short dxford(FILE *filpek, DBRdim *rdmpek, DBVector *origo);
-static short dxfoad(FILE *filpek, DBAdim *admpek, DBVector *origo);
+static short dxfold(FILE *filpek, DBLdim *ldmptr, DBCsys *csyptr, DBVector *origo);
+static short dxfocd(FILE *filpek, DBCdim *cdmpek, DBCsys *csyptr, DBVector *origo);
+static short dxford(FILE *filpek, DBRdim *rdmpek, DBCsys *csyptr, DBVector *origo);
+static short dxfoad(FILE *filpek, DBAdim *admpek, DBCsys *csyptr, DBVector *origo);
 static short dxfoxh(FILE *filpek, DBHatch *xhtpek, DBfloat crd[], DBVector *origo);
 static short dxfopl(FILE *filpek, DBHeader *hedpek, int n,
                     double x[], double y[], char a[], DBVector *origo);
@@ -94,6 +94,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
    DBAny   gmpost;
    DBTmat  pmat;
    DBSeg  *segptr,arcseg[4];
+   DBCsys  csy;
 
 /*
 ***Initializations.
@@ -163,19 +164,19 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
        case TXTTYP: DBread_text(&gmpost.txt_un,str,la);
                     dxfotx(filpek,&gmpost.txt_un,str,origo); break;
 
-       case LDMTYP: DBread_ldim(&gmpost.ldm_un,la);
-                    dxfold(filpek,&gmpost.ldm_un,origo); break;
+       case LDMTYP: DBread_ldim(&gmpost.ldm_un,&csy,la);
+                    dxfold(filpek,&gmpost.ldm_un,&csy,origo); break;
 
-       case CDMTYP: DBread_cdim(&gmpost.cdm_un,la);
-                    dxfocd(filpek,&gmpost.cdm_un,origo); break;
+       case CDMTYP: DBread_cdim(&gmpost.cdm_un,&csy,la);
+                    dxfocd(filpek,&gmpost.cdm_un,&csy,origo); break;
 
-       case RDMTYP: DBread_rdim(&gmpost.rdm_un,la);    
-                    dxford(filpek,&gmpost.rdm_un,origo); break;
+       case RDMTYP: DBread_rdim(&gmpost.rdm_un,&csy,la);
+                    dxford(filpek,&gmpost.rdm_un,&csy,origo); break;
 
-       case ADMTYP: DBread_adim(&gmpost.adm_un,la);
-                    dxfoad(filpek,&gmpost.adm_un,origo); break;
+       case ADMTYP: DBread_adim(&gmpost.adm_un,&csy,la);
+                    dxfoad(filpek,&gmpost.adm_un,&csy,origo); break;
 
-       case XHTTYP: DBread_xhatch(&gmpost.xht_un,xhtcrd,la);
+       case XHTTYP: DBread_xhatch(&gmpost.xht_un,xhtcrd,&csy,la);
                     dxfoxh(filpek,&gmpost.xht_un,xhtcrd,origo); break;
        }
      }
@@ -710,13 +711,14 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 
  static short     dxfold(
         FILE     *filpek,
-        DBLdim   *ldmpek,
+        DBLdim   *ldmptr,
+        DBCsys   *csyptr,
         DBVector *origo)
 
 /*      Writes a linear dimension on DXF-format.
  *
  *      In:  filpek = Pekar på öppen DXF-fil.
- *           ldmpek = Pekare till ldmpost.
+ *           ldmptr = Pekare till ldmpost.
  *           origo  = Nollpunkt.
  *
  *      FV:  0 => Ok
@@ -731,13 +733,13 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(actwin.nivtab,ldmpek->hed_ld.level) ||
-        ldmpek->hed_ld.blank ) return(0);
+   if ( !WPnivt(actwin.nivtab,ldmptr->hed_ld.level) ||
+        ldmptr->hed_ld.blank ) return(0);
 /*
 ***Make polyline.
 */
    k = -1;
-   WPplld(ldmpek,&k,x,y,z,a);
+   WPplld(ldmptr,csyptr,&k,x,y,z,a);
 /*
 ***Project.
 */
@@ -747,7 +749,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 */
    if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
-     dxfopl(filpek,&(ldmpek->hed_ld),k,x,y,a,origo);
+     dxfopl(filpek,&(ldmptr->hed_ld),k,x,y,a,origo);
      }
 
    return(0);
@@ -759,6 +761,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
  static short     dxfocd(
         FILE     *filpek,
         DBCdim   *cdmpek,
+        DBCsys   *csyptr,
         DBVector *origo)
 
 /*      Writes diameter dimension on DXF-format.
@@ -785,7 +788,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 ***Make polyline.
 */
    k = -1;
-   WPplcd(cdmpek,&k,x,y,z,a);
+   WPplcd(cdmpek,csyptr,&k,x,y,z,a);
 /*
 ***Project.
 */
@@ -806,6 +809,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
  static short     dxford(
         FILE     *filpek,
         DBRdim   *rdmpek,
+        DBCsys   *csyptr,
         DBVector *origo)
 
 /*      Writes radius dimension on DXF-format.
@@ -832,7 +836,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 ***Make polyline.
 */
    k = -1;
-   WPplrd(rdmpek,&k,x,y,z,a);
+   WPplrd(rdmpek,csyptr,&k,x,y,z,a);
 /*
 ***Project.
 */
@@ -854,6 +858,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
  static short     dxfoad(
         FILE     *filpek,
         DBAdim   *admpek,
+        DBCsys   *csyptr,
         DBVector *origo)
 
 /*      Writes angular dimension on DXF-format.
@@ -888,7 +893,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 ***Make polyline.
 */
    k = -1;
-   WPplad(admpek,scale,&k,x,y,z,a);
+   WPplad(admpek,csyptr,scale,&k,x,y,z,a);
 /*
 ***Project.
 */

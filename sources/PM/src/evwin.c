@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    evcrwi();     Evaluerar CRE_WIN
 *    evcred();     Evaluerar CRE_EDIT
@@ -151,6 +151,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
  *      (C)microform ab 6/12/93 J. Kjellander
  *
  *      2001-04-20 In-Param changed to Global variables, R Svedin
+ *      2007-10-23 Button types, J.Kjellander
  *
  ******************************************************!*/
 
@@ -163,33 +164,49 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 ***Om inte skicka tom sträng.
 */
    if ( func_pc > 7 ) strcpy(font,func_pv[8].par_va.lit.str_va);
-   else            font[0] = '\0';
+   else               font[0] = '\0';
 /*
 ***Bakgrundsfärg ? Parameter nummer 9.
-***Om inte skicka 6.
 */
    if ( func_pc > 8 ) cb = (short)func_pv[9].par_va.lit.int_va;
-   else            cb = WP_BGND2;
+   else
+     {
+     if ( func_pv[5].par_va.lit.float_va == 0.0 ) cb = WP_BGND1;
+     else                                         cb = WP_BGND2;
+     }
 /*
 ***Förgrundsfärg ? Parameter nummer 10.
-***Om inte skicka 1.
 */
    if ( func_pc > 9 ) cf = (short)func_pv[10].par_va.lit.int_va;
-   else            cf = WP_FGND;
+   else               cf = WP_FGND;
 /*
-***Skapa knappen.
+***If border width = 0, create a LABEL, otherwise
+***create a TOGGLEBUTTON.
 */
-   return(WPmcbu(       func_pv[1].par_va.lit.int_va,
-                 (short)func_pv[2].par_va.lit.vec_va.x_val,
-                 (short)func_pv[2].par_va.lit.vec_va.y_val,
-                 (short)func_pv[3].par_va.lit.float_va,
-                 (short)func_pv[4].par_va.lit.float_va,
-                 (short)func_pv[5].par_va.lit.float_va,
-                        func_pv[6].par_va.lit.str_va,
-                        func_pv[7].par_va.lit.str_va,
-                        font,
-                        cb,cf,
-                       &func_vp->lit.int_va));
+   if ( func_pv[5].par_va.lit.float_va == 0.0 )
+     {
+     return(WPcrlb(       func_pv[1].par_va.lit.int_va,
+                   (short)func_pv[2].par_va.lit.vec_va.x_val,
+                   (short)func_pv[2].par_va.lit.vec_va.y_val,
+                   (short)func_pv[3].par_va.lit.float_va,
+                   (short)func_pv[4].par_va.lit.float_va,
+                          func_pv[6].par_va.lit.str_va,
+                         &func_vp->lit.int_va));
+      }
+   else
+     {
+     return(WPcrsb(       func_pv[1].par_va.lit.int_va,
+                   (short)func_pv[2].par_va.lit.vec_va.x_val,
+                   (short)func_pv[2].par_va.lit.vec_va.y_val,
+                   (short)func_pv[3].par_va.lit.float_va,
+                   (short)func_pv[4].par_va.lit.float_va,
+                   (short)func_pv[5].par_va.lit.float_va,
+                          func_pv[6].par_va.lit.str_va,
+                          func_pv[7].par_va.lit.str_va,
+                          font,
+                          cb,cf,
+                         &func_vp->lit.int_va));
+     }
 }
 
 /********************************************************/
@@ -238,7 +255,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 /*
 ***Skapa knappen.
 */
-   return(WPmcbu(     func_pv[1].par_va.lit.int_va,
+   return(WPcrsb(     func_pv[1].par_va.lit.int_va,
                  (int)func_pv[2].par_va.lit.vec_va.x_val,
                  (int)func_pv[2].par_va.lit.vec_va.y_val,
                  (int)func_pv[3].par_va.lit.float_va,

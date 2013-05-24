@@ -4,7 +4,7 @@
 *    =====
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -52,16 +52,11 @@
 
 WPWIN wpwtab[WTABSIZ];
 
-/* wpwtab ï¿½r en tabell med typ och pekare till fï¿½nster.
-   Typ ï¿½r en kod som anger vilken typ av fï¿½nster det rï¿½r
-   sig om tex. TYP_IWIN fï¿½r ett input-fï¿½nster frï¿½n MBS.
-   Pekaren ï¿½r en C-pekare som pekar pï¿½ en structure av
-   den aktuella typen tex. WPIWIN fï¿½r ett input-fï¿½nster.
-
-   Alla element i wpwtab initieras av WPwini() till NULL.
-   Nï¿½r ett nytt fï¿½nster skapas fï¿½r det som ID lï¿½gsta lediga
-   plats i wpwtab och nï¿½r det deletas nollstï¿½lls platsen
-   igen.
+/* wpwtab[] is the global window table. All elements of wpwtab[]
+   are initialized to NULL by WPwini() at startup. When a window
+   is created, the lowest free entry is used for that window.
+   When a window is deleted, its entry in wpwtab[] is set to NULL
+   again.
 */
 
 /*!******************************************************/
@@ -182,23 +177,22 @@ WPWIN wpwtab[WTABSIZ];
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         bool           WPwbut(
         XButtonEvent  *butev,
         wpw_id        *serv_id)
 
-/*      Button-rutinen fï¿½r wpw-fï¿½nstren. Kollar
- *      vilken typ av fï¿½nster det ï¿½r och anropar
- *      rï¿½tt rutin fï¿½r jobbet.
+/*      Button handler WPIWIN, WPLWIN, WPGWIN and
+ *      WPRWIN windows.
  *
- *      In: butev    = Pekare till Button-event.
- *          serv_id  = Pekare till utdata.
+ *      In: butev    = Ptr to Button event.
+ *          serv_id  = Ptr to output.
  *
- *      Ut: *serv_id = ID fï¿½r subfï¿½nster som servat eventet.
+ *      Out: *serv_id = ID of serving subwindow.
  *
- *      FV. TRUE  = Eventet har servats.
- *          FALSE = Eventet gï¿½llde inga av dessa fï¿½nster.
+ *      Return: TRUE  = Event served.
+ *              FALSE = Event not served.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -215,9 +209,9 @@ WPWIN wpwtab[WTABSIZ];
     WPRWIN *rwinpt;
 
 /*
-***Sï¿½k igenom wpwtab och anropa alla fï¿½nstrens
-***respektive butt-hanterare. Den som vill kï¿½nnas vid
-***eventet tar hand om det.
+***Search through wpwtab[] and call all windows
+***button handlers. The window that wants the
+***event will serve it.
 */
     for ( i=0; i<WTABSIZ; ++i )
       {
@@ -247,7 +241,9 @@ WPWIN wpwtab[WTABSIZ];
           }
         }
       }
-
+/*
+***No window wants to have this event.
+*/
     return(FALSE);
   }
 
@@ -479,6 +475,7 @@ WPWIN wpwtab[WTABSIZ];
  *      (C)microform ab 8/2/94 J. Kjellander
  *
  *      1998-10-29 WPRWIN, J.Kjellander
+ *      2007-10-21 WPLWIN, J.Kjellander
  *
  ******************************************************!*/
 
@@ -488,6 +485,7 @@ WPWIN wpwtab[WTABSIZ];
     WPWIN  *winptr;
     WPGWIN *gwinpt;
     WPRWIN *rwinpt;
+    WPLWIN *lwinpt;
 
 /*
 ***Sï¿½k igenom wpwtab och kolla om nï¿½got av fï¿½nstren
@@ -516,6 +514,15 @@ WPWIN wpwtab[WTABSIZ];
           if ( rwinpt->id.x_id == conev->window )
             {
             WPcorw(rwinpt,conev);
+            status = TRUE;
+            }
+          break;
+
+          case TYP_LWIN:
+          lwinpt = (WPLWIN *)winptr->ptr;
+          if ( lwinpt->id.x_id == conev->window )
+            {
+            WPcolw(lwinpt,conev);
             status = TRUE;
             }
           break;
@@ -619,13 +626,9 @@ WPWIN wpwtab[WTABSIZ];
         short WPwshw(
         DBint w_id)
 
-/*      Visar ett fï¿½nster.
+/*      Show a window.
  *
  *      In: w_id  = Entry i wpwtab.
- *
- *      Ut: Inget.   
- *
- *      Felkod: .
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -713,8 +716,8 @@ WPWIN wpwtab[WTABSIZ];
      DBint  slevel,
      DBint *subw_id)
 
-/*   Event-loop fï¿½r MBS-rutinen WAIT_WIN. Lï¿½gger sig
- *   och vï¿½ntar pï¿½ events i det WPIWIN-fï¿½nster som angetts.
+/*   Event-loop for MBS-routine WAIT_WIN(). Also used by many
+ *   Varkon dialogs.
  *
  *   Denna rutin anvï¿½nds dels av MBS (WAIT_WIN) och dessutom
  *   av WPialt() samt WPmsip(). Kï¿½nnetecknande ï¿½r att den i
@@ -750,7 +753,7 @@ WPWIN wpwtab[WTABSIZ];
     MNUALT              *altptr;
 
 /*
-***Kolla att fï¿½nstret finns.
+***Check that the window exists.
 */
     if ( (winptr=WPwgwp((wpw_id)iwin_id)) == NULL )
       {
@@ -803,7 +806,10 @@ evloop:
         }
       goto evloop;
 /*
-***ButtonPress is always associated with a WPRWIN.
+***ButtonPress is associated with a WPGWIN
+***(rubberbanding), WPRWIN (pan/scale/rot) or a
+***slidebar in a WPLWIN or WPIWIN. A ButtonPress
+***in a WPIWIN-slidebar is treated as an event.
 ***Use WPwfpx() to get the WP-id of the window that
 ***created the event. WPwfpx() returns the parent
 ***of the window if it has one or the window itself
@@ -811,9 +817,21 @@ evloop:
 */
       case ButtonPress:
       par_id = WPwfpx(butev->window);
-      if ( par_id < 0 ) goto evloop;
-      if ( wpwtab[par_id].typ == TYP_RWIN )
-        WPbtrw((WPRWIN *)wpwtab[par_id].ptr,butev,&serv_id);
+      if ( (par_id=WPwfpx(butev->window)) >= 0 )
+        {
+        if ( wpwtab[par_id].typ == TYP_RWIN ||
+             wpwtab[par_id].typ == TYP_GWIN ||
+             wpwtab[par_id].typ == TYP_LWIN ) WPwbut(butev,&serv_id);
+
+        else if ( wpwtab[par_id].typ == TYP_IWIN )
+          {
+          if ( WPwbut(butev,&serv_id) )
+            {
+           *subw_id = (DBint)serv_id;
+            return(0);
+            }
+          }
+        }
       goto evloop;
 /*
 ***If it is a ButtonRelease, it may come from a WPLWIN...
@@ -883,28 +901,27 @@ evloop:
  }
 
 /*********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-        short WPwdel(
-        DBint w_id)
+        short WPwdel(DBint w_id)
 
-/*      Dï¿½dar ett huvudfï¿½nster med alla subfï¿½nster.
+/*      Delete a window in wpwtab[] and it's children.
  *
- *      In: w_id   = Huvudfï¿½nstrets entry i wpwtab.
+ *      In: w_id = Window ID.
  *
- *      Ut: Inget.   
- *
- *      Felkod: WP1222 = Huvudfï¿½nstret finns ej.
+ *      Error: WP1222 = Window does not exist.
+ *             WP1733 = Illegal window type.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
  *      1998-01-04 WPRWIN, J.Kjellander
+ *      2007-11-28 2.0 J.Kjellander
  *
  ******************************************************!*/
 
   {
     char     errbuf[80];
-    Window   xwin_id=0;
+    Window   xwin_id;
     WPWIN   *winptr;
     WPIWIN  *iwinpt;
     WPLWIN  *lwinpt;
@@ -912,7 +929,8 @@ evloop:
     WPRWIN  *rwinpt;
 
 /*
-***Fixa en C-pekare till huvud-fï¿½nstrets entry i wpwtab.
+***Get a C ptr to the window entry in the global
+***window table.
 */
     if ( (winptr=WPwgwp(w_id)) == NULL )
       {
@@ -920,7 +938,7 @@ evloop:
       return(erpush("WP1222",errbuf));
       }
 /*
-***Vilken typ av fï¿½nster ï¿½r det ?
+***What kind of window ?
 */
     switch ( winptr->typ )
       {
@@ -947,17 +965,25 @@ evloop:
       xwin_id = rwinpt->id.x_id;
       WPdlrw(rwinpt);
       break;
+
+      default:
+      sprintf(errbuf,"%d",(int)w_id);
+      return(erpush("WP1733",errbuf));
       }
 /*
-***Dï¿½da fï¿½nstret ur X.
+***Kill the X window and flush the display to ensure that the
+***window is removed immediately.
 */
     XDestroyWindow(xdisp,xwin_id);
+    XFlush(xdisp);
 /*
-***Stryk fï¿½nstret ur fï¿½nstertabellen.
+***Remove the WP window from global window table.
 */
     winptr->typ = TYP_UNDEF;
     winptr->ptr = NULL;
-   
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -968,20 +994,18 @@ evloop:
         DBint w_id,
         DBint sub_id)
 
-/*      Dï¿½dar ett subfï¿½nster. Klara fn. bara subfï¿½nster
- *      i huvudfï¿½nster av typen WPIWIN och WPGWIN.
+/*      Kills a sub (child) window in a WPIWIN or WPGWIN.
  *
- *      In: w_id   = Huvudfï¿½nstrets entry i wpwtab.
- *          sub_id = Subfï¿½nstrets id.
+ *      In: w_id   = Parent window ID.
+ *          sub_id = Sub window ID.
  *
- *      Ut: Inget.   
- *
- *      Felkod: WP1222 = Huvudfï¿½nstret finns ej.
- *              WP1232 = Subfï¿½nstret finns ej.
+ *      Felkod: WP1222 = Huvudfönstret finns ej.
+ *              WP1232 = Subfönstret finns ej.
  *
  *      (C)microform ab 17/1/94 J. Kjellander
  *
  *      1996-05-20 WPGWIN, J. Kjellander
+ *      2008-02-03 WPSBAR, J.Kjellander
  *
  ******************************************************!*/
 
@@ -995,9 +1019,10 @@ evloop:
     WPBUTT  *butptr;
     WPEDIT  *edtptr;
     WPICON  *icoptr;
+    WPSBAR  *sbptr;
 
 /*
-***Fixa en C-pekare till huvud-fï¿½nstrets entry i wpwtab.
+***Get a C ptr to the parent window.
 */
     if ( (winptr=WPwgwp(w_id)) == NULL )
       {
@@ -1005,12 +1030,12 @@ evloop:
       return(erpush("WP1222",errbuf));
       }
 /*
-***Vilken typ av fï¿½nster ï¿½r det ?
+***What type is it ?
 */
     switch ( winptr->typ )
       {
 /*
-***WPIWIN, kolla att subfï¿½nstret finns.
+***WPIWIN, check that the child exists.
 */
       case TYP_IWIN:
       if ( sub_id < 0  ||  sub_id > WP_IWSMAX-1 )
@@ -1026,7 +1051,7 @@ evloop:
         return(erpush("WP1232",errbuf));
         }
 /*
-***Dï¿½da fï¿½nstret ur wpw och ta reda pï¿½ X-id.
+***Kill the child.
 */
       switch ( iwinpt->wintab[(wpw_id)sub_id].typ )
         {
@@ -1047,13 +1072,19 @@ evloop:
         xwin_id = icoptr->id.x_id;
         WPdlic(icoptr);
         break;
+
+        case TYP_SBAR:
+        sbptr = (WPSBAR *)subptr;
+        xwin_id = sbptr->id.x_id;
+        WPdelete_slidebar(sbptr);
+        break;
         }
 /*
-***Dï¿½da fï¿½nstret ur X.
+***Kill the child X window.
 */
       XDestroyWindow(xdisp,xwin_id);
 /*
-***Lï¿½nka bort subfï¿½nstret frï¿½n WPIWIN-fï¿½nstret.
+***Remove child from the WPIWIN.
 */
       iwinpt->wintab[(wpw_id)sub_id].ptr = NULL;
       iwinpt->wintab[(wpw_id)sub_id].typ = TYP_UNDEF;
@@ -1075,7 +1106,7 @@ evloop:
         return(erpush("WP1232",errbuf));
         }
 /*
-***Dï¿½da fï¿½nstret ur wpw och ta reda pï¿½ X-id.
+***Delete the child.
 */
       switch ( gwinpt->wintab[(wpw_id)sub_id].typ )
         {
@@ -1098,17 +1129,19 @@ evloop:
         break;
         }
 /*
-***Dï¿½da fï¿½nstret ur X.
+***Kill the child X window.
 */
       XDestroyWindow(xdisp,xwin_id);
 /*
-***Lï¿½nka bort subfï¿½nstret frï¿½n WPIWIN-fï¿½nstret.
+***Remove the child from the WPGWIN.
 */
       gwinpt->wintab[(wpw_id)sub_id].ptr = NULL;
       gwinpt->wintab[(wpw_id)sub_id].typ = TYP_UNDEF;
       break;
       }
-   
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -1184,7 +1217,7 @@ evloop:
         wpw_id WPwfpx(
         Window   x_id)
 
-/*      Letar upp id fï¿½r fï¿½rï¿½ldern till ett sub-
+/*      Letar upp id för fï¿½rï¿½ldern till ett sub-
  *      fï¿½nster med visst X-id. Om fï¿½nstret med
  *      det angivna X-id:t ï¿½r en fï¿½rï¿½lder returneras
  *      ID fï¿½r fï¿½nstret (fï¿½rï¿½ldern) sjï¿½lvt.
@@ -1200,34 +1233,35 @@ evloop:
  *      (C)microform ab 15/12/93 J. Kjellander
  *
  *      1998-03-27 WPRWIN, J.Kjellander
+ *      2007-10-28 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short    i,j;
-    WPIWIN  *iwinpt;
-    WPLWIN  *lwinpt;
-    WPGWIN  *gwinpt;
-    WPRWIN  *rwinpt;
-    WPBUTT  *buttpt;
-    WPEDIT  *edtptr;
-    WPICON  *icoptr;
+    short   i,j;
+    WPIWIN *iwinpt;
+    WPLWIN *lwinpt;
+    WPGWIN *gwinpt;
+    WPRWIN *rwinpt;
+    WPBUTT *buttpt;
+    WPEDIT *edtptr;
+    WPICON *icoptr;
+    WPSBAR *sbptr;
 
 /*
-***Sï¿½k igenom hela wpwtab efter fï¿½nster.
+***Loop through wpwtab.
 */
     for ( i=0; i<WTABSIZ; ++i)
       {
       if ( wpwtab[i].ptr != NULL )
         {
 /*
-***Vilken typ av fï¿½nster ï¿½r det ?
+***What kind of window.
 */
         switch ( wpwtab[i].typ )
           {
 /*
-***WPIWIN-fï¿½nster. Kolla fï¿½nstret sjï¿½lvt och 
-***sï¿½k igenom alla sub-fï¿½nster.
+***WPIWIN.
 */
           case TYP_IWIN:
           iwinpt = (WPIWIN *)wpwtab[i].ptr;
@@ -1253,43 +1287,47 @@ evloop:
                 icoptr = (WPICON *)iwinpt->wintab[j].ptr;
                 if ( icoptr->id.x_id == x_id ) return((wpw_id)i);
                 break;
-                }
-              }
-            }
-          break;
-/*
-***WPLWIN-fï¿½nster. Kolla fï¿½nstret sjï¿½lvt och 
-***sï¿½k igenom alla sub-fï¿½nster.
-*/
-          case TYP_LWIN:
-          lwinpt = (WPLWIN *)wpwtab[i].ptr;
-          if ( lwinpt->id.x_id == x_id ) return((wpw_id)i);
 
-          for ( j=0; j<WP_LWSMAX; ++j )
-            {
-            if ( lwinpt->wintab[j].ptr != NULL )
-              {
-              switch ( lwinpt->wintab[j].typ ) 
-                {
-                case TYP_BUTTON:
-                buttpt = (WPBUTT *)lwinpt->wintab[j].ptr;
-                if ( buttpt->id.x_id == x_id ) return((wpw_id)i);
+                case TYP_SBAR:
+                sbptr = (WPSBAR *)iwinpt->wintab[j].ptr;
+                if ( sbptr->id.x_id == x_id ) return((wpw_id)i);
                 break;
                 }
               }
             }
           break;
 /*
-***Grafiskt fï¿½nster.
+***WPLWIN window.
+*/
+          case TYP_LWIN:
+          lwinpt = (WPLWIN *)wpwtab[i].ptr;
+
+          if ( x_id == lwinpt->id.x_id )
+            {
+            return((wpw_id)i);
+            }
+          else if ( (sbptr=(WPSBAR *)lwinpt->wintab[0].ptr) != NULL &&
+                     x_id == sbptr->id.x_id )
+            {
+            return(lwinpt->id.w_id);
+            }
+          else if ( (sbptr=(WPSBAR *)lwinpt->wintab[1].ptr) != NULL &&
+                     x_id == sbptr->id.x_id )
+            {
+            return(lwinpt->id.w_id);
+            }
+          break;
+/*
+***WPGWIN.
 */
           case TYP_GWIN:
           gwinpt = (WPGWIN *)wpwtab[i].ptr;
           if ( x_id == gwinpt->id.x_id ) return((wpw_id)i);
           else if ( x_id == gwinpt->mcw_ptr->messcom_xid ) return((wpw_id)i);
-          else if ( x_id == gwinpt->mcw_ptr->resize_xid ) return((wpw_id)i);
+          else if ( x_id == gwinpt->mcw_ptr->resize_xid )  return((wpw_id)i);
           break;
 /*
-***OpenGL fï¿½nster.
+***WPRWIN.
 */
           case TYP_RWIN:
           rwinpt = (WPRWIN *)wpwtab[i].ptr;
@@ -1299,7 +1337,7 @@ evloop:
         }
      }
 /*
-***Ingen trï¿½ff.
+***No hit.
 */
     return((wpw_id)-1);
   }

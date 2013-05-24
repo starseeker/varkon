@@ -1,28 +1,27 @@
-/*!******************************************************************
-*  File: formpar.h 
-*  ===============   
-* 
-*  This file is part of the Program Module Library. 
-*    
-*  This library is free software; you can redistribute it and/or 
-*  modify it under the terms of the GNU Library General Public 
-*  License as published by the Free Software Foundation; either 
-*  version 2 of the License, or (at your option) any later 
-*  version. 
-* 
-*  This library is distributed in the hope that it will be 
-*  useful, but WITHOUT ANY WARRANTY; without even the implied  
-*  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-*  PURPOSE.  See the GNU Library General Public License for more  
-*  details.   
-*   
-*  You should have received a copy of the GNU Library General 
-*  Public License along with this library; if not, write to the 
-*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge, 
-*  MA 02139, USA. 
-*       
-*  (C) J.Kjellander, Örebro university
-*   
+/********************************************************************
+*  File: formpar.h
+*  ===============
+*
+*  This file is part of the Program Module Library.
+*  URL: http://varkon.sourceforge.net
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later
+*  version.
+*
+*  This library is distributed in the hope that it will be
+*  useful, but WITHOUT ANY WARRANTY; without even the implied
+*  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU Library General Public License for more
+*  details.
+*
+*  You should have received a copy of the GNU Library General
+*  Public License along with this library; if not, write to the
+*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,
+*  MA 02139, USA.
+*
 ********************************************************************/
 /*******************************************************************
 *
@@ -49,16 +48,16 @@
 *                  o = conformant array of string = st_o_p
 *                  p = conformant array of int    = st_p_p
 *
-*   Classes:          
+*   Classes:
 *                  e = expresssion = ST_EXPCL
 *                  v = variable = ST_VARCL
 *                  d = default = ST_DEFCL
 *
-*   Geometry:       
+*   Geometry: 2 is not used, all routines are 3 or 5
 *                  5 = 2D and 3D
 *                  2 = only 2D
 *                  3 = only 3D
-*                              
+*
 ********************************************************************/
 /*
 ***Parameter lists for Varkon MBS functions and procedures.
@@ -141,13 +140,13 @@
 /*
 ***VXHT = 18, XHATCH(-,<flo>,<flo>,<ref>[,<ref>])
 */
-     "-2:fe.fe.re.49(re)",
+     "-5:fe.fe.re.49(re)",
 /*
 ***VPART = 19, PART(-,-,<ref>)
 */
      "-5:1(re)",
 /*
-***VIONSUR = 20, INV_ON_SUR(ref,p,kod,nï¿½start_uvï¿½
+***VIONSUR = 20, INV_ON_SUR(ref,p,kod,n[,start_uv])
 */
      "v3:re.ve.ie.ie.1(ve)",
 /*
@@ -170,19 +169,19 @@
 /*
 ***VLDIM = 25, LDIM(-,<vec>,<vec>,<vec>,<int>)
 */
-     "-2:ve.ve.ve.ie",
+     "-5:ve.ve.ve.ie",
 /*
 ***VCDIM = 26, CDIM(-,<ref>,<pos>,<int>) 
 */
-     "-2:re.ve.ie",
+     "-5:re.ve.ie",
 /*
 ***VRDIM = 27, RDIM(-,<ref>,<vec>,<vec>)
 */
-     "-2:re.ve.ve",
+     "-5:re.ve.ve",
 /*
 ***VADIM = 28, ADIM(-,<ref>,<ref>,<vec>,<int>)
 */
-     "-2:re.re.ve.ie",
+     "-5:re.re.ve.ie",
 /*
 ***VACOS = 29, ARCCOS(<float>) = <float>
 */
@@ -523,11 +522,11 @@
 /*
 ***VSYMB = 113, SYMB.
 */
-     "-2:se.ve.1(fe<1.0>.1(fe<0.0>))",
+     "-5:se.ve.1(fe<1.0>.1(fe<0.0>))",
 /*
 ***VTRIM = 114, TRIM.
 */
-     "-2:re.ie.re.1(ie<1>)",
+     "-5:re.ie.re.1(ie<1>)",
 /*
 ***VDEL = 115, DEL.
 */
@@ -868,11 +867,11 @@
 /*
 ***VAREA  = 199, AREA.
 */
-     "f2:fe.re.49(re)",
+     "f5:fe.re.49(re)",
 /*
 ***VCGRAV = 200, CGRAV.
 */
-     "v2:fe.re.49(re)",
+     "v5:fe.re.49(re)",
 /*
 ***VSETB = 201, SET_GLOBAL
 */
@@ -1195,23 +1194,23 @@
 /*
 ***VGRID = 280, GRID_VIEW(0/1);
 */
-     "-2:ie",
+     "-5:ie",
 /*
 ***VGRIDX = 281, GRIDX_VIEW(x_val);
 */
-     "-2:fe",
+     "-5:fe",
 /*
 ***VGRIDY = 282, GRIDY_VIEW(y_val);
 */
-     "-2:fe",
+     "-5:fe",
 /*
 ***VGRIDDX = 283, GRIDDX_VIEW(dx_val);
 */
-     "-2:fe",
+     "-5:fe",
 /*
 ***VGRIDDY = 284, GRIDDY_VIEW(dy_val);
 */
-     "-2:fe",
+     "-5:fe",
 /*
 ***VSRTGM = 285, SET_ROOT_GM([id]);
 */
@@ -1282,25 +1281,25 @@
 */
      "-5:se",
 /*
-***VMTVIEW = 302, MATERIAL_VIEW(pen,ar,ag,ab,dr,dg,db,sr,sg,sb,er,eg,eb,s);
+***VMTVIEW = 302, CRE_MATERIAL(pen,ar,ag,ab,dr,dg,db,sr,sg,sb,er,eg,eb,s);
 */
-     "-3:ie.fe.fe.fe.fe.fe.fe.fe.fe.fe.fe.fe.fe.fe",
+     "-5:ie.ie.ie.ie.ie.ie.ie.ie.ie.ie.ie.ie.ie.ie",
 /*
-***VLTVIEW = 303, LIGHT_VIEW(num,pos[,ang,dir]);
+***VLTVIEW = 303, CRE_LIGHT(num,pos[,spot_dir,spot_ang,spot_focus]);
 */
      "-3:ie.ve.1(ve.fe.fe)",
 /*
-***VGTCOL = 304, GET_COLOR(pen,red,green,blue);
+***VGTCOL = 304, GET_COLOR(pen,defined,red,green,blue);
 */
-     "-5:ie.iv.iv.iv",
+     "i5:ie.iv.iv.iv",
 /*
 ***VCRCOL = 305, CRE_COLOR(pen,red,green,blue);
 */
      "-5:ie.ie.ie.ie",
 /*
-***VLTON = 306, LIGHT_ON(light,intensity);
+***VLTON = 306, LIGHT_ON(light,intensity,tmode);
 */
-     "-3:ie.1(fd<100.0>)",
+     "-3:ie.1(fd<100.0>.1(id))",
 /*
 ***VLTOFF = 307, LIGHT_OFF(light);
 */
@@ -1640,8 +1639,27 @@
 /*
 ***VNMLEVEL = 390, NAME_LEVEL()
 */
-     "-5:ie.se"
-     
+     "-5:ie.se",
+/*
+***VASVNVERS = 391, ACT_SVN_VERS()
+*/
+     "s5:",
+/*
+***VGETMAT = 392, defined:=GET_MATERIAL(pen,ar,ag,ab,dr,dg,db,sr,sg,sb,er,eg,eb,s);
+*/
+     "i5:ie.iv.iv.iv.iv.iv.iv.iv.iv.iv.iv.iv.iv.iv",
+/*
+***VGETMAT = 393, defined:=GET_LIGHT(light,on,intensity,follow_model);
+*/
+     "i5:ie.iv.fv.iv",
+/*
+***VRGBHSV = 394, RGB_TO_HSV(r,g,b,h,s,v);
+*/
+     "-5:ie.ie.ie.iv.iv.iv",
+/*
+***VHSVRGB = 395, HSV_TO_RGB(h,s,v,r,g,b);
+*/
+     "-5:ie.ie.ie.iv.iv.iv"
 /*
 ***Remember, no comma after the last parameter list definition.
 */

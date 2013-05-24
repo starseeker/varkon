@@ -66,7 +66,7 @@ loop:
 !***Check level.
 !*
      if levtab(level) < 0 then
-       get_lev(level,state,name);
+       get_level(level,0,state,name);
        levtab(level):=state;
      endif;
 !*

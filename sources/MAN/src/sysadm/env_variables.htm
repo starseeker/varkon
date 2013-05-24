@@ -1,0 +1,227 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- Environment variables</h1>})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Environment variables</h1>
+
+<p>
+Varkon depends on the values of a number of Varkon specific environment
+variables. Each variable either points to a single file or to the location
+of a group of files needed by Varkon to operate correctly. Normally, these
+environment variables are set up by the Varkon start script. The default
+start script sets up an environment that will work but it is usual among
+Varkon users to use customized versions of the defult start script with
+some of the environment variables changed to meet specific needs. See below
+for the full list of all environment variables used by Varkon and how they
+influence the system.
+</p>
+
+
+<h2>VARKON_ROOT</h2>
+
+<p>
+This is the first variable set by the start script. It points to the place
+where the Varkon system is installed and is basically used to define other
+environment variables. At start up, Varkon checks for the existence of
+VARKON_ROOT. If VARKON_ROOT is not defined, Varkon will issue an error
+message to the console (stdout) and exit. For mor information about
+VARKON_ROOT, see <a href="./start_script.htm">The start script</a> section
+of this manual.
+</p>
+
+<h2>VARKON_LIB</h2>
+
+<p>
+Modules (MBO-files) are essential to Varkon. Users create modules and
+many interactive functions are implemented using (macro) modules.
+When a module is called, Varkon searches the current job_directory,
+then  <code>job_directory/lib</code> and if not found, Varkon uses the value of
+VARKON_LIB to search additional directories. VARKON_LIB may define
+up to 10 different directories separated by colon. Directories are
+searched in the order they appear until a module is found. In a
+sense, VARKON_LIB reminds of the PATH environment variable used by
+many operating systems to find the location of executable files.
+</p>
+
+<p>
+In the default start script, VARKON_LIB points to the system module
+library. If you add additional directories to VARKON_LIB it is
+important not to remove the system library. Here is a section
+from a start script that shows how to use VARKON_LIB.
+</p>
+
+<pre class=box>
+VARKON_LIB=$VARKON_ROOT/lib
+export VARKON_LIB
+
+# The following line is an example that includes
+# an additional directory.
+# VARKON_LIB=/home/username/my_library:$VARKON_ROOT/lib
+</pre>
+
+<p>
+For more information on VARKON_LIB, see also the following sections:<br>
+<a href="../appdev/modlibs.htm">Module libraries</a><br>
+<a href="../appdev/macro_varkon.htm">Where should I keep my macros ?</a>
+</p>
+
+<h2>VARKON_MDF</h2>
+
+<p>
+Varkon uses the value of VARKON_MDF to find the menu file (MDF-file) to
+load at start up. Sooner or later you may want to change VARKON_MDF to
+point to a menu file of your own. See the <a href="../appdev/MDFsyntax.htm">Menu files</a>
+section for more information about menu files.
+</p>
+
+<h2>VARKON_ERM</h2>
+
+<p>
+Varkon internally uses an error message system based on error codes
+composed of two letters and 4 digits. The two letters relate to the
+source code module involved. The first 3 digits form the actual error
+number, and the last digit is a severity code. Varkon uses the text
+files in the directory pointed to by VARKON_ERM to map internal error
+codes to text messages. Each source code module has an error message
+file (ERM-file) of its own. You should normally not need to alter the
+value of VARKON_ERM but you could for example change it to point to a
+custom set of ERM-files that you have translated into another language.
+</p>
+
+<h2>VARKON_DOC</h2>
+
+<p>
+This is the top directory for the Varkon documentation and the files
+used by the Varkon interactive context sensitive help system. Unless
+you want to replace the Varkon documentation with something else, you
+should not need to edit VARKON_DOC. To display help and documentation
+correctly Varkon also relies on the settings of the "html_viewer"
+resource in the ini-file.
+</P>
+
+<p>
+For more information see:
+</p>
+
+<p><a href="../appdev/docs.htm">Application specific documentation</a></p>
+<p>and</p>
+<p><a href="../GUI/f153.htm">Varkon context sensitive help system</a></p>
+
+<h2>VARKON_TMP</h2>
+
+<p>
+Varkon uses the value of VARKON_TMP as the location for temporary
+files. By default, it points to <code>VARKON_ROOT/tmp</code> which is a directory
+included in the Varkon installation. You may want to change VARKON_TMP
+to point to a system wide directory like <code>/tmp</code> or <code>C:/TEMP</code>
+or you may want each user to have an individual temp directory.
+</p>
+
+<p>
+Varkon users only need read access to most of the files in the Varkon installation
+but note that all Varkon users must have <b>read and write</b> access to VARKON_TMP.
+</p>
+
+<p>
+Under normal circumstances Varkon automatically removes a temporary
+file when it's not needed but there are occasions when temporary
+files are left in VARKON_TMP. This may cause VARKON_TMP to grow as time
+goes. Should any files be found in the location pointed to by VARKON_TMP
+when Varkon is not running it is suggested you delete them.
+</p>
+
+<h2>VARKON_FNT</h2>
+
+<p>
+This environment variable is used by Varkon to locate files with fonts for
+vector based graphical text. Varkon by default includes a number of fonts
+(see the TEXT statement in MBS). Font 0 is the default when a new job is
+started. This font is hardcoded and has no font file. The rest of the
+fonts are defined in <code>*.FNT</code> files in VARKON_FNT. These files are not
+loaded until they are used for the first time but then stays loaded in
+memory until Varkon terminates.
+</p>
+
+<p>
+Fonts 0 to 9 are reserved by the system. The font editor included in the Varkon
+system can be used to defines custom fonts. Such fonts should have names beginning
+at <code>10.FNT</code> and up until <code>20.FNT</code> and also reside in the
+location pointed to by VARKON_FNT. It should not be nessecary under normal
+circumstances to use another value of VARKON_FNT than the default.
+</p>
+
+<h2>VARKON_PLT</h2>
+
+<p>
+This variable is used by Varkon to find the plotter configuration
+file (plot.cnf) used to set the output scale etc. for interactive
+printing. plot.cnf is also updated automatically when you use the
+configure alternative in the print dialog.
+</p>
+
+<p>
+It is not a bad idea to change VARKON_PLT to point to a location
+outside the Varkon installation file tree. If so, place a copy of
+the default file in that location and then configure your printer
+interactively. This way your plotter settings will persist if a new
+version of Varkon is installed.
+</p>
+
+<p>
+Note also that all Varkon users must have <b>read and write</b> access
+to VARKON_PLT.
+</p>
+
+<h2>VARKON_ICO</h2>
+
+<p>
+VARKON_ICO is used by Varkon to locate icon files used by the user
+interface. Although VARKON_ICO may be changed to point to another
+location this should normally not be nessecary.
+</p>
+
+<h2>VARKON_TOL</h2>
+
+<p>
+VARKON_TOL is used by Varkon to locate the file <code>surpac.tol</code>. This
+file is loaded at startup and defines the tolerances used in many
+geometric calculations. If you need to change any of the
+values in <code>surpac.tol</code>, put the changed version of the file somewhere
+outside the Varkon installation file tree and edit VARKON_TOL to
+point to the new location. This way your changes to <code>surpac.tol</code> will
+persist when Varkon is updated to a new version.
+</p>
+
+<h2>VARKON_INI</h2>
+
+<p>
+VARKON_INI is used in the start script to point to the location for
+the default Varkon ini-file. There is normally no reason to change or
+add anything to the default ini-file but you can create a custom
+ini-file of your own and instruct Varkon to load it "on top" of the
+default file. Settings in the custom file will then override settings
+in the default file. You can put a custom ini-file anywhere you like,
+Varkon only uses VARKON_INI to locate the default ini-file.
+</p>
+
+<p>
+There is more information on ini-files in the <a href="../appdev/inifiles.htm">
+Ini-files</a> section of the Application developers manual.
+</p>
+
+<h2>VARKON_BIN</h2>
+
+<p>
+This is the place for the Varkon executables. It is used by
+the start scrip to start the main Varkon executable but also
+by Varkon to execute the Varkon compiler (mbsc) and
+the Varkon plotter driver specified in <code>VARKON_PLT/plot.cnf</code>.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

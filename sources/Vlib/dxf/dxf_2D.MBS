@@ -1,6 +1,6 @@
 !*******************************************************
 
- GLOBAL DRAWING MODULE dxf_2D(
+ GLOBAL MODULE dxf_2D(
    STRING filnam*132 >"t395";
    VECTOR p          >"t337";
    FLOAT  s:=1.0     >"t136";

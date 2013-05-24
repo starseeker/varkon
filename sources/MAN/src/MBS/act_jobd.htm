@@ -1,0 +1,57 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- act_jobdir - Function})
+define({_INDEXLINK_},{<a href="statindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>act_jobdir - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Returns the path to the current job directory and adds a terminating &quot;/&quot; (UNIX)
+or &quot;\&quot; (Microsoft windows).
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  path:=act_jobdir();
+
+  string path;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<p>None.</p>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>A string containing the path to the current job directory.</p>
+
+<h2>Comments</h2>
+
+<p>
+A terminating slash is added to make it easier to add a filename to the end of of the
+path in a way that is portable between UNIX and Windows. The following line for example...
+</p>
+<pre>
+  path:=act_jobdir() + &quot;myfile&quot;;
+</pre>
+<p>
+creates a path to &quot;myfile&quot; on the current job directory.
+</p>
+
+<p>
+See also: <a href="act_jobn.htm">act_jobnam.</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

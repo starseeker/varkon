@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -748,7 +748,9 @@ extern MNUALT smbind[];
  *              WP1182 = Edit %s does not exist.
  *              WP1192 = %s is not an edit.
  *
- *      (C)2007-02-02- J.Kjellander
+ *      (C)2007-02-02 J.Kjellander
+ *
+ *      2007-11-23 Added XClearWindow(), J.Kjellander
  *
  ******************************************************!*/
 
@@ -780,7 +782,7 @@ extern MNUALT smbind[];
 */
    iwinptr = (WPIWIN *)winptr->ptr;
 /*
-***Check for the existense of the WPEDIT.
+***Check for the existence of the WPEDIT.
 */
    if ( iwinptr->wintab[(wpw_id)edit_id].ptr == NULL )
      {
@@ -798,7 +800,7 @@ extern MNUALT smbind[];
 */
    edtptr = (WPEDIT *)iwinptr->wintab[(wpw_id)edit_id].ptr;
 /*
-***Check strin length.
+***Check string length.
 */
     ntkn = strlen(newstr);
     if ( ntkn < 0 ) ntkn = 0;
@@ -806,13 +808,14 @@ extern MNUALT smbind[];
     if ( ntkn > edtptr->tknmax ) ntkn = edtptr->tknmax;
     newstr[ntkn] = '\0';
 /*
-***Update the WPEIT.
+***Update the WPEDIT.
 */
     strcpy(edtptr->str,newstr);
 
     edtptr->scroll = 0;
     edtptr->curpos = 0;
     edtptr->fuse   = TRUE;
+    XClearWindow(xdisp,edtptr->id.x_id);
     WPxped(edtptr);
 /*
 ***The end.
@@ -994,7 +997,7 @@ extern MNUALT smbind[];
 /*
 ***Fokus AV !
 */
-    else                            
+    else
       {
       XSetWindowBorder(xdisp,edtptr->id.x_id,WPgcol(WP_BGND1));
       edtptr->focus = FALSE;
@@ -1067,12 +1070,12 @@ extern MNUALT smbind[];
 /*
 ***ï¿½, ï¿½ och ï¿½.
 */
-      case XK_aring:      symbol = SMBCHAR; tkn = 'ï¿½' ; break;
-      case XK_Aring:      symbol = SMBCHAR; tkn = 'ï¿½' ; break;
-      case XK_adiaeresis: symbol = SMBCHAR; tkn = 'ï¿½' ; break;
-      case XK_Adiaeresis: symbol = SMBCHAR; tkn = 'ï¿½' ; break;
-      case XK_odiaeresis: symbol = SMBCHAR; tkn = 'ï¿½' ; break;
-      case XK_Odiaeresis: symbol = SMBCHAR; tkn = 'ï¿½' ; break;
+      case XK_aring:      symbol = SMBCHAR; tkn = 'å' ; break;
+      case XK_Aring:      symbol = SMBCHAR; tkn = 'Å' ; break;
+      case XK_adiaeresis: symbol = SMBCHAR; tkn = 'ä' ; break;
+      case XK_Adiaeresis: symbol = SMBCHAR; tkn = 'Ä' ; break;
+      case XK_odiaeresis: symbol = SMBCHAR; tkn = 'ö' ; break;
+      case XK_Odiaeresis: symbol = SMBCHAR; tkn = 'Ö' ; break;
 /*
 ***Backspace, delete och return (samt enter).
 */

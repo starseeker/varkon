@@ -4,7 +4,7 @@
 *    ======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -152,13 +152,9 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evpspt()
 
-/*      Evaluerar proceduren PSH_PMT.
+/*      Evaluates procedure PSH_PMT().
  *
- *      In: extern proc_pv => Pekare till array med parameterv�rden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
+ *      In: extern proc_pv => Ptr to parameter value
  *
  *      (C)microform ab 13/4/87 R. Svedin
  *
@@ -175,13 +171,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evpopt()
 
-/*      Evaluerar proceduren POP_PMT.
- *
- *      In: extern proc_pv => Pekare till array med parameterv�rden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
+/*      Evaluates procedure POP_PMT().
  *
  *      (C)microform ab 10/4/87 R. Svedin
  *
@@ -269,13 +259,9 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evpomy()
 
-/*      Evaluerar proceduren POP_MEN.
+/*      Evaluates procedure POP_MEN().
  *
- *      In: extern proc_pv => Pekare till array med parameterv�rden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
+ *      In: extern proc_pv => Ptr to parameter value
  *
  *      (C)microform ab 10/4/87 R. Svedin
  *

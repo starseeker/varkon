@@ -1,0 +1,80 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- Using the MBS compiler})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Using the MBS compiler</h1>
+
+<p>
+mbsc is the UNIX version and MBSC.EXE the Microsoft version
+of the MBS compiler. The MBS compiler reads source lines frome MBS-files
+and produces binary modules in MBO-files. The MBS compiler may be used
+as a stand alone program but is usually called automatically
+by Varkon when needed.
+</p>
+
+<p>
+The MBS compiler depends on the values of environment variables
+VARKON_TMP and VARKON_ERM defined in the Varkon startscript.
+To run the MBS compiler stand alone you
+need to define these variables somehow. One possibility is that
+you write a script similar to the Varkon start script. Another
+is that you define them in your login script (.profile or similar).
+</p>
+
+<p>
+The <a href="env_variables.htm">Environment variables</a> section
+of the System Administrators manual includes more information on
+environment variables.
+</p>
+
+<p>
+The MBS compiler understands the following command line
+parameters:
+</p>
+
+<h2>source(s)</h2>
+<p>
+A parameter not preceeded by a minus sign "-" is interpreted as
+the name of a source MBS-file to compile. You may supply names with
+or without the trailing letters <code>.MBS</code>. Paths are
+not accepted, the MBS files must be in the current directory.
+</p>
+
+<h2>Listfile, -l</h2>
+<p>
+-l creates a listfile, (source.LST) with compiler warnings and error
+messages. With -l not defined on the command line, warnings and
+error messages are sent to the standard output.
+</p>
+
+<h2>Page width, -w</h2>
+<p>
+-w<i><b>n</b></i> prints <i><b>n</b></i> characters per line in list files.
+</p>
+
+<h2>Page length, -h</h2>
+<p>
+-h<i><b>n</b></i> prints <i><b>n</b></i> lines per page in list files.
+</p>
+
+<h2>Size of module cache, -pm</h2>
+<p>
+-pm<i><b>n</b></i> sets the size of the internal module cache to <i><b>n</b></i> kB.
+Default is 400 kB. Due to a bug, the compiler will not report if the
+size of the module cache is too small to hold the entire module.
+Instead it truncates the module and writes it to disc without notice.
+</p>
+
+<h2>Compiler version, -v</h2>
+<p>
+-v prints the current version of the compiler to the
+standard output and exits.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

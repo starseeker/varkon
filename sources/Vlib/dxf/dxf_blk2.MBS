@@ -1,6 +1,6 @@
 !*******************************************************
 
- global drawing module dxf_blk2(
+ global module dxf_blk2(
   VAR FILE   infil;          !>"DXF-filen.";
   STRING     namn*32          >"BLOCK-namnet";
   VECTOR     p                >"INSERT-placering";

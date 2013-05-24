@@ -360,4 +360,4 @@ debug : $(VARKON_OBJS)
 $(VARKON_OBJS) : $(INCFILES)
 
 clean:
-	rm ../lib/GElib.a
+	rm -f ../lib/GElib.a

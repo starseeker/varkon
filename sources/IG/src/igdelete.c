@@ -4,16 +4,15 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  IGdlen();    Delete entity                                      */
-/*  IGdlls();    Delete last entity (not used)                      */
-/*  IGdlgp();    Delete named group (not used)                      */
-/*  IGtrim();    Generate TRIM statement                            */
-/*  IGblnk();    Blank entity                                       */
-/*  IGubal();    Unblank all entities                               */
-/*  IGhtal();    Make all entities hitable                          */
+/*  IGdelete_entity();  Delete entity                               */
+/*  IGdelete_group();   Delete named group (explicit mode only)     */
+/*  IGtrim();           Generate TRIM statement                     */
+/*  IGblnk();           Blank entity                                */
+/*  IGubal();           Unblank all entities                        */
+/*  IGhtal();           Make all entities hitable                   */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -41,7 +40,7 @@
 #include "../../EX/include/EX.h"
 #include <string.h>
 
-extern short v3mode;
+extern short sysmode;
 
 static short igdlgs(DBId *idvek);
 static char *mk_dpsimple(V2REFVA *id);
@@ -49,7 +48,7 @@ static char *mk_dppart(V2REFVA *id);
 
 /*!******************************************************/
 
-        short IGdlen()
+        short IGdelete_entity()
 
 /*      Varkonfunktion f�r att ta bort en geometrisats
  *      via h�rkors.
@@ -77,7 +76,7 @@ static char *mk_dppart(V2REFVA *id);
 /*
 ***H�mta id f�r n�gon av storhetens instanser.
 */
-    if ( v3mode == RIT_MOD )
+    if ( sysmode == EXPLICIT )
       {
       nid = IGMAXID;
       WPaddmess_mcwin(IGgtts(146),WP_PROMPT);
@@ -96,7 +95,7 @@ static char *mk_dppart(V2REFVA *id);
 ***Om RITPAK, fr�ga om OK innan allt f�rsvinner. och
 ***ta sedan bort allt utan vidare kontroller.
 */
-    if ( v3mode == RIT_MOD )
+    if ( sysmode == EXPLICIT )
       {
       if ( nid > 0  &&  IGialt(1630,67,68,FALSE) == FALSE ) goto exit;
       for ( i=0; i<nid; ++i) igdlgs(&idmat[i][0]);
@@ -160,7 +159,7 @@ exit:
 /*
 ***Om RITPAK, ta bort storheten utan n�gra kontroller.
 */
-    if ( v3mode == RIT_MOD ) return(EXdel(idvek));
+    if ( sysmode == EXPLICIT ) return(EXdel(idvek));
 /*
 ***Kolla om storheten ing�r i en part. Om s� �r fallet
 ***tar vi antingen bort hela parten eller blankar
@@ -253,40 +252,7 @@ syserr:
 /********************************************************/
 /*!******************************************************/
 
-        short IGdlls()
-
-/*      Tar bort sista satsen i PM.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 10/1/85 J. Kjellander
- *
- *      6/9/85  Felhantering, B. Doverud
- *
- ******************************************************!*/
-
-  {
-
-/*
-***Stryk sista satsen ur PM.
-*/
-    if ( pmdlst() < 0 )
-      {
-      erpush("IG3523","");
-      errmes();
-      }
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short IGdlgp()
+        short IGdelete_group()
 
 /*      Varkonfunktion f�r att ta bort grupp via namn.
  *      Om flera grupper med samma namn fins i GM tas
@@ -321,8 +287,7 @@ syserr:
 /*
 ***L�s in gruppnamn.
 */
-    IGptma(318,IG_INP);
-    if ( (status=IGssip(IGgtts(267),grpnam,"",JNLGTH)) < 0 ) goto exit;
+    if ( (status=IGssip(IGgtts(318),IGgtts(267),grpnam,"",JNLGTH)) < 0 ) goto exit;
 /*
 ***H�mta LA och typ f�r huvud-parten.
 */
@@ -398,13 +363,12 @@ exit:
     char    istr[V3STRLEN+1];
 
 /*
-***Skapa referens till storhet som skall trimmas.
+***ID of entity to be trimmed.
 */
 start:
-    IGptma(352,IG_MESS);
+    WPaddmess_mcwin(IGgtts(352),WP_MESSAGE);
     typ1 = LINTYP+ARCTYP;
     if ( (status=IGgsid(id,&typ1,&end,&right,(short)0)) < 0 ) goto exit;
-    IGrsma();
 
     litval.lit_type = C_REF_VA;
     litval.lit.ref_va[0].seq_val = id[0].seq_val;
@@ -412,7 +376,7 @@ start:
     litval.lit.ref_va[0].p_nextre = id[0].p_nextre;
     pmclie(&litval,&exnpt1);
 /*
-***�nde.
+***End.
 */
     litval.lit_type = C_INT_VA;
     if ( end ) litval.lit.int_va = 1;
@@ -423,7 +387,6 @@ start:
 */
     typ2 = LINTYP+ARCTYP+CURTYP;
     if ( (status=IGcref (353,&typ2,&exnpt3,&end,&right)) < 0 ) goto exit;
-    IGrsma();
 /*
 ***Om sk�rning linje/linje, alt = -1.
 */
@@ -478,7 +441,6 @@ start:
 ***Slut.
 */
 exit:
-    IGrsma();
     WPerhg();
     return(status);
 /*

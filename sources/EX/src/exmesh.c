@@ -42,7 +42,6 @@
 extern DBTmat *lsyspk;
 extern DBTmat  lklsyi;
 extern DBptr   lsysla;
-extern short   modtyp;
 
 /*!******************************************************/
 

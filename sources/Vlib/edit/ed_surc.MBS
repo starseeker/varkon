@@ -28,7 +28,7 @@ NSLOOP:
        exit();
      else
        snum:=-1;
-       snum:=round(val(svar));
+       snum:=round(fval(svar));
        if snum < 1  or snum > npatv  then goto NSLOOP; endif;
      endif;
    else

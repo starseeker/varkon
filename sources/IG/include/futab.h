@@ -25,352 +25,320 @@
 /********************************************************************/
 
 /*
-***Ett entry i funktionstabellen futab.
+***C functions callable from menus, FBUTTON's or FICON's are defined
+***in the global function table futab[]. Function numbers are
+***also used by the help system to load the right doc page for
+***each function. An entry in futab[] is defined as follows:
 */
 
 typedef struct fuattr
 {
 short (*fnamn)();      /* C function to call */
-tbool snabb;           /* Can be called in other function TRUE/FALSE */
-char  modul;           /* Logical AND between XXX_MOD codes */
+bool    call;          /* Can be called while other function active */
+char    mode;          /* Valid in these modes */
 } FUATTR;
 
 /*
-***Följande är unika för WIN32.
-*/
-#ifdef WIN32
-extern short msamod(),msomod(),mscoal(),msneww(),
-       mshlp1(),mshlp2();
-#endif
-
-/*
-***Själva funktionstabellen.
-*/
-
-static FUATTR futab[] = 
-{
- {IGexit, FALSE, TOP_MOD},                   /* f1   Sluta */
- {notimpl,FALSE, BAS_MOD},                   /* Fd. f2   Skapa parameter */
- {notimpl,FALSE, BAS_MOD},                   /* Fd. f3   Ändra parametervärde */
- {notimpl,FALSE, BAS_MOD},                   /* Fd. f4   Lista parametrar */
- {IGramo, FALSE, BAS_MOD},                   /* f5   Kör aktiv modul */
-
- {IGtrim, FALSE, RIT_MOD+BAS2_MOD},          /* f6   Trimma storhet */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f7   Scale WPRWIN */
- {IGrnmo, FALSE, RIT_MOD+BAS_MOD},           /* f8   Kör namngiven modul */
- {IGcs1p, FALSE, RIT_MOD+BAS2_MOD},          /* f9   Koordinatsystem 1 pos */
- {IGdlen, FALSE, RIT_MOD+BAS_MOD},           /* f10  Ta bort storhet */
-
- {IGcpen, FALSE, RIT_MOD+BAS_MOD},           /* f11  Ändra penna */
- {IGcniv, FALSE, RIT_MOD+BAS_MOD},           /* f12  Ändra nivå */
- {IGdlgp, FALSE, RIT_MOD+BAS_MOD},           /* f13  Ta bort grupp */
- {IGcs1p, FALSE, BAS3_MOD},                  /* f14  Koordinatsystem 1 pos */
- {IGdlls, FALSE, BAS_MOD},                   /* f15  Ta bort sista sats */
-
- {WPatdi,  TRUE, RIT_MOD+BAS_MOD},           /* f16 Attribute dialogue */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f17  Delning X */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f18  Delning Y */
- {IGpofr, FALSE, BAS3_MOD},                  /* f19  Punkt fri */
- {IGpofr, FALSE, RIT_MOD+BAS2_MOD},          /* f20  Punkt */
-
- {IGpopr, FALSE, BAS3_MOD},                  /* f21  Punkt projicerad */
- {IGlifr, FALSE, BAS3_MOD},                  /* f22  Linje fri */
- {IGliof, FALSE, BAS3_MOD},                  /* f23  Linje parallell */
- {IGlipv, FALSE, BAS3_MOD},                  /* f24  Linje pos. och vinkel */
- {IGpart, FALSE, RIT_MOD+BAS_MOD},           /* f25  Skapa part */
-
- {IGbpln, FALSE, BAS3_MOD},                  /* f26  B-Plan */
- {IGbpln, FALSE, RIT_MOD+BAS2_MOD},          /* f27  B-Plan */
- {IGlipt, FALSE, BAS3_MOD},                  /* f28  Linje tang. en storhet */
- {IGli2t, FALSE, BAS3_MOD},                  /* f29  Linje tang. 2 cirklar */
- { IGld0, FALSE, RIT_MOD+BAS2_MOD},          /* f30  Längdmått horisontellt */
-
- { IGld1, FALSE, RIT_MOD+BAS2_MOD},          /* f31  Längdmått vertikalt */
- { IGld2, FALSE, RIT_MOD+BAS2_MOD},          /* f32  Längdmått parallellt */
- { IGcd0, FALSE, RIT_MOD+BAS2_MOD},          /* f33  Diametermått horisont. */
- { IGcd1, FALSE, RIT_MOD+BAS2_MOD},          /* f34  Diametermått vertikalt */
- { IGcd2, FALSE, RIT_MOD+BAS2_MOD},          /* f35  Diametermått parallellt */
-
- {IGrdim, FALSE, RIT_MOD+BAS2_MOD},          /* f36  Radiemått */
- {IGadim, FALSE, RIT_MOD+BAS2_MOD},          /* f37  Vinkelmått */
- { IGxht, FALSE, RIT_MOD+BAS2_MOD},          /* f38  Snittmarkering */
- {IGlipe, FALSE, RIT_MOD+BAS2_MOD},          /* f39  Linje v-rät mot annan */
- {IGlifr, FALSE, RIT_MOD+BAS2_MOD},          /* f40  Linje mellan 2 pos */
-
- {IGlipr, FALSE, BAS3_MOD},                  /* f41  Linje projicerad */
- {IGliof, FALSE, RIT_MOD+BAS2_MOD},          /* f42  Linje parallell */
- {IGlipv, FALSE, RIT_MOD+BAS2_MOD},          /* f43  Linje pos. och vinkel */
- {IGlipt, FALSE, RIT_MOD+BAS2_MOD},          /* f44  Linje tang. en storhet */
- {IGli2t, FALSE, RIT_MOD+BAS2_MOD},          /* f45  Linje tangent 2 cirklar */
-
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f46  Heldragen linjetyp */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f47  Streckad linjetyp */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f48  Streckprickad linjetyp */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f49  Linjers strecklängd */
- {IGtext, FALSE, RIT_MOD+BAS_MOD},           /* f50  Text */
-
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f51  Ändra aktiv texthöjd */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f52  Ändra aktiv textbredd */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f53  Ändra aktiv textlutning */
- {IGlipe, FALSE, BAS3_MOD},                  /* f54  Linje v-rät mot annan */
- { IGgrp, FALSE, RIT_MOD+BAS_MOD},           /* f55  Skapa grupp */
-
- {IGar1p, FALSE, BAS3_MOD},                  /* f56  Cirkelbåge 1 pos */
- {IGar2p, FALSE, BAS3_MOD},                  /* f57  Cirkelbåge 2 pos */
- {IGar3p, FALSE, BAS3_MOD},                  /* f58  Cirkelbåge 3 pos */
- {IGarof, FALSE, BAS3_MOD},                  /* f59  Cirkelbåge offset */
- {IGar1p, FALSE, RIT_MOD+BAS2_MOD},          /* f60  Cirkelbåge 1 pos */
-
- {IGar2p, FALSE, RIT_MOD+BAS2_MOD},          /* f61  Cirkelbåge 2 pos */
- {IGar3p, FALSE, RIT_MOD+BAS2_MOD},          /* f62  Cirkelbåge 3 pos */
- {IGarof, FALSE, RIT_MOD+BAS2_MOD},          /* f63  Cirkelbåge offset */
- {IGarfl, FALSE, RIT_MOD+BAS2_MOD},          /* f64  Hörnradie */
- {IGarfl, FALSE, BAS3_MOD},                  /* f65  Hörnradie */
-
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f66  Heldragen cirkeltyp */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f67  Streckad cirkeltyp */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f68  Streckprickad cirkeltyp */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f69  Cirklars strecklängd */
- {IGcuft, FALSE, RIT_MOD+BAS_MOD},           /* f70  Ferguson med tang */
-
- {IGcuct, FALSE, RIT_MOD+BAS_MOD},           /* f71  Chord med tang */
- {IGcuvt, FALSE, RIT_MOD+BAS_MOD},           /* f72  Stiffness med tang */
- {IGcdal, FALSE, RIT_MOD+BAS_MOD},           /* f73  Ändra strecklängd */
- { IGcfs, FALSE, RIT_MOD+BAS_MOD},           /* f74  Ändra till heldragen */
- {IGcomp, FALSE, RIT_MOD+BAS_MOD},           /* f75  Sammansatt kurva */
-
- { IGcfd, FALSE, RIT_MOD+BAS_MOD},           /* f76  Ändra till streckad */
- { IGcfc, FALSE, RIT_MOD+BAS_MOD},           /* f77  Ändra till streckprickad */
- {IGctsz, FALSE, RIT_MOD+BAS_MOD},           /* f78  Ändra texthöjd */
- {IGctwd, FALSE, RIT_MOD+BAS_MOD},           /* f79  Ändra textbredd */
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* f80  Fd. Ändra aktiv sifferstorl */
-
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f81  Ändra aktiv pilstorlek */
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f82  Ändra aktiv antal dec */
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f83  Auto på */
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f84  Ej auto */
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f85  Heldragen snittyp */
-
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f86  Streckad snittyp */
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f87  Streckprickad snittyp */
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f88  Snittlinjers längd */
- {IGctsl, FALSE, RIT_MOD+BAS_MOD},           /* f89  Ändra textlutning */
- {IGslvl, FALSE, RIT_MOD+BAS_MOD},           /* f90  Byt aktiv nivå */
-
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f91  Pan WPRWIN */
- {IGcdxf, FALSE, RIT_MOD+BAS_MOD},           /* f92  Skriv ut DXF-fil */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f93  Rotate WPRWIN */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f94  Perspective WPRWIN */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f95  Light WPRWIN */
-
- {IGspen, FALSE, RIT_MOD+BAS_MOD},           /* f96  Byt aktivt pennummer */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f97  Clip WPRWIN */
- {IGcnog,  TRUE, RIT_MOD+BAS_MOD},           /* f98  Kurvnoggrannhet */
- {notimpl,FALSE, BAS3_MOD},                  /* Fd. f99  Skapa vy med ksys */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f100 Wireframe mode WPRWIN */
-
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f101 Shaded mode WPRWIN */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f102 The view dialouge */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f103 The grid dialogue */
- {IGcs3p, FALSE, BAS3_MOD},                  /* f104 Koordinatsystem */
- {IGcs3p, FALSE, RIT_MOD+BAS2_MOD},          /* f105 Koordinatsystem */
-
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f106 Aktivera lokalt ksys */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f107 Aktivera globala */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f108 Ritningsskala */
- {IGuppt, FALSE, RIT_MOD+BAS_MOD},           /* f109 Updatera part */
- {notimpl, TRUE, RIT_MOD+BAS_MOD+NO_X11_MOD},/* Fd. f110 Byt vy */
-
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f111 Skapa vy */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f112 Ta bort vy */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f113 Lista vyer */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f114 Raster */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f115 Släck raster */
-
- {IGcufn, FALSE, RIT_MOD+BAS_MOD},           /* f116 Ferguson utan tang. */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f117 Pos-menyn av */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f118 Pos-menyn på */
- {IGsjbn, FALSE, RIT_MOD+BAS_MOD},           /* f119 Lagra jobfil */
- {IGnjsn, FALSE, RIT_MOD+BAS_MOD},           /* f120 Lagra ej och nytt job */
-
- {IGsgmn, FALSE, RIT_MOD+BAS_MOD},           /* f121 Lagra resultatfil */
- {IGexsa, FALSE, RIT_MOD+BAS_MOD},           /* f122 Lagra allt och sluta */
- {IGexsn, FALSE, RIT_MOD+BAS_MOD},           /* f123 Lagra ej och sluta */
- {IGnjsa, FALSE, RIT_MOD+BAS_MOD},           /* f124 Lagra allt och nytt job */
- {IGshll,  TRUE, RIT_MOD+BAS_MOD},           /* f125 Kommando till OS */
-
- {IGspmn, FALSE, BAS_MOD},                   /* f126 Lagra modul */
- {IGcatt, FALSE, BAS_MOD},                   /* f127 Ändra modulens attribut */
- {notimpl,FALSE, BAS_MOD},                   /* Fd. f128 Ändra modulens skyddskod */
- {IGcdnd, FALSE, RIT_MOD+BAS2_MOD},          /* f129 Ändra antal dec. i mått */
- {IGcda0, FALSE, RIT_MOD+BAS2_MOD},          /* f130 Ändra mått auto av */
-
- {IGcda1, FALSE, BAS2_MOD},                  /* f131 Ändra mått auto på */
- {notimpl,FALSE, BAS3_MOD+NO_X11_MOD},       /* Fd. f132 Perspektiv */
- {IGhid1,  TRUE, BAS3_MOD},                  /* f133 Dolda konturer skärm */
- {IGhid2,  TRUE, BAS3_MOD},                  /* f134 Dolda konturer fil */
- {IGhid3,  TRUE, BAS3_MOD},                  /* f135 Dolda konturer båda */
-
- {notimpl,FALSE, RIT_MOD+BAS2_MOD},          /* Fd. f136 Kalibrera digitizer */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f137 Status */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f138 Ej status */
- {IGanpm, FALSE, RIT_MOD+BAS_MOD},           /* f139 Analysera PM */
- {IGangm, FALSE, RIT_MOD+BAS_MOD},           /* f140 Analysera GM */
-
- {IGlitb,  TRUE, RIT_MOD+BAS_MOD},           /* f141 Lista ID-tab */
- {IGrgmp,  TRUE, RIT_MOD+BAS_MOD},           /* f142 Läs i GM */
- {IGlsyd,  TRUE, RIT_MOD+BAS_MOD},           /* f143 Systemdata */
- {IGprtm, FALSE, BAS_MOD},                   /* f144 Lista modul till fil */
- {IGsymb, FALSE, RIT_MOD+BAS2_MOD},          /* f145 Läs in plotfil */
-
- {notimpl,FALSE, BAS_MOD},                   /* Fd. f146 Lista modul till skärm */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f147 Hela menyer */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f148 Bara rubriker */
- {notimpl, TRUE, RIT_MOD+BAS_MOD},           /* Fd. f149 Inga menyer */
- {wpunik,  TRUE, RIT_MOD+BAS_MOD},           /* f150 The print dialogue */
-
- {IGcgkm,  TRUE, RIT_MOD+BAS_MOD},           /* f151 Skapa plotfil */
- {IGmfun, FALSE, RIT_MOD+BAS_MOD},           /* f152 Kör MACRO */
- {IGhelp,  TRUE, TOP_MOD+RIT_MOD+BAS_MOD},   /* f153 Hjälp */
- {IGcdts, FALSE, RIT_MOD+BAS2_MOD},          /* f154 Ändra mått siff.storl. */
- {IGcdas, FALSE, RIT_MOD+BAS2_MOD},          /* f155 Ändra mått pilstorl. */
-
- {IGcucn, FALSE, RIT_MOD+BAS_MOD},           /* f156 Chord utan tang. */
- {IGcuvn, FALSE, RIT_MOD+BAS_MOD},           /* f157 Stiffness utan tang. */
- {IGsuro, FALSE, BAS3_MOD},                  /* f158 Rotationsyta */
- {IGsuof, FALSE, BAS3_MOD},                  /* f159 Offsetyta */
- {IGsucy, FALSE, BAS3_MOD},                  /* f160 Cylinderyta */
-
- {IGcucf, FALSE, RIT_MOD+BAS_MOD},           /* f161 Kägelsnitt fri */
- {IGcucp, FALSE, BAS3_MOD},                  /* f162 Kägelsnitt proj */
- {IGcuro, FALSE, RIT_MOD+BAS_MOD},           /* f163 Offset kurva */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f164 Heldragen kurvtyp */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f165 Streckad kurvtyp */
-
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f166 Streckprickad kurvtyp */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f167 Kurvors strecklängd */
- {IGedst, FALSE, BAS_MOD},                   /* f168 Editera sats */
- {IGanrf, FALSE, BAS_MOD},                   /* f169 Analysera referenser */
- {IGcptw, FALSE, RIT_MOD+BAS_MOD},           /* f170 X11/WIN32-ändra part */
-
- {IGctfn, FALSE, RIT_MOD+BAS_MOD},           /* f171 Ändra text:s font */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f172 Sätt aktiv textfont */
- {IGexsd, FALSE, BAS_MOD},                   /* f173 Sluta med dekomp. */
- {IGnjsd, FALSE, BAS_MOD},                   /* f174 Nytt jobb med dekomp. */
- {IGsjsa, FALSE, RIT_MOD+BAS_MOD},           /* f175 Lagra allt sluta ej */
-
- {IGchpr, FALSE, RIT_MOD+BAS_MOD},           /* f176 Byt projekt */
- {notimpl,FALSE, RIT_MOD+BAS_MOD},           /* Fd. f177 Aktivera basic */
- {IGlspr, FALSE, RIT_MOD+BAS_MOD},           /* f178 Lista projekt */
- {IGdlpr, FALSE, RIT_MOD+BAS_MOD},           /* f179 Ta bort projekt */
- {IGlsjb, FALSE, RIT_MOD+BAS_MOD},           /* f180 Lista jobb */
-
- {IGsusw, FALSE, BAS3_MOD},                  /* f181 Svept yta */
- {IGsuru, FALSE, BAS3_MOD},                  /* f182 Regelyta */
- {IGcuri, FALSE, BAS3_MOD},                  /* f183 Skärningskurva */
- {IGdljb, FALSE, RIT_MOD+BAS_MOD},           /* f184 Ta bort jobb */
- {IGcwdt, FALSE, RIT_MOD+BAS_MOD},           /* f185 Ändra storhets bredd */
-
- {IGswdt, FALSE, RIT_MOD+BAS_MOD},           /* f186 Storheters bredd */
- {IGmvrr, FALSE, TOP_MOD},                   /* f187 Kopiera RES->RIT */
- {wpunik, FALSE, NONE_MOD},                  /* f188 X-Ändra skala */
- {wpunik, FALSE, NONE_MOD},                  /* f189 X-Panorera */
- {wpunik, FALSE, NONE_MOD},                  /* f190 X-Perspektiv */
-
- {wpunik, FALSE, NONE_MOD},                  /* f191 X-Föregående vy */
- {wpunik, FALSE, NONE_MOD},                  /* f192 X-version av status */
- {wpunik, FALSE, NONE_MOD},                  /* f193 X-version av ZOOM */
- {wpunik, FALSE, NONE_MOD},                  /* f194 X-version av AutoZOOM */
- {notimpl,FALSE, NONE_MOD},                  /* Fd. f195 X-Byt vy */
-#ifdef WIN32
- {msneww, TRUE,  RIT_MOD+BAS_MOD},           /* f196 WIN32-Skapa nytt fönster */
-#else
- {WPneww, TRUE,  RIT_MOD+BAS_MOD+X11_MOD},   /* f196 X-Skapa nytt fönster */
-#endif
- {wpunik, FALSE, NONE_MOD},                  /* f197 The levels dialogue */
- {notimpl,TRUE,  BAS3_MOD},                  /* Fd. f198 Flat shading */
- {notimpl,TRUE,  BAS3_MOD},                  /* Fd. f199 Smooth shading */
- {IGrenw, FALSE, NONE_MOD},                  /* f200 Render */
-
- {IGsaln, FALSE, RIT_MOD+BAS_MOD},           /* f201 Lagra allt med nytt namn */
- { IGmv1, FALSE, RIT_MOD},                   /* f202 Dra storhet */
- {IGrot1, FALSE, RIT_MOD},                   /* f203 Rotera storhet */
- {IGcarr, FALSE, RIT_MOD},                   /* f204 Ändra cirkel radie */
- {IGcar1, FALSE, RIT_MOD},                   /* f205 Ändra startvinkel*/
-
- {IGcar2, FALSE, RIT_MOD},                   /* f206 Ändra slutvinkel */
- {IGctxv, FALSE, RIT_MOD},                   /* f207 Ändra text vinkel */
- {IGctxs, FALSE, RIT_MOD},                   /* f208 Ändra text */
- {IGmven, FALSE, RIT_MOD},                   /* f209 Flytta storheter */
- {IGcpy1, FALSE, RIT_MOD},                   /* f210 Kopiera storheter */
-
- {IGmir1, FALSE, RIT_MOD},                   /* f211 Spegla storhet */
- {IGchgr, FALSE, RIT_MOD},                   /* f212 Ändra grupp */
- {IGblnk, FALSE, RIT_MOD},                   /* f213 Släck storhet */
- {IGubal, FALSE, RIT_MOD},                   /* f214 Tänd alla släckta */
- {IGhtal, FALSE, RIT_MOD},                   /* f215 Gör allt pekbart */
-
-/*
-***Några funktioner som har samma nummer i WIN32
-***och X11 men i själva verket är olika.
-*/
-#ifdef WIN32
-
-{ msamod, FALSE, BAS_MOD},                   /* f216 MBS:a aktiv modul WIN32 */
-{ msomod, FALSE, BAS_MOD},                   /* f217 MBS:a annan modul WIN32 */
-{notimpl, FALSE, NONE_MOD},                  /* f218  */
-{notimpl, FALSE, NONE_MOD},                  /* f219  */
-{ mscoal, FALSE, BAS_MOD},                   /* f220 Kompilera alla WIN32 */
-
-{ mshlp1, TRUE,  RIT_MOD+BAS_MOD},           /* f221 Hjälp om hjälp WIN32 */
-{ mshlp2, TRUE,  RIT_MOD+BAS_MOD},           /* f222 Hjälpindex     WIN32 */
-{notimpl, FALSE, NONE_MOD},                  /* f223  */
-{notimpl, FALSE, NONE_MOD},                  /* f224  */
-{notimpl, FALSE, NONE_MOD},                  /* f225  */
-
-#else
-
-{ WPamod, FALSE, BAS_MOD+X11_MOD},           /* f216 MBS:a aktiv modul X11 */
-{ WPomod, FALSE, BAS_MOD+X11_MOD},           /* f217 MBS:a annan modul X11 */
- { IGcff, FALSE, RIT_MOD+BAS_MOD},           /* f218 Edit entity font = 3 */
-{notimpl, FALSE, NONE_MOD},                  /* f219  */
-{ WPcoal, FALSE, BAS_MOD+X11_MOD},           /* f220 Kompilera alla X11 */
-
-{notimpl,  TRUE, NONE_MOD},                  /* f221 Delete WPRWIN */
-{notimpl, FALSE, NONE_MOD},                  /* f222  */
-{notimpl, FALSE, NONE_MOD},                  /* f223  */
-{notimpl, FALSE, NONE_MOD},                  /* f224  */
-{notimpl, FALSE, NONE_MOD},                  /* f225  */
-
-#endif
-
-{ IGctpm, FALSE, BAS3_MOD},                  /* f226 Ändra texts TPMODE */
-{notimpl, FALSE, BAS3_MOD},                  /* Fd. f227 Sätt aktivt TPMODE */
-{notimpl, FALSE, NONE_MOD},                  /* f228  */
-{notimpl, FALSE, NONE_MOD},                  /* f229  */
-{ IGcuis, FALSE, BAS3_MOD},                  /* f230 Isoparameter kurva */
-
-{ IGcura, FALSE, BAS2_MOD+BAS3_MOD},         /* f231 Approximera kurva */
-{ IGcurt, FALSE, BAS2_MOD+BAS3_MOD},         /* f232 Trimma kurva */
-{ IGcusi, FALSE, BAS3_MOD},                  /* f233 Silhuette kurva */
-{ IGsurt, FALSE, BAS3_MOD},                  /* f234 Trimma yta */
-{ IGsura, FALSE, BAS3_MOD},                  /* f235 Approximera yta */
-
-{ IGsuco, FALSE, BAS3_MOD},                  /* f236 Sammansatt yta */
-{ IGsuex, FALSE, BAS3_MOD},                  /* f237 Importerad yta */
-{ IGsulo, FALSE, BAS3_MOD},                  /* f238 Loftad yta */
-{ IGtfmo, FALSE, BAS3_MOD},                  /* f239 Translation */
-{ IGtfro, FALSE, BAS3_MOD},                  /* f240 Rotation */
-
-{ IGtfmi, FALSE, BAS3_MOD},                  /* f241 Spegling */
-{ IGtcpy, FALSE, BAS3_MOD},                  /* f242 Kopiering */
-
-};
-
-/*
-***Kom ihåg att sätta futab's storlek till rätt värde nedan om
-***storleken ändras.
+***The size of futab[].
 */
 #define FTABSIZ 242
+
+/*
+***futab[] itself.
+*/
+
+static FUATTR futab[] =
+{
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f1   WPselect_sysmode() */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f2   IGselect_job() */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f3   - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f4   - */
+ {IGrun_active,      FALSE, GENERIC},          /* f5   Run active module*/
+
+ {IGtrim,            FALSE, EXPLICIT+GENERIC}, /* f6   Trim entity */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f7   - */
+ {IGrun_named,       FALSE, EXPLICIT+GENERIC}, /* f8   Run a named module */
+ {IGcsy_1p,          FALSE, EXPLICIT+GENERIC}, /* f9   Create CSYS_1P */
+ {IGdelete_entity,   FALSE, EXPLICIT+GENERIC}, /* f10  Delete entity*/
+
+ {IGcpen,            FALSE, EXPLICIT+GENERIC}, /* f11  Change the PEN of an entity */
+ {IGclevel,          FALSE, EXPLICIT+GENERIC}, /* f12  Change the LEVEL of an entity */
+ {IGdelete_group,    FALSE, EXPLICIT},         /* f13  Delete group by name */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f14  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f15  - */
+
+ {IGset_actatts,     FALSE, EXPLICIT+GENERIC}, /* f16  Set active attributes */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f17  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f18  - */
+ {IGpofr,            FALSE, EXPLICIT+GENERIC}, /* f19  Create POI_FREE */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f20  - */
+
+ {IGpopr,            FALSE, EXPLICIT+GENERIC}, /* f21  Create POI_PROJ */
+ {IGlifr,            FALSE, EXPLICIT+GENERIC}, /* f22  Create LIN_FREE */
+ {IGliof,            FALSE, EXPLICIT+GENERIC}, /* f23  Create LIN_OFFS */
+ {IGlipv,            FALSE, EXPLICIT+GENERIC}, /* f24  Create LIN_ANG */
+ {IGpart,            FALSE, EXPLICIT+GENERIC}, /* f25  Create PART */
+
+ {IGbpln,            FALSE, EXPLICIT+GENERIC}, /* f26  Create B_PLANE */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f27  - */
+ {IGlipt,            FALSE, EXPLICIT+GENERIC}, /* f28  Create LIN_TAN1 */
+ {IGli2t,            FALSE, EXPLICIT+GENERIC}, /* f29  Create LIN_TAN2 */
+ {IGld0,             FALSE, EXPLICIT+GENERIC}, /* f30  Create LDIM horizontal */
+
+ {IGld1,             FALSE, EXPLICIT+GENERIC}, /* f31  Create LDIM vertical */
+ {IGld2,             FALSE, EXPLICIT+GENERIC}, /* f32  Create LDIM parallell */
+ {IGcd0,             FALSE, EXPLICIT+GENERIC}, /* f33  Create CDIM horizontal */
+ {IGcd1,             FALSE, EXPLICIT+GENERIC}, /* f34  Create CDIM vertical */
+ {IGcd2,             FALSE, EXPLICIT+GENERIC}, /* f35  Create CDIM parallell */
+
+ {IGrdim,            FALSE, EXPLICIT+GENERIC}, /* f36  Create RDIM */
+ {IGadim,            FALSE, EXPLICIT+GENERIC}, /* f37  Create ADIM */
+ {IGxht,             FALSE, EXPLICIT+GENERIC}, /* f38  Create XHATCH */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f39  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f40  - */
+
+ {IGlipr,            FALSE, EXPLICIT+GENERIC}, /* f41  Create LIN_PROJ */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f42  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f43  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f44  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f45  - */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f46  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f47  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f48  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f49  - */
+ {IGtext,            FALSE, EXPLICIT+GENERIC}, /* f50  Create TEXT */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f51  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f52  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f53  - */
+ {IGlipe,            FALSE, EXPLICIT+GENERIC}, /* f54  Create LIN_PERP */
+ {IGgrp,             FALSE, EXPLICIT+GENERIC}, /* f55  Create GROUP */
+
+ {IGar1p,            FALSE, EXPLICIT+GENERIC}, /* f56  Create ARC_1POS */
+ {IGar2p,            FALSE, EXPLICIT+GENERIC}, /* f57  Create ARC_2POS */
+ {IGar3p,            FALSE, EXPLICIT+GENERIC}, /* f58  Create ARC_3POS */
+ {IGarof,            FALSE, EXPLICIT+GENERIC}, /* f59  Create ARC_OFFS */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f60  - */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f61  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f62  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f63  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f64  - */
+ {IGarfl,            FALSE, EXPLICIT+GENERIC}, /* f65  Create ARC_FIL */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f66  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f67  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f68  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f69  - */
+ {IGcuft,            FALSE, EXPLICIT+GENERIC}, /* f70  Create CUR_SPLINE Ferg w tan */
+
+ {IGcuct,            FALSE, EXPLICIT+GENERIC}, /* f71  Create CUR_SPLINE Chord w tan */
+ {IGcuvt,            FALSE, EXPLICIT+GENERIC}, /* f72  Create CUR_SPLINE Stiff w tan */
+ {IGcdal,            FALSE, EXPLICIT+GENERIC}, /* f73  Edit *DASHL */
+ {IGcfs,             FALSE, EXPLICIT+GENERIC}, /* f74  Set *FONT to solid */
+ {IGcomp,            FALSE, EXPLICIT+GENERIC}, /* f75  Create CUR_COMP */
+
+ {IGcfd,             FALSE, EXPLICIT+GENERIC}, /* f76  Set *FONT to dashed */
+ {IGcfc,             FALSE, EXPLICIT+GENERIC}, /* f77  Set *FONT to centerline */
+ {IGctsz,            FALSE, EXPLICIT+GENERIC}, /* f78  Edit TSIZE */
+ {IGctwd,            FALSE, EXPLICIT+GENERIC}, /* f79  Edit TWIDTH */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f80  - */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f81  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f82  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f83  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f84  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f85  - */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f86  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f87  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f88  - */
+ {IGctsl,            FALSE, EXPLICIT+GENERIC}, /* f89  Edit TSLANT */
+ {IGslvl,            FALSE, EXPLICIT+GENERIC}, /* f90  Set active level */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f91  - */
+ {IGexport_DXF2D,    FALSE, EXPLICIT+GENERIC}, /* f92  Export DXF 2D */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f93  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f94  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f95  - */
+
+ {IGspen,            FALSE, EXPLICIT+GENERIC}, /* f96  Set active pen */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f97  - */
+ {IGset_cacc,        FALSE, EXPLICIT+GENERIC}, /* f98  Set curve accuracy */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f99  - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f100 - */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f101 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f102 WPview_dialog() */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f103 WPgrid_dialog() */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f104 - */
+ {IGcsy_3p,          FALSE, EXPLICIT+GENERIC}, /* f105 Create coordinate system with 3 pos */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f106 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f107 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f108 - */
+ {IGuppt,            FALSE, EXPLICIT+GENERIC}, /* f109 Update part */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f110 - */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f111 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f112 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f113 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f114 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f115 - */
+
+ {IGcufn,            FALSE, EXPLICIT+GENERIC}, /* f116 Create CUR_SPLINE Ferg no tan */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f117 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f118 - */
+ {IGsave_JOB_as,     FALSE, EXPLICIT+GENERIC}, /* f119 Save JOB-file as */
+ {IGnjsn,            FALSE, EXPLICIT+GENERIC}, /* f120 New job, save nothing */
+
+ {IGsave_RES_as,     FALSE, EXPLICIT+GENERIC}, /* f121 Save RES-file as */
+ {IGexit_sa,         FALSE, EXPLICIT+GENERIC}, /* f122 Exit and save all */
+ {IGexit_sn,         FALSE, EXPLICIT+GENERIC}, /* f123 Exit and save nothing */
+ {IGnjsa,            FALSE, EXPLICIT+GENERIC}, /* f124 New job, save all */
+ {IGshell,           FALSE, EXPLICIT+GENERIC}, /* f125 Issue a shell command */
+
+ {IGsave_MBO_as,     FALSE, GENERIC},          /* f126 Save MBO-file as */
+ {IGcatt,            FALSE, GENERIC},          /* f127 Edit module attribute */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f128 - */
+ {IGcdnd,            FALSE, EXPLICIT+GENERIC}, /* f129 Edit DNDIG */
+ {IGcda0,            FALSE, EXPLICIT+GENERIC}, /* f130 Set DAUTO off */
+
+ {IGcda1,            FALSE, EXPLICIT+GENERIC}, /* f131 Set DAUTO on */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f132 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f133 ! Hide on display */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f134 ! Hide to file */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f135 ! Both */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f136 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f137 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f138 - */
+ {IGanpm,            FALSE, EXPLICIT+GENERIC}, /* f139 PM status */
+ {IGandb,            FALSE, EXPLICIT+GENERIC}, /* f140 DB status */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f141 */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f142 */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f143 */
+ {IGsave_MBS_as,     FALSE, GENERIC},          /* f144 Save module in MBS format */
+ {IGsymb,            FALSE, EXPLICIT+GENERIC}, /* f145 Import plotfile */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f146 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f147 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f148 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f149 - */
+ {IGabout_help,      TRUE,  EXPLICIT+GENERIC}, /* f150 Display help about help */
+
+ {IGexport_GKSM,     FALSE, EXPLICIT+GENERIC}, /* f151 Export GKS Metafile */
+ {IGmacro,           FALSE, EXPLICIT+GENERIC}, /* f152 Execute a macro */
+ {IGhelp,            TRUE,  EXPLICIT+GENERIC}, /* f153 Display help on current context */
+ {IGcdts,            FALSE, EXPLICIT+GENERIC}, /* f154 Edit DTSIZE */
+ {IGcdas,            FALSE, EXPLICIT+GENERIC}, /* f155 Edit DASIZE */
+
+ {IGcucn,            FALSE, EXPLICIT+GENERIC}, /* f156 Create CUR_SPLINE Chord no tan */
+ {IGcuvn,            FALSE, EXPLICIT+GENERIC}, /* f157 Create CUR_SPLINE Stiff no tan */
+ {IGsuro,            FALSE, EXPLICIT+GENERIC}, /* f158 Create SUR_ROT */
+ {IGsuof,            FALSE, EXPLICIT+GENERIC}, /* f159 Create SUR_OFFS */
+ {IGsucy,            FALSE, EXPLICIT+GENERIC}, /* f160 Create SUR_CYL */
+
+ {IGcucf,            FALSE, EXPLICIT+GENERIC}, /* f161 Create CUR_CONIC free */
+ {IGcucp,            FALSE, EXPLICIT+GENERIC}, /* f162 Create CUR_CONIC proj */
+ {IGcuro,            FALSE, EXPLICIT+GENERIC}, /* f163 Create CUR_OFFS */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f164 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f165 - */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f166 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f167 - */
+ {IGedst,            FALSE, GENERIC},          /* f168 Edit MBS statement */
+ {IGanrf,            FALSE, GENERIC},          /* f169 Analyze references */
+ {IGcptw,            FALSE, EXPLICIT+GENERIC}, /* f170 Edit part parameters */
+
+ {IGctfn,            FALSE, EXPLICIT+GENERIC}, /* f171 Edit TFONT */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f172 - */
+ {IGexsd,            FALSE, GENERIC},          /* f173 Exit with decompilation */
+ {IGnjsd,            FALSE, GENERIC},          /* f174 New job with decompilation */
+ {IGsave_all,        FALSE, EXPLICIT+GENERIC}, /* f175 Save everything */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f176 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f177 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f178 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f179 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f180 - */
+
+ {IGsusw,            FALSE, EXPLICIT+GENERIC}, /* f181 Create SUR_SWEEP */
+ {IGsuru,            FALSE, EXPLICIT+GENERIC}, /* f182 Create SUR_RULED */
+ {IGcuri,            FALSE, EXPLICIT+GENERIC}, /* f183 Create CUR_INT */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f184 - */
+ {IGcwdt,            FALSE, EXPLICIT+GENERIC}, /* f185 Edit WIDTH */
+
+ {IGswdt,            FALSE, EXPLICIT+GENERIC}, /* f186 Set active WIDTH */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f187 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f188 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f189 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f190 - */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f191 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f192 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f193 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f194 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f195 - */
+
+ {IGcreate_gwin,     FALSE, EXPLICIT+GENERIC}, /* f196 Create new WPGWIN */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f197 WPlevel_dialog() */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f198 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f199 - */
+ {IGcreate_rwin,     FALSE, EXPLICIT+GENERIC}, /* f200 Create new WPRWIN */
+
+ {IGsave_all_as,     FALSE, EXPLICIT+GENERIC}, /* f201 Save everything as */
+ {IGmv1,             FALSE, EXPLICIT},         /* f202 Drag entity */
+ {IGrot1,            FALSE, EXPLICIT},         /* f203 Rotate entity */
+ {IGcarr,            FALSE, EXPLICIT},         /* f204 Edit arc radius */
+ {IGcar1,            FALSE, EXPLICIT},         /* f205 Edit arc start angle */
+
+ {IGcar2,            FALSE, EXPLICIT},         /* f206 Edit arc end angle */
+ {IGctxv,            FALSE, EXPLICIT},         /* f207 Edit text angle */
+ {IGctxs,            FALSE, EXPLICIT},         /* f208 Edit text */
+ {IGmven,            FALSE, EXPLICIT},         /* f209 Move entities */
+ {IGcpy1,            FALSE, EXPLICIT},         /* f210 Copy entities */
+
+ {IGmir1,            FALSE, EXPLICIT},         /* f211 Mirror entities */
+ {IGchgr,            FALSE, EXPLICIT},         /* f212 Edit group */
+ {IGblnk,            FALSE, EXPLICIT},         /* f213 Blank entity */
+ {IGubal,            FALSE, EXPLICIT},         /* f214 Unblank all entities */
+ {IGhtal,            FALSE, EXPLICIT},         /* f215 Make all selectable */
+
+ {IGedit_active,     FALSE, GENERIC},          /* f216 Edit active module in MBS mode */
+ {IGedit_MBS,        FALSE, EXPLICIT+GENERIC}, /* f217 Edit MBS file */
+ {IGcff,             FALSE, EXPLICIT+GENERIC}, /* f218 Set *FONT to filled */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f219 - */
+ {IGcompile_all,     FALSE, EXPLICIT+GENERIC}, /* f220 Compile all */
+
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f221 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f222 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f223 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f224 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f225 - */
+
+ {IGctpm,            FALSE, EXPLICIT+GENERIC}, /* f226 Edit TPMODE */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f227 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f228 - */
+ {notimpl,           FALSE, EXPLICIT+GENERIC}, /* f229 - */
+ {IGcuis,            FALSE, EXPLICIT+GENERIC}, /* f230 Create CUR_ISO */
+
+ {IGcura,            FALSE, EXPLICIT+GENERIC}, /* f231 Create CUR_APPROX */
+ {IGcurt,            FALSE, EXPLICIT+GENERIC}, /* f232 Create CUR_TRIM */
+ {IGcusi,            FALSE, EXPLICIT+GENERIC}, /* f233 Create CUR_SIL */
+ {IGsurt,            FALSE, EXPLICIT+GENERIC}, /* f234 Create SUR_TRIM */
+ {IGsura,            FALSE, EXPLICIT+GENERIC}, /* f235 Create SUR_APPROX */
+
+ {IGsuco,            FALSE, EXPLICIT+GENERIC}, /* f236 Create SUR_COMP */
+ {IGsuex,            FALSE, EXPLICIT+GENERIC}, /* f237 Create SUR_EXDEF */
+ {IGsulo,            FALSE, EXPLICIT+GENERIC}, /* f238 Create SUR_CONIC */
+ {IGtfmo,            FALSE, EXPLICIT+GENERIC}, /* f239 Create TFORM_MOVE */
+ {IGtfro,            FALSE, EXPLICIT+GENERIC}, /* f240 Create TFORM_ROTL */
+
+ {IGtfmi,            FALSE, EXPLICIT+GENERIC}, /* f241 Create TFORM_MIRR*/
+ {IGtcpy,            FALSE, EXPLICIT+GENERIC}, /* f242 Create TCOPY */
+};
 
 /******************************************************!*/

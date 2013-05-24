@@ -86,18 +86,18 @@ typedef char pmsubcl;   /* Type for subclasses with values defined by        */
 typedef struct pmmono   /* The Module node                                   */
     {
     pmnocl  monocl;     /* Node class                                        */
-    pm_ptr  mona_;      /* Module name : pointer to a character string in PM */ 
-    pmmoty  moty_;      /* Module type : 2D or 3D                            */
+    pm_ptr  mona_;      /* Module name : pointer to a character string in PM */
+    pmmoty  moty_;      /* Module type : always 3D                           */
     pmmoat  moat_;      /* Module attribute : LOCAL,GLOBAL.. etc.            */
-    pm_ptr  psysb_;     /* Pointer to Symbol table, system part              */ 
+    pm_ptr  psysb_;     /* Pointer to Symbol table, system part              */
     pm_ptr  ppali_;     /* Pointer to List Node which point to  PARAM_NODE   */
     pm_ptr  plosb_;     /* Pointer to Symbol table, local part               */
     pm_ptr  pstl_;      /* Pointer to List Node which point to  STAT_NODE    */
     pmseqn  geidlev;    /* geometric id level, the highest number used for   */
-                        /*   an identity in a module */
+                        /* an identity in a module */
     DBint   datasize;   /* size of local data size */
     V3MDAT  sysdat;     /* system data structure */
-    }  PMMONO ;
+    } PMMONO ;
 /*---------------------------------------------------------------------------*/
 /*      End of definition for MODULE_NODE.                                   */
 /*===========================================================================*/

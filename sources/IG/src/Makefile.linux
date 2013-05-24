@@ -1,8 +1,8 @@
 ##########################################################
 #
-#   Makefile for IGlib with gcc and linux
+#   Makefile for IG on linux
 #
-#  (C)Microform AB 1999-02-15 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
@@ -19,7 +19,6 @@ distr :     CFLAGS =                    \
             -O                          \
             -DUNIX
 
-            
 debug :     CFLAGS =                    \
             -ansi                       \
             -Wall                       \

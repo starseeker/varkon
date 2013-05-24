@@ -1,0 +1,64 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- Module libraries})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Module libraries</h1>
+
+<p>
+The obvious way to start developing a Varkon application is
+of course to create the modules (MBS- and MBO-files) that are
+needed to represent the range of objects that the application
+will be able to create.
+</p>
+
+<p>
+It may be convenient to move the MBS- and MBO-files of an
+application to one or more folders or directories that can be
+accessed by all jobs and users of that application. If you
+do so you must tell Varkon where they are. The way to
+do that is to edit the definition of the VARKON_LIB environment
+variable in the Varkon start script.
+</p>
+
+<p>
+The startscript included in the Varkon distribution sets
+up the VARKON_LIB environment variable to point to
+<code>VARKON_ROOT/lib</code>. It is strongly recommended not to change
+or add anything in the standard library. Keep all your
+own modules somewhere else, outside the Varkon system file tree
+and point to your own module libraries by adding them to
+the VARKON_LIB environment variable defined in the Varkon
+start script. Here is an example:
+</p>
+
+<p><code>
+&nbsp;&nbsp;VARKON_LIB=the_path_to_my_own_library:$VARKON_ROOT/lib
+</code></p>
+
+<p>
+With VARKON_LIB defined as above Varkon will
+first search your own library and if not successful, search
+the Varkon standard library. VARKON_LIB permits up to 10 libraries to
+be defined like this and Varkon will search them in the order
+they appear. Note that there is only one single namespace for
+all modules including the Varkon standard modules.
+You must use unique names for all your modules. Names used
+by Varkon begin with <code>l_, dxf_, ed_, fe_, igs_, ma_ or stl_</code>.
+If you don't actually mean to replace a Varkon standard module,
+it is best to avoid names beginning with these letter combinations
+for all types of modules, also macro modules.
+</p>
+
+<p>
+See <a href="macro_varkon.htm">Where should I keep my macros</a>
+for similar information related to macro modules.
+</p>
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

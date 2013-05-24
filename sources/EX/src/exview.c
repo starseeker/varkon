@@ -16,7 +16,7 @@
 *    EXplwi();     Interface-routine for PLOT_WIN
 *
 *    This file is part of the VARKON Execute Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -44,7 +44,7 @@
 extern DBTmat *lsyspk;
 extern DBTmat  lklsys,lklsyi;
 
-/*!******************************************************/
+/********************************************************/
 
         short     EXcrvp(
         char      name[],
@@ -68,7 +68,7 @@ extern DBTmat  lklsys,lklsyi;
  *      23/1-95  Multifönster, J. Kjellander
  *      2007-01-01 removed GP, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
    WPVIEW  view;
@@ -92,7 +92,7 @@ extern DBTmat  lklsys,lklsyi;
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short EXcrvc(
         char  name[],
@@ -113,7 +113,7 @@ extern DBTmat  lklsys,lklsyi;
  *      23/1-95  Multifönster, J. Kjellander
  *      2006-12-31 Removed GP, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
     DBptr   la;
@@ -157,7 +157,7 @@ extern DBTmat  lklsys,lklsyi;
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short EXacvi(
         char  name[],
@@ -174,7 +174,7 @@ extern DBTmat  lklsys,lklsyi;
  *
  *      (C)2007-02-13 J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
    char    errbuf[V3STRLEN];
@@ -188,13 +188,13 @@ extern DBTmat  lklsys,lklsyi;
      {
      switch ( wpwtab[win_id].typ )
        {
-       case TYP_GWIN:  
+       case TYP_GWIN:
        gwinpt = (WPGWIN *)wpwtab[win_id].ptr;
        if ( WPactivate_view(name,gwinpt,NULL,TYP_GWIN) < 0 )
           return(erpush("EX1682",name));
        break;
 
-       case TYP_RWIN:  
+       case TYP_RWIN:
        rwinpt = (WPRWIN *)wpwtab[win_id].ptr;
        if ( WPactivate_view(name,NULL,rwinpt,TYP_RWIN) < 0 )
           return(erpush("EX1682",name));
@@ -215,7 +215,7 @@ extern DBTmat  lklsys,lklsyi;
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short   EXscvi(
         char    name[],
@@ -242,7 +242,7 @@ extern DBTmat  lklsys,lklsyi;
  *
  *      (C)2006-12-31, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
    double  mdx,mdy,xmin,xmax,ymin,ymax;
@@ -298,7 +298,7 @@ extern DBTmat  lklsys,lklsyi;
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short   EXcevi(
         char    name[],
@@ -320,7 +320,7 @@ extern DBTmat  lklsys,lklsyi;
  *
  *      (C)2006-12-31 J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
     double  xmin,ymin,xmax,ymax,
@@ -365,7 +365,7 @@ extern DBTmat  lklsys,lklsyi;
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short     EXhdvi(
         char      name[],
@@ -395,7 +395,7 @@ extern DBTmat  lklsys,lklsyi;
  *      29/5/91  Origo, J. Kjellander
  *      2006-12-28 Removed GP, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
     short    status;
@@ -439,14 +439,14 @@ extern DBTmat  lklsys,lklsyi;
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short   EXprvi(
         char    name[],
         DBfloat dist)
 
-/*      Interface-rutin för PERP_VIEW. Ändrar perspektiv-
- *      avstånd.
+/*      Interface-rutin för PERP_VIEW.
+ *      OBS inte färdig !!!!!!!!!
  *
  *      In: name  => Vyns namn.
  *          dist  => Nytt avstånd. 0 = Parallellprojektion.
@@ -458,7 +458,7 @@ extern DBTmat  lklsys,lklsyi;
  *
  *      (C)2006-12-31 J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
  {
     WPWIN  *winptr;
@@ -483,129 +483,157 @@ extern DBTmat  lklsys,lklsyi;
 ***The end.
 */
     return(0);
+
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short EXervi(DBint win_id)
 
-/*      Interface-rutin för ERASE_VIEW(). Suddar fönster.
+/*      Interface routine for ERASE_VIEW().
+ *      Erase graphical window.
  *
- *      In: win_id => Fönsterid.
+ *      In: win_id => Window ID.
  *
- *      Ut: Inget.
+ *      Error: EX2162 = Window not WPGWIN/WPRWIN.
+ *             EX2172 = Window does not exist.
  *
- *      FV:  0     => Ok.
+ *      (C)2007-11-30 J.Kjellander
  *
- *      (C)microform ab 30/6/86 R. Svedin
- *
- *      20/1-95  Multifönster, J. Kjellander
- *      2006-12-29 Removed GP, J.Kjellander
- *
- ******************************************************!*/
+ ********************************************************/
 
   {
+   char errbuf[V3STRLEN];
 
 /*
-***Erase requested graphic window.
+***Get the window type and erase.
 */
-    WPergw(win_id);
+   if ( wpwtab[win_id].ptr != NULL )
+     {
+     switch ( wpwtab[win_id].typ )
+       {
+       case TYP_GWIN:
+       WPergw(win_id);
+       break;
 
-    return(0);
+       case TYP_RWIN:
+       WPerrw(win_id);
+       break;
+/*
+***Window not WPGWIN or WPRWIN.
+*/
+       default:
+       sprintf(errbuf,"%d",win_id);
+       return(erpush("EX2162",errbuf));
+       }
+     }
+/*
+***Window does not exist.
+*/
+   else
+     {
+     sprintf(errbuf,"%d",win_id);
+     return(erpush("EX2172",errbuf));
+     }
+/*
+***The end.
+*/
+   return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short EXrpvi(
         DBint autoz,
         DBint win_id)
 
-/*      Interface-rutin för REP_VIEW(). Genererar en ny bild.
+/*      Interface routine for REP_VIEW().
+ *      Repaint graphical window.
  *
- *      In: autoz  => Autozoom = 1 annars 0.
- *          win_id => Fönster att rita om.
+ *      In: autoz  => Autozoom = 1 otherwise 0.
+ *          win_id => Window ID.
  *
- *      Ut: Inget.
+ *      Error: EX2162 = Window not WPGWIN/WPRWIN.
+ *             EX2172 = Window does not exist.
  *
- *      FV:  0     => Ok.
+ *      (C)2007-11-30 J.Kjellander
  *
- *      (C)microform ab 30/6/86 R. Svedin
- *
- *      7/10/86  Bytt till repagm, R. Svedin
- *      1/1/95   Multifönster, J. Kjellander
- *      1996-12-19 WIN32, J.Kjellander
- *      2006-12-28 Removed GP, J.Kjellander
- *
- ******************************************************!*/
+ ********************************************************/
 
   {
-    short status;
+   char errbuf[V3STRLEN];
 
 /*
-***X-Windows.
+***Get the window type and repaint.
 */
-#ifdef UNIX
-    if ( autoz == 1 )
-      {
-      status = WPmaut(win_id);
-      return(status);
-      }
-    else
-      {
-      WPrepaint_GWIN(win_id);
-      return(0);
-      }
-#endif
+   if ( wpwtab[win_id].ptr != NULL )
+     {
+     switch ( wpwtab[win_id].typ )
+       {
+       case TYP_GWIN:
+       if ( autoz == 1 ) WPmaut(win_id);
+       else              WPrepaint_GWIN(win_id);
+       break;
 
+       case TYP_RWIN:
+       if ( autoz == 1 ) WPrepaint_RWIN(win_id,TRUE);
+       else              WPrepaint_RWIN(win_id,FALSE);
+       break;
 /*
-***Microsoft Windows.
+***Window not WPGWIN or WPRWIN.
 */
-#ifdef WIN32
-    if ( autoz == 1 )
-      {
-      status = (short)msmaut(win_id);
-      return(status);
-      }
-    else
-      {
-      msrepa(win_id);
-      return(0);
-      }
-#endif
+       default:
+       sprintf(errbuf,"%d",win_id);
+       return(erpush("EX2162",errbuf));
+       }
+     }
+/*
+***Window does not exist.
+*/
+   else
+     {
+     sprintf(errbuf,"%d",win_id);
+     return(erpush("EX2172",errbuf));
+     }
+/*
+***The end.
+*/
+   return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short EXcavi(DBfloat newcn)
 
-/*      Interface-rutin för CACC_VIEW(). Ändra kurvnogranhet.
+/*      Interface routine for CACC_VIEW(). Sets curve
+ *      accuracy.
  *
- *      In: Inget.
+ *      Error:  EX1712 = Illegal range
  *
- *      Ut: Inget.
- *
- *      Felkoder:  EX1712 = Felaktig kurvnogranhet.
- *
- *      (C)microform ab 4/8/86 R. Svedin
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
   {
 /*
-*** Ändra kurvnogranheten.
+***Range check.
 */
     if (newcn < 0.01 || newcn > 100.0 ) return(erpush("EX1712",""));
-
+/*
+***Execute.
+*/
     WPset_cacc(newcn);
-
+/*
+***The end.
+*/
     return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short     EXplwi(
         DBint     grw_id,
@@ -630,7 +658,7 @@ extern DBTmat  lklsys,lklsyi;
  *
  *      (C)2007-04-08 J. Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
     char     errbuf[V3STRLEN];

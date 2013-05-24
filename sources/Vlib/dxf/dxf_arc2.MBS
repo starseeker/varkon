@@ -1,6 +1,6 @@
 !*******************************************************
 
-  GLOBAL DRAWING MODULE dxf_arc2(
+  GLOBAL MODULE dxf_arc2(
   VAR FILE   infil;
   INT        levlim;
   VAR INT    levant;

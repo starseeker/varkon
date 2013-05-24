@@ -1,0 +1,46 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>VARKON - A Parametric CAD-tool</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
+	<META NAME="AUTHOR" CONTENT="Johan Kjellander">
+	<META NAME="CREATED" CONTENT="20070816;13092700">
+	<META NAME="CHANGEDBY" CONTENT="Johan Kjellander">
+	<META NAME="CHANGED" CONTENT="20070823;10330800">
+	<META NAME="DESCRIPTION" CONTENT="The homepage of the VARKON system">
+	<META NAME="KEYWORDS" CONTENT="CAD, parametric design, geometric modeling, variation, visualization">
+	<META HTTP-EQUIV="expires" CONTENT="Tue, 10 Aug 1996 14:26:12 CET">
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P ALIGN=RIGHT><A HREF="http://sourceforge.net/"><IMG SRC="http://sflogo.sourceforge.net/sflogo.php?group_id=195464&amp;type=4" NAME="graphics1" ALT="SourceForge.net Logo" ALIGN=BOTTOM WIDTH=125 HEIGHT=37 BORDER=0></A>
+</P>
+<hr WIDTH="100%">
+<center><p><b><font size=+1>Release notes for VARKON version 1.17D</font></b></center>
+
+<p>A new MBS procedure SUR_CURVES() has been added. SUR_CURVES creates
+a surface by interpolating a number of curves.
+<p>The STL import filter has been enhanced and now automatically checks
+if the STL-file is in ASCII or binary format.
+<p>The 32Mb size limit for RES-files is now removed. In earlier versions
+of Varkon the system crashed if the model increased in size past the 32Mb
+limit. This change makes RES-files created by version 1.17C and earlier
+incompatible with 1.17D. VARKON will notice if you try to load an old RES-file
+and ask you to run the active model to create a new one. Doing so will
+create a RES-file in 1.17D format.
+<p>A new MBS procedure CUR_NURBSARR() has been added. CUR_NURBSARR() creates
+a NURBS-curve of arbitrary order from controlpoints and a node vector.
+Controlpoints may be rational.
+<p>A new class of MBS functions and procedures that enable users to communicate
+using TCP/IP has been added. Using MBS you can now connect to another computer
+through TCP/IP and send or receive data.
+<p>Makefiles for FreeBSD has been added and some code modified accordingly.
+This is a contribution by Pedro F. Giffuni. Thankyou Pedro.
+<center>
+<p>
+<hr WIDTH="100%">
+<p><a href="../index.htm">VARKON homepage</a></center>
+
+</body>
+</html>

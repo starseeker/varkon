@@ -4,12 +4,12 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  main()     Main entrypoint for the interactive Varkon system    */  
-/*  igckjn();  Check jobname for consitency                         */
-/*  igcenv();  Check/register WIN32 environment                     */
+/*  main()              Main entrypoint for interactive Varkon      */
+/*  IGcheck_jobname();  Check jobname for consitency                */
+/*  igcenv();           Check/register WIN32 environment            */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -31,40 +31,45 @@
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
+#include "../../DB/include/DBintern.h"
 #include "../include/IG.h"
 #include "../include/debug.h"
+#include "../include/svnversion.h"
 #include "../../EX/include/EX.h"
 #include "../../WP/include/WP.h"
 #include "../../GE/include/GE.h"
+#include <fcntl.h>
 #include <string.h>
 
 #ifdef UNIX
 #include "/usr/include/sys/utsname.h"
 #endif
 
-#ifdef WIN32
-#include <io.h>
-static int igcenv();
-#endif
 
 /*
 ***Default system meta data.
 */
 V3MDAT  sydata =
 
-           { 1000,       /* Serial number, microform = 1000 */
+           { 1000,       /* Serial number, default = 1000 */
              1,          /* Version number*/
              19,         /* Revision */
-            'B',         /* 2007-02-11 */
+            'C',         /* 2008-02-28 */
              0,0,0,0,0,  /* Dummy times */
              0,0,0,0,0,
-             " ",        /* Sysname */
-             " ",        /* Dummy */
-             BAS_MOD,    /* opmode */
-             0,          /* Module protection code */
-             " ",        /* Release */
-             " ",        /* Version */
+             " ",        /* OS name */
+             " ",        /* Not used */
+             0,          /* Not used */
+             0,          /* Not used */
+             " ",        /* OS Release */
+             " ",        /* OS Version */
              0      } ;  /* Encrypted serial number */
+
+/*
+***Current SVN version number. Initialized
+***from the contents of IG/include/svnversion.h
+*/
+char svnversion[V3STRLEN] = SVNVERSION;
 
 /*
 ***Current system sizes is initialized during startup.
@@ -74,26 +79,24 @@ V3MSIZ  sysize;
 /*
 ***Some global data.
 */
-char    pidnam[JNLGTH+1] = "";         /* Current project, "" = No project */
 char    jobnam[JNLGTH+1] = "";         /* Current job */
-bool    jnflag = FALSE;                /* Jobname defined by user */
 char    jobdir[V3PTHLEN+1] = "";       /* Current user job directory */
-char    amodir[10*V3PTHLEN+10] = "";   /* Alternate user module libs */
-char    asydir[V3PTHLEN+1] = "";       /* Current user symbol directory */
-char    hlpdir[V3PTHLEN+1] = "";       /* Current user doc-directory */
+char    libdir[10*V3PTHLEN+10] = "";   /* Module library path(s) ($VARKON_LIB) */
 char    mdffil[V3PTHLEN+1] = "";       /* Current menufile */
-char    mbsdir[V3PTHLEN+1] = "";       /* Current user MBS-directory */
-char    mbodir[V3PTHLEN+1] = "";       /* Current user module library */
 char    inifil_1[V3PTHLEN+1] = "";     /* 1:st inifile */
 char    inifil_2[V3PTHLEN+1] = "";     /* 2:nd inifile */
 
 /*
-***Current module type and attribute.
-***modtyp = 3 => GEOMETRY
-***modtyp = 2 => DRAWING
-***modatt = LOCAL, GLOBAL or BASIC
+***Current module type. From 1.19B modtyp is
+***always 3D. modtyp 2D is obsolete.
 */
-short   modtyp,modatt;
+short modtyp = _3D;
+
+/*
+***Current module attribute.
+***modatt = LOCAL, GLOBAL, BASIC or MACRO
+*/
+short modatt;
 
 /*
 ***Largest ID sequence number in current module.
@@ -104,12 +107,12 @@ DBseqnum snrmax;
 ***Current pointer to start of active module and top
 ***of PM stack.
 */
-pm_ptr  actmod,pmstkp;
+pm_ptr actmod,pmstkp;
 
 /*
 ***Flag for temporary references.
 */
-bool    tmpref;
+bool tmpref;
 
 /*
 ***0 <= posmode <= 8 controls the current
@@ -118,55 +121,72 @@ bool    tmpref;
 *** 3 = MBS,      4 = End,       5 = On
 *** 6 = Center,   7 = Intersect, 8 = Grid
 ***posmode defaults to 2 = Cursor and is managed
-***through the buttons in the menu window.
+***through the buttons in the menu window. The
+***rel button (button 1) alters the meaning of
+***the 8 other buttons by adding an offset.
 */
-short posmode = 2;
+int  posmode = 2;
+bool relpos  = FALSE;
 
 /*
 ***Name of active coordinate system.
 */
-char    actcnm[JNLGTH+1];
+char actcnm[JNLGTH+1];
 
 /*
 ***Number of active function, name of active part
 ***and flag for <CTRL>c interrupt from keyboard.
-***actfun >  0 => Number of active function
-***       = -1 => Menu active
-***       = -2 => Part active
+***actfunc >  0 => Number of active function
+***        = -1 => Menu active
+***        = -2 => Part active
+***        =  1 => During startup
 */
-short   actfun;
-char    actpnm[JNLGTH+1];
-bool    intrup = FALSE;
+int  actfunc = 1;
+char actpnm[JNLGTH+1];
+bool intrup = FALSE;
 
 /*
 ***C:s iobuffer for stdout.
 */
-char    sobuf[BUFSIZ];
+char sobuf[BUFSIZ];
 
 /*
 ***Current system mode.
-***TOP_MOD  = During startup
-***RIT_MOD  = Non generic drafting mode
-***BAS2_MOD = Generic DRAWING (2D) mode
-***BAS3_MOD = Generic GEOMETR (3D) mode
+***NOT_DEFINED  = Not yet defined
+***EXPLICIT     = Explicit mode
+***GENERIC      = Generic mode
 */
-short   v3mode;
+int sysmode;
+
+/*
+***A special error tracing technique is used
+***during startup to make it easier to trace
+***various configuration errors etc. A flag
+***is used to determine if the system is in
+***startup mode or not and a logfile is opened
+***in $VARKON_ROOT during startup for output of
+***trace messages.
+***startup_complete = TRUE  => System started
+***startup_complete = FALSE => System starting
+***and messages are added to the logfile.
+*/
+int   startup_complete;
+FILE *startup_logfile;
 
 /*
 ***Some flags that can be set by command line options.
-***igxflg  = -x parameter. TRUE => Execute if RES-file is missing.
-***iggflg  = -g parameter. TRUE => Generate global refs.
-***igbflg  = -b parameter. TRUE => Batch mode, implies -x.
-***igmtyp, igmatt = -GEOMETRY/-DRAWING and -LOCAL/-GLOBAL/-BASIC.
-***igmtyp = igmatt = 0 => not defined => menu select in iginmo()
+***igxflg = -x parameter. TRUE => Execute if RES-file is missing.
+***iggflg = -g parameter. TRUE => Generate global refs.
+***igbflg = -b parameter. TRUE => Batch mode, implies -x.
+***igmatt = -LOCAL/-GLOBAL/-BASIC. Default attribute for new modules.
 */
-bool    igxflg,iggflg,igbflg;
-short   igmtyp,igmatt;
+bool  igxflg,iggflg,igbflg;
+short igmatt;
 
 /*
-***Prototypes for internal routines.
+***Prototypes for internal functions.
 */
-static short igppar(int argc, char *argv[]);
+static short process_cmdline(int argc, char *argv[]);
 
 /*
 ***Some defs for WIN32 version of Varkon.
@@ -182,7 +202,7 @@ extern void *v3mall();
 extern bool  IGfacc();
 #endif
 
-/*!******************************************************/
+/********************************************************/
 
 #ifdef UNIX
         int main(ac,av)
@@ -198,20 +218,23 @@ extern bool  IGfacc();
         int       wmode)
 #endif
 
-/*      Main program for xvarkon/VARKON.EXE. Inits the 
+/*      Main program for xvarkon/VARKON.EXE. Inits the
  *      graphical environment, processes command line
  *      parameters and inits various sub packages like
  *      memory allocation, geometry, debug etc. then
- *      calls IGgene().
+ *      calls the main loop.
  *
  *      (C)microform ab 31/10/95 J. Kjellander
  *
  *      2007-01-05 Major rewrite, J.Kjellander
+ *      2007-11-18 2.0, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short  status;
+    short status;
+    int   i;
+    char  lfname[V3PTHLEN+V3STRLEN],line[V3STRLEN];
 
 #ifdef WIN32
     int    ercode;
@@ -222,6 +245,31 @@ extern bool  IGfacc();
     char  *argbuf;
 #endif
 
+
+/*
+***Check that VARKON_ROOT is defined.
+*/
+   if ( getenv("VARKON_ROOT") == NULL )
+     {
+     printf("VARKON_ROOT is not defined !\n");
+     exit(-1);
+     }
+/*
+***Open startup_logfile.
+*/
+   strcpy(lfname,getenv("VARKON_ROOT"));
+   strcat(lfname,"/varkon.LOG");
+   if ( (startup_logfile=fopen(lfname,"w")) == NULL )
+     {
+     printf("Can't open startup_logfile %s\n",lfname);
+     exit(-1);
+     }
+   fprintf(startup_logfile,"VARKON_ROOT is %s\n",getenv("VARKON_ROOT"));
+   fflush(startup_logfile);
+/*
+***System is now starting up.
+*/
+   startup_complete = FALSE;
 /*
 ***On the WIN32 platform, WinMain() supplies two parameters
 ***that must be saved.
@@ -234,97 +282,155 @@ extern bool  IGfacc();
 ***First thing to do now is to init the C memory allocation
 ***system so that called functions can allocate memory.
 */
-    v3mini();
+   v3mini();
+   fprintf(startup_logfile,"Varkon memory allocation system initialized\n");
+   fflush(startup_logfile);
 /*
 ***Set up the size of the outputbuffer to stdout.
 */
-#ifdef UNIX
-    setbuf(stdout,sobuf);
-#endif
-
-#ifdef WIN32
-    setvbuf(stdout,sobuf,_IOFBF,BUFSIZ);
-#endif
+   setbuf(stdout,sobuf);
 /*
-***Init system data.
+***Init system data. This function has a misleading name.
 */
-    IGckhw();
+   IGckhw();
+   fprintf(startup_logfile,"Varkon system data initialized\n");
+   fflush(startup_logfile);
 /*
 ***Init debug before processing command line parameters.
 */
-    dbgini();
+   dbgini();
+   fprintf(startup_logfile,"Varkon debug system initialized\n");
+   fflush(startup_logfile);
 /*
 ***Process command line parameters.
 */
-#ifdef UNIX
-    igppar(ac,av);
-#endif
+   fprintf(startup_logfile,"Processing command line\n");
+   for ( i=0; i<ac; ++i )
+     {
+     fprintf(startup_logfile,"%d %s\n",i,av[i]);
+     fflush(startup_logfile);
+     }
 
-#ifdef WIN32
-    argbuf = v3mall(argc*V3STRLEN,"WinMain");
-    for ( i=0; i<argc; ++i ) argv[i] = argbuf + i*V3STRLEN;
-    msargv(args,&argc,argv);
-    igppar(argc,argv);
-    v3free(argbuf,"WinMain");
-#endif
+   process_cmdline(ac,av);
+
+   fprintf(startup_logfile,"Command line sucessfully processed\n");
 /*
 ***Init signals and error handling.
 */
-    IGsini();
-    erinit();
+   IGsini();
+   erinit();
+
+   fprintf(startup_logfile,"Varkon error system initialized\n");
+   fflush(startup_logfile);
 /*
 ***Init level names.
 */
-    EXinit_levels();
+   EXinit_levels();
+
+   fprintf(startup_logfile,"Varkon levels initialized\n");
+   fflush(startup_logfile);
 /*
 ***Init WP.
 */
-#ifdef UNIX
+   fprintf(startup_logfile,"inifil_1 = %s\n",inifil_1);
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"inifil_2 = %s\n",inifil_2);
+   fflush(startup_logfile);
+
    if ( WPinit(inifil_1,inifil_2) < 0 )
      {
+     fprintf(startup_logfile,"Can't init WinPac (WP)\n");
+     fflush(startup_logfile);
      status = EREXIT;
      goto end;
      }
-#endif
+
+   fprintf(startup_logfile,"WinPac (WP) initialized\n");
+   fflush(startup_logfile);
 /*
-***On the WIN32 platform init ms and check that environment
-***variables are registred.
+***If sysmode is not supplied on the command line,
+***ask the user what to do.
 */
-#ifdef WIN32
-   if ( (ercode=msinit(inifil_1)) < 0 )
+   if ( sysmode == TOP_MOD )
      {
-     sprintf(errbuf,"Can't init WINDOWS, error code = %d",ercode);
-     msmbox("VARKON Startup error",errbuf,0);
-     exit(V3EXOK);
+     if ( (status=WPselect_sysmode(&sysmode)) < 0 )
+       {
+       if ( status == REJECT )
+         {
+         fprintf(startup_logfile,"WPselect_sysmode rejected\n");
+         status = V3EXOK;
+         }
+       else
+         {
+         fprintf(startup_logfile,"WPselect_sysmode help error\n");
+         status = EREXIT;
+         }
+       fflush(startup_logfile);
+       goto end;
+       }
      }
-   igcenv();
-#endif
+   fprintf(startup_logfile,"sysmode set to: %d\n",sysmode);
+   fflush(startup_logfile);
 /*
-***Load default menufile.
+***Load menufile.
 */
-   strcpy(mdffil,IGgenv(VARKON_MDF));
+   strcpy(mdffil,getenv("VARKON_MDF"));
 
-#ifdef UNIX
-   strcat(mdffil,"x11.MDF");
-#endif
-
-#ifdef WIN32
-   strcat(mdffil,"mswin.MDF");
-#endif
+   fprintf(startup_logfile,"mdffile set to: %s\n",mdffil);
+   fflush(startup_logfile);
 
    if ( IGinit(mdffil) < 0 )
      {
-#ifdef UNIX
+     fprintf(startup_logfile,"Error loading menus\n");
+     fflush(startup_logfile);
      status = EREXIT;
      goto end;
-#endif
-
-#ifdef WIN32
-     sprintf(errbuf,"Can't load menufile : %s",mdffil);
-     msmbox("Varkon Startup error",errbuf,0);
-     IGexit();
-#endif
      }
+
+   fprintf(startup_logfile,"MDF file loaded\n");
+   fflush(startup_logfile);
+/*
+***job directory. If a job directory was not specified
+***on the command line use VARKON_ROOT.
+*/
+   if ( jobdir[0] == '\0' )
+     {
+     strcpy(jobdir,getenv("VARKON_ROOT"));
+     }
+
+   if ( jobdir[strlen(jobdir)-1] != '/' ) strcat(jobdir,"/");
+
+   fprintf(startup_logfile,"jobdir set to: %s\n",jobdir);
+   fflush(startup_logfile);
+/*
+***User library path.
+*/
+   strcpy(libdir,getenv("VARKON_LIB"));
+   strcat(libdir,"/");
+   fprintf(startup_logfile,"libdir set to: %s\n",libdir);
+   fflush(startup_logfile);
+/*
+***VARKON_ROOT, VARKON_LIB and VARKON_MDF have now been processed.
+***Print remaining environment variable values to the logfile.
+*/
+   fprintf(startup_logfile,"$VARKON_DOC=%s/\n",getenv("VARKON_DOC"));
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"$VARKON_ERM=%s/\n",getenv("VARKON_ERM"));
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"$VARKON_TMP=%s/\n",getenv("VARKON_TMP"));
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"$VARKON_FNT=%s/\n",getenv("VARKON_FNT"));
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"$VARKON_PLT=%s/\n",getenv("VARKON_PLT"));
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"$VARKON_ICO=%s/\n",getenv("VARKON_ICO"));
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"$VARKON_TOL=%s/\n",getenv("VARKON_TOL"));
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"$VARKON_INI=%s/\n",getenv("VARKON_INI"));
+   fflush(startup_logfile);
+   fprintf(startup_logfile,"$VARKON_BIN=%s/\n",getenv("VARKON_BIN"));
+   fflush(startup_logfile);
 /*
 ***Init surpac.
 */
@@ -333,103 +439,50 @@ extern bool  IGfacc();
      status = EREXIT;
      goto end;
      }
-/*
-***If no project name is supplied on the command line
-***ask for a project.
-*/
-pid:
-   if ( pidnam[0] == '\0' )
-     {
-     if ( IGselp(pidnam) < 0 )
-       {
-       status = 0;
-       goto end;
-       }
-     else goto pid;
-     }
-/*
-***If '.' is given as project name, create a temporary project.
-*/
-    else if ( strcmp(pidnam,".") == 0 )
-      {
-#ifdef UNIX
-      strcpy(pidnam,".");
-      strcpy(jobdir,"./");
-      strcpy(amodir,".");
-      strcpy(asydir,"./");
-      strcpy(hlpdir,"./");
-#endif
 
-#ifdef WIN32
-      strcpy(pidnam,".");
-      strcpy(jobdir,".\\");
-      strcpy(amodir,".");
-      strcpy(asydir,".\\");
-      strcpy(hlpdir,".\\");
-#endif
-      }
-/*
-***If a project name is supplied, load the PID-file. If this
-***doesn't work, we assume that the PID-file does not exist
-***so we create one and then load it.
-*/
-    else
-      {
-      if ( IGldpf(pidnam) < 0 )
-        {
-        if ( IGialt(195,67,68,TRUE) )
-          {
-          status = IGcnpr(pidnam);
-          if ( status == REJECT )
-            {
-            pidnam[0] = '\0';
-            goto pid;
-            }
-          else if ( status < 0 )
-            {
-            status = EREXIT;
-            goto end;
-            }
-          }
-        else
-          {
-          pidnam[0] = '\0';
-          goto pid;
-          }
-        }
-/*
-***PID file is loaded. Check that it seems OK and load
-***the MDF-file it points to.
-*/
-      else if ( IGckpr() < 0  ||  IGinit(mdffil) < 0 )
-        {
-        status = EREXIT;
-        goto end;
-        }
-      }
+   fprintf(startup_logfile,"Surpac initialized\n");
+   fflush(startup_logfile);
 /*
 ***If no jobname is supplied on the command line, ask for one.
 */
    if ( jobnam[0] == '\0' )
      {
-     status = IGselj(jobnam);
+     status = IGselect_job(jobnam);
 
-     if ( status < 0 )
+     if ( status == 0 )
        {
-       pidnam[0] = '\0';
-       goto pid;
+       fprintf(startup_logfile,"jobnam set to: %s\n",jobnam);
+       fflush(startup_logfile);
        }
-     else jnflag = TRUE;
+     else if ( status == REJECT )
+       {
+       status = V3EXOK;
+       goto end;
+       }
+     else
+       {
+       status = EREXIT;
+       goto end;
+       }
      }
-   else
-     {
-     jnflag = TRUE;
-     }
+/*
+***Init WP's menuhandler.
+*/
+    if ( !igbflg  &&  (status=WPinit_menu()) < 0 )
+      {
+      status = EREXIT;
+      goto end;
+      }
+   fprintf(startup_logfile,"Menu handler initialized\n");
+   fflush(startup_logfile);
 /*
 ***Start Varkon in right mode.
 */
-   if ( sydata.opmode == BAS_MOD ) status = IGgene();
-   else                            status = IGexpl();
+   fprintf(startup_logfile,"Calling main loop\n");
+   fflush(startup_logfile);
+
+   if ( sysmode == GENERIC ) status = IGgeneric();
+   else                      status = IGexplicit();
 /*
 ***Varkon is now running. When we reach this point
 ***we are about to make a normal system close down
@@ -440,13 +493,36 @@ end:
 
    if ( status == EREXIT )
      {
-     errmes();
+     WPinla("Startup log !");
+     fclose(startup_logfile);
+     startup_logfile=fopen(lfname,"r");
+     while ( fgets(line,V3STRLEN,startup_logfile) != NULL )
+       {
+       for ( i=0; i<V3STRLEN; ++i ) if ( line[i] == '\n' ) line[i] = '\0';
+       line[i] = '\0';
+       WPalla(line,1);
+       }
+     WPalla("",2);
+     WPalla("Something is wrong with your Varkon installation.",1);
+     WPalla("This startup log is stored as varkon.LOG on your Varkon",1);
+     WPalla("installation root directory and can be a good help to",1);
+     WPalla("understand what the problem is.",2);
+     WPalla("If you need help, you can contact the Varkon developers",1);
+     WPalla("through the development site:",2);
+     WPalla("http://sourceforge.net/projects/varkon",1);
+     WPexla(TRUE);
      IGials("Varkon will now terminate !","Ok","Ok",TRUE);
+     IGexit();
      }
 /*
-***Now we can exit.
+***Normal exit, remove logfile.
 */
-   IGexit();
+   else
+     {
+     fclose(startup_logfile);
+     IGfdel(lfname);
+     IGexit();
+     }
 /*
 ***The following line is there to avoid compiler warnings.
 */
@@ -456,80 +532,70 @@ end:
 /********************************************************/
 /*!******************************************************/
 
- static short igppar(
+ static short process_cmdline(
         int   argc,
         char *argv[])
 
-/*      Processar kommandorads-parametrar.
+/*      Process command line arguments (parameters)
+ *      and save result in global variables. In the
+ *      case of an error a message is written to the
+ *      startup_logfile and the system is closed down.
  *
- *      In: argc => Antal parametrar
- *          argv => Array med pekare till parametrar
+ *      In: argc => Argument count
+ *          argv => Argument string ptrs
  *
- *      Ut: *pidnam
- *          *jobnam
- *
- *      FV: 0 om OK, annars görs exit med felmeddelande.
+ *      Return: 0 = OK
  *
  *     (C)microform ab Johan Kjellander  8/5/89
  *
  *     17/6/92  Debug, J. Kjellander
  *     14/11/94 Parametern -global_ref, J. Kjellander
  *     1998-03-12 2 inifiler, J.Kjellander
- *      
+ *     2007-11-07 2.0, J.Kjellander
+ *
  ******************************************************!*/
 
 {
    int i,ival;
 
 /*
-***Förställda värden.
+***Default values.
 */
-   pidnam[0]      = jobnam[0] = '\0';
-   sysize.pm      = PMSIZE;
-   sysize.gm      = 0;
-   sysize.rts     = RTSSIZE;
-   igxflg         = FALSE;
-   iggflg         = FALSE;
-   igmtyp         = IGUNDEF;
-   igmatt         = IGUNDEF;
-   v3mode         = sydata.opmode;
-   inifil_1[0]    = '\0';
-   inifil_2[0]    = '\0';
+   jobnam[0]   = '\0';
+   sysize.pm   = PMSIZE;
+   sysize.gm   = 0;
+   sysize.rts  = RTSSIZE;
+   igbflg      = FALSE;
+   igxflg      = FALSE;
+   iggflg      = FALSE;
+   igmatt      = GLOBAL;
+   sysmode     = TOP_MOD;
+   inifil_1[0] = '\0';
+   inifil_2[0] = '\0';
 /*
-***Parsa parameterlistan. X-versionen av V3 använder då
-***först en särskild rutin för att plocka bort X-relaterade
-***parametrar och bygga sin resursdatabas. Övriga parametrar
-***tas om hand här på vanligt sätt.
+***Parse the argument list. With UNIX we first call
+***WPmrdb() to remove any arguments related to X.
 */
 #ifdef UNIX
    WPmrdb(&argc,argv);
 #endif
-
 /*
-***Loopa igenom alla parametrarna.
+***Loop through all arguments.
 */
    for ( i=1; i<argc; ++i)
      {
 /*
-***Om parametern inte föregås av ett minustecken är
-***det fråga om pid- eller jobnamn.
+***If leading minus sign (-) is missing this must be
+***the job name. Check that the name is valid.
 */
      if ( argv[i][0] != '-')
        {
-       if ( pidnam[0] == '\0' )
+       if ( jobnam[0] == '\0' )
          {
-         strncpy(pidnam,argv[i],JNLGTH);
-         pidnam[JNLGTH] = '\0';
-         }
-/*
-***Jobnamn kollas särskilt noga med avseende på antal tecken,
-***å,ä,ö mm. mm.
-*/
-       else if ( jobnam[0] == '\0' )
-         {
-         if ( igckjn(argv[i]) < 0 )
+         if ( IGcheck_jobname(argv[i]) < 0 )
            {
-           printf("%s: Invalid jobname\n",argv[0]);
+           fprintf(startup_logfile,"Invalid jobname: %s\n",argv[i]);
+           fclose(startup_logfile);
            exit(V3EXOK);
            }
          else strcpy(jobnam,argv[i]);
@@ -537,69 +603,70 @@ end:
        else goto usage;
        }
 /*
-***Parametrar som föregås av ett minustecken.
+***Arguments with leading minus sign (-).
 */
      else
        {
 /*
-***Modultyp och attribut.
+***Module attribute.
 */
-       if      ( sticmp(&argv[i][1],"DRAWING")  == 0 ) igmtyp = _2D;
-       else if ( sticmp(&argv[i][1],"GEOMETRY") == 0 ) igmtyp = _3D;
-       else if ( sticmp(&argv[i][1],"LOCAL")    == 0 ) igmatt = LOCAL;
-       else if ( sticmp(&argv[i][1],"GLOBAL")   == 0 ) igmatt = GLOBAL;
-       else if ( sticmp(&argv[i][1],"BASIC")    == 0 ) igmatt = BASIC;
+       if      ( sticmp(&argv[i][1],"LOCAL")     == 0 ) igmatt = LOCAL;
+       else if ( sticmp(&argv[i][1],"GLOBAL")    == 0 ) igmatt = GLOBAL;
+       else if ( sticmp(&argv[i][1],"BASIC")     == 0 ) igmatt = BASIC;
+/*
+***System mode.
+*/
+       else if ( sticmp(&argv[i][1],"EXPLICIT")  == 0 ) sysmode = EXPLICIT;
+       else if ( sticmp(&argv[i][1],"GENERIC")   == 0 ) sysmode = GENERIC;
        else
          {
          switch (argv[i][1])
            {
 /*
-***PM:s storlek.
+***Job directory.
+*/
+           case 'j':
+           if ( argv[i][2] == 'd'  &&
+                sscanf(&argv[i][3],"%s",jobdir) == 1 )
+             {
+             break;
+             }
+           else goto usage;
+/*
+***PM RAM size.
 */
            case 'p':
-#ifdef V3_DEMO
-           goto usage;
-#else
            if ( argv[i][2] == 'm'  &&
                 sscanf(&argv[i][3],"%d",&ival) == 1  && ival > 0 )
              {
-             sysize.pm = ival;
+             sysize.pm = ival*1024;
              break;
              }
            else goto usage;
-#endif
 /*
-***Ritmodulen eller RTS:s storlek.
+***RTS size.
 */
            case 'r':
-           if ( argv[i][2] == '\0' )
-             {
-             v3mode = sydata.opmode = RIT_MOD;
-             break;
-             }
-           else if ( argv[i][2] == 't'  &&  argv[i][3] == 's'  &&
+           if ( argv[i][2] == 't'  &&  argv[i][3] == 's'  &&
                 sscanf(&argv[i][4],"%d",&ival) == 1  && ival > 0 )
              {
-#ifdef V3_DEMO
-             goto usage;
-#else
-             sysize.rts = ival;
-#endif
+             sysize.rts = ival*1024;
              break;
              }
            else goto usage;
 /*
-***GM:s storlek.
+***DB RAM buffer size. Round to closest number of pages.
 */
-           case 'g':
-           if ( argv[i][2] == 'm'  &&
+           case 'd':
+           if ( argv[i][2] == 'b'  &&
                 sscanf(&argv[i][3],"%d",&ival) == 1  && ival > 0 )
              {
-             sysize.gm = ival;
+             sysize.gm = ival*1024;
+             sysize.gm = sysize.gm/PAGSIZ;
              break;
              }
 /*
-***Parametern för global_ref vid interaktivt part-anrop.
+***Use global_ref in part calls.
 */
            else if ( sticmp(&argv[i][1],"GLOBAL_REF") == 0 )
              {
@@ -608,16 +675,14 @@ end:
              }
            else goto usage;
 /*
-***Skriv ut version och serienummer.
+***Print version.
 */
            case 'v':
            case 'V':
            if ( argv[i][2] == '\0' )
              {
-             if ( sydata.opmode == RIT_MOD ) printf("VARKON-3D/R");
-             else                            printf("VARKON-3D/B");
-             printf(" %d.%d%c Serienummer : %d\n",sydata.vernr,sydata.revnr,
-                                                  sydata.level,sydata.sernr);
+             printf("VARKON %d.%d%c svn#%s\n",sydata.vernr,sydata.revnr,
+                                              sydata.level,svnversion);
              exit(V3EXOK);
              }
            else goto usage;
@@ -631,7 +696,6 @@ end:
 ***Run in debug mode.
 */
            case 'D':
-           case 'd':
            if ( dbgon(&argv[i][2]) < 0 ) goto usage;
            break;
 /*
@@ -648,6 +712,7 @@ end:
 */
            case 'b':
            igxflg = igbflg = TRUE;
+           sysmode = GENERIC;
            break;
 /*
 ***Illegal option.
@@ -659,42 +724,47 @@ end:
        }
      }
 /*
-***Slut.
+***The end.
 */
      return(0);
-
+/*
+***Error exit.
+*/
 usage:
-     printf("usage: %s (pid) (job) (-pm) (-gm) (-r) (-i) (-x) (-v) (-D)\n",
+     fprintf(startup_logfile,"Illegal option: %s\n",argv[i]);
+     fclose(startup_logfile);
+
+     printf("usage: %s (job) (-jd) (-pm) (-gm) (-rts) (-I) (-x) (-b) (-v) (-D)\n",
             argv[0]);
-     printf("          (-DRAWING) (-GEOMETRY) (-LOCAL) (-GLOBAL) (-BASIC)\n");
+     printf("          (-EXPLICIT) (-GENERIC) (-LOCAL) (-GLOBAL) (-BASIC)\n");
      exit(V3EXOK);
 }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igckjn(char jobnam[])
+        short IGcheck_jobname(char jobnam[])
 
-/*      Kollar att ett jobnamn inte är för långt eller
- *      innehåller otillåtna tecken.
+/*      Check a job name for syntax errors.
  *
- *      In:  jobnam = Pekare till NULL-terminerad sträng.
+ *      In:  jobnam = Name to check.
  *
- *      FV:  0 om OK. Annars -1.
+ *      Return:  0 = OK
+ *              -1 = Syntax error
  *
- *     (C)microform ab Johan Kjellander  8/5/89
- *      
+ *     (C)2007-11-25 J.Kjellander
+ *
  ******************************************************!*/
 
 {
    int j,jnl;
 
 /*
-***Kolla antal tecken.
+***Check name length.
 */
     if ( (jnl=strlen(jobnam)) > JNLGTH ) return(-1);
 /*
-***Kolla otillåtna tecken.
+***Check for illegal characters.
 */
     else
       {
@@ -711,7 +781,7 @@ usage:
         }
       }
 /*
-***Slut.
+***The end.
 */
      return(0);
 }

@@ -1,0 +1,222 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- The driver for Microsoft windows})
+define({_INDEXLINK_},{<a href="printing.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The driver for Microsoft windows</h1>
+
+<p>
+The driver for Microsoft windows systems (MSW32.DLL) reads Varkon
+plotfiles and outputs the processed image on a printer using the
+ordinary printer drivers and spooling system of the Windows operating
+system. Plotfiles can either be in .PLT format or in .DXF format.
+</p>
+
+<p>
+The -raw option can be used to turn off all processing and send input to
+the spooler exactly as it is. This can be used to print an ordinary textfile
+or to send device specific control characters to a printer or plotter.
+</p>
+
+<h2>Calling convention<h2>
+
+<p>
+The MBS calling syntax is:
+</p>
+
+<pre>
+call_dll_function(&quot;$VARKON_BIN\MSW32.DLL&quot;, &quot;msw32&quot;,&quot;file&quot;,&quot;options&quot;);
+</pre>
+
+<p>
+The declaration of the main entrypoint and its parameters in C-syntax is:
+</p>
+
+<pre>
+int msw32(file,options)
+char *file;
+char *options;
+</pre>
+
+<p>
+The file parameter is the name of the file to process
+and the second parameter is one or more options that control the way the
+file is processed. Options are preceeded with a minus sign and separated
+with spaces as follows.
+</p>
+
+<pre>
+-sS -wsL -xX -yY -vN -PPRINTER -raw -FF -d -kK -del
+</pre>
+
+<p>
+Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.
+</p>
+
+<h2>Options </h2>
+
+<table>
+<tr>
+<td>
+<p>-sS</p>
+</td>
+
+<td>
+<p>- Set scale to S. Float value, default = 1.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-wsL</p>
+</td>
+
+<td>
+<p>- Scale linewidth with L. Float value, default = 1.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-xX</p>
+</td>
+
+<td>
+<p>- Set origin.x to X. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-yY</p>
+</td>
+
+<td>
+<p>- Set origin.y to Y. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-vN</p>
+</td>
+
+<td>
+<p>- Rotate n degrees. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-PPRINTER</p>
+</td>
+
+<td>
+<p>- Use PRINTER, if not specified the default printer is used.</p>
+</td>
+</tr>
+
+<TR>
+<TD width="99">
+<P>-raw</P>
+</TD>
+
+<td>
+<p>- Send input to printer spooler without processing</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-FF</p>
+</td>
+
+<td>
+<p>- Send trailing formfeed (should only be used with -raw)</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-d</p>
+</td>
+
+<td>
+<p>- Show outline of plot area and print statistics</p>
+</tf>
+</tr>
+
+<tr>
+<td>
+<p>-kK</p>
+</td>
+
+<td>
+<p>- Set curve accuracy to K. Float value, default = 1.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-del</p>
+</td>
+
+<td>
+<p>- Deletes the file after processing</p>
+</td>
+</tr>
+</table>
+
+
+<h2>Examples</h2>
+
+<p>
+call_dll_function(&quot;C:\VARKON\BIN\MSW32.DLL&quot;, &quot;msw32&quot;,
+&quot;plotfile.PLT&quot;, &quot;-v90&quot;);
+</p>
+
+<p>
+Rotates the image in plotfile.PLT 90 degrees anticlockwise and prints the
+result on the default printer.
+</p>
+
+<p>
+call_dll_function(&quot;C:\VARKON\BIN\MSW32.DLL&quot;,&quot;msw32&quot;,
+&quot;plotfile.PLT&quot;, &quot;-v90 -PCANON B320&quot;);
+</p>
+
+<p>
+Same as above but the result is sent to a printer with name = &quot;CANON
+B320&quot;. Note that space characters are allowed in printer names.
+</p>
+
+<p>
+call_dll_function(&quot;C:\VARKON\BIN\MSW32.DLL&quot;, &quot;msw32&quot;,
+&quot;file.TXT&quot;, &quot;-raw -FF&quot;);
+</p>
+
+<p>
+Sends file.TXT to the default printer without any processing. A trailing
+formfeed character ASCII-12 is also sent to the printer.
+</p>
+
+
+<h2>Comments</h2>
+
+<p>
+MSW32 automatically recognizes if the input is in PLT or DXF format.
+The -k option only applies to DXF format.
+</p>
+
+<p>
+MSW32 supports the WIDTH and PEN attributes.
+</p>
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

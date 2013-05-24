@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Analyzer Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -23,8 +23,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
 *
 ***********************************************************************/
 
@@ -184,7 +182,7 @@ extern short modtyp;               /* geometry type, for annaml() */
          }
 /*
 ***Check parameter/geometry
-*/
+*
        if ( modtyp == 3 )
          {
          switch ( nampar )
@@ -220,7 +218,7 @@ extern short modtyp;               /* geometry type, for annaml() */
            break;
            }
          }
-/*
+*
 ***Check parameter/procedure
 */
        if ( (nampar != PMLEVEL) && (nampar != PMPEN) && 
@@ -289,7 +287,7 @@ extern short modtyp;               /* geometry type, for annaml() */
 ***Hatch.
 */
            case VXHT:
-             if ( (nampar != PMXFONT) && (nampar != PMXDASHL) )
+             if ( (nampar != PMXFONT) && (nampar != PMXDASHL) && (nampar != PMWIDTH) )
                okflg = FALSE;
            break;
 /*
@@ -324,7 +322,7 @@ extern short modtyp;               /* geometry type, for annaml() */
            case VRDIM:
            case VADIM:
              if ( (nampar != PMDTSIZE) && (nampar != PMDASIZE) &&
-                  (nampar != PMDNDIG) && (nampar != PMDAUTO) )
+                  (nampar != PMDNDIG) && (nampar != PMDAUTO) && (nampar != PMWIDTH) )
                okflg = FALSE;
            break;
 /*

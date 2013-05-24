@@ -1,4 +1,4 @@
-VARKON Error messages for IGEPAC
+VARKON Error messages for IG
 
 001  4  Icon missing
 002  2  Menu %s undefined
@@ -194,3 +194,4 @@ VARKON Error messages for IGEPAC
 534  2  One of the parameters is "call by reference"
 535  2  Module %s is MACRO module
 536  2  Module %s is not a MACRO module
+537  3  Can't create plotfile %s

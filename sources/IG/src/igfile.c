@@ -4,18 +4,18 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  IGfmov();     Move/Rename file                                  */
-/*  IGfcpy();     Copy files                                        */
-/*  IGfapp();     Add two files                                     */
-/*  IGfdel();     Delete file                                       */
-/*  IGfacc();     Test file accessability                           */
-/*  IGftst();     Test file existance                               */
-/*  IGmkdr();     Create directory                                  */
-/*  IGcmpw();     Compare strings with wildcard                     */
-/*  IGcmos();     Interactive OS-command                            */
+/*  IGfmov();          Move/Rename file                             */
+/*  IGfcpy();          Copy files                                   */
+/*  IGfapp();          Add two files                                */
+/*  IGfdel();          Delete file                                  */
+/*  IGfacc();          Test file accessability                      */
+/*  IGftst();          Test file existance                          */
+/*  IGmkdr();          Create directory                             */
+/*  IGcmpw();          Compare strings with wildcard                */
+/*  IGcmos();          Interactive OS-command                       */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -412,14 +412,11 @@ loop:
         char *tststr)
 
 /*      Jämför 2 strängar varav en med wildcard "*".
- *      Godtyckligt antal stjärnor får förekomma i 
+ *      Godtyckligt antal stjärnor får förekomma i
  *      söksträngen (wc_str) varsomhelst men inte intill
  *      varandra. Om så returneras FALSE.
  *
  *      Om någon av strängarna = "" returneras FALSE.
- *
- *      OBS ! Kopia av denna rutin finns i DBtraverse.c
- *      IGcmpw() används fn. inte !
  *
  *      In: wc_str => Sträng med 0, 1 eller flera stjärnor.
  *          tststr => Sträng utan stjärnor.
@@ -569,7 +566,7 @@ loop2:
 /*
 ***Vänta på användarens <CR>.
 */
-   status = IGssip(IGgtts(3),s,"",1);
+   status = IGssip("",IGgtts(3),s,"",1);
 /*
 ***Slut.
 */

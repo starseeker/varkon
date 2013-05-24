@@ -1,0 +1,81 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- rgb_to_hsv - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>rgb_to_hsv - Procedure</h1>
+
+<h2>Description</h2>
+
+<p>
+Converts color values from the RGB system to HSV.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  rgb_to_hsv(red, green, blue, hue, saturation, value);
+
+  int red;
+  int green;
+  int blue;
+  int hue;
+  int saturation;
+  int value;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>red</td>
+<td>- Red intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>green</td>
+<td>- Green intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>blue</td>
+<td>- Blue intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>hue</td>
+<td>- Hue, 0 - 360</td>
+</tr>
+
+<tr>
+<td>saturation</td>
+<td>- Saturation, 0 - 100</td>
+</tr>
+
+<tr>
+<td>value</td>
+<td>- Value, 0 - 100</td>
+</tr>
+
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Comments</h2>
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="hsvrgb.htm">hsv_to_rgb()</a>
+<a href="cre_col.htm">cre_color()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,15 +1,13 @@
 !*******************************************************
 
- MACRO DRAWING MODULE ma_text2(
-  VECTOR p1        >"t258";        ! Ange startposition !
-  VECTOR p2        >"t259";        ! Ange slutposition !
-  STRING s*132     >"t10");        ! Ange sträng !
+ MACRO MODULE ma_text2(
+  VECTOR p1        >"t258";        ! Start position !
+  VECTOR p2        >"t259";        ! End position !
+  STRING s*132     >"t10");        ! String !
 
-!*      Skapar text mellan 2 positioner.
+!*      Create text between 2 positions.
 !*
-!*      (C)microform ab 11/5/92 J. Kjellander
-!*
-!*      1996-06-11 Engelska, J.Kjellander
+!*      (C)2008-01-07 J.Kjellander
 !*
 !*******************************************************
 
@@ -19,16 +17,16 @@
  beginmodule
 
 !*
-!***Beräkna storleks-faktor.
+!***Calculate text size.
 !*
    k:=vecl(p2-p1)/textl(s);
 !*
-!***Beräkna vinkel.
+!***Calculate angle.
 !*
    p2:=p2-p1;
    v:=angle(p2.x,p2.y);
 !*
-!***Skapa text.
+!***Create text statement.
 !*
    id:=add_mbs("text","vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+")",
            str(v,-1,5),chr(34)+s+chr(34),":TSIZE="+str(act_tsize()*k,-1,5));

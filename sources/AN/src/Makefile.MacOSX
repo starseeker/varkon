@@ -1,0 +1,29 @@
+##########################################################
+#
+#   Makefile for mbsc on MacOSX
+#
+#  (C)2008-01-12 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+CFLAGS = -ansi \
+         -Wall \
+         -ffloat-store \
+         -fsigned-char \
+         -O \
+         -DUNIX \
+         -DANALYZER \
+         -DVARKON \
+         -I/usr/X11R6/include
+
+LDFLAGS =
+
+COMPILE = $(CC) -c $(CFLAGS)
+
+include Makefile.AN
+
+##########################################################

@@ -13,7 +13,7 @@
 *    EXtcla();    Transform and copy by DBptr
 *
 *    This file is part of the VARKON Execute  Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -551,35 +551,35 @@ extern DBTmat *lsyspk;
         break;
 
       case LDMTYP:
-        DBread_ldim(&ogmpst.ldm_un,la);
-        DBread_ldim(&ngmpst.ldm_un,la);
+        DBread_ldim(&ogmpst.ldm_un,NULL,la);
+        DBread_ldim(&ngmpst.ldm_un,NULL,la);
         GEtfLdim_to_local(&ogmpst.ldm_un,ptr,&ngmpst.ldm_un);
         status = EXeldm(id,&ngmpst.ldm_un,att);
         break;
 
       case CDMTYP:
-        DBread_cdim(&ogmpst.cdm_un,la);
-        DBread_cdim(&ngmpst.cdm_un,la);
+        DBread_cdim(&ogmpst.cdm_un,NULL,la);
+        DBread_cdim(&ngmpst.cdm_un,NULL,la);
         GEtfCdim_to_local(&ogmpst.cdm_un,ptr,&ngmpst.cdm_un);
         status = EXecdm(id,&ngmpst.cdm_un,att);
         break;
 
       case RDMTYP:
-        DBread_rdim(&ogmpst.rdm_un,la);
-        DBread_rdim(&ngmpst.rdm_un,la);
+        DBread_rdim(&ogmpst.rdm_un,NULL,la);
+        DBread_rdim(&ngmpst.rdm_un,NULL,la);
         GEtfRdim_to_local(&ogmpst.rdm_un,ptr,&ngmpst.rdm_un);
         status = EXerdm(id,&ngmpst.rdm_un,att);
         break;
 
       case ADMTYP:
-        DBread_adim(&ogmpst.adm_un,la);
-        DBread_adim(&ngmpst.adm_un,la);
+        DBread_adim(&ogmpst.adm_un,NULL,la);
+        DBread_adim(&ngmpst.adm_un,NULL,la);
         GEtfAdim_to_local(&ogmpst.adm_un,ptr,&ngmpst.adm_un);
         status = EXeadm(id,&ngmpst.adm_un,att);
         break;
 
       case XHTTYP:
-        DBread_xhatch(&ngmpst.xht_un,xhtcrd,la);
+        DBread_xhatch(&ngmpst.xht_un,xhtcrd,NULL,la);
         GEtfHatch_to_local(&ngmpst.xht_un,xhtcrd,ptr);
         status = EXexht(id,&ngmpst.xht_un,xhtcrd,att);
         break;

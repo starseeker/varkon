@@ -1,7 +1,7 @@
 /********************************************************************/
 /*                                                                  */
 /*  This file is part of the VARKON Geometry Library.               */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -85,7 +85,6 @@ static short suerror();       /* Get SU error message               */
 
 extern char  jobdir[];          /* Current job directory            */
 extern char  jobnam[];          /* Current job name                 */
-extern char  pidnam[];          /* Current project                  */
 
 /*!------------ Error messages and warnings ------------------------*/
 /*                                                                  */
@@ -310,7 +309,6 @@ fflush(dbgfil(SURPAC));
      fprintf(f_dat, " \n");  
      fprintf(f_dat, "Job name:      %s \n", jobnam );  
      fprintf(f_dat, "Job directory: %s \n", jobdir );  
-     fprintf(f_dat, "Project:       %s \n", pidnam );  
      fprintf(f_dat, " \n");  
      fprintf(f_dat, " \n");  
 

@@ -1,6 +1,6 @@
 !*******************************************************
 
-  GLOBAL DRAWING MODULE dxf_ply(
+  GLOBAL MODULE dxf_ply(
   VAR FILE   infil;
   INT        levlim;
   VAR INT    levant;

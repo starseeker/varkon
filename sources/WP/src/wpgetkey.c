@@ -4,7 +4,7 @@
 *    ==========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -143,11 +143,11 @@ start:
         break;
 /*
 ***Left button could be a menu selection, a pos-button,
-***A scroll_down in a WPLWIN or a button in a WPGWIN/WPRWIN.
+***a scrollbar or a button in a WPGWIN/WPRWIN.
 ***Optional mid button is always = GOMAIN.
-***Right button is normally = REJECT but could be scroll_up in WPLWIN.
+***Right button is normally = REJECT.
 ***Normally a ButtonRelease is the event that triggers
-***an action but in  WPGWIN/WPRWIN we also need to handle ButtonPress.
+***an action but in  WPGWIN/WPRWIN/WPSBAR we also need to handle ButtonPress.
 ***A button press is usually preceeded by a crosing event in that window.
 ***A tooltip may thus have been ordered but not yet displayed. To avoid
 ***that a ButtonPress always turns off any pending displays of tooltips.
@@ -157,7 +157,8 @@ start:
         if ( (serv_id=WPwfpx(butev->window)) >= 0 )
           {
           if ( wpwtab[serv_id].typ == TYP_RWIN ||
-               wpwtab[serv_id].typ == TYP_GWIN ) WPwbut(butev,&serv_id);
+               wpwtab[serv_id].typ == TYP_GWIN ||
+               wpwtab[serv_id].typ == TYP_LWIN ) WPwbut(butev,&serv_id);
           }
         break;
 
@@ -184,8 +185,8 @@ start:
         break;
 
 /*
-***A key press can either be a menu selection (if no command window has focus)
-***or a command (if a command window has focus).
+***A key press can either be a menu selection (if no command
+***window has focus) or a command (if a command window has focus).
 */
         case KeyPress:
         if ( WPkey_mcwin(keyev) ) break;
@@ -320,12 +321,12 @@ start:
 /*
 ***Ã…, Ã„ ochï¿½Ã–.
 */
-      case XK_aring:      *s = 'ï¿½'; ntkn = 1; break;
-      case XK_Aring:      *s = 'ï¿½'; ntkn = 1; break;
-      case XK_adiaeresis: *s = 'ï¿½'; ntkn = 1; break;
-      case XK_Adiaeresis: *s = 'ï¿½'; ntkn = 1; break;
-      case XK_odiaeresis: *s = 'ï¿½'; ntkn = 1; break;
-      case XK_Odiaeresis: *s = 'ï¿½';ntkn = 1; break;
+      case XK_aring:      *s = 'å'; ntkn = 1; break;
+      case XK_Aring:      *s = 'Å'; ntkn = 1; break;
+      case XK_adiaeresis: *s = 'ä'; ntkn = 1; break;
+      case XK_Adiaeresis: *s = 'Ä'; ntkn = 1; break;
+      case XK_odiaeresis: *s = 'ö'; ntkn = 1; break;
+      case XK_Odiaeresis: *s = 'Ö';ntkn = 1; break;
 /*
 ***Funktionstangenter.
 */

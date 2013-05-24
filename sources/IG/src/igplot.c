@@ -1,12 +1,12 @@
-/********************************************************************
-*   igplot.c
-*   ========
-*                                                                  */
+/********************************************************************/
+/*  igplot.c                                                        */
+/*  ========                                                        */
+/*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  IGcgkm();  Create PLT-file GKS formatted                        */
-/*  IGcdxf();  Create DXF-file                                      */
-/*  IGshll();  Shell command                                        */
+/*  IGexport_GKSM();  Export plotfile on GKS Metafile format        */
+/*  IGexport_DXF2D(); Export plotfile on DXF format                 */
+/*  IGshell(); Shell command                                        */
 /*  IGhid1();  Hide on screen                                       */
 /*  IGhid2();  Hide to PLT-file                                     */
 /*  IGhid3();  Hide on screen and to file                           */
@@ -54,9 +54,9 @@ static short ighidf(bool screen);
 
 /*!******************************************************/
 
-       short IGcgkm()
+       short IGexport_GKSM()
 
-/*      Skapa plotfil på GKS-format.
+/*      Create plotfile, GKS-format.
  *
  *      (C)microform ab 27/3/91 J. Kjellander
  *
@@ -67,9 +67,9 @@ static short ighidf(bool screen);
 /********************************************************/
 /*!******************************************************/
 
-       short IGcdxf()
+       short IGexport_DXF2D()
 
-/*      Skapa plotfil på DXF-format.
+/*      Create plotfile, DXF-format.
  *
  *      (C)microform ab 27/3/91 J. Kjellander
  *
@@ -80,347 +80,167 @@ static short ighidf(bool screen);
 /********************************************************/
 /*!******************************************************/
 
-static short igcplf(char *typ)
+static short igcplf(char *type)
 
-/*      Skapa plotfil.
+/*      Create 2D plotfile GKS or DXF formatted.
  *
- *      In: typ = ".PLT eller ".DXF".
+ *      In: type = ".PLT or ".DXF".
  *
- *      Ut: Inget.
+ *      Error: IG3042 = Plot window too small.
+ *             IG3062 = Can't create file %s, OS error
+ *             IG5373 = Cant create plotdata %s
  *
- *      FV: Inget.
- *
- *      Felkoder: IG0103 = Okänt alt. i plot-menyn.
- *                IG3012 = Vyn %s finns ej.
- *                IG3062 = Kan ej skapa plotfil %s, fel från OS
- *
- *      (C)microform ab 9/8/85 J. Kjellander
- *
- *      19/11-85 GKS-format, Ulf Johansson
- *      18/10/86 Plot-meny mm, J. Kjellander
- *      4/11/86  gpstvi(), J. Kjellander
- *      5/11/86  Flagga för hela modellen, R. Svedin
- *      25/11/86 Återställning av flaggan, J. Kjellander
- *      7/5/87   Plotorigo, J. Kjellander
- *      4/8/87   Filen finns... J. Kjellander
- *      17/2/87  Plotvy, J. Kjellander
- *      21/5/89  tmpref, J. Kjellander
- *      27/3/91  DXF, J. Kjellander
- *      5/8/91   3D-origo, J. Kjellander
- *      2/10/91  Bug DXF-origo, J. Kjellander
- *      4/12/91  Bug GEtfpos_to_local(), J. Kjellander
- *      1/3/94   Snabbval, J. Kjellander
- *      2006-12-27 WPmkpf(), J.Kjellander
+ *      (C)2007-11-28 J.Kjellander
  *
  ******************************************************!*/
 
   {
-     char     fnam[JNLGTH+1];
-     char     path[V3PTHLEN+1];
-     char     pektkn;
-     double   x1,y1,x2,y2;
-     double   tmp,dx,dy;
-     short    status,alttyp,tsnr;
-     bool     tmptrf;
-     wpw_id   grw_id;
-     FILE    *filpek;
-     MNUALT  *pmualt;
-     WPVIEW   plotvy;
-     DBVector origo;
-     WPWIN   *winptr;
-     WPGWIN  *gwinpt;
-     WPGRPT   projpos;
-
-     static char dstr[JNLGTH+1] = "";
+   short    status,tsnr;
+   char     plotfile[V3PTHLEN],newname[JNLGTH],newpath[V3PTHLEN],
+            wc_str[6],mesbuf[2*V3PTHLEN];
+   int      i,ix1,iy1,ix2,iy2,dx,dy,tmp;
+   double   x1,y1,x2,y2;
+   wpw_id   grw_id;
+   DBVector origin;
+   WPVIEW   plotvy;
+   WPWIN   *winptr;
+   WPGWIN  *gwinpt;
+   FILE    *fp;
 
 /*
-***Fixa en pekare till huvudfönstret.
+***Select plot area (and window).
 */
-    winptr = WPwgwp((wpw_id)GWIN_MAIN);
-    gwinpt = (WPGWIN *)winptr->ptr;
-/*
-***Plot-menyn.
-*/
-#ifdef WIN32
-    if ( strcmp(typ,PLTEXT) == 0 ) msshmu(146);
-    else                           msshmu(147);
-#else
-    if ( strcmp(typ,PLTEXT) == 0 ) IGaamu(146);
-    else                           IGaamu(147);   
-#endif
-/*
-***Läs in svar, snabbval ej tillåtet.
-*/
-loop:
-    IGptma(359,IG_MESS);
-    IGgalt(&pmualt,&alttyp);
+   WPaddmess_mcwin(IGgtts(359),WP_PROMPT);
 
-    if ( pmualt == NULL )
-      {
-      switch ( alttyp )
-        {
-        case SMBRETURN:
-        IGrsma();
-#ifdef WIN32
-        mshdmu();
-#else
-        IGsamu();
-#endif
-        return(REJECT);
+   if ( (status=WPgtsw(&grw_id,&ix1,&iy1,&ix2,&iy2,WP_RUB_RECT,TRUE)) < 0 )
+     return(status);
+/*
+***Sort coordinates.
+*/
+   if ( ix2 < ix1 ) { tmp = ix1; ix1 = ix2; ix2 = tmp; }
+   if ( iy2 < iy1 ) { tmp = iy1; iy1 = iy2; iy2 = tmp; }
+/*
+***Get a C ptr to the window. Currently only WPGWIN
+***supported.
+*/
+   if ( (winptr=WPwgwp((wpw_id)grw_id)) != NULL  &&
+         winptr->typ != TYP_GWIN ) return(0);
 
-        case SMBMAIN:
-        goto gomain;
-        }
-      }
+   gwinpt = (WPGWIN *)winptr->ptr;
 /*
-***Väl alternativ.
+***Transform to 2D model coordinates.
 */
-    switch(pmualt->actnum)
-      {
-/*
-***Plotta hela modellen.
-*/
-      case 1:
-      WPmsiz(gwinpt,&plotvy);
-      break;
-/*
-***Plotta allt på skärmen.
-*/
-      case 2:
-      plotvy.modwin.xmin = gwinpt->vy.modwin.xmin;
-      plotvy.modwin.ymin = gwinpt->vy.modwin.ymin;
-      plotvy.modwin.xmax = gwinpt->vy.modwin.xmax;
-      plotvy.modwin.ymax = gwinpt->vy.modwin.ymax;
-      break;
-/*
-***Plotta del av skärmen.
-*/
-      case 3:
-/*
-***Läs in plot-fönster.
-*/
-l1:
-      IGptma(322,IG_MESS);
-      WPgmc2(FALSE,&pektkn,&x1,&y1,&grw_id);
-      IGrsma();
-      if ( pektkn == *smbind[1].str ) goto reject;
-      if ( pektkn == *smbind[7].str ) goto gomain;
-      if ( pektkn == *smbind[8].str )
-        {
-        IGhelp();
-        goto l1;
-        }
-      if ( pektkn != ' ' )
-        {
-        WPbell();
-        goto l1;
-        }
-l2:
-      IGptma(323,IG_MESS);
-      WPgmc2(FALSE,&pektkn,&x2,&y2,&grw_id);
-      IGrsma();
-      if ( pektkn == *smbind[1].str ) goto reject;
-      if ( pektkn == *smbind[7].str ) goto gomain;
-      if ( pektkn == *smbind[8].str )
-        {
-        IGhelp();
-        goto l2;
-        }
-      if ( pektkn != ' ' )
-        {
-        WPbell();
-        goto l2;
-        }
-/*
-***Sortera.
-*/
-      if (x1 - x2 > 0.0) 
-        {
-        tmp=x1;
-        x1=x2;
-        x2=tmp;
-        }
+   x1 = gwinpt->vy.modwin.xmin + (ix1 - gwinpt->vy.scrwin.xmin)*
+                     (gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin)/
+                     (gwinpt->vy.scrwin.xmax - gwinpt->vy.scrwin.xmin);
+   y1 = gwinpt->vy.modwin.ymin + (iy1 - gwinpt->vy.scrwin.ymin)*
+                     (gwinpt->vy.modwin.ymax - gwinpt->vy.modwin.ymin)/
+                     (gwinpt->vy.scrwin.ymax - gwinpt->vy.scrwin.ymin);
 
-      if (y1 - y2 > 0.0) 
-        {
-        tmp=y1;
-        y1=y2;
-        y2=tmp;
-        }
+   x2 = gwinpt->vy.modwin.xmin + (ix2 - gwinpt->vy.scrwin.xmin)*
+                     (gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin)/
+                     (gwinpt->vy.scrwin.xmax - gwinpt->vy.scrwin.xmin);
+   y2 = gwinpt->vy.modwin.ymin + (iy2 - gwinpt->vy.scrwin.ymin)*
+                     (gwinpt->vy.modwin.ymax - gwinpt->vy.modwin.ymin)/
+                     (gwinpt->vy.scrwin.ymax - gwinpt->vy.scrwin.ymin);
 /*
-***Felkontroll.
+***Error check.
 */
-      dx=x2 - x1;
-      dy=y2 - y1;
-      if ( dx < 1e-10 || dy < 1e-10 )
-        {
-        erpush("IG3042","");
-        goto error;
-        }
-/*
-***Sätt upp nytt fönster.
-*/
-      plotvy.modwin.xmin = x1;
-      plotvy.modwin.ymin = y1;
-      plotvy.modwin.xmax = x2;
-      plotvy.modwin.ymax = y2;
-      break;
-/*
-***Plotta annan vy. OBS !!!!!!!!! Detta alternativ bör utgå !!!!!!!!
-*
-      case 4:
-      IGptma(220,IG_INP);
-      status=IGssip(IGgtts(267),vynam,"",GPVNLN);
-      IGrsma();
-      if ( status == REJECT ) goto reject;
-      if ( status == GOMAIN ) goto gomain;
-
-      if ( (vynum=vyindx(vynam)) == -1 )
-        {
-        erpush("IG3012",vynam);
-        goto error;
-        }
-
-      V3MOME(&vytab[vynum],&plotvy,sizeof(VY));
-      vypek = &vytab[vynum];
-      break;
-*
-***Okänt alternativ.
-*/
-      default:
-      erpush("IG0103","");
-      goto error;
-      }
-/*
-***Sudda "Vad vill du plotta ?"
-*/
-     IGrsma();
-/*
-***Fråga efter plotorigo.
-*/
-     if ( IGialt(380,67,68,FALSE) )
-       {
-       origo.x_gm = origo.y_gm = origo.z_gm = 0.0;
-       }
-     else
-       {
-       IGptma(381,IG_MESS); tmptrf = tmpref; tmpref = TRUE;
-       status=IGcpov(&origo);
-       tmpref = tmptrf; IGrsma(); WPerhg();
-       if ( status == GOMAIN ) goto gomain;
-       if ( status == REJECT ) goto reject;
-/*
-***Transformera till BASIC och sedan till aktiv vy.
-*/
-       if ( lsyspk != NULL ) GEtfpos_to_local(&origo,&lklsyi,&origo);
-
-       WPppos(gwinpt,&origo,&projpos);
-       origo.x_gm = projpos.x;
-       origo.y_gm = projpos.y;
-       origo.z_gm = 0.0;
-/*
-***Om det är en GKS-fil som skall skapas skall origo beräknas
-***annorlunda än om det är en DXF-fil.
-*/
-       if ( strcmp(typ,PLTEXT) == 0 )
-         {
-         origo.x_gm -= plotvy.modwin.xmin;
-         origo.y_gm -= plotvy.modwin.ymin;
-         }
-       }
-/*
-***Läs in filnamn.
-*/
-getnam:
-     if ( strcmp(dstr,"") == 0 )    strcpy(dstr,jobnam);
-     if ( strcmp(typ,PLTEXT) == 0 ) IGptma(215,IG_INP);
-     else                           IGptma(173,IG_INP);
-     status=IGssip(IGgtts(267),fnam,dstr,JNLGTH);
-     IGrsma();
-     if ( status == GOMAIN ) goto gomain;
-     if ( status == REJECT ) goto reject;
-     strcpy(dstr,fnam);
-/*
-***Skapa filnamn.
-*/
-     strcpy(path,jobdir);
-     strcat(path,fnam);
-     strcat(path,typ);
-/*
-***Kolla om filen finns.
-*/
-     if ( (filpek=fopen(path,"r")) != NULL )
-       {
-       fclose(filpek);
-       if ( strcmp(typ,PLTEXT) == 0 ) tsnr = 382; else tsnr = 383;
-       if ( IGialt(tsnr,67,68,TRUE) ) goto opfil;
-       else goto getnam;
-       }
-/*
-***Öppna filen.
-*/
-opfil:
-    if ( (filpek=fopen(path,"w+")) == NULL )
-      {
-      erpush("IG3062",path);
-      goto error;
-      }
-/*
-***Generera plotfil.
-*/
-     if ( strcmp(typ,PLTEXT) == 0 )
-       {
-       IGptma(221,IG_MESS);
-       status = WPmkpf(gwinpt,filpek,&plotvy.modwin,&origo);
-       }
-     else
-       {
-       IGptma(172,IG_MESS);
-       status = WPdxf_out(gwinpt,filpek,&plotvy,&origo);
-       }
-
-     fclose(filpek);
-/*
-***Avbrott.
-*/
-     if ( status == AVBRYT ) 
-       {
-       IGrsma();
-#ifdef WIN32
-        mshdmu();
-#else
-        IGsamu();
-#endif
-       WPaddmess_mcwin(IGgtts(171),WP_ERROR);
-       return(REJECT);
-       }
-/*
-***Sudda "Plotfil skapas" och återvänd till Plot-menyn.
-*/
-     IGrsma();
-     goto loop;
-/*
-***Fel.
-*/
-error:
+   dx = x2 - x1;
+   dy = y2 - y1;
+   if ( dx < 1e-10 || dy < 1e-10 )
+     {
+     erpush("IG3042","");
      errmes();
+     return(0);
+     }
 /*
-***REJECT.
+***Set up the plot window.
 */
-reject:
-     IGrsma();
-     goto loop;
+   plotvy.modwin.xmin = x1;
+   plotvy.modwin.ymin = y1;
+   plotvy.modwin.xmax = x2;
+   plotvy.modwin.ymax = y2;
 /*
-***GOMAIN.
+***Set plot origin. DXF and PLT have different conventions.
 */
-gomain:
-     return(GOMAIN);
+   origin.x_gm = origin.y_gm = origin.z_gm = 0.0;
+
+   if ( strcmp(type,PLTEXT) == 0 )
+     {
+     origin.x_gm -= plotvy.modwin.xmin;
+     origin.y_gm -= plotvy.modwin.ymin;
+     }
+/*
+***Get the name and path to use for the new plotfile.
+*/
+   strcpy(wc_str,"*");
+   strcat(wc_str,type);
+   strcpy(newpath,jobdir);
+   strcpy(plotfile,jobnam);
+   strcat(plotfile,type);
+   if ( strcmp(type,PLTEXT) == 0 ) tsnr = 186; else tsnr = 187;
+start:
+   status = WPfile_selector(IGgtts(tsnr),newpath,TRUE,plotfile,"*",newname);
+   if ( status == 0 )
+     {
+     if ( IGcmpw(wc_str,newname) )
+       {
+       i = strlen(newname) - 4;
+       newname[i] = '\0';
+       }
+     }
+   else return(status);
+/*
+***Create full plotfile name with path.
+*/
+   strcpy(plotfile,newpath);
+   strcat(plotfile,newname);
+   strcat(plotfile,type);
+/*
+***Owerwrite existing file ?
+*/
+   if ( strcmp(type,PLTEXT) == 0 ) tsnr = 382; else tsnr = 383;
+   if ( IGftst(plotfile) && !IGialt(tsnr,67,68,TRUE) ) goto start;
+/*
+***Open the new file.
+*/
+   if ( (fp=fopen(plotfile,"w+")) == NULL )
+     {
+     erpush("IG3062",plotfile);
+     errmes();
+     return(0);
+     }
+/*
+***Create the PLT/DXF file.
+*/
+   if ( strcmp(type,PLTEXT) == 0 ) status = WPmkpf(gwinpt,fp,&plotvy.modwin,&origin);
+   else                            status = WPdxf_out(gwinpt,fp,&plotvy,&origin);
+
+   fclose(fp);
+
+   if ( status < 0 )
+     {
+     erpush("IG5373",plotfile);
+     errmes();
+     return(0);
+     }
+/*
+***Message.
+*/
+   strcpy(mesbuf,plotfile);
+   strcat(mesbuf,IGgtts(221));
+   WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
+***The end.
+*/
+   return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-       short IGshll()
+       short IGshell()
 
 /*      Kommando till shell.
  *
@@ -443,7 +263,7 @@ gomain:
 /*
 ***Läs in kommando.
 */
-     if ( (status=IGssip(IGgtts(302),shcmd,dstr,80)) < 0 ) return(status);
+     if ( (status=IGssip("",IGgtts(302),shcmd,dstr,80)) < 0 ) return(status);
      strcpy(dstr,shcmd);
 /*
 ***Utför.
@@ -564,9 +384,7 @@ static short ighidf(bool screen)
 */
 getnam:
    if ( strcmp(dstr,"") == 0 ) strcpy(dstr,jobnam);
-   IGptma(215,IG_INP);
-   status = IGssip(IGgtts(267),fnam,dstr,JNLGTH);
-   IGrsma();
+   status = IGssip(IGgtts(215),IGgtts(267),fnam,dstr,JNLGTH);
    if ( status < 0 ) return(status);
    strcpy(dstr,fnam);
 /*

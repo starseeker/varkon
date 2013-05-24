@@ -1,6 +1,6 @@
 !*******************************************************
 
- GLOBAL DRAWING MODULE dxf_lev(
+ GLOBAL MODULE dxf_lev(
   VAR FILE   infil;
   VAR INT    levant;
   VAR STRING levnam(500)*40;
@@ -34,7 +34,7 @@
 !***som "LAY"+nivånummer.
 !*
     if substr(rad,1,3)="LAY" then
-      lev:=round(val(substr(rad,4)));
+      lev:=round(ival(substr(rad,4)));
 !*
 !***Om inte kan nivån ha ett namn eller ett nummer. Kolla om
 !***den finns i tabellen levnam.

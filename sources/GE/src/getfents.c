@@ -21,7 +21,7 @@
 /*     GEtfMesh_to_local   Transform mesh from basic to local       */
 /*                                                                  */
 /*  This file is part of the VARKON Geometry Library.               */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -57,7 +57,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBPoint *opoi,
         DBTmat  *pt,
         DBPoint *npoi)
-        
+
 /*      Transforms the point with t.
  *      (from basic to local)
  *
@@ -189,7 +189,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBTmat *pt,
         DBArc  *narc,
         DBSeg   nseg[])
-        
+
 /*      Transforms the input arc and optional segments with t.
  *      (from basic to local)
  *
@@ -223,7 +223,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         oldorg.z_gm = 0.0;
         GEtfpos_to_local(&oldorg,pt,&neworg);
         narc->x_a = neworg.x_gm;
-        narc->y_a = neworg.y_gm;  
+        narc->y_a = neworg.y_gm;
 /*
 ***Transform angles.
 */
@@ -291,7 +291,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
  *      (C)microform ab 8/12/92 J. Kjellander
  *
  *      5/12/94  GE6282, J. Kjellander
- *      7/03/94  Plan kurva, G. Liden       
+ *      7/03/94  Plan kurva, G. Liden
  *      17/3/95  Plan kurva, J. Kjellander
  *      1999-04-27 Rewritten, J.Kjellander
  *      2006-11-08 Transform NURBS, Sören Larsson
@@ -304,11 +304,11 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
     int    i;
     DBptr      cpts_la,knots_la;
     DBVector   ocpt,ncpt;
-    DBfloat    w;  
-    DBint      ncpts,nknots; 
+    DBfloat    w;
+    DBint      ncpts,nknots;
    
 /*
-***Transform curve plane. 
+***Transform curve plane.
 */
    if ( ocur->plank_cu == TRUE )
       {
@@ -318,7 +318,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
     if ( osge != NULL )
       {
       if ( osge[0].typ == NURB_SEG  )
-        { 
+        {
         nknots=osge->nknots;
         ncpts=nknots-osge->nurbs_degree-1;
         for ( i=0; i<ncpts; ++i )
@@ -330,7 +330,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
           GEtfpos_to_local(&ocpt,pt,&ncpt);
           nsge->cpts_c[i].x_gm=ncpt.x_gm*w;
           nsge->cpts_c[i].y_gm=ncpt.y_gm*w;
-          nsge->cpts_c[i].z_gm=ncpt.z_gm*w;         
+          nsge->cpts_c[i].z_gm=ncpt.z_gm*w;
           }
 /*
 ***Store transformed controlpoints and knotvector in DB.
@@ -343,9 +343,9 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
 */
         for ( i=0; i<ocur->ns_cu; ++i )
           {
-          (nsge+i)->cpts_db      = cpts_la;
-          (nsge+i)->knots_db     = knots_la;
-          }         
+          (nsge+i)->cpts_db  = cpts_la;
+          (nsge+i)->knots_db = knots_la;
+          }
         }
 
       else /* not NURB_SEG */
@@ -361,7 +361,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
             }
           }
         }
-      }    
+      }
 /*
 ***Transform graphical segments if they are different
 ***from the geometric segments.
@@ -421,7 +421,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBText *otxt,
         DBTmat *pt,
         DBText *ntxt)
-        
+
 /*      Transforms a text with t.
  *      (from basic to local)
  *
@@ -475,7 +475,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBLdim *oldm,
         DBTmat *pt,
         DBLdim *nldm)
-        
+
 /*      Transforms a linear dimension with t.
  *      (from basic to local)
  *
@@ -505,7 +505,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBCdim *ocdm,
         DBTmat *pt,
         DBCdim *ncdm)
-        
+
 /*      Transforms a diameter dimension with t.
  *      (from basic to local)
  *
@@ -525,7 +525,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
     GEtfpos_to_local(&ocdm->p2_cd,pt,&ncdm->p2_cd);
     GEtfpos_to_local(&ocdm->p3_cd,pt,&ncdm->p3_cd);
 
-    return(0);  
+    return(0);
   }
 
 /********************************************************/
@@ -535,7 +535,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBRdim *ordm,
         DBTmat *pt,
         DBRdim *nrdm)
-        
+
 /*      Transforms a radius dimension with t.
  *      (from basic to local)
  *
@@ -565,7 +565,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBAdim *oadm,
         DBTmat *pt,
         DBAdim *nadm)
-        
+
 /*      Transforms an angular dimension with t.
  *      (from basic to local)
  *
@@ -721,7 +721,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBBplane *obpl,
         DBTmat   *pt,
         DBBplane *nbpl)
-        
+
 /*      Transforms a B_plane with t.
  *      (from basic to local)
  *
@@ -785,7 +785,7 @@ static short calds2(DBTmat *ptr, DBfloat *pdet, DBfloat *psx);
         DBTmat  *pt,
         DBfloat *pdet,
         DBfloat *psx)
-        
+
 /*      Computes 2D-determinant and X-scale.
  *
  *      In: pt   = Transformation

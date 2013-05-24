@@ -1,0 +1,41 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- Start Varkon})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Start Varkon</h1>
+
+<p>
+Varkon can only be started by executing a Varkon start script.
+By default Varkon comes with an english start script located
+in <code>$VARKON_ROOT/com/english</code>. To start Varkon, run the Varkon
+start script. Varkon will then display the following dialog:
+</p>
+
+<img class="center" src="welcome.jpg"></img>
+
+<p>
+If this is the first time you start Varkon, you can now continue with the
+<a href="../tutorial/index.htm">The 6 min tutorial for first time users.</a>
+</p>
+
+<p>
+More information about start scripts is available in the
+<a href="./start_script.htm">Start script</a> section and also the
+<a href="../appdev/index.htm">Application developers manual.</a>
+</p>
+
+<p>
+If Varkon does not start when you execute the start script, check
+$VARKON_ROOT for a file named <code>varkon.LOG</code>. This file shows what
+happens during startup and may be a help to localize the problem.
+</p>
+
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

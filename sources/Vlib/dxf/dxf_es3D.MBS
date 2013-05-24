@@ -1,6 +1,6 @@
 !*******************************************************
 
-  GLOBAL GEOMETRY MODULE dxf_es3D(
+  GLOBAL MODULE dxf_es3D(
   VAR FILE   infil,logfil;
   VAR STRING bntab(2000)*32;
   VAR INT    bptab(2000);

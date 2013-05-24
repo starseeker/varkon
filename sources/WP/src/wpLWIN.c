@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -16,6 +16,7 @@
 *    WPbtlw();     Button routine for WPLWIN
 *    WPcrlw();     Crossing routine for WPLWIN
 *    WPcmlw();     ClientMessage routine for WPLWIN
+*    WPcolw();     Configure routine for WPLWIN
 *    WPdllw();     Delete WPLWIN
 *
 *    This library is free software; you can redistribute it and/or
@@ -38,191 +39,166 @@
 #include "../../IG/include/IG.h"
 #include "../../EX/include/EX.h"
 #include "../include/WP.h"
-#include <string.h>
-
-extern char  jobdir[],jobnam[];
-extern char *mktemp();
-
-static WPLWIN  *actlwin = NULL;
-
-/* actlwin ï¿½r en C-pekare till ett WPLWIN som skapats (WPinla) men
-   ï¿½nnu ej blivit fï¿½rdig (WPexla). Om actlwin = NULL finns inget
-   sï¿½dant fï¿½nster pï¿½ gï¿½ng. */
-
-
-static char title [81];        /* varkon.list.title  */
-static char row   [81];        /* varkon.list.row    */
-static char page  [81];        /* varkon.list.page   */
-static char save  [81];        /* varkon.list.save   */
-static char kill  [81];        /* varkon.list.kill   */
 
 /*
-***Diverse resurser.
+***Since Varkon is compiled with -ansi and -Wall we will
+***get compiler warnings about the two following functions
+***if we don't declare them here. They are not ansi but POSIX
+***and seem to exist in all Unix implementations. The reason
+***for using them is that they are reccommended by the compiler
+***to be the most secure way to create a temporary file.
+*/
+extern int   mkstemp();
+extern FILE *fdopen();
+
+/*
+***External Varkon global variables.
+*/
+extern char  jobdir[],jobnam[];
+
+/*
+***Static variables.
+*/
+static WPLWIN  *actlwin = NULL;
+
+/*
+***actlwin is a C ptr to a WPLWIN which has been created (WPinla)
+***but not yet closed (WPexla). If actlwin = NULL no WPLWIN is
+***open but there may exist many closed WPLWIN.
+*/
+
+static char title [V3STRLEN];   /* Current window border title  */
+
+/*
+***Internal functions.
 */
 static short crlwin(int,int,int,int,char *wtitle);
-static short scrrup(WPLWIN *lwinpt);
-static short scrpup(WPLWIN *lwinpt);
-static short scrrdn(WPLWIN *lwinpt);
-static short scrpdn(WPLWIN *lwinpt);
 static short savelw(WPLWIN *lwinpt);
 
-/*!******************************************************/
+/********************************************************/
 
-        short WPinla(
-        char *hs)
+        short WPinla(char *hs)
 
-
-/*      Skapar nytt list-fï¿½nster, wp:s WPinla(). MBS-
- *      LST_INI(rubrik);
+/*      Create (open) a WPLWIN. LST_INI(title) in MBS.
  *
- *      In: hs = Rubriktext.  
- *
- *      Ut: Inget.
- *
- *      FV: 0.
+ *      In: hs = Header string (title).
  *
  *      (C)microform ab 22/7/92 U. Andersson
  *
  *      7/12/93  Omarbetad, J. Kjellander
- *      8/11/94  Resurser fï¿½r texterna, J. Kjellander
+ *      8/11/94  Resurser för texterna, J. Kjellander
  *      1996-04-25 6 st. "X", J. Kjellander
  *      1997-01-15 IGgenv(), J.Kjellander
+ *      2007-10-30 Slidebars, J.Kjellander
+ *      2007-12-14 mkstemp(), J.Kjellander
  *
  ******************************************************!*/
 
   {
-    char     templ[V3PTHLEN+1],tmpfil[V3PTHLEN+1],
-             tmpbuf[V3STRLEN+1];
+    char     tmpnam[V3PTHLEN+JNLGTH+1],tmpbuf[V3STRLEN+1];
     wpw_id   id;
-    int      dx;
+    int      tmp_fd,dx;
     WPLWIN  *lwinptr;
     FILE    *fp;
 
 /*
-***Kolla att inte ett listfï¿½nster redan ï¿½r pï¿½ gï¿½ng.
-***Isï¿½fall, stï¿½ng det och returnera felkod. Dï¿½rmed
-***borde det vara OK fï¿½r errmes() att skapa ny lista
-***med felmeddelanden.
+***Check that another WPLWIN is not already opened.
 */
     if ( actlwin != NULL )
-      { 
+      {
       WPexla(TRUE);
       return(-2);
       }
 /*
-***Allra fï¿½rst ser vi till att ï¿½ppna en ny temporï¿½r-fil.
-***Skulle det misslyckas ï¿½r ju ingen skada skedd och vi 
-***slipper jobbig felhantering med malloc() och sï¿½nt.
-*/  
-    strcpy(templ,IGgenv(VARKON_TMP));
-    strcat(templ,jobnam);
-    strcat(templ,".XXXXXX");
-    mktemp(templ);
-    strcpy(tmpfil,templ);
+***Create a temporary file for list contents. For security reasons,
+***use mkstemp() and fdopen() which are not ansi but POSIX and seem
+***to be available everywhere.
+*/
+    strncpy(tmpnam,IGgenv(VARKON_TMP),V3PTHLEN+1);
+    strncat(tmpnam,jobnam,JNLGTH+1);
+    strncat(tmpnam,".XXXXXX",8);
+    tmp_fd = mkstemp(tmpnam);
 
-    if ( (fp=fopen(tmpfil,"w+")) == NULL ) return(-2);
+    if ( (fp=fdopen(tmp_fd,"w+")) == NULL ) return(-2);
 /*
-***Skapa fï¿½nstertitel (den text som skrivs ut i ramen).
-***Hï¿½rdprogrammerat default ï¿½r " ". Tom strï¿½ng "" tolkas
-***av Motif som ingen titel och ersï¿½tts med stjï¿½rnor. Det
-***vill vi inte ha.
+***Get text resources from the ini-file.
 */
     if ( !WPgrst("varkon.list.title",title) ) strcpy(title," ");
     if (  WPgrst("varkon.list.title.jobnam",tmpbuf)  &&
           strcmp(tmpbuf,"True") == 0 ) strcat(title,jobnam);
 /*
-***Initiera knapptexter.
-*/
-    if ( !WPgrst("varkon.list.row",row) ) strcpy(row,"Rad");
-    if ( !WPgrst("varkon.list.page",page) ) strcpy(page,"Sida");
-    if ( !WPgrst("varkon.list.save",save) ) strcpy(save,"Spara");
-    if ( !WPgrst("varkon.list.kill",kill) ) strcpy(kill,"St{ng");
-/*
-***Skapa ett ledigt fï¿½nster-ID.
+***Allocate a window-ID.
 */
     if ( (id=WPwffi()) < 0 ) return(-2);
 /*
-***Skapa ett interimistiskt WPLWIN.
-***Alla data finns ï¿½nnu inte. X-fï¿½nstret ï¿½r tex. inte skapat.
-***Detta gï¿½rs fï¿½rst i WPexla() som dï¿½ fï¿½r fylla i resten.
+***Create an opened WPLWIN. Note that there is still
+***no X window created. This is done when the WPLWIN
+***is closed.
 */
     if ( (lwinptr=(WPLWIN *)v3mall(sizeof(WPLWIN),"WPinla"))
                                                    == NULL ) return(-2);
-
     lwinptr->id.w_id = id;
     lwinptr->id.p_id = 0;
     lwinptr->id.x_id = 0;
 
-    lwinptr->geo.x =  0;
-    lwinptr->geo.y =  0;
-    lwinptr->geo.dx =  0;
-    lwinptr->geo.dy =  0;
+    lwinptr->geo.x   = 0;
+    lwinptr->geo.y   = 0;
+    lwinptr->geo.dx  = 0;
+    lwinptr->geo.dy  = 0;
 
+    lwinptr->wintab[0].typ = TYP_UNDEF;
     lwinptr->wintab[0].ptr = NULL;
+    lwinptr->wintab[1].typ = TYP_UNDEF;
     lwinptr->wintab[1].ptr = NULL;
-    lwinptr->wintab[2].ptr = NULL;
 
-    lwinptr->filpek = fp;
-    strcpy(lwinptr->filnam,tmpfil);
-
+    strcpy(lwinptr->filnam,tmpnam);
+    lwinptr->filpek  = fp;
     strcpy(lwinptr->rubrik,hs);
 /*
-***Fï¿½nstrets mï¿½ste minst vara sï¿½ brett att alla 
-***knappar samt rubrik och titel syns.
+***Calculate minimum window width.
 */
-    dx = WPstrl(page);
-    if ( WPstrl(row) > dx ) dx = WPstrl(row);
-    if ( WPstrl(save) > dx ) dx = WPstrl(save);
-    if ( WPstrl(kill) > dx ) dx = WPstrl(kill);
-
-    dx = (int)(3*1.4*dx + 4*WPstrh());
+    dx = WPstrl(title);
 
     if ( WPstrl(hs) > dx ) dx = WPstrl(hs);
-    if ( WPstrl(title) > dx ) dx = WPstrl(title);
 
-    lwinptr->maxrln = dx;
+    lwinptr->maxchars = 0;
+    lwinptr->maxlen   = dx;
 
-    lwinptr->rstart = 0;
-    lwinptr->trant  = 1;
-    lwinptr->frant  = 0;
-    lwinptr->sscrol = TRUE;
+    lwinptr->nl_first = 0;    /* First visible line */
+    lwinptr->nl_tot   = 0;    /* Total number of lines */
+    lwinptr->nl_vis   = 0;    /* Number of lines in window */
 /*
-***Lagra fï¿½nstret i fï¿½nstertabellen.
-***Fï¿½nstret ï¿½r ï¿½nnu ej komplett med alla data tex. X-id eller
-***geometri men detta skall inte vara nï¿½got problem.
+***Enter opened WPLWIN in global window table.
 */
     wpwtab[id].typ = TYP_LWIN;
     wpwtab[id].ptr = (char *)lwinptr;
 /*
-***Sï¿½tt pekaren till aktivt listfï¿½nster.
+***This WPLWIN is now opened but not closed.
 */
     actlwin = lwinptr;
 /*
-***Slut.
+***The end.
 */
     return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short WPalla(
-        char *s, 
+        char *s,
         short rs)
 
-/*      Skriver in en rad text i listfilen.
+/*      Add a line to the currently open WPLWIN.
  *
- *      In: s  = textstrï¿½ng. 
- *          rs = radsprï¿½ng.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
+ *      In: s  = Text string.
+ *          rs = Line space.
  *
  *      (C)microform ab 22/7/92 U. Andersson 
  *
  *      931207 Omarbetad, J. Kjellander
- *      1998-03-11 Lï¿½ngre rader, J.Kjellander
+ *      1998-03-11 Längre rader, J.Kjellander
+ *      2007-10-18 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
@@ -231,26 +207,27 @@ static short savelw(WPLWIN *lwinpt);
     char mell[V3STRLEN+1],rad[V3STRLEN+1];
 
 /*
-***Kolla att aktivt listfï¿½nster verkligen finns.
+***An open WPLWIN must exist.
 */
     if ( actlwin == NULL ) return(-2);
 /*
-***Kolla att raden inte ï¿½r lï¿½ngre ï¿½n V3STRLEN tecken.
+***Check line length. Truncate at V3STRLEN.
 */
-    nstkn = strlen(s); 
+    nstkn = strlen(s);
     if ( nstkn > V3STRLEN )
       {
       s[V3STRLEN] = '\0';
       nstkn = V3STRLEN;
       }
+
+    if ( nstkn > actlwin->maxchars ) actlwin->maxchars = nstkn;
 /*
-***Berï¿½kna textradens lï¿½ngd i pixels.
-*/  
+***Line length in pixels.
+*/
     lt = WPstrl(s);
-    if ( lt > actlwin->maxrln ) actlwin->maxrln = lt;
+    if ( lt > actlwin->maxlen ) actlwin->maxlen = lt;
 /*
-***Om raden ï¿½r kortare ï¿½n V3STRLEN tecken, padda med space.
-***Alla rader i list-filen skall vara V3STRLEN tecken + \n.
+***If line is shorter than V3STRLEN, pad with space.
 */
     rest  = V3STRLEN - nstkn; 
     for ( i=0; i<rest; i++ ) mell[i] = ' ';
@@ -259,73 +236,69 @@ static short savelw(WPLWIN *lwinpt);
     strcat(rad,mell);
     fprintf(actlwin->filpek,"%s\n",rad);
 /*
-***Rï¿½kna upp antalet textrader.
-*/  
-    ++actlwin->trant;
-/*
-***Skapa en rad med V3STRLEN mellanslag.
+***Update line counter.
 */
+  ++actlwin->nl_tot;
+/*
+***Optional line spacing.
+*/
+    if ( rs > 1 )
+      {
       for (i=0;i<V3STRLEN;i++) mell[i] = ' ';
       mell[V3STRLEN] = '\0';
-/*
-***Berï¿½kna antalet radsprï¿½ng.
-***Skriv till listfilen.
-*/
+
       for ( i=0; i<rs - 1; i++ )
         {
-        ++actlwin->trant;
+      ++actlwin->nl_tot;
         fprintf(actlwin->filpek,"%s\n",mell);
         }
+      }
 /*
-***Slut.
+***The end.
 */
     return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short WPexla(
         bool  show)
 
-/*      Avslutar en listning till ett listfï¿½nster.
- *      Stï¿½nger temporï¿½r-filen, skapar fï¿½nstret i X.
+/*      Close an open WPLWIN.
  *
- *      In: show = TRUE  => Visa.
- *                 FALSE => Stï¿½ng utan att visa.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
+ *      In: show = TRUE  => Display.
+ *                 FALSE => Don't display.
  *
  *      (C)microform ab 22/7/92 U. Andersson 
  *
  *       8/12/93    Omarbetad, J. Kjellander
- *       7/11/94    Resurser fï¿½r placering, J. Kjellander
+ *       7/11/94    Resurser för placering, J. Kjellander
  *       1996-02-05 show, J. Kjellander
+ *       2007-20-28 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    int      x,y,mar,ar,a,b,px,py,dx,dy;
+    int      x,y,maxnl,nl,a,b,dx,dy,sx,sy,sdx,sdy,end;
     unsigned int dum1,dum2;
     double   c,d;
     char    *type[20];
     XrmValue value;
     WPWIN   *winptr;
-    WPBUTT  *butptr;
+    WPSBAR  *sbptr;
 
 /*
-***Kolla att ett listfï¿½nster verkligen ï¿½r pï¿½ gï¿½ng.
+***A WPLWIN must be open.
 */
-    if ( actlwin == NULL ) return(-2);
+   if ( actlwin == NULL ) return(-2);
 /*
-***Stï¿½ng temporï¿½rfilen.
+***Close temporary file.
 */
-    fclose(actlwin->filpek);
+   fclose(actlwin->filpek);
 /*
-***Om inget skall visas ï¿½r det enkelt. Ta bort temporï¿½rfilen och
-***det interimistiska fï¿½nster som skapats i WPinla();
+***If no show it's simple. Remove temp. file, and
+***kill open WPLWIN created by WPinla().
 */
    if ( !show)
      {
@@ -340,20 +313,21 @@ static short savelw(WPLWIN *lwinpt);
      return(0);
      }
 /*
-***Berï¿½kning av av max hï¿½jd pï¿½ listfï¿½nstret.
+***WPLWIN height.
 */
-    mar = (int)(0.6*DisplayHeight(xdisp,xscr)/WPstrh());
-    ar = actlwin->trant;
+    maxnl = (int)(0.6*DisplayHeight(xdisp,xscr)/WPstrh()); /* Max number of lines */
+    nl = actlwin->nl_tot;
 
-    if ( ar > mar ) ar = mar; 
+    if ( nl > maxnl ) nl = maxnl;
 
-    dy = 4*WPstrh() + ar*WPstrh() + WPstrh();
+    dy = WPstrh()*(nl + 5);
 /*
-***Berï¿½kning av av min bredd pï¿½ listfï¿½nstret.
+***WPLWIN width.
 */
-    dx = WPstrh() + actlwin->maxrln + WPstrh();
+    dx = 2*WPstrh() + actlwin->maxlen + WPstrh();
+    if ( dx > 0.8*DisplayWidth(xdisp,xscr) ) dx = 0.8*DisplayWidth(xdisp,xscr);
 /*
-***Listfï¿½nstrets lï¿½ge.
+***WPLWIN position.
 */
     x  = 90;
     y  = DisplayHeight(xdisp,xscr) - dy - 50; 
@@ -361,364 +335,277 @@ static short savelw(WPLWIN *lwinpt);
     if ( XrmGetResource(xresDB,"varkon.list.geometry","Varkon.List.Geometry",
          type,&value) ) XParseGeometry((char *)value.addr,&x,&y,&dum1,&dum2);
 /*
-***Skapa listfï¿½nstret.
+***Create the window in X.
 */
     crlwin(x,y,dx,dy,title);
 /*
-***Frï¿½ga hur stort listfï¿½nstret blev.
+***What size did it get (after possible fight with a WM)?
 */
-    WPgwsz(actlwin->id.x_id,&a,&b,&px,&py,&c,&d);
+    WPgwsz(actlwin->id.x_id,&a,&b,&dx,&dy,&c,&d);
+
+    actlwin->geo.dx = dx;
+    actlwin->geo.dy = dy;
 /*
-***Sï¿½tt antal rader i fï¿½nstret.
+***How many lines visible.
 */
-    actlwin->frant = py/WPstrh() - 6;
+    actlwin->nl_vis = dy/WPstrh() - 4;
 /*
-***Berï¿½kna knapparnas storlek.
+***Add optional vertical slidebar.
 */
-    dx = WPstrl(page);
-    if ( WPstrl(row) > dx ) dx = WPstrl(row);
-    if ( WPstrl(save) > dx ) dx = WPstrl(save);
-    if ( WPstrl(kill) > dx ) dx = WPstrl(kill);
+    if ( actlwin->nl_vis < actlwin->nl_tot )
+      {
+      sx  = actlwin->geo.dx-WPstrh();
+      sy  = 0;
+      sdx = WPstrh();
+      sdy = actlwin->geo.dy-WPstrh();
+      end = (double)((double)actlwin->nl_vis/(double)actlwin->nl_tot)*sdy;
+      if ( end < 15 ) end = 15;
+
+      WPcreate_slidebar(actlwin->id.w_id,sx,sy,sdx,sdy,0,end,WP_SBARV,&sbptr);
+
+      sbptr->id.p_id         = actlwin->id.w_id;
+      sbptr->cback           = WPxplw;
+      actlwin->wintab[0].typ = TYP_SBAR;
+      actlwin->wintab[0].ptr = (char *)sbptr;
+      }
 /*
-***Skapa sida/rad-subfï¿½nstret.
+***Add optional horizontal slidebar.
 */
-    x  = WPstrh();
-    y  = (int)(0.25*x);
-    dx = (int)(1.4*dx);
-    dy = (int)(2*x);
+    if ( actlwin->maxlen > actlwin->geo.dx - 2*WPstrh() )
+      {
+      sx  = 0;
+      sy  = actlwin->geo.dy-WPstrh();
+      sdx = actlwin->geo.dx-WPstrh();
+      sdy = WPstrh();
+      end = ((double)(sdx - 2*WPstrh())/(double)actlwin->maxlen)*(sdx - 2*WPstrh());
+      if ( end < 15 ) end = 15;
 
-    WPwcbu(actlwin->id.x_id,x,y,dx,dy,2,page,row,"",
-                                     WP_BGND2,WP_FGND,&butptr);
+      WPcreate_slidebar(actlwin->id.w_id,sx,sy,sdx,sdy,0,end,WP_SBARH,&sbptr);
 
-    butptr->id.p_id = actlwin->id.w_id;
-    butptr->id.w_id = 0;
-
-    actlwin->wintab[0].typ = TYP_BUTTON;
-    actlwin->wintab[0].ptr = (char *)butptr;
+      sbptr->id.p_id         = actlwin->id.w_id;
+      sbptr->cback           = WPxplw;
+      actlwin->wintab[1].typ = TYP_SBAR;
+      actlwin->wintab[1].ptr = (char *)sbptr;
+      }
 /*
-***Skapa spara-subfï¿½nstret.
-*/
-    x = x + dx + x;
-
-    WPwcbu(actlwin->id.x_id,x,y,dx,dy,2,save,save,"",
-                                     WP_BGND2,WP_FGND,&butptr);
-
-    butptr->id.p_id = actlwin->id.w_id;
-    butptr->id.w_id = 1;
-
-    actlwin->wintab[1].typ = TYP_BUTTON;
-    actlwin->wintab[1].ptr = (char *)butptr;
-/*
-***Skapa stï¿½ng-subfï¿½nstret.
-*/
-    x = x + dx + WPstrh();
-
-    WPwcbu(actlwin->id.x_id,x,y,dx,dy,2,kill,kill,"",
-                                     WP_BGND2,WP_FGND,&butptr);
-
-    butptr->id.p_id = actlwin->id.w_id;
-    butptr->id.w_id = 2;
-
-    actlwin->wintab[2].typ = TYP_BUTTON;
-    actlwin->wintab[2].ptr = (char *)butptr;
-/*
-***Visa listfï¿½nstret.
+***Display.
 */
     WPwshw(actlwin->id.w_id);
 /*
-***Aktivt listfï¿½nster finns ej nu lï¿½ngre.
+***The open WPLWIN is now closed.
 */
     actlwin = NULL;
 /*
-***Slut.
+***The end.
 */
     return(0);
   }
 /********************************************************/
-/*!******************************************************/
-
- static short crlwin(
-        int   x,
-        int   y,
-        int   dx,
-        int   dy,
-        char *wtitle)
-
-/*      Skapar listfï¿½nster.   
- *
- *      In: x,y    = startkoordinater listfï¿½nstret.
- *          dx,dy  = bredd resp hï¿½jd pï¿½ listfï¿½nster.
- *          wtitel = pekare till listfï¿½nstertitel. 
- *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 19/7/92 U. Andersson
- *
- *      8/12/93 Omarbetad, J. Kjellander
- *      1998-03-11 Lï¿½ngre rader, J.Kjellander
- *      2006-12-19 ButtonReleaseMAsk, J.Kjellander
- *
- ******************************************************!*/
-
-  {
-    XSetWindowAttributes xwina;
-    unsigned long        xwinm;
-    XSizeHints           xhint;
-    char                 titel[V3STRLEN];
-
-/*
-***Tilldelning av vï¿½rden. 
-*/
-    strcpy(titel,"l-");
-    strcat(titel,jobnam); 
-/*
-***Sï¿½tt fï¿½rg mm.
-*/
-    xwina.background_pixel = WPgcol(WP_BGND1);
-    xwina.border_pixel = BlackPixel( xdisp, xscr );
-    xwina.override_redirect = False;
-    xwina.save_under = False;
-
-    xwinm = ( CWBackPixel        | CWBorderPixel |
-              CWOverrideRedirect | CWSaveUnder );  
-/*
-***Skapa ett listfï¿½nster med 3 pixels ram.
-*/
-    actlwin->id.x_id = XCreateWindow(xdisp,DefaultRootWindow(xdisp),
-                                     x,y,dx,dy,3,
-                                     DefaultDepth(xdisp,xscr),
-                                     InputOutput,
-                                     CopyFromParent,xwinm,&xwina);
-   
-    xhint.flags  = USPosition | USSize | PMinSize | PMaxSize;   
-    xhint.x = x;
-    xhint.y = y;
-    xhint.width  = dx;
-    xhint.height = dy; 
-    xhint.min_height = 4*WPstrh();  
-    xhint.min_width  = WPstrl(wtitle);
-    xhint.max_width  = V3STRLEN*WPstrl("w")+2*WPstrh();
-    xhint.max_height = (int)(0.8*DisplayHeight(xdisp,xscr));
-
-    XSetNormalHints(xdisp,actlwin->id.x_id,&xhint);
- 
-    XStoreName(xdisp,actlwin->id.x_id,wtitle);   
-    XSetIconName(xdisp,actlwin->id.x_id,titel);
-/*
-***Sï¿½tt upp delete-protokollet mot fï¿½nsterhanteraren fï¿½r
-***listfï¿½nstret. 
-*/   
-    WPsdpr(actlwin->id.x_id);
-/*
-***Events som vi ï¿½r intresserade av. 
-*/   
-    XSelectInput(xdisp,actlwin->id.x_id,ExposureMask    |
-                                        ButtonPressMask |
-                                        ButtonReleaseMask);
-/*
-***Slut. 
-*/   
-    return(0);
-  }
-
 /********************************************************/
-/*!******************************************************/
 
         bool    WPxplw(
         WPLWIN *lwinpt)
 
-/*      Expose-rutin fï¿½r WPLWIN.
+/*      Expose handler for WPLWIN.
  *
  *      In: lwinpt = C-pekare till WPLWIN.
- *
- *      Ut: Inget. 
- *
- *      FV: 0.
  *
  *      (C)microform ab 11/7/92 U. Andersson.
  *
  *      7/12/93  Omarbetad, J. Kjellander
- *      1998-03-11 Lï¿½ngre rader, J.Kjellander
+ *      1998-03-11 Längre rader, J.Kjellander
+ *      2007-10-30 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    char    rad[V3STRLEN+3];
-    int     j,n,tx,a,b,px,py;
-    double  c,d;
-    WPBUTT *butptr;
+   char    rad[V3STRLEN+3];
+   int     j,tx,ty,a,b,px,py,butsiz,dx,nskip;
+   double  c,d;
+   WPSBAR *sbptr;
 
 /*
-***Fï¿½rst expose pï¿½ subfï¿½nster.
+***Colors.
 */
-    butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
-    WPxpbu(butptr);
+   XSetBackground(xdisp,xgc,WPgcol(0)); /*WP_BGND1));*/
+   XSetForeground(xdisp,xgc,WPgcol(1));
+/*
+***Current WPLWIN size.
+*/
+   WPgwsz(lwinpt->id.x_id,&a,&b,&px,&py,&c,&d);
+/*
+***How many lines are possible to display ?
+*/
+   lwinpt->nl_vis = py/WPstrh() - 4;
+/*
+***Optional vertical slidebar status.
+*/
+   sbptr = (WPSBAR *)lwinpt->wintab[0].ptr;
 
-    butptr = (WPBUTT *) lwinpt->wintab[1].ptr;
-    WPxpbu(butptr);
+   if ( (lwinpt->nl_tot > lwinpt->nl_vis) && (sbptr != NULL) )
+     {
+     butsiz = sbptr->butend - sbptr->butstart;
+     if ( sbptr->butstart == 0 )
+       {
+       lwinpt->nl_first = 0;
+       }
+     else
+       {
+       lwinpt->nl_first = ((double)sbptr->butstart/
+                          ((double)(sbptr->geo.dy - butsiz))*
+                           (lwinpt->nl_tot - lwinpt->nl_vis));
+       }
 
-    butptr = (WPBUTT *) lwinpt->wintab[2].ptr;
-    WPxpbu(butptr);
+     if ( lwinpt->nl_first > (lwinpt->nl_tot - lwinpt->nl_vis) )
+       lwinpt->nl_first = lwinpt->nl_tot - lwinpt->nl_vis - 1;
+     }
 /*
-***Ta reda pï¿½ list-fï¿½nstrets storlek.
-*/  
-    WPgwsz(lwinpt->id.x_id,&a,&b,&px,&py,&c,&d);
-/*
-***Aktivera rï¿½tt fï¿½rg.
+***Optional horizontal slidebar status.
 */
-    XSetBackground(xdisp,xgc,WPgcol(WP_BGND1));
-/*
-***Antal rader i fï¿½nstret.
-*/   
-    lwinpt->frant = py/WPstrh() - 6;
-/*
-***Tilldelning av vï¿½rden.
-*/
-    n = WPstrh();
-    tx = n;
-/*
-***Skriv ut rubriken.
-*/
-    n = n + 3*WPstrh();
-    WPwstr(lwinpt->id.x_id,tx,n,lwinpt->rubrik);
-/*
-***En tomrad efter rubriken.
-*/
-    n = n + WPstrh();
-/*
-***ï¿½ppna listfil fï¿½r lï¿½sning.
-*/
-    lwinpt->filpek = fopen(lwinpt->filnam,"r");
-/*
-***Vilken rad ska vi bï¿½rja lï¿½sningen ifrï¿½n.
-*/
-    fseek(lwinpt->filpek,lwinpt->rstart*(V3STRLEN+1),SEEK_SET);
-/*
-***Lï¿½s rad och skriv ut i listfï¿½nstret. I filen avslutas
-***raderna med '\n' men hï¿½r skall de avslutas med '\0'.
-*/
-    for ( j=0; j<lwinpt->frant; ++j )
-      {  
-      if ( fgets(rad,V3STRLEN+2,lwinpt->filpek) != NULL )
-        {
-        n +=  WPstrh();
-        rad[V3STRLEN] = '\0';
-        WPwstr(lwinpt->id.x_id,tx,n,rad);
-        }
-      else break; 
-      }
-/*
-***Stï¿½ng listfil och ï¿½terstï¿½ll fï¿½rg.
-*/
-    fclose(lwinpt->filpek); 
+   sbptr = (WPSBAR *)lwinpt->wintab[1].ptr;
+   dx = lwinpt->geo.dx - 2*WPstrh();
 
-    return(0);
+   if ( sbptr != NULL ) dx -= WPstrh();
+
+   if ( ( lwinpt->maxlen > dx ) && (sbptr != NULL) )
+     {
+     butsiz = sbptr->butend - sbptr->butstart;
+     nskip = ((double)sbptr->butstart/((double)(dx - butsiz)))*
+             ((double)(lwinpt->maxlen - dx)/(double)lwinpt->maxlen)*
+             lwinpt->maxchars;
+     }
+   else nskip = 0;
+/*
+***Current Y position in pixels.
+*/
+   tx = ty = 2*WPstrh();
+/*
+***Display header string.
+*/
+   WPwstr(lwinpt->id.x_id,tx,ty,lwinpt->rubrik);
+/*
+***Empty line.
+*/
+   ty = ty + WPstrh();
+/*
+***Open list file.
+*/
+   lwinpt->filpek = fopen(lwinpt->filnam,"r");
+/*
+***Position to first visible line.
+*/
+   fseek(lwinpt->filpek,lwinpt->nl_first*(V3STRLEN+1),SEEK_SET);
+/*
+***Read lines and display.
+*/
+   for ( j=0; j<lwinpt->nl_vis; ++j )
+     {
+     if ( fgets(rad,V3STRLEN+2,lwinpt->filpek) != NULL )
+       {
+       ty +=  WPstrh();
+       rad[V3STRLEN] = '\0';
+       if ( strlen(rad) > nskip ) WPwstr(lwinpt->id.x_id,tx,ty,&rad[nskip]);
+       }
+     else break;
+     }
+/*
+***Close the list file.
+*/
+   fclose(lwinpt->filpek); 
+/*
+***Expose optional slidebars.
+*/
+   sbptr = (WPSBAR *)lwinpt->wintab[0].ptr;
+   if ( sbptr != NULL ) WPexpose_slidebar(sbptr);
+
+   sbptr = (WPSBAR *)lwinpt->wintab[1].ptr;
+   if ( sbptr != NULL ) WPexpose_slidebar(sbptr);
+/*
+***The end.
+*/
+   return(0);
  }
 
 /*********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         bool          WPbtlw(
         WPLWIN       *lwinpt,
         XButtonEvent *butev,
         wpw_id       *serv_id)
 
-/*      Button-rutin fï¿½r WPLWIN med vidhï¿½ngande sub-fï¿½nster.
+/*      Button handler for WPLWIN.
  *
- *      In: iwinpt  = C-pekare till WPLWIN.
- *          butev   = Pekare till X-event.
- *          serv_id = Pekare till utdata.
+ *      In: iwinpt    = C ptr to WPLWIN.
+ *          butev     = C ptr to X-event.
  *
- *      Ut: *serv_id = ID fï¿½r subfï¿½nster som servat eventet.
+ *      Out: *serv_id = ID of window that served the event.
  *
- *      FV: TRUE =  Eventet har servats.
- *          FALSE = Eventet gï¿½llde nï¿½t annat fï¿½nster. 
+ *      Return: TRUE =  Event served.
+ *              FALSE = This window (with subwindows) not involved.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
  *      1997-01-16 Bug, butptr=NULL, J.Kjellander
+ *      2007-10-30 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    WPBUTT *butptr;
+   bool    hit;
+   WPSBAR *sbptr;
 
 /*
-***Till att bï¿½rja med kollar vi om mus-tryckningen
-***skett i sjï¿½lva list-fï¿½nstret.
+***Mouse event in the actual WPLWIN ?
 */
-    if ( butev->window == lwinpt->id.x_id )
+    if ( butev->window == lwinpt->id.x_id  &&
+         butev->type   == ButtonPress )
       {
-     *serv_id = lwinpt->id.w_id;
       switch ( butev->button )
         {
 /*
-***Knapp 1 = scrolla texten uppï¿½t.
-*/
-        case 1:
-        butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
-        if ( butptr->status == TRUE ) scrrup(lwinpt);
-        else                          scrpup(lwinpt);
-        break;
-/*
-***Knapp nr. 2 (mittenknappen pï¿½ en 3-knappars mus) i ett
-***list-fï¿½nster anvï¿½nds fï¿½r att dï¿½da det.
-*/
-        case 2:
-        WPwdel(lwinpt->id.w_id);
-        break;
-/*
-***Knapp 3 = scrolla texten nerï¿½t.
+****Rightclick = Save/Print.
 */
         case 3:
-        butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
-        if ( butptr->status == TRUE ) scrrdn(lwinpt);
-        else                          scrpdn(lwinpt);
-        break;
+        savelw(lwinpt);
+       *serv_id = lwinpt->id.w_id;
+        return(TRUE);
 /*
-***ï¿½r det nï¿½n annan knapp bryr vi oss inte om den.
-***Observera att vi dï¿½ mï¿½ste gï¿½ra return() hï¿½r.
+***Something else should not be possible.
 */
         default:
+        WPbell();
         return(FALSE);
         }
       return(TRUE);
       }
 /*
-***Rad/sida-knappen. Pï¿½ samma sï¿½tt som i crossing-
-***rutinen kan man komma hit utan att knapparna
-***finns ï¿½nnu.
+***Optional vertical slidebar.
 */
-    butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
-    if ( butptr != NULL  &&  butev->window == butptr->id.x_id )
-      {
-      WPbtbu(butptr);
-     *serv_id = butptr->id.w_id;
-      return(TRUE);
-      }
-/*
-***Spara-knappen.
-*/
-    butptr = (WPBUTT *) lwinpt->wintab[1].ptr;
-    if ( butptr != NULL  &&  butev->window == butptr->id.x_id )
-      {
-      savelw(lwinpt);
-     *serv_id = butptr->id.w_id;
-      return(TRUE);
-      }
-/*
-***Stï¿½ng-knappen.
-*/
-    butptr = (WPBUTT *) lwinpt->wintab[2].ptr;
-    if ( butptr != NULL  &&  butev->window == butptr->id.x_id )
-      {
-      WPwdel(lwinpt->id.w_id);
-      return(TRUE);
-      }
+    hit = FALSE;
+    sbptr = (WPSBAR *)lwinpt->wintab[0].ptr;
 
-    return(FALSE);
+    if ( sbptr != NULL  &&  butev->window == sbptr->id.x_id )
+      {
+      WPbutton_slidebar(sbptr,butev);
+     *serv_id = lwinpt->id.w_id;
+      hit = TRUE;
+      }
+/*
+***Optional horizontal slidebar.
+*/
+    sbptr = (WPSBAR *)lwinpt->wintab[1].ptr;
+
+    if ( sbptr != NULL  &&  butev->window == sbptr->id.x_id )
+      {
+      WPbutton_slidebar(sbptr,butev);
+     *serv_id = lwinpt->id.w_id;
+      hit = TRUE;
+      }
+/*
+***The end.
+*/
+    return(hit);
   }
 
 /********************************************************/
@@ -728,57 +615,19 @@ static short savelw(WPLWIN *lwinpt);
         WPLWIN         *lwinpt,
         XCrossingEvent *croev)
 
-/*      Crossing-rutin fï¿½r WPLWIN med vidhï¿½ngande sub-fï¿½nster.
+/*      Crossing handler for WPLWIN with sub windows.
+ *      (Not currently needed, maybe later... )
  *
- *      In: lwinpt = C-pekare till WPLWIN.
+ *      In: lwinpt = C ptr to WPLWIN.
  *
- *      Ut: Inget.   
+ *      Return: TRUE  => Event served.
+ *              FALSE => Not this window.
  *
- *      FV: TRUE  => Eventet servat.
- *          FALSE => Detta fï¿½nster inte inblandat.
- *
- *      (C)microform ab 6/12/93 J. Kjellander
- *
- *      1997-01-16 Bug, butptr=NULL, J.Kjellander
+ *      (C)2007-10-18 J. Kjellander
  *
  ******************************************************!*/
 
   {
-    WPBUTT *butptr;
-
-/*
-***Rad/sida-knappen. Om inte WPexla() anropats ï¿½nnu, dvs
-***listan hï¿½ller pï¿½ att skapas ï¿½r inga knappar ï¿½nnu skapade
-***men ett WPLWIN finns och butptr = NULL.
-*/
-    butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
-    if ( butptr != NULL  &&  croev->window == butptr->id.x_id )
-      {
-      if ( croev->type == EnterNotify ) return(WPcrbu(butptr,TRUE));
-      else                              return(WPcrbu(butptr,FALSE));
-      }
-/*
-***Spara-knappen.
-*/
-    else
-      {
-      butptr = (WPBUTT *) lwinpt->wintab[1].ptr;
-      if ( butptr != NULL  &&  croev->window == butptr->id.x_id )
-        {
-        if ( croev->type == EnterNotify ) return(WPcrbu(butptr,TRUE));
-        else                              return(WPcrbu(butptr,FALSE));
-        }
-      else
-        {
-        butptr = (WPBUTT *) lwinpt->wintab[2].ptr;
-        if ( butptr != NULL  &&  croev->window == butptr->id.x_id )
-          {
-          if ( croev->type == EnterNotify ) return(WPcrbu(butptr,TRUE));
-          else                              return(WPcrbu(butptr,FALSE));
-          }
-        }
-      }
-
     return(FALSE);
   }
 
@@ -789,13 +638,13 @@ static short savelw(WPLWIN *lwinpt);
         WPLWIN               *lwinpt,
         XClientMessageEvent  *clmev)
 
-/*      ClientMessage-rutinen fï¿½r WPLWIN.
+/*      ClientMessage handler for WPLWIN.
  *
- *      In: iwinpt  = C-pekare till WPLWIN.
- *          clmev   = X-event.
+ *      In: iwinpt  = C ptr to WPLWIN.
+ *          clmev   = C ptr to event.
  *
- *      FV: TRUE  = Eventet servat.
- *          FALSE = Detta fï¿½nster ej inblandat.
+ *      FV: TRUE  = Eventet served.
+ *          FALSE = Not this window.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -803,12 +652,11 @@ static short savelw(WPLWIN *lwinpt);
 
   {
 /*
-***Om det ï¿½r WM_DELETE_WINDOW servar vi genom att dï¿½da
-***fï¿½nstret ifrï¿½ga.
+*** If it's a WM_DELETE_WINDOW, delete the window.
 */
    if ( clmev->message_type ==
         XInternAtom(xdisp,"WM_PROTOCOLS",False) &&
-        clmev->data.l[0]    == 
+        clmev->data.l[0]    ==
         XInternAtom(xdisp,"WM_DELETE_WINDOW",False) )
      {
      WPwdel((DBint)lwinpt->id.w_id);
@@ -820,194 +668,298 @@ static short savelw(WPLWIN *lwinpt);
 /********************************************************/
 /*!******************************************************/
 
+        bool             WPcolw(
+        WPLWIN          *lwinpt,
+        XConfigureEvent *conev)
+
+/*      Configure handler for WPLWIN. Handles user
+ *      resize.
+ *
+ *      In: lwinpt = C-ptr to WPLWIN.
+ *          conev  = C-ptr to ConfigureEvent.
+ *
+ *      Return: TRUE.
+ *
+ *      (C)2007-10-21 J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   int     olddx,olddy,newdx,newdy,ddx,ddy,end;
+   XEvent  event;
+   WPSBAR *sbptr;
+
+/*
+***To prevent multiple updates of the window during resize
+***by the user, remove pending StructureNotify events.
+*/
+  while ( XCheckMaskEvent(xdisp, StructureNotifyMask, &event)  &&
+          event.type == ConfigureNotify)
+    V3MOME(&event.xconfigure,conev,sizeof(XConfigureEvent));
+/*
+***Old size.
+*/
+   olddx = lwinpt->geo.dx; olddy = lwinpt->geo.dy;
+/*
+***What is the new size ?
+*/
+   newdx = conev->width;
+   newdy = conev->height;
+/*
+***How big is the change ?
+*/
+   ddx = newdx - olddx; ddy = newdy - olddy;
+/*
+***The window changed size i X direction.  Update
+***window geometry and optional slidebars.
+*/
+   if ( ddx != 0.0 )
+     {
+     lwinpt->geo.dx = newdx;
+/*
+***A vertical slidebar needs to be moved in the X direction.
+*/
+     sbptr = (WPSBAR *)lwinpt->wintab[0].ptr;
+
+     if ( sbptr != NULL )
+       {
+       sbptr->geo.x = newdx - WPstrh();
+       XMoveWindow(xdisp,sbptr->id.x_id,sbptr->geo.x,0);
+       }
+/*
+***A horizontal slidebar may have to be resized or deleted.
+*/
+     sbptr = (WPSBAR *)lwinpt->wintab[1].ptr;
+
+     if ( sbptr != NULL )
+       {
+       if ( lwinpt->geo.dx < lwinpt->maxlen + 3*WPstrh() )
+         {
+         sbptr->geo.dx = newdx - WPstrh();
+         sbptr->butstart = 0;
+         sbptr->butend = ((double)(lwinpt->geo.dx - 3*WPstrh())/
+                          (double)lwinpt->maxlen)*
+                          (lwinpt->geo.dx - 3*WPstrh());
+         if ( sbptr->butend < 15 ) sbptr->butend = 15;
+         XResizeWindow(xdisp,sbptr->id.x_id,sbptr->geo.dx,WPstrh());
+         }
+       else
+         {
+         XDestroyWindow(xdisp,sbptr->id.x_id);
+         v3free((char *)sbptr,"WPcolw");
+         lwinpt->wintab[1].ptr = NULL;
+         }
+       }
+/*
+***If there is no horizontal slidebar, one may have to be added.
+*/
+     else if ( lwinpt->geo.dx < lwinpt->maxlen + 3*WPstrh() )
+       {
+       end = ((double)(lwinpt->geo.dx - 3*WPstrh())/(double)lwinpt->maxlen)*
+              (lwinpt->geo.dx - 3*WPstrh());
+       if ( end < 15 ) end = 15;
+       WPcreate_slidebar(lwinpt->id.w_id,
+                         0,lwinpt->geo.dy-WPstrh(),
+                         lwinpt->geo.dx-WPstrh(),WPstrh(),
+                         0,end,WP_SBARH,&sbptr);
+       lwinpt->wintab[1].ptr = (char *)sbptr;
+       sbptr->id.p_id = lwinpt->id.w_id;
+       sbptr->cback   = WPxplw;
+       XMapWindow(xdisp,sbptr->id.x_id);
+       }
+     }
+/*
+***The window changed size i Y direction.  Update
+***window geometry and optional slidebars.
+*/
+   if ( ddy != 0.0 )
+     {
+     lwinpt->geo.dy = newdy;
+     sbptr = (WPSBAR *)lwinpt->wintab[1].ptr;
+/*
+***A horizontal slidebar needs to be moved in the Y direction.
+*/
+     if ( sbptr != NULL )
+       {
+       sbptr->geo.y = newdy - WPstrh();
+       XMoveWindow(xdisp,sbptr->id.x_id,0,sbptr->geo.y);
+       }
+/*
+***A vertical slidebar may have to be resized or deleted.
+*/
+     sbptr = (WPSBAR *)lwinpt->wintab[0].ptr;
+
+     if ( sbptr != NULL )
+       {
+       if ( lwinpt->nl_vis < lwinpt->nl_tot )
+         {
+         sbptr->geo.dy = newdy - WPstrh();
+         sbptr->butstart = 0;
+         sbptr->butend = (double)((double)lwinpt->nl_vis/
+                                   (double)lwinpt->nl_tot)*sbptr->geo.dy;
+         if ( sbptr->butend < 15 ) sbptr->butend = 15;
+         XResizeWindow(xdisp,sbptr->id.x_id,WPstrh(),sbptr->geo.dy);
+         }
+       else
+         {
+         XDestroyWindow(xdisp,sbptr->id.x_id);
+         v3free((char *)sbptr,"WPcolw");
+         lwinpt->wintab[0].ptr = NULL;
+         }
+       }
+/*
+***If there is no vertical slidebar, one may have to be added.
+*/
+     else if ( lwinpt->nl_vis < lwinpt->nl_tot )
+       {
+       end = (double)((double)lwinpt->nl_vis/
+             (double)lwinpt->nl_tot)*lwinpt->geo.dy-WPstrh();
+       if ( end < 15 ) end = 15;
+       WPcreate_slidebar(lwinpt->id.w_id,
+                         lwinpt->geo.dx-WPstrh(),0,
+                         WPstrh(),lwinpt->geo.dy-WPstrh(),
+                         0,end,WP_SBARV,&sbptr);
+       lwinpt->wintab[0].ptr = (char *)sbptr;
+       sbptr->id.p_id = lwinpt->id.w_id;
+       sbptr->cback   = WPxplw;
+       XMapWindow(xdisp,sbptr->id.x_id);
+       }
+     }
+/*
+***Expose the WPLWIN.
+*/
+   WPxplw(lwinpt);
+/*
+***The end.
+*/
+   return(TRUE);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
         short   WPdllw(
         WPLWIN *lwinpt)
 
-/*      Dï¿½dar ett WPLWIN-fï¿½nster.
+/*      Kill a WPLWIN window.
  *
- *      In: lwinpt = C-pekare till WPLWIN.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
+ *      In: lwinpt = C-ptr to WPLWIN.
  *
  *      (C)microform ab 24/7/92 U. Andersson 
  *
  *      7/12/93 Omarbetad, J. Kjellander
+ *      2007-10-18 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
    {
-    WPBUTT *butptr;
-/*
-***Ta bort rï¿½tt temporï¿½rfilen.
-*/
-    IGfdel(lwinpt->filnam);
-/*
-***Lï¿½mna tillbaks allokerat minne fï¿½r subfï¿½nstren.
-*/
-    butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
-    v3free((char *)butptr,"WPdllw");
+   WPSBAR *sbptr;
 
-    butptr = (WPBUTT *) lwinpt->wintab[1].ptr;
-    v3free((char *)butptr,"WPdllw");
-
-    butptr = (WPBUTT *) lwinpt->wintab[2].ptr;
-    v3free((char *)butptr,"WPdllw");
 /*
-***Lï¿½mna tillbaks allokerat minne fï¿½r sjï¿½lva listfï¿½nstret.
+***Remove temporary file.
 */
-    v3free((char *)lwinpt,"WPdllw");
+   IGfdel(lwinpt->filnam);
+/*
+***Deallocate memory for subwindows.
+*/
+   sbptr = (WPSBAR *)lwinpt->wintab[0].ptr;
+   if ( sbptr != NULL ) WPdelete_slidebar(sbptr);
+
+   sbptr = (WPSBAR *)lwinpt->wintab[1].ptr;
+   if ( sbptr != NULL ) WPdelete_slidebar(sbptr);
+/*
+***Free memory for the WPLWIN itself.
+*/
+   v3free((char *)lwinpt,"WPdllw");
 /*
 ***Slut.
 */
-    return(0);
+   return(0);
    }
 /********************************************************/
 /*!******************************************************/
 
- static short scrrup(
-        WPLWIN *lwinpt)
+ static short crlwin(
+        int   x,
+        int   y,
+        int   dx,
+        int   dy,
+        char *wtitle)
 
-/*      Scrollar listan en rad uppï¿½t.
+/*      Creates a WPLWIN in X.
  *
- *      In: lwinpt = C-pekare till list-fï¿½nster.
+ *      In: x,y    = Window position.
+ *          dx,dy  = Window size.
+ *          wtitel = Window title.
  *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 24/7/92 U. Andersson 
+ *      (C)microform ab 19/7/92 U. Andersson
  *
  *      8/12/93 Omarbetad, J. Kjellander
- *
- ******************************************************!*/
-
-   {
-    int nyradb;
-/*
-***Scrollar listan en rad uppï¿½t.
-*/  
-    nyradb = lwinpt->rstart + 1;
-
-    if ( lwinpt->trant - nyradb < lwinpt->frant ) 
-      nyradb = lwinpt->trant - lwinpt->frant;
-    else if ( nyradb >= lwinpt->trant - lwinpt->frant )
-      nyradb = lwinpt->rstart; 
-
-    lwinpt->rstart = nyradb;
-         
-    WPxplw(lwinpt);
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static short scrrdn(
-        WPLWIN *lwinpt)
-
-/*      Scrollar listan en rad nedï¿½t.
- *
- *      In: lwinpt = C-pekare till list-fï¿½nster.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 24/7/92 U. Andersson 
- *
- *      8/12/93 Omarbetad, J. Kjellander
+ *      1998-03-11 Lï¿½ngre rader, J.Kjellander
+ *      2006-12-19 ButtonReleaseMask, J.Kjellander
+ *      2007-10-18 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
   {
-/*
-***Scrollar listan en rad nedï¿½t.
-*/  
-    if ( lwinpt->rstart > 0 && lwinpt->rstart < lwinpt->trant )
-      {
-      --lwinpt->rstart;
-      WPxplw(lwinpt);
-      }
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static short scrpup(
-        WPLWIN *lwinpt)
-
-/*      Scrollar listan en hel sida uppï¿½t.
- *
- *      In: lwinptr = C-pekare till listfï¿½nster.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 31/7/92 U. Andersson 
- *
- *      8/12/93 Omarbetad, J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    int nyradb;
+    XSetWindowAttributes xwina;
+    unsigned long        xwinm;
+    XSizeHints           xhint;
+    char                 titel[V3STRLEN];
 
 /*
-***Scrolla listan en hel sida uppï¿½t.
-*/    
-    nyradb = lwinpt->rstart + lwinpt->frant - 1;
-
-    if ( lwinpt->trant - nyradb < lwinpt->frant )
-      nyradb = lwinpt->trant - lwinpt->frant - 1;
-
-    lwinpt->rstart = nyradb;
-
-    WPxplw(lwinpt);
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static short scrpdn(
-        WPLWIN *lwinpt)
-
-/*      Scrollar listan en hel sida nedï¿½t.
- *
- *      In: lwinpt = C-pekare till listfï¿½nster.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 31/7/92 U. Andersson 
- *
- *      8/12/93 Omarbetad, J. Kjellander
- *
- ******************************************************!*/
-
-  {
-
+***Title.
+*/
+    strcpy(titel,"l-");
+    strcat(titel,jobnam);
 /*
-***Scrolla listan en hel sida nedï¿½t.
-*/  
-    if ( lwinpt->rstart - lwinpt->frant + 2 >  0  &&
-                             lwinpt->rstart <= lwinpt->trant )
-      lwinpt->rstart = lwinpt->rstart - lwinpt->frant + 1;
-    else
-      lwinpt->rstart = 0;
+***Attributes.
+*/
+    xwina.background_pixel = WPgcol(0); /*WP_BGND1);*/
+    xwina.border_pixel = BlackPixel( xdisp, xscr );
+    xwina.override_redirect = False;
+    xwina.save_under = False;
 
-    WPxplw(lwinpt);
+    xwinm = ( CWBackPixel        | CWBorderPixel |
+              CWOverrideRedirect | CWSaveUnder );
+/*
+***Create window.
+*/
+    actlwin->id.x_id = XCreateWindow(xdisp,DefaultRootWindow(xdisp),
+                                     x,y,dx,dy,3,
+                                     DefaultDepth(xdisp,xscr),
+                                     InputOutput,
+                                     CopyFromParent,xwinm,&xwina);
 
+    xhint.flags  = USPosition | USSize | PMinSize | PMaxSize;
+    xhint.x = x;
+    xhint.y = y;
+    xhint.width  = dx;
+    xhint.height = dy;
+    xhint.min_height = 4*WPstrh();
+    xhint.min_width  = WPstrl(wtitle);
+    xhint.max_width  = V3STRLEN*WPstrl("w")+2*WPstrh();
+    xhint.max_height = (int)(0.8*DisplayHeight(xdisp,xscr));
+
+    XSetNormalHints(xdisp,actlwin->id.x_id,&xhint);
+
+    XStoreName(xdisp,actlwin->id.x_id,wtitle);
+    XSetIconName(xdisp,actlwin->id.x_id,titel);
+/*
+***Set the WM delete protocol.
+*/
+    WPsdpr(actlwin->id.x_id);
+/*
+***Event mask.
+*/
+    XSelectInput(xdisp,actlwin->id.x_id,ExposureMask    |
+                                        ButtonPressMask |
+                                        ButtonReleaseMask |
+                                        StructureNotifyMask);
+/*
+***The end.
+*/
     return(0);
-
   }
 
 /********************************************************/
@@ -1016,26 +968,22 @@ static short savelw(WPLWIN *lwinpt);
  static short savelw(
         WPLWIN *lwinpt)
 
-/*      Sparar det angivna listfï¿½nstret eller
- *      hela listfilen pï¿½ fil eller utskrift till valfri skrivare.
+/*      Save to file or print WPLWIN contents.
  *
- *      In: lwinpt = C-pekare till list-fï¿½nster.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
+ *      In: lwinpt = C ptr to WPLWIN.
  *
  *      (C)microform ab 7/8/92 U. Andersson 
  *
  *      8/12/93 Omarbetad, J. Kjellander
  *      1997-01-25 printer, J.Kjellander
- *      1998-03-11 Lï¿½ngre rader, J.Kjellander
- *      2004-09-03 English texts, Johan Kjellander, ï¿½rebro university
+ *      1998-03-11 Längre rader, J.Kjellander
+ *      2004-09-03 English texts, Johan Kjellander, Örebro university
+ *      2007-10-20 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
   {
-   int   radb,r = 0;
+   int   first,count;
    char *slt = "Entire list or window";
    char *est = "e";
    char *wst = "w";  
@@ -1051,25 +999,20 @@ static short savelw(WPLWIN *lwinpt);
    static char dstr[V3PTHLEN] = "";
 
 /*
-***Anrop till alternativ funktionen WPialt
-***ska vi spara hela listan eller bara fï¿½nstret?. 
+***Entire list or only current window ?
 */
     hela = WPialt(slt,est,wst,FALSE);
 /*
-***Spara aktiv radbï¿½rjan.
+***First line.
 */
-    radb = lwinpt->rstart;
+    if ( hela )  first = 0;
+    else         first = lwinpt->nl_first;
 /*
-***Ska vi spara hela listan?. 
-*/
-    if ( hela == TRUE )  lwinpt->rstart = 0;
-/*
-***Anrop till alternativ funktionen WPialt
-***spara pï¿½ fil eller skrivare. 
+***Save to file or print ?
 */
     fil = WPialt(spt,fst,pst,FALSE);
 /*
-***Vad skall filen heta ?
+***File name ?
 */
     if ( dstr[0] == '\0' )
       {
@@ -1078,9 +1021,9 @@ static short savelw(WPLWIN *lwinpt);
       strcat(dstr,LSTEXT);
       }
 
-    if ( fil == TRUE )
+    if ( fil )
       {
-      status = IGssip("Enter filename :",fnam,dstr,V3PTHLEN);
+      status = IGssip("","Enter filename :",fnam,dstr,V3PTHLEN);
       if ( status < 0 ) goto end;
       strcpy(dstr,fnam);
       }
@@ -1089,24 +1032,23 @@ static short savelw(WPLWIN *lwinpt);
       strcpy(fnam,dstr);
       }
 /*
-***ï¿½ppna listfil fï¿½r lï¿½sning.
+***Open list file.
 */
     lwinpt->filpek = fopen(lwinpt->filnam,"r");
 /*
-***ï¿½ppna  ny fil fï¿½r skrivning.
+***Create and open temporary file.
 */
     tempfil = fopen(fnam,"w+");
 /*
-***Skriv in ï¿½verskrift och en tomrad fï¿½rst i tmpfil.
+***Write header
 */
     fprintf(tempfil,"%s\n\n",lwinpt->rubrik);
 /*
-***Spara listfilen pï¿½ en valfri fil.
-***Vilken rad ska vi bï¿½rja lï¿½sningen ifrï¿½n.
+***Write listfile contents.
 */
-     fseek(lwinpt->filpek,lwinpt->rstart*81,SEEK_SET);
+     fseek(lwinpt->filpek,first*(V3STRLEN+1),SEEK_SET);
 
-     if ( hela == TRUE ) 
+     if ( hela )
        {
        while ( fgets(rad,V3STRLEN+2,lwinpt->filpek) != NULL) 
          {
@@ -1114,31 +1056,28 @@ static short savelw(WPLWIN *lwinpt);
          fprintf(tempfil,"%s\n",rad);
          }
        }
-     else 
+     else
        {
+       count = 0;
        while ( fgets(rad,V3STRLEN+2,lwinpt->filpek) != NULL &&
-               r < lwinpt->frant ) 
+               count < lwinpt->nl_vis )
          {
          rad[V3STRLEN] = '\0';
          fprintf(tempfil,"%s\n",rad);
-         ++r;
+       ++count;
          }
        }
 /*
-***Stï¿½ng filerna.
+***Close files.
 */
     fclose(lwinpt->filpek);
     fclose(tempfil);
 /*
-***Tilldela radbï¿½rjan sitt ursprungliga vï¿½rde.
-*/
-    lwinpt->rstart = radb;
-/*
-***Ev. utskrift pï¿½ skrivare.
+***Possible printout.
 */
     if ( !WPgrst("varkon.list.printer",printer) ) strcpy(printer,"lp");
 
-    if ( fil == FALSE )
+    if ( !fil )
       {
       strcpy(oscmd,"cat ");
       strcat(oscmd,fnam);
@@ -1147,7 +1086,7 @@ static short savelw(WPLWIN *lwinpt);
       EXos(oscmd,2);
       }
 /*
-***Slut.
+***The end.
 */
 end:
     return(0);

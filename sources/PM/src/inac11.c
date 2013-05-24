@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -37,8 +37,6 @@
 #ifndef ANALYZER           /* don't compile if analyser */
 extern DBTmat  *lsyspk;
 #endif
-
-extern short  modtyp;      /* indicate module type, from GM-part */
 
 extern PMPARVA *func_pv;   /* Access structure for MBS routines */
 extern short    func_pc;   /* Number of actual parameters */

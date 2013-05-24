@@ -16,15 +16,5 @@ s11 = "%3",a13      ! Interrupt = <CTL>c
 
 ! Function keys
 
-s21 = "%27A",m14  ! PF1  Change active attribute
-s22 = "%27B",f96  ! PF2  Change active pen
-s23 = "%27C",f90  ! PF3  Change active level
-s24 = "%27D",f196 ! PF4  New window
-s25 = "%27E",M356 ! PF5  Analyse entity
-s26 = "%27F",M379 ! PF6  Analyse part
-s27 = "%27G",M418 ! PF7  Callchain
-s28 = "%27H",f146 ! PF8  Decompile
-s29 = "%27I",f5   ! PF9  Run active module
-s30 = "%27J",f170 ! PF10 PChange
-s31 = "%27K",f168 ! PF11 Edit
-s32 = "%27L",f10  ! PF12 Delete
+s21 = "%27A",f153 ! PF1  Help
+

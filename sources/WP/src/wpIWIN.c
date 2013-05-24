@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -49,7 +49,7 @@
 /*      Create WPIWIN window.
  *
  *      In: x     = L�ge i X-led.
- *          y     = L�ge i Y-led.   
+ *          y     = L�ge i Y-led.
  *          dx    = Storlek i X-led.
  *          dy    = Storlek i Y-led.
  *          label = F�nstertitel.
@@ -63,6 +63,7 @@
  *      (C)microform ab 6/12/93 J. Kjellander
  *
  *       2006-12-10 XSetWMNormalHints(), J.Kjellander
+ *       2007-10-28 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
@@ -87,7 +88,7 @@
     xwina.save_under        = False;
 
     xwinm = ( CWBackPixel        | CWBorderPixel |
-              CWOverrideRedirect | CWSaveUnder );  
+              CWOverrideRedirect | CWSaveUnder );
 /*
 ***Skapa ett popup-f�nster med 1 pixels ram.
 */
@@ -118,15 +119,15 @@
       return(erpush("WP1062",label));
 
     iwinptr->id.w_id = *id;
-    iwinptr->id.p_id =  (wpw_id)NULL;
-    iwinptr->id.x_id =  xwin_id;
+    iwinptr->id.p_id = (wpw_id)NULL;
+    iwinptr->id.x_id = xwin_id;
 
-    iwinptr->geo.x =  x;
-    iwinptr->geo.y =  y;
-    iwinptr->geo.dx =  dx;
-    iwinptr->geo.dy =  dy;
+    iwinptr->geo.x   = x;
+    iwinptr->geo.y   = y;
+    iwinptr->geo.dx  = dx;
+    iwinptr->geo.dy  = dy;
 
-    iwinptr->mapped =  FALSE;
+    iwinptr->mapped  = FALSE;
 
     for ( i=0; i<WP_IWSMAX; ++i) iwinptr->wintab[i].ptr = NULL;
 /*
@@ -141,84 +142,89 @@
 /********************************************************/
 /*!******************************************************/
 
-        bool WPxpiw(
+        bool    WPxpiw(
         WPIWIN *iwinptr)
 
-/*      Expose-rutin f�r WPIWIN med vidh�ngande sub-f�nster.
- *      Denna event-rutin servar alltid eventet. Anropande
- *      rutin har redan avgjort att Expose skall g�ras just
- *      p� detta f�nster.
+/*      Expose handler for WPIWIN (and children).
  *
- *      In: iwinptr = C-pekare till WPIWIN.
+ *      In: iwinptr = C ptr to WPIWIN.
  *
- *      Ut: Alltid TRUE.
- *
- *      Felkod: .
+ *      Return: Always TRUE.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
+ *
+ *      2007-10-28 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short   i;
-    char   *subptr;
+    short i;
+    char *subptr;
 
 /*
-***F�rst expose p� alla sub-f�nster.
+***Clear window.
 */
-    for ( i=0; i<WP_IWSMAX; ++i )
-      {
-      subptr = iwinptr->wintab[i].ptr;
-      if ( subptr != NULL )
-        {
-        switch ( iwinptr->wintab[i].typ )
-          {
-          case TYP_EDIT:
-          WPxped((WPEDIT *)subptr);
-          break;
-
-          case TYP_BUTTON:
-          WPxpbu((WPBUTT *)subptr);
-          break;
-
-          case TYP_ICON:
-          WPxpic((WPICON *)subptr);
-          break;
-          }
-        }
-      }
+   XClearWindow(xdisp,iwinptr->id.x_id);
 /*
-***WPIWIN-f�nstret sj�lvt har inga texter etc.
-***att g�ra expose p� !
+***Expose all children.
 */
+   for ( i=0; i<WP_IWSMAX; ++i )
+     {
+     subptr = iwinptr->wintab[i].ptr;
+     if ( subptr != NULL )
+       {
+       switch ( iwinptr->wintab[i].typ )
+         {
+         case TYP_EDIT:
+         WPxped((WPEDIT *)subptr);
+         break;
 
-    return(TRUE);
+         case TYP_BUTTON:
+         WPxpbu((WPBUTT *)subptr);
+         break;
+
+         case TYP_ICON:
+         WPxpic((WPICON *)subptr);
+         break;
+
+         case TYP_SBAR:
+         WPexpose_slidebar((WPSBAR *)subptr);
+         break;
+
+         case TYP_DECRN:
+         WPexpose_decoration((WPDECRN *)subptr);
+         break;
+         }
+       }
+     }
+/*
+***The end.
+*/
+   return(TRUE);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        bool  WPbtiw(
+        bool          WPbtiw(
         WPIWIN       *iwinptr,
         XButtonEvent *butev,
         wpw_id       *serv_id)
 
-/*      Button-rutin f�r WPIWIN med vidh�ngande sub-f�nster.
- *      Kollar om muspekning skett i n�got av WPIWIN-f�nstrets
- *      subf�nster och servar is�fall eventet.
+/*      Button handler for WPIWIN (with children).
  *
- *      In: iwinptr = C-pekare till WPIWIN.
- *          butev   = X-but event.
- *          serv_id = Pekare till utdata.
+ *      In:  iwinptr = C-ptr to WPIWIN.
+ *           butev   = X-but event.
  *
- *      Ut: *serv_id = ID f�r subf�nster som servat eventet.
+ *      Out: *serv_id = ID for child window.
  *
- *      Fv: TRUE  = Eventet servat.
- *          FALSE = Detta f�nster ej inblandat.
+ *      Return: TRUE  = Event served.
+ *              FALSE = Event not served..
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
  *      2007-03-07 Menu window, J.Kjellander
+ *      2007-10-28 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
@@ -228,6 +234,7 @@
     WPBUTT *butptr;
     WPEDIT *edtptr,*focptr;
     WPICON *icoptr;
+    WPSBAR *sbptr;
 
 /*
 ***A WPIWIN is normally insensitive to button clicks.
@@ -240,7 +247,7 @@
 */
    if ( butev->button != 1 ) return(FALSE);
 /*
-***The subwindows of a WPIWIN can create Button events.
+***Lopp through all WPIWIN cild windows.
 */
     for ( i=0; i<WP_IWSMAX; ++i )
       {
@@ -249,9 +256,13 @@
         {
         switch ( iwinptr->wintab[i].typ )
           {
+/*
+***Button. Only ButtonRelease is reconized.
+*/
           case TYP_BUTTON:
           butptr = (WPBUTT *)subptr;
-          if ( butev->window == butptr->id.x_id )
+          if ( butev->window == butptr->id.x_id  &&
+               butev->type   == ButtonRelease )
             {
             WPbtbu(butptr);
            *serv_id = butptr->id.w_id;
@@ -261,31 +272,51 @@
 /*
 ***A button click in a WPEDIT means that it will get focus.
 ***The edit that has focus now will loose focus and this
-***is treated as a serving event.
+***is treated as a serving event. Only ButtonRelease is
+***reconized.
 */
           case TYP_EDIT:
           edtptr = (WPEDIT *)subptr;
-          if ( butev->window == edtptr->id.x_id )
+          if ( butev->window == edtptr->id.x_id  &&
+               butev->type   == ButtonRelease )
             {
             focptr = WPffoc(iwinptr,FOCUS_EDIT);
            *serv_id = focptr->id.w_id;
             return(WPbted(edtptr,butev));
             }
           break;
-
+/*
+***Icon. Only ButtonRelease is reconized.
+*/
           case TYP_ICON:
           icoptr = (WPICON *)subptr;
-          if ( butev->window == icoptr->id.x_id )
+          if ( butev->window == icoptr->id.x_id  &&
+               butev->type   == ButtonRelease )
             {
             WPbtic(icoptr);
            *serv_id = icoptr->id.w_id;
             return(TRUE);
             }
           break;
+/*
+***Slidebar. A slidebar recognizes ButtonPress, ButtonRelease
+***and PointerMotion.
+*/
+          case TYP_SBAR:
+          sbptr = (WPSBAR *)subptr;
+          if ( butev->window == sbptr->id.x_id )
+            {
+            WPbutton_slidebar(sbptr,butev);
+           *serv_id = sbptr->id.w_id;
+            return(TRUE);
+            }
+          break;
           }
         }
       }
-
+/*
+***The end.
+*/
     return(FALSE);
   }
 
@@ -461,18 +492,16 @@
 /********************************************************/
 /*!******************************************************/
 
-        short WPdliw(
+        short   WPdliw(
         WPIWIN *iwinptr)
 
-/*      D�dar en WPIWIN med vidh�ngande sub-f�nster.
+/*      Deletes a WPIWIN with children.
  *
- *      In: iwinptr = C-pekare till WPIWIN.
+ *      In: iwinptr = C ptr to WPIWIN.
  *
- *      Ut: Inget.   
+ *      (C)microform ab 6/12/93 J.Kjellander
  *
- *      Felkod: .
- *
- *      (C)microform ab 6/12/93 J. Kjellander
+ *      2007-10-28 Slidebars, J.Kjellander
  *
  ******************************************************!*/
 
@@ -481,7 +510,7 @@
     char   *subptr;
 
 /*
-***D�da alla sub-f�nster.
+***Delete all children.
 */
     for ( i=0; i<WP_IWSMAX; ++i )
       {
@@ -501,14 +530,24 @@
           case TYP_ICON:
           WPdlic((WPICON *)subptr);
           break;
+
+          case TYP_DECRN:
+          WPdelete_decoration((WPDECRN *)subptr);
+          break;
+
+          case TYP_SBAR:
+          WPdelete_slidebar((WPSBAR *)subptr);
+          break;
           }
         }
       }
 /*
-***L�mna tillbaks dynamiskt allokerat minne.
+***Deallocate memory for WPIWIN itself.
 */
     v3free((char *)iwinptr,"WPdliw");
- 
+/*
+***The end.
+*/
     return(0);
   }
 

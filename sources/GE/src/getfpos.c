@@ -9,7 +9,7 @@
 *    GEtfpos_to_basic()  Transform position from local to basic
 *
 *    This file is part of the VARKON Geometry Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -38,7 +38,7 @@
 
 /*!******************************************************/
 
-        DBstatus GEtfpos_to_local(
+        DBstatus  GEtfpos_to_local(
         DBVector *pin,
         DBTmat   *pt,
         DBVector *pout)
@@ -61,9 +61,9 @@
    DBfloat x,y,z;
 
    if ( pt == NULL )
-     { 
+     {
      if ( pin != pout )
-      { 
+      {
       pout->x_gm = pin->x_gm;
       pout->y_gm = pin->y_gm;
       pout->z_gm = pin->z_gm;
@@ -114,9 +114,9 @@
    DBTmat  ti;
 
    if ( pt == NULL )
-     { 
+     {
      if ( pin != pout )
-      { 
+      {
       pout->x_gm = pin->x_gm;
       pout->y_gm = pin->y_gm;
       pout->z_gm = pin->z_gm;

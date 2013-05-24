@@ -1,0 +1,71 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Curve accuracy})
+define({_INDEXLINK_},{<a href="gwins.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Curve accuracy</h1>
+
+<p>
+Curve accuracy is the same as display tolerance or graphical
+approximation error in other systems. It has nothing
+to do with the real accuracy of a curve, only it's graphical
+appearence. Curves and surfaces in Varkon are probably more accurate
+than in most systems including systems that claim that they have
+class A surfaces.
+</p>
+
+<p>
+Systems that display curves do that by approximating the curve
+with short lines or vectors (vectorization). The number of vectors
+must be kept within reasonable limits or the process will take
+too much time. With too few vectors however, the visual effect
+is disappointing.
+</p>
+
+<img src="cacc_1.jpg" style="float:left;padding-right:1em;"></img>
+<img src="cacc_2.jpg" style="float:left;padding-right:1em;"></img>
+<img src="cacc_3.jpg" style="float:left;padding-right:1em;"></img>
+<br style="clear: both;"/>
+
+<p>
+The pictures above show the same curve with curve accuracy set
+to 0.1, 0.5 and 1. As you see, there is a dramatic change in quality
+between 0.1 and 1 but higher values would not differ much. This is
+due to the fact that Varkon automatically adjusts the length of
+the vectors to the curvature of the curve and that the display
+itself has a limited resolution.
+</p>
+
+<p>
+Default value for curve accuracy is 1. The smallest value you can use
+is 0.1 and the biggest is 100. The default value usually works fine
+but if you need to display curves with more vectors it is usually
+enough to increase the value to 2 or 3. Varkon automatically increases
+the curve accuracy 3 times when plotfiles  (*.PLT) are created. This
+means that a printout on paper is usually smoother than the same image
+on the display.
+</p>
+
+<p>
+Curve accuracy controls the display of arcs and curves. It also controls
+the curves used to display a surface in wireframe mode. When surfaces
+are shaded with light and color Varkon uses the curve accuracy factor
+to control the number of triangles used for the shading process.
+</p>
+
+<img src="cacc_4.jpg" style="float:left;padding-right:1em;"></img>
+<img src="cacc_5.jpg" style="float:left;padding-right:1em;"></img>
+<br style="clear: both;"/>
+
+<p>
+The pictures above show the same surface shaded with a curve accuracy
+of 1 and 3 respectively. Be carful to increase this value too much if
+you don't have a very powerful graphics display card.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

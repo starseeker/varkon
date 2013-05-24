@@ -1,0 +1,85 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- light_on - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>light_on - Procedure</h1>
+
+<h2>Description</h2>
+
+<p>
+Activates a lightsource. Up to 8 light sources may be active at the
+same time. light_on() can also be used to set the intensity of a light
+source or to toggle between static mode or follow_model. In static mode
+the light does not move when the model is scaled, panned or rotated in the
+OpenGL window. In follow_model mode the lightsource follows the model.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  light_on(light, intensity, mode);
+
+  int   light;
+  float intensity;
+  int   mode;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>light</td>
+<td>- Light source number (0-7)</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>intensity</td>
+<td>- Light intensity in procent. 0 = No light, 100 = Full strength. Default = 100</td>
+</tr>
+
+<tr>
+<td>mode</td>
+<td>- Static = 0, Light source follows model = 1. Default = 0</td>
+</tr>
+</table>
+
+<h2>Examples</h2>
+
+<pre>
+  light_on(1);
+</pre>
+
+<p>
+Turns on lightsource 1 with default values for strength and mode.
+</p>
+
+<pre>
+  light_on(0,50,1);
+</pre>
+
+<p>
+Turns on lightsource 0 with 50% intensity and sets the mode to follow_model.
+</p>
+
+<h2>Comments</h2>
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="light_off.htm">light_off()</a>,
+<a href="cre_light.htm">cre_light()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)
+

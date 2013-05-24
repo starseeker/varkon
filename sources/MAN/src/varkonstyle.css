@@ -1,0 +1,156 @@
+body 
+  {
+  padding-left: 3em;
+  padding-right: 3em;
+  padding-bottom: 1em;
+  font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif; 
+/*  font-family: "Times New Roman",Times,serif; */
+  color: #000000;
+  background-color: #99CCFF; 
+  line-height: 1.4em
+  }
+
+p
+  {
+  margin-top: 0;
+  margin-bottom: 1em;
+  line-height: 1.4em
+  }
+
+h1 
+  {
+  margin-top: 1.5em;
+  margin-bottom: 1.0em;
+  font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif; 
+  font-size: 2em
+
+  }
+
+h2 
+  {
+  margin-top: 2.0em;
+  margin-bottom: 0.8em;
+  font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif; 
+  font-size: 1.3em
+  }
+
+
+pre
+  {
+  margin-top: 0;
+  margin-bottom: 1em;
+  line-height: 1.4em;
+  font-family: Courier, "Courier New", monospace
+  }
+
+pre.box
+  {
+  background-color: #AFD5FF;
+  padding: 0.8em;
+  font-size: 0.9em
+  }
+
+
+
+code
+  {
+  font-family: Courier, "Courier New", monospace;
+  }
+
+img 
+  {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border: 0;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  }
+
+img.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+img.left {
+  display: block;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+
+a:link 
+  {
+  color: blue 
+  }
+
+a:visited 
+  {
+  color: blue 
+  }
+
+hr
+  {
+  margin-top:1em;
+  margin-bottom:1em;
+  border:0;
+  color:#000000;
+  background-color: #000000;
+  height: 1px
+  }
+
+table
+  {
+  margin-top: 1em;
+  margin-bottom: 2em;
+  border: 0
+  }
+
+td
+  {
+  padding-right:1em;
+  padding-left:0.2em;
+  padding-top:0.3em;
+  padding-bottom:0.3em;
+  }
+
+th
+  {
+  padding-right:1em;
+  padding-left:0.2em;
+  padding-top:0.3em;
+  padding-bottom:0.3em;
+  background-color: #c0c0c0;
+  font-weight: bold;
+  text-align:left
+  }
+
+
+div#horisontal_list
+  {
+  }
+
+div#horisontal_list ul
+  {
+  margin-left: 0;
+  padding-left: 0;
+  }
+
+div#horisontal_list li
+  {
+  list-style-type: none;
+  display: inline;
+  padding-right:2em;
+  padding-left:0;
+  padding-top:0.3em;
+  padding-bottom:0.3em;
+  }
+
+
+
+
+
+
+
+

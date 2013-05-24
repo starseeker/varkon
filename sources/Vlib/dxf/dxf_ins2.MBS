@@ -1,6 +1,6 @@
 !*******************************************************
 
-  LOCAL DRAWING MODULE dxf_ins2(
+  LOCAL MODULE dxf_ins2(
   VAR FILE   infil;
   INT        levlim;
   VAR INT    levant;

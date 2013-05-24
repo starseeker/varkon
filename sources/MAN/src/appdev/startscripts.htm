@@ -1,0 +1,39 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- Start scripts})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Start scripts</h1>
+
+<p>
+Varkon can only be started by executing a start script
+that sets up an environment for Varkon to function properly.
+The default start scripts in the Varkon distribution are
+located in <code>$VARKON_ROOT/com/english and $VARKON_ROOT/com/swedish</code>.
+</p>
+
+<p>
+If you develop an application with specific needs you can
+use an individual start script for that application. Make
+a copy of the default start script, edit it to suit your
+needs, then store it with the rest of the application
+files and use it to start the application.
+</p>
+
+<p>
+The things you might want to change in the start script
+are environment variables that point to the menus to be used,
+the module librarie(s) or the documentation. You may also
+want to edit the line that starts the Varkon executable and
+supply application specific parameters like the default
+job directory or an application specific ini-file. See the
+comments in the default start script for more information
+on how to make these changes.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -4,13 +4,14 @@
 *    ==========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
-*    WPialt();             Input alternative
-*    WPilse();             Input from list with edit
+*    WPialt();            Input True/False alternative
+*    WPilse();            Input from list with edit
 *    WPselect_partname(); Select a module to be used in a PART statement
+*    WPselect_sysmode();  Select system mode during startup
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -33,25 +34,26 @@
 #include "../include/WP.h"
 #include <math.h>
 
+extern V3MDAT  sydata;
+extern char    svnversion[];
+
 /*********************************************************/
 
-     bool WPialt(
+     bool  WPialt(
      char *ps,
      char *ts,
      char *fs,
      bool  pip)
 
-/*   Läser in alternativ (1 tecken) typ j/n, +/- etc.
+/*   Input alternative (1 char) type y/n, +/- etc.
  *
- *   In: ps  = Promptsträng
- *       ts  = TRUE-sträng
- *       fs  = FALSE-sträng
- *       pip = Inledande pip, Ja/Nej
+ *   In: ps  = Prompt string.
+ *       ts  = TRUE-string.
+ *       fs  = FALSE-string.
+ *       pip = Optional beep, Yes/No.
  *
- *   Ut: Inget.
- *
- *   FV: TRUE  om svar = 1:a tecknet i tsnum
- *       FALSE om svar = 1:a tecknet i fsnum
+ *   Return: TRUE  if answer = First char in ts
+ *           FALSE if answer = First char in fs
  *
  *   (C)microform ab 24/6/92 J. Kjellander
  *
@@ -63,56 +65,50 @@
 
  {
     char     tkn;
-    short    status,x,y,dx,dy,lx,ly,px,py,ay,lm;
+    short    x,y,dx,dy,lx,ly,ay,lm;
     char     title[81],ps1[V3STRLEN+1],ps2[V3STRLEN+1];
     DBint    iwin_id,pmt_id,true_id,false_id,but_id,edit_id;
     bool     svar;
-    int      ix,iy,tdx,tdy;
+    int      px,py,ix,iy,tdx,tdy;
     unsigned int dum1,dum2;
     char    *type[20];
     XrmValue value;
 
 /*
-***Ev. inledande pip.
+***Optional beep.
 */
-    if ( pip ) XBell(xdisp,100);
+    if ( pip ) WPbell();
 /*
-***För att nu kunna bestämma storleken på själva
-***alternativ-fönstret utgår vi från promt-strängen,
-***och beräknar promt-fönstrets storlek. En lång promt
-***kan behöva delas i 2 rader. Max storlek i X-led är
-***80% av skärmen. Blir fönstret större delar vi.
+***Prompt size.
 */
-    px = (short)(1.1*WPstrl(ps));
-    py = (short)(1.5*WPstrh());
+    px = 1.1*WPstrl(ps);
+    py = 1.5*WPstrh();
 /*
-***Vi utgår från att promten är det som tar mest
-***plats i X-led och beräknar alternativfönstrets längd
-***därefter.
+***Calculate dialog size in X-direction.
+***A long prompt (more than 80% of display) needs
+***splitting.
 */
     lx = WPstrl(" ");
     dx = lx + px + lx;
 
-    if ( dx > 0.8*DisplayWidth(xdisp,xscr) ) 
+    if ( dx > 0.8*DisplayWidth(xdisp,xscr) )
       {
       WPdivs(ps,(int)(0.8*DisplayWidth(xdisp,xscr)),&tdx,&tdy,ps1,ps2);
       px = tdx;
       py = tdy;
       dx = lx + px + lx;
       }
-    else
-      ps1[0] = '\0';
+    else ps1[0] = '\0';
 /*
-***Beräkna luft yttre, knapparnas höjd, luft mellan och
-***huvudfönstrets höjd.
-*/  
+***Calculate dialog size in Y-direction.
+*/
     ly = WPstrh();
-    ay = (short)(3.0*WPstrh()); 
-    lm = (short)(0.8*ly);
+    ay = 3.0*WPstrh();
+    lm = 0.8*ly;
 
-    dy = ly + py + lm + ay + ly;  
+    dy = ly + py + lm + ay + ly;
 /*
-***Alternativfönstrets läge.
+***Dialog position.
 */
     ix  = (DisplayWidth(xdisp,xscr)-dx)/2;
     iy  = (DisplayHeight(xdisp,xscr)-dy)/2;
@@ -124,16 +120,16 @@
     x = (short)ix;
     y = (short)iy;
 /*
-***Fönstertitel.
+***Dialog title.
 */
     if ( !WPgrst("varkon.alternative.title",title) )
       strcpy(title,"Alternativ");
 /*
-***Skapa själva alternativfönstret som ett WPIWIN.
+***Create WPIWIN.
 */
-    status = WPwciw(x,y,dx,dy,title,&iwin_id);
+    WPwciw(x,y,dx,dy,title,&iwin_id);
 /*
-***Skapa promt, om ps1 <> "" krävs 2 rader. 
+***Create promt, if ps1 <> "" use two lines.
 */
     x  = lx;
     y  = ly;
@@ -141,17 +137,17 @@
     dy = py;
 
     if ( ps1[0] == '\0' )
-      status = WPmcbu((wpw_id)iwin_id,x,y,dx,dy,(short)0,
-                              ps,"","",WP_BGND1,WP_FGND,&pmt_id);
+      WPcrpb((wpw_id)iwin_id,x,y,dx,dy,(short)0,
+                     ps,"","",WP_BGND1,WP_FGND,&pmt_id);
     else
       {
-      status = WPmcbu((wpw_id)iwin_id,x,y,dx,dy/2,(short)0,
+      WPcrpb((wpw_id)iwin_id,x,y,dx,dy/2,(short)0,
                               ps1,"","",WP_BGND1,WP_FGND,&pmt_id);
-      status = WPmcbu((wpw_id)iwin_id,x,y+dy/2,dx,dy/2,(short)0,
+      WPcrpb((wpw_id)iwin_id,x,y+dy/2,dx,dy/2,(short)0,
                               ps2,"","",WP_BGND1,WP_FGND,&pmt_id);
       }
 /*
-***Skapa true-knapp.
+***TRUE button.
 */
     x = 0.2*px;
     y  = ly + py + lm;
@@ -160,55 +156,57 @@
     if ( dx < 6*WPstrl(" ") )      dx = 6*WPstrl(" ");
     dy = ay;
 
-    status = WPmcbu((wpw_id)iwin_id,x,y,dx,dy,(short)3,
+    WPcrpb((wpw_id)iwin_id,x,y,dx,dy,(short)3,
                             ts,ts,"",WP_BGND2,WP_FGND,&true_id);
 /*
-***Skapa FALSE-knapp.
+***FALSE button.
 */
     x  = lx + px  - (short)(0.2*px) - dx;
 
-    status = WPmcbu((wpw_id)iwin_id,x,y,dx,dy,(short)3,
+    WPcrpb((wpw_id)iwin_id,x,y,dx,dy,(short)3,
                             fs,fs,"",WP_BGND2,WP_FGND,&false_id);
 /*
-***En oändligt liten ramlös edit för att kunna läsa tecken.
+***An invisible edit for keyboard input.
 */
-   status = WPmced((wpw_id)iwin_id,1,1,1,1,(short)0,
+    WPmced((wpw_id)iwin_id,1,1,1,1,(short)0,
                    "",1,&edit_id);
 /*
-***Klart för visning.
+***Display.
 */
     WPwshw(iwin_id);
 /*
-***Vänta på action. Service-nivå för key-event = SLEVEL_ALL
-***så att vi kan ta hand om varje tecken.
+***Wait for action. Service-level for key-event = SLEVEL_ALL
+***so that each char may be processed.
 */
 loop:
-    status = WPwwtw(iwin_id,SLEVEL_ALL,&but_id);
+    WPwwtw(iwin_id,SLEVEL_ALL,&but_id);
 /*
-***Har det hänt nåt i TRUE- eller FALSE-fönstret ?
+***Action in TRUE- or FALSE-button ?
 */
     if      ( but_id == true_id  ) svar = TRUE;
     else if ( but_id == false_id ) svar = FALSE;
 /*
-***Eller i det lilla osynliga edit-fönstret ?
+***Keypress ?
 */
     else if ( but_id == edit_id  )
       {
       WPgted(iwin_id,edit_id,&tkn);
-      if      ( tkn == *ts ) svar = TRUE;
+      if       ( tkn == *ts ) svar = TRUE;
       else if ( tkn == *fs ) svar = FALSE;
       else
         {
-        XBell(xdisp,100);
+        WPbell();
         goto loop;
         }
       }
     else goto loop;
 /*
-***Dags att sluta.
+***Time to exit.
 */
-    status = WPwdel(iwin_id);
-
+    WPwdel(iwin_id);
+/*
+***The end.
+*/
     return(svar);
   }
 
@@ -224,7 +222,7 @@ loop:
      char *altstr)
 
 /*   Select from a list of strings or input a string
- *   with the keyboard. I actalt > 0 this button is
+ *   with the keyboard. If actalt > 0 this button is
  *   shown in active state.
  *
  *   In:   rubrik => Window title
@@ -370,10 +368,10 @@ kloop:
        if ( alt < nstr )
          {
          if ( alt == actalt )
-           status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,alth,(short)1,
+           status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen1,alth,(short)1,
                                    str,str,"",WP_BGND3,WP_FGND,&alt_id[alt]);
          else
-           status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,alth,(short)1,
+           status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen1,alth,(short)1,
                                    str,str,"",WP_BGND2,WP_FGND,&alt_id[alt]);
          }
        }
@@ -382,7 +380,7 @@ kloop:
 ***The input field, WPEDIT.
 */
    if ( edtlen > main_dx - 2*ly) edtlen = main_dx - 2* ly;
-   
+
    alt_x  = (main_dx-edtlen)/2;
    alt_y  = ly + radant*(alth + ly) + ly;
    strcpy(altstr,defstr);
@@ -393,27 +391,26 @@ kloop:
 */
    alt_x = main_dx/8;
    alt_y  = ly + radant*(alth + ly) + ly + alth + alth;
-   WPmcbu(iwin_id,alt_x,alt_y-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,alt_x,alt_y  ,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,alt_x,alt_y,7*main_dx/8,alt_y);
 /*
 ***Ok, reject and help.
 */
    alt_x  = ly;
    alt_y  = ly + radant*(alth + ly) + alth + alth + alth;
    alth   = 2*WPstrh();
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
                            okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    alt_x  = ly + butlen2 + ly;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
                            reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    alt_x  = main_dx - ly - butlen2;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
                            help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -502,14 +499,14 @@ exit:
 /*    This dialogue is used by IG to let the user select
  *    a module to use in creating a PART statement.
  *
- *   In:   source => Initial source, 1=jobdir, 2=mbodir
+ *   In:   source => Initial source, 1=jobdir, 2=jobdir/lib
  *         namlst => Array of C ptrs to part names
  *         nstr   => Number of names
  *
  *   Out: *name = The name of the selected module
  *
  *   Return:  1 = Switch to jobdir
- *            2 = Switch to mbodir
+ *            2 = Switch to jobdir/lib
  *            3 = Too many modules
  *            0 = Ok.
  *       REJECT = Cancel.
@@ -646,10 +643,10 @@ kloop:
    alt_y = 0;
 
    if ( source == 1 )
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen3,alth,(short)1,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen3,alth,(short)1,
                                 job,job,"",WP_BGND3,WP_FGND,&job_id);
    else
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen3,alth,(short)1,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen3,alth,(short)1,
                                 job,job,"",WP_BGND2,WP_FGND,&job_id);
 
    butptr = (WPBUTT *)iwinpt->wintab[job_id].ptr;
@@ -658,10 +655,10 @@ kloop:
    alt_x += butlen3;
 
    if ( source == 2 )
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen3,alth,(short)1,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen3,alth,(short)1,
                                 lib,lib,"",WP_BGND3,WP_FGND,&lib_id);
    else
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen3,alth,(short)1,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen3,alth,(short)1,
                                 lib,lib,"",WP_BGND2,WP_FGND,&lib_id);
 
    butptr = (WPBUTT *)iwinpt->wintab[lib_id].ptr;
@@ -675,7 +672,7 @@ kloop:
      {
      alt_x = (main_dx - WPstrl(empty))/2;
      alt_y += alth + ly;
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,WPstrl(empty),alth,(short)0,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,WPstrl(empty),alth,(short)0,
                                  empty,empty,"",WP_BGND1,WP_FGND,&but_id);
      }
 
@@ -691,7 +688,7 @@ kloop:
 
        if ( alt < nstr )
          {
-         WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen1,alth,(short)1,
+         WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen1,alth,(short)1,
                                  str,str,"",WP_BGND2,WP_FGND,&alt_id[alt]);
          }
        }
@@ -701,21 +698,20 @@ kloop:
 */
    alt_x  = main_dx/8;
    alt_y += alth + ly + ly;
-   WPmcbu(iwin_id,alt_x,alt_y-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,alt_x,alt_y  ,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,alt_x,alt_y,7*main_dx/8,alt_y);
 /*
 ***Reject and help.
 */
    alt_x   = ly;
    alt_y  += ly;
    alth   = 2*WPstrh();
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
                            reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    alt_x  = main_dx - ly - butlen2;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,butlen2,alth,(short)2,
                            help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -785,5 +781,214 @@ exit:
 
    return(status);
  }
+
+/********************************************************/
+/*********************************************************/
+
+     short WPselect_sysmode(int *mode)
+
+/*   Select system mode during startup.
+ *
+ *   Out: *mode = GENERIC or EXPLICIT
+ *
+ *   Return: 0      = Ok.
+ *           REJECT = Exit.
+ *          -2      = Error from the help system
+ *
+ *   (C)2007-10-14 J. Kjellander
+ *
+ *******************************************************!*/
+
+ {
+   char     expl[81],gen[81],exit[81],learn[81],line1[81],
+            line2[81],line3[81],line4[81];
+   short    status,tlen,air1,air2,bh1,bh2,iwin_x,iwin_y,main_dx,
+            main_dy,alt_x,alt_y;
+   DBint    iwin_id,expl_id,gen_id,exit_id,learn_id,but_id,dum_id;
+   WPWIN   *winptr;
+   WPIWIN  *iwinpt;
+   WPBUTT  *butptr;
+
+/*
+***Line 1 = Welcome to VARKON
+***Line 2 = version X.X.X svn#X
+***Line 3 = an open source CAD-tool
+*/
+   strcpy(line1,"Welcome to VARKON");
+   sprintf(line2,"version %d.%d%c svn#%s",(int)sydata.vernr,
+                 (int)sydata.revnr,sydata.level,svnversion);
+   strcpy(line3,"an open source CAD-tool");
+/*
+***Line 4 = What would you like to do next ?
+***Explicit-, generic-, exit- and learn-texts.
+*/
+   if ( !WPgrst("varkon.mode.what",line4) )      strcpy(line4,"What next ?");
+   if ( !WPgrst("varkon.mode.explicit",expl) )   strcpy(expl,"Explicit");
+   if ( !WPgrst("varkon.mode.generic",gen) )     strcpy(gen,"Generic");
+   if ( !WPgrst("varkon.mode.learnmore",learn) ) strcpy(learn,"Help");
+   if ( !WPgrst("varkon.mode.exit",exit) )       strcpy(exit,"Exit");
+/*
+***Length and heights of texts.
+*/
+   WPsfnt(WP_FNTBIG);
+   bh1  = WPstrh();
+   tlen = WPstrl(line1);
+   if ( WPstrl(line4) > tlen ) tlen = WPstrl(line4);
+
+   WPsfnt(WP_FNTNORMAL);
+   bh2 =  WPstrh();
+   if ( WPstrl(line2) > tlen ) tlen = WPstrl(line2);
+   if ( WPstrl(line3) > tlen ) tlen = WPstrl(line3);
+   if ( WPstrl(expl)  > tlen ) tlen = WPstrl(expl);
+   if ( WPstrl(gen)   > tlen ) tlen = WPstrl(gen);
+   if ( WPstrl(exit)  > tlen ) tlen = WPstrl(exit);
+   if ( WPstrl(learn) > tlen ) tlen = WPstrl(learn);
+/*
+***Calculate outside air (air1) and air between (air2).
+*/
+   air1 = 1.3*bh1;
+   air2 = 0.5*bh2;
+/*
+***Window position.
+*/
+   iwin_x = 200;
+   iwin_y = 200;
+/*
+***Calculate the window size in X-direction.
+*/
+   main_dx = air1 + air1 + tlen + air1;
+/*
+***Calculate the window size in Y-direction.
+*/
+   main_dy = air1 + bh1 + air2 + bh2 + air2 + bh2 + air1 +
+             + air1 + bh1 + air1 + bh2 + air2 + bh2 + air2 + bh2 +
+             air2 + bh2 + air1;
+/*
+***Create the dialogue window as a WPIWIN.
+*/
+   WPwciw(iwin_x,iwin_y,main_dx,main_dy,"Select mode",&iwin_id);
+/*
+***Get a C-ptr to the WPIWIN.
+*/
+   winptr = WPwgwp((wpw_id)iwin_id);
+   iwinpt = (WPIWIN *)winptr->ptr;
+/*
+***Line 1.
+*/
+   alt_x = air1;
+   alt_y = air1;
+   WPcrlb(iwin_id,alt_x,alt_y,tlen,bh1,line1,&dum_id);
+   butptr = (WPBUTT *)iwinpt->wintab[dum_id].ptr;
+   butptr->font = WP_FNTBIG;
+/*
+***Line 2.
+*/
+   alt_x  = air1;
+   alt_y += bh1 + air2;
+   WPcrlb(iwin_id,alt_x,alt_y,tlen,bh1,line2,&dum_id);
+/*
+***Line 3.
+*/
+   alt_x  = air1;
+   alt_y += bh2 + air2;
+   WPcrlb(iwin_id,alt_x,alt_y,tlen,bh1,line3,&dum_id);
+/*
+***A 3D line.
+*/
+   alt_x = (main_dx - tlen)/2;
+   alt_y += bh2 + air1;
+   WPcreate_3Dline(iwin_id,alt_x,alt_y,alt_x+tlen,alt_y);
+/*
+***Line 4.
+*/
+   alt_x  = air1;
+   alt_y += bh2 + air1;
+   WPcrlb(iwin_id,alt_x,alt_y,tlen,bh1,line4,&dum_id);
+   butptr = (WPBUTT *)iwinpt->wintab[dum_id].ptr;
+   butptr->font = WP_FNTBIG;
+/*
+***Explicit.
+*/
+   alt_x += air1;
+   alt_y += bh2 + air1;
+   WPcrtb((wpw_id)iwin_id,alt_x,alt_y,expl,&expl_id);
+/*
+***Generic.
+*/
+   alt_y += bh2 + air2;
+   WPcrtb((wpw_id)iwin_id,alt_x,alt_y,gen,&gen_id);
+/*
+***Learn more.
+*/
+   alt_y += bh2 + air2;
+   WPcrtb((wpw_id)iwin_id,alt_x,alt_y,learn,&learn_id);
+/*
+***Exit.
+*/
+   alt_y += bh2 + air2;
+   WPcrtb((wpw_id)iwin_id,alt_x,alt_y,exit,&exit_id);
+/*
+***Show the dialogue and wait for action.
+*/
+   WPwshw(iwin_id);
+/*
+***Wait for action.
+*/
+loop:
+   WPwwtw(iwin_id,SLEVEL_V3_INP,&but_id);
+/*
+***Explicit button.
+*/
+   if ( but_id == expl_id )
+     {
+    *mode = EXPLICIT;
+     status = 0;
+     goto exit;
+     }
+/*
+***Generic button.
+*/
+   else if ( but_id == gen_id )
+     {
+    *mode = GENERIC;
+     status = 0;
+     goto exit;
+     }
+/*
+***Exit button.
+*/
+   else if ( but_id == exit_id )
+     {
+     status = REJECT;
+     goto exit;
+     }
+/*
+***Learn more button (help). Negative status from the help
+***system is a serious indication that something is mis-
+***configured.
+*/
+   else if ( but_id == learn_id )
+     {
+     if ( (status=IGhelp()) < 0 ) goto exit;
+     else                         goto loop;
+     }
+/*
+***Unknown event, should not happen.
+*/
+   else
+     {
+     WPbell();
+     goto loop;
+     }
+/*
+***Time to exit.
+*/
+exit:
+   WPwdel(iwin_id);
+/*
+***The end.
+*/
+   return(status);
+  }
 
 /********************************************************/

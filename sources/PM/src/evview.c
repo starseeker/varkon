@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -34,8 +34,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -43,26 +41,17 @@
 #include "../../WP/include/WP.h"
 #include "../../EX/include/EX.h"
 
-extern PMPARVA *proc_pv;  /* inproc.c *pv      Access structure for MBS routines */
-extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
+extern PMPARVA *proc_pv;  /* Access structure for MBS routines */
+extern short    proc_pc;  /* Number of actual parameters */
+extern PMLITVA *func_vp;  /* Function value */
 
-extern PMLITVA *func_vp;   /* Pekare till resultat. */
-
-/*!******************************************************/
+/********************************************************/
 
         short evgtvi()
 
-/*      Evaluerar proceduren GET_VIEW.
+/*      Evaluates MBS procedure GET_VIEW().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      Felkod:
- *
- *      (C)microform ab 20/1-95 J. Kjellander
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
@@ -75,19 +64,16 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    DBTmat  vymat;
    PMLITVA litval[16];
 
-   win_id = proc_pv[1].par_va.lit.int_va;
-
-#ifdef UNIX
-   WPgtvi(win_id,vynamn,&skala,&xmin,&ymin,&xmax,&ymax,&vymat,&persp);
-#else
-#ifdef WIN32
-   msgtvi(win_id,vynamn,&skala,&xmin,&ymin,&xmax,&ymax,&vymat,&persp);
-#else
-   return(-2);
-#endif
-#endif
 /*
-***Vynamn,skala,modellfönster.
+***Window ID.
+*/
+   win_id = proc_pv[1].par_va.lit.int_va;
+/*
+***Get current view data from requested window in WP.
+*/
+   WPgtvi(win_id,vynamn,&skala,&xmin,&ymin,&xmax,&ymax,&vymat,&persp);
+/*
+***View name, scale and 2D (model)window.
 */
    strcpy(litval[0].lit.str_va,vynamn);
    litval[1].lit.float_va = skala;
@@ -98,7 +84,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
    evwval(litval,6,proc_pv);
 /*
-***Transformationsmatris.
+***3D view transformation matrix.
 */
    litval[0].lit.float_va  = vymat.g11;
    litval[1].lit.float_va  = vymat.g12;
@@ -119,7 +105,9 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    litval[13].lit.float_va = vymat.g42;
    litval[14].lit.float_va = vymat.g43;
    litval[15].lit.float_va = vymat.g44;
-
+/*
+***Copy matrix to MBS variable.
+*/
    for ( i=0; i<4; ++i )
      {
      index[0] = i+1;
@@ -131,37 +119,26 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
        }
      }
 /*
-***Perspektiv.
+***Perspective.
 */
    litval[0].lit.float_va = persp;
-   inwvar(proc_pv[9].par_ty,proc_pv[9].par_va.lit.adr_va,
-	                        0,NULL,&litval[0]);
+   inwvar(proc_pv[9].par_ty,proc_pv[9].par_va.lit.adr_va,0,NULL,&litval[0]);
 /*
-***Slut.
+***The end.
 */
    return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evcrvi()
 
-/*      Evaluerar proceduren CRE_VIEW.
+/*      Evaluates MBS procedure CRE_VIEW().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      Error: IN5062 = Illegal parameter type.
  *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
- *
- *      Felkoder: IN5062 = Fel typ av indata.
- *
- *      (C)microform ab 30/6/86 R. Svedin
- *
- *      10/10/86 Tagit bort param. för vyfönster, R. Svedin
- *      29/9/92  Matris-vyer, J. Kjellander
- *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
@@ -169,13 +146,13 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
     DBVector bpos;
 
 /*
-***Betraktelseposition (VECTOR) eller koordinatsystem (REF).
+***Camera position (VECTOR) or coordinate system (REF).
 */
     switch ( proc_pv[2].par_va.lit_type )
       {
       case C_VEC_VA:
 /*
-***Betraktelseposition.
+***Campos.
 */
       bpos.x_gm = proc_pv[2].par_va.lit.vec_va.x_val;
       bpos.y_gm = proc_pv[2].par_va.lit.vec_va.y_val;
@@ -183,37 +160,31 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
       return(EXcrvp(proc_pv[1].par_va.lit.str_va,&bpos));
       break;
 /*
-***Koordinatsystem.
+***Csys.
 */
       case C_REF_VA:
       return(EXcrvc( proc_pv[1].par_va.lit.str_va,
-		            &proc_pv[2].par_va.lit.ref_va[0]));
+                    &proc_pv[2].par_va.lit.ref_va[0]));
 /*
-***Felaktig typ av indata.
+***Illegal parameter type, not VECTOR or REF.
 */
       default:
       return(erpush("IN5062",""));
       }
-
+/*
+***The end.
+*/
     return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evacvi()
 
-/*      Evaluerar proceduren ACT_VIEW.
+/*      Evaluates MBS procedure ACT_VIEW(). (activate view)
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
- *
- *      (C)microform ab 1/8/86 R. Svedin
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
@@ -223,21 +194,13 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evscvi()
 
-/*      Evaluerar proceduren SCL_VIEW.
+/*      Evaluate MBS procedure SCL_VIEW().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
- *
- *      (C)microform ab 1/8/86 R. Svedin
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
@@ -247,21 +210,13 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evcevi()
 
-/*      Evaluerar proceduren CEN_VIEW.
+/*      Evaluate MBS procedure CEN_VIEW().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
- *
- *      (C)microform ab 4/8/86 R. Svedin
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
@@ -276,7 +231,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evhdvi()
 
-/*      Evaluerar proceduren HIDE_VIEW.
+/*      Evaluerar proceduren HIDE_VIEW().
  *
  *      In: extern proc_pv => Pekare till array med parametervärden
  *          extern proc_pc => 
@@ -335,21 +290,13 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evprvi()
 
-/*      Evaluerar proceduren PERP_VIEW.
+/*      Evaluates MBS procedure PERP_VIEW().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
- *
- *      (C)microform ab 21/3/89 J. Kjellander
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
@@ -359,30 +306,22 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evervi()
 
-/*      Evaluerar proceduren ERASE_VIEW.
+/*      Evaluates MBS procedure ERASE_VIEW().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      (C)2007-11-30 J.Kjellander
  *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
- *
- *      (C)microform ab 30/6/86 R. Svedin
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
+ ********************************************************/
 
   {
     return(EXervi(proc_pv[1].par_va.lit.int_va));
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evrpvi()
 
@@ -426,21 +365,13 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evcavi()
 
-/*      Evaluerar proceduren CACC_VIEW.
+/*      Evaluates MBS procedure CACC_VIEW().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
- *
- *      (C)microform ab 4/8/86 R. Svedin
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
@@ -449,27 +380,17 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evmsiz()
 
-/*      Evaluerar proceduren MSIZE_VIEW.
+/*      Evaluates MBS procedure MSIZE_VIEW().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 8/8/93
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
- *      2006-12-28 Removed GP, J.Kjellander
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
   {
-   short   status;
    WPVIEW  modvy;
    PMLITVA litval;
    WPWIN  *winptr;
@@ -481,7 +402,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /*
 ***Calculate bounding rectangle of projected model.
 */
-    WPmsiz(winptr->ptr,&modvy);
+    WPmsiz((WPGWIN *)winptr->ptr,&modvy);
 /*
 ***If there is no model or it has no size, return zeros.
 */
@@ -493,16 +414,16 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
       }
 /*
 ***Else return 2D view limits in p1 and p2.
-*/    
+*/
     litval.lit.vec_va.x_val = modvy.modwin.xmin;
     litval.lit.vec_va.y_val = modvy.modwin.ymin;
-    inwvar(proc_pv[1].par_ty,
-		   proc_pv[1].par_va.lit.adr_va,0,NULL,&litval);
+    inwvar(proc_pv[1].par_ty,proc_pv[1].par_va.lit.adr_va,0,NULL,&litval);
     litval.lit.vec_va.x_val = modvy.modwin.xmax;
     litval.lit.vec_va.y_val = modvy.modwin.ymax;
-    inwvar(proc_pv[2].par_ty,
-		   proc_pv[2].par_va.lit.adr_va,0,NULL,&litval);
-
+    inwvar(proc_pv[2].par_ty,proc_pv[2].par_va.lit.adr_va,0,NULL,&litval);
+/*
+***The end.
+*/
     return(0);
   }
 

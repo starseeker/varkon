@@ -1,0 +1,39 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- Application specific documentation})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Application specific documentation</h1>
+
+<p>
+A good Varkon application needs it's own documentation.
+If you have application specific documentation in html
+format you can make it available online through the
+Varkon context sensitive help system by placing the
+html file(s) in the current job directory or by altering
+the value of the VARKON_DOC variable in the Varkon start
+script.
+</p>
+
+<p>
+When a user calls for help, Varkon searches the current job
+directory for the required html file before the system
+directory specified by VARKON_DOC is searched. Each module
+in the application may have a doc file of it's own. You may
+also have an individual doc file for each menu.
+</p>
+
+<p>
+See <a HREF="../GUI/f153.htm">f153</a> for more
+information about the interactive help system and how
+to name your doc files.
+</p>
+
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,0 +1,51 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- Macro programming})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Macro programming</h1>
+
+<p>
+A macro is a module of a special type. It is written in MBS
+and compiled by the MBS compiler. Here is an example:
+</p>
+
+<p><pre class=box>
+MACRO MODULE start_editor(STRING file*132 >"Enter filename !");
+
+BEGINMODULE<
+&nbsp; os("some_text_editor "+file);
+ENDMODULE
+</pre></p>
+
+<p>
+This macro takes a filename as input, then calls the operating
+system to start a text editor and load the file specified. If
+you also add a call to this macro in one of your menus you have
+actually added new functionality to the Varkon user interface. A
+user will not see the difference between this and
+functionality provided by the standard system.
+</p>
+
+<p>
+In many senses a macro is similar to an ordinary module. An important
+difference is that a macro does not create a part that is stored in
+the DB. Also, you can not load a macro to become the active module
+and edit it interactively. A macro module must be created using the
+text editor. While ordinary modules themselves make up the model,
+macros are only used to create it.
+</p>
+
+<ol>
+<li><a href="macro_dialog.htm">Dialog programming</a></li>
+<li><a href="macro_mbs.htm">Using macros to create a model</a></li>
+<li><a href="macro_init.htm">The init, exit and newjob macro</a></li>
+<li><a href="macro_varkon.htm">Where should I keep my macros ?</a></li>
+</ol>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

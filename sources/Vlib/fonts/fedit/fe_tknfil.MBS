@@ -23,7 +23,7 @@
    INT    status,typ,nref,blnk,niv,pen,onr,mtyp,mall,
           mattr,np,mant,nv,i,ix1,iy1,ix2,iy2,anr;
    REF    id,id1,id2,gid(3),kid,idm(100);
-   STRING s*1,code*1,namn*20,anm*60;
+   STRING s*1,namn*20,anm*60;
    INT    vtab(6,MAXVEC);
    VECTOR p1,p2;
    FILE   tf;
@@ -45,10 +45,9 @@
 !*
 !***H{mta storheter ur gm.
 !*
-   code := "F";
+   set_root_gm();
 loop:
-   id := getid(code);
-   code := "P";
+   id := get_next_gm();
    if id <> #0 then
      gethdr(id,typ,nref,blnk,niv,pen,gid);
      if typ = 16384 then

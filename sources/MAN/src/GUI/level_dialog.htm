@@ -1,0 +1,68 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Levels})
+define({_INDEXLINK_},{<a href="gwins.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The Level dialog</h1>
+
+<p>
+Each entity in Varkon belongs to a specific level (or layer).
+Graphic viewing windows can display any combinations of up to
+2000 individual layers and you use the level dialog to control
+which levels to display. When a new window is created all levels
+are visible by default. You can then blank or unblank levels as
+you wish individually in each window. This means that you can
+display different combinations of levels in different windows.
+</p>
+
+<p>
+You can name a level if you want to. This way it is easier to
+remember which type of information that belongs to a specific
+level. If you give a name to a level the same name will be
+used for this level in all graphics windows.
+</p>
+
+<img class="center" src="level_dialog.jpg"></img>
+
+<p>
+The upper part of the level dialog is used to list the status
+of a selected range of levels. The default behaviour is to start
+with level 0 and then list as many additional levels as will fit
+in the window. To list another range of levels, enter the range 
+in the range input field as first-last (no spaces) and
+press <code>Apply</code>. If you enter 5-10 for example, and press
+<code>Apply</code>, level 5, 6, 7, 8, 9 and 10 will be selected.
+</p>
+
+<p>
+For each level in the list you can enter a name. You can also blank
+or unblank (display) the level by pressing the plus or minus button
+to the right of the name. In the example above, 15 levels are listed.
+The first 4 levels have names and all levels are visible except level
+2 and 3.
+</p>
+
+<p>
+You can also select a range by entering a name in the name input field
+and pressing <code>Apply</code>. Names may be entered using wildcards.
+The default value is * which is equal to all levels (that have names).
+El* will list all levels with a name starting with letters El etc.
+Other valid combinations are *text and *text*.
+</p>
+
+<p>
+Use <code>All used</code> to list all levels that are used in the current
+model.
+</p>
+
+<p>
+To close the view dialog press <code>Close</code>.
+To display this help press <code>Help</code> 
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

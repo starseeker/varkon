@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Analyzer Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -14,7 +14,7 @@
 *    anlist();       Open source an list files.
 *    anlmsg();       Return next diagnostic message.
 *    anyerr();       Report if any errors so far.
-*  
+*
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
 *    License as published by the Free Software Foundation; either
@@ -28,8 +28,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
 *
 ***********************************************************************/
 
@@ -48,6 +46,15 @@ extern V3MDAT sydata;
 
 #define  display_w 80
 #define  almax     100
+
+/*
+***POSIX functions mkstemp and fdopen().
+*/
+extern int   mkstemp();
+extern FILE *fdopen();
+
+
+
 
 static short alpgl;                /* Page length                */
 static short alpgw;                /* Page width                 */
@@ -337,7 +344,7 @@ static void  act();
 
 /*      Initialize diagnostic log file handler.
  *
- *      In:   logfnam    => Pointer to string containing name of file.                      
+ *      In:   logfnam    => Pointer to string containing name of file.
  *            lipag,     => Lines per page.
  *            licol,	 => Columns per line.
  *            list)      => TRUE print list.
@@ -345,18 +352,19 @@ static void  act();
  *      Out:  Nothing
  *
  *      Ret:  Severity code (negated).
- *              0 = file opened            
+ *              0 = file opened
  *             -2 = Can not open file.
  *
  *      (C)microform ab 1986-01-16 J. Wilander
- * 
+ *
  *      1999-04-19 Rewritten, R. Svedin
+ *      2008-02-15 mkstemp(), J.Kjellander
  *
  ******************************************************!*/
 
-  { 
-   int  i;
-   char *alp;
+  {
+   int i;
+   int fd;
 
    allist = list;                       /* Supress or print source listing */
 
@@ -376,20 +384,18 @@ static void  act();
 */
    while( ( alfile[i] = logfnm[i] ) != '\0' ) 
      i++;
-      
+
    alfile[i-3] = '\0';
 /*
-***XXX->XXXXXX for all platforms, 1999-01-24, J.Kjellander.
+***Use mkstemp to create a temporary file.
 */
-   strcat( alfile,"XXXXXX" );
-   alp = mktemp(alfile);
-       
+   strncat(alfile,"XXXXXX",7);
+   fd = mkstemp(alfile);
+
 #ifdef WIN32
-   if ( (allogf=fopen(alfile,"w+b")) == NULL )
-
+   if ( (allogf=fdopen(fd,"w+b")) == NULL )
 #else
-   if ( (allogf=fopen(alfile,"w+")) == NULL )
-
+   if ( (allogf=fdopen(fd,"w+")) == NULL )
 #endif
      {
      printf("mbsc: Can't open logfile %s.\n",alfile);

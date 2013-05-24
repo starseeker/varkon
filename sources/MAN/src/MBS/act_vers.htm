@@ -1,0 +1,50 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- act_varkon_version - Function})
+define({_INDEXLINK_},{<a href="statindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>act_varkon_version - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Returns the current Varkon version formatted as major_number.minor_number.revision_letter.
+A new Varkon version is usually the same as a new packaged release. Note that between
+packaged releases (which only occur one or a few times per year) the latest development
+sources are available from the SVN repository. Each update to the SVN repository gets
+a new SVN version number.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  varkon_vers:=act_varkon_version();
+
+  string varkon_vers;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<p>None.</p>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+
+<h2>Return value</h2>
+
+<p>A string value equal to the current Varkon version.</p>
+
+<h2>Comments</h2>
+
+<p>
+See also: <a href="act_svnv.htm">act_svn_version</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

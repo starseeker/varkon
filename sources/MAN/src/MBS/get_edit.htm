@@ -1,0 +1,58 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- get_edit - Function})
+define({_INDEXLINK_},{<a href="dialindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>get_edit - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Gets the text currently displayed in an edit.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  text:=get_edit(window, edit);
+
+  int    window;
+  int    edit;
+  string text;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>window</td>
+<td>- The id of the parent dialog window.</td>
+</tr>
+
+<tr>
+<td>edit</td>
+<td>- The id of the edit.</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>None.</td>
+<td></td>
+</tr>
+</table>
+
+<h2>Return value</h2>
+
+<p>
+A string holding a copy of the text displayed in the edit.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

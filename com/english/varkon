@@ -1,53 +1,51 @@
 #!/bin/sh
 #######################################################
 #
-# Startscript for Varkon 1.19
+# Startscript for Varkon
+# Version: 2.0
+# OS: Unix
+# Language: English
 #
 # See the comments below for instructions on
 # how to configure your installation.
 #
-# (C)�rebro university 2007
+# URL:  http://varkon.sourceforge.net
+# (C)2007 J.Kjellander
 #
 #######################################################
 
-# Root directory for VARKON installation. You may change 
-# this line to point to the right location.
-
-# alternative 1, relative path
+# Root directory for VARKON installation.
+# Alternative 1, relative path.
 VARKON_ROOT=`(cd $(dirname $0); cd ..; cd ..; pwd)`
 
-# alternative 2, explicit path
-# VARKON_ROOT=/home/username/varkon/varkon_1.Xx
+# Alternative 2, explicit path.
+# VARKON_ROOT=/home/username/varkon/varkon_2.Xx
 export VARKON_ROOT
 
-# Standard menufiles  (*.MDF, *.INC)
+# Module library path (*.MBO)
+# Varkon first searches the active job directory, jobdir,
+# then jobdir/lib and finally the path defined in
+# VARKON_LIB. VARKON_LIB may specify up to 10 paths
+# separated by colon ":". It is advisable to let
+# VARKON_LIB end with the path to the system library.
+VARKON_LIB=$VARKON_ROOT/lib
+export VARKON_LIB
 
-VARKON_MDF=$VARKON_ROOT/mdf/english
+# The following line is an example that includes
+# an additional directory in the path.
+# VARKON_LIB=/home/username/my_library:$VARKON_ROOT/lib
+
+# Menufile to load at startup.
+VARKON_MDF=$VARKON_ROOT/mdf/english/x11.MDF
 export VARKON_MDF
 
-# Project files  (*.PID)
-# You may change this location to some other place
-# like $HOME/pid if you want PID files from different
-# versions of VARKON to persist in a common place.
-# All users need write access to this directory
-
-VARKON_PID=$VARKON_ROOT/pid
-export VARKON_PID
-
 # Errormessages   (*.ERM)
-
 VARKON_ERM=$VARKON_ROOT/erm
 export VARKON_ERM
 
 # The VARKON documentation (*.htm)
-
 VARKON_DOC=$VARKON_ROOT/man
 export VARKON_DOC
-
-# System module library   (*.MBO)
-
-VARKON_LIB=$VARKON_ROOT/lib
-export VARKON_LIB
 
 # Temporary files
 # This line may be changed to /tmp or wherever you
@@ -55,12 +53,10 @@ export VARKON_LIB
 # directory should usually reside on the local machine
 # so you may set it up differently for different users.
 # All users need write access to this directory
-
 VARKON_TMP=$VARKON_ROOT/tmp
 export VARKON_TMP
 
 # Fonts for graphical text
-
 VARKON_FNT=$VARKON_ROOT/cnf/fnt
 export VARKON_FNT
 
@@ -69,37 +65,22 @@ export VARKON_FNT
 # like $HOME/cnf/plt if you want to reuse an old
 # configuration when installing a new version of VARKON.
 # All users need write access to this directory
-
 VARKON_PLT=$VARKON_ROOT/cnf/plt
 export VARKON_PLT
 
 # Icon bitmaps
-
 VARKON_ICO=$VARKON_ROOT/cnf/icons
 export VARKON_ICO
 
 # Tolerances
-
 VARKON_TOL=$VARKON_ROOT/cnf/tol
 export VARKON_TOL
 
 # Standard resources for X-Windows
-
 VARKON_INI=$VARKON_ROOT/cnf/ini/english
 export VARKON_INI
 
-# Default root for VARKON applications
-# This directory should normally be $HOME/app
-# or somewhere else outside the VARKON_ROOT tree
-# directory so that a new version of VARKON will
-# not interfere with old jobs.
-# All users need write access to this directory
-
-VARKON_PRD=$VARKON_ROOT/app
-export VARKON_PRD
-
 # PATH for executables (xvarkon, mbsc and plotterdrivers)
-
 VARKON_BIN=$VARKON_ROOT/bin
 export VARKON_BIN
 
@@ -115,7 +96,6 @@ export VARKON_BIN
 # if you want to. Don't edit the standard ini-file included
 # in the distribution or you will have to do it all
 # over again when updating the system.
-
 $VARKON_BIN/xvarkon -GLOBAL -i$VARKON_INI/linux
 
 # With an inifile of your own it would look something
@@ -124,6 +104,14 @@ $VARKON_BIN/xvarkon -GLOBAL -i$VARKON_INI/linux
 # $VARKON_BIN/xvarkon -GLOBAL  \
 # -i$VARKON_INI/linux -i$HOME/cnf/ini/english/my_own_inifile
 
-# If you want to run the system in pure drafting mode, add
-# "-r" to the command line.
-# $VARKON_BIN/xvarkon -r -i$VARKON_INI/linux
+# If you want to run the system in EXPLICIT mode only, add
+# "-EXPLICIT" to the command line and the system will not
+# prompt for this every time you start.
+# $VARKON_BIN/xvarkon -EXPLICIT -i$VARKON_INI/linux
+#
+# You can also use -GENERIC to force the system to start
+# in generic mode.
+#
+# If you want to specify a default job directory use the -jd
+# option on the command line. Here is an example:
+# $VARKON_BIN/xvarkon -GLOBAL -jd /home/my_directory/my_varkon_jobs

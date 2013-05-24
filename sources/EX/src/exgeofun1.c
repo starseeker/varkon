@@ -30,7 +30,7 @@
 *    EXusec();    Used by EXsect()
 *
 *    This file is part of the VARKON Execute Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -226,7 +226,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXon(
+        short     EXon(
         DBId     *idpek,
         DBfloat   u,
         DBfloat   v,
@@ -261,6 +261,7 @@ extern V2NAPA  defnap;
  *      1997-12-17 sur209(), J.Kjellander
  *      1998-09-24 b_plan, J.Kjellander
  *      1999-12-18 sur209->varkon_sur_eval_gm, G  Liden
+ *      2007-09-24 3D dims, J.Kjellander
  *
  ******************************************************!*/
 
@@ -268,6 +269,7 @@ extern V2NAPA  defnap;
     DBAny  gmpost;
     DBSeg *segpek;
     DBSeg  arcseg[4];
+    DBCsys csy;
     EVALS  xyz;
     DBptr  la;
     DBetype  typ;
@@ -329,23 +331,27 @@ extern V2NAPA  defnap;
       break;
 
       case LDMTYP:
-      DBread_ldim(&gmpost.ldm_un, la);
+      DBread_ldim(&gmpost.ldm_un, &csy, la);
       status=GEposition(&gmpost,NULL,u,v,vecptr);
+      if ( gmpost.ldm_un.pcsy_ld > 0 ) GEtfpos_to_basic(vecptr,&csy.mat_pl,vecptr);
       break;
 
       case CDMTYP:
-      DBread_cdim(&gmpost.cdm_un, la);
+      DBread_cdim(&gmpost.cdm_un, &csy, la);
       status=GEposition(&gmpost,NULL,u,v,vecptr);
+      if ( gmpost.cdm_un.pcsy_cd > 0 ) GEtfpos_to_basic(vecptr,&csy.mat_pl,vecptr);
       break;
 
       case RDMTYP:
-      DBread_rdim(&gmpost.rdm_un, la);
+      DBread_rdim(&gmpost.rdm_un, &csy, la);
       status=GEposition(&gmpost,NULL,u,v,vecptr);
+      if ( gmpost.rdm_un.pcsy_rd > 0 ) GEtfpos_to_basic(vecptr,&csy.mat_pl,vecptr);
       break;
 
       case ADMTYP:
-      DBread_adim(&gmpost.adm_un, la);
+      DBread_adim(&gmpost.adm_un, &csy, la);
       status=GEposition(&gmpost,NULL,u,v,vecptr);
+      if ( gmpost.adm_un.pcsy_ad > 0 ) GEtfpos_to_basic(vecptr,&csy.mat_pl,vecptr);
       break;
 
       default:
@@ -366,7 +372,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXion(
+        short     EXion(
         DBId     *idpek,
         DBVector *vecptr,
         DBshort   tnr,
@@ -450,7 +456,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXtang(
+        short     EXtang(
         DBId     *idpek,
         DBfloat   t,
         DBTmat   *crdptr,
@@ -539,7 +545,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXitan(
+        short     EXitan(
         DBId     *idpek,
         DBVector *vecptr,
         DBshort   tnr,
@@ -615,7 +621,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXcurv(
+        short    EXcurv(
         DBId    *idpek,
         DBfloat  t,
         DBfloat *fltptr)
@@ -688,7 +694,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXicur(
+        short    EXicur(
         DBId    *idpek,
         DBfloat  kappa,
         DBshort  tnr,
@@ -756,7 +762,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXcen(
+        short     EXcen(
         DBId     *idpek,
         DBfloat   t,
         DBTmat   *crdptr,
@@ -835,7 +841,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXnorm(
+        short     EXnorm(
         DBId     *idpek,
         DBfloat   u,
         DBfloat   v,
@@ -932,7 +938,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXarcl(
+        short    EXarcl(
         DBId    *idpek,
         DBfloat *length)
 
@@ -1009,7 +1015,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXiarc(
+        short    EXiarc(
         DBId    *idpek,
         DBfloat  l,
         DBfloat *tptr)
@@ -1109,7 +1115,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXsuar(
+        short    EXsuar(
         DBId    *idpek,
         DBfloat  tol,
         DBfloat *p_area)
@@ -1203,7 +1209,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXsear(
+        short    EXsear(
         DBId    *idpek,
         DBfloat  tol,
         DBfloat *p_area)
@@ -1320,7 +1326,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXsecg(
+        short     EXsecg(
         DBId     *idpek,
         DBfloat   tol,
         DBVector *p_cgrav)
@@ -1434,7 +1440,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXtxtl(
+        short    EXtxtl(
         char    *str,
         DBfloat *l)
 
@@ -1466,7 +1472,7 @@ extern V2NAPA  defnap;
 /********************************************************/
 /*!******************************************************/
 
-        short EXsect(
+        short     EXsect(
         DBId     *idp1,
         DBId     *idp2,
         DBint     inr,
@@ -1688,7 +1694,7 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-        short EXnsec(
+        short    EXnsec(
         DBId    *idp1,
         DBId    *idp2,
         DBshort  inr,
@@ -1874,7 +1880,7 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-       short EXidnt(
+       short    EXidnt(
        DBetype *typmsk,
        DBId     ident[],
        bool    *end,
@@ -1911,7 +1917,6 @@ end:
     WPerhg();
 
     return(0);
-
   }
   
 /********************************************************/
@@ -1952,8 +1957,8 @@ end:
       pos.y_gm = *py;
       pos.z_gm = 0.0;
       GEtfpos_to_local(&pos,lsyspk,&pos);
-      *px = pos.x_gm;
-      *py = pos.y_gm;
+     *px = pos.x_gm;
+     *py = pos.y_gm;
       }
 
     return(0);
@@ -1962,7 +1967,7 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-       short EXscr(
+       short    EXscr(
        DBshort *pix,
        DBshort *piy,
        DBint   *win_id)
@@ -1997,31 +2002,32 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-       short EXarea(
+       short     EXarea(
        DBId     *ridvek,
        DBshort   nref,
        DBfloat   dist,
        DBfloat  *area,
        DBVector *tp)
 
-/*      Beräknar area och tyngdpunkt. MBS-funktionerna
- *      AREA() och CGRAV().
+/*      Calculate area and centre of gravity.
+ *      Used by MBS-functions AREA() and CGRAV().
  *
- *      In: ridvek => Pekare till vektor med referenser.
- *          nref   => Antal referenser.
- *          dist   => Avstånd mellan snittlinjer.
+ *      In: ridvek => C ptr to array of refs.
+ *          nref   => Number of refs.
+ *          dist   => Stepsize.
  *
- *      Ut: *area  => Beräknad area.
- *          *tp    => Beräknad tyngdpunkt.
+ *      Out: *area  => Area.
+ *           *tp    => Centre of gravity.
  *
- *      FV:      0 = Ok.
- *          EX1402 = Den refererade storhten finns ej i DB
- *          EX1412 = Otillåten geometri-typ för denna operation
- *          EX1962 = Fel från malloc().
+ *      Return:  0 = Ok.
+ *          EX1402 = Entity does not exist in DB
+ *          EX1412 = Illegal entity type
+ *          EX1962 = malloc() error.
  *
  *      (C)microform ab 26/7/90 J. Kjellander
  *
- *      7/6/93   Dynamiska segment, J. Kjellander
+ *      7/6/93     Dynamiska segment, J. Kjellander
+ *      2007-09-30 3D, J.Kjellander
  *
  ******************************************************!*/
 
@@ -2030,14 +2036,16 @@ end:
     DBptr    la;
     DBetype  typ;
     short    nlin,narc,ncur,status;
-    DBLine  *linvek=NULL,*lpvek[GMMXXH];
-    DBArc   *arcvek=NULL,*apvek[GMMXXH];
-    DBCurve *curvek=NULL,*cpvek[GMMXXH];
-    DBSeg   *spvek[GMMXXH];
+    DBLine  *lpvek[GMMXXH],lin[GMMXXH];
+    DBArc   *apvek[GMMXXH],arc[GMMXXH];
+    DBSeg   *aspvek[GMMXXH],arcseg[GMMXXH][4];
+    DBCurve *cpvek[GMMXXH],cur[GMMXXH];
+    DBSeg   *cspvek[GMMXXH];
+    DBVector pos;
 
 /*
-***Hämta geometri-data för samtliga refererade storheter och
-***lagra i mallokerade minnesareor.
+***Get the geometry of all referenced entities and save
+***in mallocated C memory.
 */
     nlin = narc = ncur = 0;
 
@@ -2049,36 +2057,36 @@ end:
       switch ( typ )
          {
          case (LINTYP):
-         if ( nlin == 0 )
-           {
-           if ( (linvek=(DBLine *)v3mall((unsigned)(GMMXXH*sizeof(DBLine)),
-                           "EXarea")) == NULL ) return(erpush("EX1962",""));
-           }
-         DBread_line(&linvek[nlin],la);
-         lpvek[nlin] = &linvek[nlin];
-         ++nlin;
+         DBread_line(&lin[nlin],la);
+         lpvek[nlin] = &lin[nlin];
+         if ( lsyspk != NULL ) GEtfLine_to_local(lpvek[nlin],lsyspk,lpvek[nlin]);
+       ++nlin;
          break;
 
          case (ARCTYP):
-         if ( narc == 0 )
+         DBread_arc(&arc[narc],&arcseg[narc][0],la);
+         if ( arc[narc].ns_a == 0 )
            {
-           if ( (arcvek=(DBArc *)v3mall((unsigned)(GMMXXH*sizeof(DBArc)),
-                          "EXarea")) == NULL ) return(erpush("EX1962",""));
+           pos.x_gm = arc[narc].x_a;
+           pos.y_gm = arc[narc].y_a;
+           pos.z_gm = 0.0;
+
+           if ( GE300(&pos,arc[narc].r_a,arc[narc].v1_a,arc[narc].v2_a,NULL,
+                 &arc[narc],&arcseg[narc][0],3) < 0 ) return(erpush("GE7213","GE300"));
            }
-         DBread_arc(&arcvek[narc],NULL,la);
-         apvek[narc] = &arcvek[narc];
-         ++narc;
+         apvek[narc] = &arc[narc];
+         aspvek[narc] = &arcseg[narc][0];
+         if ( lsyspk != NULL )
+           GEtfArc_to_local(apvek[narc],aspvek[narc],lsyspk,apvek[narc],aspvek[narc]);
+       ++narc;
          break;
 
          case (CURTYP):
-         if ( ncur == 0 )
-           {
-           if ((curvek=(DBCurve *)v3mall((unsigned)(GMMXXH*sizeof(DBCurve)),
-                          "EXarea")) == NULL ) return(erpush("EX1962",""));
-           }
-         DBread_curve(&curvek[ncur],NULL,&spvek[ncur],la);
-         cpvek[ncur] = &curvek[ncur];
-         ++ncur;
+         DBread_curve(&cur[ncur],NULL,&cspvek[ncur],la);
+         cpvek[ncur] = &cur[ncur];
+         if ( lsyspk != NULL )
+           GEtfCurve_to_local(cpvek[narc],cspvek[narc],NULL,lsyspk,cpvek[narc],cspvek[narc],NULL);
+       ++ncur;
          break;
 
          default:
@@ -2086,30 +2094,29 @@ end:
          }
       }
 /*
-***Beräkna arean.
+***Calculate area and centre of gravity.
 */
-    if ( GEarea2D(lpvek,nlin,apvek,narc,cpvek,spvek,ncur,dist,area,tp) < 0 )
+    if ( GEarea2D(lpvek,nlin,apvek,aspvek,narc,cpvek,cspvek,ncur,dist,area,tp) < 0 )
       status = erpush("EX1552","");
-    else 
+    else
       status = 0;
 /*
-***Deallokera minne.
+***Deallocate C memory.
 */
-    if ( nlin > 0 ) v3free(linvek,"EXarea");
-    if ( narc > 0 ) v3free(arcvek,"EXarea");
     if ( ncur > 0 )
       {
-      v3free(curvek,"EXarea");
-      for ( i=0; i<ncur; ++i ) DBfree_segments(spvek[i]);
+      for ( i=0; i<ncur; ++i ) DBfree_segments(cspvek[i]);
       }
-
+/*
+***The end.
+*/
     return(status);
   }
-  
+
 /********************************************************/
 /*!******************************************************/
 
-        short EXusec(
+        short     EXusec(
         DBId     *idp1,
         DBId     *idp2,
         DBshort   inr,
@@ -2173,7 +2180,7 @@ end:
   pdat2 = NULL;
 /*
 ***Initializations for surface/curve intersect
-***No start point       
+***No start point.
 */
    start.x_gm =  0.0;
    start.y_gm =  0.0;
@@ -2401,7 +2408,7 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-       short EXpinc(
+       short     EXpinc(
        DBVector *p1,
        DBVector *p2,
        DBfloat   r1,

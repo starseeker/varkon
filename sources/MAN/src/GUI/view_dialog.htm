@@ -1,0 +1,57 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Views})
+define({_INDEXLINK_},{<a href="gwins.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The view dialog</h1>
+
+<p>
+In Varkon you can rotate your model and view it from different directions
+in all three dimensions. The view dialog is used to rotate the model
+into a specific orientation and (optionally) save that view with a name. In
+the OpenGL graphics window you can also rotate your model using the middle
+mouse button. The view dialog has 3 sections, see below.
+</p>
+
+<img class="center" src="view_dialog.jpg"></img>
+
+<h2>The upper section</h2>
+
+<p>
+The upper section lists all currently defined views. The first 8 views are
+created automatically when you start a new job. In the example above the
+user has added two views, My_view-1 and My_view-2. The xy button is highlighted
+because the xy view is active. If you press another button that view is 
+displayed instead.
+</p>
+
+<h2>The middle section</h2>
+
+<p>
+The middle section includes functions to rotate the model and save or delete views.
+Use the <code>Coordinate system</code> button to select a coordinate system in
+your model. Varkon will then rotate the model so that the Z-axis of the selected
+coordinate system becomes the viewing direction. Use <code>Camera position</code>
+to specify any viewing position. Note that in the OpenGL graphics window you can
+also rotate your model using the middle mouse button.
+</p>
+
+<p>
+To save the current view, enter the name you want to use in the name field and
+press <code>Save as</code>. To delete a view, enter the name of the view you want
+to delete and press <code>Delete view</code>.
+</p>
+
+<h2>The bottom section</h2>
+
+<p>
+To close the view dialog press <code>Close</code>.
+To display this help press <code>Help</code> 
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

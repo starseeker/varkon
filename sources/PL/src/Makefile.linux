@@ -1,8 +1,8 @@
 ##########################################################
 #
-#   Makefile for PL with gcc and GNU/linux
+#   Makefile for PL on GNU/linux
 #
-#  (C)Microform AB 1999-11-17 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 

@@ -1,0 +1,119 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- act_width - Function})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Introduction</h1>
+
+<p>
+The MBS programming language is an integrated part of the Varkon
+system. Its main purpose is to act as a generic product modeling language
+but it can also be used for other things.
+</p>
+
+<p>
+All real products have some kind of structure.
+They usually consist of several different parts and it is therefore important
+to model the parts individually. MBS uses the concept of a MODULE to generically
+define each type of part that is used in a product. Here's an example...
+</p>
+
+<pre class="box">
+  MODULE plate_with_hole(
+    FLOAT width:=100            >"Horisontal size ?";
+    FLOAT height:=50            >"Vertical size ?";
+    FLOAT hole_diameter:=30     >"Size of hole ?";
+    STRING material*10:="Steel" >"What material ?");
+
+  BEGINMODULE
+    lin_ang(#1,vec(0,0),0,width);
+    lin_offs(#2,#1,-height);
+    lin_free(#3,startp(#1),startp(#2));
+    lin_free(#4,endp(#1),endp(#2));
+    arc_1pos(#5,vec(width/2,height/2),hole_diameter/2);
+  ENDMODULE
+</pre>
+
+<p>
+This module defines a rectangular plate with a hole in
+the center. It has a name (plate_with_hole), it has 4 parameters with default
+values and prompt strings (width, height, hole_diameter, material) and
+it has a body with statements that defines its geometty generically.
+</p>
+
+<p>
+In order to use this module to create an actual instance (part)
+of a plate_with_hole we must first compile the text based MBS file into
+a binary MBO equivalent and then call the module from within the Varkon
+system. This can be done interactively or by another module. In any case
+we have to provide actual values for all parameters or at least accept
+the defaults. Varkon then evaluates (executes) the module using actual
+parameters and stores the result in the DB database. This is what it
+looks like:
+</p>
+
+<img src="intro_1.jpg"></img>
+
+<p>
+Each time we call
+the module Varkon will evaluate it again and store a new instance in DB.
+The result in DB from evaluating a module is called a part.
+Each part holds its name, its actual parameter values and the entities
+created by the statements in the body of the module.
+</p>
+
+<p>
+Suppose now that we want to model a product consisting
+of many differently sized plates next to each other with
+a small distance between them.
+</p>
+
+<pre class="box">
+  MODULE many_plates(
+    INT   n:=5 >"How many ?";
+    FLOAT d:=2 >"At what distance ?");
+
+    INT i; ! This is a local variable
+
+  BEGINMODULE
+    for i:=1 to n do
+      csys_1p(#1,"Z-plane",vec(0,0,i*d),0,0:PEN=2);
+      part(#2,plate_with_hole(10,10-i,2,"Copper"),refc(1,i));
+    endfor;
+  ENDMODULE
+</pre>
+
+<p>
+The result of evaluating this module is a part named many_plates
+consisting of a number of other parts named plate_with_hole. Each
+plate_with_hole is differently sized and placed in a plane of increasing
+Z. Here is what it looks like:
+</p>
+
+<img src="intro_2.jpg"></img>
+
+<p>
+A part may consist of any number of other parts as
+well as basic geometric entities like lines or arcs. Parts may also consist
+of parts that consist of parts and so on down to a depth of maximum 10
+levels.
+</p>
+
+<p>
+In the example above we have used lin_ang(), lin_offs(), lin_free(), arc_1pos()
+and csys_1p() to create the geometry. MBS includes more than 60 different
+procedures that create geometry. There is also more than 300 additional procedures
+that can be used to do other things ! Learning MBS syntax is easy. Learning how
+to use MBS procedures takes a little longer but they all are documented
+in this manual and you only need a few of them to get started.
+</p>
+
+<h2>Good luck !</h2>
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

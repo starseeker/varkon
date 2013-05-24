@@ -17,20 +17,5 @@ s11 = "%3",a13      ! Interrupt = <CTL>c
 !
 ! Funktionstangenter
 !
-s21 = "%27A",m14  ! PF1  Byt aktivt attribut
-s22 = "%27B",f96  ! PF2  Byt aktiv penna
-s23 = "%27C",f90  ! PF3  Byt aktiv niv}
-s24 = "%27D",f196 ! PF4  Nytt Fönster
-s25 = "%27E",M356 ! PF5  Analysera en storhet
-s26 = "%27F",M379 ! PF6  Analysera part
-s27 = "%27G",M418 ! PF7  Anropskedja
-s28 = "%27H",f146 ! PF8  Dekompilera
-s29 = "%27I",f5   ! PF9  K|r aktiv modul
-s30 = "%27J",f170 ! PF10 X-{ndra part
-s31 = "%27K",f168 ! PF11 Editera
-s32 = "%27L",f10  ! PF12 Ta bort storhet
-!
-! N}gra shiftade funktionstangenter, mest som test.
-!
-s33 = "%27a",f10  ! <SHIFT>PF1 Ta bort storhet
-s34 = "%27b",f10  ! <SHIFT>PF2 Ta bort storhet
+s21 = "%27A",f153  ! PF1  Help
+

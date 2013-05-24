@@ -1,0 +1,190 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- The keyboard})
+define({_INDEXLINK_},{<a href="GUI.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The keyboard</h1>
+
+<p>
+Varkon will work with most types of keyboards. Keys with
+special meaning are described below.
+</p>
+
+<h2>RETURN (CR or Enter)</h2>
+
+<p>
+Rejects input, exits the current situation and returns to
+the previous state of input.
+</p>
+
+<h2>TAB</h2>
+
+<p>
+Similar to RETURN but returns back to the main menu. If a text input
+window is active the TAB key moves between text fields.
+</p>
+
+<h2>Arrow keys</h2>
+
+<p>
+Left and right arrows are used to move the text cursor within a line.
+Up and down arrows are used to move the text cursor between fields
+in a multiple field input window.
+</p>
+
+<h2>BS and DEL</h2>
+
+<p>
+BS (backspace) erases text from right to left. DEL (delete) erases
+text from right to left.
+</p>
+
+<h2>End and Home</h2>
+
+<p>
+The End key moves the text cursor to the end of the line. The Home
+key moves the text cursor to the beginning of the line.
+</p>
+
+<h2>Special keys during mouse input</h2>
+
+<p>
+During entity selections, when the mouse is used in a graphics window
+to select a single entity the following keys (defined by t-strings in
+the menu file) can be used to restrict the selection to a specific type
+of entity:
+</p>
+
+<table>
+
+<tr>
+<th>Key</th>
+<th>t-string</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><b>p</b></td>
+<td>t80</td>
+<td>Closest point</td>
+</tr>
+
+<tr>
+<td><b>l</b></td>
+<td>t81</td>
+<td>Closest line</td>
+</tr>
+
+<tr>
+<td><b>a</b></td>
+<td>t82</td>
+<td>Closest arc</td>
+</tr>
+
+<tr>
+<td><b>c</b></td>
+<td>t83</td>
+<td>Closest curve</td>
+</tr>
+
+<tr>
+<td><b>s</b></td>
+<td>t84</td>
+<td>Closest surface</td>
+</tr>
+
+<tr>
+<td><b>b</b></td>
+<td>t96</td>
+<td>Closest b_plane</td>
+</tr>
+
+<tr>
+<td><b>m</b></td>
+<td>t79</td>
+<td>Closest mesh</td>
+</tr>
+
+<tr>
+<td><b>C</b></td>
+<td>t85</td>
+<td>Closest coordinate system</td>
+</tr>
+
+<tr>
+<td><b>t</b></td>
+<td>t86</td>
+<td>Closest text</td>
+</tr>
+
+<tr>
+<td><b>L</b></td>
+<td>t87</td>
+<td>Closest linear dimension</td>
+</tr>
+
+<tr>
+<td><b>D</b></td>
+<td>t88</td>
+<td>Closest diameter dimension</td>
+</tr>
+
+<tr>
+<td><b>R</b></td>
+<td>t89</td>
+<td>Closest radius dimension</td>
+</tr>
+
+<tr>
+<td><b>A</b></td>
+<td>t90</td>
+<td>Closest angular dimension</td>
+</tr>
+
+<tr>
+<td><b>X</b></td>
+<td>t91</td>
+<td>Closest hatch</td>
+</tr>
+
+<tr>
+<td><b>P</b></td>
+<td>t95</td>
+<td>Closest part</td>
+</tr>
+
+<tr>
+<td><b>i</b></td>
+<td>t97</td>
+<td>Enter identity as text</td>
+</tr>
+
+<tr>
+<td><b>SPACE</b></td>
+<td>t99</td>
+<td>Any type of entity</td>
+</tr>
+
+</table>
+
+<p>
+During input of positions with the cursor the "g" key (t93) can be used
+to snap to the closest grid point even if the grid is is not active.
+</p>
+
+
+<h2>Programmable Function keys</h2>
+
+<p>
+F1 is by defult programmed to acces Varkon's context sensitive help
+system. You can program additional function keys to pop up menus,
+call Varkon functions or modules etc. See the <a href="../appdev/MDFsyntax.htm">
+Menu files section</a>  of the Application developers manual for more information.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

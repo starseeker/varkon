@@ -1,0 +1,43 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- tan - Function})
+define({_INDEXLINK_},{<a href="mathindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>tan - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Returns the tangent of an argument given in degrees.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  x:=tan(angle);
+
+  float x;
+  float angle;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>angle</td>
+<td>- Angle in the range from -360 to +360 degree</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>A positive or negative FLOAT value. For an angle of +90 or -90 tan is undefined.</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

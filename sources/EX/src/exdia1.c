@@ -17,7 +17,7 @@
 *    EXlsln();      Interface routine for LST_LIN
 *
 *    This file is part of the VARKON Execute  Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -33,13 +33,12 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*
-*
 *********************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
 #include "../include/EX.h"
+#include "../../WP/include/WP.h"
 
 extern char    txtmem []; /* Textsträngar */
 extern char   *txtind[];  /* Pekare till t-strängar */
@@ -47,31 +46,25 @@ extern MNUALT  malist[];  /* Menyalternativ */
 extern MNUDAT  mnutab[];  /* Menyer */
 extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
 
-#ifdef WIN32
-#include "../../WP/include/WP.h"
-#endif
-
 /*!******************************************************/
 
         short EXpspt(char *pstr)
  
-/*      Interface-rutin för PSH_PMT. Skriver en sträng i
- *      promt-arean.
+/*      Interface routine for PSH_PMT().
  *
- *      In:  *pstr => Pekare till prompt-sträng.
+ *      In: *pstr => C ptr to prompt string.
  *
- *      Ut:  Inget.
- *
- *      FV:  0     => Ok.
+ *      Return: Always 0.
  *
  *      (C)microform ab 13/4/87 R. Svedin
  *
  *      19/4/87  Kodning, J. Kjellander
+ *      2007-09-22 WPaddmess_mcwin(), J.Kjellander
  *
  ******************************************************!*/
 
   {
-    IGplma(pstr,IG_MESS);
+    WPaddmess_mcwin(pstr,WP_MESSAGE);
 
     return(0);
   }
@@ -81,23 +74,20 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
 
         short EXpopt()
  
-/*      Interface-rutin för POP_PMT. Stryker aktiv promt
- *      från skärm och ur stacken.
+/*      Interface routine for POP_PMT(). Clears
+ *      message line.
  *
- *      In:  Inget.
- *
- *      Ut:  Inget.
- *
- *      FV:  0     => Ok.
+ *      Return: Always 0.
  *
  *      (C)microform ab 13/4/87 R. Svedin
  *
  *      19/4/87  Kodning, J. Kjellander
+ *      2007-09-22 WPclear_mcwin(), J.Kjellander
  *
  ******************************************************!*/
 
   {
-    IGrsma();
+    WPclear_mcwin();
 
     return(0);
   }

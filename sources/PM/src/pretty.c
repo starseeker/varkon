@@ -4,11 +4,11 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    Pretty print routins for PM structures to MBS source format
 *
-*    short ppinit()    Initiera pretty-printern
+*    short ppinit()    Init pretty printer
 *    short pprsts()    print statement to string
 *    short pprst()     print statement
 *    short pprsl()     print statement list
@@ -16,7 +16,7 @@
 *    short pprex()     print expression
 *    short pprel()     print expression list
 *
-*    short pprmo();    print modul
+*    short pprmo();    print module
 *
 *    short pprpa()     print module parameter
 *    short pprpl()     print module parameter list
@@ -49,6 +49,7 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
+#include "../../WP/include/WP.h"
 #include <string.h>
 #include <ctype.h>
 
@@ -72,14 +73,14 @@ static void  ppkeyw(char *keyw);
 static void  fixsli(char str[]);
 static void  fixflt(double f, char *str);
 
-static FILE *mbsfp = NULL;      /* MBS-file pointer */
-static int  ppmode = PPSTRING;  /* Output-mode for pretty */
-static short ppstat = 0;        /* Output-status for pretty */
-static short level = 0;         /* indentation level for output */
-static char pplin[ PPLINLEN ];  /* line buffer */
-static char *pplinp = pplin;    /* pointer to current position in pplin */
-static pmmoty modtyp = _3D;     /* for vec(x,y,ÄzÅ)  */
-static short ppindl = DEFINDL;
+static FILE  *mbsfp = NULL;       /* MBS-file pointer */
+static int    ppmode = PPSTRING;  /* Output-mode for pretty */
+static short  ppstat = 0;         /* Output-status for pretty */
+static short  level = 0;          /* indentation level for output */
+static char   pplin[ PPLINLEN ];  /* line buffer */
+static char  *pplinp = pplin;     /* pointer to current position in pplin */
+static pmmoty modtyp = _3D;       /* for vec(x,y,ÄzÅ)  */
+static short  ppindl = DEFINDL;
 
 /********************************************************/
 /*!******************************************************/
@@ -118,9 +119,8 @@ static short ppindl = DEFINDL;
 /********************************************************/
 /*!******************************************************/
 
-        short pprsts(
+        short  pprsts(
         pm_ptr statla,
-        short  geotyp,
         char  *str,
         int    ntkn)
 
@@ -142,11 +142,9 @@ static short ppindl = DEFINDL;
   {
    short status;
 /*
-***Initiera.
+***Init.
 */
    ppinit(PPSTRING,NULL);
-   if ( geotyp == 2 ) modtyp = _2D;
-   else               modtyp = _3D;
 /*
 ***Dekompilera. Negativ status från pprst() innebär att
 ***modulen är konstig på något sätt.
@@ -251,11 +249,9 @@ static short ppindl = DEFINDL;
            {
            indent( level );
            ppkeyw( "ELSE " );
-/**           pplisc( ifp->stat ); **/
            pprlin();
            pprsl(ifp->ifstat);           /* print statement list */
            }
- 
         indent( level );
         ppkeyw( "ENDIF" );
 
@@ -589,7 +585,7 @@ static short ppindl = DEFINDL;
       }
 
    if ( ( status = pmgexp( exprla, &np ) ) != 0 )
-      {  
+      {
       return( status );                         /* Error */
       }
 
@@ -1240,12 +1236,12 @@ static short ppindl = DEFINDL;
    ppinit(mode,filpek);
 
    if ( ( status = pmgmod( (pm_ptr)0, &np ) ) != 0 )
-      {  
+      {
       return( status );         /* Error */
       }
 
    if ( np->monocl != MODULE )
-      {  
+      {
       return( erpush( "PM2542", "" ) );   /*Error  Not a module node */
       }
 
@@ -1259,9 +1255,10 @@ static short ppindl = DEFINDL;
    else if ( np->moat_ == MACRO )  pprint( "MACRO " );
 
    modtyp = np->moty_;
-
+/*
    if ( np->moty_ == _2D ) ppkeyw( "DRAWING " );
    else if ( np->moty_ == _3D ) ppkeyw( "GEOMETRY " );
+*/
 
    if ( ( status = pmgstr( np->mona_, &str ) ) != 0 ) return( status );
 

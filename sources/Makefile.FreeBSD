@@ -3,38 +3,50 @@
 #   Makefile.FreeBSD
 #   --------------
 #
-#   Top level makefile for xvarkon with FreeBSD
+#   Top level makefile for Varkon with FreeBSD
 #
-#  (C)Microform AB 1999-05-03 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
 # The varkon object libraies
 
-LIBS  = $(VARKON_ROOT)/sources/IG/lib/IGlib.a \
-        $(VARKON_ROOT)/sources/PM/lib/PMlib.a \
-        $(VARKON_ROOT)/sources/EX/lib/EXlib.a \
-        $(VARKON_ROOT)/sources/GP/lib/GPlib.a \
-        $(VARKON_ROOT)/sources/DB/lib/DBlib.a \
-        $(VARKON_ROOT)/sources/WP/lib/WPlib.a \
-        $(VARKON_ROOT)/sources/GE/lib/GElib.a
+LIBS  = IG/lib/IGlib.a \
+        PM/lib/PMlib.a \
+        EX/lib/EXlib.a \
+        DB/lib/DBlib.a \
+        WP/lib/WPlib.a \
+        GE/lib/GElib.a
 
-# Xlibs 
+# Xlibs
 
-XLIBS = -lX11
+XLIBS =	-L/usr/local/lib -lX11 -lXext -lXpm
 
-# OpenGL libs (currently not supported on Sun's)
+# OpenGL libs
 
-GLIBS = -IGL -IGLU
+GLIBS = -lGL -lGLU
+
+# The TIFF library
+
+ifeq ($(DV3TIFF),TRUE)
+TIFFLIBS = -ltiff
+endif
+
+# ODBC libraries. You may have to change this line
+# to reflect the location of your ODBC libs.
+
+ifeq ($(DV3ODBC),TRUE)
+SQLLIBS = -L/usr/local/lib/unixODBC -lmyodbc3
+endif
 
 # The actual executable, xvarkon.
 
-XVARKON = $(VARKON_ROOT)/bin/xvarkon
+XVARKON = ../bin/xvarkon
 
 # Targets
 
 $(XVARKON): $(LIBS)
-	cc $(LIBS) $(XLIBS) -lm -o $(XVARKON)
+	cc $(LIBS) $(SQLLIBS) $(XLIBS) $(GLIBS) $(TIFFLIBS) -lm -o $(XVARKON)
 
 
 ##########################################################

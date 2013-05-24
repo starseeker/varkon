@@ -1,0 +1,347 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- set - Procedure})
+define({_INDEXLINK_},{<a href="miscindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>set - Procedure</h1>
+
+<h2>Description</h2>
+
+<p>
+Changes the current value for one or more attributes. The new value
+will continue to be in effect as long as execution continues within
+this module or any modules called by this module.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  set(attribute = value, attribute = value,.......)
+</pre>
+
+<p>
+One or more attributes with value may be specified in the same call.
+</p>
+
+<h2>Attributes</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Max</th>
+<th>Min</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>PEN</td>
+<td>INT</td>
+<td>32768</td>
+<td>0</td>
+<td>1</td>
+<td>Pen or colour number</td>
+</tr>
+
+<tr>
+<td>LEVEL</td>
+<td>INT</td>
+<td>1999</td>
+<td>0</td>
+<td>0</td>
+<td>Level number</td>
+</tr>
+
+<tr>
+<td>WIDTH</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>Graphical width</td>
+</tr>
+
+<tr>
+<td>BLANK</td>
+<td>INT</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>Visible/unvisible</td>
+</tr>
+
+<tr>
+<td>HIT</td>
+<td>INT</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>Selectable/unselectable</td>
+</tr>
+
+<tr>
+<td>SAVE</td>
+<td>INT</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>Save in DB/Don't save</td>
+</tr>
+
+<tr>
+<td>PFONT</td>
+<td>INT</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>Pointfont</td>
+</tr>
+
+<tr>
+<td>LFONT</td>
+<td>INT</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>Linefont</td>
+</tr>
+
+<tr>
+<td>AFONT</td>
+<td>INT</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>Arcfont</td>
+</tr>
+
+<tr>
+<td>CFONT</td>
+<td>INT</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>Curvefont</td>
+</tr>
+
+<tr>
+<td>MFONT</td>
+<td>INT</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>Meshfont</td>
+</tr>
+
+<tr>
+<td>TFONT</td>
+<td>INT</td>
+<td>-</td>
+<td>0</td>
+<td>0</td>
+<td>Textfont</td>
+</tr>
+
+<tr>
+<td>XFONT</td>
+<td>INT</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>Hatchfont</td>
+</tr>
+
+<tr>
+<td>PSIZE</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>Point size</td>
+</tr>
+
+<tr>
+<td>LDASHL</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>3.0</td>
+<td>Dashlengt for lines</td>
+</tr>
+
+<tr>
+<td>ADASHL</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>3.0</td>
+<td>Dashlengt for arcs</td>
+</tr>
+
+<tr>
+<td>CDASHL</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>3.0</td>
+<td>Dashlengt for curves</td>
+</tr>
+
+<tr>
+<td>SDASHL</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>3.0</td>
+<td>Dashlengt for surfaces</td>
+</tr>
+
+<tr>
+<td>NULINES</td>
+<td>INT</td>
+<td>-</td>
+<td>0</td>
+<td>1</td>
+<td>Number of surface U-lines</td>
+</tr>
+
+<tr>
+<td>NVLINES</td>
+<td>INT</td>
+<td>-</td>
+<td>0</td>
+<td>1</td>
+<td>Number of surface V-lines</td>
+</tr>
+
+<tr>
+<td>XDASHL</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>3.0</td>
+<td>Dashlengt for hatching</td>
+</tr>
+
+<tr>
+<td>TSIZE</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>5.0</td>
+<td>Text size</td>
+</tr>
+
+<tr>
+<td>TWIDTH</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>60</td>
+<td>Text width</td>
+</tr>
+
+<tr>
+<td>TSLANT</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>-</td>
+<td>15.0</td>
+<td>Text slant</td>
+</tr>
+
+<tr>
+<td>TPMODE</td>
+<td>INT</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>Text 3D mode</td>
+</tr>
+
+<tr>
+<td>DTSIZ</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>5.0</td>
+<td>Dim. text size</td>
+</tr>
+
+<tr>
+<td>DASIZ</td>
+<td>FLOAT</td>
+<td>-</td>
+<td>&gt;0.0</td>
+<td>5.0</td>
+<td>Dim. arrow size</td>
+</tr>
+
+<tr>
+<td>DNDIG</td>
+<td>INT</td>
+<td>15</td>
+<td>0</td>
+<td>0</td>
+<td>Dim. precision</td>
+</tr>
+<tr>
+
+<td>DAUTO</td>
+<td>INT</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>Dim. text on/off</td>
+</tr>
+</table>
+
+<h2>Example</h2>
+
+<pre>
+  set(LFONT=1, LDASHL=15);
+</pre>
+
+<p>
+Activates linefont 1 (dashed) and sets its dashlength to 15
+millimeters. From now on lines will be dashed with dashlength
+15.
+</p>
+
+<p>
+Note that you can also use attributes in geometric procedures
+and part calls:
+</p>
+
+<pre>
+  poi_free(#5,vec(100,100):LEVEL=7,PFONT=1,PSIZE=5);
+</pre>
+
+<p>
+Overrides the default attribute settings and creates a point
+with font 1, size 5 and level 7. No other entities are affected.
+</p>
+
+<pre>
+  part(#5,my_part(my_parameters):PEN=2);
+</pre>
+
+<p>
+Loads my_part.MBO and executes the module with the
+default value of the PEN attribute set to 2. In effect
+the same as if the first line in the module was: set(PEN=2);
+</p>
+
+<h2>Comments</h2>
+
+<p>
+See also the <a href="set_basi.htm">set_basic()</a> procedure which has
+the same syntax but basic effect.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

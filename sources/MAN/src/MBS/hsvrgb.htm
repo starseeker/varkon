@@ -1,0 +1,84 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- hsv_to_rgb - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>hsv_to_rgb - Procedure</h1>
+
+<h2>Description</h2>
+
+<p>
+Converts color values from the HSV system to RGB. The HSV system uses
+a base color (the Hue) of specific purity (the Saturation) and brightness
+(the Value) to create a color. Saturation = 100 means that the color is
+100% pure (no white added).
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  hsv_to_rgb(hue, saturation, value, red, green, blue);
+
+  int hue;
+  int saturation;
+  int value;
+  int red;
+  int green;
+  int blue;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>hue</td>
+<td>- Hue, 0 - 360</td>
+</tr>
+
+<tr>
+<td>saturation</td>
+<td>- Saturation, 0 - 100</td>
+</tr>
+
+<tr>
+<td>value</td>
+<td>- Value, 0 - 100</td>
+</tr>
+
+<tr>
+<td>red</td>
+<td>- Red intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>green</td>
+<td>- Green intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>blue</td>
+<td>- Blue intensity, 0 - 255</td>
+</tr>
+
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Comments</h2>
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="rgbhsv.htm">rgb_to_hsv()</a>,
+<a href="cre_col.htm">cre_color()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,0 +1,158 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Modeling concepts})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>Modeling concepts</h1>
+
+<h2>Positions</h2>
+
+<p>
+In Varkon, a position is any specific place in the universe that can be defined
+using MBS language. One way is by it's coordinates, (x,y,z). Another way is by
+saying "the end of that line" or "the centre of that circle". The most usual
+ways to define positions are easily available as buttons in the lower part of
+the menu window but there is actually no limit to the number of ways you can
+define positions if you know the MBS syntax. When so, use the mbs button.
+</p>
+
+<p>
+See the <a href="vector.htm">VECTOR</a> datatype for more information about
+positions.
+</p>
+
+<p>
+Note that in Varkon, a position is not a point ! Points are geometric entities
+with graphical attributes that can be displayed in  graphics windows. A point
+of course also has a position.
+</p>
+
+
+<h2>Entities</h2>
+
+<p>
+There are 17 entity types in Varkon. See the <a href="entities.htm">
+entities section</a> of the Varkon Interatcive users manual for a complete list.
+Each entity can be created using one or more specific methods. Many of these
+methods are available through the create menu (and sub menus) but with MBS you
+can create entities in almost any way you can come to think of. Most of the
+Varkon entities also exist in a similar form in other CAD systems. Some
+systems call them objects instead of entities.
+</p>
+
+
+<h2>Coordinate systems</h2>
+
+<p>
+Varkon uses the concept of "the currently active coordinate system". The
+BASIC coordinate system is the system that is active when you start a new job.
+You can create any number of LOCAL coordinate systems and you can activate
+each one of them individually at any time by pressing the CSY button in the
+menu window. Varkon uses the currently active coordinate system as the
+reference when you enter coordinates, directions or angles from the keyboard.
+Varkon also uses the XY-plane of the currently active coordinate system as
+the "current work plane" for operations that need a plane to be defined.
+</p>
+
+<p>
+See <a href="csys.htm">Coordinate systems</a> for more information about
+coordinate systems.
+</p>
+
+
+<h2>Sense of direction</h2>
+
+<p>
+In Varkon, wireframe entities (lines, arcs and curves) have two ends.
+One is the start, and the other is the end. Which is which depends
+on how you create the entity. The sense of direction is always from
+the start to the end.
+If you create a line for example, with two positions, the first position
+will be the start of the line and the second will be the end. You can
+access any position on a wireframe entity through the on button in the
+lower part of the menu window. You will then have to enter a parameter
+value. A value of zero is equal to the position where the entity starts.
+A value equal to 1 (or more for curves with many segments) is equal to
+the end of the entity. Values in between represent positions along the
+entity. A value of 0.3 for example, would be a position 30% along the
+lenght of the entity in it's sense of direction.
+</p>
+
+<p>
+Surface entities have 2 senses of direction, U and V. Similar to wireframe
+entities these are controlled by how you create the surface. You can access
+any position on a surface by supplying 2 parameter values, one for U and
+one for V.
+</p>
+
+<h2>Identity and reference</h2>
+
+<p>
+When you create an entity, Varkon automatically assigns a unique
+identity (ID) to it. ID's are integer values preceeded by a "#".
+If you start a new job and create an entity it will get an ID equal
+to #1. Next entity will become #2 and so on. As a beginner, using
+Varkon in explicit mode you don't need to know about ID's but if
+you want to use Varkon in generic mode and learn MBS, ID's will
+become very important.
+</p>
+
+<p>
+Once an entity is created you can use it's ID to refer to it. The
+end position for example, of a line with ID #5 is end(#5) in MBS
+notation. When you use the ID of an entity to access the entiy in
+some way this entity is referenced. An entity which is referenced
+may not be deleted and if it is changed, the referent needs to be
+updated as well. This is done automatically by Varkon in generic
+mode.
+</p>
+
+<p>
+See the <a href="ref.htm">REF</a> datatype for more information about
+ID's and reference.
+</p>
+
+<h2>The part concept</h2>
+
+<p>
+A part is an entity that is often used to represent real world parts.
+In Varkon, parts are created by calling and executing modules. Since
+a module is in fact a computer program you can feed a module with
+different input each time you call it and the module can perform
+calculations and make decisions automatically. This means that
+parts can be parametric and intelligent. A part may consist of any
+number of entities including other parts.
+</p>
+
+<p>
+You can only create modules in generic mode but you can use them to
+create parts in explicit mode as well. A module is the generic version
+of a part and the part itself is the explicit version. See:
+<a href="MBO_and_RES.htm">MBO- and RES-files, what's the difference ?</a>
+for more iformation about generic and explicit.
+</p>
+
+
+<h2>Graphical attributes</h2>
+
+<p>
+All entities have graphical attributes that can be used to control their
+visual appearence. Some are common to all entities and some are unique.
+All entities for example, have PEN and a LEVEL number. Points also have
+PFONT and PSIZE while lines have LFONT and LDASHL, and so on. For a
+complete list of all graphical attributes see the
+<a href="../MBS/set.htm">set()</a> procedure.
+</p>
+
+<p>
+When you create an entity, it automatically inherits the currently
+active graphical attributes that apply to it. To set the currently active
+attributes, use menu/settings/attributes. You can also edit an attribute
+of an individual entitiy once it is created with menu/edit/attributes.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

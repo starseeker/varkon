@@ -1,0 +1,94 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- index})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Variables and constants</h1>
+
+<h2>Variables</h2>
+
+<p>
+Variables (and constants) are declared after all parameters but before BEGINMODULE. A
+variable declaration reminds of a value_parameter_declaration without default_value or
+prompt_string.
+</p>
+
+<pre>
+  INT   i,j;    ! Two INT variables
+  FLOAT size;   ! A FLOAT variable
+  FILE  input_data,output_data; ! More than one variable separeted by commas
+</pre>
+
+<p>
+Variables may be indexed...
+</p>
+
+<pre>
+  INT   list(100);    ! Array of 100 integers
+  FLOAT matrix(20,50) ! A 2-dimensional matrix 20 by 50
+  FLOAT k(10,5,20,6)  ! A 4-dimensional matrix
+</pre>
+
+<p>
+and declared with upper and lower limit.
+</p>
+
+<pre>
+  INT    list(20:50);    ! An array of 31 integers
+  FLOAT  matrix(0:3,0:3) ! A 4 by 4 matrix
+  STRING names(0:9)*20;  ! An array of 10 names
+</pre>
+
+<p>
+If no lower limit is specified MBS uses a lower limit of 1 as default.
+</p>
+
+<h2>Constants</h2>
+
+<p>
+  A constant is like a variable but may not be indexed and may not have its value changed.
+  Instead its value is defined once and for all in its declaration...
+</p>
+
+<pre>
+  CONSTANT FLOAT  max_diameter=20.0;
+  CONSTANT STRING error_message=&quot;Diameter is too large !&quot;;
+</pre>
+
+<p>
+The FILE type may not be used as a constant.
+</p>
+
+<p>
+  Here is a module with some variables and constants:
+</p>
+
+<pre class="box">
+  !*********************************
+  !*
+  MODULE init_array();
+  !*
+  !*********************************
+  !*
+  INT   i;
+  FLOAT k(100);
+
+  CONSTANT INT min=1,max=100;
+
+  BEGINMODULE
+
+  for i:=min to max do
+    k(i):=0.0;
+  endfor;
+
+  ENDMODULE
+  !*
+  !*********************************
+</pre>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

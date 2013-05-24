@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    pminit()       Initierar PM.
 *    pmcmod()       Skapar ett modulhuvud och den lokala symbol-
@@ -432,10 +432,10 @@
 /*
 ***get c-address to module name in PM and copy from interface struct
 */
-   str = pmgadr( np->mona_ );
-   strcpy( str, module->mname );
+   str = pmgadr(np->mona_ );
+   strcpy(str,module->mname);
 
-   np->moty_ = module->mtype;
+   np->moty_ = _3D;
    np->moat_ = module->mattri;
    np->ppali_ = module->parlist;
    np->pstl_ = module->stlist;

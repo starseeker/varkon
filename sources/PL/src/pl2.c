@@ -165,7 +165,7 @@ loop:
     int     ntkn,ncrd,i;
     int     npnum;
     double  xt,yt,origox,origoy,width;
-    double  nx,ny;
+    double  nx=0,ny=0;
     double  mxmin,mymin,mxmax,mymax;
 		
 /*

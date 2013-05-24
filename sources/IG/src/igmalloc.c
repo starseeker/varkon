@@ -11,7 +11,7 @@
 /*  v3msta();     Writes allocation table to disc                   */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -194,7 +194,7 @@ static int     altsiz;
 /*
 ***Det gjorde det, notera även namn och storlek i alltab.
 */
-     strncpy(altptr->name,name,6);
+     strncpy(altptr->name,name,31);
      altptr->size = size;
 
    if ( dbglev(IGEPAC) == 361 )

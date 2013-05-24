@@ -1,17 +1,17 @@
 ##########################################################
 #
-#   Makefile for DBlib on GNU/Linux
+#   Makefile for DB on FreeBSD
 #
-#  (C)Microform AB 1999-03-30 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
 RM = rm -f
 
-CC = gcc
+CC ?= cc
 
 CFLAGS +=   -ansi -pedantic -Wall -ffloat-store -fsigned-char \
-            -fwritable-strings -O -DUNIX -I/usr/X11R6/include
+            -O -DUNIX -I/usr/local/include
 
 debug :      CFLAGS += \
             -g \
@@ -20,6 +20,5 @@ debug :      CFLAGS += \
 COMPILE = $(CC) -c $(CFLAGS)
 
 include Makefile.DB
-
 
 ################################################################

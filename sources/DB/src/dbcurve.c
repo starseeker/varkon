@@ -21,7 +21,7 @@
 *       DBdelete_nurbs();    Deletes NURBS-data from DB
 *
 *    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -36,11 +36,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
-*    
-*    2004-09-02 DBread_nurbs static->public, S. Larsson, Örebro university
-*    2006-10-20 Added free/delete NURBS, J. Kjellander, Örebro university
 *
 ***********************************************************************/
 
@@ -321,14 +316,14 @@ static DBstatus gmdloc(DBptr, DBint);
                if ( (segptr->cpts_c=v3mall(segptr->ncpts*sizeof(DBHvector),"DBread_segments")) == NULL )
                  {
                  sprintf(errbuf,"%d",(int)segptr->ncpts);
-                 erpush("GM1083",errbuf);
+                 erpush("DB1083",errbuf);
                  }
                last_cpts_c = segptr->cpts_c;
                last_cpts_db = segptr->cpts_db;  /* line added 2007-01-22 */
                if ( (segptr->knots_c=v3mall(segptr->nknots*sizeof(DBfloat),"DBread_segments")) == NULL )
                  {
                  sprintf(errbuf,"%d",(int)segptr->nknots);
-                 erpush("GM1093",errbuf);
+                 erpush("DB1093",errbuf);
                  }
                last_knots_c = segptr->knots_c;
 
@@ -631,7 +626,7 @@ static DBstatus gmdloc(DBptr, DBint);
     if ( (ptr=v3mall(antal*sizeof(GMSEG),"DBcreate_segments")) == NULL )
       {
       sprintf(errbuf,"%d",(int)antal);
-      erpush("GM1053",errbuf);
+      erpush("DB1053",errbuf);
       }
 /*
 ***Slut.
@@ -668,7 +663,7 @@ static DBstatus gmdloc(DBptr, DBint);
     if ( (ptr=v3rall((char *)segpek,antal*sizeof(GMSEG),"DBadd_segments")) == NULL )
       {
       sprintf(errbuf,"(reallokera) %d",(int)antal);
-      erpush("GM1053",errbuf);
+      erpush("DB1053",errbuf);
       }
 /*
 ***Slut.

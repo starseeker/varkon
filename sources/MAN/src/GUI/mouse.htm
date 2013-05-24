@@ -1,0 +1,40 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- The mouse})
+define({_INDEXLINK_},{<a href="GUI.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The mouse</h1>
+
+<p>
+Varkon assumes a mouse with three buttons. The left button is
+always used to make selections and the right button is used to quit the
+current operation (or return to the previous menu). The middle button is
+used to pan, zoom and rotate the model in OpenGL graphics windows. It can
+also be used to quit the current operation and return directly back to the
+main menu. A mouse with only two buttons usually emulates a middle button
+by pressing the two buttons at the same time. A mouse with a scrollwheel
+may let you press the scrollwheel and that will work as the middle button.
+</p>
+
+<p>
+Many operations use of the mouse to select or outline something in a
+graphics window. The ZOOM-operation for example, where you first press
+the left button, then move the mouse with the button still down and
+finally release the button. Entity selection is another example where you
+use the mouse and its left button to select an entity. Whenever Varkon
+wants you to use the mouse in a graphics window the shape of the cursor
+changes from the normal pointer to a crosshair. You can press F1 or
+&lt;CTRL&lt;a while the cursor is in crosshair mode to get help as usual.
+
+<p>
+The configuration of mouse buttons is currently hard coded within Varkon
+and can not be controlled by ini-files or similar.
+</p>
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

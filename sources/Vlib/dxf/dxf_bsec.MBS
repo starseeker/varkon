@@ -1,6 +1,6 @@
 !*******************************************************
 
- MACRO  MODULE dxf_bsec(
+ MACRO MODULE dxf_bsec(
    VAR FILE   infil,logfil;
    VAR STRING bntab(2000)*32;
    VAR INT    bptab(2000);

@@ -1,0 +1,87 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- cre_color - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>cre_color - Procedure</h1>
+
+<h2>Description</h2>
+
+<p>
+Sets the RGB color value for a pen. Pen numbers range from 0 to 255. Pen 0 is used for
+background in graphics windows and pen 1 is the default pen for drawing. Pen 0 and 1 are
+always defined in Varkon's ini-file. Additional default pen colors may be defined in
+the ini-file but usually not all 256. It is good advice not to change the default
+RGB values of pen 0 and 1.
+</p>
+
+<p>
+A pen color is defined by mixing different intensities of Red, Green and Blue color (RGB).
+No intensity is 0 and full intensity is 255. This gives what is often referred to as 24
+bits of color or True Color. If the hardware of the computer does not support true color
+Varkon uses the closest match to the desired color.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  cre_color(pen, red, green, blue);
+
+  int pen;
+  int red;
+  int green;
+  int blue;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+
+<tr>
+<td>pen</td>
+<td>- Pen number, 2 - 255</td>
+</tr>
+
+<tr>
+<td>red</td>
+<td>- Red intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>green</td>
+<td>- Green intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>blue</td>
+<td>- Blue intensity, 0 - 255</td>
+</tr>
+
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Comments</h2>
+
+<p>
+Colors may look different on different computers due to differences in hardware. Varkon
+uses the specified RGB-triplet as it is without gamma correction.
+</p>
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="get_col.htm">get_color()</a>,
+<a href="cre_mat.htm">cre_material()</a>,
+<a href="get_mat.htm">get_material()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

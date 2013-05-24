@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -12,8 +12,9 @@
 *    WPwcrw();          Creates a WPRWIN
 *    WPbtrw();          Button routine for a WPRWIN
 *    WPxprw();          Expose routine for a WPRWIN
-*    WPcrrw();          Crossing routine for a WPRWIN 
-*    WPcorw();          Configure routine for a WPRWIN 
+*    WPtitle_RWIN();    Set the title for a WPRWIN
+*    WPcrrw();          Crossing routine for a WPRWIN
+*    WPcorw();          Configure routine for a WPRWIN
 *    WPcmrw();          Client message for a WPRWIN
 *    WPrepaint_RWIN();  Update the contents of a WPRWIN
 *    WPerrw();          Erase one or more WPRWIN
@@ -49,27 +50,19 @@
 #define SCALE       1         /* Dynamic scaling */
 #define PAN         2         /* Dynamic pan */
 
-extern char jobnam[];
+extern char   jobnam[],jobdir[];
+extern V3MDAT sydata;
 
 static short setup_ogl(WPRWIN *rwinpt);
-static short get_visinfo(WPRWIN *rwinpt);
+static short get_visual(WPRWIN *rwinpt);
 static void  init_colors(WPRWIN *rwinpt);
 static void  create_toolbar(WPRWIN *rwinpt);
-static void  scale_on(WPRWIN *rwinpt);
-static void  pan_on(WPRWIN *rwinpt);
-static void  rot_on(WPRWIN *rwinpt);
-static void  persp_on(WPRWIN *rwinpt);
-static void  light_on(WPRWIN *rwinpt);
-static void  clip_on(WPRWIN *rwinpt);
-static void  line_fill(WPRWIN *rwinpt);
 
-/*!******************************************************/
+/********************************************************/
 
         short WPrenw()
 
 /*      Creates a default size WPRWIN window.
- *
- *      Felkod:
  *
  *      (C)microform ab 1997-12-21 J. Kjellander
  *
@@ -89,7 +82,7 @@ static void  line_fill(WPRWIN *rwinpt);
    XrmValue     value;
 
 /*
-***H�rdprogrammerad storlek och placering.
+***Default size and position.
 */
    width  = DisplayWidth(xdisp,xscr);
    height = DisplayHeight(xdisp,xscr);
@@ -99,8 +92,7 @@ static void  line_fill(WPRWIN *rwinpt);
    dx = 0.6*width - 15;
    dy = 0.7*height;
 /*
-***V�rden fr�n resursdatabasen.
-***Kolla att resultatet hamnar p� sk�rmen.
+***Size and psition from ini-file ?
 */
    if ( XrmGetResource(xresDB,"varkon.rwin.geometry",
                               "Varkon.rwin.geometry",
@@ -114,11 +106,7 @@ static void  line_fill(WPRWIN *rwinpt);
      }
 
    WPposw(x,y,dx+10,dy+25,&x,&y);
-/*
-***F�nstertitel.
-*/
-   if ( !WPgrst("varkon.rwin.title",title) )
-                  strcpy(title,"VARKON Dynamic Rendering");
+
 /*
 ***Create the window.
 */
@@ -127,7 +115,9 @@ static void  line_fill(WPRWIN *rwinpt);
 ***Update the contents from DB.
 */
    WPrepaint_RWIN(id,TRUE);
-
+/*
+***The end.
+*/
    return(status);
  }
 
@@ -145,7 +135,7 @@ static void  line_fill(WPRWIN *rwinpt);
 /*      Create a WPRWIN.
  *
  *      In: x     = Position in X.
- *          y     = Position in Y.   
+ *          y     = Position in Y.
  *          dx    = Size in X-dir.
  *          dy    = Size in Y-dir.
  *          label = Window title.
@@ -174,7 +164,7 @@ static void  line_fill(WPRWIN *rwinpt);
    XEvent               event;
    XWMHints             wmhint;
    Pixmap               IconPixmap,SavePixmap;
-   int                  i,width,height,margin;
+   int                  i,width,height,margin,ival;
    unsigned int         depth;
    XGCValues            values;
    GC                   Win_gc,Rub_gc;
@@ -182,6 +172,7 @@ static void  line_fill(WPRWIN *rwinpt);
    WPRWIN              *rwinpt;
    WPGWIN              *mainpt;
    char                *type[20];
+   char                 buf[V3STRLEN];
    XrmValue             value;
 
 /*
@@ -192,7 +183,7 @@ static void  line_fill(WPRWIN *rwinpt);
 /*
 ***Select a visual.
 */
-   if ( (status=get_visinfo(rwinpt)) < 0 )
+   if ( (status=get_visual(rwinpt)) < 0 )
      {
      v3free((char *)rwinpt,"WPwcrw");
      return(erpush("WP1612",""));
@@ -200,7 +191,7 @@ static void  line_fill(WPRWIN *rwinpt);
 /*
 ***Create rendering context.
 */
-   if ( (rwinpt->rc=glXCreateContext(xdisp,rwinpt->pvinfo,NULL,TRUE)) == NULL )
+   if ( (rwinpt->rc=glXCreateContext(xdisp,rwinpt->pvinfo,NULL,True)) == NULL )
      {
      v3free((char *)rwinpt,"WPwcrw");
      erpush("WP1643","");
@@ -230,7 +221,7 @@ static void  line_fill(WPRWIN *rwinpt);
 /*
 ***Window attributes.
 */
-   xwina.colormap          = rwinpt->colmap; 
+   xwina.colormap          = rwinpt->colmap;
    xwina.background_pixel  = rwinpt->bgnd2;
    xwina.border_pixel      = 0;
    xwina.override_redirect = False;
@@ -403,17 +394,23 @@ static void  line_fill(WPRWIN *rwinpt);
 */
    rwinpt->vy.status = VIEW_3D_ONLY;
 /*
-***Default values.
+***Some default values.
 */
    rwinpt->musmod  = 2;
    rwinpt->movx    = rwinpt->movy = 0.0;
    rwinpt->rotx    = rwinpt->roty = rwinpt->rotz = 0.0;
    rwinpt->scale   = 1.0;
-   rwinpt->light   = 50.0;
    rwinpt->pfactor = 0.0;
    rwinpt->zclip   = FALSE;
    rwinpt->zfactor = 50.0;
    rwinpt->fill    = TRUE;
+/*
+***Default light intensity from ini-file.
+*/
+   if ( WPgrst("varkon.light.intensity",buf)  &&
+        sscanf(buf,"%d",&ival) == 1           &&
+        ival >=0  &&  ival <= 100 ) rwinpt->light = ival;
+   else rwinpt->light = 50;
 /*
 ***Init levels by copying GWIN_MAIN.
 */
@@ -454,6 +451,10 @@ static void  line_fill(WPRWIN *rwinpt);
 */
    WPactivate_view("xy",NULL,rwinpt,TYP_RWIN);
 /*
+***Update the window border title.
+*/
+   WPtitle_RWIN(rwinpt);
+/*
 ***The end.
 */
    return(0);
@@ -483,20 +484,20 @@ static void  line_fill(WPRWIN *rwinpt);
  *      1998-11-17 Musrotation, J.Kjellander
  *      1998-11-21 actview, G. Liden
  *      2007-07-09 1.19, J.Kjellander
+ *      2008-01-16 down_fuse, J.Kjellander
  *
  ******************************************************!*/
 
   {
     short         i,acttyp,actnum=0;
     int           butx,buty,ix1,iy1,ix2,iy2,xrk,yrk,xck,yck,mode;
-    bool          hit;
+    bool          hit,pressed;
     Window        root,child;
     unsigned int  xbuts;
     char         *subptr;
     WPBUTT       *butptr;
     WPICON       *icoptr;
     XEvent        event;
-
 
 /*
 ***It could also be a resize of the Message and Command window...
@@ -520,20 +521,28 @@ static void  line_fill(WPRWIN *rwinpt);
      glXMakeCurrent(xdisp,rwinpt->id.x_id,rwinpt->rc);
      ix1 = butev->x;
      iy1 = butev->y;
+     pressed = FALSE;
+/*
+***Copy the passed butev to the local event variable
+***so we can process it as the rest that will come.
+*/
+     V3MOME(butev,&event, sizeof(XEvent));
+/*
+***The event loop starts here.
+*/
 evloop:
-     XNextEvent(xdisp,&event);
      if ( event.xany.window == rwinpt->id.x_id )
        {
-       switch ( event.type)
+       switch ( event.type )
          {
 /*
 ***Mouse button pressed. Clear event stack from pending
-***events and order a new event. When a new event comes,
-***poll the mouse position.
+***and poll the mouse position.
 */
          case ButtonPress:
          ix1 = event.xmotion.x;
          iy1 = event.xmotion.y;
+         pressed = TRUE;
          while ( XPending(xdisp) ) XNextEvent(xdisp,&event);
          XQueryPointer(xdisp,rwinpt->id.x_id,&root,&child,
                       &xrk,&yrk,&xck,&yck,&xbuts);
@@ -543,6 +552,7 @@ evloop:
 */
          case ButtonRelease:
          while ( XPending(xdisp) ) XNextEvent(xdisp,&event);
+         if ( !pressed ) goto evloop;
          XCopyArea(xdisp,rwinpt->id.x_id,rwinpt->savmap,rwinpt->win_gc,
                                      0,0,rwinpt->geo.dx,rwinpt->geo.dy,0,0);
          return(TRUE);
@@ -551,6 +561,7 @@ evloop:
 ***last motion event and do something.
 */
          case MotionNotify:
+         if ( !pressed ) goto evloop;
          ix2 = event.xmotion.x;
          iy2 = event.xmotion.y;
          while ( XPending(xdisp) )
@@ -569,7 +580,7 @@ evloop:
 */
         if      ( event.xmotion.state & ControlMask ) mode = SCALE;
         else if ( event.xmotion.state & ShiftMask )   mode = PAN;
-        else                                           mode = ROT;
+        else                                          mode = ROT;
 
          switch ( mode )
            {
@@ -717,25 +728,31 @@ evloop:
 ***The view dialogue, f102.
 */
                case 102:
-               WPview_dialogue(rwinpt->id.w_id);
+               WPview_dialog(rwinpt->id.w_id);
                break;
 /*
 ***The grid dialogue, f103.
 */
                case 103:
-               WPgrid_dialogue(rwinpt->id.w_id);
+               WPgrid_dialog(rwinpt->id.w_id);
+               break;
+/*
+***Print.
+*/
+               case 150:
+               if ( WPprint_GL(rwinpt) < 0 ) errmes();
                break;
 /*
 ***The levels dialogue, f197.
 */
                case 197:
-               WPlevels_dialogue(rwinpt->id.w_id);
+               WPlevel_dialog(rwinpt->id.w_id);
                break;
 /*
 ***Some other function.
 */
                default:
-               if ( IGdofu(acttyp,actnum) == EXIT ) IGexit(); 
+               if ( IGdofu(acttyp,actnum) == EXIT ) IGexit();
                break;
                }
              }
@@ -744,7 +761,7 @@ evloop:
 */
            else
              {
-             if ( IGdofu(acttyp,actnum) == EXIT ) IGexit(); 
+             if ( IGdofu(acttyp,actnum) == EXIT ) IGexit();
              else return(TRUE);
              }
           return(TRUE);
@@ -818,6 +835,59 @@ evloop:
   }
 
 /********************************************************/
+/*********************************************************/
+
+       short   WPtitle_RWIN(
+       WPRWIN *rwinpt)
+
+/*     Update the title text of a WPRWIN window border.
+ *
+ *     In: rwinpt => C ptr to WPRWIN
+ *
+ *     (C)2008-02-10 J.Kjellander
+ *
+ *******************************************************!*/
+
+ {
+   char title[V3STRLEN+V3PTHLEN],tmpbuf[V3STRLEN];
+
+/*
+***Init.
+*/
+   title[0] = '\0';
+/*
+***All windows either have a custom title or the defult title.
+*/
+   if ( !WPgrst("varkon.title",title) )
+     {
+     sprintf(title,"VARKON %d.%d%c",sydata.vernr,sydata.revnr,
+                                    sydata.level);
+     }
+/*
+***They can also have have jobdir and/or jobname.
+*/
+   strcat(title," ");
+
+   if ( WPgrst("varkon.title.jobdir",tmpbuf) && strcmp(tmpbuf,"True") == 0 )
+     {
+     strcat(title,jobdir);
+     }
+
+   if ( WPgrst("varkon.title.jobname",tmpbuf) && strcmp(tmpbuf,"True") == 0 )
+     {
+     strcat(title,jobnam);
+     }
+/*
+***Update the window border of the WPRWIN.
+*/
+   XStoreName(xdisp,rwinpt->id.x_id,title);
+/*
+***The end.
+*/
+   return(0);
+ }
+
+/*********************************************************/
 /*!******************************************************/
 
         bool            WPcrrw(
@@ -1321,234 +1391,20 @@ evloop:
 /********************************************************/
 /*!******************************************************/
 
- static void    scale_on(
-        WPRWIN *rwinpt)
-
-/*      Turns "Scale" on for a WPRWIN, f7.
- *
- *      In: rwinptr = C ptr to WPRWIN.
- *
- *      (C)2007-01-12 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-/*
-***Turn of "Clip mode".
-*/
-   if ( rwinpt->zclip )
-     {
-     glDisable(GL_CLIP_PLANE0);
-     rwinpt->zclip = FALSE;
-     WPsodl_all(rwinpt);
-     }
-/*
-***Toggle "Scale" mode.
-*/
-   rwinpt->musmod = 0;
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static void    pan_on(
-        WPRWIN *rwinpt)
-
-/*      Turns "Pan" on for a WPRWIN, f91.
- *
- *      In: rwinptr = C ptr to WPRWIN.
- *
- *      (C)2007-01-12 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-/*
-***Turn of "Clip mode".
-*/
-   if ( rwinpt->zclip )
-     {
-     glDisable(GL_CLIP_PLANE0);
-     rwinpt->zclip = FALSE;
-     WPsodl_all(rwinpt);
-     }
-/*
-***Toggle "Pan" mode.
-*/
-   rwinpt->musmod = 1;
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static void    rot_on(
-        WPRWIN *rwinpt)
-
-/*      Turns "Rot" on for a WPRWIN, f93.
- *
- *      In: rwinptr = C ptr to WPRWIN.
- *
- *      (C)2007-01-12 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-/*
-***Turn of "Clip mode".
-*/
-   if ( rwinpt->zclip )
-     {
-     glDisable(GL_CLIP_PLANE0);
-     rwinpt->zclip = FALSE;
-     WPsodl_all(rwinpt);
-     }
-/*
-***Toggle "Rot" mode.
-*/
-   rwinpt->musmod = 2;
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static void    persp_on(
-        WPRWIN *rwinpt)
-
-/*      Turns "Persp" on for a WPRWIN, f94.
- *
- *      In: rwinptr = C ptr to WPRWIN.
- *
- *      (C)2007-01-12 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-/*
-***Turn of "Clip mode".
-*/
-   if ( rwinpt->zclip )
-     {
-     glDisable(GL_CLIP_PLANE0);
-     rwinpt->zclip = FALSE;
-     WPsodl_all(rwinpt);
-     }
-/*
-***Toggle "Persp" mode.
-*/
-   rwinpt->musmod = 3;
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static void    light_on(
-        WPRWIN *rwinpt)
-
-/*      Turns "Light" on for a WPRWIN, f95.
- *
- *      In: rwinptr = C ptr to WPRWIN.
- *
- *      (C)2007-01-12 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-/*
-***Turn of "Clip mode".
-*/
-   if ( rwinpt->zclip )
-     {
-     glDisable(GL_CLIP_PLANE0);
-     rwinpt->zclip = FALSE;
-     WPsodl_all(rwinpt);
-     }
-/*
-***Toggle "Light" mode.
-*/
-   rwinpt->musmod = 4;
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static void    clip_on(
-        WPRWIN *rwinpt)
-
-/*      Turns "Clip" on for a WPRWIN, f97.
- *
- *      In: rwinptr = C ptr to WPRWIN.
- *
- *      (C)2007-01-12 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-/*
-***Turn on "Clip mode".
-*/
-   glEnable(GL_CLIP_PLANE0);
-   rwinpt->zclip = TRUE;
-   rwinpt->zfactor = 50.0;
-   WPsodl_all(rwinpt);
-/*
-***Toggle "Clip" mode.
-*/
-   rwinpt->musmod = 5;
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static void    line_fill(
-        WPRWIN *rwinpt)
-
-/*      Toggles "Line/Fill" for a WPRWIN, f100.
- *
- *      In: rwinptr = C ptr to WPRWIN.
- *
- *      (C)2007-01-12 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-/*
-***Turn of "Clip mode".
-*/
-   if ( rwinpt->zclip )
-     {
-     glDisable(GL_CLIP_PLANE0);
-     rwinpt->zclip = FALSE;
-     WPsodl_all(rwinpt);
-     }
-/*
-***Toggle "Line/Fill" mode.
-*/
-   if ( rwinpt->fill ) rwinpt->fill = FALSE;
-   else                rwinpt->fill = TRUE;
-
-   WPrepaint_RWIN(rwinpt->id.w_id,FALSE);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
 static short setup_ogl(
        WPRWIN *rwinpt)
 
-/*      Set up OpenGL default parameters.
+/*      Set up some OpenGL default parameters for
+ *      a WPRWIN.
  *
  *      In: rwinpt = C ptr to WPRWIN.
  *
- *      (C)microform ab 1998-01-04 J. Kjellander
- *
- *      1998-12-10 F�rgresurser, J.Kjellander
+ *      (C)2008-01-21 J.Kjellander
  *
  ******************************************************!*/
 
   {
-   int     ival;
-   char    buf[V3STRLEN];
-   GLfloat ambient[4],diffuse[4],specular[4];
+   DBVector pos1,pos2;
 
 /*
 ***Activate the Rendering Contextet.
@@ -1577,142 +1433,59 @@ static short setup_ogl(
 */
    glFrontFace(GL_CCW);
 /*
-***Turn on light.
+***Turn on OpenGL light calculation.
 */
    glEnable(GL_LIGHTING);
 /*
-***Create a default lightsource, GL_LIGHT0.
-***Ambient.
+***Create a default lightsource (GL_LIGHT0) and turn it on.
 */
-   if ( WPgrst("varkon.shade.ambient.red",buf)  &&
-        sscanf(buf,"%d",&ival) == 1             &&
-        ival >=0  &&  ival <= 100 ) ambient[0] = ival/100.0;
-   else ambient[0] = 0.4;
-
-   if ( WPgrst("varkon.shade.ambient.green",buf)  &&
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) ambient[1] = ival/100.0;
-   else ambient[1] = 0.4;
-
-   if ( WPgrst("varkon.shade.ambient.blue",buf)  &&
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) ambient[2] = ival/100.0;
-   else ambient[2] = 0.4;
-
-   ambient[3] = 1.0;
-
-   rwinpt->ambient[0] = ambient[0];
-   rwinpt->ambient[1] = ambient[1];
-   rwinpt->ambient[2] = ambient[2];
-
-   ambient[0] *= rwinpt->light/100.0;
-   ambient[1] *= rwinpt->light/100.0;
-   ambient[2] *= rwinpt->light/100.0;
-   glLightfv(GL_LIGHT0,GL_AMBIENT,ambient);
+   pos1.x_gm = pos1.y_gm = 0.0; pos1.z_gm = 1.0;
+   pos2.x_gm = pos2.y_gm = 0.0; pos2.z_gm = 0.0;
+   WPcreate_light(0,&pos1,&pos2,180.0,0.0);
+   WPactivate_light(0,50.0,0,TRUE);
 /*
-***Diffuse
+***Set the color to be used to clear OpenGL windows to white.
 */
-   if ( WPgrst("varkon.shade.diffuse.red",buf)  &&
-        sscanf(buf,"%d",&ival) == 1             &&
-        ival >=0  &&  ival <= 100 ) diffuse[0] = ival/100.0;
-   else diffuse[0] = 1.0;
-
-   if ( WPgrst("varkon.shade.diffuse.green",buf)  &&
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) diffuse[1] = ival/100.0;
-   else diffuse[1] = 1.0;
-
-   if ( WPgrst("varkon.shade.diffuse.blue",buf)  &&
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) diffuse[2] = ival/100.0;
-   else diffuse[2] = 1.0;
-
-   diffuse[3] = 1.0;
-
-   rwinpt->diffuse[0] = diffuse[0];
-   rwinpt->diffuse[1] = diffuse[1];
-   rwinpt->diffuse[2] = diffuse[2];
-
-   diffuse[0] *= rwinpt->light/100.0;
-   diffuse[1] *= rwinpt->light/100.0;
-   diffuse[2] *= rwinpt->light/100.0;
-   glLightfv(GL_LIGHT0,GL_DIFFUSE,diffuse);
-
-/*
-***Specular
-*/
-   if ( WPgrst("varkon.shade.specular.red",buf)  &&
-        sscanf(buf,"%d",&ival) == 1             &&
-        ival >=0  &&  ival <= 100 ) specular[0] = ival/100.0;
-   else specular[0] = 0.8;
-
-   if ( WPgrst("varkon.shade.specular.green",buf)  &&
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) specular[1] = ival/100.0;
-   else specular[1] = 0.8;
-
-   if ( WPgrst("varkon.shade.specular.blue",buf)  &&
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) specular[2] = ival/100.0;
-   else specular[2] = 0.8;
-
-   specular[3] = 1.0;
-
-   rwinpt->specular[0] = specular[0];
-   rwinpt->specular[1] = specular[1];
-   rwinpt->specular[2] = specular[2];
-
-   specular[0] *= rwinpt->light/100.0;
-   specular[1] *= rwinpt->light/100.0;
-   specular[2] *= rwinpt->light/100.0;
-   glLightfv(GL_LIGHT0,GL_SPECULAR,specular);
-/*
-***Turn on the default lightsource.
-*/
-   ambient[0] = ambient[1] = ambient[2] = 1.0; ambient[3] = 1.0;
-   glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient);
-/*
-***Clear color and depth buffers.
-*/ 
    glClearColor((GLclampf)1.0,(GLclampf)1.0,(GLclampf)1.0,(GLclampf)1.0);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+/*
+***The end.
+*/
    return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
- static short get_visinfo(
-        WPRWIN *rwinpt)
+ static short get_visual(WPRWIN *rwinpt)
 
-/*      V�ljer X-visual.
+/*      Selects a visual suitable for OpenGL and saves
+ *      a pointer to the visualinfo in the WPRWIN.
  *
- *      In:  rwinpt    = Pekare till blivande WPRWIN.
+ *      In:  rwinpt = C pter to WPRWIN.
  *
- *      Ut: *rwinpt = Fyller i vald visinfo.
+ *      Out: *rwinpt = Updated WPRWIN.
  *
- *      Felkoder: WP1623 = GLX-saknas.
- *                WP1633 = Ingen visual
+ *      Error: WP1623 = GLX not supported.
+ *             WP1633 = No suitable visual found.
  *
- *      (C)microform ab 1998-03-23 J. Kjellander
+ *      (C)2008-03-05 J.Kjellander
  *
  ******************************************************!*/
 
   {
    char   tmpbuf[V3STRLEN];
-   int    i,dummy,redbits,greenbits,bluebits,zbits;
-   int    visatt[50];
+   int    i,dummy,redbits,greenbits,bluebits,zbits,
+          attval,visatt[50];
 
-   static XVisualInfo *pvisinfo; /* Beh�ver kanske inte vara static */
+   static XVisualInfo *pvisinfo;
 
 /*
-***Kolla att OpenGL supportas av X-servern.
+***Check that OpenGL is supported by the X-server.
 */
    if ( !glXQueryExtension(xdisp,&dummy,&dummy) )
      return(erpush("WP1623",""));
 /*
-***Vilka egenskaper skall visualen ha ?
+***Set up the required visual attributes.
 */
    i = 0;
 
@@ -1744,7 +1517,7 @@ static short setup_ogl(
        sscanf(tmpbuf,"%d",&zbits) == 1) ) zbits = 16;
    visatt[i++] = zbits;
 /*
-***Enkel eller dubbelbuffrat ?
+***Single or double buffered ?
 */
    if ( WPgrst("varkon.shade.doublebuffer",tmpbuf)  &&
         strcmp(tmpbuf,"True") == 0 )
@@ -1754,18 +1527,12 @@ static short setup_ogl(
      }
      else rwinpt->double_buffer = FALSE;
 /*
-***Level 0 is the normal frame buffer used for geometric primitives.
-*/
-     visatt[i++] = GLX_LEVEL;
-     visatt[i++] = 0;
-/*
 ***Request a matching visual.
 */
-   visatt[i]   = None;
-
-   pvisinfo = glXChooseVisual(xdisp,xscr,visatt);
+   visatt[i] = None;
+   pvisinfo  = glXChooseVisual(xdisp,xscr,visatt);
 /*
-***Hur gick det ?
+***Did we get one ?
 */
    if ( !pvisinfo )
      {
@@ -1773,21 +1540,18 @@ static short setup_ogl(
      else                    return(erpush("WP1633","Color Index Mode"));
      }
 /*
-***Bra !
+***Yes !
 */
    rwinpt->pvinfo = pvisinfo;
-
 /*
-***Testa att be om en overlay.
+***What attributes did we get ?
 */
-   i = 0;
-   visatt[i++] = GLX_BUFFER_SIZE;
-   visatt[i++] = 4;
-   visatt[i++] = GLX_LEVEL;
-   visatt[i++] = 1;
-   visatt[i]   = None;
-   pvisinfo    = glXChooseVisual(xdisp,xscr,visatt);
-
+   glXGetConfig(xdisp,pvisinfo,GLX_RGBA,&attval);
+   glXGetConfig(xdisp,pvisinfo,GLX_RED_SIZE,&attval);
+   glXGetConfig(xdisp,pvisinfo,GLX_GREEN_SIZE,&attval);
+   glXGetConfig(xdisp,pvisinfo,GLX_BLUE_SIZE,&attval);
+   glXGetConfig(xdisp,pvisinfo,GLX_DEPTH_SIZE,&attval);
+   glXGetConfig(xdisp,pvisinfo,GLX_DOUBLEBUFFER,&attval);
 /*
 ***The end.
 */
@@ -1889,6 +1653,7 @@ static short setup_ogl(
           {
           rwinpt->wintab[nsub].typ = TYP_BUTTON;
           rwinpt->wintab[nsub].ptr = (char *)buttpt;
+          buttpt->type = FUNCBUTTON;
 /*
 ***Get the .action resource value. If missing, use "f0".
 */

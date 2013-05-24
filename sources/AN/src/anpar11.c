@@ -4,7 +4,7 @@
 *    =========
 *
 *    This file is part of the VARKON Analyzer Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    Parser access functions for MBS analyser in Varkon
 *
@@ -29,8 +29,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
 *
 ***********************************************************************/
 

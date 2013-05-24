@@ -1,0 +1,94 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- The start script})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The start script</h1>
+
+<p>
+Varkon can only be started by executing a start script
+that sets up an environment for Varkon to function properly.
+The default start scripts in the Varkon distribution are
+located in <code>$VARKON_ROOT/com/english</code> and
+<code>$VARKON_ROOT/com/swedish</code>.
+</p>
+
+<p>
+It is possible to edit the default start scripts but if you need
+to make changes it is better to make a copy of the default start
+script, edit the copy and put it somwhere else (outside the Varkon
+file tree). You might even need several different scripts to start
+Varkon in different configurations.
+</p>
+
+<h2>Everything in the start script depends on VARKON_ROOT</h2>
+
+<p>
+A start script always begins by defining an environment variable
+named VARKON_ROOT. VARKON_ROOT is a symbolic name for the root
+directory of your Varkon installation. If you create your own start
+script it is important to check that the definition of VARKON_ROOT
+points to the right location. The default definition will not work
+if you move the start script to a new location. Here are some lines
+from a default start script:
+</p>
+
+<pre class=box>
+# Root directory for VARKON installation.
+# Alternative 1, relative path.
+VARKON_ROOT=`(cd $(dirname $0); cd ..; cd ..; pwd)`
+
+# Alternative 2, explicit path.
+# VARKON_ROOT=/home/username/varkon/varkon_2.Xx
+export VARKON_ROOT
+</pre>
+
+<p>
+As you see from the comments, the default definition of VARKON_ROOT
+is relative to the location of the script. If you make a copy of the
+default script and move the script (which we recommend) to a place
+away from the Varkon installation, you should use the second alternative.
+This is what it would look like if you do that:
+</p>
+
+<pre class=box>
+# Root directory for VARKON installation.
+# Alternative 1, relative path.
+#VARKON_ROOT=`(cd $(dirname $0); cd ..; cd ..; pwd)`
+
+# Alternative 2, explicit path.
+VARKON_ROOT=the_actual_path_to_your_varkon_installation
+export VARKON_ROOT
+</pre>
+
+<p>
+With this done, you can store your new start script anywhere you
+like and use it sto start Varkon. Why not also associate it with an Icon
+on your desktop ? Note that if you move your Varkon installation or
+install a new version of Varkon you will need to set VARKON_ROOT
+in all your start scripts to point to the new Varkon installation.
+Obviousley, you can also use different start scripts to start different
+versions of Varkon.
+</p>
+
+<h2>Environment, parameters and Ini-files</h2>
+
+<p>
+The rest of the start script defines a number of additional environment
+variables. Check the <a href="./env_variables.htm">Environment variables
+section</a> for details. You will sooner or later probably want to edit
+some of them as well. The last line of the start script starts the Varkon
+executable with a number of command line parameters. See the
+<a href="./cmd_params.htm">Command line parameters section</a> for 
+information about command line parameters. One of the parameters is
+the ini-file. Editing ini-files (or supplying custom ini-files) is
+also a way to customize your system. See <a href="./ini_files.htm">
+Ini-files</a> for more information about ini-files.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

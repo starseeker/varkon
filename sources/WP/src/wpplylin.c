@@ -4,7 +4,7 @@
 *    ==========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -163,13 +163,14 @@ static double curnog = 1.0;
  *      2006-12-28 Removed GP, J.Kjellander
  *      2007-01-08 piso, pborder,  Sören L
  *      2007-04-23 Bug, text projection, J.Kjellander
+ *      2007-08-28 Dim text, J.Kjellander
  *
  ******************************************************!*/
 
  {
     DBptr     la;
     DBetype   typ;
-    int       k,i,n;
+    int       k,i;
     char      str[V3STRLEN+1];
     double    x[PLYMXV],y[PLYMXV],z[PLYMXV];
     char      a[PLYMXV];
@@ -286,55 +287,47 @@ static double curnog = 1.0;
         break;
 
         case XHTTYP:
-        DBread_xhatch(&xht,crdvek,la);
+        DBread_xhatch(&xht,crdvek,&csy,la);
         if ( !xht.hed_xh.blank  &&  WPnivt(gwinpt->nivtab,xht.hed_xh.level) )
           {
-          i =  0;
-          n =  4*xht.nlin_xh;
-  
-          while ( i < n )
-            {
-            x[++k] = crdvek[i++];
-            y[k]   = crdvek[i++];
-            x[++k] = crdvek[i++];
-            y[k]   = crdvek[i++];
-            }
+          WPplxh(&xht,crdvek,&csy,&k,x,y,z,a);
+          WPpply(gwinpt,k,x,y,z);
           }
         break;
 
         case LDMTYP:
-        DBread_ldim(&dim.ldm_un,la);
+        DBread_ldim(&dim.ldm_un,&csy,la);
         if ( !dim.hed_un.blank  &&  WPnivt(gwinpt->nivtab,dim.hed_un.level) )
           {
-          dim.ldm_un.auto_ld = FALSE;
-          WPplld(&dim.ldm_un,&k,x,y,z,a);
+          WPplld(&dim.ldm_un,&csy,&k,x,y,z,a);
+          WPpply(gwinpt,k,x,y,z);
           }
         break;
 
         case CDMTYP:
-        DBread_cdim(&dim.cdm_un,la);
+        DBread_cdim(&dim.cdm_un,&csy,la);
         if ( !dim.hed_un.blank  &&  WPnivt(gwinpt->nivtab,dim.hed_un.level) )
           {
-          dim.cdm_un.auto_cd = FALSE;
-          WPplcd(&dim.cdm_un,&k,x,y,z,a);
+          WPplcd(&dim.cdm_un,&csy,&k,x,y,z,a);
+          WPpply(gwinpt,k,x,y,z);
           }
         break;
 
         case RDMTYP:
-        DBread_rdim(&dim.rdm_un,la);
+        DBread_rdim(&dim.rdm_un,&csy,la);
         if ( !dim.hed_un.blank  &&  WPnivt(gwinpt->nivtab,dim.hed_un.level) )
           {
-          dim.rdm_un.auto_rd = FALSE;
-          WPplrd(&dim.rdm_un,&k,x,y,z,a);
+          WPplrd(&dim.rdm_un,&csy,&k,x,y,z,a);
+          WPpply(gwinpt,k,x,y,z);
           }
         break;
 
         case ADMTYP:
-        DBread_adim(&dim.adm_un,la);
+        DBread_adim(&dim.adm_un,&csy,la);
         if ( !dim.hed_un.blank  &&  WPnivt(gwinpt->nivtab,dim.hed_un.level) )
           {
-          dim.adm_un.auto_ad = FALSE;
-          WPplad(&dim.adm_un,1.0,&k,x,y,z,a);
+          WPplad(&dim.adm_un,&csy,1.0,&k,x,y,z,a);
+          WPpply(gwinpt,k,x,y,z);
           }
         break;
 

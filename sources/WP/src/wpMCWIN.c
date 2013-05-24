@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -198,7 +198,8 @@ static GC     icon_gc = 0;                  /* X GC with clip mask for transpare
       {
       strcpy(fnam,IGgenv(VARKON_ICO));
       strcat(fnam,"Varkon_message.xpm");
-      status = XpmReadFileToPixmap(xdisp,messcom_xid,fnam,&message_icon,&icon_mask,&attributes);
+      status = XpmReadFileToPixmap(xdisp,messcom_xid,fnam,&message_icon,
+                                   &icon_mask,&attributes);
       if ( status != XpmSuccess ) message_icon = 0;
       icon_dx = attributes.width;
       icon_dy = attributes.height;
@@ -208,7 +209,8 @@ static GC     icon_gc = 0;                  /* X GC with clip mask for transpare
       {
       strcpy(fnam,IGgenv(VARKON_ICO));
       strcat(fnam,"Varkon_prompt.xpm");
-      status = XpmReadFileToPixmap(xdisp,messcom_xid,fnam,&prompt_icon,&icon_mask,&attributes);
+      status = XpmReadFileToPixmap(xdisp,messcom_xid,fnam,&prompt_icon,
+                                   &icon_mask,&attributes);
       if ( status != XpmSuccess ) prompt_icon = 0;
       }
 
@@ -216,7 +218,8 @@ static GC     icon_gc = 0;                  /* X GC with clip mask for transpare
       {
       strcpy(fnam,IGgenv(VARKON_ICO));
       strcat(fnam,"Varkon_error.xpm");
-      status = XpmReadFileToPixmap(xdisp,messcom_xid,fnam,&error_icon,&icon_mask,&attributes);
+      status = XpmReadFileToPixmap(xdisp,messcom_xid,fnam,&error_icon,
+                                   &icon_mask,&attributes);
       if ( status != XpmSuccess ) error_icon = 0;
       }
 /*
@@ -245,9 +248,9 @@ static GC     icon_gc = 0;                  /* X GC with clip mask for transpare
  *
  *      In: message = C ptr to message string.
  *          type    = Type of message, WP_MESSAGE
- *                                      WP_ERROR
- *                                      WP_PROMPT
- *                                      WP_CLEARED
+ *                                     WP_ERROR
+ *                                     WP_PROMPT
+ *                                     WP_CLEARED
  *
  *      (C)2007-06-18 J. Kjellander
  *
@@ -353,9 +356,11 @@ expose:
 
 /*      Expose handler for WPMCWIN.
  *
- *      In: mcwptr = C ptr to WPMCWIN.   
+ *      In: mcwptr = C ptr to WPMCWIN.
  *
  *      (C)2007-05-30 J. Kjellander
+ *
+ *      2007-09-22 Flush added, J.Kjellander
  *
  ******************************************************!*/
 
@@ -401,7 +406,7 @@ expose:
 */
    start = oldest_message + message_count - 1;
    if ( start > WP_MCWBUFSIZ-1 ) start -= WP_MCWBUFSIZ;
-  
+
    stop = message_count;
    if ( stop > nlines ) stop = nlines;
 /*
@@ -432,17 +437,20 @@ expose:
          {
          case WP_ERROR:
          if ( error_icon != 0 )
-           XCopyArea(xdisp,error_icon,mcwptr->messcom_xid,icon_gc,0,0,icon_dx,icon_dy,x_icon,y_icon);
+           XCopyArea(xdisp,error_icon,mcwptr->messcom_xid,icon_gc,
+                     0,0,icon_dx,icon_dy,x_icon,y_icon);
          break;
 
          case WP_PROMPT:
          if ( prompt_icon != 0 ) 
-           XCopyArea(xdisp,prompt_icon,mcwptr->messcom_xid,icon_gc,0,0,icon_dx,icon_dy,x_icon,y_icon);
+           XCopyArea(xdisp,prompt_icon,mcwptr->messcom_xid,icon_gc,
+                     0,0,icon_dx,icon_dy,x_icon,y_icon);
          break;
 
          case WP_MESSAGE:
          if ( message_icon != 0 ) 
-           XCopyArea(xdisp,message_icon,mcwptr->messcom_xid,icon_gc,0,0,icon_dx,icon_dy,x_icon,y_icon);
+           XCopyArea(xdisp,message_icon,mcwptr->messcom_xid,icon_gc,
+                     0,0,icon_dx,icon_dy,x_icon,y_icon);
          break;
          }
        }
@@ -457,12 +465,16 @@ expose:
 */
    XSetForeground(xdisp,xgc,WPgcol(WP_FGND));
    XDrawImageString(xdisp,mcwptr->messcom_xid,xgc,mcwptr->cmdptr->geo.x,
-                                                   mcwptr->geo.dy - mcwptr->cmdptr->geo.dy - 10,
-                                                   "Command:",strlen("Command:"));
+                    mcwptr->geo.dy - mcwptr->cmdptr->geo.dy - 10,
+                    "Command:",strlen("Command:"));
 /*
 ***Expose the command WPEDIT window.
 */
    WPxped(mcwptr->cmdptr);
+/*
+***Flush.
+*/
+   XFlush(xdisp);
 /*
 ***The end.
 */

@@ -86,11 +86,11 @@ rn:=rn/rowlgt;
 !lst_lin(rad2);
 !*
 !***Levels.
-!*   
+!*
     IF uselevels="y" THEN 
        levn   :=ival(substr(rad1,33,8));       ! field 5, "level"
        IF levn<0 THEN
-         levn:=act_lev();
+         levn:=act_level();
          outstr(logfile,"igs_ents, Definitions level property, not implemented, active is used");
          outlin(logfile);
          outstr(logfile,rad1); outlin(logfile);
@@ -98,7 +98,7 @@ rn:=rn/rowlgt;
          outlin(logfile);       
        ENDIF;
        IF levn>1999 THEN
-         levn:=act_lev();
+         levn:=act_level();
          outstr(logfile,"igs_ents, levels higher than 1999 is not supported by varkon, active is used");
          outlin(logfile);
          outstr(logfile,rad1); outlin(logfile);
@@ -106,7 +106,7 @@ rn:=rn/rowlgt;
          outlin(logfile);       
        ENDIF;
     ELSE
-       levn:= act_lev();
+       levn:= act_level();
     ENDIF;
 !*
 !***Colors.

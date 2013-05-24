@@ -1,6 +1,6 @@
 !*******************************************************
 
-  GLOBAL DRAWING MODULE dxf_txt(
+  GLOBAL MODULE dxf_txt(
   VAR FILE   infil;
   INT        levlim;
   VAR INT    levant;

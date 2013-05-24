@@ -55,7 +55,7 @@ static short (*functab[])() =
      NULL,      NULL,    evvecp,      NULL,      NULL, /* 59 */
      NULL,      NULL,      NULL,      NULL,     evvec,
      NULL,      NULL,      NULL,      NULL,      NULL, /* 69 */
-   evasci,     evstr,     evchr,     evval,    evleng,
+   evasci,     evstr,     evchr,      NULL,    evleng,
    evsubs,
 /*
 ***When building xvarkon all routines are included.

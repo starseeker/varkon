@@ -1,4 +1,4 @@
-/*!******************************************************************/
+/********************************************************************/
 /*  igstatem.c                                                      */
 /*  ===========                                                     */
 /*                                                                  */
@@ -11,7 +11,7 @@
 /*  IGanrf();    Analyzes reference dependencies                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -39,30 +39,28 @@
 #include "../../AN/include/AN.h"
 #include "../../WP/include/WP.h"
 
-extern short    v3mode,modtyp;
+extern short    sysmode,modtyp;
 extern pm_ptr   actmod;
 extern DBseqnum snrmax;
 extern DBptr    lsysla;
 extern char     actcnm[];
 extern struct   ANSYREC sy;
 
-/*!******************************************************/
+/********************************************************/
 
-       short IGcges(
+       short  IGcges(
        char  *typ,
        pm_ptr pplist)
 
 /*      Creates, executes and adds a geometric statement
  *      to end of active module.
  *
- *      In: typ    => Typ av geometrisats, tex. "POI-FREE"
- *          pplist => Pekare till parameterlista.
+ *      In: typ    => MBS procedure name  ie. "POI_FREE"
+ *          pplist => PM ptr to parameter list
  *
- *      Ut: Inget.
- *
- *      Felkod: IG5213 = Fel fr�n pmcges i IGcges
- *              IG5222 = Fel vid interpretering av %s-sats
- *              IG5233 = Fel fr�n pmlmst i IGcges
+ *      Error: IG5213 = Error from pmcges()
+ *             IG5222 = Error intepreting %s-statement
+ *             IG5233 = Error from pmlmst()
  *
  *      (C)microform ab 3/9/85 J. Kjellander
  *
@@ -72,7 +70,7 @@ extern struct   ANSYREC sy;
  ******************************************************!*/
 
   {
-    char   mesbuf[2*V3STRLEN],mbsbuf[V3STRLEN];
+    char   mesbuf[2*V3STRLEN],mbsbuf[5*V3STRLEN];
     pmseqn geid;
     pm_ptr retla,ref;
     stidcl kind;
@@ -99,10 +97,25 @@ extern struct   ANSYREC sy;
       return(erpush("IG5222",typ));
       }
 /*
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message. In explicit mode prettyprint
+***must be done before pmrele(). pprsts() needs a buffer
+***which is long enough to hold the full MBS statement but
+***here we truncate long statements to V3STRLEN characters.
+*/
+    strncpy(mesbuf,IGgtts(58),V3STRLEN);
+    pprsts(retla,mbsbuf,5*V3STRLEN);
+    mbsbuf[V3STRLEN] = '\0';
+    strncat(mesbuf,mbsbuf,V3STRLEN);
+    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
 ***Everything ok, add statement to end of module. In RIT-mode,
 ***reset PM stack pointer.
 */
-    if ( v3mode & BAS_MOD )
+    if ( sysmode & GENERIC )
       {
       if ( pmlmst(actmod, retla) < 0 ) return(erpush("IG5233",typ));
       }
@@ -111,22 +124,11 @@ extern struct   ANSYREC sy;
       pmrele();
       }
 /*
-***Update WPRWIN's.
-*/
-    WPrepaint_RWIN(RWIN_ALL,FALSE);
-/*
-***Confirmational message.
-*/
-    strcpy(mesbuf,IGgtts(58));
-    pprsts(retla,modtyp,mbsbuf,V3STRLEN);
-    strcat(mesbuf,mbsbuf);
-    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
-/*
 ***The end.
 */
     return(0);
   }
-  
+
 /********************************************************/
 /*!******************************************************/
 
@@ -180,7 +182,7 @@ extern struct   ANSYREC sy;
 ***Everything ok, add procedure call to end of module. In RIT-mode,
 ***reset PM stack pointer.
 */
-    if ( v3mode & BAS_MOD )
+    if ( sysmode & GENERIC )
       {
       if ( pmlmst(actmod, retla) < 0 ) return(erpush("IG5263",typ));
       }
@@ -192,7 +194,7 @@ extern struct   ANSYREC sy;
 ***Confirmational message.
 */
     strcpy(mesbuf,IGgtts(58));
-    pprsts(retla,modtyp,mbsbuf,V3STRLEN);
+    pprsts(retla,mbsbuf,V3STRLEN);
     strcat(mesbuf,mbsbuf);
     WPaddmess_mcwin(mesbuf,WP_MESSAGE);
 /*
@@ -229,7 +231,7 @@ extern struct   ANSYREC sy;
 /*
 ***Om ritmodulen aktiv, returnera GM:s idmax + 1.
 */
-    if ( v3mode == RIT_MOD )
+    if ( sysmode == EXPLICIT )
       {
       DBget_highest_id(&idmax);
       if ( idmax == -1 ) idmax = 0;
@@ -342,7 +344,7 @@ extern struct   ANSYREC sy;
 /*
 ***De-kompilera dito till en str�ng.
 */
-    if ( (status=pprsts(statla,modtyp,oldstr,V3STRLEN)) < 0 ) goto exit;
+    if ( (status=pprsts(statla,oldstr,V3STRLEN)) < 0 ) goto exit;
 /*
 ***Klipp ut allt fram till 1:a parametern och g�r det
 ***till promt, resten blir default-v�rde.
@@ -356,7 +358,7 @@ edit:
 /*
 ***L�t anv�ndaren editera.
 */
-    status = IGssip(promt,newpar,oldpar,V3STRLEN);
+    status = IGssip("",promt,newpar,oldpar,V3STRLEN);
 
     if ( status < 0 )
       {
@@ -435,7 +437,7 @@ edit:
 */
     if ( pmamir((DBId *)idmat)  &&  IGialt(175,67,68,FALSE) )
       {
-      status = IGramo();
+      status = IGrun_active();
       if ( status < 0 )
         { 
         pmrgps(lstla,statla);

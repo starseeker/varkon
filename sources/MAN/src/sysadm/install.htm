@@ -1,0 +1,112 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- Download and installation})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Download and installation</h1>
+
+<p>
+The Varkon system is hosted by SourceForge, the world's
+largest Open Source software development web site. This
+is the address to the home page of SourceForge:
+<a href="http://sourceforge.net">http://sourceforge.net</a>
+</p>
+
+<p>
+To download Varkon, go to the Varkon project site on SourceForge:
+<a href="http://sourceforge.net/projects/varkon">
+http://sourceforge.net/projects/varkon</a>
+</p>
+
+<p>
+From he Varkon project site on SourceForge you can download different
+versions of Varkon, You can also read news, post bug reports or feature
+requests and participate in a discussion on the forum. Varkon is available
+either as a package or through SVN. In both cases there are several options.
+</p>
+
+<h2>Downloading a Varkon package</h2>
+
+<p>
+A package is a compressed file that includes all files needed to install
+Varkon. You can select between a binary package or a source package. The
+easiest way to go is the binary package since it is prebuilt for a specific
+platform and there is no need to compile the sources. If there is no binary
+package that suits your platform you will have to download the source package
+and build the system on your own computer. Each package has a version composed
+of two numbers and a letter, 1.19B for example. Packaged versions are released
+on a regular basis one or two times per year. When you browse the Varkon project
+site on SourceForge you will see that you can download the latest version
+of the system as well as older versions.
+</p>
+
+<h2>Installing a Varkon package</h2>
+
+<p>
+Installing a package is very easy. After downloading the
+compressed file, just unpack it in the location where you want
+the system installed, any directory will do. If you have an earlier
+version of Varkon installed you can use the same directory but we
+recommend that you install a new version in a new directory.
+</p>
+
+<p>
+All files in the package will be placed in a subdirectory with the
+name of the current version. This directory becomes the root-directory
+of your installation and is called VARKON_ROOT. If you install
+Varkon version 1.19B in <code>/home/username</code>, then VARKON_ROOT becomes:<br>
+<pre class=box>
+  /home/username/varkon_1.19B
+</pre>
+</p>
+
+<p>
+The idea with this installation procedure is to make it
+possible to install new versions of Varkon at any time
+without interfearing with previously installed versions.
+This way you can easily switch between two versions if you
+like to.
+</p>
+
+<p>
+If the package you have installed is a binary package, you
+are now ready to start the system for the first time. If you
+have installed a source package you must first build the
+system. How to build the system is described in the README-file
+located in <code>$VARKON_ROOT/sources</code>. How to start the system is
+described in the <a href="./start.htm">Start Varkon</a>
+section of this manual.
+</p>
+
+
+<h2>Downloading Varkon through SVN</h2>
+
+<p>
+It is also possible to download sources from the SVN repository.
+The SVN repository contains the latest developments of the sources,
+sometimes not fully tested or documented and sometimes not with
+support for all platforms but usually with more functionality
+than what is availabe in the latest package. The sources in the
+SVN repository are updated by the Varkon development team without
+notice. Each update gets a new SVN version number. You can use the
+SVN Browse tool on the Varkon project site on Sourceforge to read
+the update logs. To download the Varkon sources from the SVN
+repository you need to have the Subversion package (svn) installed
+on your computer.
+</p>
+
+<h2>Uninstalling Varkon</h2>
+
+<p>
+If you want to remove a Varkon installation the only thing
+you need to do is to remove its root directory. All files
+included in the package will then be removed.
+</p>
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

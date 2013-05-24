@@ -1,15 +1,15 @@
 /*!******************************************************************
-*                            
-*    exsur2.c                    
-*    ========                     
-*                               
+*
+*    exsur2.c
+*    ========
+*
 *    EXsswp();       Create SUR_SWEEP
-*    EXscyl();       Create SUR_CYL  
-*    EXsrot();       Create SUR_ROT 
+*    EXscyl();       Create SUR_CYL
+*    EXsrot();       Create SUR_ROT
 *    EXsrul();       Create SUR_RULED 
 *
 *    This file is part of the VARKON Execute  Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -52,7 +52,7 @@ extern DBTmat  lklsyi;     /* Active coord. system, inverted        */
 
 /*!******************************************************/
 
-        short EXsswp(
+        short     EXsswp(
         DBId     *sur_id,
         DBId     *cur_id,
         DBId     *spine_id,
@@ -441,7 +441,7 @@ if ( dbglev(EXEPAC) == 1 )
 /********************************************************/
 /*!******************************************************/
 
-       short EXsrot(
+       short     EXsrot(
        DBId     *id,
        DBId     *rid,
        DBVector *p1,
@@ -452,7 +452,7 @@ if ( dbglev(EXEPAC) == 1 )
        DBint     reverse,
        V2NAPA   *pnp)
 
-/*      Skapa SUR_ROT.
+/*      Cretae SUR_ROT().
  *
  *      In:  id   => Pekare till ytans identitet.
  *           rid  => Pekare till ID för refererad kurva.
@@ -463,13 +463,13 @@ if ( dbglev(EXEPAC) == 1 )
  *           dir  => Rotationsriktning +/- 1
  *           pnp  => Pekare till attribut.
  *
- *      Ut:  Inget.
  *
- *      FV:       0 => Ok.
+ *      Return:   0 => Ok.
  *           EX1402 => Refererad storhet finns ej.
  *           EX1412 => Refererad storhet har fel typ.
  *
- *      (C)microform ab ?????????????
+ *      (C)microform ab 1997
+ *
  *      1997-03-09  sur_type, dir_in   Gunnar Liden
  *      1997-03-21  sur716             Gunnar Liden
  *      1998-03-20  Initializations    Gunnar Liden
@@ -477,116 +477,99 @@ if ( dbglev(EXEPAC) == 1 )
  ******************************************************!*/
 
   {
-    short   status;
-    DBptr   la;
-    DBetype typ;
-    char    errbuf[V3STRLEN+1];
-    DBCurve rotcur;
-    DBSeg  *rotseg;
-    DBSeg   cirlin[4];
-    DBLine  lin;       /* For a rotation curve which is a line      */
-    DBArc   arc;       /* For a rotation curve which is a circle    */
-    DBint   f_alloc;   /* =0: No allocation  =1: Curve allocation   */
+    short    status;
+    DBptr    la;
+    DBetype  typ;
+    char     errbuf[V3STRLEN+1];
+    DBCurve  rotcur;
+    DBSeg   *rotseg;
+    DBSeg    cirlin[4];
+    DBLine   lin;       /* For a rotation curve which is a line      */
+    DBArc    arc;       /* For a rotation curve which is a circle    */
+    DBint    f_alloc;   /* =0: No allocation  =1: Curve allocation   */
     DBSurf   rotsur;
     DBPatch *rotpat;
-    DBint   sur_type;  /* =1: LFT_SUR p_flag=2 =2: LFT_SUR p_flag=3 */
-    DBint   dir;       /* =1: positive =-1 Negative                 */
+    DBint    sur_type;  /* =1: LFT_SUR p_flag=2 =2: LFT_SUR p_flag=3 */
+    DBint    dir;       /* =1: positive =-1 Negative                 */
 
-
-#ifdef DEBUG
-if ( dbglev(EXEPAC) == 1 )
-  {
-  fprintf(dbgfil(EXEPAC),"exe23*EXsrot Enter dir_in %d reverse %d\n",
-      (int)dir_in ,(int)reverse );
-  fflush(dbgfil(EXEPAC)); 
-  }
-#endif
-
-    sur_type = I_UNDEF;
-    f_alloc  = I_UNDEF;      
-    dir      = I_UNDEF;
 
 /*
-***Hämta geometri-data för refererad kurva.
+***Get the curve data.
 */
     if ( DBget_pointer('I',rid,&la,&typ) < 0 ) return(erpush("EX1402",""));
+
     if      ( typ == CURTYP )
       {
-      f_alloc = 1;      
+      f_alloc = 1;
       DBread_curve(&rotcur,NULL,&rotseg,la);
       }
     else if ( typ == LINTYP )
       {
-      f_alloc = 0;      
+      f_alloc = 0;
       DBread_line(&lin, la);
       status = varkon_cur_fromlin(&lin, &rotcur, &cirlin[0] );
       rotseg = &cirlin[0];
       }
-      
     else if ( typ == ARCTYP )
       {
-      f_alloc = 0;      
+      f_alloc = 0;
       DBread_arc(&arc, cirlin, la);
       status = varkon_cur_fromarc(&arc, &rotcur, &cirlin[0] );
       rotseg = &cirlin[0];
       }
-
     else
       {
       IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
-
 /*
-***Transformera p1 och p2 till basic.
+***Transform p1 and p2 to basic.
 */
-   if ( lsyspk != NULL ) GEtfpos_to_local(p1,&lklsyi,p1);
-   if ( lsyspk != NULL ) GEtfpos_to_local(p2,&lklsyi,p2);
+    if ( lsyspk != NULL ) GEtfpos_to_local(p1,&lklsyi,p1);
+    if ( lsyspk != NULL ) GEtfpos_to_local(p2,&lklsyi,p2);
 /*
-***Skapa ytan.
+***Create the surface.
+***The SUR_ROT function should have a parameter which makes it
+***possible to create an ordinary (P-value) LFT_SUR surface.
 */
+    if      ( dir_in ==  1001 )
+      {
+      dir      =  1;
+      sur_type =  2;
+      }
+    else if ( dir_in == -1001 )
+      {
+      dir      = -1;
+      sur_type =  2;
+      }
+    else
+      {
+      dir      = dir_in;
+      sur_type = 1;
+      }
 
-/* The SUR_ROT function should have a parameter which makes it */
-/* possible to create an ordinary (P-value) LFT_SUR surface    */
+    status = varkon_sur_rot(&rotcur,rotseg,dir,
+              p1,p2,v1,v2,sur_type,&rotsur,&rotpat);
 
-   if      (  dir_in ==  1001 )
-     {
-     dir      =  1;
-     sur_type =  2;
-     }
-   else if (  dir_in == -1001 )
-     {
-     dir      = -1;
-     sur_type =  2;
-     }
-   else 
-     {
-     dir      = dir_in;
-     sur_type =    1;
-     }
-
-   status = varkon_sur_rot(&rotcur,rotseg,dir,
-             p1,p2,v1,v2,sur_type,&rotsur,&rotpat);
-
-   if      ( status < 0  &&  rotpat == NULL ) goto err2;
-   else if ( status < 0 ) goto err1;
+    if       ( status < 0  &&  rotpat == NULL ) goto err2;
+    else if ( status < 0 ) goto err1;
 /*
-***Lagra i DB och rita.
+***Save in DB and display.
 */
    status = EXesur(id,&rotsur,rotpat,NULL,NULL,pnp);
 /*
-***Lämna tillbaks dynamiskt allokerat minne.
+***Release mallocated C memory.
 */
 err1:
     DBfree_patches(&rotsur,rotpat);
 err2:
     if ( f_alloc == 1 ) DBfree_segments(rotseg);
 /*
-***Slut.
+***The end.
 */
     return(status);
   }
-  
+
 /********************************************************/
 /*!******************************************************/
 

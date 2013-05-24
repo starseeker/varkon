@@ -21,7 +21,7 @@
 *           is in explicit mode.
 *
 *    This file is part of the VARKON Execute  Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -189,35 +189,35 @@ extern V2NAPA  defnap;
         break;
 
       case LDMTYP:
-        DBread_ldim(&ogmpst.ldm_un,la);
-        DBread_ldim(&ngmpst.ldm_un,la);
+        DBread_ldim(&ogmpst.ldm_un,NULL,la);
+        DBread_ldim(&ngmpst.ldm_un,NULL,la);
         GEtfLdim_to_local(&ogmpst.ldm_un,ptr,&ngmpst.ldm_un);
         DBupdate_ldim(&ngmpst.ldm_un,la);
         break;
 
       case CDMTYP:
-        DBread_cdim(&ogmpst.cdm_un,la);
-        DBread_cdim(&ngmpst.cdm_un,la);
+        DBread_cdim(&ogmpst.cdm_un,NULL,la);
+        DBread_cdim(&ngmpst.cdm_un,NULL,la);
         GEtfCdim_to_local(&ogmpst.cdm_un,ptr,&ngmpst.cdm_un);
         DBupdate_cdim(&ngmpst.cdm_un,la);
         break;
 
       case RDMTYP:
-        DBread_rdim(&ogmpst.rdm_un,la);
-        DBread_rdim(&ngmpst.rdm_un,la);
+        DBread_rdim(&ogmpst.rdm_un,NULL,la);
+        DBread_rdim(&ngmpst.rdm_un,NULL,la);
         GEtfRdim_to_local(&ogmpst.rdm_un,ptr,&ngmpst.rdm_un);
         DBupdate_rdim(&ngmpst.rdm_un,la);
         break;
 
       case ADMTYP:
-        DBread_adim(&ogmpst.adm_un,la);
-        DBread_adim(&ngmpst.adm_un,la);
+        DBread_adim(&ogmpst.adm_un,NULL,la);
+        DBread_adim(&ngmpst.adm_un,NULL,la);
         GEtfAdim_to_local(&ogmpst.adm_un,ptr,&ngmpst.adm_un);
         DBupdate_adim(&ngmpst.adm_un,la);
         break;
 
       case XHTTYP:
-        DBread_xhatch(&ngmpst.xht_un,xhtcrd,la);
+        DBread_xhatch(&ngmpst.xht_un,xhtcrd,NULL,la);
         GEtfHatch_to_local(&ngmpst.xht_un,xhtcrd,ptr);
         DBupdate_xhatch(&ngmpst.xht_un,xhtcrd,la);
         break;
@@ -473,8 +473,8 @@ extern V2NAPA  defnap;
         break;
 
       case LDMTYP:
-        DBread_ldim(&ogmpst.ldm_un,la);
-        DBread_ldim(&ngmpst.ldm_un,la);
+        DBread_ldim(&ogmpst.ldm_un,NULL,la);
+        DBread_ldim(&ngmpst.ldm_un,NULL,la);
         GEtfLdim_to_local(&ogmpst.ldm_un,ptr,&ngmpst.ldm_un);
         attr.dtsize = ogmpst.ldm_un.tsiz_ld;
         attr.dasize = ogmpst.ldm_un.asiz_ld;
@@ -484,8 +484,8 @@ extern V2NAPA  defnap;
         break;
 
       case CDMTYP:
-        DBread_cdim(&ogmpst.cdm_un,la);
-        DBread_cdim(&ngmpst.cdm_un,la);
+        DBread_cdim(&ogmpst.cdm_un,NULL,la);
+        DBread_cdim(&ngmpst.cdm_un,NULL,la);
         GEtfCdim_to_local(&ogmpst.cdm_un,ptr,&ngmpst.cdm_un);
         attr.dtsize = ogmpst.cdm_un.tsiz_cd;
         attr.dasize = ogmpst.cdm_un.asiz_cd;
@@ -495,8 +495,8 @@ extern V2NAPA  defnap;
         break;
 
       case RDMTYP:
-        DBread_rdim(&ogmpst.rdm_un,la);
-        DBread_rdim(&ngmpst.rdm_un,la);
+        DBread_rdim(&ogmpst.rdm_un,NULL,la);
+        DBread_rdim(&ngmpst.rdm_un,NULL,la);
         GEtfRdim_to_local(&ogmpst.rdm_un,ptr,&ngmpst.rdm_un);
         attr.dtsize = ogmpst.rdm_un.tsiz_rd;
         attr.dasize = ogmpst.rdm_un.asiz_rd;
@@ -506,8 +506,8 @@ extern V2NAPA  defnap;
         break;
 
       case ADMTYP:
-        DBread_adim(&ogmpst.adm_un,la);
-        DBread_adim(&ngmpst.adm_un,la);
+        DBread_adim(&ogmpst.adm_un,NULL,la);
+        DBread_adim(&ngmpst.adm_un,NULL,la);
         GEtfAdim_to_local(&ogmpst.adm_un,ptr,&ngmpst.adm_un);
         attr.dtsize = ogmpst.adm_un.tsiz_ad;
         attr.dasize = ogmpst.adm_un.asiz_ad;
@@ -517,7 +517,7 @@ extern V2NAPA  defnap;
         break;
 
       case XHTTYP:
-        DBread_xhatch(&ngmpst.xht_un,xhtcrd,la);
+        DBread_xhatch(&ngmpst.xht_un,xhtcrd,NULL,la);
         GEtfHatch_to_local(&ngmpst.xht_un,xhtcrd,ptr);
         attr.xfont = ngmpst.xht_un.fnt_xh;
         attr.xdashl = ngmpst.xht_un.lgt_xh;
@@ -930,35 +930,35 @@ extern V2NAPA  defnap;
         break;
 
       case LDMTYP:
-        DBread_ldim(&ogmpst.ldm_un,la);
-        DBread_ldim(&ngmpst.ldm_un,la);
+        DBread_ldim(&ogmpst.ldm_un,NULL,la);
+        DBread_ldim(&ngmpst.ldm_un,NULL,la);
         GEtfLdim_to_local(&ogmpst.ldm_un,ptr,&ngmpst.ldm_un);
         DBupdate_ldim(&ngmpst.ldm_un,la);
         break;
 
       case CDMTYP:
-        DBread_cdim(&ogmpst.cdm_un,la);
-        DBread_cdim(&ngmpst.cdm_un,la);
+        DBread_cdim(&ogmpst.cdm_un,NULL,la);
+        DBread_cdim(&ngmpst.cdm_un,NULL,la);
         GEtfCdim_to_local(&ogmpst.cdm_un,ptr,&ngmpst.cdm_un);
         DBupdate_cdim(&ngmpst.cdm_un,la);
         break;
 
       case RDMTYP:
-        DBread_rdim(&ogmpst.rdm_un,la);
-        DBread_rdim(&ngmpst.rdm_un,la);
+        DBread_rdim(&ogmpst.rdm_un,NULL,la);
+        DBread_rdim(&ngmpst.rdm_un,NULL,la);
         GEtfRdim_to_local(&ogmpst.rdm_un,ptr,&ngmpst.rdm_un);
         DBupdate_rdim(&ngmpst.rdm_un,la);
         break;
 
       case ADMTYP:
-        DBread_adim(&ogmpst.adm_un,la);
-        DBread_adim(&ngmpst.adm_un,la);
+        DBread_adim(&ogmpst.adm_un,NULL,la);
+        DBread_adim(&ngmpst.adm_un,NULL,la);
         GEtfAdim_to_local(&ogmpst.adm_un,ptr,&ngmpst.adm_un);
         DBupdate_adim(&ngmpst.adm_un,la);
         break;
 
       case XHTTYP:
-        DBread_xhatch(&ngmpst.xht_un,xhtcrd,la);
+        DBread_xhatch(&ngmpst.xht_un,xhtcrd,NULL,la);
         GEtfHatch_to_local(&ngmpst.xht_un,xhtcrd,ptr);
         DBupdate_xhatch(&ngmpst.xht_un,xhtcrd,la);
         break;

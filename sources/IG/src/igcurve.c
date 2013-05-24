@@ -21,7 +21,7 @@
 /*  IGcusi();     Generate cur_sil...    statement                  */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -45,8 +45,6 @@
 #include "../../DB/include/DB.h"
 #include "../include/IG.h"
 #include "../../WP/include/WP.h"
-
-extern short modtyp;
 
 static short curpm(char *typ, bool tang);
 static short cucpm(char *typ);

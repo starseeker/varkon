@@ -4,7 +4,7 @@
 *    ==========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -29,34 +29,36 @@
 ***********************************************************************/
 
 #include "../../DB/include/DB.h"
+#include "../../GE/include/GE.h"
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 
 extern int actpen;
 
 static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
-                    DBptr la, bool draw);
+                    DBCsys *csyptr, DBptr la, bool draw);
 
 /*!******************************************************/
 
         short    WPdrxh(
         DBHatch *xhtpek,
         DBfloat  crdvek[],
+        DBCsys  *csyptr,
         DBptr    la,
         DBint    win_id)
 
 /*      Display a hatch.
  *
- *      In: xhtpek => Pekare till xht-post.
- *          crdvek => Pekare till koordinater.
- *          la     => GM-adress.
- *          win_id => Fönster att rita i.
+ *      In: xhtpek => C ptr to hatch data.
+ *          crdvek => C ptr to coordinates.
+ *          la     => Hatch DB address.
+ *          win_id => WPGWIN id or GWIN_ALL.
  *
- *      Ut: Inget.
- *
- *      FV:      0 => Ok.
+ *      Return: 0 => Ok.
  *
  *      (C) microform ab 26/1/95 J. Kjellander
+ *
+ *      2007-09-01 WIDTH, J.Kjellander
  *
  ******************************************************!*/
 
@@ -70,7 +72,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
 */
    if ( xhtpek->hed_xh.blank) return(0);
 /*
-***Loopa igenom alla WPGWIN-fönster.
+***Loop through all WPGWIN windows.
 */
    for ( i=0; i<WTABSIZ; ++i )
      {
@@ -79,23 +81,25 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
        {
        gwinpt = (WPGWIN *)winptr->ptr;
 /*
-***Skall vi rita i detta fönster ?
+***Hit ?
 */
        if ( win_id == GWIN_ALL  ||  win_id == gwinpt->id.w_id )
          {
 /*
-***Ja, ligger snittet på en nivå som är tänd i detta fönster ?
+***Yes, is this level visible ?
 */
          if ( WPnivt(gwinpt->nivtab,xhtpek->hed_xh.level) )
            {
 /*
-***Ja. Kolla att rätt färg är inställd.
+***Yes, set color and width.
 */
            if ( xhtpek->hed_xh.pen != actpen ) WPspen(xhtpek->hed_xh.pen);
+           if ( xhtpek->wdt_xh != 0.0 ) WPswdt(gwinpt->id.w_id,xhtpek->wdt_xh);
 /*
-***Sen är det bara att rita.
+***Display.
 */
-           drawxh(gwinpt,xhtpek,crdvek,la,TRUE);
+           drawxh(gwinpt,xhtpek,crdvek,csyptr,la,TRUE);
+           if ( xhtpek->wdt_xh != 0.0 ) WPswdt(gwinpt->id.w_id,0.0);
            }
          }
        }
@@ -110,21 +114,22 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
         short    WPdlxh(
         DBHatch *xhtpek,
         DBfloat  crdvek[],
+        DBCsys  *csyptr,
         DBptr    la,
         DBint    win_id)
 
-/*      Suddar ett snitt.
+/*      Erase (undisplay) a hatch.
  *
- *      In: xhtpek => Pekare till xht-post.
- *          crdvek => Pekare till koordinater.
- *          la     => GM-adress.
- *          win_id => Fönster att sudda i.
+ *      In: xhtpek => C ptr do hatch data.
+ *          crdvek => C ptr to coordinates.
+ *          la     => Hatch DB address.
+ *          win_id => WPGWIN id or GWIN_ALL.
  *
- *      Ut: Inget.
- *
- *      FV:      0 => Ok.
+ *      Return: 0 => Ok.
  *
  *      (C) microform ab 26/1/95 J. Kjellander
+ *
+ *      2007-09-01 WIDTH, J.Kjellander
  *
  ******************************************************!*/
 
@@ -135,7 +140,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
    WPGWIN *gwinpt;
 
 /*
-***Loopa igenom alla WPGWIN-fönster.
+***Loop through all WPGWIN windows.
 */
    for ( i=0; i<WTABSIZ; ++i )
      {
@@ -144,34 +149,25 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
        {
        gwinpt = (WPGWIN *)winptr->ptr;
 /*
-***Skall vi sudda i detta fönster ?
+***Hit ?
 */
        if ( win_id == GWIN_ALL  ||  win_id == gwinpt->id.w_id )
          {
 /*
-***Ja. Om den finns i DF och det är heldraget kan vi sudda snabbt.
+***Remove object from DF.
 */
-         if ( WPfobj(gwinpt,la,XHTTYP,&typ) )
-           {
-           if ( xhtpek->fnt_xh == 0 ) WPdobj(gwinpt,FALSE);
-           else
-             {
-             WProbj(gwinpt);
-             if ( !WPnivt(gwinpt->nivtab,xhtpek->hed_xh.level)  ||
-                                 xhtpek->hed_xh.blank) return(0);
-             drawxh(gwinpt,xhtpek,crdvek,la,FALSE);
-             }
-           }
+         if ( WPfobj(gwinpt,la,XHTTYP,&typ) ) WProbj(gwinpt);
 /*
-***Om den nu ligger på en släckt nivå eller är blankad gör vi
-***inget mer. Annars får vi återskapa polylinjen och sudda långsamt.
+***If blanked we are now finished.
 */
-         else
-           {
-           if ( !WPnivt(gwinpt->nivtab,xhtpek->hed_xh.level)  ||
+         if ( !WPnivt(gwinpt->nivtab,xhtpek->hed_xh.level)  ||
                                xhtpek->hed_xh.blank) return(0);
-           drawxh(gwinpt,xhtpek,crdvek,la,FALSE);
-           }
+/*
+***Remove from display.
+*/
+         if ( xhtpek->wdt_xh != 0.0 ) WPswdt(gwinpt->id.w_id,xhtpek->wdt_xh);
+         drawxh(gwinpt,xhtpek,crdvek,csyptr,la,FALSE);
+         if ( xhtpek->wdt_xh != 0.0 ) WPswdt(gwinpt->id.w_id,0.0);
          }
        }
      }
@@ -186,25 +182,25 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
         WPGWIN  *gwinpt,
         DBHatch *xhtpek,
         DBfloat  crdvek[],
+        DBCsys  *csyptr,
         DBptr    la,
         bool     draw)
 
-/*      Ritar/suddar ett snitt ett visst fönster.
- *      Vid ritning lagras objektet samtidigt i DF.
+/*      Display/erase hatch in a WPGWIN and insert
+ *      object into DF.
  *
- *      In: gwinpt => Pekare till fönster.
- *          xhtpek => Pekare till xht-post.
- *          crdvek => Pekare till koordinater.
- *          la     => GM-adress.
- *          draw   => TRUE = Rita, FALSE = Sudda
+ *      In: gwinpt => C ptr to WPGWIN.
+ *          xhtpek => C ptr to hatch data.
+ *          crdvek => C ptr to coordinates.
+ *          la     => Hatch DB address.
+ *          draw   => TRUE = Display, FALSE = Erase
  *
- *      Ut:  Inget.
- *
- *      FV: Inget.
+ *      Return: Always 0.
  *
  *      (C)microform ab 26/1/95 J. Kjellander
  *
  *      2006-12-17 WPplli(), J.Kjellander
+ *      2007-10-06 3D, J.Kjellander
  *
  ******************************************************!*/
 
@@ -217,7 +213,8 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
 ***Create polyline.
 */
    n = -1;
-   WPplxh(xhtpek,crdvek,&n,x,y,z,a);
+   WPplxh(xhtpek,crdvek,csyptr,&n,x,y,z,a);
+   WPpply(gwinpt,n,x,y,z);
 /*
 ***Clip.
 */
@@ -230,7 +227,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
      else WPdply(gwinpt,n,x,y,a,draw);
      }
 /*
-***End.
+***The end.
 */
    return(0);
  }
@@ -241,6 +238,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
         short    WPplxh(
         DBHatch *xhtptr,
         DBfloat  crdvek[],
+        DBCsys  *csyptr,
         int     *n,
         double   x[],
         double   y[],
@@ -249,7 +247,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
 
 /*      Creates the graphical 3D polyline representation 
  *      for a xhatch.
- *      
+ *
  *      In:  xhtptr  = C-ptr to DBHatch.
  *           n+1     = Offset to polyline start.
  *
@@ -260,12 +258,16 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
  *
  *      (C)2006-12-08 J.Kjellander
  *
+ *      2007-09-30 3D,J.Kjellander
+ *
  ******************************************************!*/
 
  {
-   int    i,k,nl;
-   DBLine lin;
- 
+   int     i,k,nl;
+   DBfloat xt,yt,zt;
+   DBLine  lin;
+   DBTmat  t;
+
 /*
 ***Initializations.
 */
@@ -284,15 +286,44 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
      {
      lin.crd1_l.x_gm = crdvek[i++];
      lin.crd1_l.y_gm = crdvek[i++];
+     lin.crd1_l.z_gm = 0.0;
      lin.crd2_l.x_gm = crdvek[i++];
      lin.crd2_l.y_gm = crdvek[i++];
+     lin.crd2_l.z_gm = 0.0;
      WPplli(&lin,&k,x,y,z,a); 
      }
-
-   *n = k;
 /*
-***End.
+***If needed, transform 2D polyline to XY-plane of 3D csys.
 */
+    if ( xhtptr->pcsy_xh > 0 )
+      {
+      GEtform_inv(&csyptr->mat_pl,&t);
+
+      for ( i=0; i<=k; i++ )
+        {
+        xt = t.g11 * x[i] +
+             t.g12 * y[i] +
+             t.g13 * z[i] +
+             t.g14;
+        yt = t.g21 * x[i] +
+             t.g22 * y[i] +
+             t.g23 * z[i] +
+             t.g24;
+        zt = t.g31 * x[i] +
+             t.g32 * y[i] +
+             t.g33 * z[i] +
+             t.g34;
+
+        x[i] = xt;
+        y[i] = yt;
+        z[i] = zt;
+        }
+      }
+/*
+***The end.
+*/
+   *n = k;
+
     return(0);
  }
 

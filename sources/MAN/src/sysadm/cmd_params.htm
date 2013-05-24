@@ -1,0 +1,109 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- Command line parameters</h1>})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Command line parameters</h1>
+
+<p>
+The main varkon executable understands the following command line
+parameters:
+</p>
+
+<h2>jobname</h2>
+<p>
+A parameter not preceeded by a minus sign "-" is interpreted as
+the name of a RES- or MBO-file to load. An optional path can be
+specified with the -jd parameter, see below.
+</p>
+
+<h2>Job directory, -jd</h2>
+<p>
+-jd<i><b>path</b></i> sets the default job directory to <i><b>path</b></i>.
+</p>
+
+<h2>Module attribute, -LOCAL, -GLOBAL or -BASIC</h2>
+<p>
+Sets the default attribute for new modulesto LOCAL, GLOBAL or
+BASIC. If not specified GLOBAL will be used.
+</p>
+
+<h2>System mode, -EXPLICIT or -GENERIC</h2>
+<p>
+Sets the system mode. If not specified the system mode dialog will
+be displayed when the system is started.
+</p>
+
+<h2>Size of module cache PM, -pm</h2>
+<p>
+-pm<i><b>n</b></i> sets the size of the module memory cache (PM)
+to <b><i>n</b></i> kilobytes. Default size of PM if not specified is 400 kB.
+The PM cache is used by Varkon to keep the active module and the size 
+of PM therefore sets the maximum size of the active module. Varkon also
+allocates a second memory area of the same size as PM and uses this to
+keep modules that are called by the active module. Subsequently the
+size of PM also sets the maximum size of a called module.
+</p>
+
+<p>
+The secondary PM is used as a cache. When a module is called for the
+first time it is always loaded from disc but after it is executed it is
+left in the cache. If the module is called again and hasn't left the cache
+it does not need to be read from disc a second time. This process goes
+on until the cache is full of modules and there is no room for another
+module. When this happens the entire cache is cleared and the process
+starts on again. The cache mechanism of the secondary
+PM can increase execution speed significantly if the size of PM is large
+enough to hold all called modules at the same time.
+</p>
+
+<h2>Size of database cache, -db</h2>
+<p>
+-db<i><b>n</b></i> sets the size of the DB memory cache to <b><i>n</b></i> kilobytes.
+Default size if not specified is 1000 kB. If the model grows larger than the cache,
+data will automatically be swapped to disc. In that case, increasing the size of the
+database cache sufficiently may increase the speed of many operations.
+</p>
+
+<h2>Size of module run time stack, -rts</h2>
+<p>
+-rts<i><b>n</b></i> sets the size of the module run time stack to <b><i>n</b></i> kilobytes.
+Default size if not specified is 1000 kB.
+
+The run time stack is used by Varkon to keep the values of local variables
+declared in the modules currently executing. A local variable of type FLOAT
+only requires 8 bytes but an indexed variable may need much
+more. An array of 1000 4X4 matrixes for example needs 128kB. The run time stack
+must be big enough to fit all local variables in a call chain. This
+means that if the active module calls module A and A calls B then the size
+of the stack must be big enough for the total sum of local variables in the active
+module + A + B. If Varkon should find the run time stack
+too small en error message is displayed stating the actual size needed.
+If this happens try to increase the size as shown above.
+</p>
+
+<h2>Ini-files, -i</h2>
+<p>
+-i<i><b>file</b></i> loads the ini-file specified by <i><b>file</b></i>. A path
+may be included. One or two inifiles may be specified.
+</p>
+
+<h2>Auto execute, -x</h2>
+<p>
+In generic mode, automatically executes the module loaded at start up
+if a RES-file is missing.
+</p>
+
+<h2>Batch mode, -b</h2>
+<p>
+Starts Varkon in silent mode (no output to the display), executes the
+module, saves the result and exits automatically. You must also supply
+a job name and a job directory.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

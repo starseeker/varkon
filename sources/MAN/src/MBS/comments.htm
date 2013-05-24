@@ -1,0 +1,73 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- index})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Comments</h1>
+
+<p>
+The exclamation mark &quot;!&quot; is used to indicate the beginning of a comment and
+the &quot;end of line&quot; ends a comment. All characters on the rest of the line after
+an exclamation mark are skipped by the compiler. Here is an example...
+</p>
+
+<pre class="box">
+  !******************************************************
+  !*
+  MODULE  plate_10X10( ! Creates a plate size 10 by 10
+    FLOAT t); ! Thickness of plate
+  !*
+  !* (C)2008-01-14 The Author
+  !*
+  !* Revisions: None
+  !*
+  !******************************************************
+
+  BEGINMODULE
+
+    lin_free(#1,vec(0,0),vec(10,0)); ! The lower horisontal line
+    lin_offs(#2,#1,-10);             ! The upper horisontal line
+    lin_free(#3,on(#1),on(#2));      ! A line connecting startpoints
+    lin_free(#4,on(#1,1),on(#2,1));  ! A line connecting endpoints
+
+  ENDMODULE
+
+  !******************************************************
+</pre>
+
+<p>
+Dont be sparse with comments. You can also increase readability by indenting and using
+lower and upper characters in a systematic way. A piece of code like the one above is
+definitely much easier to understand than the following.
+</p>
+
+<pre class="box">
+  module plate_10X10(float t);
+  beginmodule
+  lin_free(#1,vec(0,0),vec(10,0));
+  lin_offs(#2,#1,-10);
+  lin_free(#3,on(#1),on(#2));
+  lin_free(#4,on(#1,1),on(#2,1));
+  endmodule
+</pre>
+
+<p>
+It is possible to let a comment continue over many lines by using
+the same &quot;/*&quot; and &quot;*/&quot; notation as in the C
+programming language.
+</p>
+
+<pre class="box">
+  /* A multiline comment starts here
+     and continues
+     and continues
+     and continues
+     and ends here */
+</pre>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -12,16 +12,21 @@
 !*
 !*      28/12/86 Globala ref, J. Kjellander
 !*      1996-06-03 Engelska, J.Kjellander
+!*      2007-09-01 WIDTH, J.Kjellander
 !*
 !*******************************************************
 
    INT    typ,nd,auto;
-   FLOAT  ps,ts;
+   FLOAT  ps,ts,w;
    VECTOR p1,p2,p3;
 
  beginmodule
 
     getcdm(global_ref(id,2),p1,p2,p3,typ,ps,ts,nd,auto);
+    w:=getwidth(global_ref(id,2));
+
+    lst_lin(get_tstr(1620) + str(w,-12,5));   ! t1620 = "Bredd           : "
+    lst_lin("");
 
     lst_lin(get_tstr(470) + str(p1.x,-12,6));
     lst_lin(get_tstr(471) + str(p1.y,-12,6));

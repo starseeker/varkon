@@ -24,8 +24,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include <stdio.h>

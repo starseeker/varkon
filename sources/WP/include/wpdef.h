@@ -41,6 +41,8 @@
 #define TYP_GWIN    6            /* X11 Graphical window */
 #define TYP_RWIN    7            /* OpenGL Graphical window */
 #define TYP_MCWIN   8            /* Message and Command window */
+#define TYP_DECRN   9            /* Decoration */
+#define TYP_SBAR   10            /* Slidebar */
 
 /*
 ***Colors.
@@ -49,13 +51,20 @@
 #define WP_SPENS 9               /* Number of system pens */
 #define WP_BGND1 WP_NPENS        /* Background for WPIWIN's, varkon.background */
 #define WP_BGND2 WP_NPENS+1      /* Background for WPBUTT's, varkon.buttonColor */
-#define WP_BGND3 WP_NPENS+2      /* Background for "selected" WPBUTT's, varkon.selectedButtonColor */
+#define WP_BGND3 WP_NPENS+2      /* Selected WPBUTT, varkon.selectedButtonColor */
 #define WP_FGND  WP_NPENS+3      /* Foreground, varkon.foreground */
 #define WP_TOPS  WP_NPENS+4      /* Top shadow, varkon.topShadowColor */
 #define WP_BOTS  WP_NPENS+5      /* Bottom shadow, varkon.bottomShadowColor */
 #define WP_NOTI  WP_NPENS+6      /* Button highlight, varkon.highlightedButtonColor */
 #define WP_TTIP  WP_NPENS+7      /* Tooltip background, varkon.tooltipColor */
 #define WP_ENTHG WP_NPENS+8      /* Entity highlight, varkon.highlightedEntityColor */
+
+/*
+***Text fonts.
+*/
+#define WP_FNTSMALL    0         /* Small text font */
+#define WP_FNTNORMAL   1         /* Normal size text font */
+#define WP_FNTBIG      2         /* Large size font for headlines etc. */
 
 /*
 ***Rubberband modes.
@@ -139,13 +148,13 @@ Window     x_id;               /* X-window ID */
 */
 typedef struct
 {
-short      x;                  /* Läge X-koordinat */
-short      y;                  /* Läge Y-koordinat */
-short      dx;                 /* Storlek i X-led */
-short      dy;                 /* Storlek i Y-led */
-short      bw;                 /* Ramens tjocklek */
-double     psiz_x;             /* Pixelstorlek i X-led i mm. */
-double     psiz_y;             /* Pixelstorlek i Y-led i mm. */
+short      x;                  /* Position in X dir. */
+short      y;                  /* Position in Y dir. */
+short      dx;                 /* Size in X dir. */
+short      dy;                 /* Size in Y dir. */
+short      bw;                 /* Border width or 0 */
+double     psiz_x;             /* Pixel size in X dir. in mm. */
+double     psiz_y;             /* Pixel size in Y dir. in mm. */
 } WPWGEO;
 
 /*
@@ -153,8 +162,8 @@ double     psiz_y;             /* Pixelstorlek i Y-led i mm. */
 */
 typedef struct
 {
-short      bckgnd;             /* Bakgrundsfärg */
-short      forgnd;             /* Förgrundsfärg */
+short      bckgnd;             /* Background color */
+short      forgnd;             /* Foreground color */
 } WPWCOL;
 
 /*
@@ -162,8 +171,8 @@ short      forgnd;             /* Förgrundsfärg */
 */
 typedef struct
 {
-char       typ;                /* Typ av fönster, tex. TYP_IWIN */
-char      *ptr;                /* C-pekare till en fönster-structure */
+char       typ;                /* Window type, ie. TYP_IWIN */
+char      *ptr;                /* C-ptr to window */
 } WPWIN;
 
 /*
@@ -171,10 +180,10 @@ char      *ptr;                /* C-pekare till en fönster-structure */
 */
 typedef struct
 {
-double     x;                  /* X-koordinat */
-double     y;                  /* Y-koordinat */
-double     z;                  /* Z-koordinat */
-char       a;                  /* Tänd/släck + start/slut */
+double     x;                  /* X coordinate */
+double     y;                  /* Y coordinate */
+double     z;                  /* Z coordinate */
+char       a;                  /* VISIBLE/INVISIBLE + ENDSIDE */
 } WPGRPT;
 
 /*
@@ -182,8 +191,8 @@ char       a;                  /* Tänd/släck + start/slut */
 */
 typedef struct
 {
-double     xmin,xmax;          /* Gränser i X-led */
-double     ymin,ymax;          /* Gränser i Y-led */
+double     xmin,xmax;          /* Limits in X dir. */
+double     ymin,ymax;          /* Limits in Y dir. */
 } VYWIN;
 
 /*
@@ -191,9 +200,9 @@ double     ymin,ymax;          /* Gränser i Y-led */
 */
 typedef struct
 {
-double     k11,k12,k13;        /* 1:a raden */
-double     k21,k22,k23;        /* 2:a raden */
-double     k31,k32,k33;        /* 3:e raden */
+double     k11,k12,k13;        /* 1:st row */
+double     k21,k22,k23;        /* 2:nd row */
+double     k31,k32,k33;        /* 3:rd row */
 } VYTRF;
 
 /*
@@ -237,31 +246,55 @@ struct
 } DFPOST;
 
 /*
-***A Button window.
+***A decoration.
 */
+#define    LINE3DDECRN   1     /* 3D line */
+#define    FILLRECTDECRN 2     /* A filled rectangle */
+
 typedef struct
 {
 WPWID      id;                 /* ID */
-WPWGEO     geo;                /* Geometri */
-WPWCOL     color;              /* Färger */
-short      font;               /* Fontnummer */
-char       stron[81];          /* Text  för knapp på */
-char       stroff[81];         /* Text  för knapp av */
-bool       status;             /* Logiskt tillstånd, default = FALSE */
-short      acttyp;             /* Aktionstyp, MENU/FUNC etc. */
-short      actnum;             /* Aktionens nummer */
+int        type;               /* Type of decoration */
+int        x1;                 /* Start position */
+int        y1;
+int        x2;                 /* End position */
+int        y2;
+short      color;              /* Fill color */
+} WPDECRN;
+
+/*
+***A Button.
+*/
+#define    LABELBUTTON  1      /* A static text */
+#define    PUSHBUTTON   2      /* A push button */
+#define    STATEBUTTON  3      /* A state button */
+#define    FUNCBUTTON   4      /* A function button */
+#define    TEXTBUTTON   5      /* A text button */
+
+typedef struct
+{
+WPWID      id;                 /* ID */
+WPWGEO     geo;                /* Geometry */
+WPWCOL     color;              /* Colors */
+int        type;               /* Button type */
+int        font;               /* Font number */
+char       stron[81];          /* Text ON */
+char       stroff[81];         /* Text OFF */
+bool       status;             /* Logical state, default = FALSE */
+short      acttyp;             /* Action type, MENU/FUNC etc. */
+short      actnum;             /* Akcion number */
 bool       hlight;             /* Highlight, TRUE/FALSE */
 char       tt_str[81];         /* Tooltip string */
 } WPBUTT;
 
 /*
-***An Edit window.
+***An Edit.
 */
-#define    FIRST_EDIT    1     /* 1:a edit-fönstret */
-#define    NEXT_EDIT     2     /* Nästa edit-fönster */
-#define    PREV_EDIT     3     /* Föregående edit-fönster */
-#define    FOCUS_EDIT    4     /* Aktiva edit-fönstret */
-#define    LAST_EDIT     5     /* Sista edit-fönstret */
+#define    FIRST_EDIT    1     /* 1:st edit */
+#define    NEXT_EDIT     2     /* Next edit */
+#define    PREV_EDIT     3     /* Previous edit */
+#define    FOCUS_EDIT    4     /* Active edit */
+#define    LAST_EDIT     5     /* Last edit */
 
 typedef struct
 {
@@ -389,11 +422,8 @@ DBint         musmod;             /* Aktuell musmode */
 double        rotx,roty,rotz;     /* Aktuell rotation */
 double        movx,movy;          /* Aktuell translation */
 double        scale;              /* Aktuell skalfaktor */
-double        light;              /* Aktuell ljusstyrka 0 -> 100 */
+double        light;              /* Current light intensity 0 -> 100 */
 double        pfactor;            /* Perspektivfaktor 0 -> 100 */
-double        ambient[3];         /* Ambient light */
-double        diffuse[3];         /* Diffuse light */
-double        specular[3];        /* Specualar light */
 bool          zclip;              /* Z-clip on/off */
 double        zfactor;            /* Current Z clip factor 0 -> 100 */
 bool          fill;               /* Fill mode TRUE/FALSE */
@@ -404,36 +434,52 @@ WPMCWIN      *mcw_ptr;            /* Ptr to Message_and_Command window */
 } WPRWIN;
 
 /*
-***An Input window.
+***A Slidebar.
 */
-#define WP_IWSMAX    500          /* Max antal sub-fönster i ett WPIWIN */
+#define WP_SBARH      0           /* Horizontal slidebar */
+#define WP_SBARV      1           /* Vertical slidebar */
 
 typedef struct
 {
 WPWID      id;                    /* ID */
-WPWGEO     geo;                   /* Geometri */
-WPWIN      wintab[WP_IWSMAX];     /* Subfönster */
-bool       mapped;                /* Mappat i X, ja/nej */
+WPWGEO     geo;                   /* Geometry */
+int        dir;                   /* WP_SBARH or WP_SBARV */
+int        butstart;              /* Button start coordinate */
+int        butend;                /* Button end coordinate */
+bool       (*cback)();            /* Callback function or NULL */
+} WPSBAR;
+
+/*
+***An Input window.
+*/
+#define WP_IWSMAX    500          /* Max number of subwindows in a WPIWIN */
+
+typedef struct
+{
+WPWID      id;                    /* ID */
+WPWGEO     geo;                   /* Geometry */
+WPWIN      wintab[WP_IWSMAX];     /* Sub window table */
+bool       mapped;                /* Mapped in X11, TRUE/FALSE */
 } WPIWIN;
 
 /*
 ***A List window.
 */
-#define WP_LWSMAX     3           /* Max antal sub-fönster i ett WPIWIN */
+#define WP_LWSMAX     2           /* Max number of sub windows */
 
 typedef struct
 {
 WPWID      id;                    /* ID */
-WPWGEO     geo;                   /* Geometri */
-WPWIN      wintab[WP_LWSMAX];     /* Subfönster, scroll och save */
-FILE      *filpek;                /* Pekare till list-fil */
-char       filnam[V3PTHLEN+1];    /* Listfilens namn (inkl. path) */
-char       rubrik[V3STRLEN+1];    /* Listans rubrik, dvs. lst_ini(rubrik) */
-DBint      maxrln;                /* Max radlängd */
-DBint      rstart;                /* Radbörjan */
-DBint      trant;                 /* Totalt antal rader */
-DBint      frant;                 /* Antal rader i fönstret */
-bool       sscrol;                /* TRUE=Sid-scroll, FALSE=Rad-scroll */
+WPWGEO     geo;                   /* Geometry */
+WPWIN      wintab[WP_LWSMAX];     /* Sub window table, 0=Vert, 1 = Hor */
+FILE      *filpek;                /* Ptr to temporary list-file */
+char       filnam[V3PTHLEN+1];    /* List file name (incl. path) */
+char       rubrik[V3STRLEN+1];    /* List title */
+DBint      maxchars;              /* Number of chars in longest line */
+DBint      maxlen;                /* Max line length in pixels */
+DBint      nl_first;              /* First visible line */
+DBint      nl_tot;                /* Total number of lines */
+DBint      nl_vis;                /* Number of lines visible in window */
 } WPLWIN;
 
 /*

@@ -1,5 +1,4 @@
 VARKON Error messages for Interpreter routines
-(C) Microform AB 1998
 
 002  4  Illegal id class for id expression
 003  4  Array base not address
@@ -15,6 +14,7 @@ VARKON Error messages for Interpreter routines
 
 201  2  Too long reference
 202  2  No more activation frames
+203  2  Maximum depth (%s) of part call chain reached
 204  2  Named Parameter stack overflow
 205  2  Named Parameter stack underflow
 206  2  Using constant expression where VAR-parameter required
@@ -161,3 +161,10 @@ VARKON Error messages for Interpreter routines
 578  2  Can't malloc for %s trim-curves, SUR_TRIM_USRDEF
 579  2  Error executing procedure %s
 580  2  This module needs to be compiled with a newer MBS compiler
+581  2  HSV_TO_RGB, Hue out of range
+582  2  HSV_TO_RGB, Saturation out of range
+583  2  HSV_TO_RGB, Value out of range
+584  2  RGB_TO_HSV, Red value out of range
+585  2  RGB_TO_HSV, Green value out of range
+586  2  RGB_TO_HSV, Blue value out of range
+587  2  RGB_TO_HSV, R=G=B=0

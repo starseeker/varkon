@@ -10,7 +10,7 @@
 *    DBexit();   Exit DB and save file
 *
 *    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -25,8 +25,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
 *
 ***********************************************************************/
 
@@ -82,7 +80,7 @@ static int init_gmsdat(),update_gmsdat();
 */
    if ( version  != DB_LIBVERSION  ||
         revision != DB_LIBREVISION ||
-        level    != DB_LIBLEVEL ) return(erpush("GM0213",""));
+        level    != DB_LIBLEVEL ) return(erpush("DB0213",""));
 /*
 ***Set creation date etc. in gmsdat_db.
 */
@@ -154,7 +152,7 @@ static int init_gmsdat(),update_gmsdat();
 */
    if ( version  != DB_LIBVERSION  ||
         revision != DB_LIBREVISION ||
-        level    != DB_LIBLEVEL ) return(erpush("GM0213",""));
+        level    != DB_LIBLEVEL ) return(erpush("DB0213",""));
 /*
 ***Init gmssiz. DB only cares about gmssiz.gm
 */
@@ -184,7 +182,7 @@ static int init_gmsdat(),update_gmsdat();
    if ( gmsdat_org.revnr < 1 )
      {
      gmclpf();
-     return(erpush("GM0052",dbfile));
+     return(erpush("DB0052",dbfile));
      }
 /*
 ***All other versions are backward compatible but forward compatibility
@@ -199,14 +197,14 @@ static int init_gmsdat(),update_gmsdat();
      sprintf(errbuf,"%d%d.%c",(int)gmsdat_db.vernr,
                               (int)gmsdat_db.revnr,
                                    gmsdat_db.level);
-     erpush("GM0171",errbuf);
+     erpush("DB0171",errbuf);
      sprintf(errbuf,"%s%%%d%d.%c",dbfile,
                               (int)gmsdat_org.vernr,
                               (int)gmsdat_org.revnr,
                                    gmsdat_org.level);
-     erpush("GM0181",errbuf);
+     erpush("DB0181",errbuf);
      gmclpf();
-     return(erpush("GM0052",dbfile));
+     return(erpush("DB0052",dbfile));
      }
 /*
 ***Read metdat and do gmclear with right logmax.
@@ -231,7 +229,7 @@ static int init_gmsdat(),update_gmsdat();
 */
 readerr:
    gmclpf();
-   return(erpush("GM0033",""));
+   return(erpush("DB0033",""));
  }
 
 /********************************************************/

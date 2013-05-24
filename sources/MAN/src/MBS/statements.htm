@@ -1,0 +1,186 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- index})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Statements</h1>
+
+<p>
+Statements are the things that actually do the job in a module.
+There are five types of statements: Assignment, IF, FOR, GOTO,
+and procedure call.
+</p>
+
+<h2>Assignment</h2>
+
+<p>
+An assignment has the following form...
+</p>
+
+<pre>
+  variable:=expression;
+</pre>
+
+<p>
+where expression is any valid expression for the type of
+variable to recieve its value.
+</p>
+
+<h2>The IF statement</h2>
+
+<p>
+An IF statement has the following form:
+</p>
+
+<pre>
+  IF condition THEN
+    statements
+  [ELIF condition THEN
+    statements]
+  [ELSE
+    statements]
+  ENDIF;
+</pre>
+
+<p>
+The ELIF and ELSE keywords are optional. A condition is a logical
+expression including relational operators and keywords AND, OR and NOT.
+</p>
+
+<p>
+Here is an example:
+</p>
+
+<pre>
+  IF a &lt; min OR a &gt; max THEN
+    statements
+  ELSE
+    statements
+  ENDIF;
+</pre>
+
+<h2>The FOR statement</h2>
+
+<p>
+A for statement has the following form:
+</p>
+
+<pre>
+  FOR loop_variable:=start TO stop [STEP increment] DO
+    statements
+  ENDFOR;
+</pre>
+
+<p>
+The loop_variable is an ordinary INT variable while start, stop and increment are any
+integer expressions. Evaluation of these is done once before the loop is entered and
+their values can not be altered from within the loop. The STEP value may be positive or
+negative.
+</p>
+
+<p>
+A sample FOR loop:
+</p>
+
+<pre>
+  FOR i:=1 to 10 DO
+    poi_free(#1,vec(i,0)); ! 10 Points on a row
+  ENDFOR;
+</pre>
+
+<h2>The GOTO statement</h2>
+
+<p>
+A goto statement is used to jump to a label as in the following example:
+</p>
+
+<pre>
+  IF a &gt; max THEN
+    GOTO error;
+  ENDIF;
+
+  error:
+</pre>
+
+<p>
+As you see from this example a label is just an identifier followed by a colon.
+</p>
+
+<h2>Procedure calls</h2>
+
+<p>
+There are four types of procedures in MBS.
+
+<h3>1. Ordinary procedures</h3>
+
+<p>
+A call to an ordinary procedure has the following form:
+</p>
+
+<pre>
+  identifier([expressions]);
+</pre>
+
+<h3>2. Geometric procedures</h3>
+
+<p>
+A call to a geometric procedure has the following form:
+</p>
+
+<pre>
+  identifier(#integer, [expressions] [:attributes]);
+</pre>
+
+<p>
+Geometric procedures are used to create entities with #integer as ID.
+Attributes are things like PEN and LEVEL, see below.
+</p>
+
+<h3>3. The part procedure</h3>
+
+<p>
+The part procedure has two forms:
+</p>
+
+<pre>
+  part(#integer, part_name([parameters]) [,reference_expression] [:attributes]);
+
+  part(#integer, string_expression, ([parameters]) [,reference_expression]);
+</pre>
+
+<p>
+In the first form the part name is a constant while the other form accepts an expression.
+</p>
+
+<h3>4. The set procedure</h3>
+
+<p>
+The set procedure also has two forms:
+</p>
+
+<pre>
+  set(attributes);
+
+  set_basic(attributes);
+</pre>
+
+<p>
+Multiple attributes may be specified by separating them with commas.
+</p>
+
+<pre>
+  set(LEVEL=1,TFONT=0,LDASHL=10/s);
+
+  set_basic(PSIZE=2.5);
+</pre>
+
+<p>
+  For a complete list of attributes see the <a href="set.htm">set</a> procedure.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

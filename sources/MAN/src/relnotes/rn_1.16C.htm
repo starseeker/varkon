@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>VARKON - A Parametric CAD-tool</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
+	<META NAME="AUTHOR" CONTENT="Johan Kjellander">
+	<META NAME="CREATED" CONTENT="20070816;13092700">
+	<META NAME="CHANGEDBY" CONTENT="Johan Kjellander">
+	<META NAME="CHANGED" CONTENT="20070823;10330800">
+	<META NAME="DESCRIPTION" CONTENT="The homepage of the VARKON system">
+	<META NAME="KEYWORDS" CONTENT="CAD, parametric design, geometric modeling, variation, visualization">
+	<META HTTP-EQUIV="expires" CONTENT="Tue, 10 Aug 1996 14:26:12 CET">
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P ALIGN=RIGHT><A HREF="http://sourceforge.net/"><IMG SRC="http://sflogo.sourceforge.net/sflogo.php?group_id=195464&amp;type=4" NAME="graphics1" ALT="SourceForge.net Logo" ALIGN=BOTTOM WIDTH=125 HEIGHT=37 BORDER=0></A>
+</P>
+
+<HR WIDTH="100%">
+<BR>
+<center><P><B><FONT SIZE=+1>Release notes for VARKON version 1.16C</FONT></B></CENTER>
+
+<P><BR>
+<P>Two new MBS functions IVAL() and FVAL() have been added to faciliate
+stable string to int and float conversion. Both routines return status
+and number of characters read. The old routine VAL() is still supported
+for compatibility but removed from the documentation.
+<P>The INBIN() MBS-procudere now has an extra optional parameter that can
+be used to control how many bytes to be read. This can be used to read
+8 or 16 bit integers into a VARKON INT which is 32 bits or to read a 32
+bit float into a VARKON FLOAT which is 64 bits.
+<P>New functions to import ASCII- or binary-formatted STL-files have been
+added to the VARKON library. A function that exports VARKON models in ASCII
+STL-format has also been added. See the create/part/stl menu. STL files
+are used by many CAD-systems to export/import faceted approximations of
+3D solid models. STL files can also be used by many visualization tools
+and for rapid prototyping. See create/part/stl in the standard menus.
+<P>The SUR_TRIM() procedure in MBS can now also be used to interchange
+parametric directions of the resulting surfaces. See the documentation
+on SUR_TRIM() for more info.
+<P>A minor bug related to the use of f122 and f123 (exit VARKON) linked
+to buttons in graphics windows has been corrected.
+<P>A new function f201 in the SAVE AS menu saves all files in the current
+job with a new name. JOB-file, MBO-file and RES/RIT-files can also be saved
+individually as before.
+<P>Function f170 (Edit part) now supports promt strings using the t-modifier.
+It will automatically strip the leading "@" in an optinal parameter and
+it will also present a default promt for parameters that have no prompt
+defined.
+<P>Function f10 (Interactive delete entity) now promts with type and ID
+of the entity to delete. If you pick a part the name of the part is displayed
+as well. Purpose of this add is to make it easier to verify that you pick
+the right entity before it's deleted.
+<P>All Unix plotterdrivers have been updated to support the WIDTH attribute
+as well as the old PEN-file system. Available drivers are "postscript",
+"hpcl5", "hp7475", "epson" and "ibmpro". The postscript driver also supports
+color.
+<P>The ON() function now supports b_planes. You can reach any position
+on a b_plane by specifying two parameters U and V ranging from 0 to 1.
+Linear interpolation between the 4 corners of the b_plane is used to calculate
+the resulting position.
+<P>The help system is now supported by the "Edit Part" function (f170)
+so that pressing the help button will display the help file of the part
+you are editing if there is one. Earlier versions of VARKON displayed the
+help file of the "Edit Part" function itself which is less interesting.
+<P>Some of the routines involved in surface intersects CUR_INT(...) have
+been revised resulting in more stable calculation of intersects.
+<P>Text can now be used also in 3D. A new text attribute <B>TPMODE</B>
+(<B>T</B>ext<B>P</B>lane<B>MODE</B>) controls which plane the text is oriented
+in. TPMODE = 0 forces the text always to be displayed in the plane of the
+screen. TPMODE = 1 gives a true 3D appearence. Interactive functions f226
+and f227 have been added to change and set the TPMODE attribute.
+<P>The "varkon.act_csys_pen" resource that was missing in the english version
+of VARKON:s ini-file for UNIX has been added. The active coordinate system
+is now automatically displayed in red color also for english users.
+<P>The default colors of pen 2, 3 and 4 in the UNIX version of VARKON have
+been swapped with pen 5, 6 and 7. Dark red is now light red, dark green
+is light green, dark blue is light blue and vice versa. This colorscheme
+is already default for the Windows95/NT version of VARKON.
+<P>A bug in a low level routine of the (UNIX-) user interface that sometimes
+made it impossible to accept a value in a input window using &lt;CR> from
+the keyboard has been fixed.
+<P>The graphics/view/shade/dynamic rendering function f200 now supports
+also points, lines, curves, coordinate systems and text. Version 1.16A
+of VARKON only supported b_planes and surfaces. Still not supported are
+arcs.
+<P>6 new MBS routines have been added to the Windows95/NT version of VARKON
+that makes it possible to acces data in external databases through ODBC.
+ODBC supports local and networked databaseservers from most commersial
+vendors and also access to data created in Microsoft Excel. We have tested
+the new interface with a local Excel database and a customer is using it
+with a networked database in a IBM AS400. The new routines are: ODBC_Connect(),
+ODBC_Execdirekt(), ODBC_Fetch(), ODBC_Getstring(), ODBC_Disconnect() and
+ODBC_Error().
+<P>A bug in the MBS compiler (mbsc) that made it impossible to use larger
+integer literal values than 214748000 has been corrected. The max value
+of an integer literal is now 2147483678 or 2**31 as it should be with 32-bit
+integers. You might think this is not very important but to one of our
+users it was !
+<P>A bug that crashed VARKON if errormessage files were not properly installed
+has been corrected.
+<P>The graphics/view/shading/dynamic rendering function f200 now has 2
+new recources that can be set in the ini-file to control position, size
+and window title. Interactive resize is now also supported.
+<P>VARKON:s help system has been updated to work with HTML documents as
+well as plain ASCII text files. The standard distribution of VARKON no
+longer includes the VARKON_ROOT/doc directory. Instead, VARKON_DOC now
+points to VARKON_ROOT/man where the VARKON documentation should be installed.
+If the VARKON documentation (v_man and m_man) is downloaded and installed
+in VARKON_DOC (VARKON_ROOT/man) as described on the download pages the
+new help system will use these files. An external HTML viewer/browser is
+required. The VARKON ini-file includes a new resource "varkon.html_viewer"
+that controls which browser to use. Netscape works as well as Microsoft
+InternetExplorer. If the resource is not defined VARKON will only search
+for text files and display them in a VARKON list window.&nbsp; From now
+on the help system only recognizes textfiles as files named *.txt andt
+HTML files as files named *.htm. The older type textfiles named *.DOC are
+no longer supported because of the problems with interpretation of ."DOC"
+as Micrsoft Word documents.
+<P>All VARKON plotterdrivers now support a new -ws option that scales linewidth.
+If not set, all linewidths are scaled with the ordinary scalefactor -s.
+If set, -ws is used as scalefactor for linewidth instead of -s. This makes
+it possible to scale linewidths independantly from the scale used for the
+geometry.
+<P>A bug that resulted in the wrong line coordinates calculated if&nbsp;
+lin_tan2() was used with a local coordinatesystem active in a 3D-module
+has been corrected. lin_tan2() now works as it should in 2D and 3D with
+or without local systems activated.
+<P>The "change linewidth" function (f185) now supports multiple entity
+selections. You can edit the linewidth of many entities in one operation.
+<P>A minor bug in function f92, "Create DXF file" related to 2D circles
+has been corrected. The criterion for a DXF CIRCLE is now that the difference
+in angles is 360 +-0.001 degrees. All other VARKON arcs will be treated
+as DXF ARC.
+<P>Function f200 "Dynamic rendering" now has dynamic rotation, panning,
+scaling, perspective and light intensity controlled by the mouse. You can
+also switch between wireframe_polygon and shaded_surface representations.
+<CENTER>
+<P>
+<HR WIDTH="100%">
+<P><A HREF="../index.htm">VARKON homepage</A></CENTER>
+</BODY>
+</HTML>

@@ -9,7 +9,7 @@
 /*  GE823() Create angular dimension                                */
 /*                                                                  */
 /*  This file is part of the VARKON Geometry Library.               */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -28,8 +28,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Gunnar Liden, gunnar@microform.se    */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -37,82 +35,124 @@
 
 /*!******************************************************/
 
-        DBstatus GE821(
+        DBstatus  GE821(
         DBArc    *parc,
+        DBSeg    *seg,
         DBVector *pos,
-        short     alt,
+        short     type,
+        DBTmat   *dimsys,
         DBCdim   *cdmpek)
 
-/*      Beräknar med hjälp av cirkeln och pos de tre
- *      positioner som definierar måttet.
+/*      Uses pos and DBArc data to calculate the three
+ *      LOCAL positions that define a CDIM.
  *
- *      In: parc   = Pekare till cirkel
- *          pos    = Pekare till måttextens läge
- *          alt    = Horisontellt, vertikalt eller parall.
- *          cdmpek = Pekare till diametermått-struktur
+ *      Varkon pre SVN#28 saved CDIM DB-geometry in BASIC.
+ *      From SVN#28 CDIM data is saved in LOCAL coordinates.
  *
- *      Out: *cdmpek = Fyller i de tre positionerna
+ *      In: parc   = C ptr to arc
+ *          seg    = C ptr to segments
+ *          pos    = C ptr to LOCAL text position
+ *          type   = Horizontal, vertical or parallell
+ *          dimsys = C ptr to CDIM coordinate system
+ *
+ *      Out: *cdmpek = DBCdim with positions calculated
  *
  *      (C)microform ab 19/8/85 J. Kjellander
  *
- *       1999-05-27 Rewritten, J.Kjellander
+ *      1999-05-27 Rewritten, J.Kjellander
+ *      2007-09-17 3D arcs, J.Kjellander
  *
  ******************************************************!*/
 
   {
-   DBfloat dx,dy,fi;
+   DBfloat  dx,dy,fi;
+   DBVector arc_centre;
 
 /*
-***Testa alt och beräkna positionerna därefter.
+***Calculate CDIM data (3 pos). Note that DBArc
+***centre pos x_a and y_a are BASIC coordinates
+***and can not be used in 3D since Z is missing.
 */
-   switch ( alt )
+   if ( parc->ns_a == 0 )
+     {
+     arc_centre.x_gm = parc->x_a;
+     arc_centre.y_gm = parc->y_a;
+     arc_centre.z_gm = 0.0;
+     }
+/*
+***3D arc. Calculate arc centre. GEcentre() returns
+***coordinates in BASIC. Transform to LOCAL and project
+***to XY-plane of dimsys.
+*/
+   else
+     {
+     GEcentre((DBAny *)parc,seg,0.0,&arc_centre);
+     if ( dimsys != NULL ) GEtfpos_to_local(&arc_centre,dimsys,&arc_centre);
+     arc_centre.z_gm = 0.0;
+     }
+/*
+***Orientation.
+*/
+   switch ( type )
      {
 /*
-***Horisontellt.
+***Horizontal.
 */
      case 0:
-     cdmpek->p1_cd.x_gm = parc->x_a + parc->r_a;
-     cdmpek->p1_cd.y_gm = parc->y_a;
-     cdmpek->p2_cd.x_gm = parc->x_a - parc->r_a;
-     cdmpek->p2_cd.y_gm = parc->y_a;
+     cdmpek->p1_cd.x_gm = arc_centre.x_gm + parc->r_a;
+     cdmpek->p1_cd.y_gm = arc_centre.y_gm;
+     cdmpek->p1_cd.z_gm = 0.0;
+     cdmpek->p2_cd.x_gm = arc_centre.x_gm - parc->r_a;
+     cdmpek->p2_cd.y_gm = arc_centre.y_gm;
+     cdmpek->p2_cd.z_gm = 0.0;
      break;
 /*
-***Vertikalt.
+***Vertical.
 */
      case 1:
-     cdmpek->p1_cd.x_gm = parc->x_a;
-     cdmpek->p1_cd.y_gm = parc->y_a + parc->r_a;
-     cdmpek->p2_cd.x_gm = parc->x_a;
-     cdmpek->p2_cd.y_gm = parc->y_a - parc->r_a;
+     cdmpek->p1_cd.x_gm = arc_centre.x_gm;
+     cdmpek->p1_cd.y_gm = arc_centre.y_gm + parc->r_a;
+     cdmpek->p1_cd.z_gm = 0.0;
+     cdmpek->p2_cd.x_gm = arc_centre.x_gm;
+     cdmpek->p2_cd.y_gm = arc_centre.y_gm - parc->r_a;
+     cdmpek->p2_cd.z_gm = 0.0;
      break;
 /*
-***Parallellt.
+***Parallell.
 */
      case 2:
-     dx = pos->x_gm - parc->x_a;
-     dy = pos->y_gm - parc->y_a;
-     if ( dx == 0 && dy > 0 ) fi = PI05;
-     else if ( dx == 0 && dy < 0 ) fi = PI15;
+     dx = pos->x_gm - arc_centre.x_gm;
+     dy = pos->y_gm - arc_centre.y_gm;
+     if       ( dx == 0.0 && dy > 0.0 ) fi = PI05;
+     else if ( dx == 0.0 && dy < 0.0 ) fi = PI15;
      else
-        {
-        fi = ATAN(dy/dx);
-        if ( dx < 0 ) fi = fi + PI;
-        if ( fi < 0.0 ) fi = fi + PI2;
-        }
+       {
+       fi = ATAN(dy/dx);
+       if ( dx < 0.0 ) fi = fi + PI;
+       if ( fi < 0.0 ) fi = fi + PI2;
+       }
      fi = fi - PI05;
-     cdmpek->p1_cd.x_gm = parc->x_a + parc->r_a*COS(fi);
-     cdmpek->p1_cd.y_gm = parc->y_a + parc->r_a*SIN(fi);
-     cdmpek->p2_cd.x_gm = parc->x_a - parc->r_a*COS(fi);
-     cdmpek->p2_cd.y_gm = parc->y_a - parc->r_a*SIN(fi);
+     cdmpek->p1_cd.x_gm = arc_centre.x_gm + parc->r_a*COS(fi);
+     cdmpek->p1_cd.y_gm = arc_centre.y_gm + parc->r_a*SIN(fi);
+     cdmpek->p1_cd.z_gm = 0.0;
+     cdmpek->p2_cd.x_gm = arc_centre.x_gm - parc->r_a*COS(fi);
+     cdmpek->p2_cd.y_gm = arc_centre.y_gm - parc->r_a*SIN(fi);
+     cdmpek->p2_cd.z_gm = 0.0;
      break;
      }
 /*
-***Oavsett typ är alltid 3:e positionen = pos.
+***Third position is always = pos.
 */
    cdmpek->p3_cd.x_gm = pos->x_gm;
    cdmpek->p3_cd.y_gm = pos->y_gm;
-   cdmpek->dtyp_cd = alt;
-
+   cdmpek->p3_cd.z_gm = 0.0;
+/*
+***Add type.
+*/
+   cdmpek->dtyp_cd = type;
+/*
+***The end.
+*/
    return(0);
   }
 
@@ -121,57 +161,82 @@
 
         DBstatus GE822(
         DBArc    *parc,
+        DBSeg    *seg,
         DBVector *p1,
         DBVector *p2,
+        DBTmat   *dimsys,
         DBRdim   *rdmpek)
 
-/*      Beräknar med hjälp av cirkeln och p1, p2 de tre
- *      positioner som definierar måttet.
+/*      Uses p1, p2 and DBArc data to calculate the three
+ *      LOCAL positions that define a RDIM.
  *
- *      In: parc   = Pekare till cirkel
- *          p1     = Pekare till brytposition
- *          p2     = Pekare till slutposition
- *          cdmpek = Pekare till diametermått-struktur
+ *      In: parc   = C ptr to arc.
+ *          seg    = C ptr to segments.
+ *          p1     = C ptr to break position.
+ *          p2     = C ptr to end position.
+ *          dimsys = C ptr to RDIM coordinate system.
  *
- *      Out: *rdmpek = Fyller i de tre positionerna
+ *      Out: *rdmpek = DBRdim with positions calculated.
  *
  *      (C)microform ab 25/8/85 J. Kjellander
  *
  *      28/3/89    Bug P1=Cirkelcentrum, J, Kjellander
  *      1999-05-27 Rewritten, J.Kjellander
+ *      2007-09-22 3D, J.Kjellander
  *
  ******************************************************!*/
 
   {
-   DBVector p0;
+   DBVector p0,arc_centre;;
    DBLine   lin;
    DBfloat  dx,dy,dist;
    DBfloat  u1[2],u2[2],u;
    short    noint;
 
 /*
-***Låtsas att det är en 2D-cirkel.
+***Calculate arc centre.
 */
-   parc->ns_a = 0;
+   if ( parc->ns_a == 0 )
+     {
+     arc_centre.x_gm = parc->x_a;
+     arc_centre.y_gm = parc->y_a;
+     arc_centre.z_gm = 0.0;
+     }
 /*
-***Beräkna längden cirkelcentrum - P1.
+***3D arc. Calculate arc centre. GEcentre() returns
+***coordinates in BASIC. Transform to LOCAL and project
+***to XY-plane of dimsys.
 */
-   dx = p1->x_gm - parc->x_a;
-   dy = p1->y_gm - parc->y_a;
+   else
+     {
+     GEcentre((DBAny *)parc,seg,0.0,&arc_centre);
+     if ( dimsys != NULL ) GEtfpos_to_local(&arc_centre,dimsys,&arc_centre);
+     arc_centre.z_gm = 0.0;
+     }
+/*
+***Calculate 2D distance between P1 and arc_centre.
+*/
+   dx = p1->x_gm - arc_centre.x_gm;
+   dy = p1->y_gm - arc_centre.y_gm;
 
    dist = SQRT(dx*dx + dy*dy);
 /*
-***Om > 0, skapa lagom lång linje igenom cirkelcentrum riktad
-***mot P1 och beräkna skärningen mellan linjen och cirkeln.
+***If dist > 0, create a line through arc centre 
+***in the direction of P1 and calculate intersection.
 */
    if ( dist > 1e-10 )
      {
      lin.hed_l.type = LINTYP;
-     lin.crd1_l.x_gm = parc->x_a + 2.0 * (parc->r_a/dist) * dx;
-     lin.crd1_l.y_gm = parc->y_a + 2.0 * (parc->r_a/dist) * dy;
-     lin.crd2_l.x_gm = parc->x_a - 2.0 * (parc->r_a/dist) * dx;
-     lin.crd2_l.y_gm = parc->y_a - 2.0 * (parc->r_a/dist) * dy;
+     lin.crd1_l.x_gm = arc_centre.x_gm + 2.0*(parc->r_a/dist)*dx;
+     lin.crd1_l.y_gm = arc_centre.y_gm + 2.0*(parc->r_a/dist)*dy;
+     lin.crd1_l.z_gm = 0.0;
+     lin.crd2_l.x_gm = arc_centre.x_gm - 2.0*(parc->r_a/dist)*dx;
+     lin.crd2_l.y_gm = arc_centre.y_gm - 2.0*(parc->r_a/dist)*dy;
+     lin.crd2_l.z_gm = 0.0;
+/*
      GE706((DBAny *)&lin,(DBAny *)parc,&noint,u1,u2);
+*/
+     GE710((DBAny *)&lin,NULL,(DBAny *)parc,seg,dimsys,&noint,u1,u2);
      }
 /*
 ***Om inte, dvs. P1 = Cirkelcentrum, välj u=0.5.
@@ -202,23 +267,29 @@
      break;
      }
 /*
-***Beräkna P0:s koordinater.
+***Calculate the coordinates of P0.
 */
-   GEposition((DBAny *)parc,NULL,u,(gmflt)0.0,&p0);
+   GEposition((DBAny *)parc,(char *)seg,u,(DBfloat)0.0,&p0);
+   if ( dimsys != NULL ) GEtfpos_to_local(&p0,dimsys,&p0);
 /*
-***Lagra resultatet i mått-posten.
+***Store positions in RDIM.
 */
    rdmpek->p1_rd.x_gm = p0.x_gm;
    rdmpek->p1_rd.y_gm = p0.y_gm;
+   rdmpek->p1_rd.z_gm = 0.0;
 
    rdmpek->p2_rd.x_gm = p1->x_gm;
    rdmpek->p2_rd.y_gm = p1->y_gm;
+   rdmpek->p2_rd.z_gm = 0.0;
 
    rdmpek->p3_rd.x_gm = p2->x_gm;
    rdmpek->p3_rd.y_gm = p2->y_gm;
+   rdmpek->p3_rd.z_gm = 0.0;
 
    rdmpek->r_rd = parc->r_a;
-
+/*
+***The end.
+*/
    return(0);
   }
 
@@ -230,23 +301,28 @@
         DBLine   *l2,
         DBVector *pos,
         short     alt,
+        DBTmat   *dimsys,
         DBAdim   *admpek)
 
-/*      Geo-rutin för ADIM.
+/*      Uses 2 lines, a text position and an
+ *      alternative to calculate DBAdim data.
  *
- *      In: l1     = Pekare till 1:a linjen.
- *          l2     = Pekare till 2:a linjen.
- *          pos    = Pekare till textens position.
- *          alt    = Alternativ.
- *          admpek = Pekare till vinkelmått-post.
+ *      In: l1     = C ptr to first line.
+ *          l2     = C ptr to second line.
+ *          pos    = C ptr to text position.
+ *          alt    = Alternative.
  *
- *      Out: *admpek = Fyller i mått-posten.
+ *      Out: *admpek = DBAdim data calculated.
+ *
+ *      Error: GE8132 = Illegal alt value.
+ *             GE8122 = Lines parallell.
  *
  *      (C)microform ab  4/9/85 J. Kjellander
  *
  *       10/9/85    Nya felnummer, R. Svedin
  *       23/10/86   Bug, J. Kjellander
  *       1999-05-27 Rewritten, J.Kjellander
+ *       2007-09-24 3D, J.Kjellander
  *
  ******************************************************!*/
 
@@ -257,15 +333,23 @@
    short   rikt1;
 
 /*
-***Beräkna delta-värden.
+***Line delta values.
 */
+   if ( dimsys != NULL )
+     {
+     GEtfpos_to_local(&l1->crd1_l,dimsys,&l1->crd1_l);
+     GEtfpos_to_local(&l1->crd2_l,dimsys,&l1->crd2_l);
+     GEtfpos_to_local(&l2->crd1_l,dimsys,&l2->crd1_l);
+     GEtfpos_to_local(&l2->crd2_l,dimsys,&l2->crd2_l);
+     }
+
    dx1 = l1->crd2_l.x_gm - l1->crd1_l.x_gm;
    dy1 = l1->crd2_l.y_gm - l1->crd1_l.y_gm;
 
    dx2 = l2->crd2_l.x_gm - l2->crd1_l.x_gm;
    dy2 = l2->crd2_l.y_gm - l2->crd1_l.y_gm;
 /*
-***Beräkna skärningspunkt.
+***Calculate line intersect (local coordinates).
 */
    q = dy1*dx2 - dx1*dy2;
    if ( ABS(q) < TOL1 ) return(erpush("GE8122",""));
@@ -277,15 +361,15 @@
    admpek->pos_ad.y_gm = l1->crd1_l.y_gm + t*dy1;
    admpek->pos_ad.z_gm = 0.0;
 /*
-***Beräkna radie.
+***Calculate radius.
 */
    dx = pos->x_gm - admpek->pos_ad.x_gm;
    dy = pos->y_gm - admpek->pos_ad.y_gm;
    admpek->r_ad = SQRT(dx*dx + dy*dy);
 /*
-***Beräkna vinkel för placering av text.
+***Calculate text angle.
 */
-   if ( dx == 0.0 && dy > 0.0 ) admpek->tv_ad = 90.0;
+   if       ( dx == 0.0 && dy > 0.0 ) admpek->tv_ad = 90.0;
    else if ( dx == 0.0 && dy < 0.0 ) admpek->tv_ad = 270.0;
    else
      {
@@ -293,8 +377,7 @@
      if ( dx < 0.0 ) admpek->tv_ad += 180.0;
      }
 /*
-***Beräkna linjernas vinkel mot X-axeln. Se till
-***att vinkeln ligger mellan 0 och 180 grader.
+***Calculate line angles to X-axis between 0 and 180.
 */
    if ( dx1 == 0.0 )
      {
@@ -316,13 +399,14 @@
      if ( fi2 < 0.0 ) fi2 += 180.0;
      }
 /*
-***Beräkna 1:a linjens riktning genom X-axeln.
+***Determine 1:st line direction through X-axis.
 */
    rikt1 = 1;
-   if ( dy1 == 0.0 && dx1 < 0 ) rikt1 = -1;
+
+   if       ( dy1 == 0.0 && dx1 < 0 ) rikt1 = -1;
    else if ( dy1 < 0.0 ) rikt1 = -1;
 /*
-***Bestäm måttets start och slutvinkel.
+***Calculate ADIM start- and end angle.
 */
    switch ( alt )
      {
@@ -369,7 +453,7 @@
      break;
      }
 /*
-***Gör vinklarna säkert mindre än 360 grader.
+***Normalize angles.
 */
    if ( fi2 > 360.0 )
      {
@@ -380,11 +464,13 @@
    admpek->v1_ad = fi1;
    admpek->v2_ad = fi2;
 /*
-***Lagra r1 och r2.
+***Set r1 and r2 to zero. (Not used ?)
 */
    admpek->r1_ad = 0.0;
    admpek->r2_ad = 0.0;
-
+/*
+***The end.
+*/
    return(0);
   }
 

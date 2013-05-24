@@ -1,6 +1,6 @@
 !*******************************************************
 
- macro drawing module l_cgrav(
+ macro module l_cgrav(
  REF id1  >"@t30 t268",
      id2  >"@@t30 t268",
      id3  >"@@t30 t268",
@@ -209,8 +209,8 @@ end:
      s:="-1.0";
      s:=inpmt(get_tstr(248),str(dist,-1,1),10);     ! Ange nytt värde
      if length(s) > 0 then
-       if val(s) > 0.0 then
-         dist:=val(s);
+       if fval(s) > 0.0 then
+         dist:=fval(s);
          goto start;
        endif;
      endif;

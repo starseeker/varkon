@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -42,6 +42,8 @@
 #include <string.h>
 #include <math.h>
 
+extern int actfunc; /* For the help system */
+
 static void drwarr(WPGWIN *gwinpt, GC arr_gc, int ix1, int iy1,
                    int ix2, int iy2);
 
@@ -49,7 +51,7 @@ static void drwarr(WPGWIN *gwinpt, GC arr_gc, int ix1, int iy1,
 
         short WPzoom()
 
-/*      Interactive function for ZOOM with X-Windows.
+/*      Interactive function for WPGWIN/WPRWIN ZOOM.
  *
  *      Return:  0 = OK.
  *          REJECT = Operation rejected.
@@ -65,7 +67,7 @@ static void drwarr(WPGWIN *gwinpt, GC arr_gc, int ix1, int iy1,
 
   {
    short   status;
-   int     ix1,iy1,ix2,iy2,tmp;
+   int     ix1,iy1,ix2,iy2,tmp,actfunc_org;
    double  x1,y1,x2,y2;
    double  move,dx,dy;
    wpw_id  grw_id;
@@ -74,10 +76,16 @@ static void drwarr(WPGWIN *gwinpt, GC arr_gc, int ix1, int iy1,
    WPRWIN *rwinpt;
 
 /*
-***Get a rubberband window.
+***Set actfunc during user action, see IG/include/futab.h.
 */
-   if ( (status=WPgtsw(&grw_id,&ix1,&iy1,&ix2,&iy2,WP_RUB_RECT,TRUE)) < 0 )
-     return(status);
+   actfunc_org = actfunc;
+   actfunc = 193;
+/*
+***Get a rubberband window, then reset actfunc.
+*/
+   status = WPgtsw(&grw_id,&ix1,&iy1,&ix2,&iy2,WP_RUB_RECT,TRUE);
+   actfunc = actfunc_org;
+   if ( status < 0 ) return(status);
 /*
 ***Sort coordinates.
 */
@@ -295,7 +303,7 @@ static void drwarr(WPGWIN *gwinpt, GC arr_gc, int ix1, int iy1,
    WPVIEW minvy;
 
 /*
-***Calculate bounding box. 
+***Calculate bounding box.
 */
    WPmsiz(gwinpt,&minvy);
 /*
@@ -399,7 +407,7 @@ loop:
 /*
 ***Uppdatera fönsterramen.
 */
-     WPupwb(gwinpt);
+     WPtitle_GWIN(gwinpt);
 /*
 ***Uppdatera fönstret på skärmen.
 */
@@ -508,7 +516,7 @@ loop:
    alt_x  = ly;
    alt_y  = ly;
    altlen = WPstrl(persp);
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
                    (short)0,persp,persp,"",WP_BGND2,WP_FGND,&dum_id);
 /*
 ***Toggle-button för ON/OFF.
@@ -522,19 +530,19 @@ loop:
    else                diston = TRUE;
 
    if ( diston == FALSE )
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
                      (short)1,off,on,"",WP_BGND2,WP_FGND,&onoff_id);
 /*
 ***Om perspektiv redan är satt skall avståndet visas.
 */
    else
      {
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
                      (short)1,on,off,"",WP_BGND2,WP_FGND,&onoff_id);
      alt_x  = ly;
      alt_y  = ly + alth + ly;
      altlen = WPstrl(dist);
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
                      (short)0,dist,dist,"",WP_BGND2,WP_FGND,&dist_id);
 
      alt_x  = (short)(ly + altlen + 10);
@@ -550,17 +558,17 @@ loop:
    alt_y  = (short)(ly + 2*(alth + ly) + ly);
    alth   = (short)(2*WPstrh());
    altlen = (short)(WPstrl(okey) + 15);
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
                    (short)2,okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
 
    alt_x  = (short)(alt_x + altlen + lm);
    altlen = (short)(WPstrl(reject) + 15);
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
                    (short)2,reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
 
    altlen = (short)(WPstrl(help) + 15);
    alt_x  = (short)(main_dx - altlen - lm);
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
                    (short)2,help,help,"",WP_BGND2,WP_FGND,&help_id);
 /*
 ***Klart för visning.
@@ -635,7 +643,7 @@ loop:
        alt_x  = ly;
        alt_y  = ly + alth + ly;
        altlen = WPstrl(dist);
-       WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
+       WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,
                        (short)0,dist,dist,"",WP_BGND2,WP_FGND,&dist_id);
 
        alt_x  = (short)(ly + altlen + 10);
@@ -832,40 +840,45 @@ exit:
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-        short WPscle(
+        short   WPscle(
         WPGWIN *gwinpt,
         int     x,
         int     y)
 
-/*      Varkon-funktion för skala med X-Windows.
+/*      The scale dilaog for WPGWIN's.
  *
- *      In: gwinpt = Pekare till fönstret som skall skalas.
- *          x,y    = Aktiverande knapps/ikons rootposition.
+ *      In: gwinpt = C ptr to WPGWIN.
+ *          x,y    = Root position of activiating button.
  *
- *      Ut: Inget.
+ *      Return:  0 = OK.
+ *          REJECT = Operation cancelled.
  *
- *      FV:      0 = OK.
- *          REJECT = Operationen avbruten.
- *
- *      Felkod: IG3042 = Kan ej minska skalan mera.
+ *      Error: IG3042 = Can't decrease scale more.
  *
  *      (C)microform ab 4/1/95 J. Kjellander
+ *
+ *      2008-01-25 1.19 J.Kjellander
  *
  ******************************************************!*/
 
   {
    char     rubrik[81],dubbla[81],half[81],reject[81],help[81],
             scale[81];
-   int      main_x,main_y;
-   short    main_dx,main_dy,alt_x,alt_y,alth,altlen,ly,lm;
+   int      main_x,main_y,actfunc_org;
+   short    status,main_dx,main_dy,alt_x,alt_y,alth,altlen,ly,lm;
    DBint    iwin_id,scale_id,one_id,but_id,help_id,
             dubbla_id,half_id,reject_id;
    double   skala,xmin,xmax,ymin,ymax,mdx,mdy;
 
 /*
-***Texter för rubrik, dubbla, halva, avbryt och hjälp.
+***Set actfunc, see IG/include/futab.h.
+*/
+   actfunc_org = actfunc;
+   actfunc = 188;
+/*
+***Button texts from ini-file.
 */
    if ( !WPgrst("varkon.scale.title",rubrik) )  strcpy(rubrik,"Skala");
    if ( !WPgrst("varkon.scale.double",dubbla) ) strcpy(dubbla,"Dubbla");
@@ -873,10 +886,7 @@ exit:
    if ( !WPgrst("varkon.input.reject",reject) ) strcpy(reject,"Avbryt");
    if ( !WPgrst("varkon.input.help",help) )     strcpy(help,"Hj{lp");
 /*
-***För att nu kunna bestämma storleken på själva
-***skala-fönstret utgår vi från  2 kolumner med
-***knappar där knapparnas längd bestäms av den längsta
-***alternativtexten.
+***Button size.
 */
    altlen = 0;
 
@@ -889,8 +899,7 @@ exit:
 
    altlen *= 1.3;
 /*
-***Beräkna luft yttre, knapparnas höjd, luft mellan och
-***huvudfönstrets höjd.
+***Window size.
 */
    ly   = (short)(0.8*WPstrh());
    alth = (short)(1.6*WPstrh()); 
@@ -899,13 +908,12 @@ exit:
    main_dx = (short)(ly + altlen + lm + altlen + ly);
    main_dy = (short)(ly + 2*(alth + ly) +  ly + 2*WPstrh() + ly);  
 /*
-***Skapa själva alternativfönstret som ett WPIWIN.
+***Create a WPIWIN.
 */
    WPposw(x,y,main_dx+10,main_dy+25,&main_x,&main_y);
    WPwciw((short)main_x,(short)main_y,main_dx,main_dy,rubrik,&iwin_id);
 /*
-***Edit-knapp för godtycklig skala.
-***Beräkna nuvarande skala.
+***Edit for user scale.
 */
    mdx   =  gwinpt->geo.psiz_x *
            (gwinpt->vy.scrwin.xmax - gwinpt->vy.scrwin.xmin);
@@ -920,54 +928,54 @@ exit:
    WPmced((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)1,
                            scale,15,&scale_id);
 /*
-***Button för skala = 1.0.
+***Button for scale = 1.0.
 */
    alt_x  = ly + altlen + lm;
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)1,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)1,
                            "1.0","1.0","",WP_BGND2,WP_FGND,&one_id);
 /*
-***Dubbla och halva.
+***Double and half.
 */
    alt_x  = ly;
    alt_y  = ly + alth + ly;
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)1,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)1,
                            dubbla,dubbla,"",WP_BGND2,WP_FGND,&dubbla_id);
 
    alt_x  = ly + altlen + lm;
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)1,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)1,
                           half,half,"",WP_BGND2,WP_FGND,&half_id);
 /*
-***Avbryt och hjälp.
+***Reject and help.
 */
    alt_x  = (short)(ly);
    alt_y  = (short)(ly + 2*(alth + ly) + ly);
    alth   = (short)(2*WPstrh());
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)2,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)2,
                            reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
 
    alt_x  = ly + altlen + lm;
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)2,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,(short)2,
                            help,help,"",WP_BGND2,WP_FGND,&help_id);
 /*
-***Klart för visning.
+***Show the dialog.
 */
    WPwshw(iwin_id);
 /*
-***Vänta på action. Service-nivå för key-event saknar
-***intresse i sammanhanget.
+***Wait for action.
 */
 loop:
    WPwwtw(iwin_id,SLEVEL_V3_INP,&but_id);
 /*
-***Avbryt.
+***Reject.
 */
    if ( but_id == reject_id )
      {
      WPwdel(iwin_id);
-     return(REJECT);
+     status = REJECT;
+     goto exit;
      }
 /*
-***Hjälp.
+***Help.
 */
    else if ( but_id == help_id )
      {
@@ -975,7 +983,7 @@ loop:
      goto loop;
      }
 /*
-***Inmatad skala.
+***User scale.
 */
    else if ( but_id == scale_id )
      {
@@ -987,23 +995,23 @@ loop:
        }
      }
 /*
-***Skala = 1.0
+***Scale = 1.0
 */
    else if ( but_id == one_id ) skala = 1.0;
 /*
-***Dubbla.
+***Double.
 */
    else if ( but_id == dubbla_id ) skala *= 2.0;
 /*
-***Halva.
+***Half.
 */
    else if ( but_id == half_id ) skala /= 2.0;
 /*
-***Dags att sluta.
+***Time to finish.
 */
    WPwdel(iwin_id);
 /*
-***Vi har nu en ny skalfaktor och kan beräkna ett nytt modellfönster.
+***Calculate new model window.
 */
    xmin =  gwinpt->vy.modwin.xmin + 
           (gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin)/2.0 -
@@ -1018,7 +1026,7 @@ loop:
           (gwinpt->vy.modwin.ymax - gwinpt->vy.modwin.ymin)/2.0 +
                      mdy/2.0/skala;
 /*
-***Uppdatera WPGWIN-posten.
+***Uppdate the WPGWIN data.
 */
    V3MOME(&gwinpt->vy,&gwinpt->old_vy,sizeof(WPVIEW));
 
@@ -1028,11 +1036,16 @@ loop:
    gwinpt->vy.modwin.ymax = ymax;
    WPnrgw(gwinpt);
 /*
-***Uppdatera skärmen.
+***Update the display.
 */
    WPrepaint_GWIN((wpw_id)gwinpt->id.w_id);
-
-   return(0);
+   status = 0;
+/*
+***The end.
+*/
+exit:
+   actfunc = actfunc_org;
+   return(status);
   }
 
 /********************************************************/

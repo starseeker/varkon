@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -325,7 +325,7 @@ start:
 ***Border curves.
 */
    cur.fnt_cu = 0;
-   cur.lgt_cu = 0;    
+   cur.lgt_cu = 0;
 
    for ( bcount=0; bcount<surpek->ngrwborder_su; bcount++ ) 
      {

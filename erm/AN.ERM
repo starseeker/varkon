@@ -1,5 +1,4 @@
-VARKON Error messages for ANAPAC
-(C) Microform AB 1996
+VARKON Error messages for the MBS compiler
 
     000 0 : Analysis complete. %s errors detected.
     100 2 : Illegal token. Ignored.
@@ -82,14 +81,15 @@ VARKON Error messages for ANAPAC
     936 2 : Undefined label : %s.
     937 1 : Unreferenced label : %s.
     938 1 : Undefined reference : #%s.
-    939 2 : No order number allowed in reference definition .
-    940 2 : Not allowed in a GEOMETRY module : %s
+    939 2 : No order number allowed in reference definition.
     941 2 : Not allowed in this procedure : %s
     942 2 : Procedure/function not allowed in a %s module.
     943 2 : Procedure only allowed in a %s module.
     944 1 : Module name can be interpreted as VAR, CONST or FUNC
     945 2 : Global reference not allowed in this context
     946 2 : #0 not allowed in this context
+    947 1 : DRAWING should not be used in MODULE declaration
+    948 1 : GEOMETRY should not be used in MODULE declaration
 
     998 2 : Too many errors in MBS-program.
-    999 0 : Resumed analyse at .. 
+    999 0 : Resumed analyse at ..

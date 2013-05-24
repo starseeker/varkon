@@ -1,14 +1,14 @@
 ##########################################################
 #
-#   Makefile for EXlib on FreeBSD
+#   Makefile for EX on FreeBSD
 #
-#  (C)Microform AB 1999-03-30 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
 RM = rm -f
 
-CC ?= gcc
+CC ?= cc
 
 CFLAGS +=   -ansi                       \
             -pedantic                   \
@@ -16,10 +16,16 @@ CFLAGS +=   -ansi                       \
             -ffloat-store               \
             -fsigned-char               \
             -O                          \
-            -DUNIX -I/usr/X11R6/include
+            -DUNIX			\
+	    -DVARKON			\
+	    -I/usr/local/include
 
-debug :     CFLAGS += -g
+debug :     CFLAGS += \
+            -g \
+            -DDEBUG
 
 COMPILE = $(CC) -c $(CFLAGS)
 
 include Makefile.EX
+
+##########################################################

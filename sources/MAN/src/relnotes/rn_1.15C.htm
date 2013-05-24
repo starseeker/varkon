@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>VARKON - A Parametric CAD-tool</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
+	<META NAME="AUTHOR" CONTENT="Johan Kjellander">
+	<META NAME="CREATED" CONTENT="20070816;13092700">
+	<META NAME="CHANGEDBY" CONTENT="Johan Kjellander">
+	<META NAME="CHANGED" CONTENT="20070823;10330800">
+	<META NAME="DESCRIPTION" CONTENT="The homepage of the VARKON system">
+	<META NAME="KEYWORDS" CONTENT="CAD, parametric design, geometric modeling, variation, visualization">
+	<META HTTP-EQUIV="expires" CONTENT="Tue, 10 Aug 1996 14:26:12 CET">
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P ALIGN=RIGHT><A HREF="http://sourceforge.net/"><IMG SRC="http://sflogo.sourceforge.net/sflogo.php?group_id=195464&amp;type=4" NAME="graphics1" ALT="SourceForge.net Logo" ALIGN=BOTTOM WIDTH=125 HEIGHT=37 BORDER=0></A>
+</P>
+
+<HR>
+
+<CENTER><P>
+<B><FONT SIZE=+1>Release notes for VARKON version 1.15C</FONT></B></P></CENTER>
+
+<P>The &quot;save/exit&quot;-menu in VARKON&nbsp;has been renamed to the
+&quot;file&quot;-menu and reorganized to the common layout of a &quot;file&quot;-menu
+in many other programs. All functions are the same as before it is only
+the standard menufile that is changed.</P>
+
+<P>The POS()-function in MBS can now be used also in 3D.</P>
+
+<P>A new easy-to-use plot function has been added to the plot menu. Select
+a rectangular area with the mouse (2 corners) and the image inside goes
+to your plotter or printer.</P>
+
+<P>MBS now supports relational operators &gt; (greater than) and &lt; (less
+than) in string comparising. (Good for sorting).</P>
+
+<P>The last piece of the work with a full implementation of the NURBS surface
+is now finished. MBS supports creation of NURBS-surfaces, conversion from
+other surface types to NURBS and import/export of NURBS surfaces from/to
+external files. </P>
+
+<P>A problem with garbage collection in GM&nbsp;has been corrected.</P>
+
+<P>DXF-import has been enhanced. Now you can restrict your import to a
+specific layer. Bugs have been corrected.</P>
+
+<P>The MBS-routine CUR_USRDEF now takes an extra (optional) parameter wich
+makes it possible to create an UV-curve, ie. a curve on a surface.</P>
+
+<P>A new MBS-routine for sectional area calculations has been added. SECTION_AREA
+calculates the area bounded by any planar (open or closed) 3D curve. You
+can also call it interactively from the &quot;analysis-geometry-area&quot;
+menu.</P>
+
+<P>A new MBS-routine has been added to faciliate surface area calculations.
+SURFACE_AREA calculates the area of any sculptured surface in VARKON. You
+can also call it interactively from the &quot;analysis-geometry-area&quot;
+menu.</P>
+
+<P>The Windows95/NT-version of VARKON is now compiled with version 5.0
+of Microsoft Visual C++.</P>
+
+<P>A problem with color-printing has been corrected. Color printing is
+now supported by the PostScript driver as well as the driver for Windows95/NT.</P>
+
+<P>A new graphical attribute for lines, arcs, curves and text has been
+added. The attribute name is WIDTH and it controls the width of the entity
+it is used on. Deafult WIDTH is 0.0. Entities with default width are displayed
+and printed one pixel wide, just like in earlier versions of VARKON. A
+value of WIDTH &gt; 0.0 displays and prints the entity with the actual
+width. WIDTH has nothing with PEN number to do. A line can be yellow and
+5 mm:s wide at he same time. Color and width are now independant attributes.
+To accomplish this many of VARKON:s files have new internal structure.
+All older files are compatible with 1.15C (as usual) but files created
+with 1.15C or later can not be used by 1.15B or earlier versions of VARKON.
+A new GM-get routine GETWIDTH() has been added to get the actual WIDTH
+attribute value of a specific entity and an ACT_WIDTH() function has been
+added to get the currently active setting of the WIDTH attribute.</P>
+
+<UL>
+<P><A HREF="../pub/images/width.gif">- This is what it looks like.</A></P>
+</UL>
+
+<P>The postscript driver for UNIX and the printer driver for Windows95/NT
+(msw32.dll) have been modified to support wide lines through the new WIDTH
+attribute as well as color (through the PEN attribute). The old system
+of controlling linewidth by PEN number and PEN-files is no longer supported.
+Keep your old drivers (and rename them) if you still need them !</P>
+
+<P>The Windows95/NT version of VARKON has been modified so that it will
+automatically insert default values for its environment into the registry
+if they are missing. The path to VARKON95.EXE is used to determine a VARKON_ROOT
+directory and the standard paths for environment variables are constructed
+relative to the root directory. If for example VARKON95.EXE resides in
+D:\Program\Varkon\Bin then a root directory of D:\Program\Varkon will be
+assumed and VARKON_ROOT will be set to this value. VARKON_ERM will be set
+to D:\Program\Varkon\Erm, VARKON_PID to D:\Program\Varkon\Pid and so on.
+All environment variables get standard values relative to VARKON_ROOT.
+This feature is useful in cases where VARKON is installed only on a server
+but executed on clients in a Windows95/NT network. There is no need to
+install VARKON separately on each client. </P>
+
+<P>If the job-directory of a project does not exist VARKON now automatically
+creates one. If it exists but does not have write permission by the current
+user an error is reported.</P>
+
+<P>The MBS-procedure CLOSE which is used to close an open file will now
+if called without any parameter close <B>all</B> files opened by the OPEN-procedure.</P>
+
+<P>A beta version of a new viewingfunction is now included. f200 available
+through graphics-views-shading-dynamic creates a new window with controls
+for &quot;dynamic&quot; viewing. You can rotate, pan or scale your model
+with light and color on. Version 1.16 of VARKON will include a considerably
+enhanced function. No documentation on f200 is yet available. For maximum
+performance, set your varkon.shade.doublebuffer resource in your ini-file
+to True.</P>
+
+<P>Many pages in the documentation have been updated. A new version of
+the documentation is now available for download.</P>
+
+
+<HR>
+
+<CENTER><P><A HREF="../index.htm">VARKON homepage</A><BR>
+</P></CENTER>
+
+</BODY>
+</HTML>

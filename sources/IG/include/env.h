@@ -3,27 +3,22 @@
 *      env.h
 *      -----
 *
-*      Environmentparametrar. Internt används dessa koder
-*      som indata till v3genv() som på ett portabelt och
-*      OS-oberoende sätt mappar dem till vad det nu skall
-*      vara på den dator som används.
+*      Environment handling. These codes are used as input
+*      to IGgenv().
 *
-*      (C)2006 J. Kjellander
+*      (C)2007 J. Kjellander
 *
 *********************************************************/
 
-#define  VARKON_ERM    0  /* Felmeddelandefiler */
-#define  VARKON_DOC    1  /* Hjälptextfiler */
-#define  VARKON_PID    2  /* Projektfiler */
-#define  VARKON_MDF    3  /* Filkatalog för V3.MDF */
-#define  VARKON_LIB    4  /* V3:s MBO-filer */
-#define  VARKON_TMP    5  /* Temporärfiler */
-#define  VARKON_FNT    6  /* Fontfiler */
-#define  VARKON_ICO    7  /* Ikonfiler */
-#define  VARKON_PLT    8  /* Pennfiler för plotprogram */
-#define  VARKON_PRD    9  /* Default Projekt Root Directory */
-#define  VARKON_TOL   10  /* Toleransfiler */
-#define  VARKON_INI   11  /* Initfiler */
-#define  VARKON_SND   12  /* Ljudfiler */
+#define  VARKON_ERM    0  /* Path to error message files */
+#define  VARKON_DOC    1  /* Path to help files */
+#define  VARKON_MDF    2  /* Path to menu file */
+#define  VARKON_LIB    3  /* Path to system library */
+#define  VARKON_TMP    4  /* Path to temorary files */
+#define  VARKON_FNT    5  /* Path to fonts */
+#define  VARKON_ICO    6  /* Path to icons */
+#define  VARKON_PLT    7  /* Path to plotter conf */
+#define  VARKON_TOL    8  /* Path to tolerance files */
+#define  VARKON_SND    9  /* Path to sound files */
 
 /********************************************************/

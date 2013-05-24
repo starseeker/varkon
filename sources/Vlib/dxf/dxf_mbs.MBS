@@ -35,7 +35,7 @@
 !*
 !***Deklaration av modul.
 !*
-   outstr(utfil,"BASIC DRAWING MODULE "+filnamn+"();");
+   outstr(utfil,"BASIC MODULE "+filnamn+"();");
    outlin(utfil); outlin(utfil);
    outlin(utfil); outlin(utfil);
    outstr(utfil,"BEGINMODULE"); outlin(utfil); outlin(utfil);
@@ -43,10 +43,9 @@
 !***Hämta storheter ur GM.
 !*
    snr:="#0";
-   code:="F";
+   set_root_gm();
  next:
-   id:=getid(code);
-   code:="N";
+   id:=get_next_gm();
 
    if id <> #0 then
      gethdr(id,typ,nref,blnk,niv,pen,gid);
@@ -61,7 +60,7 @@
        outlin(utfil); actpen:=pen;
      endif;
 
-     snr:="#"+str(val(substr(snr,2))+1,-1,0);
+     snr:="#"+str(ival(substr(snr,2))+1,-1,0);
 !*
 !***Punkt.
 !*

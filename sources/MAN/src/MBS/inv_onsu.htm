@@ -1,0 +1,104 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- inv_on_sur - Function})
+define({_INDEXLINK_},{<a href="geomindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>inv_on_sur - Function</h1>
+
+<h2>Description<h2>
+
+<p>
+Returns the parameter value (u,v) of the position on a surface which
+is closest to a given point in R3.
+</p>
+
+<h2>Syntax<h2>
+
+<pre>
+  uv_pos:=inv_on_sur(surface, pos, order, sno, start);
+
+  ref    surface;
+  vector pos;
+  int    order;
+  int    sno;
+  vector start;
+  vector uv_pos;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+
+<tr>
+<td>surface</td>
+<td>- Identity of the surface</td>
+</tr>
+
+<tr>
+<td>pos</td>
+<td>- Position in R3</td>
+</tr>
+
+<tr>
+<td>order</td>
+<td>- Method for the ordering of closest points (the solutions)</td>
+</tr>
+
+<tr>
+<td></td>
+<td>&nbsp; Eq. 1: With respect to the distance to the input R*3 point</td>
+</tr>
+
+<tr>
+<td></td>
+<td>&nbsp; Eq. 2: With respect to the input UV start point&nbsp;</td>
+</tr>
+
+<tr>
+<td>sno</td>
+<td>- Requested solution number</td>
+</tr>
+
+</table>
+
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>start</td>
+<td>- Start UV position for the calculation</td>
+</tr>
+</table>
+
+
+<h2>Return value</h2>
+
+<p>
+uv_pos is the (u,v) parameter value for the closest point on the surface.
+The third component of uv_pos will be negative if there is no closest point.
+</p>
+
+<h2>Example</h2>
+
+<pre>
+  uv_pos:=inv_on_sur(#5, vec(100,100,100), 1, 1);
+</pre>
+
+<p>
+The parameter value on surface #5 for the point which is closest to the R*3
+point (X, Y, Z)=(100,100,100).
+</p>
+
+<h2>Comments</h2>
+
+<p>
+The input point does not need to be exactly on the referenced surface.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -4,7 +4,7 @@
 *    =========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -33,7 +33,7 @@
 #include "../include/WP.h"
 #include <string.h>
 
-extern char jobdir[],jobnam[],mbsdir[],mbodir[];
+extern char jobdir[],jobnam[];
 
 /*
 ***For some reason popen and pclose dont seem to be defined
@@ -113,7 +113,7 @@ loop:
        IGfdel(tmpnam);
        if ( WPgrst("varkon.mbsedit.autoexec",buf)  &&
             strcmp(buf,"True") == 0  &&
-            IGramo() < 0 ) errmes();
+            IGrun_active() < 0 ) errmes();
        }
 /*
 ***Compile errors.
@@ -140,47 +140,64 @@ loop:
 
         short WPomod()
 
-/*      Edit a MBS part program.
+/*      Edit a MBS part program in the part library.
  *
  *      (C)microform ab 1996-02-06 J. Kjellander
  *
  *      1998-04-01 Ny WPilse(), J.Kjellander
- *      2007-05-27 1.19 J.Kjellander
+ *      2007-11-24 2.0 J.Kjellander
  *
  ******************************************************!*/
 
  {
    short status;
-   char  mesbuf[V3STRLEN];
-   char *pekarr[1000],strarr[20000];
-   int   nstr;
+   char  mesbuf[V3STRLEN],libdir[V3PTHLEN],filter[6];
+   int   i;
 
-   static char namn[JNLGTH+5] = "";
+   static char mbsfile[JNLGTH+5] = "";
+
 /*
-***Create file list. mbsdir/XXX.MBS
+***Path to libdir.
 */
-   IGdir(mbsdir,MBSEXT,1000,20000,pekarr,strarr,&nstr);
+   strcpy(libdir,jobdir);
+   strcat(libdir,"lib/");
 /*
-***Let user select.
+***Check if libdir exists. If not, create it.
 */
-   status = WPilse(IGgtts(464),namn,pekarr,-1,nstr,namn);
-   if ( status < 0 ) return(status);
+   if ( !IGftst(libdir) ) IGmkdr(libdir);
+/*
+***Select file to edit.
+*/
+   strcpy(filter,"*");
+   strcat(filter,MBSEXT);
+
+   status = WPfile_selector(IGgtts(464),libdir,TRUE,"",filter,mbsfile);
+   if ( status == 0 )
+     {
+     if ( IGcmpw("*.MBS",mbsfile) )
+       {
+       i = strlen(mbsfile) - 4;
+       mbsfile[i] = '\0';
+       }
+     if ( IGcheck_jobname(mbsfile) < 0 ) return(erpush("IG0342",mbsfile));
+     }
+   else return(status);
 /*
 ***Edit.
 */
-   edit(mbsdir,namn);
+   edit(libdir,mbsfile);
 /*
 ***Compile.
 */
-   sprintf(mesbuf,"%s %s",IGgtts(462),namn);
+   sprintf(mesbuf,"%s %s",IGgtts(462),mbsfile);
 
    if ( WPialt(mesbuf,IGgtts(67),IGgtts(68),FALSE) )
      {
-     if ( comp(mbsdir,namn,mbodir) )
+     if ( comp(libdir,mbsfile,NULL) )
        {
        WPexla(FALSE);
        clheap();
-       sprintf(mesbuf,"%s%s %s",namn,MBSEXT,IGgtts(466));
+       sprintf(mesbuf,"%s%s %s",mbsfile,MBSEXT,IGgtts(466));
        WPaddmess_mcwin(mesbuf,WP_MESSAGE);
        }
      else
@@ -204,19 +221,21 @@ loop:
  *
  *      (C)microform ab 1996-02-06 J. Kjellander
  *
- *      2007-05-27 1.19 J.Kjellander
+ *      2007-11-20 2.0 J.Kjellander
  *
  ******************************************************!*/
 
  {
-   char  mesbuf[V3STRLEN];
-   char *pekarr[1000],strarr[20000];
+   char  mesbuf[V3STRLEN],libdir[V3PTHLEN];
+   char *pekarr[5000],strarr[100000];
    int   i,nstr,errant;
 
 /*
-***Create file list. mbsdir/XXX.MBS
+***Create file list. jobdir/lib/XXX.MBS
 */
-   IGdir(mbsdir,MBSEXT,1000,20000,pekarr,strarr,&nstr);
+   strcpy(libdir,jobdir);
+   strcat(libdir,"lib/");
+   IGdir(libdir,MBSEXT,5000,100000,pekarr,strarr,&nstr);
 /*
 ***Compile all.
 */
@@ -224,7 +243,7 @@ loop:
 
    for ( i=0; i<nstr; ++i )
      {
-     if ( comp(mbsdir,pekarr[i],mbodir) )
+     if ( comp(libdir,pekarr[i],NULL) )
        {
        WPexla(FALSE);
        sprintf(mesbuf,"%s%s %s",pekarr[i],MBSEXT,IGgtts(466));

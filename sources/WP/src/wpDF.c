@@ -4,7 +4,7 @@
 *    ======
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -690,7 +690,7 @@ end:
 */
    glRenderMode(GL_SELECT);
 /*
-***Make OpenGL displaylist for all entities. 
+***Make OpenGL displaylist for all entities.
 */
     WPmodl_all(rwinpt);
 /*
@@ -700,7 +700,7 @@ end:
 /*
 ***Exit selection mode &Get No of hits.
 */
-  *idant = glRenderMode(GL_RENDER);  
+  *idant = glRenderMode(GL_RENDER);
 /*
 ***We now have 0, 1 or more objects in the hitlist.
 ***If no hit, return -1.

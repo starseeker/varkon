@@ -1,0 +1,329 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- index})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Parameter declarations</h1>
+
+<p>
+A parameter_declaration is either a value_parameter_declaration:
+</p>
+
+<pre>
+  type parameter_definition [:=default_value] [&gt;prompt_string]
+</pre>
+
+<p>
+or a reference_parameter_declaration:
+</p>
+
+<pre>
+  VAR type parameter_definition
+</pre>
+
+<p>
+Value parameters are evaluated at runtime and the actual value of the parameter is
+transferred from the caller to the called module. A reference parameter is not passed to
+the called module, only its adress.
+</p>
+
+<p>
+MBS supports the following types:
+</p>
+
+<table>
+
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>INT</td>
+<td>- 32 bit integer</td>
+</tr>
+
+<tr>
+<td>FLOAT</td>
+<td>- 64 bit float</td>
+</tr>
+
+<tr>
+<td><a href="../GUI/vector.htm">VECTOR</a></td>
+<td>- 3 floats, .x, .y and .z</td>
+</tr>
+
+<tr>
+<td>STRING</td>
+<td>- String of maximum 132 8 bit characters</td>
+</tr>
+
+<tr>
+<td><a href="../GUI/ref.htm">REF</a></td>
+<td>- ID of entity in DB</td>
+</tr>
+
+<tr>
+<td>FILE</td>
+<td>- File variable</td>
+</tr>
+</table>
+
+<p>
+Here are some valid value_parameter_declarations:
+</p>
+
+<pre>
+  INT    number_of_holes:=5 &gt;&quot;How many holes ?&quot;
+  FLOAT  distance           &gt;&quot;What distance ?&quot;
+  VECTOR pos:=vec(100,100);
+  STRING name*20            &gt;&quot;What is your name ?&quot;
+  REF    id                 &gt;&quot;Pick a line !&quot;
+</pre>
+
+<p>
+STRING parameters need an extra &quot;*length&quot; after the identifier to indicate the
+maximum length of the string. MBS supports strings up to 132 characters.
+</p>
+
+<p>
+A FILE parameter must be declared with a reference_parameter_declaration.
+Here are some valid reference_parameter_declarations:
+</p>
+
+<pre>
+  VAR INT    number_of_holes
+  VAR FLOAT  distance
+  VAR VECTOR pos
+  VAR STRING name*20
+  VAR REF    id
+  VAR FILE   customer_data
+</pre>
+
+<p>
+A reference parameter may also be used to pass an indexed variable from one module to
+another:
+</p>
+
+<pre>
+  VAR INT    sizes(100)
+  VAR FLOAT  matrix(4,4)
+  VAR STRING name_list(100)*20
+</pre>
+
+<p>
+It is not necessary to declare each parameter of the same type individually.
+The following style with multiple parameters separated by commas is also possible:
+</p>
+
+<pre>
+  VECTOR pos_1 &gt;&quot;First position !&quot;,
+         pos_2 &gt;&quot;Mid position !&quot;,
+         pos_3 &gt;&quot;Last position !
+</pre>
+
+<p>
+A module with only one parameter declaration might begin as follows:
+</p>
+
+<pre>
+  MODULE shaft(FLOAT size);
+</pre>
+
+<p>
+but with multiple parameter declarations they must be separated by semicolons...
+</p>
+
+<pre>
+  MODULE shaft(FLOAT size; INT number_of_holes; STRING material*10);
+</pre>
+
+<p>
+MBS is not line oriented. The line above may just as well be written as follows:
+</p>
+
+<pre>
+  MODULE   shaft(
+    FLOAT  size;
+    INT    number_of_holes;
+    STRING material*10);
+</pre>
+
+<p>
+A value parameter may be declared with default value and prompt string. This information
+is displayed to the user by Varkon when the module is called interactively. The
+<a href="../GUI/f025.htm">Create part</a> and <a href="../GUI/f170.htm">Change part</a>
+functions both rely on default values and prompt strings.
+</p>
+
+<h2>Hidden parameters</h2>
+
+<p>
+A parameter without any prompt at all, is called a <b><i>hidden parameter</i></b>. Hidden
+parameters are not prompted for when the module is called. Varkon uses the default value
+automatically. This mechanism is intended for modules with many parameters but only a few
+that need to be set by the user initially. <a href="../GUI/f170.htm">Change part</a> can
+be used to change the value also of hidden parameters.
+</p>
+
+<p>
+A prompt may be any string like &quot;How many ?&quot; or &quot;Pick a line !&quot;
+but may also be preceded by a @-modifier. @-modifiers are used by Varkon to modify the
+standard behaviour of presenting default values and prompts. A parameter without
+@-modifier is called a <b><i>normal parameter</i></b>.
+</p>
+
+<h2>Optional parameters</h2>
+
+<p>
+A parameter with a prompt preceded by a single &quot;@&quot; and a space is called
+an <b><i>optional parameter</i></b>. Optional parameters can be used to present a
+varying number of parameters like in the following example:
+</p>
+
+<pre>
+  VECTOR p1 &gt;&quot;Give a start position !&quot;;
+  VECTOR p2 &gt;&quot;@ Second position ! (optional)&quot;;
+  VECTOR p3 &gt;&quot;@ Third position ! (optional)&quot;;
+  VECTOR p4 &gt;&quot;@ Fourth position ! (optional)&quot;;
+  VECTOR p5 &gt;&quot;@ Fifth position ! (optional)&quot;;
+  VECTOR p6 &gt;&quot;Last position !&quot;;
+</pre>
+
+<p>
+In the example above Varkon will first prompt for p1 and then for p2. If the user defines
+a valid position for p2 Varkon goes on with p3, p4 and so on. As long as the user answers
+the questions he gets positively Varkon will continue to present the next parameter even
+if it is optional. If the user refuses to input a valid value for an optional parameter
+and rejects the question Varkon will use the default value for the parameter in question
+as well as all optional parameters directly following. This mechanism makes it possible to
+construct dialogues where the user may input a varying number of values from call to call.
+In the example above the user must always define p1 and will always be prompted for p2. If
+he rejects p2 Varkon will skip even p3, p4 and p5 but finally prompt for p6. 2, 3, 4, 5 or
+6 positions are the alternatives in this example.
+</p>
+
+<h2>Menu parameters</h2>
+
+<p>
+A STRING parameter may get its value from a menu instead of the normal input from the
+keyboard by the use of the @m-modifier. Such a parameter is called a <b><i>menu parameter</i></b>.
+</p>
+
+<pre>
+  STRING type*2 &gt;&quot;@m250 Select a type from the menu !&quot;
+</pre>
+
+<p>
+The parameter above will force Varkon to display menu 250 and prompt the user to make a
+selection. The answer is either an empty string &quot;&quot; if the user rejects, or the
+action code of the selected alternative. See the <a href="get_alt.htm">get_alt()</a>
+function for related information.
+</p>
+
+<p>
+Menu parameters may also be optional as in the following example:<br>
+</p>
+
+<pre>
+  STRING type*2 &gt;&quot;@@m250 Select a type from the menu !&quot;
+</pre>
+
+<h2>Position parameters</h2>
+
+<p>
+A VECTOR parameter normally uses the position method currently active as shown
+by the buttons in the bottom part of the menu window. If you know in advance
+what method to use, you can specify this with a @-modifier. Here is an example of a
+<b><i>position method parameter:</i></b>
+</p>
+
+<pre>
+  VECTOR p1 &gt;&quot;@a3 Where do you want to start ?&quot;
+</pre>
+
+<p>
+The @a followed by a number forces Varkon to override the normal method and use
+the method indicated by the number instead. Number 3 is the same as alternative
+button 3 in the bottom section of the menu window. Position parameters may also
+be optional.
+</p>
+
+<h2>Typemask parameters</h2>
+
+<p>
+A REF parameter can be used to input the identity of all types of entities. The
+@t-modifier makes it possible to restrict the input to an entity of a certain type (or
+types). Such a parameter is called a <b><i>typemask parameter...</i></b>
+</p>
+
+<pre>
+  REF id &gt;&quot;@t6 Pick a line or arc !&quot;
+</pre>
+
+<p>
+The typemask is created by adding the type codes for the valid entity types. In this case
+2 + 4 = line and arc. See the <a href="gethdr.htm">gethdr()</a> procedure for a list of
+type codes. Typemask parameters may also be optional.
+</p>
+
+<h2>Dynamic default parameters</h2>
+
+<p>
+An INT, FLOAT or STRING parameter can have its default value fetched from a textfile by
+the use of the @f-modifier. This makes it possible to present new default values each time
+the module is called and such a parameter is therefore called a <b><i>dynamic default
+parameter.</i></b> Here are some examples:
+
+<pre>
+  INT number &gt;&quot;@ffilename Enter next number !&quot;
+</pre>
+
+<p>
+Reads default value from the first line in the file with the name filename. A path may be
+included.
+</p>
+
+<pre>
+  INT number &gt;&quot;@fact_job Enter next number !&quot;
+</pre>
+
+<p>
+If the special filename &quot;act_job&quot; is used Varkon replaces this with
+the value of act_jobdir()+act_jobnam(). This is a way to dynamically link
+individual default values to different jobs. (act_job is actully the value of
+t-string 119 and may be redefined if prefered).
+</p>
+
+<pre>
+  INT number &gt;&quot;@defvals.dat(5) Enter next number !&quot;
+</pre>
+
+<p>
+Reads the default value from line 5 in the file defvals.dat. An extra @ makes the
+parameter optional in the same way as all other parameters.
+</p>
+
+<h2>Dynamic prompt parameter</h2>
+
+<p>
+A normal prompt string is static but may be linked to a t-string using a slightly
+different syntax than the @-modifier described above.
+</p>
+
+<pre>
+  INT n &gt;&quot;t625&quot;
+</pre>
+
+<p>
+A prompt beginning with lower case &quot;t&quot; directly followed by a number is treated
+as a <b><i>dynamic prompt parameter. </i></b>A dynamic prompt parameter may be optional
+but may not be combined with other @-modifiers.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

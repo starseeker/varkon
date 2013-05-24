@@ -14,7 +14,7 @@
 *
 *
 *    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -29,8 +29,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
 *
 ***********************************************************************/
 
@@ -198,7 +196,7 @@ loop:
 */
     for ( j=0; ; ++j, ++i )
       {
-      if ( i > MXINIV-1 ) return(erpush("GM0082",""));
+      if ( i > MXINIV-1 ) return(erpush("DB0082",""));
       (utref+i)->seq_val = abs((inref+j)->seq_val);
       (utref+i)->ord_val = (inref+j)->ord_val;
       (utref+i)->p_nextre = &utref[i+1];

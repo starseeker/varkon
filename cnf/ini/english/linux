@@ -8,15 +8,17 @@
 !***************************************************************
 
 !*
-!***Text font for menus etc.
+!***Text fonts.
 !*
-!varkon.font:                    fixed
-!varkon.font:                   6x13
-!varkon.font:                   7x13
-varkon.font:                   9x15
-!varkon.font: -adobe-times-medium-r-normal--18-180-75-75-p-94-iso8859-1
-!varkon.font:                   10x20
-!varkon.font:                   12x24
+varkon.font.normal:             9x15
+!varkon.font.big:                10x20
+
+!varkon.font.normal:            fixed
+!varkon.font.small:            6x13
+varkon.font.small:            lucidasans-bold-10
+!varkon.font.normal:            7x13
+!varkon.font.normal:            12x24
+varkon.font.big: -adobe-times-medium-r-normal--18-180-75-75-p-94-iso8859-1
 !*
 !***Resources for f216, "Edit active module in MBS format".
 !***Default editor is vi in a xterm window which should work
@@ -33,12 +35,23 @@ varkon.mbsedit.autocompile:     True
 varkon.mbsedit.autoexec:        True
 !*
 !***varkon.html_viewer is used by the help-system to spawn a
-!***HTML-browser. If this resource is defined VARKON will send
+!***HTML-browser. If this resource is defined Varkon will send
 !***the required helpfile to the browser. If not defined
-!***VARKON will display text files in VARKON list windows
-!***but HTML files will not be supported.
+!***Varkon will display the file $VARKON_DOC/no_html_viewer.txt
+!***in a list window.
 !*
-varkon.html_viewer:              firefox
+!***Suse Linux with KDE can use Konqueror
+!varkon.html_viewer:             konqueror
+!
+!***Many Linux systems use firefox or seamonkey
+!varkon.html_viewer:             firefox
+!varkon.html_viewer:             seamonkey
+!
+!***Mozilla may also work
+!varkon.html_viewer:             mozilla
+!
+!***The following line will spawn the default browser on MacOSX systems
+!varkon.html_viewer:             open
 !*
 !***Default graphic window. You may use more if you want.
 !*
@@ -47,9 +60,10 @@ varkon.grawin_1.geometry:       700x500+200
 !varkon.grawin_3.geometry:       495x435+145+20
 varkon.margin_up  :             32
 !*
-!***Contents of the graphical window titlebar.
+!***What to show in graphical window titlebars.
 !*
-varkon.title.project:           True
+!varkon.title:                   Custom title
+varkon.title.jobdir:            True
 varkon.title.jobname:           True
 varkon.title.viewname:          True
 !*
@@ -136,6 +150,19 @@ varkon.rwin.icon_6.geometry:    +190+0
 varkon.rwin.icon_6.name:        Varkon_levels.xpm
 varkon.rwin.icon_6.action:      f197
 varkon.rwin.icon_6.tooltip:     Blank, unblank or list levels
+
+varkon.rwin.icon_7.geometry:    +228+0
+varkon.rwin.icon_7.name:        Varkon_printer.xpm
+varkon.rwin.icon_7.action:      f150
+varkon.rwin.icon_7.tooltip:     Create TIFF file (Beta test function)
+!*
+!***Resources for the system mode dialogue.
+!*
+varkon.mode.what:               What do you want to do now ?
+varkon.mode.explicit:            - Edit or create a RES-file
+varkon.mode.generic:             - Edit or create a module
+varkon.mode.learnmore:           - Learn more about VARKON
+varkon.mode.exit:                - Exit
 !*
 !***Resources for the partname dialogue.
 !*
@@ -171,7 +198,7 @@ varkon.menu.button_9.text:       grid
 varkon.menu.button_9.tooltip:    Use grid for position input
 varkon.menu.level.tooltip:       Set the currently active level number
 varkon.menu.pen.tooltip:         Set the currently active pen or color number
-varkon.menu.width.tooltip:       Set the currently active linewidth (for all entities)
+varkon.menu.width.tooltip:       Set the currently active linewidth
 varkon.menu.csy.tooltip:         Set the currently active coordinate system
 varkon.menu.csy.title:           Activate csys
 varkon.menu.local.tooltip:       Pick a coordinate system to activate, MODE_LOCAL(#n); in MBS
@@ -203,9 +230,11 @@ varkon.print.command.tooltip:    Command that will direct driver output to the p
 varkon.print.mediasize:          Media size
 varkon.print.media_x.tooltip:    Media size in horizontal direction (A4 = 210 mm)
 varkon.print.media_y.tooltip:    Media size in vertical direction (A4 = 297 mm)
-varkon.print.auto_manual:        Print scale and orientation
+varkon.print.orientation:        Print orientation
 varkon.print.auto:               Auto
 varkon.print.auto.tooltip:       Automatically scale print to fit media
+varkon.print.select:             Select
+varkon.print.select.tooltip:     Use the mouse to select what part of the model to print
 varkon.print.manual:             Manual
 varkon.print.manual.tooltip:     Manually configure print scale and orientation
 varkon.print.manual.title:       Print scale and orientation
@@ -219,15 +248,7 @@ varkon.print.manual.scale:       Print scale
 varkon.list.title:               Listing - 
 varkon.list.geometry:            +200+100
 varkon.list.title.jobnam:        True
-varkon.list.row:                 Row
-varkon.list.page:                Page
-varkon.list.save:                Save
-varkon.list.kill:                Close
 varkon.list.printer:             lpr
-!*
-!***Resources for the error message listwindow.
-!*
-varkon.error.title:             -----------------ERROR-MESSAGE--------------
 !*
 !***Resources for input dialogs.
 !*
@@ -248,11 +269,17 @@ varkon.input.close.tooltip:     Close this window
 varkon.input.save:              Save
 varkon.input.delete:            Delete
 varkon.input.apply:             Apply
+varkon.input.up.tooltip:        Display files in parent directory
+varkon.input.new.tooltip:       Create a new directory
+varkon.input.new.title:         Create directory
+varkon.input.new.prompt:        Create new directory in:
+varkon.input.file:              Filename:
+varkon.input.file.tooltip:      Enter filename and select OK
 !*
 !***Resources for the alternative popup.
 !*
 varkon.alternative.title:       Alternative
-varkon.alternative.geometry:    +50+50
+varkon.alternative.geometry:    +250+250
 !*
 !***Resources for the view dialogue
 !*
@@ -370,9 +397,9 @@ varkon.act_csys_pen:             2
 !*
 !***Varkon GUI system colors.
 !*
-varkon.background:               gray84
-varkon.buttonColor:              gray90
-varkon.selectedButtonColor:      gray75
+varkon.background:               gray82
+varkon.buttonColor:              gray88
+varkon.selectedButtonColor:      gray70
 varkon.highlightedButtonColor:   SteelBlue
 varkon.foreground:               Black
 varkon.topShadowColor:           White
@@ -407,25 +434,13 @@ varkon.shade.doublebuffer:       True
 !***and other workstations may require
 !***proper settings here.
 !*
-!varkon.shade.redbits:           8
-!varkon.shade.greenbits:         8
-!varkon.shade.bluebits:          8
+!varkon.shade.redbits:           5
+!varkon.shade.greenbits:         6
+!varkon.shade.bluebits:          5
 !varkon.shade.zbits:             16
 !*
-!***Light sources ambient component.
+!***Default light intensity.
 !*
-varkon.shade.ambient.red:        40
-varkon.shade.ambient.blue:       40
-varkon.shade.ambient.green:      40
-!*
-!***Light sources diffuse component.
-!*
-varkon.shade.diffuse.red:        100
-varkon.shade.diffuse.blue:       100
-varkon.shade.diffuse.green:      100
-!*
-!***Light sources specular component.
-!*
-varkon.shade.specular.red:       100
-varkon.shade.specular.blue:      100
-varkon.shade.specular.green:     100
+varkon.light.intensity:          50
+!
+!***************************************************************

@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -35,11 +35,12 @@
 #include "../include/WP.h"
 #include <math.h>
 
-extern char    jobnam[];      /* Current jobname for menu window border */
-extern short   posmode;       /* Currently active positions method in IG */
-extern short   v3mode;        /* RIT_MOD/BAS_MOD... */
-extern char    actcnm[];      /* Name of currently active coordinate system */
-extern V2NAPA  defnap;        /* Currently active attributes */
+extern char    jobnam[];     /* Current jobname for menu window border */
+extern int     posmode;      /* Currently active positions method in IG */
+extern bool    relpos;       /* Relative positions flag On/Off */
+extern short   sysmode;       /* EXPLICIT/GENERIC */
+extern char    actcnm[];     /* Name of currently active coordinate system */
+extern V2NAPA  defnap;       /* Currently active attributes */
 
 static MNUDAT *actmeny;       /* Currently active menu */
 static wpw_id  men_id;        /* WP-id of the menu window */
@@ -54,15 +55,15 @@ static Window  runid;         /* X-id of the Run button */
 static Window  edpid;         /* X-id of the EditP button */
 static Window  delid;         /* X-id of the Delete button */
 
-static char    pbtext_1[81];  /* Text for pos button 1 */
-static char    pbtext_2[81];  /* Text for pos button 2 */
-static char    pbtext_3[81];  /* Text for pos button 3 */
-static char    pbtext_4[81];  /* Text for pos button 4 */
-static char    pbtext_5[81];  /* Text for pos button 5 */
-static char    pbtext_6[81];  /* Text for pos button 6 */
-static char    pbtext_7[81];  /* Text for pos button 7 */
-static char    pbtext_8[81];  /* Text for pos button 8 */
-static char    pbtext_9[81];  /* Text for pos button 9 */
+static char    pbtext_1[81];  /* Text for pos button 1 absolute */
+static char    pbtext_2[81];  /* Text for pos button 2 relative */
+static char    pbtext_3[81];  /* Text for pos button 3 mouse */
+static char    pbtext_4[81];  /* Text for pos button 4 mbs */
+static char    pbtext_5[81];  /* Text for pos button 5 end */
+static char    pbtext_6[81];  /* Text for pos button 6 on */
+static char    pbtext_7[81];  /* Text for pos button 7 centre */
+static char    pbtext_8[81];  /* Text for pos button 8 intersect */
+static char    pbtext_9[81];  /* Text for pos button 9 grid */
 
 static char    pbttip_1[81];  /* Tooltip for pos button 1 */
 static char    pbttip_2[81];  /* Tooltip for pos button 2 */
@@ -311,6 +312,10 @@ static short csys_dialogue(int x,int y);
 */
    actmeny = NULL;
 /*
+***Init (turn off) the relative positions button.
+*/
+   relpos = FALSE;
+/*
 ***The end.
 */
    return(0);
@@ -320,7 +325,7 @@ static short csys_dialogue(int x,int y);
 /*!*******************************************************/
 
      short   WPactivate_menu(
-     MNUDAT *meny)  
+     MNUDAT *meny)
 
 /*   Make a menu active and display it.
  *
@@ -335,7 +340,7 @@ static short csys_dialogue(int x,int y);
 /*
 ***Update actmeny.
 */
-    actmeny = meny;   
+    actmeny = meny;
 /*
 ***Update contents of menu window.
 */
@@ -358,6 +363,7 @@ static short csys_dialogue(int x,int y);
  *
  *    24/1/94    Omarbetad, J. Kjellander
  *    2007-03-17 More buttons, J.Kjellander
+ *    2007-09-09 relpos, J.Kjellander
  *
  *******************************************************!*/
 
@@ -365,7 +371,7 @@ static short csys_dialogue(int x,int y);
    int         ly,mendx,mendy,butx,butdx,buty,butdy;
    char        title[V3STRLEN],butstr[V3STRLEN];
    int         bw,lm,tl,mrl,i,tlmax,minalt,text_color; 
-   DBint       rubr_id,alt_id,dum_id,pos_id,lvl_id,pen_id,
+   DBint       rubr_id,alt_id,pos_id,lvl_id,pen_id,
                wdt_id,csy_id,mbs_id,run_id,edp_id,del_id;
    MNUALT     *altptr;
    WPIWIN     *mwinpt;
@@ -410,12 +416,12 @@ static short csys_dialogue(int x,int y);
      tl = 1.2*WPstrl(altptr->str);
    ++altptr;
      if ( tl > tlmax) tlmax = tl;
-     } 
+     }
 
    if ( mrl > tlmax) tlmax = mrl;
 /*
 ***Window width, mendx.
-*/    
+*/
    butdx = tlmax;
    mendx = ly + butdx + ly;
 /*
@@ -454,8 +460,7 @@ static short csys_dialogue(int x,int y);
 */
    butx = ly;
    buty = ly;
-   WPmcbu(men_id,butx,buty,butdx,butdy,0,actmeny->rubr,actmeny->rubr,
-                                     "",WP_BGND1,WP_FGND,&rubr_id);
+   WPcrlb(men_id,butx,buty,butdx,butdy,actmeny->rubr,&rubr_id);
 /*
 ***Create new alternative buttons.
 */
@@ -465,7 +470,7 @@ static short csys_dialogue(int x,int y);
    for ( i=0; i<actmeny->nalt; i++ )
      {
      buty += lm + butdy;
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,
                    altptr->str,altptr->str,"",WP_BGND2,WP_FGND,&alt_id);
      butptr = (WPBUTT *)mwinpt->wintab[alt_id].ptr;
      altid[i] = butptr->id.x_id;
@@ -476,21 +481,20 @@ static short csys_dialogue(int x,int y);
 ***A line.
 */
    buty = ly + minalt*(lm + butdy) + butdy + 2*lm;
-   WPmcbu(men_id,butx+butdx/4,buty-1,butdx/2,1,(short)0,"","","",WP_BOTS,WP_BOTS,&dum_id);
-   WPmcbu(men_id,butx+butdx/4,buty,butdx/2,1,(short)0,"","","",WP_TOPS,WP_TOPS,&dum_id);
+   WPcreate_3Dline(men_id,butx+butdx/4,buty,butx+3*butdx/4,buty);
 /*
 ***Pen and Level.
 */
    buty += 2*lm;
    sprintf(butstr,"LVL %d",defnap.level);
-   WPmcbu(men_id,butx,buty,butdx/2 - bw,butdy,bw,
+   WPcrpb(men_id,butx,buty,butdx/2 - bw,butdy,bw,
                            butstr,butstr,"",WP_BGND2,WP_FGND,&lvl_id);
    butptr = (WPBUTT *)mwinpt->wintab[lvl_id].ptr;
    strcpy(butptr->tt_str,lvltip);
    levelid = butptr->id.x_id;
 
    sprintf(butstr,"PEN %d",defnap.pen);
-   WPmcbu(men_id,butx + butdx/2 + bw,buty,butdx/2 - bw,butdy,bw,
+   WPcrpb(men_id,butx + butdx/2 + bw,buty,butdx/2 - bw,butdy,bw,
                            butstr,butstr,"",WP_BGND2,WP_FGND,&pen_id);
    butptr = (WPBUTT *)mwinpt->wintab[pen_id].ptr;
    strcpy(butptr->tt_str,pentip);
@@ -501,7 +505,7 @@ static short csys_dialogue(int x,int y);
    buty += (butdy + lm);
    sprintf(butstr,"WIDTH %g",defnap.width);
    if ( DEC(defnap.width) == 0.0 ) strcat(butstr,".0");
-   WPmcbu(men_id,butx,buty,butdx,butdy,bw,
+   WPcrpb(men_id,butx,buty,butdx,butdy,bw,
                            butstr,butstr,"",WP_BGND2,WP_FGND,&wdt_id);
    butptr = (WPBUTT *)mwinpt->wintab[wdt_id].ptr;
    strcpy(butptr->tt_str,wdttip);
@@ -511,7 +515,7 @@ static short csys_dialogue(int x,int y);
 */
    buty += (butdy + lm);
    sprintf(butstr,"CSY %s",actcnm);
-   WPmcbu(men_id,butx,buty,butdx,butdy,bw,
+   WPcrpb(men_id,butx,buty,butdx,butdy,bw,
                            butstr,butstr,"",WP_BGND2,WP_FGND,&csy_id);
    butptr = (WPBUTT *)mwinpt->wintab[csy_id].ptr;
    strcpy(butptr->tt_str,csytip);
@@ -519,17 +523,17 @@ static short csys_dialogue(int x,int y);
 /*
 ***MBS and Run. Gray texts in explicit mode.
 */
-   if ( v3mode == RIT_MOD ) text_color = WP_BGND3;
+   if ( sysmode == EXPLICIT ) text_color = WP_BGND3;
    else                     text_color = WP_FGND;
 
    buty += (butdy + lm);
-   WPmcbu(men_id,butx,buty,butdx/2 - bw,butdy,bw,
+   WPcrpb(men_id,butx,buty,butdx/2 - bw,butdy,bw,
                            "MBS","MBS","",WP_BGND2,text_color,&mbs_id);
    butptr = (WPBUTT *)mwinpt->wintab[mbs_id].ptr;
    strcpy(butptr->tt_str,mbstip);
    mbsid = butptr->id.x_id;
 
-   WPmcbu(men_id,butx + butdx/2 + bw,buty,butdx/2 - bw,butdy,bw,
+   WPcrpb(men_id,butx + butdx/2 + bw,buty,butdx/2 - bw,butdy,bw,
                            runtext,runtext,"",WP_BGND2,text_color,&run_id);
    butptr = (WPBUTT *)mwinpt->wintab[run_id].ptr;
    strcpy(butptr->tt_str,runtip);
@@ -538,13 +542,13 @@ static short csys_dialogue(int x,int y);
 ***EditP and Delete.
 */
    buty += (butdy + lm);
-   WPmcbu(men_id,butx,buty,butdx/2 - bw,butdy,bw,
+   WPcrpb(men_id,butx,buty,butdx/2 - bw,butdy,bw,
                            edptext,edptext,"",WP_BGND2,WP_FGND,&edp_id);
    butptr = (WPBUTT *)mwinpt->wintab[edp_id].ptr;
    strcpy(butptr->tt_str,edptip);
    edpid = butptr->id.x_id;
 
-   WPmcbu(men_id,butx + butdx/2 + bw,buty,butdx/2 - bw,butdy,bw,
+   WPcrpb(men_id,butx + butdx/2 + bw,buty,butdx/2 - bw,butdy,bw,
                            deltext,deltext,"",WP_BGND2,WP_FGND,&del_id);
    butptr = (WPBUTT *)mwinpt->wintab[del_id].ptr;
    strcpy(butptr->tt_str,deltip);
@@ -553,35 +557,34 @@ static short csys_dialogue(int x,int y);
 ***A second line.
 */
    buty += butdy + 2*lm;
-   WPmcbu(men_id,butx+butdx/4,buty-1,butdx/2,1,(short)0,"","","",WP_BOTS,WP_BOTS,&dum_id);
-   WPmcbu(men_id,butx+butdx/4,buty,butdx/2,1,(short)0,"","","",WP_TOPS,WP_TOPS,&dum_id);
+   WPcreate_3Dline(men_id,butx+butdx/4,buty,butx+3*butdx/4,buty);
 /*
 ***Position alternatives, line 1.
 */
    buty += 2*lm;
    butdx = 1.5*WPstrl("ABCD");
    if ( posmode == 0 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_1,pbtext_1,"",WP_BGND3,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_1,pbtext_1,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_1,pbtext_1,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_1,pbtext_1,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_1);
    posid[0] = butptr->id.x_id;
 
    butx += butdx + 2*bw;
-   if ( posmode == 1 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_2,pbtext_2,"",WP_BGND3,WP_FGND,&pos_id);
+   if ( relpos )
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_2,pbtext_2,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_2,pbtext_2,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_2,pbtext_2,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_2);
    posid[1] = butptr->id.x_id;
 
    butx += butdx + 2*bw;
    if ( posmode == 2 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_3,pbtext_3,"",WP_BGND3,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_3,pbtext_3,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_3,pbtext_3,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_3,pbtext_3,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_3);
    posid[2] = butptr->id.x_id;
@@ -591,27 +594,27 @@ static short csys_dialogue(int x,int y);
    butx  = ly - bw;
    buty += butdy + 2*bw;
    if ( posmode == 3 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_4,pbtext_4,"",WP_BGND3,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_4,pbtext_4,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_4,pbtext_4,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_4,pbtext_4,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_4);
    posid[3] = butptr->id.x_id;
 
    butx += butdx + 2*bw;
    if ( posmode == 4 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_5,pbtext_5,"",WP_BGND3,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_5,pbtext_5,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_5,pbtext_5,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_5,pbtext_5,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_5);
    posid[4] = butptr->id.x_id;
 
    butx += butdx + 2*bw;
    if ( posmode == 5 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_6,pbtext_6,"",WP_BGND3,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_6,pbtext_6,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_6,pbtext_6,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_6,pbtext_6,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_6);
    posid[5] = butptr->id.x_id;
@@ -621,27 +624,27 @@ static short csys_dialogue(int x,int y);
    butx  = ly - bw;
    buty += butdy + 2*bw;
    if ( posmode == 6 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_7,pbtext_7,"",WP_BGND3,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_7,pbtext_7,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_7,pbtext_7,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_7,pbtext_7,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_7);
    posid[6] = butptr->id.x_id;
 
    butx += butdx + 2*bw;
    if ( posmode == 7 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_8,pbtext_8,"",WP_BGND3,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_8,pbtext_8,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_8,pbtext_8,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_8,pbtext_8,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_8);
    posid[7] = butptr->id.x_id;
 
    butx += butdx + 2*bw;
    if ( posmode == 8 )
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_9,pbtext_9,"",WP_BGND3,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_9,pbtext_9,"",WP_BGND3,WP_FGND,&pos_id);
    else
-     WPmcbu(men_id,butx,buty,butdx,butdy,bw,pbtext_9,pbtext_9,"",WP_BGND2,WP_FGND,&pos_id);
+     WPcrpb(men_id,butx,buty,butdx,butdy,bw,pbtext_9,pbtext_9,"",WP_BGND2,WP_FGND,&pos_id);
    butptr = (WPBUTT *)mwinpt->wintab[pos_id].ptr;
    strcpy(butptr->tt_str,pbttip_9);
    posid[8] = butptr->id.x_id;
@@ -650,8 +653,7 @@ static short csys_dialogue(int x,int y);
 */
    XStoreName(xdisp,mwinpt->id.x_id,title);
 /*
-***Mappa alla sub-fönster nu. Detta görs inte av WPmcbu() eftersom
-***vi har satt mwinpt->mapped = FALSE när vi skapade meny-fönstret.
+***Map all sub windows now. This is not done earlier.
 */
    XMapSubwindows(xdisp,mwinpt->id.x_id);
 /*
@@ -679,6 +681,7 @@ static short csys_dialogue(int x,int y);
  *      (C)microform ab 17/7/92 J. Kjellander
  *
  *      2007-03-25 1.19, J.Kjellander
+ *      2007-09-09 relpos, J.Kjellander
  *
  ******************************************************!*/
 
@@ -704,7 +707,7 @@ static short csys_dialogue(int x,int y);
    else
      {
      *altptr = actmeny->alt;
-  
+
       while ( hit == FALSE  &&  i < actmeny->nalt )
         {
         if ( event->xany.window == altid[i++] ) hit = TRUE;
@@ -739,15 +742,15 @@ static short csys_dialogue(int x,int y);
        }
      else if ( event->xany.window == mbsid )
        {
-       if ( v3mode == RIT_MOD ) WPbell();
+       if ( sysmode == EXPLICIT ) WPbell();
        else                     WPamod();
       *altptr = NULL;
        hit = TRUE;
        }
      else if ( event->xany.window == runid )
        {
-       if ( v3mode == RIT_MOD ) WPbell();
-       else                     IGramo();
+       if ( sysmode == EXPLICIT ) WPbell();
+       else                     IGrun_active();
       *altptr = NULL;
        hit = TRUE;
        }
@@ -759,7 +762,7 @@ static short csys_dialogue(int x,int y);
        }
      else if ( event->xany.window == delid )
        {
-       IGdlen();
+       IGdelete_entity();
       *altptr = NULL;
        hit = TRUE;
        }
@@ -783,7 +786,13 @@ static short csys_dialogue(int x,int y);
        {
        if ( event->xany.window == posid[i] )
          {
-         posmode = i;
+         if ( i == 1 )
+           {
+           if ( relpos ) relpos = FALSE;
+           else          relpos = TRUE;
+           }
+         else posmode = i;
+
          WPupdate_menu();
         *altptr = NULL;
          hit = TRUE;
@@ -874,10 +883,9 @@ static short csys_dialogue(int x,int y);
 */
     WPwshw(*id);
 /*
-***För att varje sub-fönster vid meny-byte varje gång inte
-***skall mappas individuellt av WPmcbu() sätter vi meny-
-***fönstrets map-status till false och mappar alla subfönster
-***vid ett enda tillfälle i WPrcmw().
+***To prevent each sub window to be mapped individually each
+***time a new menu is displayed we set the map falg to FALSE.
+***Mapping is then done by WPupdate_menu();
 */
     iwinpt->mapped = FALSE;
 
@@ -893,7 +901,7 @@ static short csys_dialogue(int x,int y);
 
 /*      Handles the CSY-button in the menu window.
  *
- *      In: 
+ *      In: main_x, main_y = Requested window position.
  *
  *      Return:  0 = OK.
  *          REJECT = Operation canceled.
@@ -937,7 +945,7 @@ static short csys_dialogue(int x,int y);
    if ( WPstrl(basic)  > altlen ) altlen = WPstrl(basic);
    if ( WPstrl(reject) > altlen ) altlen = WPstrl(reject);
    if ( WPstrl(help)   > altlen ) altlen = WPstrl(help);
- 
+
    altlen *= 1.4;
 /*
 ***Window geometry.
@@ -956,7 +964,7 @@ static short csys_dialogue(int x,int y);
 /*
 ***Which csy mode is active now ?
 */
-   if      ( strcmp(actcnm,"BASIC") == 0 )  csy_mode = 1;
+   if       ( strcmp(actcnm,"BASIC") == 0 ) csy_mode = 1;
    else if ( strcmp(actcnm,"GLOBAL") == 0 ) csy_mode = 2;
    else                                     csy_mode = 3;
 /*
@@ -964,7 +972,7 @@ static short csys_dialogue(int x,int y);
 */
    alt_x  = ly;
    alt_y  = ly;
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
                           local,local,"",WP_BGND2,WP_FGND,&local_id);
    butptr = (WPBUTT *)iwinpt->wintab[local_id].ptr;
    strcpy(butptr->tt_str,localtt);
@@ -974,12 +982,12 @@ static short csys_dialogue(int x,int y);
    alt_x  = ly + altlen + lm;
    if ( csy_mode == 2 )
      {
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
                             global,global,"",WP_BGND3,WP_FGND,&global_id);
      }
    else
      {
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
                             global,global,"",WP_BGND2,WP_FGND,&global_id);
      }
    butptr = (WPBUTT *)iwinpt->wintab[global_id].ptr;
@@ -990,12 +998,12 @@ static short csys_dialogue(int x,int y);
    alt_x  = ly + altlen + lm + altlen + lm;
    if ( csy_mode == 1 )
      {
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
                             basic,basic,"",WP_BGND3,WP_FGND,&basic_id);
      }
    else
      {
-     WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
+     WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
                             basic,basic,"",WP_BGND2,WP_FGND,&basic_id);
      }
    butptr = (WPBUTT *)iwinpt->wintab[basic_id].ptr;
@@ -1005,13 +1013,13 @@ static short csys_dialogue(int x,int y);
 */
    alt_x  = ly;
    alt_y += (alth + ly + ly);
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
                           reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    alt_x  = main_dx - (altlen + ly);
-   WPmcbu((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
+   WPcrpb((wpw_id)iwin_id,alt_x,alt_y,altlen,alth,1,
                           help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);

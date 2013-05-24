@@ -1,0 +1,43 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Context sensitive help system})
+define({_INDEXLINK_},{<a href="GUI.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+<h1>Varkon context sensitive help system</h1>
+
+<p>
+To get help, press F1 or CTRL-a in any situation. You
+can also select a "Help"-button in any dialog window.
+</p>
+
+<p>
+The Varkon interactive context sensitive help system is
+based on a large number of HTML files in $VARKON_DOC/GUI,
+one for each context. A context can be a menu, a function or a
+macro module. If a menu is active Varkon uses the menu number to decide
+which helpfile to display. If menu 48 is active Varkon will display m48.htm.
+If a function is active Varkon uses the number of the function.
+Function f127 will display f127.htm. If a module is active Varkon
+uses the name of the module to decide which helpfile to display.
+</p>
+
+<p>In order to display helpfiles the "html_viewer"-resource line
+in the Varkon ini-file must be set to a proper HTML viewer. In the default
+ini-files distributed with Varkon for UNIX this resource is set to a HTML
+viewer that should work in most cases. The Microsoft Windows version of Varkon
+defaults to InternetExplorer. You may have to edit the "html_viewer"-resource line
+in your ini-file if you want to use something else than default or if the
+default is not working.
+</p>
+
+<p>
+If the "html_viewer"-resource in you ini-file is not set at all, Varkon will display
+an error message.
+</p>
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

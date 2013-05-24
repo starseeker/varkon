@@ -61,7 +61,7 @@ typedef          double DBfloat;   /* Always 64-bit float */
 */
 
 typedef DBint   DBptr;        /* A DB virtual address (pointer) may be < 0 */
-#define DBNULL (DBptr)0       /* A DB NULL pointer */
+#define   DBNULL (DBptr)0       /*  A DB NULL pointer */
 typedef DBshort DBstatus;     /* A DB function return value */
 typedef DBint   DBseqnum;     /* A DB ID sequence value */
 typedef DBint   DBordnum;     /* A DB ID order value */
@@ -107,7 +107,7 @@ typedef DBuint DBetype;       /* A GM entity type, POITYP, LINTYP etc.. short->i
 #define LINTYP (DBetype)2     /* Line */
 #define ARCTYP (DBetype)4     /* Arc */
 #define CURTYP (DBetype)8     /* Curve */
-#define SURTYP (DBetype)16    /* Surface */                             
+#define SURTYP (DBetype)16    /* Surface */
 #define TXTTYP (DBetype)32    /* Text */
 #define XHTTYP (DBetype)64    /* Hatch */
 #define LDMTYP (DBetype)128   /* Linear dimension */
@@ -400,6 +400,7 @@ DBfloat  ang_xh;             /* Line angle */
 DBshort  nlin_xh;            /* Number of lines, max GMXMXL */
 DBptr    lptr_xh;            /* DB-pointer to lines */
 DBptr    pcsy_xh;            /* DB-pointer to coordinate system */
+DBfloat  wdt_xh;             /* Linewidth */
 } DBHatch;
 
 /*
@@ -418,6 +419,7 @@ DBfloat  tsiz_ld;            /* Text size */
 DBshort  ndig_ld;            /* Number of decimals */
 tbool    auto_ld;            /* Auto text TRUE/FALSE */
 DBptr    pcsy_ld;            /* DB-pointer to coordinate system */
+DBfloat  wdt_ld;             /* Linewidth */
 } DBLdim;
 
 /*
@@ -436,6 +438,7 @@ DBfloat  tsiz_cd;            /* Text size */
 DBshort  ndig_cd;            /* Number of decimals */
 tbool    auto_cd;            /* Auto text TRUE/FALSE */
 DBptr    pcsy_cd;            /* DB-pointer to coordinate system */
+DBfloat  wdt_cd;             /* Linewidth */
 } DBCdim;
 
 /*
@@ -454,6 +457,7 @@ DBfloat  tsiz_rd;            /* Text size */
 DBshort  ndig_rd;            /* Number of decimals */
 tbool    auto_rd;            /* Auto text TRUE/FALSE */
 DBptr    pcsy_rd;            /* DB-pointer to coordinate system */
+DBfloat  wdt_rd;             /* Linewidth */
 } DBRdim;
 
 /*
@@ -475,6 +479,7 @@ DBfloat  tsiz_ad;            /* Text size */
 DBshort  ndig_ad;            /* Number of decimals */
 tbool    auto_ad;            /* Auto text TRUE/FALSE */
 DBptr    pcsy_ad;            /* DB-pointer to coordinate system */
+DBfloat  wdt_ad;             /* Linewidth */
 } DBAdim;
 
 /*
@@ -686,10 +691,9 @@ DBstatus DBwrite_nurbs(DBHvector *cpts, DBint ncpts, DBfloat *knots,
                        DBint nknots, DBptr *cpts_la, DBptr *knots_la);
 DBstatus DBread_nurbs(DBHvector *cpts, DBint ncpts, DBfloat *knots,
                              DBint nknots, DBptr cpts_la, DBptr knots_la);
-DBstatus DBfree_nurbs(DBfloat  *knots, DBHvector *cpts);                             
-DBstatus DBdelete_nurbs(DBSeg *seg);                  
-                       
-                       
+DBstatus DBfree_nurbs(DBfloat  *knots, DBHvector *cpts);
+DBstatus DBdelete_nurbs(DBSeg *seg);
+
 /* Surface insert, read, update, deltete etc. */
 
 DBstatus  DBinsert_surface(DBSurf *surptr, DBPatch *tpptr, DBSegarr *ptrim,
@@ -742,37 +746,37 @@ DBstatus DBdelete_text(DBptr la);
 
 /* Crosshatch insert, read, update and delete */
 
-DBstatus DBinsert_xhatch(DBHatch *xhtptr, gmflt *crdptr,
+DBstatus DBinsert_xhatch(DBHatch *xhtptr, DBfloat *crdptr,
                          DBId  *idptr,  DBptr *laptr);
-DBstatus DBread_xhatch(DBHatch *xhtptr, gmflt *crdptr, DBptr la);
-DBstatus DBupdate_xhatch(DBHatch *xhtptr, gmflt *crdptr, DBptr la);
+DBstatus DBread_xhatch(DBHatch *xhtptr, DBfloat *crdptr, DBCsys *csyptr, DBptr la);
+DBstatus DBupdate_xhatch(DBHatch *xhtptr, DBfloat *crdptr, DBptr la);
 DBstatus DBdelete_xhatch(DBptr la);
 
 /* Linear dimension insert, read, update and delete */
 
 DBstatus DBinsert_ldim(DBLdim *ldmptr, DBId *idptr, DBptr *laptr);
-DBstatus DBread_ldim(DBLdim *ldmptr, DBptr la);
+DBstatus DBread_ldim(DBLdim *ldmptr, DBCsys *csyptr, DBptr la);
 DBstatus DBupdate_ldim(DBLdim *ldmptr, DBptr la);
 DBstatus DBdelete_ldim(DBptr la);
 
 /* Circular dimension insert, read, update and delete */
 
 DBstatus DBinsert_cdim(DBCdim *cdmptr, DBId *idptr, DBptr *laptr);
-DBstatus DBread_cdim(DBCdim *cdmptr, DBptr la);
+DBstatus DBread_cdim(DBCdim *cdmptr, DBCsys *csyptr, DBptr la);
 DBstatus DBupdate_cdim(DBCdim *cdmptr, DBptr la);
 DBstatus DBdelete_cdim(DBptr la);
 
 /* Radius dimension insert, read, update and delete */
 
 DBstatus DBinsert_rdim(DBRdim *rdmptr, DBId *idptr, DBptr *laptr);
-DBstatus DBread_rdim(DBRdim *rdmptr, DBptr la);
+DBstatus DBread_rdim(DBRdim *rdmptr, DBCsys *csyptr, DBptr la);
 DBstatus DBupdate_rdim(DBRdim *rdmptr, DBptr la);
 DBstatus DBdelete_rdim(DBptr la);
 
 /* Angular dimension insert, read, update and delete */
 
 DBstatus DBinsert_adim(DBAdim *admptr, DBId *idptr, DBptr *laptr);
-DBstatus DBread_adim(DBAdim *admptr, DBptr la);
+DBstatus DBread_adim(DBAdim *admptr, DBCsys *csyptr, DBptr la);
 DBstatus DBupdate_adim(DBAdim *admptr, DBptr la);
 DBstatus DBdelete_adim(DBptr la);
 
@@ -817,6 +821,11 @@ DBstatus DBread_named_data(char *key, DBint *type, DBint *size,
                            DBint *count, char **datptr);
 DBstatus DBdelete_named_data(char *key);
 
+/* DB jobdata import and export. */
+
+DBstatus DBimport_jobfile(char *filepath);
+DBstatus DBexport_jobfile(char *filepath);
+
 /* DBId to DBptr etc. */
 
 DBstatus DBget_pointer(char fcode, DBId *id, DBptr *laptr, DBetype *typptr);
@@ -824,7 +833,7 @@ DBstatus DBget_id(DBptr la, DBId *idptr);
 DBstatus DBget_highest_id(DBseqnum *numptr);
 DBstatus DBget_free_id(DBseqnum *numptr);
 
-/* GM search and traversal */
+/* DB search and traversal */
 
 DBstatus DBset_root_id(DBId *id);
 DBstatus DBget_next_ptr(DBint trmode, DBetype typmsk, char *name,

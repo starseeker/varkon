@@ -4,44 +4,44 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    ST - Symbol Table access routines
 *    The library contains the following entry routines 
-*                                                        
-*    Initialization routines:                          
-*     stgini()       Inits the systems symbol table   
-*     stlini()       Inits a local symbol table   
-*                                                
-*    Common symbol table routines:                   
-*     sticmp()       Compares two identifiers   
+*
+*    Initialization routines:
+*     stgini()       Inits the systems symbol table
+*     stlini()       Inits a local symbol table
+*
+*    Common symbol table routines:
+*     sticmp()       Compares two identifiers
 *     stlook()       Search for a name in the table
-*     stratt()       Read common attributes       
-*     stgnid()       Get next identifier        
-*                                                     
-*    Type manipulation routines:                           
-*     stdtyp()       Define a primitive type (Not compound)    
-*     stdarr()       Define an array type           
-*     strtyp()       Read type attributes  
-*     strarr()       Read array attributes      
-*                                                         
-*    Variable access routines:                         
-*     stcvar()       Creates a variable         
-*     strvar()       Read variable attributes       
-*     stuvar()       Update variable attributes  
-*                                                       
-*    Named constants routines:                           
-*     stccon()       Create a named constant   
-*     strcon()       Read constant attributes     
-*     stgcon()       get constant declaration attributes  
-*     stucon()       Update constant attributes      
-*                                                       
-*     Label access routines:                      
-*     stclab()       Create a label       
-*     strlab()       Read label attributes    
-*     stulab()       Update label attributes        
-*                                                      
-*    Procedure/Function access routines                        
+*     stratt()       Read common attributes
+*     stgnid()       Get next identifier
+*
+*    Type manipulation routines:
+*     stdtyp()       Define a primitive type (Not compound)
+*     stdarr()       Define an array type
+*     strtyp()       Read type attributes
+*     strarr()       Read array attributes
+*
+*    Variable access routines:
+*     stcvar()       Creates a variable
+*     strvar()       Read variable attributes
+*     stuvar()       Update variable attributes
+*
+*    Named constants routines:
+*     stccon()       Create a named constant
+*     strcon()       Read constant attributes
+*     stgcon()       get constant declaration attributes
+*     stucon()       Update constant attributes
+*
+*     Label access routines:
+*     stclab()       Create a label
+*     strlab()       Read label attributes
+*     stulab()       Update label attributes
+*
+*    Procedure/Function access routines
 *     strrou()       Read procedure/function attributes 
 *
 *    Local routines
@@ -71,12 +71,12 @@
 **********************************************************************/
 
 /**********************************************************************
-*  The symbol table is implemented by one binary tree for each module 
-*  level. The static nesting depth is two - the systems level and the 
+*  The symbol table is implemented by one binary tree for each module
+*  level. The static nesting depth is two - the systems level and the
 *  active module. Pointers constituting the binary tree and pointers to
-*  type descriptors etc. are "offsets" from a base address in PM.    
-*  Note! The systems symbols have negative offsets to distinguish them   
-*  from other symbols without storing the level number.            
+*  type descriptors etc. are "offsets" from a base address in PM.
+*  Note! The systems symbols have negative offsets to distinguish them
+*  from other symbols without storing the level number.
 **********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -91,7 +91,7 @@
 ***Implementation of the Symbol table internal representation
 */
 typedef struct stidtbl
-   { 
+   {
      pm_ptr      name_id;           /* Name string              */
      pm_ptr      llink_id;          /* Left hand side subtree   */
      pm_ptr      rlink_id;          /* Right hand side subtree  */
@@ -167,11 +167,15 @@ static  struct syspf                 /* System names                       */
                bool      cnst;
                stprcl    proc_cl;
                pmroutn   pfid;
-           } 
-
+           }
+/*
+***The Varkon symbol table starts here.
+***Symbols marked with stars are dummy replacements for
+***symbols that are removed and no longer valid. 
+*/
 #ifdef VARKON
             systab[ ] =
-              { 
+              {
                {"POI_FREE",    ST_PROC,    FALSE,   ST_GEO,   VPOI},
                {"POI_PROJ",    ST_PROC,    FALSE,   ST_GEO,   VPOIP},
                {"LIN_FREE",    ST_PROC,    FALSE,   ST_GEO,   VLINF},
@@ -185,8 +189,8 @@ static  struct syspf                 /* System names                       */
                {"ARC_3POS",    ST_PROC,    FALSE,   ST_GEO,   VARC3P},
                {"ARC_OFFS",    ST_PROC,    FALSE,   ST_GEO,   VARCO},
                {"ARC_FIL",     ST_PROC,    FALSE,   ST_GEO,   VARCFI},
-               {"CUR_FREE",    ST_PROC,    FALSE,   ST_GEO,   VCURF},
-               {"CUR_PROJ",    ST_PROC,    FALSE,   ST_GEO,   VCURP},
+               {"********",    ST_PROC,    FALSE,   ST_GEO,   VCURF},
+               {"********",    ST_PROC,    FALSE,   ST_GEO,   VCURP},
                {"COMP",        ST_PROC,    FALSE,   ST_GEO,   VCOMP},
                {"XHATCH",      ST_PROC,    FALSE,   ST_GEO,   VXHT},
                {"PART",        ST_PROC,    FALSE,   ST_GEO,   VPART},
@@ -224,7 +228,7 @@ static  struct syspf                 /* System names                       */
                {"ASCII",       ST_FUNC,    TRUE,    ST_ORD,   VASCII},
                {"STR",         ST_FUNC,    TRUE,    ST_ORD,   VSTR},
                {"CHR",         ST_FUNC,    TRUE,    ST_ORD,   VCHR},
-               {"VAL",         ST_FUNC,    TRUE,    ST_ORD,   VVAL},
+               {"***",         ST_UNDEF,   FALSE,   ST_UNDEF, VVAL},
                {"LENGTH",      ST_FUNC,    TRUE,    ST_ORD,   VLENGTH},
                {"SUBSTR",      ST_FUNC,    TRUE,    ST_ORD,   VSUBSTR},
                {"OPEN",        ST_PROC,    FALSE,   ST_ORD,   VOPEN},
@@ -247,20 +251,20 @@ static  struct syspf                 /* System names                       */
               };
 
 static  struct syspf addtab1[ ] =       /* System names  - add on table 1 */
-              {  
+              {
                {"TANG",        ST_FUNC,    FALSE,   ST_GEO,   VTANG},
                {"CENTRE",      ST_FUNC,    FALSE,   ST_GEO,   VCENTRE},
                {"",            ST_UNDEF,   FALSE,   ST_ORD,   ST_UNDEF}
               };
 
 static  struct syspf addtab2[ ] =       /* System names  - add on table 2 */
-              {  
-               {"GETID",             ST_FUNC,     FALSE,  ST_ORD,    VGTID},
+              {
+               {"*****",             ST_FUNC,     FALSE,  ST_ORD,    VGTID},
                {"GETHDR",            ST_PROC,     FALSE,  ST_ORD,    VGTHDR},
                {"GETPOI",            ST_PROC,     FALSE,  ST_ORD,    VGTPOI},
                {"GETLIN",            ST_PROC,     FALSE,  ST_ORD,    VGTLIN},
                {"GETARC",            ST_PROC,     FALSE,  ST_ORD,    VGTARC},
-               {"GETCUR",            ST_PROC,     FALSE,  ST_ORD,    VGTCUR},
+               {"******",            ST_PROC,     FALSE,  ST_ORD,    VGTCUR},
                {"GETTRF",            ST_PROC,     FALSE,  ST_ORD,    VGTTRF},
                {"GETTXT",            ST_PROC,     FALSE,  ST_ORD,    VGTTXT},
                {"GETXHT",            ST_PROC,     FALSE,  ST_ORD,    VGTXHT},
@@ -286,10 +290,10 @@ static  struct syspf addtab2[ ] =       /* System names  - add on table 2 */
                {"GETREF",            ST_FUNC,     FALSE,  ST_ORD,    VGTREF},
                {"LOAD_GM",           ST_PROC,     FALSE,  ST_ORD,    VLDGM},
                {"SAVE_GM",           ST_PROC,     FALSE,  ST_ORD,    VSVGM},
-               {"BLANK_LEV",         ST_PROC,     FALSE,  ST_ORD,    VBLEV},
-               {"UNBLANK_LEV",       ST_PROC,     FALSE,  ST_ORD,    VUBLEV},
-               {"GET_LEV",           ST_PROC,     FALSE,  ST_ORD,    VGTLEV},
-               {"ACT_LEV",           ST_FUNC,     FALSE,  ST_ORD,    VACLEV},
+               {"*********",         ST_PROC,     FALSE,  ST_ORD,    VBLEV},
+               {"***********",       ST_PROC,     FALSE,  ST_ORD,    VUBLEV},
+               {"*******",           ST_PROC,     FALSE,  ST_ORD,    VGTLEV},
+               {"*******",           ST_FUNC,     FALSE,  ST_ORD,    VACLEV},
                {"********",          ST_UNDEF,    FALSE,  ST_UNDEF,  VPOI},
                {"********",          ST_UNDEF,    FALSE,  ST_UNDEF,  VPOI},
                {"CRE_VIEW",          ST_PROC,     FALSE,  ST_ORD,    VCREVI},
@@ -311,7 +315,7 @@ static  struct syspf addtab2[ ] =       /* System names  - add on table 2 */
                {"ACT_VNAM",          ST_FUNC,     FALSE,  ST_ORD,    VACVIN},
                {"ACT_PEN",           ST_FUNC,     FALSE,  ST_ORD,    VACPEN},
                {"ACT_SCL",           ST_FUNC,     FALSE,  ST_ORD,    VACSCL},
-               {"ACT_DSCL",          ST_FUNC,     FALSE,  ST_ORD,    VACDSCL},
+               {"********",          ST_FUNC,     FALSE,  ST_ORD,    VACDSCL},
                {"ACT_CACC",          ST_FUNC,     FALSE,  ST_ORD,    VACCAC},
                {"ACT_GRIDX",         ST_FUNC,     FALSE,  ST_ORD,    VACGRX},
                {"ACT_GRIDY",         ST_FUNC,     FALSE,  ST_ORD,    VACGRY},
@@ -319,7 +323,7 @@ static  struct syspf addtab2[ ] =       /* System names  - add on table 2 */
                {"ACT_GRIDDY",        ST_FUNC,     FALSE,  ST_ORD,    VACGRDY},
                {"ACT_GRID",          ST_FUNC,     FALSE,  ST_ORD,    VACGRID},
                {"ACT_JOBNAM",        ST_FUNC,     FALSE,  ST_ORD,    VACJOBN},
-               {"ACT_MTYPE",         ST_FUNC,     FALSE,  ST_ORD,    VACMTYP},
+               {"*********",         ST_FUNC,     FALSE,  ST_ORD,    VACMTYP},
                {"ACT_MATTR",         ST_FUNC,     FALSE,  ST_ORD,    VACMATR},
                {"ACT_JOBDIR",        ST_FUNC,     FALSE,  ST_ORD,    VACJOBD},
                {"ACT_LFONT",         ST_FUNC,     FALSE,  ST_ORD,    VACLFNT},
@@ -352,19 +356,19 @@ static  struct syspf addtab2[ ] =       /* System names  - add on table 2 */
                {"GET_MEN",           ST_PROC,     FALSE,  ST_ORD,    VGTMEN},
                {"VPROD",             ST_FUNC,     FALSE,  ST_ORD,    VVPROD},
                {"LIN_PERP",          ST_PROC,     FALSE,  ST_GEO,    VLINPER},
-               {"DB_OPEN",           ST_FUNC,     FALSE,  ST_ORD,    VDBOP},
-               {"DB_BEGIN",          ST_FUNC,     FALSE,  ST_ORD,    VDBBG},
-               {"DB_SELECT",         ST_FUNC,     FALSE,  ST_ORD,    VDBSL},
-               {"DB_UPDATE",         ST_FUNC,     FALSE,  ST_ORD,    VDBUP},
-               {"DB_INSERT",         ST_FUNC,     FALSE,  ST_ORD,    VDBIN},
-               {"DB_DELETE",         ST_FUNC,     FALSE,  ST_ORD,    VDBDL},
-               {"DB_END",            ST_FUNC,     FALSE,  ST_ORD,    VDBEN},
-               {"DB_ROLLBACK",       ST_FUNC,     FALSE,  ST_ORD,    VDBRL},
-               {"DB_CLOSE",          ST_FUNC,     FALSE,  ST_ORD,    VDBCL},
-               {"DB_FETCHI",         ST_FUNC,     FALSE,  ST_ORD,    VDBFI},
-               {"DB_FETCHF",         ST_FUNC,     FALSE,  ST_ORD,    VDBFF},
-               {"DB_FETCHS",         ST_FUNC,     FALSE,  ST_ORD,    VDBFS},
-               {"DB_NEXT",           ST_FUNC,     FALSE,  ST_ORD,    VDBNX},
+               {"*******",           ST_UNDEF,    FALSE,  ST_UNDEF,  VDBOP},
+               {"********",          ST_UNDEF,    FALSE,  ST_UNDEF,  VDBBG},
+               {"*********",         ST_UNDEF,    FALSE,  ST_UNDEF,  VDBSL},
+               {"*********",         ST_UNDEF,    FALSE,  ST_UNDEF,  VDBUP},
+               {"*********",         ST_UNDEF,    FALSE,  ST_UNDEF,  VDBIN},
+               {"*********",         ST_UNDEF,    FALSE,  ST_UNDEF,  VDBDL},
+               {"******",            ST_UNDEF,    FALSE,  ST_UNDEF,  VDBEN},
+               {"***********",       ST_UNDEF,    FALSE,  ST_UNDEF,  VDBRL},
+               {"********",          ST_UNDEF,    FALSE,  ST_UNDEF,  VDBCL},
+               {"*********",         ST_UNDEF,    FALSE,  ST_UNDEF,  VDBFI},
+               {"*********",         ST_UNDEF,    FALSE,  ST_UNDEF,  VDBFF},
+               {"*********",         ST_UNDEF,    FALSE,  ST_UNDEF,  VDBFS},
+               {"*******",           ST_UNDEF,    FALSE,  ST_UNDEF,  VDBNX},
                {"B_PLANE",           ST_PROC,     FALSE,  ST_GEO,    VBPLAN},
                {"GETBPL",            ST_PROC,     FALSE,  ST_ORD,    VGTBPL},
                {"CSYS_1P",           ST_PROC,     FALSE,  ST_GEO,    VCSYS1P},
@@ -448,9 +452,9 @@ static  struct syspf addtab2[ ] =       /* System names  - add on table 2 */
                {"CUR_GEODESIC",      ST_PROC,     FALSE,  ST_GEO,    VCURGD},
                {"CUR_APPROX",        ST_PROC,     FALSE,  ST_GEO,    VCURAP},
                {"RUN_MBS",           ST_PROC,     FALSE,  ST_ORD,    VRUNMBS},
-               {"ACT_PID",           ST_FUNC,     FALSE,  ST_ORD,    VAPID},
+               {"*******",           ST_FUNC,     FALSE,  ST_ORD,    VAPID},
                {"ACT_VARKON_VERS",   ST_FUNC,     FALSE,  ST_ORD,    VAVVERS},
-               {"ACT_VARKON_SERIAL", ST_FUNC,     FALSE,  ST_ORD,    VAVSER},
+               {"*****************", ST_FUNC,     FALSE,  ST_ORD,    VAVSER},
                {"ACT_OSTYPE",        ST_FUNC,     FALSE,  ST_ORD,    VAOSTYP},
                {"ACT_HOST",          ST_FUNC,     FALSE,  ST_ORD,    VAHOST},
                {"UNIQUE_FILENAME",   ST_FUNC,     FALSE,  ST_ORD,    VUFNAM},
@@ -492,7 +496,7 @@ static  struct syspf addtab2[ ] =       /* System names  - add on table 2 */
 #endif
 
 static  struct syspf addtab3[ ] =         /* System names  - add on table 3 */
-               {  
+               {
 #include "../include/newrout.h"
                };
 
@@ -803,16 +807,14 @@ static pm_ptr find(char *name, short lev);
  ******************************************************!*/
 
   {
-   char c1, c2;
+   char c1,c2;
 
    for ( ; (c1 = (isilower(*s1) ? toiupper(*s1) : *s1)) ==
-           (c2 = (isilower(*s2) ? toiupper(*s2) : *s2)) ;  s1++, s2++)
+           (c2 = (isilower(*s2) ? toiupper(*s2) : *s2)) ;  s1++, s2++ )
          {
-          if (c1 == '\0')
-               return(0);
+         if ( c1 == '\0' ) return(0);
          }
    return(c1 - c2);
-
   }
 
 /********************************************************/

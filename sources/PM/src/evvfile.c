@@ -4,7 +4,7 @@
 *    =========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    evclgm();     Evaluerar CLEAR_GM
 *    evldgm();     Evaluates LOAD_GM
@@ -42,7 +42,7 @@
 #include <string.h>
 
 extern char     jobnam[];
-extern short    v3mode,modtyp;
+extern short    sysmode,modtyp;
 extern pm_ptr   actmod;
 extern struct   ANSYREC sy;
 extern V2NAPA   defnap;
@@ -225,7 +225,7 @@ extern PMLITVA *func_vp;  /* Pointer to results. */
 /*
 ***I ritmodulen laddar man inga moduler !
 */
-    if ( v3mode == RIT_MOD ) return(0);
+    if ( sysmode == EXPLICIT ) return(0);
 /*
 ***Vad heter nuvarande modul. Måste vi veta för att
 ***kunna anropa pmgeba() på slutet.
@@ -305,7 +305,7 @@ extern PMLITVA *func_vp;  /* Pointer to results. */
 /*
 ***Prova att hämta.
 */
-   strpek = IGenv3(func_pv[1].par_va.lit.str_va);
+   strpek = getenv(func_pv[1].par_va.lit.str_va);
 /*
 ***Om den inte finns returnerar vi tom sträng "".
 */ 

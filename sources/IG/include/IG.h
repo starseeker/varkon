@@ -75,52 +75,45 @@
 #define DSGANT    25       /* Allokeringsstorlek fï¿½r dynamiska DBSeg */
 #define V3SRCMAX  300      /* Max antal filer att kompilera */
 
-#define MODEXT ".MBO"      /* Extension fï¿½r modul-fil */
-#define MBSEXT ".MBS"      /* Extension fï¿½r MBS-fil */
-#define RESEXT ".RES"      /* Extension fï¿½r resultatfil */
-#define RITEXT ".RIT"      /* Extension fï¿½r ritningsfil */
-#define JOBEXT ".JOB"      /* Extension fï¿½r jobb-fil */
-#define PIDEXT ".PID"      /* Extension fï¿½r PID-fil */
-#define PLTEXT ".PLT"      /* Extension fï¿½r GKS-fil */
-#define DXFEXT ".DXF"      /* Extension fï¿½r DXF-fil */
-#define SYMEXT ".PLT"      /* Extension fï¿½r symbol-fil */
-#define LSTEXT ".LST"      /* Extension fï¿½r list-filer */
-#define MDFEXT ".MDF"      /* Extension fï¿½r meny-filer */
-#define ERMEXT ".ERM"      /* Extension fï¿½r ERM-filer */
+#define MODEXT ".MBO"      /* Extension for modul files */
+#define MBSEXT ".MBS"      /* Extension for MBS source files */
+#define RESEXT ".RES"      /* Extension for resultfiles */
+#define JOBEXT ".JOB"      /* Extension for job files */
+#define PIDEXT ".PID"      /* Extension for PID files */
+#define PLTEXT ".PLT"      /* Extension for GKS files */
+#define DXFEXT ".DXF"      /* Extension for DXF files */
+#define SYMEXT ".PLT"      /* Extension for symbol files */
+#define LSTEXT ".LST"      /* Extension for list files */
+#define MDFEXT ".MDF"      /* Extension for menu definition files */
+#define ERMEXT ".ERM"      /* Extension for error message files */
 
-#define AVBRYT (short)5    /* Kod fï¿½r <CTRL>c */
-#define WINDOW (short)-994 /* Kod fï¿½r Window */
-#define EREXIT -996        /* Kod fï¿½r felslut */
-#define EXIT   -997        /* Kod fï¿½r ok-slut */
-#define GOMAIN -998        /* Kod fï¿½r direkt till huvudmenyn */
-#define REJECT -999        /* Kod fï¿½r avbruten operation */
-#define IGUNDEF -1         /* igmtyp/igmatt "not defined" pï¿½ kom.rad */
+#define AVBRYT (short)5    /* <CTRL>c */
+#define WINDOW (short)-994 /* Window */
+#define EREXIT -996        /* Error exit */
+#define EXIT   -997        /* Normal exit */
+#define GOMAIN -998        /* Back to main menu */
+#define REJECT -999        /* Operation cancelled */
 /*
-***Koder fï¿½r meddelanderutinerna.
+***Koder för meddelanderutinerna.
 */
 #define IG_INP     1       /* Promt fï¿½r inmatning */
 #define IG_MESS    2       /* Meddelande */
 
 /*
-***Koder fï¿½r v3mode.
+***System/function modes (sysmode).
 */
-#define NONE_MOD   0        /* Funktionen ej implementerad */
-#define TOP_MOD    1        /* V3:s Topp-nivï¿½ */
-#define RIT_MOD    2        /* Ritmodulen */
-#define BAS2_MOD   4        /* Basmodulen i 2D-mode */
-#define BAS3_MOD   8        /* Basmodulen i 3D-mode */
-#define BAS_MOD    12       /* Basmodulen allmï¿½nt */
-#define X11_MOD    16       /* Funktion bara fï¿½r X11 */
-#define NO_X11_MOD 32       /* Funktion ej fï¿½r X11 */
+#define TOP_MOD    1        /* System top level */
+#define EXPLICIT   2        /* Explicit mode */
+#define GENERIC    4        /* Generic mode */
 
 /*
-***MDF konstanter.
+***Constants related to MDF-files.
 */
-#define CHRMAX 50000  /* maximalt antal tecken i samtliga t-strï¿½ngar */
-#define TXTMAX 2500   /* maximalt antal t-strï¿½ngar */
-#define SMBMAX 200    /* maximalt antal s-strï¿½ngar */
-#define MNUMAX 400    /* maximalt antal meny-nummer */
-#define MALMAX 2000   /* maximalt antal alternativ (alla menyer) */
+#define CHRMAX 50000  /* max number of chars in all t-strings */
+#define TXTMAX 2500   /* max number of t-strings */
+#define SMBMAX 200    /* max number of s-strings */
+#define MNUMAX 400    /* highest menu number */
+#define MALMAX 2000   /* max number of menu alternatives */
 
 /*
 ***A menu alternative.
@@ -220,7 +213,7 @@ int     nalt;      /* Number of alternatives */
 /*
 ***varkon.c
 */
-short igckjn(char jobnam[]);
+short IGcheck_jobname(char jobnam[]);
 
 /*
 ***IGinit.c
@@ -237,13 +230,13 @@ char *IGgtts(int tnr);
 short IGckhw();
 
 short notimpl();
-short wpunik();
 
 /*
 ***igview.c
 */
-short IGcnog();
-short IGrenw();
+short IGset_cacc();
+short IGcreate_gwin();
+short IGcreate_rwin();
 
 /*
 ***igpoint.c
@@ -311,13 +304,15 @@ short IGsulo();
 ***igpart.c
 */
 short IGpart();
-short IGrnmo();
-short IGmfun();
+short IGrun_named();
+short IGmacro();
 short IGcall_part(char *filnam, short atyp);
 short IGcall_macro(char *filnam);
 short IGuppt();
 short IGcptp();
 short IGcptw();
+short IGedit_MBS();
+short IGcompile_all();
 short IGgnps(PMREFVA *id);
 
 /*
@@ -330,8 +325,8 @@ short IGctxs();
 /*
 ***igcsy.c
 */
-short IGcs3p();
-short IGcs1p();
+short IGcsy_3p();
+short IGcsy_1p();
 short IGmodb();
 short IGmodg();
 short IGmodl();
@@ -382,7 +377,7 @@ short IGsymb();
 /*
 ***igsysdat.c
 */
-short IGangm();
+short IGandb();
 short IGanpm();
 short IGlitb();
 short IGrgmp();
@@ -391,9 +386,8 @@ short IGlsyd();
 /*
 ***igdelete.c
 */
-short IGdlen();
-short IGdlls();
-short IGdlgp();
+short IGdelete_entity();
+short IGdelete_group();
 short IGtrim();
 short IGblnk();
 short IGubal();
@@ -427,9 +421,9 @@ short IGanrf();
 /*
 ***igplot.c
 */
-short IGcgkm();
-short IGcdxf();
-short IGshll();
+short IGexport_GKSM();
+short IGexport_DXF2D();
+short IGshell();
 short IGhid1();
 short IGhid2();
 short IGhid3();
@@ -447,13 +441,15 @@ short IGcpre(DBId *frompk, DBId *topk);
 ***ighelp.c
 */
 short IGhelp();
+short IGabout_help();
 
 /*
 ***igmodule.c
 */
 short IGevlp();
-short IGramo();
+short IGrun_active();
 short IGream();
+short IGedit_active();
 short IGprtm();
 
 /*
@@ -478,39 +474,37 @@ char *IGqema();
 /*
 ***iginput.c
 */
-short IGssip(char *ps, char *is, char *ds, short ml);
+short IGssip(char *prompt, char *ps, char *is, char *ds, short ml);
 short IGsfip(char *ps, DBfloat *fval);
 short IGsiip(char *ps, int *ival) ;
-short IGmsip(char *ps[], char *is[], char *ds[], short ml[], short as);
+short IGmsip(char *prompt, char *ps[], char *is[], char *ds[], short ml[], short as);
 bool  IGialt(short psnum, short tsnum, short fsnum, bool  pip);
 bool  IGials(char *ps, char *ts, char *fs, bool  pip);
 
 /*
 ***igjob.c
 */
-short IGgene();
-short IGexpl();
-short IGlsjb();
+short IGgeneric();
+short IGexplicit();
 short IGdljb();
-short IGmvrr();
 short IGload();
 short IGldmo();
 short IGsjpg();
-short IGsaln();
-short IGspmn();
-short IGsgmn();
-short IGsjbn();
+short IGsave_all_as();
+short IGsave_MBS_as();
+short IGsave_MBO_as();
+short IGsave_RES_as();
+short IGsave_JOB_as();
 short IGcatt();
 short IGexit();
-short IGexsn();
-short IGexsa();
+short IGexit_sn();
+short IGexit_sa();
 short IGexsd();
 short IGnjsd();
 short IGnjsa();
-short IGsjsa();
+short IGsave_all();
 short IGnjsn();
-short IGselj(char *newjob);
-short IGchjn(char *newnam);
+short IGselect_job(char *newjob);
 bool  IGgrst(char *resurs, char *pvalue);
 
 /*
@@ -540,13 +534,13 @@ short IGcmos(char oscmd[]);
 int   IGfopr(char *path, char *fil, char *ext);
 void  IGtrfp(char *path1, char *path2);
 char *IGgenv(int envkod);
-char *IGenv3(char *envstr);
 
 /*
 ***igattedit.c
 */
+short IGset_actatts();
 short IGcpen();
-short IGcniv();
+short IGclevel();
 short IGcwdt();
 short IGcdal();
 short IGcfs();
@@ -584,15 +578,8 @@ void  v3msta();
 /*
 ***igPID.c
 */
-short IGchpr();
-short IGcnpr(char *newpid);
-short IGselp(char *projekt);
-short IGlspr();
-short IGdlpr();
-short IGldpf(char *filnam);
 short IGdir(char *inpath, char *typ, int maxant, int maxsiz, char *pekarr[],
             char *strarr, int *nf);
-short IGckpr();
 
 /*
 ***igdebug.c

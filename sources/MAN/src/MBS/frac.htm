@@ -1,0 +1,53 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- frac - Function})
+define({_INDEXLINK_},{<a href="mathindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>frac - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Returns the fractional part (decimals) of a FLOAT argument.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  dec:=frac(x);
+
+  float dec;
+  float x;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>x</td>
+<td>- A value.</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>
+A FLOAT value equal to the decimal fraction of x. If x is positive, frac(x) is also
+positive and if x is negative, frac(x) is negative.
+</p>
+
+<h2>Example</h2>
+
+<pre>
+   dec:=frac(25.35);   ! Returns 0.35
+   dec:=frac(-0.99);   ! Returns -0.99
+</pre>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

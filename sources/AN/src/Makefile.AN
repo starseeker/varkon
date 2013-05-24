@@ -47,10 +47,8 @@ OBJS = ../lib/mbsclib.a(anascan.o)    \
        ../lib/mbsclib.a(igenvpath.o)  \
        ../lib/mbsclib.a(igmalloc.o)
 
-# The actual executable, mbsc. VARKON_ROOT should be set
-# in the users loginfile or elswhere as preferred.
+# The actual executable, mbsc.
 
-#MBSC = $(VARKON_ROOT)/bin/mbsc
 MBSC = ../../../bin/mbsc
 
 # Targets

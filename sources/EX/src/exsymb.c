@@ -6,7 +6,7 @@
 *    EXsymb();     Create (SYMB) plotfile-part
 *
 *    This file is part of the VARKON Execute Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -22,8 +22,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*
-*
 *********************************************************/
 
 #include "../../DB/include/DB.h"
@@ -34,78 +32,30 @@
 #include "../include/EX.h"
 #include <string.h>
 
-/* Tabell för gpitoa */
-
-static short tal[] = {
-9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000,
-900, 800, 700, 600, 500, 400, 300, 200, 100,
-90, 80, 70, 60, 50, 40, 30, 20, 10 };
-
-static short *acc_tab[] = { &tal[0], &tal[9], &tal[18]};
-
-static char ch[] = {'9','8','7','6','5','4','3','2','1','0'};
-
-/* Tabell för gpaton */
-
-static double tab_1[] = {
-      0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001,
-      0.00000001, 0.000000001, 0.0000000001};
-static double tab_2[] = { 
-      0.2, 0.02, 0.002, 0.0002, 0.00002, 0.000002, 0.0000002, 
-      0.00000002, 0.000000002, 0.0000000002};
-static double tab_3[] = { 
-      0.3, 0.03, 0.003, 0.0003, 0.00003, 0.000003, 0.0000003, 
-      0.00000003, 0.000000003, 0.0000000003};
-static double tab_4[] = { 
-      0.4, 0.04, 0.004, 0.0004, 0.00004, 0.000004, 0.0000004, 
-      0.00000004, 0.000000004, 0.0000000004};
-static double tab_5[] = { 
-      0.5, 0.05, 0.005, 0.0005, 0.00005, 0.000005, 0.0000005,
-      0.00000005, 0.000000005, 0.0000000005};
-static double tab_6[] = { 
-      0.6, 0.06, 0.006, 0.0006, 0.00006, 0.000006, 0.0000006,
-      0.00000006, 0.000000006, 0.0000000006};
-static double tab_7[] = { 
-      0.7, 0.07, 0.007, 0.0007, 0.00007, 0.000007, 0.0000007, 
-      0.00000007, 0.000000007, 0.0000000007};
-static double tab_8[] = { 
-      0.8, 0.08, 0.008, 0.0008, 0.00008, 0.000008, 0.0000008, 
-      0.00000008, 0.000000008, 0.0000000008};
-static double tab_9[] = { 
-      0.9, 0.09, 0.009, 0.0009, 0.00009, 0.000009, 0.0000009, 
-      0.00000009, 0.000000009, 0.0000000009};
-
-extern char    jobdir[];
-extern char    asydir[];
-extern DBptr   lsysla;
-extern DBTmat *lsyspk;
-extern DBTmat  lklsyi;
-
-static double gpaton(char *pos);
+extern DBTmat lklsyi,*lsyspk;
+extern char   jobdir[];
 
 /*!******************************************************/
 
        short     EXsymb(
        DBId     *id,
-       char     *nam,
+       char     *name,
        DBVector *pos,
        DBfloat   size,
        DBfloat   ang,
        V2NAPA   *pnp)
 
-/*      Skapa SYMB.
+/*      Create a part from plot (GKSM) data.
  *
- *      In: id     => Pekare till symbolens identitet.
- *          nam    => Pekare till namnsträng.
- *          pos    => Pekare till position.
- *          size   => Symbolens storlek (skala).
- *          ang    => Vinkel (vridning).
- *          pnp    => Pekare till namnparameterblock.
+ *      In: id     => ID.
+ *          nam    => Plot file name.
+ *          pos    => Base position.
+ *          size   => Scale factor.
+ *          ang    => Rotation in the XY-plane.
+ *          pnp    => Attributes.
  *
- *      Ut: Inget.
- *
- *      FV:       0 = Ok.
- *           EX1582 = Filen %s finns ej.
+ *      Return:   0 = Ok.
+ *           EX1582 = File %s does not exist.
  *
  *      (C)microform ab 6/12/85 J. Kjellander
  *
@@ -122,6 +72,7 @@ static double gpaton(char *pos);
  *      15/12/89 Pennummer, J. Kjellander
  *      13/2/91  Bytt riktn. på linjer, J. Kjellander
  *      99-02-26 Linjebredd, J.Kjellander
+ *      2007-11-30 2.0, J.Kjellander
  *
  ******************************************************!*/
 
@@ -147,49 +98,48 @@ static double gpaton(char *pos);
     V2NAPA  attr;
 
 /*
-***Transformera pos till basic.
+***Transform pos to basic.
 */
     if ( lsyspk != NULL ) GEtfpos_to_local(pos,&lklsyi,pos);
 /*
-***Skapa en part-post.
+***Create a part struct.
 */
     prt.hed_pt.level = pnp->level;
     prt.hed_pt.pen = pnp->pen;
     prt.hed_pt.blank = pnp->blank;
     prt.hed_pt.hit = pnp->hit;
-    *(nam+JNLGTH) = '\0';
-    strcpy(prt.name_pt,nam);
-    prt.its_pt = 2;
-    dat.mtyp_pd = 2;
+   *(name+JNLGTH) = '\0';
+    strcpy(prt.name_pt,name);
+    prt.its_pt = 3;
+    dat.mtyp_pd = 3;
     dat.matt_pd = BASIC;
     dat.npar_pd = 0;
 /*
-***Skapa en linje-post.
+***Create a line struct.
 */
+   lid.seq_val = 1;
+   lid.ord_val = 1;
+   lid.p_nextre = NULL;
    lin.crd1_l.z_gm = lin.crd2_l.z_gm = 0.0;
-   lid.seq_val = 1; lid.ord_val = 1; lid.p_nextre = NULL;
 /*
-***Skapa attributblock.
+***Create an attributes struct.
 */
    V3MOME(pnp,&attr,sizeof(V2NAPA));
-   attr.lfont = 0;
-   attr.ldashl = attr.width = 0.0;
+   attr.lfont  = 0;
+   attr.ldashl = 0.0;
+   attr.width  = 0.0;
 /*
-***Prova att öppna PLT-filen.
+***Try to open the PLT-file. It must reside in jobdir.
 */
     strcpy(sfnam,jobdir);
-    strcat(sfnam,nam);
+    strcat(sfnam,name);
     strcat(sfnam,SYMEXT);
     if ( (fp=fopen(sfnam,"r")) == NULL )
       {
-      strcpy(sfnam,asydir);
-      strcat(sfnam,nam);
-      strcat(sfnam,SYMEXT);
-      if ( (fp=fopen(sfnam,"r")) == NULL )
-            return(erpush("EX1582",nam));
+      return(erpush("EX1582",name));
       }
 /*
-***Filen finns, öppna part.
+***File exists. Open new part in DB.
 */
     if ( pnp->save == 1 )
       {
@@ -197,13 +147,13 @@ static double gpaton(char *pos);
       if ( status < 0 ) goto end;
       }
 /*
-***Lite initiering.
+***Inits for faster computations.
 */
-    cosv = COS(ang*DGTORD);
-    sinv = SIN(ang*DGTORD);
+    cosv   = COS(ang*DGTORD);
+    sinv   = SIN(ang*DGTORD);
     origox = origoy = 0.0;
 /*
-***Läs vektorer från filen och skapa linjer.
+***Get vectors from file and make lines.
 */
     while (fgets(inbuf,127,fp) != NULL)
         {
@@ -227,12 +177,12 @@ static double gpaton(char *pos);
 
                 for ( i=0; i<ncrd; ++i )
                    {
-                   x = gpaton(bufpek);
+                   sscanf(bufpek,"%lf",&x);
                    bufpek += 10;
-                   y = gpaton(bufpek);
+                   sscanf(bufpek,"%lf",&y);
                    bufpek += 10;
 /*
-***Beräkna modellkoordinater och lagra.
+***Transform from normalized GKSM coords to model coords.
 */
                    localx = size*(x*(mxmax-mxmin)/nx-origox);
                    localy = size*(y*(mymax-mymin)/ny-origoy);
@@ -252,12 +202,15 @@ static double gpaton(char *pos);
                      *(crdpek-4) = *(crdpek-2);
                      *(crdpek-3) = *(crdpek-1);
                      crdpek -= 2;
+/*
+***Save the line in DB.
+*/
                      if ( pnp->save == 1 )
-                       if ( (status=EXelin(&lid,&lin,&attr)) < 0 ) 
+                       if ( (status=EXelin(&lid,&lin,&attr)) < 0 )
                          goto end;
                      }
 /*
-***Läsning av nästa rad i en lång polyline.
+***This line may continue on the next line (long polyline).
 */
                    if ( i != ncrd-1 && (int)(bufpek-inbuf+1) >= (int)strlen(inbuf) )
                      {
@@ -267,7 +220,7 @@ static double gpaton(char *pos);
                    }
                 }
 /*
-***Modellfönster, GKSM 175.
+***Model window, GKSM 175.
 */
             else if ( strncmp(bufpek," 175",4) == 0)
                 {
@@ -297,7 +250,7 @@ static double gpaton(char *pos);
                   sscanf(str2,"%lf",&origoy);
                   }
 /*
-***Beräkna förhållande mellan skärmens xmax o ymax.
+***Calculate xmax/ymax.
 */
                 nx = mxmax - mxmin;
                 ny = mymax - mymin;
@@ -308,7 +261,7 @@ static double gpaton(char *pos);
                    { ny /= nx; nx = 1.0; }
                 }
 /*
-***Linjebredd, GKSM 174.
+***Line width, GKSM 174.
 */
             else if ( strncmp(bufpek," 174",4) == 0)
                 {
@@ -320,7 +273,7 @@ static double gpaton(char *pos);
                 attr.width = width;
                 }
 /*
-***Pennummer, GKSM 173.
+***Pen number, GKSM 173.
 */
             else if ( strncmp(bufpek," 173",4) == 0)
                 {
@@ -334,82 +287,12 @@ static double gpaton(char *pos);
             }
         }
 /*
-***Slut.
+***The end.
 */
 end:
     if ( pnp->save == 1 ) EXclpt();
     fclose(fp);
     return(status);
-  }
-  
-/********************************************************/
-/*!******************************************************/
-
- static double gpaton(
-        char   *pos)
-
-/*      Konvreterar ascii till flyttal i området 0 - 1.
- *
- *      In: pos -> Pekare till en asciisträng.
- *
- *      Ut: Strängen konv. till flyttal.
- *
- *      FV: Inget. 
- *
- *      LDAB  18/12/85  Håkan Svensson 
- *
- *      (C)microform ab 
- *
- *      19/12/85 Modifierad till varkonformat R. Svedin
- *      29/3/86  Flyttad från exe7.c  R. Svedin
- *
- ******************************************************!*/
-   {
-     register short  i,decno;
-     register char  *start = pos;
-     register double sum;
-
-     while (*pos++ != '.');
-
-     if ( *(pos-2) == '1') return(1.0);
-
-     decno = 10 - (pos-start);
-     sum = 0.0;
-
-     for (i=0;i<decno;++i) 
-       {
-       switch (*pos) 
-         {
-         case '0': break;
-
-         case '1': sum += tab_1[i]; break;
-
-         case '2': sum += tab_2[i]; break;
-
-         case '3': sum += tab_3[i]; break;
-
-         case '4': sum += tab_4[i]; break;
-	
-         case '5': sum += tab_5[i]; break;
-
-         case '6': sum += tab_6[i]; break;
-
-         case '7': sum += tab_7[i]; break;
-
-         case '8': sum += tab_8[i]; break;
-
-         case '9': sum += tab_9[i]; break;
-
-         default:;
-
-         }
- 
-       ++pos;
-
-      }
-
-    return(sum);
-
   }
 
 /********************************************************/

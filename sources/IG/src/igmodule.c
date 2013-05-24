@@ -1,16 +1,17 @@
 /*!******************************************************************/
 /*  igmodule.c                                                      */
-/*  =========                                                      */
+/*  ==========                                                      */
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*    IGevlp();   Evaluate parameters of active module             */
-/*    IGramo();   Run active module interactively                   */
-/*    IGream();   Run active module from macro                      */
-/*    IGprtm();   Decompile to file                                 */
+/*    IGevlp();        Evaluate parameters of active module         */
+/*    IGrun_active();  Run active module interactively              */
+/*    IGream();        Run active module from macro                 */
+/*    IGedit_active(); Edit module in MBS mode                      */
+/*    IGprtm();        Decompile to file                            */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -44,8 +45,8 @@
 
 extern pm_ptr  actmod;
 extern DBptr   lsysla;
-extern short   modtyp;
 extern char    jobdir[],jobnam[];
+extern bool    igbflg;
 extern V3MDAT  sydata;
 
 /*!******************************************************/
@@ -93,7 +94,7 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-        short IGramo()
+        short IGrun_active()
 
 /*      Interaktive function for "Run active module".
  *
@@ -140,26 +141,11 @@ errend:
 
         short IGream()
 
-/*      Kör om aktiv modul. Nollst'ller inte RTS eller
- *      parameterpool.
- *      Används även av MACRO. Gamla IGramo().
+/*      Reexecute active module. RTS and parameter pool
+ *      are not cleared (to save time). In batch mode
+ *      display is not updated.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      Felkod: IG2182 = Fel vid exekvering av modul
- *
- *      (C)microform ab 22/2/85 J. Kjellander
- *
- *      22/11/85 Uppdatera menyfältet, J. Kjellander
- *      14/3/86  Bytt namn, J. Kjellander
- *      7/11/86  Tagit bort ini/exi-tty, J. Kjellander
- *      31/10/88 CGI, J. Kjellander
- *      2/11/88  N220G, R. Svedin
- *      25/1/95  Multifönster, J. Kjellander
- *      1997-03-11 IGupcs(), J.Kjellander
- *      2007-01-15 1.19, J.Kjellander
+ *      (C)2007-12-17 2.0, J.Kjellander
  *
  ******************************************************!*/
 
@@ -177,14 +163,12 @@ errend:
 *
 ***Erase graphical windows.
 */
-#ifdef UNIX
-    WPergw(GWIN_ALL);
-    WPerrw(RWIN_ALL);
-    WPwait(GWIN_MAIN,TRUE);
-#endif
-#ifdef WIN32
-    msergw(GWIN_ALL);
-#endif
+    if ( !igbflg )
+      {
+      WPergw(GWIN_ALL);
+      WPerrw(RWIN_ALL);
+      WPwait(GWIN_MAIN,TRUE);
+      }
 /*
 ***Write time for erase.
 *
@@ -225,30 +209,27 @@ errend:
 *
 ***Highlight possible active local csys.
 */
-    IGupcs(lsysla,V3_CS_ACTIVE);
+    if ( !igbflg )
+      {
+      IGupcs(lsysla,V3_CS_ACTIVE);
 /*
 ***Update the current settings of PEN, LEVEL
 ***and CSY in the menu window.
 */
-    WPupdate_menu();
+      WPupdate_menu();
 /*
 ***Show grid maybe ?
 */
-    WPdraw_grid(GWIN_ALL);
+      WPdraw_grid(GWIN_ALL);
 /*
 ***No more wait.
 */
-#ifdef UNIX
-    WPwait(GWIN_MAIN,FALSE);
-#endif
-/*
-***Any errors ?
-*/
-    if ( status < 0 ) errmes();
+      WPwait(GWIN_MAIN,FALSE);
 /*
 ***Update WPRWIN's.
 */
-    WPrepaint_RWIN(RWIN_ALL,FALSE);
+      WPrepaint_RWIN(RWIN_ALL,FALSE);
+      }
 /*
 ***Write final time.
 *
@@ -257,12 +238,34 @@ errend:
    v3time(V3_TIMER_WRITE,0,"Update cs + grid on + WPuprw(RWIN_ALL)");
 #endif
 *
+***Any errors ?
+*/
+    if ( status < 0 ) errmes();
+/*
 ***The end.
 */
     return(status);
   }
 
 /********************************************************/
+/********************************************************/
+
+       short  IGedit_active()
+
+/*     Edit active module in MBS mode.
+*
+*      (C)2007-11-20 J. Kjellander.
+*
+*******************************************************!*/
+
+ {
+/*
+***Call WP.
+*/
+   return(WPamod());
+ }
+
+/******************************************************!*/
 /*!******************************************************/
 
         short IGprtm()
@@ -296,11 +299,10 @@ errend:
 /*
 ***Fråga efter filnamn.
 */
-    IGptma(376,IG_INP);
     strcpy(fnam,jobdir);
     strcat(fnam,jobnam);
     strcat(fnam,MBSEXT);
-    status = IGssip(IGgtts(267),fnam,fnam,V3PTHLEN);
+    status = IGssip(IGgtts(376),IGgtts(267),fnam,fnam,V3PTHLEN);
     if ( status < 0 ) return(status);
 /*
 ***Finns redan en fil med samma namn ?
@@ -334,7 +336,6 @@ errend:
 ***The end.
 */
     return(0);
-
   }
 
 /********************************************************/

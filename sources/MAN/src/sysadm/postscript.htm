@@ -1,0 +1,139 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- The postscript driver})
+define({_INDEXLINK_},{<a href="printing.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The postscript driver</h1>
+
+
+<p>
+The postscript driver reads from standard input, translates .PLT or .DXF format
+to postscript format and writes to standard output.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>$VARKON_BIN/postscript -sS -wsL -xX -yY -vN -bw -kK</pre>
+
+<p>
+Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.
+</p>
+
+<h2>Options </h2>
+
+<table>
+<tr>
+<td>
+<p>-sS</p>
+</td>
+
+<td>
+<p>- Set scale to S. Float value, default = 1.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-wsL</p>
+</td>
+
+<td>
+<p>- Scale linewidth with L. Float value, default = 1.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-xX</p>
+</td>
+
+<td>
+<p>- Set origin.x to X. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-yY</p>
+</td>
+
+<td>
+<p>- Set origin.y to Y. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-vN</p>
+</td>
+
+<td>
+<p>- Rotate n degrees. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-bw</p>
+</td>
+
+<td>
+<p>- Dont use color or grayscale, default = use color.</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-kK</p>
+</td>
+
+<td>
+<p>- Set curve accuracy to K. Float value, default = 1.0</p>
+</td>
+</tr>
+</table>
+
+<h2>Examples</h2>
+
+<pre>$VARKON_BIN/postscript &lt;plofile.PLT &gt;plotfile.ps -s0.5</pre>
+
+<p>
+Scales the image in plotfile.PLT to half size and writes the result to
+a new file named &quot;plotfile.ps&quot; using the postscript format.
+</p>
+
+<pre>$VARKON_BIN/postscript &lt;plofile.PLT -s0.5 | lp</pre>
+
+<p>
+Same as above but the result is sent to a spooled plotter.
+</p>
+
+<pre>$VARKON_BIN/postscript &lt;plofile.PLT -bw | lp</pre>
+
+<p>
+Same as above but pennumbers are not mapped to color or grayscale. The
+result is always truly black and white.
+</p>
+
+<h2>Comments<h2>
+
+<p>postscript automatically recognizes if the input is in .PLT or DXF
+format. The -k option only applies to DXF format.
+</p>
+
+<p>
+postscript supports the WIDTH attribute for linewidth
+as well as the PEN attribute for color.
+</P>
+
+<p>
+The dotsize used by the postscript driver is always 72 dots per inch.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -4,13 +4,14 @@
 *    =========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
-*    WPltvi();    Servs LIGHT_VIEW()
-*    WPlton();    Servs LIGHT_ON/OFF()
-*    WPconl();    Sets light parameters
+*    WPcreate_light();   Creates an OpenGL light source
+*    WPactivate_light(); Turns light sources off and on
+*    WPenable_lights();  Sets light parameters
+*    WPget_light();      Returns light data
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -35,61 +36,77 @@
 #include <math.h>
 
 /*
-***Ljuskällor, max 8 stycken.
+***Light sources, max 8.
 */
-typedef struct wplight
+typedef struct
 {
-GLfloat pos[4];            /* Läge/riktning */
-GLfloat dir[3];            /* Spotriktning */
-GLfloat ang;               /* Spotvinkel */
+GLfloat ambient[4];        /* OpenGL ambient RGBA */
+GLfloat diffuse[4];        /* OpenGL diffuse RGBA */
+GLfloat specular[4];       /* OpenGL specular RGBA */
+GLfloat pos[4];            /* Light direction or spot position */
+GLfloat dir[3];            /* Spot direction */
+GLfloat ang;               /* Spot angle */
 GLfloat focus;             /* Spotfocus (0-128) */
-GLfloat intensity;         /* Ljusstyrka (0-1) */
-bool    state;             /* På/av */
+GLfloat intensity;         /* Light intensity (0-1) */
+bool    follow_model;      /* Transform with model */
+bool    on;                /* On/off */
+bool    defined;           /* Defined/Not defined */
 } WPLIGHT;
 
-static WPLIGHT lt_tab[8] = { {{0,0,1,0},{0,0,-1},180,0,1,TRUE},
-                             {{0,0,1,0},{0,0,-1},180,0,1,FALSE},
-                             {{0,0,1,0},{0,0,-1},180,0,1,FALSE},
-                             {{0,0,1,0},{0,0,-1},180,0,1,FALSE},
-                             {{0,0,1,0},{0,0,-1},180,0,1,FALSE},
-                             {{0,0,1,0},{0,0,-1},180,0,1,FALSE},
-                             {{0,0,1,0},{0,0,-1},180,0,1,FALSE},
-                             {{0,0,1,0},{0,0,-1},180,0,1,FALSE} };
+static WPLIGHT lt_tab[8] = {
+   {{0,0,0,1},{0,0,0,1},{0,0,0,1},{0,0,1,0},{0,0,-1},180,0,1,FALSE,FALSE,FALSE},
+   {{0,0,0,1},{0,0,0,1},{0,0,0,1},{0,0,1,0},{0,0,-1},180,0,1,FALSE,FALSE,FALSE},
+   {{0,0,0,1},{0,0,0,1},{0,0,0,1},{0,0,1,0},{0,0,-1},180,0,1,FALSE,FALSE,FALSE},
+   {{0,0,0,1},{0,0,0,1},{0,0,0,1},{0,0,1,0},{0,0,-1},180,0,1,FALSE,FALSE,FALSE},
+   {{0,0,0,1},{0,0,0,1},{0,0,0,1},{0,0,1,0},{0,0,-1},180,0,1,FALSE,FALSE,FALSE},
+   {{0,0,0,1},{0,0,0,1},{0,0,0,1},{0,0,1,0},{0,0,-1},180,0,1,FALSE,FALSE,FALSE},
+   {{0,0,0,1},{0,0,0,1},{0,0,0,1},{0,0,1,0},{0,0,-1},180,0,1,FALSE,FALSE,FALSE},
+   {{0,0,0,1},{0,0,0,1},{0,0,0,1},{0,0,1,0},{0,0,-1},180,0,1,FALSE,FALSE,FALSE} };
 
-/*!******************************************************/
+/********************************************************/
 
-        short  WPltvi(
+        short     WPcreate_light(
         DBint     ltnum,
         DBVector *pos1,
         DBVector *pos2,
         DBfloat   ang,
         DBfloat   focus)
 
-/*      Sätter ljuskällas geometry.
+/*      Create a light source.
  *
- *      In: ltnum = Ljuskälla
- *          pos1  = Position/riktning
- *          pos2  = Spotposition
- *          ang   = Spotvinkel
- *          focus = Spotfokus
+ *      In: ltnum = Light source number
+ *          pos1  = Light direction or Spot position
+ *          pos2  = Spot direction
+ *          ang   = Spot angle
+ *          focus = Spot focus
  *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 1997-02-19 J. Kjellander
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
   {
 
 /*
-***Lite felkontroll.
+***Light number range check.
 */
    if ( ltnum < 0  ||  ltnum > 7 ) return(0);
 /*
-***Om ang = 180 är det en ingen spotlight utan
-***en vanlig lampa som lyser i alla riktningar.
+***Default light color = White. With default intensity of 50%
+***this will produce a reasonable scene.
+*/
+   lt_tab[ltnum].ambient[0] =
+   lt_tab[ltnum].ambient[1] =
+   lt_tab[ltnum].ambient[2] = 0.4;
+
+   lt_tab[ltnum].diffuse[0] =
+   lt_tab[ltnum].diffuse[1] =
+   lt_tab[ltnum].diffuse[2] = 1.0;
+
+   lt_tab[ltnum].specular[0] =
+   lt_tab[ltnum].specular[1] =
+   lt_tab[ltnum].specular[2] = 1.0;
+/*
+***If ang = 180 it's no spotlight.
 */
    if ( ang == 180.0 )
      {
@@ -104,8 +121,8 @@ static WPLIGHT lt_tab[8] = { {{0,0,1,0},{0,0,-1},180,0,1,TRUE},
      lt_tab[ltnum].ang    = 180.0;
      }
 /*
-***Om spotang <> 180 är det en spot. pos1 och pos2 får
-***då inte vara lika för då kan vi inte beräkna nån riktning.
+***If ang <> 180 it's a spot. pos1 and pos2 may then not be
+***equal. W component of pos = 1 activates attenuation.
 */
    else
      {
@@ -126,254 +143,203 @@ static WPLIGHT lt_tab[8] = { {{0,0,1,0},{0,0,-1},180,0,1,TRUE},
      lt_tab[ltnum].ang    = (GLfloat)ang;
      lt_tab[ltnum].focus  = (GLfloat)focus*1.28;
      }
-
+/*
+***This light source is now defined but not on.
+*/
+   lt_tab[ltnum].defined = TRUE;
+   lt_tab[ltnum].on      = FALSE;
+/*
+***The end.
+*/
    return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-        short WPlton(
-        int   ltnum,
+        short   WPactivate_light(
+        int     ltnum,
         DBfloat intensity,
-        bool  state)
+        int     tmode,
+        bool    on)
 
-/*      Slår på och av olika ljuskällor.
+/*      Turns on and off a defined lightsource.
+ *      LIGHT_ON() and LIGHT_OFF() in MBS.
  *
- *      In: ltnum = Ljuskälla
- *          state = På/Av.
+ *      In: ltnum     = Lightsource number
+ *          intensity = 0-100%
+ *          tmode     = 1 = Follow model, 0 otherwise
+ *          on        = TRUE->On, FALSE->Off
  *
- *      Ut: Inget.
+ *      (C)2007-11-30 J.Kjellander
  *
- *      FV: 0.
- *
- *      (C)microform ab 1997-02-19 J. Kjellander
- *
- ******************************************************!*/
+ ********************************************************/
 
   {
-
+   GLfloat gl_matrix[16],ambient[4],diffuse[4],specular[4];
 /*
-***Lite felkontroll.
+***Range check. TODO add erpush()
 */
    if ( ltnum < 0  ||  ltnum > 7 ) return(0);
    if ( intensity < 0.0  ||  intensity > 100.0 ) return(0);
 /*
-***Slå på/av.
+***Is this light source defined ?
 */
-   if ( state )
+   if ( !lt_tab[ltnum].defined ) return(0);
+/*
+***Turn on this light source.
+*/
+   if ( on )
      {
-     lt_tab[ltnum].state = TRUE;
+     lt_tab[ltnum].on = TRUE;
      lt_tab[ltnum].intensity = (GLfloat)(intensity/100.0);
-     }
-   else lt_tab[ltnum].state = FALSE;
 
+     ambient[0] = lt_tab[ltnum].ambient[0]*lt_tab[ltnum].intensity;
+     ambient[1] = lt_tab[ltnum].ambient[1]*lt_tab[ltnum].intensity;
+     ambient[2] = lt_tab[ltnum].ambient[2]*lt_tab[ltnum].intensity;
+     ambient[3] = lt_tab[ltnum].ambient[3];
+     glLightfv(GL_LIGHT0+ltnum,GL_AMBIENT,ambient);
+
+     diffuse[0] = lt_tab[ltnum].diffuse[0]*lt_tab[ltnum].intensity;
+     diffuse[1] = lt_tab[ltnum].diffuse[1]*lt_tab[ltnum].intensity;
+     diffuse[2] = lt_tab[ltnum].diffuse[2]*lt_tab[ltnum].intensity;
+     diffuse[3] = lt_tab[ltnum].diffuse[3];
+     glLightfv(GL_LIGHT0+ltnum,GL_DIFFUSE,diffuse);
+
+     specular[0] = lt_tab[ltnum].specular[0]*lt_tab[ltnum].intensity;
+     specular[1] = lt_tab[ltnum].specular[1]*lt_tab[ltnum].intensity;
+     specular[2] = lt_tab[ltnum].specular[2]*lt_tab[ltnum].intensity;
+     specular[3] = lt_tab[ltnum].specular[3];
+     glLightfv(GL_LIGHT0+ltnum,GL_SPECULAR,specular);
+/*
+***Distant light or spot ? In any case, if follow_model is off,
+***the position is interpreted as BASIC coordinates.
+***Then set OpenGL's MODELVIEW rotation to zero before setting the light position.
+***If follow_model is on, don't tuch the MODELVIEW matrix.
+*/
+     if ( tmode == 0 )
+       {
+       glGetFloatv(GL_MODELVIEW_MATRIX,gl_matrix);
+       gl_matrix[ 0] = (GLfloat)1.0;
+       gl_matrix[ 1] = (GLfloat)0.0;
+       gl_matrix[ 2] = (GLfloat)0.0;
+       gl_matrix[ 3] = (GLfloat)0.0;
+       gl_matrix[ 4] = (GLfloat)0.0;
+       gl_matrix[ 5] = (GLfloat)1.0;
+       gl_matrix[ 6] = (GLfloat)0.0;
+       gl_matrix[ 7] = (GLfloat)0.0;
+       gl_matrix[ 8] = (GLfloat)0.0;
+       gl_matrix[ 9] = (GLfloat)0.0;
+       gl_matrix[10] = (GLfloat)1.0;
+       gl_matrix[11] = (GLfloat)0.0;
+       glMatrixMode(GL_MODELVIEW);
+       glLoadMatrixf(gl_matrix);
+       }
+/*
+***Now set the light position and enable it.
+*/
+     if ( lt_tab[ltnum].ang == 180.0 )
+       {
+       glLightfv(GL_LIGHT0+ltnum,GL_POSITION,lt_tab[ltnum].pos);
+       }
+     else
+       {
+       glLightfv(GL_LIGHT0+ltnum,GL_POSITION,lt_tab[ltnum].pos);
+       glLightfv(GL_LIGHT0+ltnum,GL_SPOT_DIRECTION,lt_tab[ltnum].dir);
+       glLightf(GL_LIGHT0+ltnum,GL_SPOT_CUTOFF,lt_tab[ltnum].ang);
+       glLightf(GL_LIGHT0+ltnum,GL_SPOT_EXPONENT,lt_tab[ltnum].focus);
+       glLightf(GL_LIGHT0+ltnum,GL_CONSTANT_ATTENUATION,1.0);
+       glLightf(GL_LIGHT0+ltnum,GL_LINEAR_ATTENUATION,0.0);
+       glLightf(GL_LIGHT0+ltnum,GL_QUADRATIC_ATTENUATION,0.0);
+       }
+
+     glEnable(GL_LIGHT0+ltnum);
+/*
+***Transformation mode. No transformation (static) or follow the model.
+*/
+     if ( tmode == 0 ) lt_tab[ltnum].follow_model = FALSE;
+     else              lt_tab[ltnum].follow_model = TRUE;
+     }
+/*
+***Turn light off.
+*/
+   else
+     {
+     glDisable(GL_LIGHT0+ltnum);
+     lt_tab[ltnum].on = FALSE;
+     }
+/*
+***The end.
+*/
    return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-       short WPconl(
-       WPGWIN *gwinpt)
+       short WPenable_lights(bool enable)
 
-/*      Konfigurerar aktiva ljuskällor.
+/*      Enables or disables all active light sources.
  *
- *      In: gwinpt = Pekare till grafisk fönster
+ *      In: enable = TRUE->Enable, FALSE->Disable
  *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 1997-02-19 J. Kjellander
+ *      (C)2008-01-21 J. Kjellander
  *
  ******************************************************!*/
 
   {
-   int     i,ival;
-   char    buf[V3STRLEN];
-   GLfloat pos[4],dir[3],ambient[4],diffuse[4],specular[4];
+   int     i;
 
-   GLfloat scene_ambient[4]  = {0.2,0.2,0.2,1.0};
-   GLfloat lt_ambient[4]  = {1.0,1.0,1.0,1.0};
-   GLfloat lt_diffuse[4]  = {1.0,1.0,1.0,1.0};
-   GLfloat lt_specular[4] = {1.0,1.0,1.0,1.0};
 /*
-***Slå på ljus.
-*/
-   glEnable(GL_LIGHTING);
-/*
-***Justera scenens eget bakgrundsljus. Default är
-***enligt manualen (0.2,0.2,0.2).
-*/
-   glLightModelfv(GL_LIGHT_MODEL_AMBIENT,scene_ambient);
-/*
-***Default bakgrundsljus för alla ljuskällor hämtar vi från
-***resursfilen.
-*/
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.ambient.red",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.AMBIENT.RED",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_ambient[0] = ival/100.0; 
-
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.ambient.green",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.AMBIENT.GREEN",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_ambient[1] = ival/100.0; 
-
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.ambient.blue",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.AMBIENT.BLUE",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_ambient[2] = ival/100.0; 
-/*
-***Default diffust ljus likaså.
-*/
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.diffuse.red",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.DIFFUSE.RED",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_diffuse[0] = ival/100.0; 
-
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.diffuse.green",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.DIFFUSE.GREEN",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_diffuse[1] = ival/100.0; 
-
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.diffuse.blue",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.DIFFUSE.BLUE",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_diffuse[2] = ival/100.0; 
-/*
-***Och default reflekterat ljus.
-*/
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.specular.red",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.SPECULAR.RED",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_specular[0] = ival/100.0; 
-
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.specular.green",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.SPECULAR.GREEN",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_specular[1] = ival/100.0; 
-
-#ifdef UNIX
-   if ( WPgrst("varkon.shade.specular.blue",buf)  &&
-#endif
-#ifdef WIN32
-   if ( msgrst("SHADE.SPECULAR.BLUE",buf)  &&
-#endif
-        sscanf(buf,"%d",&ival) == 1  &&
-        ival >=0  &&  ival <= 100 ) lt_specular[2] = ival/100.0; 
-/*
-***Gå igenom lt_tab och sätt upp alla aktiva ljuskällor.
+***Loop through lights 0 to 7.
 */
    for ( i=0; i<8; ++i )
      {
-     if ( lt_tab[i].state )
+     if ( lt_tab[i].defined && lt_tab[i].on )
        {
-       glEnable(GL_LIGHT0+i);
-/*
-***Transformera positionen.
-*
-       pos[0] = gwinpt->vy.vymat.k11 * lt_tab[i].pos[0] +
-                gwinpt->vy.vymat.k12 * lt_tab[i].pos[1] +
-                gwinpt->vy.vymat.k13 * lt_tab[i].pos[2];
-       pos[1] = gwinpt->vy.vymat.k21 * lt_tab[i].pos[0] +
-                gwinpt->vy.vymat.k22 * lt_tab[i].pos[1] +
-                gwinpt->vy.vymat.k23 * lt_tab[i].pos[2];
-       pos[2] = gwinpt->vy.vymat.k31 * lt_tab[i].pos[0] +
-                gwinpt->vy.vymat.k32 * lt_tab[i].pos[1] +
-                gwinpt->vy.vymat.k33 * lt_tab[i].pos[2];
-/*
-***En vanlig ljuskälla har spotvinkel 180.0 och
-***ingen avklingning, pos[3] = 0.0.
-*/
-       if ( lt_tab[i].ang == 180.0 )
-         {
-         pos[3] = 0.0;
-         glLightfv(GL_LIGHT0+i,GL_POSITION,pos);
-         glLightf(GL_LIGHT0+i,GL_SPOT_CUTOFF,(GLfloat)180.0);
-         }
-/*
-***Om det är en spot skall även riktning transformeras
-***och avklingning slås på.
-*
-       if ( lt_tab[i].ang < 180.0 )
-         {
-         pos[3] = 1.0;
-         dir[0] = gwinpt->vy.vymat.k11 * lt_tab[i].dir[0] +
-                  gwinpt->vy.vymat.k12 * lt_tab[i].dir[1] +
-                  gwinpt->vy.vymat.k13 * lt_tab[i].dir[2];
-         dir[1] = gwinpt->vy.vymat.k21 * lt_tab[i].dir[0] +
-                  gwinpt->vy.vymat.k22 * lt_tab[i].dir[1] +
-                  gwinpt->vy.vymat.k23 * lt_tab[i].dir[2];
-         dir[2] = gwinpt->vy.vymat.k31 * lt_tab[i].dir[0] +
-                  gwinpt->vy.vymat.k32 * lt_tab[i].dir[1] +
-                  gwinpt->vy.vymat.k33 * lt_tab[i].dir[2];
-         glLightfv(GL_LIGHT0+i,GL_POSITION,pos);
-         glLightfv(GL_LIGHT0+i,GL_SPOT_DIRECTION,dir);
-         glLightf(GL_LIGHT0+i,GL_SPOT_CUTOFF,(GLfloat)lt_tab[i].ang);
-         glLightf(GL_LIGHT0+i,GL_SPOT_EXPONENT,(GLfloat)lt_tab[i].focus);
-         }
-/*
-***Bakgrundskomponentens styrka.
-*/
-       ambient[0] = lt_tab[i].intensity * lt_ambient[0];
-       ambient[1] = lt_tab[i].intensity * lt_ambient[1];
-       ambient[2] = lt_tab[i].intensity * lt_ambient[2];
-       ambient[3] = 1.0;
-       glLightfv(GL_LIGHT0+i,GL_AMBIENT,ambient);
-/*
-***Diffusa komponentens styrka.
-*/
-       diffuse[0] = lt_tab[i].intensity * lt_diffuse[0];
-       diffuse[1] = lt_tab[i].intensity * lt_diffuse[1];
-       diffuse[2] = lt_tab[i].intensity * lt_diffuse[2];
-       diffuse[3] = 1.0;
-       glLightfv(GL_LIGHT0+i,GL_DIFFUSE,diffuse);
-/*
-***Spekulära komponentens styrka.
-*/
-       specular[0] = lt_tab[i].intensity * lt_specular[0];
-       specular[1] = lt_tab[i].intensity * lt_specular[1];
-       specular[2] = lt_tab[i].intensity * lt_specular[2];
-       specular[3] = 1.0;
-       glLightfv(GL_LIGHT0+i,GL_SPECULAR,specular);
+       if ( enable ) glEnable(GL_LIGHT0+i);
+       else          glDisable(GL_LIGHT0+i);
        }
      }
 /*
-***Slut.
+***The end.
+*/
+   return(0);
+  }
+
+/********************************************************/
+/********************************************************/
+
+       short    WPget_light(
+       int      ltnum,
+       bool    *defined,
+       bool    *on,
+       DBfloat *intensity,
+       bool    *follow_model)
+
+/*      Returns light source data.
+ *
+ *      In: ltnum        = Lightsource number
+ *          defined      = TRUE if defined
+ *          on           = TRUE if on
+ *          intensity    = MBS intensity (0-100)
+ *          follow_model = TRUE if transformed with model
+ *
+ *      (C)2008-01-23 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+
+/*
+***Get data from lt_tab[].
+*/
+  *defined      = lt_tab[ltnum].defined;
+  *on           = lt_tab[ltnum].on;
+  *intensity    = 100.0*lt_tab[ltnum].intensity;
+  *follow_model = lt_tab[ltnum].follow_model;
+/*
+***The end.
 */
    return(0);
   }

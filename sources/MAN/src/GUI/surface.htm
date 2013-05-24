@@ -1,0 +1,49 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Surfaces})
+define({_INDEXLINK_},{<a href="entities.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Surfaces</h1>
+
+<p>
+A surface has two parametric directions, U and V and
+consists of one or more patches in each direction. A surface
+with 2 patches in the U direction and 3 patches in the V
+direction thus has a total of 6 patches. Similar to curves,
+the number of patches in a surface depends on what type of
+surface it is and how you create it.
+</p>
+
+<p>
+A surface has two sides, positive and negative.
+When displayed with color in a OpenGL window the positive side
+of a surface will become bright and shiny while the negative
+side will become dark and dull. Which is which depends on how
+you create the surface.
+</p>
+
+<h2>Methods</h2>
+
+<ul>
+<li><a href="../MBS/b_plane.htm">Bounded plane</a></li>
+<li><a href="../MBS/sur_rule.htm">Ruled</a></li>
+<li><a href="../MBS/sur_cyl.htm">Cylinder</a></li>
+<li><a href="../MBS/sur_rot.htm">Rotational</a></li>
+<li><a href="../MBS/sur_swee.htm">Sweep</a></li>
+<li><a href="../MBS/sur_offs.htm">Offset</a></li>
+<li><a href="../MBS/sur_appr.htm">Approx</a></li>
+</ul>
+
+<p>
+MBS includes many more surface methods. See the <a href="../MBS/entiindx.htm">
+MBS entity creation</a> index for more info.
+</p>
+
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

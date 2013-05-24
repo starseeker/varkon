@@ -74,3 +74,13 @@ VARKON Error messages for WINPAC
 170  2  Error while reading plotter configuration file: %s
 171  2  XPM-error code = %s
 172  3  Can't find icon file %s
+173  3  Window %s is of illegal type
+174  2  GET_WIEW, Window with ID = %s is of illegal type.
+175  2  Can't open TIFF file %s
+176  3  Cant allocate TIFF buffer, error code = %s
+177  3  Unknown error from TIFF driver, error code = %s
+178  2  WPupbu(), WPIWIN nr:%s does not exist
+179  2  WPupbu(), Window nr:%s is not a WPIWIN
+180  2  WPupbu(), WPBUTT nr:%s does not exist
+181  2  WPupbu(), Window nr:%s is not a WPBUTT
+182  3  Your Varkon is built without TIFF support

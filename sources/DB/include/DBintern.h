@@ -111,16 +111,16 @@ extern KEYDATA *keytab;
 ***Some internal constants.
 */
 
-#define LTSDEF   (DBint)256    /* Default logical size */
-#define IDTSIZ   (DBint)128    /* Default size of ID table */
-#define PAGSIZ   (DBint)1024   /* Number of bytes/page */
-#define FYSSIZ   (DBint)262144 /* Default physical cache size */
-#define FYSTSZ   FYSSIZ/PAGSIZ /* Number of physical pages available */
-#define PGFPNA   -999999       /* Pagefile page not allocated */
-#define GMBPNA   -9999         /* Physical page not allocated */
-#define EMPTY    -127          /* Empty byte */
-#define NOTUSD   -1            /* Not used ID table entry */
-#define ERASED   -2            /* Deleted ID table entry */
+#define LTSDEF  (DBint)256     /* Default logical size */
+#define IDTSIZ  (DBint)128     /* Default size of ID table */
+#define PAGSIZ  (DBint)1024    /* Number of bytes/page */
+#define FYSSIZ  (DBint)1024000 /* Default physical cache size */
+#define FYSTSZ  FYSSIZ/PAGSIZ  /* Number of physical pages available */
+#define PGFPNA  -999999        /* Pagefile page not allocated */
+#define GMBPNA  -9999          /* Physical page not allocated */
+#define EMPTY   -127           /* Empty byte */
+#define NOTUSD  -1             /* Not used ID table entry */
+#define ERASED  -2             /* Deleted ID table entry */
 
 /*
 ***Entity version numbers. (GMRECH->vers).

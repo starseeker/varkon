@@ -1,6 +1,6 @@
 !*******************************************************
 
- GLOBAL GEOMETRY MODULE dxf_3D(
+ GLOBAL MODULE dxf_3D(
    STRING filnam*132 >"t395");
 
 !*      Läser AUTOCAD 3D DXF-fil.

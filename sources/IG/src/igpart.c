@@ -5,16 +5,18 @@
  *  This file includes:
  *
  *  IGpart();        Create and run PART statement (generic mode)
- *  IGrnmo();        Create a part (explicit mode, no statement)
- *  IGmfun();        Run a macro
+ *  IGrun_named();   Create a part (explicit mode, no statement)
+ *  IGmacro();       Run a macro
  *  IGcall_part();   Call a part
  *  IGcall_macro();  Call a macro
  *  IGuppt();        Uppdate Part
- *  IGcptw();        Edit part parameters
+ *  IGcptw();        Edit part call parameters
+ *  IGedit_MBS();    Edit MBS program in lib directory
+ *  IGcompile_all(); Compile all MBS programs in lib directory
  *  IGgnps();        Build part call
  *
  *  This file is part of the VARKON IG Library.
- *  URL:  http://www.tech.oru.se/cad/varkon
+ *  URL:  http://varkon.sourceforge.net
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -43,8 +45,9 @@
 #include "../../WP/include/WP.h"
 
 extern pm_ptr  actmod;
-extern short   actfun,v3mode,modtyp,posmode;
-extern char    jobdir[],jobnam[],actpnm[],mbodir[];
+extern short   sysmode,modtyp;
+extern int     posmode,actfunc;
+extern char    jobdir[],jobnam[],actpnm[];
 extern bool    tmpref,iggflg;
 extern V2NAPA  defnap;
 extern struct  ANSYREC sy;
@@ -96,14 +99,14 @@ static short get_partname(char *name);
 ***The end.
 */
 end:
-    WPerhg();    
+    WPerhg();
     return(status);
   }
 
 /********************************************************/
 /********************************************************/
 
-       short IGrnmo()
+       short IGrun_named()
 
 /*      Interactive function for executing a module.
  *      No statement is added to the active module
@@ -134,14 +137,14 @@ end:
 ***The end.
 */
 end:
-    WPerhg();    
+    WPerhg();
     return(status);
   }
 
 /********************************************************/
 /********************************************************/
 
-       short IGmfun()
+       short IGmacro()
 
 /*      Interactive function for calling a macro.
  *
@@ -161,8 +164,7 @@ end:
 /*
 ***Get name of macro module.
 */
-    IGptma(167,IG_INP);
-    if ( (status=IGssip(IGgtts(267),filnam,dstr,JNLGTH)) < 0 ) goto end;
+    if ( (status=IGssip(IGgtts(167),IGgtts(267),filnam,dstr,JNLGTH)) < 0 ) goto end;
     strcpy(dstr,filnam);
 /*
 ***Create a PART statement an execute in MACRO mode.
@@ -174,7 +176,7 @@ end:
 */
 end:
     WPclear_mcwin();
-    WPerhg();    
+    WPerhg();
     return(status);
   }
 
@@ -288,7 +290,7 @@ end:
     oldhit = defnap.hit;
 /*
 ***If this is a PART call in RUN mode, set tmpref = TRUE
-***and HIT = 0. 
+***and HIT = 0.
 */
     if ( atyp == RUN )
       {
@@ -301,8 +303,8 @@ end:
 ***part name to filnam so the help system can list the
 ***right help file.
 */
-    oldafu = actfun;
-    actfun = -2;
+    oldafu = actfunc;
+    actfunc = -2;
     strcpy(actpnm,part_name);
 /*
 ***Remember current position on the PM stack.
@@ -343,9 +345,10 @@ end:
         pmtcon(expr,(pm_ptr)NULL,&csys_ptr,&dummy);
         }
 /*
-***Loop through the parameter list and fix prompt strings and default values.
+***Loop through the parameter list and fix prompt
+***strings and default values.
 */
-    pmsbla(newmod);   
+    pmsbla(newmod);
     pmrpap((pm_ptr)0);
     pmgpad(&panola);
     npars = 0;
@@ -384,7 +387,7 @@ end:
 ***that should not be displayed to the user ?
 */
       if ( strlen(prompt) == 0 ) hidden[npars] = TRUE;
-      else                        hidden[npars] = FALSE;
+      else                       hidden[npars] = FALSE;
 /*
 ***Parameter type.
 */
@@ -451,7 +454,7 @@ end:
 retry:
     if ( nvisible == 1  &&  input_types[0] == C_VEC_VA )
       {
-      IGplma(input_prompts[0],IG_MESS);
+      WPaddmess_mcwin(input_prompts[0],WP_MESSAGE);
       if ( pos_modes[0] >= 0 )
         {
         old_posmode = posmode; posmode = pos_modes[0];
@@ -459,15 +462,13 @@ retry:
         posmode = old_posmode;
         }
       else { status = IGcpos(0,&expr); }
-      IGrsma();
       if ( status < 0 ) goto reject;
       pprexs(expr,modtyp,input_ptrs[0],V3STRLEN);
       }
     else if ( nvisible == 1  &&  input_types[0] == C_REF_VA )
       {
-      IGplma(input_prompts[0],IG_MESS);
+      WPaddmess_mcwin(input_prompts[0],WP_MESSAGE);
       status = IGcref(0,&type_masks[0],&expr,&end,&right);
-      IGrsma();
       if ( status < 0 ) goto reject;
       pprexs(expr,modtyp,input_ptrs[0],V3STRLEN);
       }
@@ -566,7 +567,7 @@ retry:
 ***Anything but a PART statement with the system in
 ***generic mode should be released.
 */
-    if ( atyp == RUN ||  v3mode == RIT_MOD ) pmrele();
+    if ( atyp == RUN ||  sysmode == EXPLICIT ) pmrele();
 /*
 ***Now finally, execute the PART statement.
 */
@@ -619,7 +620,7 @@ retry:
 */
     if ( atyp == PART )
       {
-      if ( v3mode & BAS_MOD  &&  pmlmst(actmod, retla) < 0 )
+      if ( sysmode & GENERIC  &&  pmlmst(actmod, retla) < 0 )
         {
         status = erpush("IG5043","");
         goto exit;
@@ -641,8 +642,8 @@ retry:
 exit:
     tmpref     = oldtrf;
     defnap.hit = oldhit;
-    actfun     = oldafu;
-    WPerhg();    
+    actfunc    = oldafu;
+    WPerhg();
 /*
 ***The end.
 */
@@ -677,12 +678,14 @@ reject:
  *
  *      (C)2007-04-27 Johan Kjellander
  *
+ *      2007-09-22 WPRWIN repaint added, J.Kjellander
+ *
  ******************************************************!*/
 
   {
     pm_ptr   parlst;              /* soft parameter list */
     pm_ptr   exnpt;               /* pekare till expr. node */
-    pm_ptr   retla;     
+    pm_ptr   retla;
     pm_ptr   oldmod;              /* base adress of caller */
     pm_ptr   newmod;              /* base adress of called module */
     pm_ptr   dummy;
@@ -725,8 +728,8 @@ reject:
 ***part name to filnam so the help system can list the
 ***right help file.
 */
-    tmpafu = actfun;
-    actfun = -2;
+    tmpafu  = actfunc;
+    actfunc = -2;
     strcpy(actpnm,filnam);
 /*
 ***Remember current position on the PM stack.
@@ -801,11 +804,11 @@ reject:
             optflg = FALSE;
 /*
 ***Substitute optional t-string with text.
-*/    
+*/
             t_string_prompt(prompt);
 /*
 ***What kind of parameter ?
-*/ 
+*/
             switch(defval.lit_type)
               {
 /*
@@ -824,7 +827,7 @@ reject:
 ***FLOAT parameter.
 */
               case C_FLO_VA: 
-              IGplma(prompt,IG_INP);
+              WPaddmess_mcwin(prompt,WP_MESSAGE);
               if ( optpar ) status = IGcflt(0,"",istr,&exnpt);
               else
                 {
@@ -970,6 +973,10 @@ reject:
 */
     else if ( status == 4 ) status = 0;
 /*
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
 ***Finish.
 */
     status = 0;
@@ -977,12 +984,12 @@ exit:
 /*
 ***Reset active values for HIT and SAVE etc..
 */
-    tmpref = oldtrf;
-    actfun = tmpafu;
+    tmpref  = oldtrf;
+    actfunc = tmpafu;
     defnap.hit  = oldhit;
     defnap.save = oldsav;
 
-    WPerhg();    
+    WPerhg();
 /*
 ***The end.
 */
@@ -1051,7 +1058,7 @@ error1:
 /*
 ***If mode is explicit, create part statement.
 */
-    if ( v3mode == RIT_MOD )
+    if ( sysmode == EXPLICIT )
       {
       if ( (status=IGgnps(idvek)) < 0 ) goto error;
       else dstflg = TRUE;
@@ -1148,11 +1155,11 @@ error:
   {
     int     typarr[V2MPMX];                 /* Parametertyper */
     char    oldval[V2MPMX][V3STRLEN];       /* Gamla värden */
-    char   *osparr[V2MPMX];         
+    char   *osparr[V2MPMX];
     char    newval[V2MPMX][V3STRLEN];       /* Nya värden */
-    char   *nsparr[V2MPMX];         
+    char   *nsparr[V2MPMX];
     char    pmtarr[V2MPMX][V3STRLEN+1];     /* Promptar */
-    char   *pmparr[V2MPMX];         
+    char   *pmparr[V2MPMX];
     short   maxtkn[V2MPMX];                 /* Stränglängder */
     short   pant;                           /* Antal parametrar */
     short   i,status;
@@ -1198,7 +1205,7 @@ error:
 /*
 ***Om ritpaket, skapa partanrop.
 */
-    if ( v3mode == RIT_MOD )
+    if ( sysmode == EXPLICIT )
       {
       if ( (status=IGgnps(idvek)) < 0 ) goto error1;
       else dstflg = TRUE;
@@ -1227,7 +1234,7 @@ error:
 /*
 ***Är parten refererad ?
 */
-    if ( v3mode & BAS_MOD  &&  pmamir(idvek) ) ref = TRUE;
+    if ( sysmode & GENERIC  &&  pmamir(idvek) ) ref = TRUE;
     else  ref = FALSE;
 /*
 ***Ladda in modulen.
@@ -1295,8 +1302,8 @@ error:
 /*
 ***Låt hjälpsystemet få veta vad vi gör.
 */
-    oldafn = actfun;
-    actfun = -2;
+    oldafn  = actfunc;
+    actfunc = -2;
     strcpy(actpnm,part.name_pt);
 /*
 ***Anropa WPmsip. t1599 = "Parametrar för parten : "
@@ -1310,7 +1317,7 @@ error:
     status = (short)msmsip(rubrik,pmparr,osparr,nsparr,maxtkn,typarr,pant);
 #endif
 
-    actfun = oldafn;
+    actfunc = oldafn;
 
     if ( status < 0 ) goto exit;
 /*
@@ -1342,7 +1349,7 @@ error:
 /*
 ***Kolla om det nya parametervärdet innebär framåt-referenser.
 */
-        if ( v3mode & BAS_MOD  &&  pmarex(idvek,exnpt) == TRUE )
+        if ( sysmode & GENERIC  &&  pmarex(idvek,exnpt) == TRUE )
           {
           erpush("IG3882",nsparr[i]);
           goto error1;
@@ -1364,7 +1371,7 @@ error:
 */
     if ( edit )
       {
-      if ( ref && IGialt(373,67,68,FALSE) ) IGramo();
+      if ( ref && IGialt(373,67,68,FALSE) ) IGrun_active();
 /*
 ***Reinterpretera inkrementellt.
 */
@@ -1395,7 +1402,7 @@ error:
           EXdraw(idvek,FALSE);
           gmumtm();
           EXdraw(idvek,TRUE);
-          if ( v3mode & BAS_MOD ) for ( i=0; i<pant; ++i )
+          if ( sysmode & GENERIC ) for ( i=0; i<pant; ++i )
             pmchpa(idvek,(short)(i+1),pla[i],&retla);
           }
         else
@@ -1414,7 +1421,7 @@ error:
 */
 exit:
     if ( dstflg ) pmdlst();
-    if ( v3mode == RIT_MOD ) pmrele();
+    if ( sysmode == EXPLICIT ) pmrele();
     WPerhg();
     return(status);
 /*
@@ -1864,8 +1871,44 @@ static void t_string_prompt(char *prompt)
 */
    return;
   }
-  
+
 /********************************************************/
+/********************************************************/
+
+       short  IGedit_MBS()
+
+/*     Edit MBS program in the lib directory.
+*
+*      (C)2007-11-20 J. Kjellander.
+*
+*******************************************************!*/
+
+ {
+/*
+***Call WP.
+*/
+   return(WPomod());
+ }
+
+/******************************************************!*/
+/********************************************************/
+
+       short  IGcompile_all()
+
+/*     Compile all MBS programs in the lib directory.
+*
+*      (C)2007-11-20 J. Kjellander.
+*
+*******************************************************!*/
+
+ {
+/*
+***Call WP.
+*/
+   return(WPcoal());
+ }
+
+/******************************************************!*/
 /********************************************************/
 
 static short get_partname(char *name)
@@ -1877,18 +1920,23 @@ static short get_partname(char *name)
  *
  *      (C)2007-05-28 J. Kjellander
  *
+ *      2007-11-20 2.0, J.Kjellander
+ *
  ******************************************************!*/
 
   {
    short status;
-   char *nparr1[1000],*nparr2[1000],strarr1[20000],strarr2[20000];
+   char *nparr1[5000],*nparr2[5000],strarr1[100000],
+         strarr2[100000],libdir[V3PTHLEN];
    int   i,j,n_names1,n_names2;
 
 /*
 ***Get the two file lists.
 */
-   if ( (status=IGdir(jobdir,MODEXT,1000,20000,nparr1,strarr1,&n_names1)) < 0 ) return(status);
-   if ( (status=IGdir(mbodir,MODEXT,1000,20000,nparr2,strarr2,&n_names2)) < 0 ) return(status);
+   if ( (status=IGdir(jobdir,MODEXT,5000,100000,nparr1,strarr1,&n_names1)) < 0 ) return(status);
+   strcpy(libdir,jobdir);
+   strcat(libdir,"lib/");
+   if ( (status=IGdir(libdir,MODEXT,5000,100000,nparr2,strarr2,&n_names2)) < 0 ) return(status);
 /*
 ***Remove the active job from the first list.
 */
@@ -1943,8 +1991,7 @@ start:
 */
    else if ( status == 3 )
      {
-     IGptma(244,IG_INP);
-     if ( (status=IGssip(IGgtts(267),name,"",JNLGTH)) < 0 ) errmes();
+     if ( (status=IGssip(IGgtts(244),IGgtts(267),name,"",JNLGTH)) < 0 ) errmes();
      }
 /*
 ***No, then this is the end.

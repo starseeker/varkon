@@ -1,0 +1,336 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- Entity creation routines})
+define({_INDEXLINK_},{<a href="catindex.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Entity creation routines</h1>
+
+<table>
+
+<tr>
+<th>MBS name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td><a href="csys_1p.htm">csys_1p</a></td>
+<td>Coordinate system with one position</td>
+</tr>
+
+<tr>
+<td><a href="csys_3p.htm">csys_3p</a></td>
+<td>Coordinate system with 2 or 3 positions</td>
+</tr>
+
+<tr>
+<td><a href="poi_free.htm">poi_free</a></td>
+<td>Point free</td>
+</tr>
+
+<tr>
+<td><a href="poi_proj.htm">poi_proj</a></td>
+<td>Point projected</td>
+</tr>
+
+<tr>
+<td><a href="lin_free.htm">lin_free</a></td>
+<td>Line free</td>
+</tr>
+
+<tr>
+<td><a href="lin_proj.htm">lin_proj</a></td>
+<td>Line projected</td>
+</tr>
+
+<tr>
+<td><a href="lin_offs.htm">lin_offs</a></td>
+<td>Line offset</td>
+</tr>
+
+<tr>
+<td><a href="lin_ang.htm">lin_ang</a></td>
+<td>Line with angle and length</td>
+</tr>
+
+<tr>
+<td><a href="lin_perp.htm">lin_perp</a></td>
+<td>Line perpendicular</td>
+</tr>
+
+<tr>
+<td><a href="lin_tan1.htm">lin_tan1</a></td>
+<td>Line tangent</td>
+</tr>
+
+<tr>
+<td><a href="lin_tan2.htm">lin_tan2</a></td>
+<td>Line tangent</td>
+</tr>
+
+<tr>
+<td><a href="arc_1pos.htm">arc_1pos</a></td>
+<td>Arc with 1 position</td>
+</tr>
+
+<tr>
+<td><a href="arc_2pos.htm">arc_2pos</a></td>
+<td>Arc with 2 positions</td>
+</tr>
+
+<tr>
+<td><a href="arc_3pos.htm">arc_3pos</a></td>
+<td>Arc with 3 positions</td>
+</tr>
+
+<tr>
+<td><a href="arc_offs.htm">arc_offs</a></td>
+<td>Arc offset</td>
+</tr>
+
+<tr>
+<td><a href="arc_fil.htm">arc_fil</a></td>
+<td>Arc fillet</td>
+</tr>
+
+<tr>
+<td><a href="cur_appr.htm">cur_approx</a></td>
+<td>Curve approximate</td>
+</tr>
+
+<tr>
+<td><a href="cur_comp.htm">cur_comp</a></td>
+<td>Curve composite</td>
+</tr>
+
+<tr>
+<td><a href="cur_comparr.htm">cur_comparr</a></td>
+<td>Curve composite</td>
+</tr>
+
+<tr>
+<td><a href="cur_cona.htm">cur_conarr</a></td>
+<td>Curve conic</td>
+</tr>
+
+<tr>
+<td><a href="cur_con.htm">cur_conic</a></td>
+<td>Curve conic</td>
+</tr>
+
+<tr>
+<td><a href="cur_int.htm">cur_int</a></td>
+<td>Curve intersect</td>
+</tr>
+
+<tr>
+<td><a href="cur_iso.htm">cur_iso</a></td>
+<td>Curve isoparameter</td>
+</tr>
+
+<tr>
+<td><a href="cur_nurbsarr.htm">cur_nurbsarr</a></td>
+<td>NURBS curve</td>
+</tr>
+
+<tr>
+<td><a href="cur_offs.htm">cur_offs</a></td>
+<td>Curve offset</td>
+</tr>
+
+<tr>
+<td><a href="cur_sil.htm">cur_sil</a></td>
+<td>Curve silhouette</td>
+</tr>
+
+<tr>
+<td><a href="cur_spla.htm">cur_splarr</a></td>
+<td>Curve spline</td>
+</tr>
+
+<tr>
+<td><a href="cur_spl.htm">cur_spline</a></td>
+<td>Curve spline</td>
+</tr>
+
+<tr>
+<td><a href="cur_trim.htm">cur_trim</a></td>
+<td>Curve trimmed</td>
+</tr>
+
+<tr>
+<td><a href="cur_us.htm">cur_usrdef</a></td>
+<td>Curve user defined</td>
+</tr>
+
+<tr>
+<td><a href="b_plane.htm">b_plane</a></td>
+<td>Bounded plane</td>
+</tr>
+
+<tr>
+<td><a href="sur_appr.htm">sur_approx</a></td>
+<td>Surface approximate</td>
+</tr>
+
+<tr>
+<td><a href="sur_comp.htm">sur_comp</a></td>
+<td>Surface composite</td>
+</tr>
+
+<tr>
+<td><a href="sur_cona.htm">sur_conarr</a></td>
+<td>Conic surface</td>
+</tr>
+
+<tr>
+<td><a href="sur_coni.htm">sur_conic</a></td>
+<td>Conic lofting surface</td>
+</tr>
+
+<tr>
+<td><a href="sur_curves.htm">sur_curves</a></td>
+<td>Surface defined by curves</td>
+</tr>
+
+<tr>
+<td><a href="sur_cyl.htm">sur_cyl</a></td>
+<td>Cylindrical surface</td>
+</tr>
+
+<tr>
+<td><a href="sur_exde.htm">sur_exdef</a></td>
+<td>Surface externally defined</td>
+</tr>
+
+<tr>
+<td><a href="sur_nurb.htm">sur_nurbsarr</a></td>
+<td>NURBS surface</td>
+</tr>
+
+<tr>
+<td><a href="sur_offs.htm">sur_offs</a></td>
+<td>Surface offset</td>
+</tr>
+
+<tr>
+<td><a href="sur_rot.htm">sur_rot</a></td>
+<td>Rotational surface</td>
+</tr>
+
+<tr>
+<td><a href="sur_rule.htm">sur_ruled</a></td>
+<td>Ruled surface</td>
+</tr>
+
+<tr>
+<td><a href="sur_spla.htm">sur_splarr</a></td>
+<td>Spline surface</td>
+</tr>
+
+<tr>
+<td><a href="sur_swee.htm">sur_sweep</a></td>
+<td>Swept surface</td>
+</tr>
+
+<tr>
+<td><a href="sur_trim.htm">sur_trim</a></td>
+<td>Surface trimmed</td>
+</tr>
+
+<tr>
+<td><a href="sur_us.htm">sur_usrdef</a></td>
+<td>Surface user defined</td>
+</tr>
+
+<tr>
+<td><a href="tf_move.htm">tform_move</a></td>
+<td>Transform move</td>
+</tr>
+
+<tr>
+<td><a href="tf_rotp.htm">tform_rotp</a></td>
+<td>Transform rotate</td>
+</tr>
+
+<tr>
+<td><a href="tf_rotl.htm">tform_rotl</a></td>
+<td>Transform rotate</td>
+</tr>
+
+<tr>
+<td><a href="tf_mirr.htm">tform_mirr</a></td>
+<td>Transform mirror</td>
+</tr>
+
+<tr>
+<td><a href="tf_comp.htm">tform_comp</a></td>
+<td>Transform composite</td>
+</tr>
+
+<tr>
+<td><a href="tf_us.htm">tform_usrdef</a></td>
+<td>Transform user defined</td>
+</tr>
+
+<tr>
+<td><a href="tcopy.htm">tcopy</a></td>
+<td>Transform and copy</td>
+</tr>
+
+<tr>
+<td><a href="mesh_arr.htm">mesh_arr</a></td>
+<td>Mesh</td>
+</tr>
+
+<tr>
+<td><a href="part.htm">part</a></td>
+<td>Part</td>
+</tr>
+
+<tr>
+<td><a href="symb.htm">symb</a></td>
+<td>Static symbol</td>
+</tr>
+
+<tr>
+<td><a href="group.htm">group</a></td>
+<td>Group</td>
+</tr>
+
+<tr>
+<td><a href="ldim.htm">ldim</a></td>
+<td>Linear dimension</td>
+</tr>
+
+<tr>
+<td><a href="cdim.htm">cdim</a></td>
+<td>Circular dimension</td>
+</tr>
+
+<tr>
+<td><a href="rdim.htm">rdim</a></td>
+<td>Radius dimension</td>
+</tr>
+
+<tr>
+<td><a href="adim.htm">adim</a></td>
+<td>Angular dimension</td>
+</tr>
+
+<tr>
+<td><a href="text.htm">text</a></td>
+<td>Text</td>
+</tr>
+
+<tr>
+<td><a href="xhatch.htm">xhatch</a></td>
+<td>Hatch</td>
+</tr>
+</table>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

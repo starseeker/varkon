@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    short evmolo()    evaluate procedure mode_local
 *    short evmogl()    evaluate procedure mode_global

@@ -1,6 +1,6 @@
 !*******************************************************
 
- basic drawing module l_anastr(STRING resfil*40 >"t498");
+ basic module l_anastr(STRING resfil*40 >"t498");
 
 !*      Visar grafiskt GM:s part-struktur.
 !*
@@ -89,7 +89,8 @@
 !*
 !***Hämta parter ur GM.
 !*
-   id:=getid("F");
+   set_root_gm();
+   id:=get_next_gm();
    if id <> #0 then
      gethdr(id,typ,nref,blnk,niv,pen,gid);
      if typ = 16384 then goto first; endif;
@@ -97,7 +98,7 @@
      goto first;
    endif;
 nxtid:
-   id:=getid("P");
+   id:=get_next_gm(0,16384);
 first:
    if id <> #0 then
 !*

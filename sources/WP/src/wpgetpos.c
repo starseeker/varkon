@@ -4,7 +4,7 @@
 *    ==========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -13,7 +13,7 @@
 *    WPgmc3();   Returns 3D-model coordinate
 *    WPgtsc();   Returns screen coordinate in pixels
 *    WPgtsw();   Returns rubberband rectangle
-*    WPneww();   Interactive creation of new window
+*    WPneww();   Interactive creation of new WPGWIN
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -566,10 +566,10 @@ exit:
 
 /*      Interactive input of 2 positions with XOR-outline.
  *
- *      In:  mode  = WP_RUB_RECT = Rectangle outline
- *                    WP_RUB_LINE = Line outline
+ *      In:  mode   = WP_RUB_RECT  = Rectangle outline
+ *                    WP_RUB_LINE  = Line outline
  *                    WP_RUB_ARROW = Arrow outline
- *                    WP_RUB_NONE = No outline outline
+ *                    WP_RUB_NONE  = No outline
  *           prompt = Autoprompt yes/no.
  *
  *      Out: *grw_id  = ID of WPGWIN or WPRWIN used
@@ -587,7 +587,7 @@ exit:
  *
  *      23/2/95 PointerMotionHintMask, J. Kjellander
  *      1/3/95  drwbox(), J. Kjellander
- *      1998-03-19 Returnera fï¿½nster, J.Kjellander
+ *      1998-03-19 Returnera fönster, J.Kjellander
  *      1998-03-24 mode, J.Kjellander
  *      2007-07-31 1.19, J.Kjellander
  *
@@ -617,15 +617,20 @@ exit:
 ***Ensure no old events pending. First event here
 ***should be Button Press.
 */
-   while ( XPending(xdisp) ) XNextEvent(xdisp,&xev);
+   while ( XPending(xdisp) )
+     {
+     XNextEvent(xdisp,&xev);
+     if ( xev.type == Expose ) WPwexp(&xev.xexpose);
+     }
 /*
 ***Eventloop.
 */
    while ( 1 )
      {
-     XMaskEvent(xdisp,ButtonPressMask |
+     XMaskEvent(xdisp,ButtonPressMask   |
                       ButtonReleaseMask |
-                      PointerMotionMask,&xev);
+                      PointerMotionMask |
+                      ExposureMask,&xev);
 
      switch (xev.type)
        {
@@ -774,6 +779,12 @@ exit:
             abs(*piy2 - *piy1) < minh ) status = -1;
        else                             status =  0;
        goto exit;
+/*
+***Expose.
+*/
+       case Expose:
+       if ( xev.type == Expose ) WPwexp(&xev.xexpose);
+       break;
        }
      }
 /*

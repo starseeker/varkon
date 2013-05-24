@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -43,11 +43,11 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
 
 extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
-/*!******************************************************/
+/********************************************************/
 
         short evbllv()
 
-/*      Evaluates procedure BLANK_LEVEL.
+/*      Evaluates MBS procedure BLANK_LEVEL().
  *
  *      Error: IN5792 = Error when executing procedure %s
  *
@@ -68,11 +68,11 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evublv()
 
-/*      Evaluates procedure UNBLANK_LEVEL().
+/*      Evaluates MBS procedure UNBLANK_LEVEL().
  *
  *      Error: IN5792 = Error when executing procedure %s
  *
@@ -93,17 +93,11 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evgtlv()
 
-/*      Evaluates procedure GET_LEVEL().
- *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
+/*      Evaluates MBS procedure GET_LEVEL().
  *
  *      (C)microform ab 1/6/86 J. Kjellander
  *
@@ -140,17 +134,17 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
      inwvar(proc_pv[4].par_ty,proc_pv[4].par_va.lit.adr_va,0,NULL,&litval);
      }
 /*
-***Slut.
+***The end.
 */
    return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short evnmlv()
 
-/*      Evaluates procedure NAME_LEVEL().
+/*      Evaluates MBS procedure NAME_LEVEL().
  *
  *      Error: IN5792 = Error when executing procedure %s
  *

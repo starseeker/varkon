@@ -28,8 +28,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)2004, Johan Kjellander, Örebro university, Sweden
-*
 ***********************************************************************/
 
 #include "../include/DB.h"
@@ -193,7 +191,7 @@ static DBptr     xf_la    = DBNULL;
           if ( (mshptr->pv_m=(DBVertex *)v3mall(mshptr->nv_m*sizeof(DBVertex),"DBread_mesh")) == NULL )
             {
             sprintf(errbuf,"%d",mshptr->nv_m);
-            return(erpush("GM1103",errbuf));
+            return(erpush("DB1103",errbuf));
             }
           rddat2((char *)mshptr->pv_m,mshptr->pvarr_m,mshptr->nv_m*sizeof(DBVertex));
           vrt_la = mshptr->pvarr_m;
@@ -212,7 +210,7 @@ static DBptr     xf_la    = DBNULL;
           if ( (mshptr->ph_m=(DBHedge *)v3mall(mshptr->nh_m*sizeof(DBHedge),"DBread_mesh")) == NULL )
             {
             sprintf(errbuf,"%d",mshptr->nh_m);
-            return(erpush("GM1103",errbuf));
+            return(erpush("DB1103",errbuf));
             }
           rddat2((char *)mshptr->ph_m,mshptr->pharr_m,mshptr->nh_m*sizeof(DBHedge));
           hdg_la = mshptr->pharr_m;
@@ -231,7 +229,7 @@ static DBptr     xf_la    = DBNULL;
           if ( (mshptr->pf_m=(DBFace *)v3mall(mshptr->nf_m*sizeof(DBFace),"DBread_mesh")) == NULL )
             {
             sprintf(errbuf,"%d",mshptr->nf_m);
-            return(erpush("GM1103",errbuf));
+            return(erpush("DB1103",errbuf));
             }
           rddat2((char *)mshptr->pf_m,mshptr->pfarr_m,mshptr->nf_m*sizeof(DBFace));
           fac_la = mshptr->pfarr_m;
@@ -250,7 +248,7 @@ static DBptr     xf_la    = DBNULL;
           if ( (mshptr->px_m=(DBfloat *)v3mall(mshptr->nx_m*sizeof(DBfloat),"DBread_mesh")) == NULL )
             {
             sprintf(errbuf,"%d",mshptr->nx_m);
-            return(erpush("GM1103",errbuf));
+            return(erpush("DB1103",errbuf));
             }
           rddat2((char *)mshptr->px_m,mshptr->pxarr_m,mshptr->nx_m*sizeof(DBfloat));
           xf_la = mshptr->pxarr_m;
@@ -326,7 +324,7 @@ static DBptr     xf_la    = DBNULL;
       if ( (mshptr->pv_m=(DBVertex *)v3mall(mshptr->nv_m*sizeof(DBVertex),"DBalloc_mesh")) == NULL )
         {
         sprintf(errbuf,"%d",mshptr->nv_m);
-        return(erpush("GM1103",errbuf));
+        return(erpush("DB1103",errbuf));
         }
       }
     else
@@ -341,7 +339,7 @@ static DBptr     xf_la    = DBNULL;
       if ( (mshptr->ph_m=(DBHedge *)v3mall(mshptr->nh_m*sizeof(DBHedge),"DBalloc_mesh")) == NULL )
         {
         sprintf(errbuf,"%d",mshptr->nh_m);
-        return(erpush("GM1103",errbuf));
+        return(erpush("DB1103",errbuf));
         }
       }
     else
@@ -356,7 +354,7 @@ static DBptr     xf_la    = DBNULL;
       if ( (mshptr->pf_m=(DBFace *)v3mall(mshptr->nf_m*sizeof(DBFace),"DBalloc_mesh")) == NULL )
         {
         sprintf(errbuf,"%d",mshptr->nf_m);
-        return(erpush("GM1103",errbuf));
+        return(erpush("DB1103",errbuf));
         }
       }
     else
@@ -371,7 +369,7 @@ static DBptr     xf_la    = DBNULL;
       if ( (mshptr->px_m=(DBfloat *)v3mall(mshptr->nx_m*sizeof(DBfloat),"DBalloc_mesh")) == NULL )
         {
         sprintf(errbuf,"%d",mshptr->nx_m);
-        return(erpush("GM1103",errbuf));
+        return(erpush("DB1103",errbuf));
         }
       }
     else

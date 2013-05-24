@@ -1,0 +1,35 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- Running Varkon in batch mode})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Running Varkon in batch mode</h1>
+
+<p>
+If you want Varkon to start with a specific module, execute
+it automatically and then exit without having made any output
+to the display you can supply the <code>-b</code> parameter to Varkon in the
+start script when Varkon is started. This is called "batch mode".
+</p>
+
+<p>
+If you want to run Varkon in batch mode it is important to use a
+start script where you also supply the job directory and the job
+name on the line that starts Varkon. Here is an example:
+</p>
+
+<p><pre class=box>
+&nbsp;$VARKON_BIN/xvarkon module_name -jd/home/my_application/job -b
+</pre></p>
+
+<p>
+Error messages issued by Varkon while in batch mode are written
+to the file <code>Varkon.LOG</code> in the job directory.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

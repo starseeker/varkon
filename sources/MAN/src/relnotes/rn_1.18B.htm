@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>VARKON - A Parametric CAD-tool</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
+	<META NAME="AUTHOR" CONTENT="Johan Kjellander">
+	<META NAME="CREATED" CONTENT="20070816;13092700">
+	<META NAME="CHANGEDBY" CONTENT="Johan Kjellander">
+	<META NAME="CHANGED" CONTENT="20070823;10330800">
+	<META NAME="DESCRIPTION" CONTENT="The homepage of the VARKON system">
+	<META NAME="KEYWORDS" CONTENT="CAD, parametric design, geometric modeling, variation, visualization">
+	<META HTTP-EQUIV="expires" CONTENT="Tue, 10 Aug 1996 14:26:12 CET">
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P ALIGN=RIGHT><A HREF="http://sourceforge.net/"><IMG SRC="http://sflogo.sourceforge.net/sflogo.php?group_id=195464&amp;type=4" NAME="graphics1" ALT="SourceForge.net Logo" ALIGN=BOTTOM WIDTH=125 HEIGHT=37 BORDER=0></A>
+</P>
+<P><HR></P>
+<B><FONT SIZE=4><P ALIGN="CENTER">Release notes for VARKON version 1.18B</P>
+</B></FONT><P ALIGN="CENTER">&nbsp;</P>
+<U><P>What is Varkon 1.18B ?</P>
+</U><P>Varkon 1.18B is a prerelease of the next major version. Varkon 1.18B is only released as sourcecode and only for Unix and Linux (not for Microsoft Windows). Varkon 1.18B includes new functionality and bug fixes (see below) but also a major rewrite of large portions of the sourcecode as a preparation for a new GraphicalUserInterface that is in early stages of planning. We want to release the sources at this stage in order to get help with testing. We also encourage all users of Varkon to contribute in the discussion of the new GUI on the Varkon mailing list at: <A HREF="http://lists.berlios.de/mailman/listinfo/varkon-discuss">http://lists.berlios.de/mailman/listinfo/varkon-discuss</A> and please also visit the Varkon resource site at <A HREF="http://www.varkon.org/">www.varkon.org</A> and try Armin Faltl's GUI demo.</P>
+<P>If you are satisfied with the functionality of 1.18A we recommend you to stay with this version but if you need the new functionality of 1.18B or just want to help us with testing please download the sources of 1.18B and build the new system. All feedback is highly appreciated !</P>
+<P>&nbsp;</P>
+<U><P>New functionality</P>
+</U><P>A new IGES import library with support for many new entities has been developed. See $VARKON_ROOT/sources/Vlib/iges/README_IGES for details.</P>
+<P>A new function for detailed analysis of geometric properties of surfaces is added to the analysis menu.</P>
+<P>A new MBS function POS_IN_CONE() has been added that makes it possible to search for points inside a cone quickly.</P>
+<P>MBS procedures for multiplication TFORM_MULT() and inversion TFORM_INV() of 4X4 transformation matrices have been added.</P>
+<P>A new MBS procedure CUR_COMP_ARR() has been added. The function can be used to create composite curves in the same
+way as CUR_COMP, but the input data are given in an array. The function can optionally bee used to create uv-curves
+-This is a preparation for trimmed surfaces.</P>
+<P>NURBS curves can now be translated using tcopy.</P>
+<P>The DynR function (OpenGL window) now supports all entities and all attributes in Varkon. This is a preparation for the new GUI.</P>
+<P>The Varkon documentation is now included in all download files in the $VARKON_ROOT/man directory. Varkon documentation can no longer be downloaded separately.</P>
+<P>It is no longer needed to set the VARKON_ROOT variable in the environment to build and/or run Varkon. Makefiles and start scripts now operate relative to their own location. You can still configure Varkon to run in custom ways by editing the startscript.</P>
+<P>&nbsp;</P>
+<U><P>Functionality removed</P>
+</U><P>As a preparation for the new GUI we have also removed the following functionality which we believe is no longer needed:</P>
+<P>Support for drawing scale is removed.</P>
+<P>Support for older type serial graphical terminals is removed. Varkon now requiers X11 and OpenGL on all Unix platforms. Varkon 1.18B will not compile without X11 and OpenGL.</P>
+<P>&nbsp;</P>
+<U><P>Bug fixes</P>
+</U><P>Bugfix SUR_ROT to ensure that surface normal always will turn out in the same direction.</P>
+<P>Bugfix in DB to cope with large models.</P>
+<P>Bugfix in EX to ensure that deleted entities are removed from the display.</P>
+<P>Bugfix in graphics to cope with slow resizing of windows in Linux.</P>
+<P>Bugfix related to changed mouse behaviour in recent Window managers for Linux. Actions are now triggered by mouse button up.</P>
+<P>Bugfix related to changed c-compiler in some recent Linux distributions. -fwritable-strings are now removed from the makefiles.
+</P>
+<P>&nbsp;</P>
+<P></></P>
+<P><HR></P>
+<P ALIGN="CENTER"><A HREF="../index.htm">VARKON homepage</A></P></BODY>
+</HTML>

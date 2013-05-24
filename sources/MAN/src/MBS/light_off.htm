@@ -1,0 +1,52 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- light_off - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>light_off - Procedure</h1>
+
+<h2>Description</h2>
+
+<p>
+Turns off a lightsource. The light is not deleted but will be invisible
+until you turn it on again with <a href="light_on.htm">light_on()</a>.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  light_off(light);
+
+  int light;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>light</td>
+<td>- Light source number (0-7)</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Comments</h2>
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="light_on.htm">light_on()</a>,
+<a href="cre_light.htm">cre_light()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)
+

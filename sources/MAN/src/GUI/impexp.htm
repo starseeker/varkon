@@ -1,0 +1,71 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Import and export})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Import and export</h1>
+
+<h2>DXF</h2>
+
+<p>
+The DXF format was originally defined as a DrawingeXchangeFormat
+for AutoCAD but is now widley used to exchange 2D geometry between
+systems of various kinds. DXF also has support for simple 3D geometry.
+Varkon supports import of DXF files through a module library, see
+VARKON_ROOT/sources/Vlib/dxf. Import is limited to support only the
+most common entities and attributes of the DXF specification.
+</p>
+
+<p>
+Varkon DXF export supports all Varkon entities. Varkon entities
+that are not supported by the DXF specification are converted to
+the DXF POLYLINE entity.
+</p>
+
+
+<h2>IGES</h2>
+
+<p>
+The ANSI IGES format is supported by most CAD systems, primarily for
+import and export of 3D wireframe and surface geometry. Varkon supports
+import of IGES files through a module library. See the README_IGES
+in VARKON_ROOT/sources/Vlib/iges for more info on the IGES import library.
+</p>
+
+<p>
+Varkon does not support IGES export.
+</p>
+
+<h2>STL</h2>
+
+<p>
+STL was originally defined as a file format for rapid prototyping using
+STereoLitografy. It is a simple 3D format limited to plane triangular
+facets. Varkon supports import of STL files in text or binary format.
+Each facet in the STL file is mapped to a b_plane in Varkon.
+</p>
+
+<p>
+Varkon supports export of b_planes, facet surfaces and mesh
+entities on STL text format.
+</p>
+
+<h2>PLT</h2>
+
+<p>
+The PLT format is used by Varkon primarily for printing and plotting
+but can also be used for static 2D symbols. The PLT format conforms
+to the ISO GKS Metafile format specification for 2D vector graphics.
+Varkon supports export of all entities on PLT format.
+</p>
+
+<p>
+Varkon supports import of PLT files through the MBS SYMB() procedure.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,6 +1,6 @@
 !*******************************************************
 
-  GLOBAL GEOMETRY MODULE dxf_arc3(
+  GLOBAL MODULE dxf_arc3(
   VAR FILE   infil;
   VAR INT    levant;
   VAR STRING levnam(500)*40;

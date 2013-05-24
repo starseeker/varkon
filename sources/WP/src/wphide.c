@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    WPhide();  Display hidden line image
 *
@@ -300,6 +300,7 @@ end:
    DBTmat    pmat;
    DBSeg    *segptr,arcseg[4];
    DBSegarr *pborder, *piso;
+   DBCsys    csy;
 
 /*
 ***Div. initiering.
@@ -409,57 +410,57 @@ loop:
        DBread_text(&gmpost.txt_un,str,la);
        if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         WPpltx(&gmpost.txt_un,str,&k,x,y,z,a);
+         WPpltx(&gmpost.txt_un,(unsigned char *)str,&k,x,y,z,a);
          }
        break;
 /*
 ***Linear dimension.
 */
        case LDMTYP:
-       DBread_ldim(&gmpost.ldm_un,la);
+       DBread_ldim(&gmpost.ldm_un,&csy,la);
        if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         WPplld(&gmpost.ldm_un,&k,x,y,z,a);
+         WPplld(&gmpost.ldm_un,&csy,&k,x,y,z,a);
          }
        break;
 /*
 ***Diameter dimension.
 */
        case CDMTYP:
-       DBread_cdim(&gmpost.cdm_un,la);
+       DBread_cdim(&gmpost.cdm_un,&csy,la);
        if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         WPplcd(&gmpost.cdm_un,&k,x,y,z,a);
+         WPplcd(&gmpost.cdm_un,&csy,&k,x,y,z,a);
          }
        break;
 /*
 ***Radius dimension.
 */
        case RDMTYP:
-       DBread_rdim(&gmpost.rdm_un,la);    
+       DBread_rdim(&gmpost.rdm_un,&csy,la);
        if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         WPplrd(&gmpost.rdm_un,&k,x,y,z,a);
+         WPplrd(&gmpost.rdm_un,&csy,&k,x,y,z,a);
          }
        break;
 /*
 ***Angular dimension.
 */
        case ADMTYP:
-       DBread_adim(&gmpost.adm_un,la);
+       DBread_adim(&gmpost.adm_un,&csy,la);
        if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         WPplad(&gmpost.adm_un,scale,&k,x,y,z,a);
+         WPplad(&gmpost.adm_un,&csy,scale,&k,x,y,z,a);
          }
        break;
 /*
 ***Hatch.
 */
        case XHTTYP:
-       DBread_xhatch(&gmpost.xht_un,xhcrds,la);
+       DBread_xhatch(&gmpost.xht_un,xhcrds,&csy,la);
        if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         WPplxh(&gmpost.xht_un,xhcrds,&k,x,y,z,a);
+         WPplxh(&gmpost.xht_un,xhcrds,&csy,&k,x,y,z,a);
          }
        break;
 /*

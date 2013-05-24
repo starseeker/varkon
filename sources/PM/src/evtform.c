@@ -4,7 +4,7 @@
 *    =========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
@@ -41,6 +41,7 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
+#include "../../GE/include/GE.h"
 #include "../../EX/include/EX.h"
 
 extern V2REFVA *geop_id;  /* ingeop.c *identp  Storhetens ID */
@@ -536,15 +537,13 @@ extern PMPARVA *proc_pv;  /*          Access structure for MBS routines */
    ingval(valadr+3*radsiz+2*fltsiz,arrtyp.base_arr,FALSE,&fval);
    tr2.g43 = fval.lit.float_va;
    ingval(valadr+3*radsiz+3*fltsiz,arrtyp.base_arr,FALSE,&fval);
-   tr2.g44 = fval.lit.float_va; 
-  
-   
-   status = GEtform_mult(&tr1,&tr2,&tr3);
+   tr2.g44 = fval.lit.float_va;
 
+   status = GEtform_mult(&tr1,&tr2,&tr3);
 /*
 ***Returnera .
 */
-     matpek = &tr3; 
+     matpek = (DBfloat *)&tr3; 
 
      for ( i=0; i<4; ++i )
         {
@@ -591,7 +590,7 @@ extern PMPARVA *proc_pv;  /*          Access structure for MBS routines */
 
      DBTmat  tr1;
      DBTmat  tr2;
-     
+
      int     radsiz,fltsiz;
      PMLITVA fval;
      STTYTBL typtbl;
@@ -657,7 +656,7 @@ extern PMPARVA *proc_pv;  /*          Access structure for MBS routines */
 /*
 ***Returnera .
 */
-     matpek = &tr2; 
+     matpek = (DBfloat *)&tr2; 
 
      for ( i=0; i<4; ++i )
         {

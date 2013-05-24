@@ -4,26 +4,24 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
-*    evon()      evaluate on function 
-*    evend()     evaluate end function 
-*    evstrt()    evaluate start function 
+*    evon()      evaluate on function
+*    evend()     evaluate end function
+*    evstrt()    evaluate start function
 *    evion()     evaluate inv_on function
 *    evtang()    evaluate tang function
 *    evitan()    evaluate inv_tang function
 *    evcurv()    evaluate curv function
 *    evicur()    evaluate inv_curv function
-*    evarcl()    evaluate arcl function 
-*    eviarc()    evaluate inv_arcl function 
+*    evarcl()    evaluate arcl function
+*    eviarc()    evaluate inv_arcl function
 *    evcent()    evaluate center function
 *    evnorm()    evaluate norm function
-*    evsect()    evaluate intersect function 
-*    evnsec()    evaluate n_intersect function 
-*    evvec()     evaluate vec function 
-*    evvecp()    evaluate vecp function
+*    evsect()    evaluate intersect function
+*    evnsec()    evaluate n_intersect function
 *
 *    evrefc();   evaluate REFC
 *    evvecl();   evaluate VECL
@@ -534,83 +532,6 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*!******************************************************/
 
-        short evvec()
-
-/*      Evaluate function VEC.
- *
- *      In: Global func_pv  => Parameter value array
- *
- *      Ut: Global*func_vp  = Referens.
- *
- *      FV:   return - error severity code
- *
- *      (C)microform ab 1985-10-23 Per-Ove Agne'
- *
- *      1999-11-12 Rewritten, R. Svedin
- *      2001-03-05 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
-
-  {
-/*
-***assign VEC , result type VEC
-*/
-   func_vp->lit.vec_va.x_val = func_pv[ 1 ].par_va.lit.float_va;
-   func_vp->lit.vec_va.y_val = func_pv[ 2 ].par_va.lit.float_va;
-
-   if ( modtyp == 2 )
-       func_vp->lit.vec_va.z_val = 0.0;
-   else
-       func_vp->lit.vec_va.z_val = func_pv[ 3 ].par_va.lit.float_va;
-
-   return( 0 );
-  }  
-
-/*!******************************************************/
-/*!******************************************************/
-
-        short evvecp()
-
-/*      Evaluate function VECP.
- *
- *      In: Global func_pv  => Parameter value array
- *
- *      Ut: Global*func_vp  = Referens.
- *
- *      FV:   return - error severity code
- *
- *      (C)microform ab 1985-10-23 Per-Ove Agne'
- *
- *      1999-11-12 Rewritten, R. Svedin
- *      2001-03-05 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
-
-  {
-   v2float  radius;       /* parameters for VECP */
-   v2float  angel;        /*      - " -          */
-   v2float  zcomp;        /*      - " -          */
-
-   radius = func_pv[ 1 ].par_va.lit.float_va;
-   angel  = func_pv[ 2 ].par_va.lit.float_va;
-   if ( modtyp == _2D )
-       zcomp  = 0.0;
-   else
-       zcomp  = func_pv[ 3 ].par_va.lit.float_va;
-
-/*
-***calculate VECP , result type VEC
-*/
-   func_vp->lit.vec_va.x_val = radius * COS(angel*DGTORD);
-   func_vp->lit.vec_va.y_val = radius * SIN(angel*DGTORD);
-   func_vp->lit.vec_va.z_val = zcomp;
-
-   return( 0 );
-  }  
-
-/*!******************************************************/
-/*!******************************************************/
-
         short evrefc()
 
 /*      Evaluerar funktionen REFC.
@@ -878,4 +799,3 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 }
 
 /********************************************************/
-

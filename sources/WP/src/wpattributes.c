@@ -4,7 +4,7 @@
 *    ==============
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -395,35 +395,34 @@ loop:
    fbutlen = 1.2*WPstrl("AAA");
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty = bh + ly + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "PFONT :","PFONT :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"PFONT :",&but_id);
 
    butx  += butlen + ly;
    if ( actfbut == 0 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND3,WP_FGND,&fnt0_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND2,WP_FGND,&fnt0_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt0_id].ptr;
    strcpy(butptr->tt_str,fnt0tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 1 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND3,WP_FGND,&fnt1_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND2,WP_FGND,&fnt1_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt1_id].ptr;
    strcpy(butptr->tt_str,fnt1tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 2 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND3,WP_FGND,&fnt2_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND2,WP_FGND,&fnt2_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt2_id].ptr;
    strcpy(butptr->tt_str,fnt2tip);
@@ -432,8 +431,7 @@ loop:
 */
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "PSIZE :","PSIZE :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"PSIZE :",&but_id);
 
    butx  += butlen + ly;
    sprintf(defstr,"%g",defnap.psize);
@@ -445,26 +443,25 @@ loop:
 ***A 3D line.
 */
    buty += bh + bh;
-   WPmcbu(iwin_id,main_dx/8,buty-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,main_dx/8,buty,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,main_dx/8,buty,7*main_dx/8,buty);
 /*
 ***Okey, reject and help buttons.
 */
    butx = ly;
    buty += ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
                   okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    butx += butlen2 + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    butx = main_dx - ly - butlen2;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -622,35 +619,34 @@ loop:
    fbutlen = 1.2*WPstrl("AAA");
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty = bh + ly + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "LFONT  :","LFONT  :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"LFONT  :",&but_id);
 
    butx  += butlen + ly;
    if ( actfbut == 0 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND3,WP_FGND,&fnt0_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND2,WP_FGND,&fnt0_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt0_id].ptr;
    strcpy(butptr->tt_str,fnt0tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 1 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND3,WP_FGND,&fnt1_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND2,WP_FGND,&fnt1_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt1_id].ptr;
    strcpy(butptr->tt_str,fnt1tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 2 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND3,WP_FGND,&fnt2_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND2,WP_FGND,&fnt2_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt2_id].ptr;
    strcpy(butptr->tt_str,fnt2tip);
@@ -659,8 +655,7 @@ loop:
 */
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "LDASHL :","LDASHL :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"LDASHL :",&but_id);
 
    butx  += butlen + ly;
    sprintf(defstr,"%g",defnap.ldashl);
@@ -672,26 +667,25 @@ loop:
 ***A 3D line.
 */
    buty += bh + bh;
-   WPmcbu(iwin_id,main_dx/8,buty-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,main_dx/8,buty,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,main_dx/8,buty,7*main_dx/8,buty);
 /*
 ***Okey, reject and help buttons.
 */
    butx = ly;
    buty += ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
                   okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    butx += butlen2 + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    butx = main_dx - ly - butlen2;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -849,35 +843,34 @@ loop:
    fbutlen = 1.2*WPstrl("AAA");
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty = bh + ly + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "AFONT  :","AFONT  :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"AFONT  :",&but_id);
 
    butx  += butlen + ly;
    if ( actfbut == 0 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND3,WP_FGND,&fnt0_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND2,WP_FGND,&fnt0_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt0_id].ptr;
    strcpy(butptr->tt_str,fnt0tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 1 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND3,WP_FGND,&fnt1_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND2,WP_FGND,&fnt1_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt1_id].ptr;
    strcpy(butptr->tt_str,fnt1tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 2 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND3,WP_FGND,&fnt2_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND2,WP_FGND,&fnt2_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt2_id].ptr;
    strcpy(butptr->tt_str,fnt2tip);
@@ -886,8 +879,7 @@ loop:
 */
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "ADASHL :","ADASHL :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"ADASHL :",&but_id);
 
    butx  += butlen + ly;
    sprintf(defstr,"%g",defnap.adashl);
@@ -899,26 +891,25 @@ loop:
 ***A 3D line.
 */
    buty += bh + bh;
-   WPmcbu(iwin_id,main_dx/8,buty-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,main_dx/8,buty,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,main_dx/8,buty,7*main_dx/8,buty);
 /*
 ***Okey, reject and help buttons.
 */
    butx = ly;
    buty += ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
                   okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    butx += butlen2 + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    butx = main_dx - ly - butlen2;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -1059,7 +1050,7 @@ loop:
 /*
 ***Curve window geometry.
 */
-   butlen  = 1.2*WPstrl("PFONT :");
+   butlen  = 1.2*WPstrl("CDASHL :");
    edlen   = 1.2*WPstrl("123.456_");
 
    if      ( defnap.cfont == 0 ) actfbut = 0;
@@ -1072,35 +1063,34 @@ loop:
    fbutlen = 1.2*WPstrl("AAA");
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty = bh + ly + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "CFONT :","CFONT :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"CFONT  :",&but_id);
 
    butx  += butlen + ly;
    if ( actfbut == 0 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND3,WP_FGND,&fnt0_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND2,WP_FGND,&fnt0_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt0_id].ptr;
    strcpy(butptr->tt_str,fnt0tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 1 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND3,WP_FGND,&fnt1_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND2,WP_FGND,&fnt1_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt1_id].ptr;
    strcpy(butptr->tt_str,fnt1tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 2 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND3,WP_FGND,&fnt2_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND2,WP_FGND,&fnt2_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt2_id].ptr;
    strcpy(butptr->tt_str,fnt2tip);
@@ -1109,8 +1099,7 @@ loop:
 */
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "CDASHL :","CDASHL :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"CDASHL :",&but_id);
 
    butx  += butlen + ly;
    sprintf(defstr,"%g",defnap.cdashl);
@@ -1122,26 +1111,25 @@ loop:
 ***A 3D line.
 */
    buty += bh + bh;
-   WPmcbu(iwin_id,main_dx/8,buty-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,main_dx/8,buty,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,main_dx/8,buty,7*main_dx/8,buty);
 /*
 ***Okey, reject and help buttons.
 */
    butx = ly;
    buty += ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
                   okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    butx += butlen2 + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    butx = main_dx - ly - butlen2;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -1282,15 +1270,14 @@ loop:
 /*
 ***Surface window geometry.
 */
-   butlen  = 1.2*WPstrl("TWIDTH :");
+   butlen  = 1.2*WPstrl("SDASHL :");
    edlen   = 1.2*WPstrl("123.456_");
 /*
 ***SDASHL label and edit.
 */
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty = bh + ly + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "SDASHL  :","SDASHL  :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"SDASHL  :",&but_id);
 
    butx  += butlen + ly;
    sprintf(ddshstr,"%g",defnap.sdashl);
@@ -1303,8 +1290,7 @@ loop:
 */
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "NULINES :","NULINES :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"NULINES :",&but_id);
 
    butx  += butlen + ly;
    sprintf(dnulstr,"%d",defnap.nulines);
@@ -1316,8 +1302,7 @@ loop:
 */
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "NVLINES :","NVLINES :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"NVLINES :",&but_id);
 
    butx  += butlen + ly;
    sprintf(dnvlstr,"%d",defnap.nvlines);
@@ -1328,26 +1313,25 @@ loop:
 ***A 3D line.
 */
    buty += bh + bh;
-   WPmcbu(iwin_id,main_dx/8,buty-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,main_dx/8,buty,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,main_dx/8,buty,7*main_dx/8,buty);
 /*
 ***Okey, reject and help buttons.
 */
    butx = ly;
    buty += ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
                   okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    butx += butlen2 + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    butx = main_dx - ly - butlen2;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -1473,8 +1457,7 @@ loop:
 */
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty = bh + ly + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "TSIZE  :","TSIZE  :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"TSIZE  :",&but_id);
 
    butx  += butlen + ly;
    sprintf(dsizstr,"%g",defnap.tsize);
@@ -1487,8 +1470,7 @@ loop:
 */
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "TWIDTH :","TWIDTH :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"TWIDTH :",&but_id);
 
    butx  += butlen + ly;
    sprintf(dwdtstr,"%g",defnap.twidth);
@@ -1500,8 +1482,7 @@ loop:
 */
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "TSLANT :","TSLANT :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"TSLANT :",&but_id);
 
    butx  += butlen + ly;
    sprintf(dsntstr,"%g",defnap.tslant);
@@ -1514,25 +1495,24 @@ loop:
    fbutlen = 1.2*WPstrl("AAA");
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "TFONT  :","TFONT  :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"TFONT  :",&but_id);
 
    butx  += butlen + ly;
    if ( actfbut == 0 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND3,WP_FGND,&fnt0_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND2,WP_FGND,&fnt0_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt0_id].ptr;
    strcpy(butptr->tt_str,fnt0tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 1 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND3,WP_FGND,&fnt1_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND2,WP_FGND,&fnt1_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt1_id].ptr;
    strcpy(butptr->tt_str,fnt1tip);
@@ -1542,25 +1522,24 @@ loop:
    fbutlen = 1.2*WPstrl("AAA");
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "TPMODE :","TPMODE :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"TPMODE :",&but_id);
 
    butx  += butlen + ly;
    if ( acttbut == 0 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND3,WP_FGND,&tpm0_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND2,WP_FGND,&tpm0_id);
    butptr = (WPBUTT *)iwinpt->wintab[tpm0_id].ptr;
    strcpy(butptr->tt_str,tpm0tip);
 
    butx  += fbutlen + ly;
    if ( acttbut == 1 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND3,WP_FGND,&tpm1_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND2,WP_FGND,&tpm1_id);
    butptr = (WPBUTT *)iwinpt->wintab[tpm1_id].ptr;
    strcpy(butptr->tt_str,tpm1tip);
@@ -1568,26 +1547,25 @@ loop:
 ***A 3D line.
 */
    buty += bh + bh;
-   WPmcbu(iwin_id,main_dx/8,buty-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,main_dx/8,buty,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,main_dx/8,buty,7*main_dx/8,buty);
 /*
 ***Okey, reject and help buttons.
 */
    butx = ly;
    buty += ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
                   okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    butx += butlen2 + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    butx = main_dx - ly - butlen2;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -1771,35 +1749,34 @@ loop:
    fbutlen = 1.2*WPstrl("AAA");
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty = bh + ly + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "XFONT  :","XFONT  :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"XFONT  :",&but_id);
 
    butx  += butlen + ly;
    if ( actfbut == 0 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND3,WP_FGND,&fnt0_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "0","0","",WP_BGND2,WP_FGND,&fnt0_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt0_id].ptr;
    strcpy(butptr->tt_str,fnt0tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 1 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND3,WP_FGND,&fnt1_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "1","1","",WP_BGND2,WP_FGND,&fnt1_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt1_id].ptr;
    strcpy(butptr->tt_str,fnt1tip);
 
    butx  += fbutlen + ly;
    if ( actfbut == 2 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND3,WP_FGND,&fnt2_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,fbutlen,bh,(short)1,
                     "2","2","",WP_BGND2,WP_FGND,&fnt2_id);
    butptr = (WPBUTT *)iwinpt->wintab[fnt2_id].ptr;
    strcpy(butptr->tt_str,fnt2tip);
@@ -1808,8 +1785,7 @@ loop:
 */
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "XDASHL :","XDASHL :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"XDASHL :",&but_id);
 
    butx  += butlen + ly;
    sprintf(defstr,"%g",defnap.xdashl);
@@ -1821,26 +1797,25 @@ loop:
 ***A 3D line.
 */
    buty += bh + bh;
-   WPmcbu(iwin_id,main_dx/8,buty-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,main_dx/8,buty,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,main_dx/8,buty,7*main_dx/8,buty);
 /*
 ***Okey, reject and help buttons.
 */
    butx = ly;
    buty += ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
                   okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    butx += butlen2 + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    butx = main_dx - ly - butlen2;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -1994,8 +1969,7 @@ loop:
 */
    butx = (main_dx - (butlen + ly + edlen))/3;
    buty = bh + ly + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "DTSIZ :","DTSIZ :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"DTSIZ :",&but_id);
 
    butx  += butlen + ly;
    sprintf(dtsizstr,"%g",defnap.dtsize);
@@ -2008,8 +1982,7 @@ loop:
 */
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "DASIZ :","DASIZ :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"DASIZ :",&but_id);
 
    butx  += butlen + ly;
    sprintf(dasizstr,"%g",defnap.dasize);
@@ -2021,8 +1994,7 @@ loop:
 */
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "DNDIG :","DNDIG :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"DNDIG :",&but_id);
 
    butx  += butlen + ly;
    sprintf(dndigstr,"%d",defnap.dndig);
@@ -2035,25 +2007,24 @@ loop:
    abutlen = 1.2*WPstrl("AAA");
    butx  = (main_dx - (butlen + ly + edlen))/3;
    buty += bh + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen,bh,(short)0,
-                  "DAUTO :","DAUTO :","",WP_BGND1,WP_FGND,&but_id);
+   WPcrlb((wpw_id)iwin_id,butx,buty,butlen,bh,"DAUTO :",&but_id);
 
    butx  += butlen + ly;
    if ( actabut == 0 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,abutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,abutlen,bh,(short)1,
                     "0","0","",WP_BGND3,WP_FGND,&auto0_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,abutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,abutlen,bh,(short)1,
                     "0","0","",WP_BGND2,WP_FGND,&auto0_id);
    butptr = (WPBUTT *)iwinpt->wintab[auto0_id].ptr;
    strcpy(butptr->tt_str,autotip);
 
    butx  += abutlen + ly;
    if ( actabut == 1 )
-     WPmcbu((wpw_id)iwin_id,butx,buty,abutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,abutlen,bh,(short)1,
                     "1","1","",WP_BGND3,WP_FGND,&auto1_id);
    else
-     WPmcbu((wpw_id)iwin_id,butx,buty,abutlen,bh,(short)1,
+     WPcrpb((wpw_id)iwin_id,butx,buty,abutlen,bh,(short)1,
                     "1","1","",WP_BGND2,WP_FGND,&auto1_id);
    butptr = (WPBUTT *)iwinpt->wintab[auto1_id].ptr;
    strcpy(butptr->tt_str,autotip);
@@ -2061,26 +2032,25 @@ loop:
 ***A 3D line.
 */
    buty += bh + bh;
-   WPmcbu(iwin_id,main_dx/8,buty-1,6*main_dx/8,1,(short)0,"","","",WP_BOTS,WP_BOTS,&but_id);
-   WPmcbu(iwin_id,main_dx/8,buty,6*main_dx/8,1,(short)0,"","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,main_dx/8,buty,7*main_dx/8,buty);
 /*
 ***Okey, reject and help buttons.
 */
    butx = ly;
    buty += ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)3,
                   okey,okey,"",WP_BGND2,WP_FGND,&okey_id);
    butptr = (WPBUTT *)iwinpt->wintab[okey_id].ptr;
    strcpy(butptr->tt_str,okeytt);
 
    butx += butlen2 + ly;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   reject,reject,"",WP_BGND2,WP_FGND,&reject_id);
    butptr = (WPBUTT *)iwinpt->wintab[reject_id].ptr;
    strcpy(butptr->tt_str,rejecttt);
 
    butx = main_dx - ly - butlen2;
-   WPmcbu((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
+   WPcrpb((wpw_id)iwin_id,butx,buty,butlen2,bh,(short)2,
                   help,help,"",WP_BGND2,WP_FGND,&help_id);
    butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
    strcpy(butptr->tt_str,helptt);
@@ -2209,10 +2179,10 @@ loop:
 */
    butx = 0;
    if ( actbut == 1 )
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             poitxt,poitxt,"",WP_BGND3,WP_FGND,&ebut_id[0]);
    else
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             poitxt,poitxt,"",WP_BGND2,WP_FGND,&ebut_id[0]);
    butptr = (WPBUTT *)iwinpt->wintab[ebut_id[0]].ptr;
    strcpy(butptr->tt_str,poitip);
@@ -2221,10 +2191,10 @@ loop:
 */
    butx += butlen1;
    if ( actbut == 2 )
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             lintxt,lintxt,"",WP_BGND3,WP_FGND,&ebut_id[1]);
    else
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             lintxt,lintxt,"",WP_BGND2,WP_FGND,&ebut_id[1]);
    butptr = (WPBUTT *)iwinpt->wintab[ebut_id[1]].ptr;
    strcpy(butptr->tt_str,lintip);
@@ -2233,10 +2203,10 @@ loop:
 */
    butx += butlen1;
    if ( actbut == 3 )
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             arctxt,arctxt,"",WP_BGND3,WP_FGND,&ebut_id[2]);
    else
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             arctxt,arctxt,"",WP_BGND2,WP_FGND,&ebut_id[2]);
    butptr = (WPBUTT *)iwinpt->wintab[ebut_id[2]].ptr;
    strcpy(butptr->tt_str,arctip);
@@ -2245,10 +2215,10 @@ loop:
 */
    butx += butlen1;
    if ( actbut == 4 )
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             curtxt,curtxt,"",WP_BGND3,WP_FGND,&ebut_id[3]);
    else
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             curtxt,curtxt,"",WP_BGND2,WP_FGND,&ebut_id[3]);
    butptr = (WPBUTT *)iwinpt->wintab[ebut_id[3]].ptr;
    strcpy(butptr->tt_str,curtip);
@@ -2257,10 +2227,10 @@ loop:
 */
    butx += butlen1;
    if ( actbut == 5 )
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             surtxt,surtxt,"",WP_BGND3,WP_FGND,&ebut_id[4]);
    else
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             surtxt,surtxt,"",WP_BGND2,WP_FGND,&ebut_id[4]);
    butptr = (WPBUTT *)iwinpt->wintab[ebut_id[4]].ptr;
    strcpy(butptr->tt_str,surtip);
@@ -2269,10 +2239,10 @@ loop:
 */
    butx += butlen1;
    if ( actbut == 6 )
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             txttxt,txttxt,"",WP_BGND3,WP_FGND,&ebut_id[5]);
    else
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             txttxt,txttxt,"",WP_BGND2,WP_FGND,&ebut_id[5]);
    butptr = (WPBUTT *)iwinpt->wintab[ebut_id[5]].ptr;
    strcpy(butptr->tt_str,txttip);
@@ -2281,10 +2251,10 @@ loop:
 */
    butx += butlen1;
    if ( actbut == 7 )
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             xhttxt,xhttxt,"",WP_BGND3,WP_FGND,&ebut_id[6]);
    else
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             xhttxt,xhttxt,"",WP_BGND2,WP_FGND,&ebut_id[6]);
    butptr = (WPBUTT *)iwinpt->wintab[ebut_id[6]].ptr;
    strcpy(butptr->tt_str,xhttip);
@@ -2293,10 +2263,10 @@ loop:
 */
    butx += butlen1;
    if ( actbut == 8 )
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             dimtxt,dimtxt,"",WP_BGND3,WP_FGND,&ebut_id[7]);
    else
-     WPmcbu(iwin_id,butx,0,butlen1,bh,1,
+     WPcrpb(iwin_id,butx,0,butlen1,bh,1,
             dimtxt,dimtxt,"",WP_BGND2,WP_FGND,&ebut_id[7]);
    butptr = (WPBUTT *)iwinpt->wintab[ebut_id[7]].ptr;
    strcpy(butptr->tt_str,dimtip);

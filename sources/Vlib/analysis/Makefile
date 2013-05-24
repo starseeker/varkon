@@ -66,20 +66,14 @@ OBJECTS = $(LIBDIR)/l_akedja.MBO     \
           $(LIBDIR)/l_invtan.MBO     \
           $(LIBDIR)/l_ligm.MBO       \
           $(LIBDIR)/l_lisp.MBO       \
-          $(LIBDIR)/l_lniv1.MBO      \
-          $(LIBDIR)/l_lniv2.MBO      \
           $(LIBDIR)/l_pcen.MBO       \
           $(LIBDIR)/l_rmbs1.MBO      \
           $(LIBDIR)/l_rmbs2.MBO      \
           $(LIBDIR)/l_searea.MBO     \
-          $(LIBDIR)/l_sniv1.MBO      \
-          $(LIBDIR)/l_sniv2.MBO      \
           $(LIBDIR)/l_stjobb.MBO     \
           $(LIBDIR)/l_suarea.MBO     \
           $(LIBDIR)/l_sureval.MBO    \
-          $(LIBDIR)/l_sysdat.MBO     \
-          $(LIBDIR)/l_tniv1.MBO      \
-          $(LIBDIR)/l_tniv2.MBO
+          $(LIBDIR)/l_sysdat.MBO
 
 # The rule for compiling MBS sources and moving
 # the MBO-module to the Varkon library

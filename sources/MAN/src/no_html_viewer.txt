@@ -1,0 +1,51 @@
+
+Hi,
+
+This is the default help text for Varkon. The Varkon help-
+system displays html pages from the Varkon documentation.
+To do that Varkon must know which html reader you prefer.
+
+If this text is displayed you have not yet configured your
+varkon system to use a html reader (web browser) or the
+configuration you have is not working properly.
+
+This is how you configure your html reader:
+
+1. Move yourself to VARKON_ROOT/cnf/ini/english
+   (or VARKON_ROOT/cnf/ini/swedish if you use the
+   swedish version of Varkon).
+   VARKON_ROOT is the directory where you have
+   installed you Varkon system.
+
+2. Open the file named linux in a text editor
+
+3. Find the following lines:
+
+!***Suse Linux with KDE can use Konqueror
+!varkon.html_viewer:             konqueror
+!
+!***Many Linux systems use firefox or seamonkey
+!varkon.html_viewer:             firefox
+!varkon.html_viewer:             seamonkey
+!
+!***Mozilla may also work
+!varkon.html_viewer:             mozilla
+!
+!***The following line will spawn the default browser on MacOSX systems
+!varkon.html_viewer:             open
+
+4. Uncomment (remove the exclamation mark on) the line including the
+   browser you want to use or add a line with the name of another browser.
+   (If you get another browser working, please let us know so we can include
+   it in the ini file for the next release of Varkon)
+
+5. Close the file and restart Varkon. Press F1, <CTRL>a or any
+   Help-button to verify that your browser configuration is working
+   correctly. If it does, your browser will start and display
+   Varkon documentation. If not, try another browser or post a
+   message about your problem on the Varkon mailing list.
+
+6. Next time you install a new version of Varkon you will have to repeat
+   this procedure. To avoid this we recommend you create a personal
+   ini-file. How to do this is described in the Ini-files section of
+   the System administrators manual.

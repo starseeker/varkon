@@ -4,10 +4,11 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  IGhelp();    Interactiv help system                             */
+/*  IGhelp();       Interactive context sensitive help system       */
+/*  IGabout_help(); List help about help                            */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -32,25 +33,25 @@
 #include "../include/IG.h"
 #include "../../WP/include/WP.h"
 #include "../../EX/include/EX.h"
-#include <string.h>
 
-extern char  hlpdir[];
-extern char  actpnm[];
-extern short mstack[];
-extern short actfun,mant;
+extern char  jobdir[],actpnm[];
+extern short mstack[],mant;
+extern int   actfunc;
 
-#ifdef WIN32
-extern HWND ms_main;
-#endif
+/*
+***Internal function prototypes.
+*/
+static short display_file(char *file_name);
+static int   exec_html_viewer(char *file_path);
 
-static short iglhlp(char *hlpnam);
-
-/*!******************************************************/
+/********************************************************/
 
         short IGhelp()
 
 /*      Displays help on currently active function,
- *      menu eller module.
+ *      menu or module. A help file name is formed
+ *      from the menu number, module name or function
+ *      number.
  *
  *      Global variable actfun = -1 => menu
  *                               -2 => module
@@ -59,55 +60,90 @@ static short iglhlp(char *hlpnam);
  *      (C)microform ab 13/10/86 J. Kjellander
  *
  *      1998-10-30 HTML, J.Kjellander
+ *      2007-12-01 2.0, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
-    char  filnam[JNLGTH+5];
+    char  file_name[JNLGTH+5];
     short mnum;
 
 /*
-***Module, use module name.
+***A module is executing or being called, use module name.
 */
-    if ( actfun == -2 )
+    if ( actfunc == -2 )
       {
-      strcpy(filnam,actpnm);
+      strncpy(file_name,actpnm,JNLGTH+5);
       }
 /*
-***Menu, make name from menu number.
+***A menu is active, make name from menu number.
 */
-    else if ( actfun == -1 )
+    else if ( actfunc == -1 )
       {
       if ( (mnum=mstack[mant-1]) == 0 ) mnum = IGgmmu();
-      filnam[0] = 'm';
-      sprintf(&filnam[1],"%d",mnum);
+      file_name[0] = 'm';
+      sprintf(&file_name[1],"%d",mnum);
       }
 /*
 ***Function, make name from function number.
 */
     else
       {
-      if      ( actfun < 10  ) sprintf(filnam,"f00%d",actfun);
-      else if ( actfun < 100 ) sprintf(filnam,"f0%d",actfun);
-      else                     sprintf(filnam,"f%d",actfun);
+      if      ( actfunc < 10  ) sprintf(file_name,"f00%d",actfunc);
+      else if ( actfunc < 100 ) sprintf(file_name,"f0%d",actfunc);
+      else                      sprintf(file_name,"f%d",actfunc);
       }
 /*
 ***Display.
 */
-    return(iglhlp(filnam));
+    return(display_file(file_name));
   }
 
-/*!******************************************************/
-/*!******************************************************/
+/********************************************************/
+/********************************************************/
 
-static short iglhlp(char *hlpnam)
+        short IGabout_help()
 
-/*      Display's help text.
+/*      Displays help about help.
  *
- *      In: hlpnam = File name.
- *                   partnamn, m+number or f+number
+ *      (C)2007-12-11 J.Kjellander
  *
- *      Felkoder: IG0202 = Kan ej hitta hjälpfilen %s
+ ********************************************************/
+
+  {
+   int oldafu;
+
+/*
+***Save actfunc and temporarily set it to 153 so
+***that f153.htm is displayed.
+*/
+   oldafu = actfunc;
+   actfunc = 153;
+/*
+***Display.
+*/
+   IGhelp();
+/*
+***Reset actfunc.
+*/
+   actfunc = oldafu;
+/*
+***The end.
+*/
+   return(0);
+  }
+
+/********************************************************/
+/********************************************************/
+
+static short display_file(char *file_name)
+
+/*      Display's a html help file.
+ *
+ *      In: file_name = File name.
+ *                      partname, m+number or f+number
+ *
+ *      Return: IG0202 = Can't find help file %s
  *
  *      (C)microform ab 13/10/86 J. Kjellander
  *
@@ -115,129 +151,139 @@ static short iglhlp(char *hlpnam)
  *      15/2/95  VARKON_DOC, J. Kjellander
  *      1998-10-30 HTML, J.Kjellander
  *      1999-03-09 WIN32, J.Kjellander
+ *      2007-12-01 2.0, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
-    char   filnam[V3PTHLEN+1];
-    char   linbuf[V3STRLEN+1];
-    char   htmcmd[V3STRLEN+1];
-    char   oscmd[512];
-    short  status;
-    FILE  *hlpfil;
+   char   file_path[V3PTHLEN+1];
+   char   linbuf[V3STRLEN+1];
+   short  status;
+   int    last,exec_status;
+   FILE  *hlpfil;
 
 /*
-***Var finns filen. Prova först på hlpdir, dvs. det
-***aktuella projektets hjälpkatalog.
+***Global variable actfunc is used to determine what
+***state the system is in. actfunc = 1 means that the
+***system is starting and has not yet entered the main
+***loop. During this time the WPselect_sysmode() dialog
+***may be displayed and help requested from the user.
+***This case is specially treated by displaying the top
+***help file $VARKON_DOC/index.htm.
+***During startup jobdir is not yet defined.
 */
-    if ( IGgrst("html_viewer",htmcmd) )
-      {
-      strcpy(filnam,hlpdir);
-      strcat(filnam,hlpnam);
-      strcat(filnam,".htm");
-      if ( IGfacc(filnam,'R') ) goto show;
-      erpush("IG0202",filnam);
-      }
+   if ( actfunc == 1 )
+     {
+     sprintf(file_path,"%sindex.htm",IGgenv(VARKON_DOC));
+     if ( IGfacc(file_path,'R') ) goto show;
+     else return(erpush("IG0202",file_path));
+     }
+/*
+***Where is the html file ? First try on jobdir.
+*/
+   strcpy(file_path,jobdir);
+   strcat(file_path,file_name);
+   strcat(file_path,".htm");
+   if ( IGfacc(file_path,'R') ) goto show;
+   else                         erpush("IG0202",file_path);
+/*
+***The file was not found in jobdir.
+***Try $VARKON_DOC/GUI.
+*/
+   sprintf(file_path,"%sGUI/%s.htm",IGgenv(VARKON_DOC),file_name);
+   if ( IGfacc(file_path,'R') ) goto show;
+   else                         erpush("IG0202",file_path);
+/*
+***Still no file found. Try with default filenames
+***menudoc.htm/partdoc.htm/funcdoc.htm on $VARKON_DOC/GUI
+*/
+   if      ( actfunc == -1 ) strcpy(file_name,"menudoc");
+   else if ( actfunc == -2 ) strcpy(file_name,"partdoc");
+   else                      strcpy(file_name,"funcdoc");
 
-    strcpy(filnam,hlpdir);
-    strcat(filnam,hlpnam);
-    strcat(filnam,".txt");
-    if ( IGfacc(filnam,'R') ) goto show;
-    erpush("IG0202",filnam);
+   sprintf(file_path,"%sGUI/%s.htm",IGgenv(VARKON_DOC),file_name);
+   if ( IGfacc(file_path,'R') ) goto show;
+   else                         erpush("IG0202",file_path);
 /*
-***Om det inte gick, prova istället VARKON_DOC-katalogen.
+***Nothing left to do but error message.
 */
-    if ( IGgrst("html_viewer",htmcmd) )
-      {
-#ifdef UNIX
-      sprintf(filnam,"%sv_man/%s.htm",IGgenv(VARKON_DOC),hlpnam);
-#endif
-#ifdef WIN32
-      sprintf(filnam,"%sv_man\\%s.htm",IGgenv(VARKON_DOC),hlpnam);
-#endif
-      if ( IGfacc(filnam,'R') ) goto show;
-      erpush("IG0202",filnam);
-      }
-#ifdef UNIX
-    sprintf(filnam,"%sv_man/%s.txt",IGgenv(VARKON_DOC),hlpnam);
-#endif
-#ifdef WIN32
-    sprintf(filnam,"%sv_man\\%s.txt",IGgenv(VARKON_DOC),hlpnam);
-#endif
-    if ( IGfacc(filnam,'R') ) goto show;
-    erpush("IG0202",filnam);
+   errmes();
+   return(0);
 /*
-***Om det inte gick, prova default hjälpfil för menyer och parter.
-*/
-    if ( actfun < 0 )
-      {
-      if      ( actfun == -1 ) strcpy(hlpnam,"menydoc");
-      else if ( actfun == -2 ) strcpy(hlpnam,"partdoc");
-
-      if ( IGgrst("html_viewer",htmcmd) )
-        {
-#ifdef UNIX
-        sprintf(filnam,"%sv_man/%s.htm",IGgenv(VARKON_DOC),hlpnam);
-#endif
-#ifdef WIN32
-        sprintf(filnam,"%sv_man\\%s.htm",IGgenv(VARKON_DOC),hlpnam);
-#endif
-        if ( IGfacc(filnam,'R') ) goto show;
-        erpush("IG0202",filnam);
-        }
-#ifdef UNIX
-      sprintf(filnam,"%sv_man/%s.txt",IGgenv(VARKON_DOC),hlpnam);
-#endif
-#ifdef WIN32
-      sprintf(filnam,"%sv_man\\%s.txt",IGgenv(VARKON_DOC),hlpnam);
-#endif
-      if ( IGfacc(filnam,'R') ) goto show;
-      erpush("IG0202",filnam);
-      }
-/*
-***Om det fortfarande inte gick, felmeddelande.
-*/
-    errmes();
-    return(0);
-/*
-***Fil har hittats. Töm felstacken och visa filen.
-***Om HTML-viewer finns, använd den.
+***A file is found. Display using html viewer if possible.
 */
 show:
-     erinit();
+   erinit();
+   exec_status = exec_html_viewer(file_path);
 
-     if ( IGgrst("html_viewer",htmcmd) )
+   if ( exec_status == 0 ) return(0);
+   else
+     {
+     sprintf(file_path,"%sno_html_viewer.txt",IGgenv(VARKON_DOC));
+     if ( !IGfacc(file_path,'R') ) return(erpush("IG0202",file_path));
+     }
+/*
+***If html viewer is not avalable, use a list window.
+*/
+   strcpy(linbuf,"Helpfile: ");
+   strcat(linbuf,file_path);
+   if ( (status=WPinla(linbuf)) < 0 ) goto end;
+/*
+***List the file. Strip newlines and returns.
+*/
+   hlpfil = fopen(file_path,"r"); 
+   while(fgets(linbuf,V3STRLEN,hlpfil) != NULL)
+     {
+     last = strlen(linbuf) - 1;
+     if ( linbuf[last] == '\n' )
        {
-       sprintf(oscmd,"(%s %s)&",htmcmd,filnam);
-       EXos(oscmd,2);
-       return(0);
+       linbuf[last] = '\0';
+     --last;
        }
+     if ( linbuf[last] == '\r' ) linbuf[last] = '\0';
+     WPalla(linbuf,(short)1);
+     }
+
+   WPexla(TRUE);
 /*
-***Om inte använder vi listarean.
-*/
-    IGplma(" ",IG_MESS);
-    strcpy(linbuf,IGgtts(358));
-    strcat(linbuf,filnam);
-    WPinla(linbuf);
-/*
-***Lista filen. Newline-tecken strippas bort.
-*/
-    hlpfil = fopen(filnam,"r"); 
-    while(fgets(linbuf,V3STRLEN,hlpfil) != NULL)
-      {
-      linbuf[strlen(linbuf)-1] = '\0';
-      if ( (status=WPalla(linbuf,(short)1)) < 0 ) goto end;
-      }
-/*
-***Återställ listarean..
-*/
-    status = WPexla(TRUE);
-/*
-***Avslutning.
+***The end.
 */
 end:
-    fclose(hlpfil);
-    IGrsma();
-    return(status);
+   fclose(hlpfil);
+   return(status);
   }
+
+/********************************************************/
+/********************************************************/
+
+static int exec_html_viewer(char *file_path)
+
+/*      Executes the html_viewer.
+ *
+ *      In: file = html file (path+name)
+ *
+ *      Return: 0 = Ok.
+ *             -1 = No viewer available
+ *
+ *      (C)2007-12-11 J.Kjellander
+ *
+ ********************************************************/
+
+ {
+   char  viewer[V3STRLEN],cmd[V3STRLEN+V3PTHLEN];
+
+/*
+***Check that the "html_viewer" resource is defined.
+***TODO: Check if the viewer specified exists.
+*/
+   if ( !IGgrst("html_viewer",viewer) ) return(-1);
+
+   sprintf(cmd,"(%s %s)&",viewer,file_path);
+   EXos(cmd,2);
+/*
+***The end.
+*/
+   return(0);
+  }
+
 /********************************************************/

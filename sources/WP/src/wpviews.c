@@ -4,11 +4,11 @@
 *    =========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
-*    WPview_dialogue();       The view dialogue
+*    WPview_dialog();         The view dialog
 *    WPinit_views();          Creates default views
 *    WPcreate_view();         Adds a view to wpviewtab[]
 *    WPdelete_view();         Deletes a view in wpviewtab[]
@@ -40,6 +40,8 @@
 #include <math.h>
 #include <string.h>
 
+extern int actfunc; /* For the help system */
+
 /*
 ***wpviewtab[] holds named WPVIEW's for graphical windows.
 */
@@ -51,16 +53,16 @@ static int  iwin_y;          /* even after a user move */
 
 /*!******************************************************/
 
-         short WPview_dialogue(DBint grw_id)
+         short WPview_dialog(DBint grw_id)
 
 /*      The view dialogue.
  *
- *      In:  gwinpt  = C ptr to WPGWIN or NULL.
- *           rwinpt  = C ptr to WRGWIN or NULL.
- *           wintype = TYP_GWIN or TYP_RWIN.
- *           x,y     = Pos of activating button.
+ *      In:  grw_id = ID of graphical window.
  *
  *      (C)2007-02-05 J.Kjellander
+ *
+ *      2007-08-31 Added WPrepaint at extit, J.Kjellander
+ *      2007-09-22 Bug repaint, J.Kjellander
  *
  ******************************************************!*/
 
@@ -68,10 +70,11 @@ static int  iwin_y;          /* even after a user move */
    char    *namlst[WPMAXVIEWS],rubrik[81],view_name[WPVNLN+1],
            *str,close[81],help[81],save[81],delete[81],
             csys[81],camera[81],ed_pmt[81],buf[81],csystt[81],
-            cameratt[81],savett[81],deletett[81];
+            cameratt[81],savett[81],deletett[81],closett[81],
+            helptt[81];
    char    *typ[20];
    int      n_views,actalt,i,rad,radant,wm_x1,wm_y1,wm_x2,wm_y2,
-            wintype;
+            wintype,actfunc_org;
    short    status,main_dx,main_dy,alt_x,alt_y,uph,lowh,uplen,
             lowlen1,lowlen2,dx_up,dx_low,ly,lm;
    DBint    iwin_id,alt_id[WP_IWSMAX],but_id,help_id,close_id,
@@ -94,6 +97,11 @@ static int  iwin_y;          /* even after a user move */
    WPBUTT  *butptr;
    WPEDIT  *edtptr;
 
+/*
+***Set actfunc, see IG/include/futab.h.
+*/
+   actfunc_org = actfunc;
+   actfunc = 102;
 /*
 ***Is this the first time this function is called ?
 ***Initial window position.
@@ -168,7 +176,9 @@ start:
    if ( !WPgrst("varkon.view.delete.text",delete) )      strcpy(delete,"Delete");
    if ( !WPgrst("varkon.view.delete.tooltip",deletett) ) strcpy(deletett,"");
    if ( !WPgrst("varkon.input.close",close) )            strcpy(close,"Close");
+   if ( !WPgrst("varkon.input.close.tooltip",closett) )  strcpy(closett,"");
    if ( !WPgrst("varkon.input.help",help) )              strcpy(help,"Help");
+   if ( !WPgrst("varkon.input.help.tooltip",helptt) )    strcpy(helptt,"");
 
    strcpy(ed_pmt,IGgtts(1662));
 /*
@@ -258,10 +268,10 @@ start:
      str    = namlst[4*rad];
 
      if ( 4*rad == actalt )
-       status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
+       status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
                                str,str,"",WP_BGND3,WP_FGND,&alt_id[4*rad]);
      else
-       status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
+       status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
                                str,str,"",WP_BGND2,WP_FGND,&alt_id[4*rad]);
 /*
 ***Button in the 2:nd column.
@@ -272,10 +282,10 @@ start:
        str    = namlst[(4*rad)+1];
 
        if ( (4*rad)+1 == actalt )
-         status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
+         status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
                           str,str,"",WP_BGND3,WP_FGND,&alt_id[(4*rad)+1]);
        else
-         status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
+         status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
                           str,str,"",WP_BGND2,WP_FGND,&alt_id[(4*rad)+1]);
        }
 /*
@@ -287,10 +297,10 @@ start:
        str    = namlst[(4*rad)+2];
 
        if ( (4*rad)+2 == actalt )
-         status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
+         status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
                           str,str,"",WP_BGND3,WP_FGND,&alt_id[(4*rad)+2]);
        else
-         status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
+         status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
                           str,str,"",WP_BGND2,WP_FGND,&alt_id[(4*rad)+2]);
        }
 /*
@@ -302,10 +312,10 @@ start:
        str    = namlst[(4*rad)+3];
 
        if ( (4*rad)+3 == actalt )
-         status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
+         status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
                           str,str,"",WP_BGND3,WP_FGND,&alt_id[(4*rad)+3]);
        else
-         status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
+         status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,uplen,uph,(short)1,
                           str,str,"",WP_BGND2,WP_FGND,&alt_id[(4*rad)+3]);
        }
      }
@@ -314,22 +324,19 @@ start:
 */
    alt_x  = main_dx/8;;
    alt_y  = radant*(uph + ly) + lowh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y-1,6*main_dx/8,1,(short)0,
-                           "","","",WP_BOTS,WP_BOTS,&but_id);
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,6*main_dx/8,1,(short)0,
-                           "","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,alt_x,alt_y,alt_x + 6*main_dx/8,alt_y);
 /*
 ***Csys and Camera.
 */
    alt_x  = ly;
    alt_y  += lowh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)2,
                            csys,csys,"",WP_BGND2,WP_FGND,&csys_id);
    butptr = (WPBUTT *)iwinpt->wintab[csys_id].ptr;
    strcpy(butptr->tt_str,csystt);
 
    alt_x  = ly + lowlen1 + lm;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)2,
                            camera,camera,"",WP_BGND2,WP_FGND,&camera_id);
    butptr = (WPBUTT *)iwinpt->wintab[camera_id].ptr;
    strcpy(butptr->tt_str,cameratt);
@@ -338,13 +345,13 @@ start:
 */
    alt_x  = ly;
    alt_y += ly + lowh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)2,
                            save,save,"",WP_BGND2,WP_FGND,&save_id);
    butptr = (WPBUTT *)iwinpt->wintab[save_id].ptr;
    strcpy(butptr->tt_str,savett);
 
    alt_x  = ly + lowlen1 + lm;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)2,
                            delete,delete,"",WP_BGND2,WP_FGND,&delete_id);
    butptr = (WPBUTT *)iwinpt->wintab[delete_id].ptr;
    strcpy(butptr->tt_str,deletett);
@@ -353,8 +360,8 @@ start:
 */
    alt_x  = ly;
    alt_y += lowh + lowh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,WPstrl(ed_pmt),lowh,(short)0,
-                           ed_pmt,ed_pmt,"",WP_BGND1,WP_FGND,&edit_id);
+   status = WPcrlb((wpw_id)iwin_id,alt_x,alt_y,WPstrl(ed_pmt),lowh,
+                           ed_pmt,&edit_id);
 
    alt_x  = ly + WPstrl(ed_pmt) + lm;
    status = WPmced((wpw_id)iwin_id,alt_x,alt_y,lowlen1,lowh,(short)1,
@@ -366,21 +373,22 @@ start:
 */
    alt_x  = main_dx/8;
    alt_y += lowh + lowh;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y-1,6*main_dx/8,1,(short)0,
-                           "","","",WP_BOTS,WP_BOTS,&but_id);
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,6*main_dx/8,1,(short)0,
-                           "","","",WP_TOPS,WP_TOPS,&but_id);
+   WPcreate_3Dline(iwin_id,alt_x,alt_y,alt_x + 6*main_dx/8,alt_y);
 /*
 ***Close and help.
 */
    alt_x  = ly;
    alt_y += ly;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,lowlen2,lowh,(short)3,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,lowlen2,lowh,(short)3,
                            close,close,"",WP_BGND2,WP_FGND,&close_id);
+   butptr = (WPBUTT *)iwinpt->wintab[close_id].ptr;
+   strcpy(butptr->tt_str,closett);
 
    alt_x  = main_dx - ly - lowlen2;
-   status = WPmcbu((wpw_id)iwin_id,alt_x,alt_y,lowlen2,lowh,(short)2,
+   status = WPcrpb((wpw_id)iwin_id,alt_x,alt_y,lowlen2,lowh,(short)2,
                            help,help,"",WP_BGND2,WP_FGND,&help_id);
+   butptr = (WPBUTT *)iwinpt->wintab[help_id].ptr;
+   strcpy(butptr->tt_str,helptt);
 /*
 ***Show the dialogue.
 */
@@ -406,10 +414,10 @@ loop:
    if ( but_id == csys_id )
      {
      XUnmapWindow(xdisp,iwinpt->id.x_id);
-     WPwlma(IGgtts(271));
+     WPaddmess_mcwin(IGgtts(271),WP_MESSAGE);
      type = CSYTYP;
      status = IGgsid(csy_id,&type,&dum,&dum,0);
-     WPwlma("");
+     WPclear_mcwin();
      XMapWindow(xdisp,iwinpt->id.x_id);
      if ( status < 0 ) goto loop;
 
@@ -461,9 +469,9 @@ loop:
    else if ( but_id == camera_id )
      {
      XUnmapWindow(xdisp,iwinpt->id.x_id);
-     WPwlma(IGgtts(330));
+     WPaddmess_mcwin(IGgtts(330),WP_MESSAGE);
      status=IGcpov((DBVector *)&campos);
-     WPwlma("");
+     WPclear_mcwin();
      XMapWindow(xdisp,iwinpt->id.x_id);
      if ( status < 0 ) WPbell();
      else
@@ -507,7 +515,7 @@ loop:
          strcpy(new_view.name,view_name);
          strcpy(gwinpt->vy.name,view_name);
          WPcreate_view(&new_view,VIEW_3D_AND_2D);
-         WPupwb(gwinpt);
+         WPtitle_GWIN(gwinpt);
          }
        else
          {
@@ -567,6 +575,7 @@ loop:
          if ( wintype == TYP_RWIN )
            {
            WPactivate_view(namlst[i],NULL,rwinpt,TYP_RWIN);
+           glXMakeCurrent(xdisp,rwinpt->id.x_id,rwinpt->rc);
            WPsodl_all(rwinpt);
            XCopyArea(xdisp,rwinpt->id.x_id,rwinpt->savmap,rwinpt->win_gc,
                      0,0,rwinpt->geo.dx,rwinpt->geo.dy,0,0);
@@ -596,14 +605,26 @@ update:
    WPwdel(iwin_id);
    goto start;
 /*
-***Time to exit.
+***Time to exit. Reset global actfunc and remeber window position.
 */
 exit:
+   actfunc = actfunc_org;
    WPgtwp(iwinpt->id.x_id,&wm_x2,&wm_y2);
    iwin_x = iwin_x + wm_x2 - wm_x1;
    iwin_y = iwin_y + wm_y2 - wm_y1;
    WPwdel(iwin_id);
-
+/*
+***If the view dialog overlaps the WPRWIN 
+***(which is rather likley) it seems that the
+***area under the view dialog is not restored
+***correctly. I can't figure out why. An extra
+***WPsodl_all() here does not help but a full
+***repaint helps.
+*/
+  if ( wintype == TYP_RWIN ) WPrepaint_RWIN(rwinpt->id.w_id,FALSE);
+/*
+***The end.
+*/
    return(status);
  }
 
@@ -913,6 +934,8 @@ exit:
  *
  *      (C)2007-02-11 J.Kjellander
  *
+ *      2007-08-31 Bugfix WPRWIN, J.Kjellander
+ *
  ******************************************************!*/
 
   {
@@ -920,13 +943,16 @@ exit:
    int     i;
    char    errbuf[81];
    WPGWIN *gwinpt;
+   WPRWIN *rwinpt;
 
 /*
 ***Initiering.
 */
    hit = FALSE;
 /*
-***Look upp all WPGWIN's.
+***Look upp all WPGWIN's and WPRWIN's and
+***activate the view of each window. If the
+***view does not exist, activate "xy" instead.
 */
    for ( i=0; i<WTABSIZ; ++i)
      {
@@ -937,12 +963,18 @@ exit:
          gwinpt = (WPGWIN *)wpwtab[i].ptr;
          if ( win_id == gwinpt->id.w_id  ||  win_id == GWIN_ALL )
            {
-/*
-***Activate the view of this window. If the view does not exist,
-***try activating "xy" instead.
-*/
            if ( WPactivate_view(gwinpt->vy.name,gwinpt,NULL,TYP_GWIN) < 0 )
              WPactivate_view("xy",gwinpt,NULL,TYP_GWIN);
+           hit = TRUE;
+           }
+         }
+       else if ( wpwtab[i].typ == TYP_RWIN )
+         {
+         rwinpt = (WPRWIN *)wpwtab[i].ptr;
+         if ( win_id == rwinpt->id.w_id  ||  win_id == GWIN_ALL )
+           {
+           if ( WPactivate_view(rwinpt->vy.name,NULL,rwinpt,TYP_RWIN) < 0 )
+             WPactivate_view("xy",NULL,rwinpt,TYP_RWIN);
            hit = TRUE;
            }
          }
@@ -1031,7 +1063,7 @@ exit:
        V3MOME(&minwin,&gwinpt->vy.modwin,sizeof(VYWIN));
        }
      WPnrgw(gwinpt);
-     WPupwb(gwinpt);
+     WPtitle_GWIN(gwinpt);
      }
 /*
 ***The end.
@@ -1053,79 +1085,106 @@ exit:
         DBTmat *vymat,
         double *persp)
 
-/*      X-versionen av MBS-GET_VIEW.
+/*      Used by MBS procedure GET_VIEW().
  *
- *      In: win_id = ID för aktuellt fönster.
+ *      In: win_id = ID of requested window.
  *
- *      Ut: *vynamn = Vy:ns namn.
- *          *skala  = Aktuell skala.
- *          *xmin   = Aktuellt modellfönster.
- *          *ymin   =         -""-
- *          *xmax   =         -""-
- *          *ymax   =         -""-
- *          *vymat  = Aktuell 3D-transformation.
- *          *persp  = Perspektivavstånd.
+ *      Out: *vynamn = View name.
+ *           *skala  = Current scale.
+ *           *xmin   = Current model window.
+ *           *ymin   =         -""-
+ *           *xmax   =         -""-
+ *           *ymax   =         -""-
+ *           *vymat  = Current 3D-transformation.
+ *           *persp  = Perspective distance.
  *
- *      Felkod: WP1402 = Fönster med id %s finns ej
+ *      Error: WP1402 = Window %s does not exist.
+ *             WP1742 = Window %s is of illegal type.
  *
- *      (C)microform ab 16/1/95 J. Kjellander
+ *      (C)2007-11-30 J.Kjellander
  *
  ******************************************************!*/
 
   {
-   char    errbuf[81];
+   char    errbuf[V3STRLEN];
    WPWIN  *winptr;
    WPGWIN *gwinpt;
+   WPRWIN *rwinpt;
+   WPVIEW *viewpt;
+   WPWGEO *geopt;
 
 /*
-***Fixa C-pekare till WPGWIN-fönstret.
+***Get C ptrs to the window data.
 */
-   if ( (winptr=WPwgwp((wpw_id)win_id)) != NULL  &&
-         winptr->typ == TYP_GWIN )
+   if ( (winptr=WPwgwp((wpw_id)win_id)) != NULL )
      {
-     gwinpt = (WPGWIN *)winptr->ptr;
+     if ( winptr->typ == TYP_GWIN )
+       {
+       gwinpt = (WPGWIN *)winptr->ptr;
+       geopt  = &gwinpt->geo;
+       viewpt = &gwinpt->vy;
+       }
+     else if ( winptr->typ == TYP_RWIN )
+       {
+       rwinpt = (WPRWIN *)winptr->ptr;
+       geopt  = &rwinpt->geo;
+       viewpt = &rwinpt->vy;
+       }
+/*
+***Illegal window type.
+*/
+     else
+       {
+       sprintf(errbuf,"%d",win_id);
+       return(erpush("WP1742",errbuf));
+       }
      }
+/*
+***Window does not exist.
+*/
    else
      {
      sprintf(errbuf,"%d",win_id);
      return(erpush("WP1402",errbuf));
      }
 /*
-***Returnera vydata.
+***Return view data.
 */
-   strcpy(vynamn,gwinpt->vy.name);
+   strcpy(vynamn,viewpt->name);
 
-  *skala = gwinpt->geo.psiz_x*
-          (gwinpt->vy.scrwin.xmax - gwinpt->vy.scrwin.xmin) /
-          (gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin);
+  *skala = geopt->psiz_x*
+          (viewpt->scrwin.xmax - viewpt->scrwin.xmin) /
+          (viewpt->modwin.xmax - viewpt->modwin.xmin);
 
-  *xmin  = gwinpt->vy.modwin.xmin;
-  *ymin  = gwinpt->vy.modwin.ymin;
-  *xmax  = gwinpt->vy.modwin.xmax;
-  *ymax  = gwinpt->vy.modwin.ymax;
+  *xmin  = viewpt->modwin.xmin;
+  *ymin  = viewpt->modwin.ymin;
+  *xmax  = viewpt->modwin.xmax;
+  *ymax  = viewpt->modwin.ymax;
 
-   vymat->g11 = gwinpt->vy.matrix.k11;
-   vymat->g12 = gwinpt->vy.matrix.k12;
-   vymat->g13 = gwinpt->vy.matrix.k13;
+   vymat->g11 = viewpt->matrix.k11;
+   vymat->g12 = viewpt->matrix.k12;
+   vymat->g13 = viewpt->matrix.k13;
    vymat->g14 = 0.0;
 
-   vymat->g21 = gwinpt->vy.matrix.k21;
-   vymat->g22 = gwinpt->vy.matrix.k22;
-   vymat->g23 = gwinpt->vy.matrix.k23;
+   vymat->g21 = viewpt->matrix.k21;
+   vymat->g22 = viewpt->matrix.k22;
+   vymat->g23 = viewpt->matrix.k23;
    vymat->g24 = 0.0;
 
-   vymat->g31 = gwinpt->vy.matrix.k31;
-   vymat->g32 = gwinpt->vy.matrix.k32;
-   vymat->g33 = gwinpt->vy.matrix.k33;
+   vymat->g31 = viewpt->matrix.k31;
+   vymat->g32 = viewpt->matrix.k32;
+   vymat->g33 = viewpt->matrix.k33;
    vymat->g34 = 0.0;
 
    vymat->g41 = 0.0;
    vymat->g42 = 0.0;
    vymat->g43 = 0.0;
    vymat->g44 = 1.0;
-  
-  *persp = gwinpt->vy.pdist;
 
+  *persp = viewpt->pdist;
+/*
+***The end.
+*/
    return(0);
   }
 

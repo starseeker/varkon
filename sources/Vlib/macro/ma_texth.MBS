@@ -1,13 +1,13 @@
 !*******************************************************
 
- MACRO DRAWING MODULE ma_texth(
-  VECTOR p2        >"t259";     ! Ange slutposition !
-  FLOAT  v:=0      >"t274";     ! Ange vinkel !
-  STRING s*132     >"t10");     ! Ange sträng !
+ MACRO MODULE ma_texth(
+  VECTOR p2        >"t259";     ! End position !
+  FLOAT  v:=0      >"t274";     ! Angle !
+  STRING s*132     >"t10");     ! String !
 
-!*      Skapar högerjusterad text.
+!*      Create a right justified text.
 !*
-!*      (C)microform ab 11/5/92 J. Kjellander
+!*      (C)2008-01-07 J.Kjellander
 !*
 !*******************************************************
 
@@ -18,11 +18,14 @@
  beginmodule
 
 !*
-!***Beräkna textens startposition.
+!***Calculate text start position.
 !*
    tl:=textl(s);
-   p1.x:=p2.x-tl*cos(v);  
-   p1.y:=p2.y-tl*sin(v);  
+   p1.x:=p2.x-tl*cos(v);
+   p1.y:=p2.y-tl*sin(v);
+!*
+!***Add the text statement.
+!*
    id:=add_mbs("text","vec("+str(p1.x,-1,5)+","+str(p1.y,-1,5)+")",
            str(v,-1,5),chr(34)+s+chr(34));
 

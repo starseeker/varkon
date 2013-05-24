@@ -2,7 +2,7 @@
 /*  File: ppdef.h                                                   */
 /*  =============                                                   */
 /*                                                                  */
-/* Definition of MBS's internal form.                               */
+/* Definitions for MBS pretty printing (decompiler)                 */
 /*                                                                  */
 /*  This file includes the definition of the last part of the       */
 /*  system global symbol table.                                     */
@@ -27,47 +27,38 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, J. Kjellander johan@microform.se     */
-/*                                                                  */
 /********************************************************************/
-/*         Definitioner för dekompilering.
-*********************************************************************/
 
-/*      Type and constants for operator priority            */
-
+/*
+***Type and constants for operator priority.
+*/
 typedef short ppopri;
 
-#define PP_NOPRI  0      /*  no priority */
-
-#define PP_NOT   10
-#define PP_OR    10
-
-#define PP_AND   15
-
-#define PP_RELOP 20
-
-#define PP_ADDOP 25
-
-#define PP_MULOP 30
-
-#define PP_EXP   35
-
-/*------------------------------------------------------------------------*/
-
-#define MAXIND  50    /* maximum indentation */
-#define PPLINLEN 200  /* length of Pretty's line buffer */
-#define PPVALSLEN 60  /* value string length */
+#define PP_NOPRI    0  /*  No priority */
+#define PP_NOT     10
+#define PP_OR      10
+#define PP_AND     15
+#define PP_RELOP   20
+#define PP_ADDOP   25
+#define PP_MULOP   30
+#define PP_EXP     35
 
 /*
-***CGI:s list-area klarar max 77 tkn. Övriga, vet ej.
+***Indentation.
 */
-#define PPMXLINL 77   /* max line length for output to MBS-file */
+#define DEFINDL     2  /* Default indentation length */
+#define MAXIND     50  /* Maximum indentation */
+
 /*
-***Define:s för PP:s output-moder.
+***Max lengths.
 */
-#define PPSTRING 0      /* Skriv till sträng */
-#define PPIGLIST 1      /* Skicka till list-arean */
-#define PPFILE   2      /* Skicka till fil */
+#define PPLINLEN 1000  /* Length of Pretty's line buffer */
+#define PPVALSLEN  60  /* Value string length */
+#define PPMXLINL   77  /* Max line length for output to MBS-file */
 
-#define DEFINDL  2    /* Default indentation length */
-
+/*
+***Define:s for PP:s output modes.
+*/
+#define PPSTRING    0  /* Write to string */
+#define PPIGLIST    1  /* Write to WPLWIN */
+#define PPFILE      2  /* Write to file */

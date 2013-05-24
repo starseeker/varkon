@@ -8,7 +8,7 @@
 *
 *
 *    This file is part of the VARKON Execute Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -24,8 +24,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*
-*
 *********************************************************/
 
 #include "../../DB/include/DB.h"
@@ -37,17 +35,16 @@
 #include <string.h>
 
 extern char    jobdir[];
-extern char    asydir[];
 extern DBptr   lsysla;
 extern DBTmat *lsyspk;
 extern DBTmat  lklsyi;
 
 /*!******************************************************/
 
-       short EXebpl(
-       DBId   *id,
+       short     EXebpl(
+       DBId     *id,
        DBBplane *bplpek,
-       V2NAPA *pnp)
+       V2NAPA   *pnp)
 
 /*      Skapar B-plan.
  *

@@ -1,8 +1,8 @@
 ##########################################################
 #
-#   Makefile for IGlib with gcc and FreeBSD
+#   Makefile for IGlib on FreeBSD
 #
-#  (C)Microform AB 1999-02-15 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
@@ -11,7 +11,7 @@ RM = rm -f
 CC ?= gcc
 
 CFLAGS +=   -ansi -ffloat-store -fsigned-char \
-            -DUNIX -I/usr/X11R6/include
+            -DUNIX -I/usr/local/include
 
 debug :     CFLAGS += -g -DDEBUG
 

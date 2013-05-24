@@ -1,8 +1,8 @@
 ##########################################################
 #
-#   Makefile for EXlib on GNU/Linux
+#   Makefile for EX on GNU/Linux
 #
-#  (c)2007-02-01 J.Kjellander
+#  (c)2008-01-12 J.Kjellander
 #
 ##########################################################
 
@@ -19,7 +19,7 @@ distr :     CFLAGS =                    \
             -O                          \
             -DUNIX                      \
             -DVARKON
-            
+
 debug :     CFLAGS =                    \
             -ansi                       \
             -Wall                       \
@@ -29,7 +29,6 @@ debug :     CFLAGS =                    \
             -DDEBUG                     \
             -DUNIX                      \
             -DVARKON
-
 
 distr :     RAPCFLAGS =                 \
             -pedantic                   \
@@ -51,8 +50,10 @@ ifeq ($(DV3ODBC),TRUE)
 COMPILE = $(CC) -c $(CFLAGS -DV3_ODBC)
 else
 COMPILE = $(CC) -c $(CFLAGS)
-endif            
-            
+endif
+
 RPCGENERATE = rpcgen
 
 include Makefile.EX
+
+##########################################################

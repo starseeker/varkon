@@ -29,6 +29,7 @@
 */
 #include "geotol.h"
 #include <math.h>
+#include <memory.h>
 
 #ifdef DEBUG
 #include "../../IG/include/debug.h"
@@ -336,19 +337,19 @@ DBstatus GE816(DBVector *pv, DBVector *tv, DBVector *iv, DBfloat pvalue[],
                short npoi, DBTmat *pcrd, DBCurve *curpek, DBSeg *segmnt);
 DBstatus GE817(DBAny *pstr, DBSeg *pseg, DBCurve *pcur_out, DBSeg *pseg_out,
                DBfloat glob_s, DBfloat glob_e);
-DBstatus GE821(DBArc *parc, DBVector *pos, short alt, DBCdim *cdmpek);
-DBstatus GE822(DBArc *parc, DBVector *p1, DBVector *p2, DBRdim *rdmpek);
-DBstatus GE823(DBLine *l1, DBLine *l2, DBVector *p, short alt, DBAdim *admpek);
+DBstatus GE821(DBArc *parc, DBSeg *seg, DBVector *pos, short alt, DBTmat *lsyspk, DBCdim *cdmpek);
+DBstatus GE822(DBArc *parc, DBSeg *seg, DBVector *p1, DBVector *p2, DBTmat *lsyspk, DBRdim *rdmpek);
+DBstatus GE823(DBLine *l1, DBLine *l2, DBVector *p, short alt, DBTmat *lsyspk, DBAdim *admpek);
 
 /* Hatching/area/cgrav. */
 
-DBstatus GEhatch2D(DBLine *lpvek[], short nlin, DBArc *apvek[], short narc,
-                   DBCurve *cpvek[], DBSeg *spvek[], short ncur,
+DBstatus GEhatch2D(DBLine *lpvek[], short nlin, DBArc *apvek[], DBSeg *aspvek[], short narc,
+                   DBCurve *cpvek[], DBSeg *spvek[], short ncur, DBTmat *lsyspk,
                    DBHatch *xhtpek, DBfloat crdvek[]);
-DBstatus GEarea2D(DBLine *lpvek[], short nlin, DBArc *apvek[], short narc,
+DBstatus GEarea2D(DBLine *lpvek[], short nlin, DBArc *apvek[], DBSeg *aspvek[], short narc,
                   DBCurve *cpvek[], DBSeg *spvek[], short ncur, DBfloat dist,
                   DBfloat *area, DBVector *tp);
-DBstatus GEint_2Dlb(DBLine *lpvek[], short nlin, DBArc *apvek[], short narc,
+DBstatus GEint_2Dlb(DBLine *lpvek[], short nlin, DBArc *apvek[], DBSeg *aspvek[], short narc,
                     DBCurve *cpvek[], DBSeg *spvek[], short ncur, DBfloat px,
                     DBfloat py, DBfloat k, DBfloat t[], short *ts);
 

@@ -1,0 +1,161 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Two types of graphical windows})
+define({_INDEXLINK_},{<a href="gwins.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Two types of graphical windows</h1>
+
+<h2></h2>
+
+<p>
+The Varkon developers are currently implementing a new type of
+graphical viewing window that is planned to replace
+the older type default graphics window sometime in the future.
+For this reason Varkon 1.19 includes two types of
+graphical viewing windows, (1)the older type based on X11
+graphics and (2)the newer type window which is based on OpenGL graphics
+and supports shaded images of surfaces with dynamic zoom, pan
+and rotation. With Varkon 1.19 you can use single or multiple
+graphical windows of both types simultaneousley. Use <code>menu/view</code>
+to create additional graphical viewing windows.
+</p>
+
+<h2>The default graphics window based on X11</h2>
+
+<p>
+The default graphics viewing window has a toolbar with 9 buttons
+along the top edge. At its bottom edge it has a scrolling message_and_ command
+window.
+</p>
+
+<img class="center" src="WPGWIN.jpg"></img>
+
+<h3>The buttons are:</h3>
+<ol>
+<li><b>Fit a Rectangle to the Window.</b>
+This is the zoom function. Move the cursor to any position in the window,
+press the left mouse button, hold the button down, move the cursor to
+the diagonally opposite corner of the rectangular area that you want
+to enlarge then release the mouse button.
+</li>
+
+<li><b>Fit the Model to the Window.</b>
+This button automatically scales and orients the model so that it will fit
+the size of the window.
+</li>
+
+<li><b>Set the Scale to Any Value.</b>
+This button lets you enter the desired true display scale factor as a number. A larger
+number gives a larger image. Scale = 1.0 displays the model in its true size.
+</li>
+
+<li><b>Move the Model with the Mouse.</b>
+This is the pan function. Move the cursor to any position in the window,
+press the left mouse button, hold the button down, move the cursor to a
+new position then release the mouse button. Varkon will move the model
+the same distance and direction as if the position where you
+pressed the button was moved to the position where it was released.
+</li>
+
+<li><b>Return to the Previous view.</b>
+This button resets the scale, pan and viewing direction to the state
+it had before the current state. You can go one step back, not more.
+</li>
+
+<li><b>Create, Edit, or Activate Views.</b>
+This button activates the view dialog to manipulate the
+current viewing direction. It can  also be used to save or delete viewing
+directions with names. See the <a href="view_dialog.htm">View dialog.</a>
+</li>
+
+<li><b>Grid Settings.</b>
+This button activates the grid dialog to manipulate
+the current grid settings. See the <a href="grid_dialog.htm">Grid dialog.</a>
+</li>
+
+<li><b>Blank, Unblank, or List Levels.</b>
+This button activates the levels dialog to manipulate the
+current levels settings. See the <a href="level_dialog.htm">Level dialog.</a>
+</li>
+
+<li><b>Print this Window (Or Set Printer Parameters).</b>
+This button activates the print dialog. The print dialog is used to
+print the model or to configure the settings of a printer. See the
+<a href="print_dialog.htm">Print dialog.</a>
+</li>
+</ol>
+
+<p>
+The scrolling message_and_ command window along the bottom edge of the
+default graphics viewing window is used by Varkon to display messages
+of different kinds. You can also use it to enter macro commands. See the
+<a href="message.htm">message section.</a>
+</p>
+
+<h2>The new graphics window based on OpenGL</h2>
+
+<p>
+The new graphics window only has 6 buttons along the top edge.
+At the bottom edge it has the same scrolling message_and_ command
+window as the older type default window.
+</p>
+
+<img class="center" src="WPRWIN.jpg"></img>
+
+<h3>The buttons are:</h3>
+<ol>
+<li><b>Fit a Rectangle to the Window.</b>
+This is the zoom function. Move the cursor to any position in the window,
+press the left mouse button, hold the button down, move the cursor to
+the diagonally opposite corner of the rectangular area that you want
+to enlarge then release the mouse button.
+</li>
+
+<li><b>Fit the Model to the Window.</b>
+This button automatically scales and orients the model so that it will fit
+the size of the window.
+</li>
+
+<li><b>Display wireframe model.</b>
+This button displays the model in wireframe mode. Surfaces are displayed
+using their boundary curves and optional iso curves.
+</li>
+
+<li><b>Display shaded model.</b>
+This button displays the model in shaded mode. Surfaces are rendered with
+light and color.
+</li>
+
+<li><b>Create, Edit, or Activate Views.</b>
+This button activates the view dialog to manipulate the
+current viewing direction. It can  also be used to save or delete viewing
+directions with names. See the <a href="view_dialog.htm">View dialog.</a>
+</li>
+
+<li><b>Blank, Unblank, or List Levels.</b>
+This button activates the levels dialog to manipulate the
+current levels settings. See the <a href="level_dialog.htm">Level dialog.</a>
+</li>
+</ol>
+
+<p>
+To rotate the model in the OpenGL graphics viewing window, move the mouse
+while pressing the middle mouse button. To zoom the model (up or down) move the
+mouse while pressing the middle mouse button and the CTRL key. To move
+the model (pan) move the mouse while pressing the middle mouse button and the
+SHIFT key.
+</p>
+
+<p>
+The scrolling message_and_ command window along the bottom edge of the
+new OpenGL graphics viewing window is used by Varkon to display messages
+of different kinds. You can also use it to enter macro commands. See the
+<a href="message.htm">message section.</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

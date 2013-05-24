@@ -1,0 +1,52 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- Part})
+define({_INDEXLINK_},{<a href="entities.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>Part</h1>
+
+<p>
+The part is a composite entity with the ability to host any number
+of other entities including other parts. A part reminds of a symbol,
+block or feature in other CAD-systems but a part is not a static
+object with predefined appearence. Parts are defined by modules and
+parameters. As modules are actually computer programs, parts are
+very dynamic.
+</p>
+
+<p>
+Any module (except MACRO modules) may be used to create a part. The
+module attribute will influence how the part is oriented in 3D space.
+A BASIC module will create a part oriented relative to the BASIC
+coordinate system. A GLOBAL module will create a part oriented relative
+to the coordinate system of the caller and a LOCAL module will create
+a part oriented relative to a LOCAL (user created) coordinate system.
+</p>
+
+<h2>Methods</h2>
+
+<ul>
+<li><a href="../MBS/part.htm">Part</a></li>
+</ul>
+
+<p>
+You can create parts in explicit and generic mode but if
+you want to create a module you must be in generic mode.
+</p>
+
+<p>
+When a part is created you can edit it's parameters and Varkon will
+automatically update the part by reexecuting the module that created
+the part with the new parameters.
+</p>
+
+<p>
+See also the <a href="../MBS/symb.htm">symbol</a> entity for a simple
+way to work with 2D static symbols.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

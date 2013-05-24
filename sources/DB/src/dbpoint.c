@@ -12,7 +12,7 @@
 *
 *
 *    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -28,8 +28,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1998, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 #include "../include/DB.h"
@@ -38,7 +36,7 @@
 /*!******************************************************/
 
         DBstatus DBinsert_point(
-        GMPOI   *poipek,
+        DBPoint *poipek,
         DBId    *idpek,
         DBptr   *lapek)
 
@@ -67,21 +65,21 @@
   {
 
 /*
-***Typ-specifika data.
+***Type-specific data.
 */
-    poipek->hed_p.type = POITYP;     /* Typ = punkt */
+    poipek->hed_p.type = POITYP;     /* Type = point */
     poipek->hed_p.vers = GMPOSTV3;   /* Version */
 /*
-***Lagra.
+***Save.
 */
-    return(inpost((GMUNON *)poipek,idpek,lapek,sizeof(GMPOI)));
+    return(inpost((GMUNON *)poipek,idpek,lapek,sizeof(DBPoint)));
   }
 
 /********************************************************/
 /*!******************************************************/
 
         DBstatus DBread_point(
-        GMPOI   *poipek,
+        DBPoint *poipek,
         DBptr    la)
 
 /*      Reads a point entity from the DB.
@@ -106,7 +104,7 @@
     switch ( GMVERS(hedpek) )
       {
       case GMPOSTV3:
-      V3MOME(hedpek,poipek,sizeof(GMPOI));
+      V3MOME(hedpek,poipek,sizeof(DBPoint));
       break;
 
       case GMPOSTV2:
@@ -138,7 +136,7 @@
 /*!******************************************************/
 
         DBstatus DBupdate_point(
-        GMPOI   *poipek,
+        DBPoint *poipek,
         DBptr    la)
 
 /*      Updates a point entity in the DB. The point
@@ -163,7 +161,7 @@
     switch ( GMVERS(hedpek) )
       {
       case GMPOSTV3:
-      updata( (char *)poipek, la, sizeof(GMPOI));
+      updata( (char *)poipek, la, sizeof(DBPoint));
       break;
 
       case GMPOSTV2:
@@ -210,7 +208,7 @@
     switch ( GMVERS(hedpek) )
       {
       case GMPOSTV3:
-      rldat1(la,sizeof(GMPOI));
+      rldat1(la,sizeof(DBPoint));
       break;
 
       case GMPOSTV2:

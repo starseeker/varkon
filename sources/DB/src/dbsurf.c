@@ -117,7 +117,7 @@ static DBstatus delete_NURBS(DBptr la);
     nv = surpek->nv_su;
     tabsiz = nu*nv*sizeof(DBptr);
     if ( (tabpek=(DBptr *)v3mall(tabsiz,"DBinsert_surface")) == NULL )
-      return(erpush("GM1043",""));
+      return(erpush("DB1043",""));
     ptab = tabpek;
 /*
 ***For each topological patch, store the geometric patch first
@@ -452,7 +452,7 @@ static DBstatus delete_NURBS(DBptr la);
     if ( sur.ntrim_su > 0 )
       {
       size = sur.ntrim_su*sizeof(DBSegarr);
-      if ( (saptr=v3mall(size,"DBdelete_surface")) == NULL ) return(erpush("GM1123",""));
+      if ( (saptr=v3mall(size,"DBdelete_surface")) == NULL ) return(erpush("DB1123",""));
       if ( size <= PAGSIZ ) rddat1((char *)saptr,sur.getrim_su,size);
       else                  rddat2((char *)saptr,sur.getrim_su,size);
 
@@ -473,7 +473,7 @@ static DBstatus delete_NURBS(DBptr la);
     tabsiz = nu*nv*sizeof(DBptr);
 
     if ( (tabpek=(DBptr *)v3mall(tabsiz,"DBdelete_surface")) == NULL )
-      return(erpush("GM1043",""));
+      return(erpush("DB1043",""));
     ptab = tabpek;
 /*
 ***Read the patch table and then delete it from DB.
@@ -643,7 +643,7 @@ static DBstatus delete_NURBS(DBptr la);
     nv = surpek->nv_su;
     tabsiz = nu*nv*sizeof(DBptr);
     if ( (tabpek=(DBptr *)v3mall(tabsiz,"DBread_patches")) == NULL )
-      return(erpush("GM1043",""));
+      return(erpush("DB1043",""));
     ptab = tabpek;
 /*
 ***Read the patch table from DB.
@@ -655,7 +655,7 @@ static DBstatus delete_NURBS(DBptr la);
 ***Allocate memory for topological patches.
 */
     if ( (*pptpat=(DBPatch *)DBcreate_patches(TOP_PAT,nu*nv)) == NULL )
-      return(erpush("GM1033",""));
+      return(erpush("DB1033",""));
     patpek = *pptpat;
 /*
 ***Read the patches from DB.
@@ -683,76 +683,76 @@ static DBstatus delete_NURBS(DBptr la);
           {
           case CUB_PAT:
           if ( (patpek->spek_c=DBcreate_patches(CUB_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchC));
           break;
 
           case RAT_PAT:
           if ( (patpek->spek_c=DBcreate_patches(RAT_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchR));
           break;
 
           case LFT_PAT:
           if ( (patpek->spek_c=DBcreate_patches(LFT_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchL));
           break;
 
           case FAC_PAT:
           if ( (patpek->spek_c=DBcreate_patches(FAC_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchF));
           break;
 
           case PRO_PAT:
           if ( (patpek->spek_c=DBcreate_patches(PRO_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP));
           break;
 
           case CON_PAT:
           if ( (patpek->spek_c=DBcreate_patches(CON_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchN));
           break;
 
           case P3_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P3_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP3));
           break;
 
           case P5_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P5_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP5));
           break;
 
           case P7_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P7_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP7));
           break;
 
           case P9_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P9_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP9));
           break;
 
           case P21_PAT:
           if ( (patpek->spek_c=DBcreate_patches(P21_PAT,1)) == NULL )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           rddat2(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchP21));
           break;
 
           case NURB_PAT:
           if ( (patpek->spek_c=DBcreate_patches(NURB_PAT,1)) == NULL )
-            return(erpush("GM1053",""));
+            return(erpush("DB1053",""));
           rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchNU));
           if ( read_NURBS((DBPatchNU *)patpek->spek_c) < 0 )
-            return(erpush("GM1063",""));
+            return(erpush("DB1063",""));
           break;
 /*
 ***If the geometric patch is topological no memory is allocated.
@@ -860,7 +860,7 @@ static DBptr  tab[500];
     else
       {
       if ( (tabpek=(DBptr *)v3mall(tabsiz,"DBread_one_patch")) == NULL )
-        return(erpush("GM1043",""));
+        return(erpush("DB1043",""));
       if ( tabsiz <= PAGSIZ ) rddat1((char *)tabpek,tabla,tabsiz);
       else                    rddat2((char *)tabpek,tabla,tabsiz);
       ptab  = tabpek + (iu-1)*nv + iv-1;
@@ -932,7 +932,7 @@ static DBptr  tab[500];
         break;
       
         default:
-        return(erpush("GM1073",""));
+        return(erpush("DB1073",""));
         }
       }
     return(0);
@@ -1143,7 +1143,7 @@ static DBptr  tab[500];
     if ( surptr->ntrim_su > 0 )
       {
       size = surptr->ntrim_su*sizeof(DBSegarr);
-      if ( (saptr=v3mall(size,"DBread_getrimcurves")) == NULL ) return(erpush("GM1123",""));
+      if ( (saptr=v3mall(size,"DBread_getrimcurves")) == NULL ) return(erpush("DB1123",""));
       if ( size <= PAGSIZ ) rddat1((char *)saptr,surptr->getrim_su,size);
       else                  rddat2((char *)saptr,surptr->getrim_su,size);
 
@@ -1338,7 +1338,7 @@ static DBptr  tab[500];
     if ( psurf->ngrwborder_su > 0 )
       {
       size = psurf->ngrwborder_su*sizeof(DBSegarr);
-      if ( (saptr=v3mall(size,"DBread_sur_grwire")) == NULL ) return(erpush("GM1113",""));
+      if ( (saptr=v3mall(size,"DBread_sur_grwire")) == NULL ) return(erpush("DB1113",""));
       if ( size <= PAGSIZ ) rddat1((char *)saptr,psurf->grwborder_su,size);
       else                  rddat2((char *)saptr,psurf->grwborder_su,size);
 /*
@@ -1361,7 +1361,7 @@ static DBptr  tab[500];
     if ( psurf->ngrwiso_su > 0 )
       {
       size = psurf->ngrwiso_su*sizeof(DBSegarr);
-      if ( (saptr=v3mall(size,"DBread_sur_grwire")) == NULL ) return(erpush("GM1113",""));
+      if ( (saptr=v3mall(size,"DBread_sur_grwire")) == NULL ) return(erpush("DB1113",""));
       if ( size <= PAGSIZ ) rddat1((char *)saptr,psurf->grwiso_su,size);
       else                  rddat2((char *)saptr,psurf->grwiso_su,size);
 
@@ -1404,7 +1404,7 @@ static DBptr  tab[500];
     if ( psurf->ngrwborder_su > 0 )
       {
       size = psurf->ngrwborder_su*sizeof(DBSegarr);
-      if ( (saptr=v3mall(size,"DBdelete_sur_grwire")) == NULL ) return(erpush("GM1113",""));
+      if ( (saptr=v3mall(size,"DBdelete_sur_grwire")) == NULL ) return(erpush("DB1113",""));
       if ( size <= PAGSIZ ) rddat1((char *)saptr,psurf->grwborder_su,size);
       else                  rddat2((char *)saptr,psurf->grwborder_su,size);
 /*
@@ -1430,7 +1430,7 @@ static DBptr  tab[500];
     if ( psurf->ngrwiso_su > 0 )
       {
       size = psurf->ngrwiso_su*sizeof(DBSegarr);
-      if ( (saptr=v3mall(size,"DBdelete_sur_grwire")) == NULL ) return(erpush("GM1113",""));
+      if ( (saptr=v3mall(size,"DBdelete_sur_grwire")) == NULL ) return(erpush("DB1113",""));
       if ( size <= PAGSIZ ) rddat1((char *)saptr,psurf->grwiso_su,size);
       else                  rddat2((char *)saptr,psurf->grwiso_su,size);
 
@@ -1636,7 +1636,7 @@ static DBptr  tab[500];
    if ( (*kvu=(GLfloat *)v3mall(nbytes,"DBread_sur_grsur")) == NULL )
      {
      sprintf(errbuf,"%d",surpek->nku_su);
-     return(erpush("GM1093",errbuf));
+     return(erpush("DB1093",errbuf));
      }
 
    if ( nbytes < PAGSIZ ) rddat1((char *)*kvu,surpek->pkvu_su,nbytes);
@@ -1646,7 +1646,7 @@ static DBptr  tab[500];
    if ( (*kvv=(GLfloat *)v3mall(nbytes,"DBread_sur_grsur")) == NULL )
      {
      sprintf(errbuf,"%d",surpek->nkv_su);
-     return(erpush("GM1093",errbuf));
+     return(erpush("DB1093",errbuf));
      }
 
    if ( nbytes < PAGSIZ ) rddat1((char *)*kvv,surpek->pkvv_su,nbytes);
@@ -1665,7 +1665,7 @@ static DBptr  tab[500];
    if ( (*cpts=(GLfloat *)v3mall(nbytes,"DBread_sur_grsur")) == NULL )
      {
      sprintf(errbuf,"%d",ncpts);
-     return(erpush("GM1083",errbuf));
+     return(erpush("DB1083",errbuf));
      }
 
    if ( nbytes < PAGSIZ ) rddat1((char *)*cpts,surpek->pcpts_su,nbytes);
@@ -1676,7 +1676,7 @@ static DBptr  tab[500];
     if ( surpek->ntrim_su > 0 )
       {
       nbytes = surpek->ntrim_su*sizeof(DBGrstrimcurve);
-      if ( (tcptr=v3mall(nbytes,"DBread_sur_grsur")) == NULL ) return(erpush("GM1123",""));
+      if ( (tcptr=v3mall(nbytes,"DBread_sur_grsur")) == NULL ) return(erpush("DB1123",""));
       if ( nbytes <= PAGSIZ ) rddat1((char *)tcptr,surpek->grstrim_su,nbytes);
       else                    rddat2((char *)tcptr,surpek->grstrim_su,nbytes);
 
@@ -1688,7 +1688,7 @@ static DBptr  tab[500];
         {
         nbytes = tcptr->nknots * sizeof(GLfloat);
         if ( (tcptr->knots_c=v3mall(nbytes,"DBread_sur_grsur")) == NULL )
-          return(erpush("GM1123",""));
+          return(erpush("DB1123",""));
         if ( nbytes <= PAGSIZ ) rddat1((char *)tcptr->knots_c,tcptr->knots_db,nbytes);
         else                    rddat2((char *)tcptr->knots_c,tcptr->knots_db,nbytes);
 /*
@@ -1699,7 +1699,7 @@ static DBptr  tab[500];
 
         nbytes = (tcptr->nknots - tcptr->order) * gl_cpts_size * sizeof(GLfloat);
         if ( (tcptr->cpts_c=v3mall(nbytes,"DBread_sur_grsur")) == NULL )
-          return(erpush("GM1123",""));
+          return(erpush("DB1123",""));
         if ( nbytes <= PAGSIZ ) rddat1((char *)tcptr->cpts_c,tcptr->cpts_db,nbytes);
         else                    rddat2((char *)tcptr->cpts_c,tcptr->cpts_db,nbytes);
 /*
@@ -1770,7 +1770,7 @@ static DBptr  tab[500];
    if ( surpek->ntrim_su > 0 )
      {
      nbytes = surpek->ntrim_su * sizeof(DBGrstrimcurve);
-     if ( (tcptr=v3mall(nbytes,"DBdelete_sur_grsur")) == NULL ) return(erpush("GM1123",""));
+     if ( (tcptr=v3mall(nbytes,"DBdelete_sur_grsur")) == NULL ) return(erpush("DB1123",""));
      if ( nbytes <= PAGSIZ ) rddat1((char *)tcptr,surpek->grstrim_su,nbytes);
      else                    rddat2((char *)tcptr,surpek->grstrim_su,nbytes);
 

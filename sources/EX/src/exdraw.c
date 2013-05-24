@@ -12,7 +12,7 @@
 *     EXdral();     Draw everything
 *
 *    This file is part of the VARKON Execute Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -433,7 +433,7 @@ extern DBTmat *lsyspk;
     DBAny     gmpost;
     DBSeg     arcseg[4];
     DBSeg    *graseg;
-/*    DBTmat    pmat;  */
+    DBCsys    csy;
     DBHeader  hed;
     DBPart    part;
     DBSegarr *pborder;
@@ -503,41 +503,41 @@ extern DBTmat *lsyspk;
 ***Crosshatch.
 */
       case XHTTYP:
-      DBread_xhatch((DBHatch *)&gmpost.xht_un,crdvek,la);
-      if ( draw ) WPdrxh(&gmpost.xht_un,crdvek,la,win_id);
-      else        WPdlxh(&gmpost.xht_un,crdvek,la,win_id);
+      DBread_xhatch((DBHatch *)&gmpost.xht_un,crdvek,&csy,la);
+      if ( draw ) WPdrxh(&gmpost.xht_un,crdvek,&csy,la,win_id);
+      else        WPdlxh(&gmpost.xht_un,crdvek,&csy,la,win_id);
       break;
 /*
 ***Längdmått.
 */
       case LDMTYP:
-      DBread_ldim((DBLdim *)&gmpost,la);
-      if ( draw ) WPdrdm(&gmpost,la,win_id);
-      else        WPdldm(&gmpost,la,win_id);
+      DBread_ldim((DBLdim *)&gmpost,&csy,la);
+      if ( draw ) WPdrdm(&gmpost,&csy,la,win_id);
+      else        WPdldm(&gmpost,&csy,la,win_id);
       break;
 /*
 ***Diametermått.
 */
       case CDMTYP:
-      DBread_cdim((DBCdim *)&gmpost,la);
-      if ( draw ) WPdrdm(&gmpost,la,win_id);
-      else        WPdldm(&gmpost,la,win_id);
+      DBread_cdim((DBCdim *)&gmpost,&csy,la);
+      if ( draw ) WPdrdm(&gmpost,&csy,la,win_id);
+      else        WPdldm(&gmpost,&csy,la,win_id);
       break;
 /*
 ***Radiemått.
 */
       case RDMTYP:
-      DBread_rdim((DBRdim *)&gmpost,la);
-      if ( draw ) WPdrdm(&gmpost,la,win_id);
-      else        WPdldm(&gmpost,la,win_id);
+      DBread_rdim((DBRdim *)&gmpost,&csy,la);
+      if ( draw ) WPdrdm(&gmpost,&csy,la,win_id);
+      else        WPdldm(&gmpost,&csy,la,win_id);
       break;
 /*
 ***Vinkelmått.
 */
       case ADMTYP:
-      DBread_adim((DBAdim *)&gmpost,la);
-      if ( draw ) WPdrdm(&gmpost,la,win_id);
-      else        WPdldm(&gmpost,la,win_id);
+      DBread_adim((DBAdim *)&gmpost,&csy,la);
+      if ( draw ) WPdrdm(&gmpost,&csy,la,win_id);
+      else        WPdldm(&gmpost,&csy,la,win_id);
       break;
 /*
 ***Koordinatsystem.

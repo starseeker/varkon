@@ -1,0 +1,66 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- get_level - Procedure})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>get_level - Procedure</h1>
+
+
+<h2>Description</h2>
+
+<p>
+Returns information about a level.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  get_level(level, window, state, name);
+
+  int    level;
+  int    window;
+  int    state;
+  string name;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>level</td>
+<td>- The level. A number from 0 to 1999.</td>
+</tr>
+
+<tr>
+<td>window</td>
+<td>- The ID of the graphical window.</td>
+</tr>
+
+<tr>
+<td>state</td>
+<td>- An int variable to recieve the state of the level.<br>
+      &nbsp;&nbsp;0 = Unblanked (visible), 1 = Blanked (invisible)</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>name</td>
+<td>- A string variable to recieve the level name.</td>
+</tr>
+</table>
+
+<h2>Comments</h2>
+
+<p>
+Each graphical viewing window has it's individual level state but all graphical viewing windows share the same name table. This means that a level can be blanked in one window and unblanked in another window but have the same name in both windows. Default graphic viewing window has ID = 0.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

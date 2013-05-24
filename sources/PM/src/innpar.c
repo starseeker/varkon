@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    short inrdnp();    reset default named parameter values
 *    short inevnp();    evaluate  named parameter
@@ -123,7 +123,6 @@ extern pm_ptr  strefp;
    PMLITVA val;        /* Named param value */
    pm_ptr  tyla;       /* Type pointer for value */
    double  fltval;     /* Float value */
-   int     intval;     /* Int value */
    short   status;     /* Return status */
 
 /*
@@ -143,6 +142,9 @@ extern pm_ptr  strefp;
 
    switch( np->par_np )
      {
+/*
+***PEN.
+*/
      case PMPEN:                                   /* integer */
         if ( ineqty( tyla, stintp ) )
            {
@@ -153,16 +155,20 @@ extern pm_ptr  strefp;
         else   
            return( erpush( "IN3193", "PEN" ) );    /* Ilegal type for named parameter */
         break;
-
+/*
+***WIDTH.
+*/
      case PMWIDTH:                                 /* float */
         if ( ineqty( tyla, stflop ) )
            npblockp->width = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->width = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "WIDTH" ) );    
+        else
+           return( erpush( "IN3193", "WIDTH" ) );
         break;
-
+/*
+***LEVEL.
+*/
      case PMLEVEL:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            {
@@ -170,85 +176,91 @@ extern pm_ptr  strefp;
               return(erpush("IN2102","LEVEL"));
            else npblockp->level = val.lit.int_va;
            }
-         else   
-           return( erpush( "IN3193", "LEVEL" ) );   
+         else
+           return( erpush( "IN3193", "LEVEL" ) );
          break;
-
+/*
+***BLANK.
+*/
      case PMBLANK:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->blank = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "BLANK" ) );   
+        else
+           return( erpush( "IN3193", "BLANK" ) );
         break;
-
+/*
+***HIT.
+*/
      case PMHIT:                                   /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->hit = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "HIT" ) );     
+        else
+           return( erpush( "IN3193", "HIT" ) );
         break;
-
+/*
+***SAVE.
+*/
      case PMSAVE:                                  /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->save = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "SAVE" ) );    
+        else
+           return( erpush( "IN3193", "SAVE" ) );
         break;
 
      case PMPFONT:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->pfont = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "PFONT" ) );   
+        else
+           return( erpush( "IN3193", "PFONT" ) );
         break;
 
      case PMLFONT:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->lfont = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "LFONT" ) );   
+        else
+           return( erpush( "IN3193", "LFONT" ) );
         break;
 
      case PMAFONT:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->afont = val.lit.int_va;
-        else  
-           return( erpush( "IN3193", "AFONT" ) );   
+        else
+           return( erpush( "IN3193", "AFONT" ) );
         break;
 
      case PMCFONT:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->cfont = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "CFONT" ) );  
+        else
+           return( erpush( "IN3193", "CFONT" ) );
         break;
 
      case PMTFONT:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->tfont = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "TFONT" ) );   
+        else
+           return( erpush( "IN3193", "TFONT" ) );
         break;
 
      case PMSFONT:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->sfont = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "SFONT" ) );   
+        else
+           return( erpush( "IN3193", "SFONT" ) );
         break;
 
      case PMNULIN:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->nulines = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "NULINES" ) ); 
+        else
+           return( erpush( "IN3193", "NULINES" ) );
         break;
 
      case PMNVLIN:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->nvlines = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "NVLINES" ) ); 
+        else
+           return( erpush( "IN3193", "NVLINES" ) );
         break;
 /*
 ***Point size. Should not be 0 or less.
@@ -268,26 +280,30 @@ extern pm_ptr  strefp;
            npblockp->ldashl = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->ldashl = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "LDASHL" ) );  
+        else
+           return( erpush( "IN3193", "LDASHL" ) );
         break;
-
+/*
+***Arc dash length.
+*/
      case PMADASHL:                                /* float */
         if ( ineqty( tyla, stflop ) )
            npblockp->adashl = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->adashl = val.lit.int_va;
-        else  
-           return( erpush( "IN3193", "ADASHL" ) );  
+        else
+           return( erpush( "IN3193", "ADASHL" ) );
         break;
-
+/*
+***Curve dash length.
+*/
      case PMCDASHL:                                /* float */
         if ( ineqty( tyla, stflop ) )
            npblockp->cdashl = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->cdashl = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "CDASHL" ) );  
+        else
+           return( erpush( "IN3193", "CDASHL" ) );
         break;
 
      case PMSDASHL:                                /* float */
@@ -295,8 +311,8 @@ extern pm_ptr  strefp;
            npblockp->sdashl = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->sdashl = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "SDASHL" ) );  
+        else
+           return( erpush( "IN3193", "SDASHL" ) );
         break;
 
      case PMTSIZE:                                 /* float */
@@ -304,8 +320,8 @@ extern pm_ptr  strefp;
            npblockp->tsize = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->tsize = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "TSIZE" ) );   
+        else
+           return( erpush( "IN3193", "TSIZE" ) );
        break;
 
      case PMTWIDTH:                                /* float, faktor i % av höjd */
@@ -313,8 +329,8 @@ extern pm_ptr  strefp;
            npblockp->twidth = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->twidth = val.lit.int_va;
-         else   
-           return( erpush( "IN3193", "TWIDTH" ) );   
+         else
+           return( erpush( "IN3193", "TWIDTH" ) );
        break;
 
      case PMTSLANT:                                /* float, lutning i % av 45 grader */
@@ -322,15 +338,15 @@ extern pm_ptr  strefp;
            npblockp->tslant = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->tslant = val.lit.int_va;
-        else  
-           return( erpush( "IN3193", "TSLANT" ) );   
+        else
+           return( erpush( "IN3193", "TSLANT" ) );
        break;
 
      case PMTPMODE:                                /* integer, Textplanmode */
         if ( ineqty( tyla, stintp ) )
            npblockp->tpmode = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "TPMODE" ) );   
+        else
+           return( erpush( "IN3193", "TPMODE" ) );
         break;
 
      case PMDTSIZE:                                /* float, dim text size */
@@ -338,8 +354,8 @@ extern pm_ptr  strefp;
            npblockp->dtsize = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->dtsize = val.lit.int_va;
-        else   
-           return( erpush( "IN3193","DTSIZE" ) );    
+        else
+           return( erpush( "IN3193","DTSIZE" ) );
         break;
 
      case PMDASIZE:                                /* float, pilstorlek för måttsättning */
@@ -347,29 +363,29 @@ extern pm_ptr  strefp;
            npblockp->dasize = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->dasize = val.lit.int_va;
-        else   
-           return( erpush( "IN3193","DASIZE" ) );    
+        else
+           return( erpush( "IN3193","DASIZE" ) );
         break;
 
      case PMDNDIG:                                 /* integer, decimaler vid måttsättning */
         if ( ineqty( tyla, stintp ) )
            npblockp->dndig = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "DNDIG" ) );    
+        else
+           return( erpush( "IN3193", "DNDIG" ) );
         break;
 
      case PMDAUTO:                                 /* integer, automatisk måttsättnig */
         if ( ineqty( tyla, stintp ) )
            npblockp->dauto = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "DAUTO" ) );    
+        else
+           return( erpush( "IN3193", "DAUTO" ) );
         break;
 
      case PMXFONT:                                 /* integer, snittyp */
         if ( ineqty( tyla, stintp ) )
            npblockp->xfont = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "XFONT" ) );    
+        else
+           return( erpush( "IN3193", "XFONT" ) );
         break;
 
      case PMXDASHL:                                /* float, snittlinjers strecklängd */
@@ -377,15 +393,15 @@ extern pm_ptr  strefp;
            npblockp->xdashl = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )
            npblockp->xdashl = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "XDASHL" ) );   
+        else
+           return( erpush( "IN3193", "XDASHL" ) );
         break;
 
      case PMMFONT:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            npblockp->mfont = val.lit.int_va;
-        else   
-           return( erpush( "IN3193", "MFONT" ) );   
+        else
+           return( erpush( "IN3193", "MFONT" ) );
         break;
 /*
 ***Error
@@ -394,9 +410,8 @@ extern pm_ptr  strefp;
      return( erpush( "IN0164", "" ) );             /* Unknown named parameter */
      break;
    }
-  
    return( 0 );
 
-  }  
+  }
 
 /********************************************************/

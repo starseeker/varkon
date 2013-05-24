@@ -10,7 +10,7 @@
 /*   IGswdt();                 Creates SET(width=expr)              */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -239,7 +239,7 @@ error:
    inevev(exnpt,&val,&valtyp);
 
    if      ( val.lit_type == C_INT_VA) width = val.lit.int_va;
-   else if ( val.lit_type == C_FLO_VA) width = val.lit.float_va;
+   else                                width = val.lit.float_va;
 
    if ( width == defnap.width )
      {
@@ -258,7 +258,7 @@ error:
 */
    return(0);
   }
-  
+
 /********************************************************/
 /*!******************************************************/
 

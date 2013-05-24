@@ -1,0 +1,69 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- Where should I keep my macros})
+define({_INDEXLINK_},{<a href="macroindex.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Where should I keep my macros</h1>
+
+<p>
+If the macros you have created are used with jobs
+stored in the same location the easiest way
+is probably to have them in the lib of that location. You
+can then easily access them for editing and Varkon will
+automatically find them when you call them, just like ordinary
+modules.
+</p>
+
+<p>
+If you have macros that you want to use with jobs located
+in different places in your file system you need to
+inform Varkon where your macros are located. See below.
+</p>
+
+<p>
+The Varkon system includes a large number of macro
+modules that are used by the Varkon user interface.
+You will find the sources in <code>VARKON_ROOT/sources/Vlib</code>
+and the (compiled) modules in <code>VARKON_ROOT/lib</code>.
+</p>
+
+<p>
+The startscript included in the Varkon distribution sets
+up the VARKON_LIB environment variable to point to
+<code>VARKON_ROOT/lib</code>. It is strongly recommended not to change
+or add anything in the standard library. Keep all your
+own macros somewhere else, outside the Varkon system file tree
+and point to your own macro libraries by adding them to
+the VARKON_LIB environment variable defined in the Varkon
+start script. Here is an example:
+</p>
+
+<pre class=box>
+  VARKON_LIB=the_path_to_my_own_library:$VARKON_ROOT/lib
+</pre>
+
+<p>
+With VARKON_LIB defined as above Varkon will
+first search your own library and if not successful, search
+the Varkon standard library. VARKON_LIB permits up to 10 libraries to
+be defined like this and Varkon will search them in the order
+they appear. Note that there is only one single namespace for
+all modules including the Varkon standard macro modules.
+You must use unique names for all your modules. Names used
+by Varkon begin with <code>l_, dxf_, ed_, fe_, igs_, ma_ or stl_</code>.
+If you don't actually mean to replace a Varkon standard macro,
+it is best to avoid names beginning with these letter combinations
+for all types of modules.
+</p>
+
+<p>
+See <a href="modlibs.htm">Module libraries</a>
+for similar information related to non macro modules.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -4,7 +4,7 @@
 *    =========
 *
 *    This file is part of the VARKON Analyzer Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    Module parser and generator of the internal form
 *
@@ -25,8 +25,6 @@
 *    You should have received a copy of the GNU Library General Public
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
 *
 ***********************************************************************/
 
@@ -84,6 +82,7 @@ static void string_def(pm_ptr *type_pm, ANFSET *fsys);
  *      (C)microform ab 1985-11-05 Kenth Ericson
  *
  *      1999-04-23 Rewritten, R. Svedin
+ *      2007-11-20 2.0, J.Kjellander
  *
  ******************************************************!*/
 
@@ -97,7 +96,7 @@ static void string_def(pm_ptr *type_pm, ANFSET *fsys);
    pm_ptr   st_list;         /* Statement list                    */
    char     buf[V3STRLEN+1]; /* Temporär buffert för modulnamn    */
    bool     varning,hit;     /* Flaggor för felhant. av modulnamn */
-            
+
    anoffs = 0;               /* 861014JK */
 
    ancset(&decl_sys, NULL, 7, ANSYINT, ANSYFLT, ANSYSTR, ANSYVECT, 
@@ -115,7 +114,7 @@ static void string_def(pm_ptr *type_pm, ANFSET *fsys);
    V3MOME(&sydata, &(modulatt.system), sizeof(sydata));
 /*
 ***Attribut, 13/2/92 J. Kjellander.
-*/   
+*/
    if ( (sy.sytype == ANSYLOCL) || (sy.sytype == ANSYGLOB) || 
         (sy.sytype == ANSYBASI) || (sy.sytype == ANSYMAC) )
      {
@@ -130,14 +129,19 @@ static void string_def(pm_ptr *type_pm, ANFSET *fsys);
      }
    modatt = (short) modulatt.mattri;
 /*
-***Typ.
+***Type, always _3D. Issue warning if type keyword is used.
 */
-   if ( (sy.sytype == ANSYGEO) || (sy.sytype == ANSYDRAW) )
+   if ( sy.sytype == ANSYDRAW )
      {
-     if ( sy.sytype == ANSYDRAW )
-       modulatt.mtype = _2D;
+     anperr("AN9471", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
      anascan(&sy);
      }
+   else if ( sy.sytype == ANSYGEO )
+     {
+     anperr("AN9481", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
+     anascan(&sy);
+     }
+
    modtyp = (short) modulatt.mtype;
 
    if ( sy.sytype != ANSYMOD )
@@ -606,12 +610,12 @@ loop:
 
 /*      Analyse the declaration part of the MBS language
  *
- *      declaration = CONSTANT constant_declaration ! 
- *      var_declaration ! empty
+ *      declaration = CONSTANT constant_declaration !
+ *      var_declaration !
  *
  *      In:  *fsys  =>  Follower set.
  *
- *      Out: 
+ *      Out:
  *
  *      (C)microform ab 1985-11-05 Kenth Ericson
  *
@@ -626,17 +630,17 @@ loop:
    ancset(&cons_sys, NULL, 5, ANSYINT, ANSYFLT, ANSYSTR, ANSYVECT,
                               ANSYREF,0,0,0);
    ancset(&decl_sys, &cons_sys, 2, ANSYFILE, ANSYCONS,0,0,0,0,0,0);
+
    if (aniset(sy.sytype, &decl_sys))
+     {
      if (sy.sytype == ANSYCONS)             /* Constant declaration? */
        {
        anascan(&sy);
-       if (aniset(sy.sytype, &cons_sys))
-         const_decl(fsys);
-       else 
-         anperr("AN2093", "", fsys, sy.sypos.srclin, sy.sypos.srccol);
+       if (aniset(sy.sytype, &cons_sys)) const_decl(fsys);
+       else anperr("AN2093", "", fsys, sy.sypos.srclin, sy.sypos.srccol);
        }
-       else
-         var_decl(fsys);
+     else var_decl(fsys);
+     }
   }
 
 /********************************************************/
@@ -1000,13 +1004,10 @@ loop:
    ancset(&loc_fol, fsys, 3, ANSYRPAR, ANSYCOM, ANSYCOL,0,0,0,0,0);
    ancoex(&expr_p, &attr, &valu, &loc_fol);
    if (attr.type != (pm_ptr)NULL)
-     if (aneqty(stintp, attr.type))
-       high = valu.lit.int_va;
-     else
-/*
-***Index must be of integer type
-*/
-       anperr("AN2173", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
+     {
+     if (aneqty(stintp, attr.type)) high = valu.lit.int_va;
+     else anperr("AN2173", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
+     }
 
    if (sy.sytype == ANSYCOL)
      {
@@ -1015,36 +1016,26 @@ loop:
      ancset(&loc_fol, fsys, 2, ANSYRPAR, ANSYCOL,0,0,0,0,0,0);
      ancoex(&expr_p, &attr, &valu, &loc_fol);
      if (attr.type != (pm_ptr)NULL)
-       if (aneqty(stintp, attr.type))
-         high = valu.lit.int_va;
-       else
-/*
-***Index must be of integer type
-*/
-         anperr("AN2173", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
+       {
+       if (aneqty(stintp, attr.type)) high = valu.lit.int_va;
+       else anperr("AN2173", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
+       }
      }
 
-   if (low > high)
-/*
-***Low bound must not be greater than high bound
-*/
-     anperr("AN2183", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
+   if (low > high) anperr("AN2183", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
 
-   if (sy.sytype == ANSYCOM)
+   if ( sy.sytype == ANSYCOM )
      {
      index_def(base_typ, &arr_type, fsys);
-     if (arr_type != (pm_ptr)NULL)
-       stdarr(high, low, arr_type, type_pm);
+     if (arr_type != (pm_ptr)NULL) stdarr(high, low, arr_type, type_pm);
      }
    else
 /*
 ***No more dimensions. Find the tail of the definition
 */
      {
-     if (sy.sytype == ANSYRPAR)
-       anascan(&sy);
-     else 
-       anperr("AN2082", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
+     if (sy.sytype == ANSYRPAR) anascan(&sy);
+     else anperr("AN2082", "", NULL, sy.sypos.srclin, sy.sypos.srccol);
 /*
 ***Call string defintion if base type is STRING
 */
@@ -1052,7 +1043,7 @@ loop:
        string_def(&arr_type, fsys);
      else
        arr_type = base_typ;
-          
+
      stdarr(high, low, arr_type, type_pm);
      }
   }
@@ -1085,18 +1076,20 @@ loop:
    PMLITVA   valu;         /* Expression value         */
 
    *type_pm = (pm_ptr)NULL;
+
    if (sy.sytype == ANSYMUL)
      {
      anascan(&sy);
      ancoex(&expr_p, &attr, &valu, fsys);
      if (attr.type != (pm_ptr)NULL)
+       {
        if (aneqty(stintp, attr.type))
          {
          if (valu.lit.int_va < 0)
 /*
 ***Negative string size
 */
-           { 
+           {
            anperr("AN2243", "", NULL, sy.sypos.srclin,sy.sypos.srccol);
            valu.lit.int_va = 1;
            }
@@ -1110,6 +1103,7 @@ loop:
            }
          stdtyp(ST_STR,(short)valu.lit.int_va, type_pm);
          }
+       }
      else
 /*
 ***Integer type expected

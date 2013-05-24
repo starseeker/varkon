@@ -4,11 +4,12 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*   IGcnog();   Set curve accuracy                                 */
-/*   IGrenw();   Dynamic shading                                    */
+/*   IGset_cacc();      Set curve accuracy                          */
+/*   IGcreate_gwin();   Create a new WPGWIN                         */
+/*   IGcreate_rwin();   Create a new WPRWIN                         */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -36,92 +37,113 @@
 #include <string.h>
 
 extern MNUALT  smbind[];
-extern short   modtyp,mant,mstack[];
+extern short   mant,mstack[];
 
 /*!******************************************************/
 
-        short IGcnog()
+        short IGset_cacc()
 
-/*      Varkon-funktion för ändring av kurvnoggrannhet.
+/*      Set current curve accuracy factor.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV:      0 = OK.
- *          REJECT = Operationen avbruten.
- *          GOMAIN = Huvudmenyn.
+ *      Return:  0 = OK.
+ *          REJECT = Cancel
+ *          GOMAIN = Main menu
  *
  *      (C)microform ab 15/2/84 J. Kjellander
  *
  *      18/10/85 Minvärde = 0.001 J. Kjellander
  *      6/10/86 GOMAIN, J. Kjellander
  *      39/9/87 IGcflv, J. Kjellander
+ *      2007-11-15 2.0, J.Kjellander
  *
  ******************************************************!*/
 
   {
     short  status;
-    double dblval;
-    char   knstr[V3STRLEN+1];
-    char   istr[V3STRLEN+1];
+    double old_cacc,new_cacc;
+    char   mstr[V3STRLEN+1],istr[V3STRLEN+1];
 
     static char dstr[V3STRLEN+1] = "1.0";
 
-    WPget_cacc(&dblval);
-    sprintf(knstr,"%s%g  %s",IGgtts(247),dblval,IGgtts(248));
-    IGplma(knstr,IG_INP);
+/*
+***Get current cacc.
+*/
+    WPget_cacc(&old_cacc);
+/*
+***Ask for new.
+*/
+    sprintf(mstr,"%s%g  %s",IGgtts(247),old_cacc,IGgtts(248));
+    WPaddmess_mcwin(mstr,WP_MESSAGE);
 
 loop:
-    if ( (status=IGcflv(0,istr,dstr,&dblval)) < 0 ) goto end;
+    if ( (status=IGcflv(0,istr,dstr,&new_cacc)) < 0 ) goto end;
     strcpy(dstr,istr);
-
-    if ( EXcavi(dblval) < 0 ) 
+/*
+***Execute.
+*/
+    if ( new_cacc != old_cacc )
       {
-      errmes();
-      goto loop;
+      if ( EXcavi(new_cacc) < 0 ) 
+        {
+        errmes();
+        goto loop;
+        }
+      else
+        {
+        WPrepaint_GWIN(GWIN_ALL);
+        WPrepaint_RWIN(RWIN_ALL,FALSE);
+        sprintf(mstr,"%s%g",IGgtts(247),new_cacc);
+        WPaddmess_mcwin(mstr,WP_MESSAGE);
+        }
       }
-    else
-      {
-      WPrepaint_GWIN(GWIN_ALL);
-      WPrepaint_RWIN(RWIN_ALL,FALSE);
-      }
-
+/*
+***The end.
+*/
 end:
-    IGrsma();
     return(status);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-        short IGrenw()
+        short IGcreate_gwin()
 
-/*      Varkon-funktion för renderingsfönstret.
+/*      Create a new WPGWIN.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      (C)microform ab 1997-12-21 J. Kjellander
+ *      (C)2007-11-14 J.Kjellander
  *
  ******************************************************!*/
 
   {
+/*
+***This goes directly to WP.
+*/
+   if ( WPneww() < 0 ) errmes();
+/*
+***The end.
+*/
+   return(0);
+  }
 
-#ifdef UNIX
-extern short WPrenw();
+/********************************************************/
+/********************************************************/
 
+        short IGcreate_rwin()
+
+/*      Create a new WPRWIN.
+ *
+ *      (C)2007-11-14 J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+/*
+***This goes directly to WP.
+*/
    if ( WPrenw() < 0 ) errmes();
-#endif
-
-#ifdef WIN32
-extern short msrenw();
-
-   if ( msrenw() < 0 ) errmes();
-#endif
-
-
+/*
+***The end.
+*/
    return(0);
   }
 

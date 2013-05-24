@@ -7,7 +7,7 @@
 /*  GE311() Curve global parameter to arclength for a 3D circle     */
 /*                                                                  */
 /*  This file is part of the VARKON Geometry Library.               */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */

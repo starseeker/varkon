@@ -166,7 +166,7 @@ extern double skala,curnog;
  ******************************************************!*/
 
  {
-    register short i,k=0;
+    int i,k=0;
     char aa='\0',a1='\0',a2='\0';
     double vec[4];
     double len,dlen,dx,dy;
@@ -457,7 +457,7 @@ extern double skala,curnog;
  ******************************************************!*/
 
   {
-    register short k=0,i;
+    int    k=0,i;
     double cx,cy,cr,v1,v2,fi,fi1,fi2,fi3,dfi,sindfi,cosdfi,lgt,fis,fim;
     short  state;
 
@@ -768,7 +768,7 @@ extern double skala,curnog;
  ******************************************************!*/
 
   {
-   register short i,j,n;
+   int   i,j,n;
    short ntkn,veclim;
    long ix,iy;
    gmflt dx,dy,tposx,tposy,dtpos,dtposx,dtposy,cosvri,sinvri;

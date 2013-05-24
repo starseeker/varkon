@@ -1,8 +1,8 @@
 ##########################################################
 #
-#   Makefile for WPlib on GNU/Linux
+#   Makefile for WP on GNU/Linux
 #
-#  (C)Microform AB 1999-03-30 J.Kjellander
+#  (C)2008-01-12 J.Kjellander
 #
 ##########################################################
 
@@ -18,7 +18,7 @@ distr :     CFLAGS =                    \
             -fsigned-char               \
             -O                          \
             -DUNIX
-            
+
 debug :     CFLAGS =                    \
             -ansi                       \
             -Wall                       \

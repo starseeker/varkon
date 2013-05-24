@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    evexst();         evaluate EXESTAT
 *
@@ -54,9 +54,9 @@ extern PMLITVA *func_vp;    /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern short actfun;
+    extern short actfunc;
 
-    switch (actfun)
+    switch (actfunc)
       {
       case 5:
       func_vp->lit.int_va = 0;

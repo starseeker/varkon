@@ -12,7 +12,7 @@
 /*  v3time();    Handles time measuring                             */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -133,11 +133,11 @@ static struct
         int dbgon(char *str)
 
 /*      Turns on debug for a source code module. Called
- *      by igppar() at startup.
+ *      by process_cmdline() at startup.
  *
  *      In: str = Command line option -DMn where
  *                M=Module and n=level. -D is stripped
- *                by igppar(). See debug.h
+ *                by iprocess_cmdline(). See debug.h
  *
  *      Return:  0 = Ok.
  *              <0 = Syntax error.

@@ -1,0 +1,91 @@
+changequote({,})
+define({_TITLE_},{Varkon Interactive users manual})
+define({_SUBTITLE_},{- MBO- and RES-files})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>MBO- and RES-files, what's the difference ?</h1>
+
+<p>
+As a beginner, the easiest way to get started
+with Varkon is probably by using the system in explicit mode.
+In explicit mode you create and edit RES-files, similar to the
+files created by many other CAD systems.
+</p>
+
+<p>
+Using Varkon in generic mode will give you access to more
+advanced modeling techniques. In generic mode you create and edit
+MBO-files.
+</p>
+
+<h2>Generic and explicit</h2>
+
+<p>
+Generic is Latin for family and a generic model is thus a model that
+describes not only a single member of the family but the entire family
+in more general terms. A generic screw for example, has all the properties
+of a screw but no specific length or diameter. A screw with specific length
+and diameter (a member of the family) is an explicit screw. In object oriented
+terminology <i><b>generic</b></i> and <i><b>explicit</b></i> translate to
+<i><b>class</b></i> and <i><b>instance</b></i>.
+</p>
+
+<p>
+In generic mode you create generic models but Varkon automatically also
+creates and updates an explicit model. This process is called evaluation....
+</p>
+
+<p>
+You create a generic model ---&gt; Automatic evaluation ---&gt; Explicit model
+</p>
+
+<p>
+Another way to understand the process is to think of the generic model
+as a computer program that creates a drawing when you run it.
+</p>
+
+<p>
+Program ---&gt; Run ---&gt; Drawing
+</p>
+
+<p>
+A Varkon program is called a module and is stored on disc as a MBO-file.
+When you load a module and run it, Varkon automatically creates the
+corresponding explicit model and stores it in a RES-file.
+</p>
+
+<p>
+In explicit mode you create and edit RES-files directly. Since you can then only
+model one member of the family at the time, explicit modeling is more direct and
+therefore easier to learn. If you need to model many members of a family,
+generic modeling will save a lot of time. In some applications you will
+probably want to use both methods in combination. You can use Varkon
+in generic mode to create modules and then use explicit mode to run them and
+add or edit the result.
+</p>
+
+<h2>The MBS modeling language</h2>
+
+<p>
+The generic model is based on the MBS modeling language which is unique
+to the Varkon system. Parameters are used to model things that differ between
+members of a family and a module with statements is used to model
+common properties. The MBS language is documented in
+<a href="../MBS/index.htm">the MBS programmers manual.</a>
+</p>
+
+<p>
+MBS is not only the basic representation of a generic model. It can also
+be used to create one! A macro module written in MBS can automatically add,
+update, delete and reevaluate a generic model.
+</p>
+
+<p>
+You create macro module ---&gt; Generic model ---&gt; Evaluation ---&gt; Explicit model
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,0 +1,141 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- The driver for the HP7475 pen plotter})
+define({_INDEXLINK_},{<a href="printing.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>The driver for the HP7475 pen plotter</h1>
+
+
+<p>
+The hp7475 driver reads from standard input, translates .PLT or .DXF format
+to HP7475 format and writes to standard output.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>$VARKON_BIN/hp7475 -sS -xX -yY -vN -hS -kK</pre>
+
+<p>
+Options preceded by a minus sign should be followed by their value without
+any separating blank spaces.
+</p>
+
+<h2>Options </h2>
+
+<table>
+<tr>
+<td>
+<p>-sS</p>
+</td>
+
+<td>
+<p>- Set scale to S. Float value, default = 1.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-xX</p>
+</td>
+
+<td>
+<p>- Set origin.x to X. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-yY</p>
+</td>
+
+<td>
+<p>- Set origin.y to Y. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-vN</p>
+</td>
+
+<td>
+<p>- Rotate n degrees. Float value, default = 0.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-kK</p>
+</td>
+
+<td>
+<p>- Set curve accuracy to K. Float value, default = 1.0</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<p>-hS</p>
+</td>
+
+<td>
+<p>- Pen speed . 0.0 &lt;= S &lt;= 1.0 Default = 0.6</p>
+</td>
+</tr>
+</table>
+
+
+<h2>Examples</h2>
+
+<pre>$VARKON_BIN/hp7475 &lt;plofile.PLT &gt;plotfile.HP -s0.5</pre>
+
+<p>
+Scales the image in plotfile.PLT to half size and writes the result to
+a new file named &quot;plotfile.HP&quot; using the HP7475 format.
+</p>
+
+<pre>$VARKON_BIN/hp7475 &lt;plofile.PLT -s0.5 | lp</pre>
+
+<p>
+Same as above but the result is sent to a spooled plotter.
+</p>
+
+<pre>$VARKON_BIN/hp7475 &lt;plofile.PLT -h0.1 | lp</pre>
+
+<p>
+Same as above but pen speed is set to a low value.
+</p>
+
+<h2>Comments<h2>
+
+<p>
+hp7475 automatically recognizes if the input is in .PLT or DXF
+format. The -k option only applies to DXF format.
+</p>
+
+<p>
+The pen speed of the hp7475 plotter can only be altered in fixed steps.
+The hp7475 driver selects the speed closest to the relative value given
+with the -h option. 1 is the highest and 0 is the lowest speed.
+</p>
+
+<p>
+hp7475 does not support color but if a plotter with more than one pen
+is used the PEN attribute can be used to force the plotter to use different
+pens. If different pens have different colors this will produce a color
+plot.
+</p>
+
+<p>
+hp7475 supports the WIDTH attribute for linewidth as well as the PEN
+attribute for color. Lines of variable width may be produced in the
+same way as above, by using a plotter with multiple pens of varying
+width.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

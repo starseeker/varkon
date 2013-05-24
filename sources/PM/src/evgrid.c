@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    evgrid();     Evaluerar GRID_VIEW
 *    evgrix();     Evaluerar GRIDX_VIEW
@@ -26,15 +26,11 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#ifdef UNIX
 #include "../../WP/include/WP.h"
-#endif
 #include "../../EX/include/EX.h"
 
 extern PMPARVA *proc_pv;  /* inproc.c *pv      Access structure for MBS routines */

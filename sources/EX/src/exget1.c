@@ -3,15 +3,14 @@
 *    exget1.c
 *    ========
 *
-*    EXgtid();      Interface routine for GETID   
-*    EXgthd();      Interface routine for GETHDR  
+*    EXgthd();      Interface routine for GETHDR
 *    EXgwdt();      Interface routine for GETWIDTH
-*    EXpdat();      Interface routine for PUTDAT 
-*    EXgdat();      Interface routine for GETDAT 
-*    EXddat();      Interface routine for DELDAT 
-*    EXgtpo();      Interface routine for GETPOI 
-*    EXgtli();      Interface routine for GETLIN 
-*    EXgtar();      Interface routine for GETARC 
+*    EXpdat();      Interface routine for PUTDAT
+*    EXgdat();      Interface routine for GETDAT
+*    EXddat();      Interface routine for DELDAT
+*    EXgtpo();      Interface routine for GETPOI
+*    EXgtli();      Interface routine for GETLIN
+*    EXgtar();      Interface routine for GETARC
 *    EXgtcu();      Interface routine for GETCURH
 *    EXgtop();      Interface routine for GETTOPP
 *    EXgcub();      Interface routine for GETCUBP
@@ -21,15 +20,15 @@
 *    EXgtld();      Interface routine for GETLDM
 *    EXgtcd();      Interface routine for GETCDM
 *    EXgtrd();      Interface routine for GETRDM
-*    EXgtad();      Interface routine for GETADM 
-*    EXgtgp();      Interface routine for GETGRP 
-*    EXgtcs();      Interface routine for GETCSY 
+*    EXgtad();      Interface routine for GETADM
+*    EXgtgp();      Interface routine for GETGRP
+*    EXgtcs();      Interface routine for GETCSY
 *    EXgttf();      Interface routine for GETTRF
 *    EXgtbp();      Interface routine for GETBPL
 *
 *
 *    This file is part of the VARKON Execute  Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -53,65 +52,6 @@
 #include "../../IG/include/IG.h"
 #include "../include/EX.h"
 
-/*!******************************************************/
-
-        short EXgtid(
-        DBId    *id,
-        char    *code)
-
-/*      Interface-rutin för GETID. Hämtar identitet
- *      ur GM.
- *
- *      In: id     => Pekare till identitet.
- *          code   =>
- *
- *      Ut:
- *
- *      FV:       0 => Ok.
- *           EX1592 => Otillåten funktionskod.
- *           EX1603 => Fel från DBget_pointer().
- *
- *      (C)microform ab 29/3/86 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    DBptr  la;
-    DBetype  typ;
-    short  status;
-
-/*
-***Hämta la, om "F"irst, ett extra anrop till DBget_pointer().
-*/
-    status = DBget_pointer(code[0],id,&la,&typ);
-
-    if ( code[0] == 'F' ) status = DBget_pointer('N',id,&la,&typ);
-/*
-***Översätt la till ID.
-*/
-    if ( status == 0 )
-      {
-      DBget_id(la,id);
-      return(0);
-      }
-    else if ( status == -4 )
-      {
-      return(erpush("EX1592",""));
-      }
-    else if ( status == -5 )
-      {
-      id[0].seq_val = 0;
-      id[0].ord_val = 1;
-      id[0].p_nextre = NULL;
-      return(0);
-      }
-    else
-      {
-      return(erpush("EX1603",""));
-      }
-  }
-
-/********************************************************/
 /*!******************************************************/
 
         short EXgthd(
@@ -157,20 +97,20 @@
         DBId    *id,
         DBfloat *width)
 
-/*      Interface-rutin för GETWIDTH.
+/*      Interface routine for GETWIDTH.
  *
- *      In: id      => Pekare till partens ID
- *          width   => Pekare till resultat
+ *      In: id      => C ptr to entity ID
  *
- *      Ut: *width  = Aktuell linjebredd
+ *      Out: *width => Entity line width
  *
- *      Felkoder: EX1402 => Hittar ej storheten
- *                EX1412 => Otillåten typ för denna operation
+ *      Felkoder: EX1402 => Entity does not exist
+ *                EX1412 => Illegal entity type
  *
  *      (C)microform ab 1998-01-01, J. Kjellander
  *
  *      1998-03-04 Punkt, J.Kjellander
  *      2004-07-15 Mesh+B_plane, J.Kjellander, Örebro university
+ *      2007-01-09 Hatch and Dims, J.Kjellander
  *
  ******************************************************!*/
 
@@ -182,15 +122,20 @@
     DBArc    arc;
     DBCurve  cur;
     DBText   txt;
+    DBHatch  xht;
+    DBLdim   ldm;
+    DBCdim   cdm;
+    DBRdim   rdm;
+    DBAdim   adm;
     DBMesh   mesh;
     DBBplane bpl;
 
 /*
-***Översätt ID -> la.
+***Map ID -> la.
 */
     if ( DBget_pointer('I',id,&la,&typ) < 0 ) return(erpush("EX1402",""));
 /*
-***Vilken typ av storhet är det ?
+***What entity type ?
 */
     switch ( typ )
       {
@@ -219,6 +164,31 @@
      *width = txt.wdt_tx;
       break;
 
+      case XHTTYP:
+      DBread_xhatch(&xht,NULL,NULL,la);
+     *width = xht.wdt_xh;
+      break;
+
+      case LDMTYP:
+      DBread_ldim(&ldm,NULL,la);
+     *width = ldm.wdt_ld;
+      break;
+
+      case CDMTYP:
+      DBread_cdim(&cdm,NULL,la);
+     *width = cdm.wdt_cd;
+      break;
+
+      case RDMTYP:
+      DBread_rdim(&rdm,NULL,la);
+     *width = rdm.wdt_rd;
+      break;
+
+      case ADMTYP:
+      DBread_adim(&adm,NULL,la);
+     *width = adm.wdt_ad;
+      break;
+
       case MSHTYP:
       DBread_mesh(&mesh,la,MESH_HEADER);
      *width = mesh.wdt_m;
@@ -231,7 +201,9 @@
 
       default: return(erpush("EX1412","GETWIDTH"));
       }
-
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -802,7 +774,7 @@
 /*
 ***Läs snitt-posten och returnera snitt-data.
 */
-    DBread_xhatch(snitt,lindat,la);
+    DBread_xhatch(snitt,lindat,NULL,la);
 
     return(0);
   }
@@ -843,7 +815,7 @@
 /*
 ***Läs ldim-posten och returnera ldim-data.
 */
-    DBread_ldim(ldim,la);
+    DBread_ldim(ldim,NULL,la);
 
     return(0);
   }
@@ -884,7 +856,7 @@
 /*
 ***Läs cdim-posten och returnera cdim-data.
 */
-    DBread_cdim(cdim,la);
+    DBread_cdim(cdim,NULL,la);
 
     return(0);
   }
@@ -925,7 +897,7 @@
 /*
 ***Läs rdim-posten och returnera rdim-data.
 */
-    DBread_rdim(rdim,la);
+    DBread_rdim(rdim,NULL,la);
 
     return(0);
   }
@@ -966,7 +938,7 @@
 /*
 ***Läs adim-posten och returnera adim-data.
 */
-    DBread_adim(adim,la);
+    DBread_adim(adim,NULL,la);
 
     return(0);
   }

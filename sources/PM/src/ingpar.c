@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    short inapar()    Evaluate actual parameter list for selected routine
 *    short inrpar()    Release pool space allocated by inapar()

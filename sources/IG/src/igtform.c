@@ -15,7 +15,7 @@
 /*  IGrot1();    Rotate entities                                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -41,7 +41,7 @@
 #include "../../WP/include/WP.h"
 #include "../../EX/include/EX.h"
 
-extern short posmode;
+extern int posmode;
 
 /*!******************************************************/
 
@@ -345,12 +345,13 @@ exit:
 
   {
     DBetype  typ;
-    DBfloat    t;
-    short    posorg,status;
+    DBfloat  t;
+    short    status;
+    int      posorg;
     bool     end,right;
     DBId     id[1][MXINIV];
     DBVector p1,p2;
-    DBCurve    cur;
+    DBCurve  cur;
 
 /*
 ***H�mta id f�r storheten som skall flyttas.

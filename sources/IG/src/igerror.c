@@ -10,7 +10,7 @@
 /*  errmes();    Display error stack                                */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -37,23 +37,29 @@
 #include "../../WP/include/WP.h"
 #include <string.h>
 
-#define ESTKSZ 25          /* Felstackens storlek */
-#define INSLEN 256         /* Max längd på insert-strängen */
+#define ESTKSZ 25          /* Size of error stack */
+#define INSLEN 256         /* Insert string max length */
 
+/*
+***The error stack holds error reports.
+*/
 typedef struct errrpt
   {
-  char   module[3];         /* Modul, 2 tecken + Ön */
-  short  errnum;            /* Felnummer */
-  short  sev;               /* Severity-code */
-  char   insert[INSLEN+1];  /* Insert-sträng, tecken + \n */
+  char   module[3];         /* Module, 2 chars + \n */
+  short  errnum;            /* Error number, 3 digits */
+  short  sev;               /* Severity-code, 1 digit */
+  char   insert[INSLEN+1];  /* Insert string, chars + \n */
   } ERRRPT;
 
 ERRRPT  errstk[ESTKSZ];
 
-/* errstk är felmeddelandestacken */
-
-extern bool  igbflg;
+/*
+***Global variables.
+*/
 extern char  jobdir[],jobnam[];
+
+extern bool  startup_complete;
+extern FILE *startup_logfile;
 
 /*!******************************************************/
 
@@ -104,6 +110,7 @@ extern char  jobdir[],jobnam[];
  *      7/3/95   max 80 tecken i str, J. Kjellander
  *      1998-03-11 INSLEN, J.Kjellander
  *      2004-02-21 IGialt(), J.Kjellander
+ *      2007-11-17 2.0, J.Kjellander
  *
  ******************************************************!*/
 
@@ -112,16 +119,15 @@ extern char  jobdir[],jobnam[];
     short i;
 
 /*
-***Ev. debug.
+***If system startup is not yet completed, write
+***error message to startup_logfile and return 
+***neg status.
 */
-#ifdef DEBUG
-    if ( dbglev(IGEPAC) == 33 )
-      {
-      fprintf(dbgfil(IGEPAC),"***Start-erpush***\n");
-      fprintf(dbgfil(IGEPAC),"Felkod=%s\n",code);
-      fprintf(dbgfil(IGEPAC),"Insert=%s\n",str);
-      }
-#endif
+   if ( startup_complete == FALSE )
+     {
+     fprintf(startup_logfile,"%s %s\n",code,str);
+     return(-1);
+     }
 /*
 ***Insertsträngar får inte vara längre än INSLEN tecken.
 */
@@ -152,23 +158,13 @@ extern char  jobdir[],jobnam[];
 
     strcpy(errstk[0].insert,str);
 /*
-***Ev. debug.
-*/
-#ifdef DEBUG
-    if ( dbglev(IGEPAC) == 33 )
-      {
-      fprintf(dbgfil(IGEPAC),"Severity=%d\n",sevval);
-      fprintf(dbgfil(IGEPAC),"***Slut-erpush***\n");
-      }
-#endif
-/*
 ***Om severity 4 rapportera felet och bryt ner systemet.
 */
     if ( sevval == 4 )
       {
       errmes();
       IGialt(457,458,458,TRUE);
-      IGexsa();
+      IGexit_sa();
       }
 /*
 ***Returnera severity.

@@ -202,7 +202,7 @@ DBfloat  wdt_su;               /* Linewidth for wireframe rep       */
 /*!  !          !  !           !  !           !  !          !      !*/
 /*!  !  NULL-   !  ! Geometric !  ! Geometric !  ! Topolog. !      !*/
 /*!  !  patch   !  !  patch    !  !  patch    !  !  patch   !      !*/
-/*!  !          !  !  DBPatch_C   !  !  DBPatchL   !  !  GMPAT   !      !*/
+/*!  !          !  ! DBPatch_C !  !  DBPatchL !  !  GMPAT   !      !*/
 /*!  !__________!  !___________!  !___________!  !__________!      !*/
 /*!                                                                !*/
 /*!                                                                !*/
@@ -321,10 +321,10 @@ gmflt ofs_pat;               /* Offset for the patch         */
 
 /*!*********************** DBPatchP3 ********************************!*/
 /*!                                                                !*/
-/*! A third degree polynomial patch                                !*/ 
+/*! A third degree polynomial patch                                !*/
 /*! -------------------------------                                !*/
 /*!                                                                !*/
-/*! This patch is exactly the same as DBPatch_C but members are       !*/
+/*! This patch is exactly the same as DBPatch_C but members are    !*/
 /*! named diferently in order to allow for patches of high         !*/
 /*! degree where more digits are needed for row- and column-       !*/
 /*! numbering.                                                     !*/

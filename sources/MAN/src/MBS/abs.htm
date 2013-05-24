@@ -1,0 +1,55 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- abs - Function})
+define({_INDEXLINK_},{<a href="mathindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>abs - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Returns the absolute (positive) value of an argument as an INT or FLOAT
+value depending on the type of the argument.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  y:=abs(x);
+
+  int/float y;
+  int/float x;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>x</td>
+<td>- An INT or FLOAT value.</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>
+If x is an INT value, abs() returns an INT. If x is a FLOAT value, abs()
+returns a FLOAT.
+</p>
+
+<h2>Comments</h2>
+
+<p>
+The abs() function is different from other functions by its dual nature of being both an INT
+and a FLOAT function. This means that if <code>i</code> is an INT, the MBS compiler will accept
+<code>i:=abs(55);</code> but not <code>i:=abs(55.7);</code>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,0 +1,53 @@
+changequote({,})
+define({_TITLE_},{Varkon application developers manual})
+define({_SUBTITLE_},{- Dialog programming})
+define({_INDEXLINK_},{<a href="macroindex.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Dialog programming</h1>
+
+<p>
+MBS includes a number of high level routines to create windows
+buttons, icons and input fields and also to manage events from them.
+Here's a simple example.....
+</p>
+
+<p><pre class=box>
+MACRO MODULE show_message(STRING message_text*132);
+
+  INT main_id,button1_id,button2_id,event_id;
+
+BEGINMODULE
+
+  main_id:=cre_win(vec(20,20),400,200,"APPLICATION MESSAGE");
+  button1_id:=cre_button(main_id,vec(10,30),20,350,0,message_text);
+  button2_id:=cre_button(main_id,vec(10,150),50,50,5,"Okey");
+  show_win(main_id);
+
+  loop: event_id:=wait_win(main_id);
+
+  if event_id = button2_id then
+    del_win(main_id);
+    exit();
+  else
+    goto loop;
+  endif;
+
+ENDMODULE
+</pre></p>
+
+<p>
+This macro creates a window with a message and a
+button with the text "Okey". When the user presses the Okey
+button the macro deletes the window and exits.
+</p>
+
+<p>
+For more information, see the (TODO:link) section in the MBS manual.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

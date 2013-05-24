@@ -1,0 +1,78 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- get_color - Function})
+define({_INDEXLINK_},{<a href="grapindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>get_color - Function</h1>
+
+<h2>Description</h2>
+
+<p>
+Returns the RGB color value for a pen.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  status:=get_color(pen, red, green, blue);
+
+  int pen;
+  int red;
+  int green;
+  int blue;
+  int status;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+
+<tr>
+<td>pen</td>
+<td>- Pen number. 0 - 255</td>
+</tr>
+
+<tr>
+<td>red</td>
+<td>- Red intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>green</td>
+<td>- Green intensity, 0 - 255</td>
+</tr>
+
+<tr>
+<td>blue</td>
+<td>- Blue intensity, 0 - 255</td>
+</tr>
+
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>
+Returns 0 if the pen is defined and -1 if the pen is not defined.
+</p>
+
+<h2>Comments</h2>
+
+<p>
+See also:
+</p>
+
+<p>
+<a href="cre_col.htm">cre_color()</a>,
+<a href="cre_mat.htm">cre_material()</a>,
+<a href="get_mat.htm">get_material()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

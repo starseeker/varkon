@@ -1,33 +1,33 @@
-/*****************************************************************************/
-/*                                                                           */
-/*  File: geevalnc.c                                                        */
-/*                                                                           */
-/*  This file includes:                                                      */
-/*                                                                           */ 
-/*  GEevalnc()   Evaluator for NURBS curve segment(span)                     */
-/*  GEevaluvnc() Evaluator in UV space for NURBS curve segment(span)         */
-/*                                                                           */
-/*  This file is part of the VARKON Geometry Library.                        */
-/*  URL:                                                                     */
-/*                                                                           */
-/*  This library is free software; you can redistribute it and/or            */
-/*  modify it under the terms of the GNU Library General Public              */
-/*  License as published by the Free Software Foundation; either             */
-/*  version 2 of the License, or (at your option) any later                  */
-/*  version.                                                                 */
-/*                                                                           */
-/*  This library is distributed in the hope that it will be                  */
-/*  useful, but WITHOUT ANY WARRANTY; without even the implied               */
-/*  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                  */
-/*  PURPOSE.  See the GNU Library General Public License for more            */
-/*  details.                                                                 */
-/*                                                                           */
-/*  You should have received a copy of the GNU Library General               */
-/*  Public License along with this library; if not, write to the             */
-/*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,                 */
-/*  MA 02139, USA.                                                           */
-/*                                                                           */
-/*****************************************************************************/
+/*********************************************************************/
+/*                                                                   */
+/*  File: geevalnc.c                                                 */
+/*                                                                   */
+/*  This file includes:                                              */
+/*                                                                   */
+/*  GEevalnc()   Evaluator for NURBS curve segment(span)             */
+/*  GEevaluvnc() Evaluator in UV space for NURBS curve segment(span) */
+/*                                                                   */
+/*  This file is part of the VARKON Geometry Library.                */
+/*  URL:                                                             */
+/*                                                                   */
+/*  This library is free software; you can redistribute it and/or    */
+/*  modify it under the terms of the GNU Library General Public      */
+/*  License as published by the Free Software Foundation; either     */
+/*  version 2 of the License, or (at your option) any later          */
+/*  version.                                                         */
+/*                                                                   */
+/*  This library is distributed in the hope that it will be          */
+/*  useful, but WITHOUT ANY WARRANTY; without even the implied       */
+/*  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR          */
+/*  PURPOSE.  See the GNU Library General Public License for more    */
+/*  details.                                                         */
+/*                                                                   */
+/*  You should have received a copy of the GNU Library General       */
+/*  Public License along with this library; if not, write to the     */
+/*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,         */
+/*  MA 02139, USA.                                                   */
+/*                                                                   */
+/*********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../include/GE.h"
@@ -35,15 +35,15 @@
 
 
                                  /* MAX_NURBD ,max NURBS degree (surdef.h).  */
-                                         
+
   static DBstatus DersBasisFuns  (
   DBint i,                       /* Offset in knot vector                    */
-  DBfloat t_seg,                 /* Local parameter value                    */         
+  DBfloat t_seg,                 /* Local parameter value                    */
   DBshort p,                     /* NURBS degree (order-1)                   */
-  DBint n,                       /* Requested derivatives                    */             
+  DBint n,                       /* Requested derivatives                    */
   DBfloat *U ,                   /* Knot vector                              */
   DBfloat ders[3][MAX_NURBD]);   /* basis values[der_no][index] (1)          */
-  
+
   /* (1) At most degree+1 of the basis values are nonzero */
 
 

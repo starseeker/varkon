@@ -1,9 +1,9 @@
 !*******************************************************
 
- MACRO DRAWING MODULE ma_posw5(INT main_id;
-                               VECTOR p;
-                               INT    b,h;
-                           VAR STRING mbsstr*132);
+ MACRO MODULE ma_posw5(INT main_id;
+                       VECTOR p;
+                       INT    b,h;
+                       VAR STRING mbsstr*132);
 
 !*      Interaktiv inmatning av en position centrum.
 !*      Om inmatningen avbryts lämnas mbsstr orörd.

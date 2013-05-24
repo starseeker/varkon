@@ -4,12 +4,12 @@
 *    ========
 *
 *    This file is part of the VARKON Analyzer Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following internal routines:
 *
-*    anaexp();        V3/MBS analyser access function - interactiv Varkon.
-*  
+*    anaexp(); V3/MBS analyser access function - interactiv Varkon.
+*
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
 *    License as published by the Free Software Foundation; either
@@ -24,19 +24,20 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
-*
 **********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
 #include "../include/AN.h"
 
-struct ANSYREC sy;                 /* scanner interface structure */
+extern PMLITVA *func_vp;   /* Ptr to function value */
+
+struct ANSYREC  sy;        /* Scanner interface structure */
+extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*!******************************************************/
 
-        short anaexp(
+        short   anaexp(
         char   *expr,
         bool    tmpref,
         pm_ptr *rptr,
@@ -51,19 +52,21 @@ struct ANSYREC sy;                 /* scanner interface structure */
  *           *typ   => Simple type.
  *
  *      (C)microform ab 1986-04-14 Mats Nelson
- * 
+ *
  *       1999-04-15 Rewritten, R. Svedin
+ *       2007-09-16 Bugfix recursion, J.Kjellander
  *
  ******************************************************!*/
  
   {
-   pm_ptr lptr;                               /* local de. */
-   ANFSET set;
-   PMLITVA valp;
-   pm_ptr valt;
-   short status;
-   ANATTR attr;                               /* out - expression
-                                                 result attributes. */
+   pm_ptr   lptr;
+   ANFSET   set;
+   PMLITVA  valp;
+   pm_ptr   valt;
+   short    status;
+   ANATTR   attr;
+   PMLITVA *cur_vp;
+
 /*
 ***Analyse the expression string
 */
@@ -87,11 +90,21 @@ struct ANSYREC sy;                 /* scanner interface structure */
      pmrele();                                /* delete incorrect expr. */
      return(erpush("IG2212",""));
      }
-   if ( inevex(lptr,&valp,&valt) != 0)        /* runtime errors */
+/*
+***Check for runtime errors. This may create a situation
+***where inevfu() is called recursively. POS_MBS() is one
+***example. Global variable func_vp must therefore be
+***preserved over the call to inevex().
+*/
+   cur_vp = func_vp;
+
+   if ( inevex(lptr,&valp,&valt) != 0 )
      {
-     pmrele();                                /* delete incorrect expr. */
+     pmrele();
      return(erpush("IG2222",""));
      }
+
+   func_vp = cur_vp;
 /*
 ***Prepare output
 */

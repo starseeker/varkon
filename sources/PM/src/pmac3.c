@@ -4,7 +4,7 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    bool  pmargs();    Hitta framåt-referenser i GEO/PART-sats
 *    bool  pmarex();    Hitta framåt-referenser i ett uttryck

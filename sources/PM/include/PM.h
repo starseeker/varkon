@@ -95,14 +95,13 @@ typedef char pmopty;    /* Type for binary operator.                         */
 #define PM_DIV   12     /*   - " -       /       - " -                       */
 #define PM_MUL   13     /*   - " -       *       - " -                       */
 #define PM_EXP   14     /*   - " -       **      - " -                       */
-   
+
 /*---------------------------------------------------------------------------*/
-typedef char pmmoty;    /* type for Module type can have the value 2 (for 2D)*/
-                        /* and  3 (for 3D). IGUNDEF = 0 => Not defined       */
+typedef char pmmoty;    /* Module type, from 1.19B always _3D                */
 #define _2D   2         /* value for 2D to be used with pmmoty               */
 #define _3D   3         /* value for 3D        - " -                         */
 /*---------------------------------------------------------------------------*/
-typedef char pmmoat;    /* type for Module attribute IGUNDEF = Not defined   */
+typedef char pmmoat;    /* Module attribute, default = GLOBAL                */
                         /*                                                   */
 #define LOCAL  1        /* value for LOCAL to be used with pmmoat - type     */
 #define GLOBAL 2        /* value for GLOBAL      - " -                       */
@@ -239,7 +238,6 @@ short evavin(void);
 short evapen(void);
 short evawdt(void);
 short evascl(void);
-short evadsc(void);
 short evacac(void);
 short evagrx(void);
 short evagry(void);
@@ -247,7 +245,6 @@ short evagdx(void);
 short evagdy(void);
 short evagrd(void);
 short evajbn(void);
-short evamtp(void);
 short evamat(void);
 short evajbd(void);
 short evalft(void);
@@ -268,9 +265,8 @@ short evadas(void);
 short evadnd(void);
 short evadau(void);
 short evacsy(void);
-short evapid(void);
 short evavvr(void);
-short evavsr(PMLITVA *valp);
+short evasvr(void);
 short evaost(void);
 short evahst(void);
 
@@ -321,8 +317,6 @@ short evsetb(void);
 /*
 ***evcur.c
 */
-short evcufr(void);
-short evcupr(void);
 short evcurs(void);
 short evcusa(void);
 short evcuna(void);
@@ -372,7 +366,6 @@ short evoutb(void);
 short evinii(void); 
 short evinif(void);
 short evinis(void);
-short evinio(pmvaty iotyp, PMPARVA pv[], PMLITVA *valp); 
 short evinl(void);
 short evinb(void);
 short evfpos(void);
@@ -391,7 +384,6 @@ short evuldl(void);
 */
 short evsrgm(void);
 short evgngm(void);
-short evgtid(void);
 short evgtyp(void);
 short evgint(void);
 short evgflt(void);
@@ -404,7 +396,6 @@ short evgwdt(void);
 short evgpoi(void);
 short evglin(void);
 short evgarc(void);
-short evgcur(void);
 short evgcuh(void);
 short evgseg(void);
 short evgsuh(void);
@@ -448,8 +439,6 @@ short evion(void);
 short evsect(void);
 short evnsec(void);
 #endif
-short evvec(void);
-short evvecp(void);
 short evrefc(void);
 short evglor(void);
 short evvecl(void);
@@ -459,6 +448,12 @@ short evangl(void);
 short evions(void);
 short eveval(void);
 short evncui(void);
+
+/*
+***evvec.c
+*/
+short evvec(void);
+short evvecp(void);
 
 /*
 ***evgprocs.c
@@ -578,7 +573,6 @@ short evpart(V2REFVA *ident, PMPAST *partp);
 /*
 ***evplot.c
 */
-short evplvi(void);
 short evplwi(void);
 
 /*
@@ -591,23 +585,6 @@ short evpopr(void);
 ***evpinc.c
 */
 short evpinc(void);
-
-/*
-***evrdb.c
-*/
-short evdbop(void);
-short evdbbg(void);
-short evdbsl(void);
-short evdbup(void);
-short evdbin(void);
-short evdbdl(void);
-short evdben(void);
-short evdbrl(void);
-short evdbcl(void);
-short evdbfi(void);
-short evdbff(void);
-short evdbfs(void);
-short evdbnx(void);
 
 /*
 ***evrap.c
@@ -628,14 +605,18 @@ short evrpofa(void);
 short evrpifa(void);
 
 /*
-***evshade.c
+***evcolor.c
 */
 short evltvi(void);
 short evlton(void);
 short evltof(void);
-short evgtco(void);
-short evcrmt(void);
+short evgtlt(void);
 short evcrco(void);
+short evgtco(void);
+short evrgbhsv(void);
+short evhsvrgb(void);
+short evcrmt(void);
+short evgtmt(void);
 
 /*
 ***evsur.c
@@ -668,7 +649,6 @@ short evfins(void);
 short evchr(void);
 short evasci(void);
 short evstr(void);
-short evval(void);
 short evleng(void);
 short evsubs(void);
 
@@ -1029,7 +1009,7 @@ short pmprmo(pm_ptr mola);
 /*
 **pretty.c
 */
-short pprsts(pm_ptr statla, short geotyp, char *str, int ntkn);
+short pprsts(pm_ptr statla, char *str, int ntkn);
 short pprst(pm_ptr statla);
 short pprexs(pm_ptr exprla, short geotyp, char *str, int ntkn);
 short pprex(pm_ptr exprla, ppopri inpri);

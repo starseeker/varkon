@@ -1,10 +1,11 @@
-/*****************************************************************************
+/*******************************************************************
 *
 *    gesurtrim.c
 *    ===========
 *
 *    GEsur_trim_usrdef()     Creates a trimmed surface
-*    GEmk_grsurftrim()       Creates trimcurves for graph.surf. (openGL)rep
+*    GEmk_grsurftrim()       Creates trimcurves for graph.surf.
+*                                      (openGL)rep
 *    GEis_inside_trim()      Inside/outside test
 *    GEtrim_loop_direction() Test of trim loop directions
 *
@@ -25,7 +26,7 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-******************************************************************************/
+***********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../include/GE.h"

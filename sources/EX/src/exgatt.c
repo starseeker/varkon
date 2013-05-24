@@ -8,7 +8,7 @@
 *    EXrist();     Reinterpret statement
 *
 *    This file is part of the VARKON Execute  Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -184,14 +184,14 @@ extern V2NAPA defnap;
       break;
 
       case XHTTYP:
-      DBread_xhatch(&gmpost.xht_un,NULL,la);
+      DBread_xhatch(&gmpost.xht_un,NULL,NULL,la);
       pnp->xfont  = gmpost.xht_un.fnt_xh;
       pnp->xdashl = gmpost.xht_un.lgt_xh;
       *pcsypk     = gmpost.xht_un.pcsy_xh;
       break;
 
       case LDMTYP:
-      DBread_ldim(&gmpost.ldm_un,la);
+      DBread_ldim(&gmpost.ldm_un,NULL,la);
       pnp->dasize = gmpost.ldm_un.asiz_ld;
       pnp->dtsize = gmpost.ldm_un.tsiz_ld;
       pnp->dndig  = gmpost.ldm_un.ndig_ld;
@@ -200,7 +200,7 @@ extern V2NAPA defnap;
       break;
 
       case CDMTYP:
-      DBread_cdim(&gmpost.cdm_un,la);
+      DBread_cdim(&gmpost.cdm_un,NULL,la);
       pnp->dasize = gmpost.cdm_un.asiz_cd;
       pnp->dtsize = gmpost.cdm_un.tsiz_cd;
       pnp->dndig  = gmpost.cdm_un.ndig_cd;
@@ -209,7 +209,7 @@ extern V2NAPA defnap;
       break;
 
       case RDMTYP:
-      DBread_rdim(&gmpost.rdm_un,la);
+      DBread_rdim(&gmpost.rdm_un,NULL,la);
       pnp->dasize = gmpost.rdm_un.asiz_rd;
       pnp->dtsize = gmpost.rdm_un.tsiz_rd;
       pnp->dndig  = gmpost.rdm_un.ndig_rd;
@@ -218,7 +218,7 @@ extern V2NAPA defnap;
       break;
 
       case ADMTYP:
-      DBread_adim(&gmpost.adm_un,la);
+      DBread_adim(&gmpost.adm_un,NULL,la);
       pnp->dasize = gmpost.adm_un.asiz_ad;
       pnp->dtsize = gmpost.adm_un.tsiz_ad;
       pnp->dndig  = gmpost.adm_un.ndig_ad;

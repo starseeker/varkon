@@ -1,0 +1,104 @@
+changequote({,})
+define({_TITLE_},{Varkon System administrators manual})
+define({_SUBTITLE_},{- Printing and plotting</h1>})
+define({_INDEXLINK_},{<a href="index.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+
+include(../../include/header.inc)
+
+
+<h1>Printing and plotting</h1>
+
+<p>
+Printing (or plotting as it is sometimes called) is a three step
+process. The first step is to create a 2D vectorbased image
+of the model on ISO/GKS Metafile format. In Varkon, such files
+are called plotfiles and have names that end with .PLT. The second
+step is to process the plotfile into a format that
+is known by a specific printer or plotter. To do this, Varkon
+uses a separate small program called plotterdriver. Varkon
+plotterdrivers read their input from standard input (stdin) and
+write their output to standard output (stdout) so you can use
+the as a filter if you wnat to. The most comonly driver used is
+postscript but special drivers for less common hardware also exist.
+The third and last step is to send the processed data to a printer
+or plotter. This is usually done by involving the printer manager
+of the computer system used, typically lp on a Unix platform,
+see below.
+</p>
+
+<p>
+The print dialog in the graphic window creates a plotfile
+automatically. Depending on what portion of the model and
+what view direction you have selected a PLT-file of that
+selection is automatically created in VARKON_TMP. (You can
+also create PLT-files with the file/export/PLT-function or
+with MBS).
+</p>
+
+<p>
+In order to process the plotfile and send it to its final destination,
+the print dialog in the graphic window uses settings from
+a printer configuration file (plot.cnf) located in VARKON_PLT.
+Here is a printout of the default plot.cnf
+</p>
+
+<pre>
+Varkon_driver:postscript -bw -FF
+Unix_print_command: | lp
+Media_size_x: 210
+Media_size_y: 296
+Xmin: 0
+Ymin: 0
+Rotation: 0
+Scale: 1
+Autofit: True
+</pre>
+
+<p>
+The first line specifies which driver to use and optional command line
+parameters to send to the driver. -bw in this case means use_black_and_white
+color mapping (the most commonly used printers are balck_and_white). -FF makes
+the driver add a FormFeed character to the end of the output. The name of the
+plotfile is added automatically. The second line specifies the command needed
+to send the output from the driver to it's final destination. The rest of
+the information in the configuration file is used to calculate the scale
+and orientation of the output. Depending on the settings in the configuration
+file Varkon will create a suitable shell command and send it to the operating
+system to process without wait. Assuming a temporary plotfile a6freg.PLT has
+been created in VARKON_TMP, this is what the Unix command line would look
+like:
+</p>
+
+<pre>
+($VARKON_BIN/postscript &lt;$VARKON_TMP/a6freg.PLT -bw -FF -s1 -v0 -x0 -y0 | lp;rm $VARKON_TMP/a6freg.PLT)&
+</pre>
+
+<p>
+To alter the settings in the configuration file, use the configure alternative
+in the print dialog. If, for example, you want to save the processed output in
+a file rather than send it to a printer, change the Unix_print_comand: to >filename.
+An option for users of the KDE environment is to replace lp with kprinter.
+To read more about available plotter drivers and how to use them se below.
+</p>
+
+<h2>Varkon printer drivers</h2>
+
+<p>
+The Varkon system includes a few different printer drivers.
+The postscript driver is defalt on Unix systems. With this
+driver (in combination with ghostscript) Varkon should be
+able to print on all printers supported by the Unix system
+where Varkon is installed. Varkon also includes drivers
+for Hewlett Packard plotters and Microsoft windows.
+See below for full documentation:
+</p>
+
+<p><a href="postscript.htm">The postscript driver<p>
+<p><a href="hp7475.htm">Driver for HP7475<p>
+<p><a href="hpcl5.htm">Driver for HPCL5<p>
+<p><a href="msw32.htm">Driver for Microsoft Windows<p>
+
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

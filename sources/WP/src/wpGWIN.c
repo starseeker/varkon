@@ -4,13 +4,14 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
 *    WPwcgw();           Create WPGWIN
 *    WPnrgw();           Normalize modelwindow
-*    WPxpgw();           Expose routine for WPGWIN 
+*    WPxpgw();           Expose routine for WPGWIN
+*    WPtitle_GWIN();     Update WPGWIN window title
 *    WPcrgw();           Crossing routine for WPGWIN
 *    WPbtgw();           Button routine for WPGWIN
 *    WPrpgw();           Reparent routine for WPGWIN
@@ -44,11 +45,11 @@
 #include "../include/v3icon.h"
 #include <string.h>
 
-extern char    jobnam[];
-extern int     actpen;
-extern short   actfun,v3mode;
-extern bool    rstron;
-extern DBptr   lsysla;
+extern char   jobnam[],jobdir[];
+extern int    actpen,actfunc,sysmode;
+extern bool   rstron;
+extern DBptr  lsysla;
+extern V3MDAT sydata;
 
 #define MCWIN_DY 45
 
@@ -142,7 +143,7 @@ static void cre_toolbar(WPGWIN *gwinpt);
     width  = DisplayWidth(xdisp,xscr);
     height = DisplayHeight(xdisp,xscr);
 
-    xhint.flags  = USPosition | USSize | PMinSize | PMaxSize;   
+    xhint.flags  = USPosition | USSize | PMinSize | PMaxSize;
     xhint.x      = x;
     xhint.y      = y;
     xhint.width  = dx;
@@ -365,9 +366,9 @@ static void cre_toolbar(WPGWIN *gwinpt);
 /*
 ***Update window border.
 */
-    WPupwb(gwinpt);
+    WPtitle_GWIN(gwinpt);
 /*
-***Slut.
+***The end.
 */
     return(0);
   }
@@ -498,6 +499,83 @@ static void cre_toolbar(WPGWIN *gwinpt);
   }
 
 /********************************************************/
+/*********************************************************/
+
+       short   WPtitle_GWIN(
+       WPGWIN *gwinpt)
+
+/*     Update the title text of a WPGWIN window border.
+ *
+ *     In: gwinpt => C ptr to WPGWIN
+ *                   or NULL for GWIN_MAIN.
+ *
+ *     (C)2008-02-10 J.Kjellander
+ *
+ *******************************************************!*/
+
+ {
+   char    title[V3STRLEN+1],tmpbuf[V3STRLEN+1];
+   WPGWIN *grawin;
+   WPWIN  *winptr;
+/*
+***Init.
+*/
+   title[0] = '\0';
+/*
+***If NULL was passed, get a C ptre to GWIN_MAIN.
+*/
+   if ( gwinpt == NULL )
+     {
+     if ( (winptr=WPwgwp((wpw_id)GWIN_MAIN)) != NULL  &&
+         winptr->typ == TYP_GWIN ) grawin = (WPGWIN *)winptr->ptr;
+     else return(0);
+     }
+   else grawin = gwinpt;
+/*
+***All windows either have a custom title or the defult title.
+*/
+   if ( !WPgrst("varkon.title",title) )
+     {
+     sprintf(title,"VARKON %d.%d%c",sydata.vernr,sydata.revnr,
+                                    sydata.level);
+     }
+/*
+***They can also have have jobdir and/or jobname.
+*/
+   strcat(title, " ");
+
+   if ( WPgrst("varkon.title.jobdir",tmpbuf) && strcmp(tmpbuf,"True") == 0 )
+     {
+     strcat(title,jobdir);
+     }
+
+   if ( WPgrst("varkon.title.jobname",tmpbuf) && strcmp(tmpbuf,"True") == 0 )
+     {
+     strcat(title,jobnam);
+     }
+/*
+***And finally also view name.
+*/
+   if ( WPgrst("varkon.title.viewname",tmpbuf) &&
+        strcmp(tmpbuf,"True") == 0 )
+       {
+       if ( grawin->vy.name[0] != '\0' )
+         {
+         strcat(title," - ");
+         strcat(title,grawin->vy.name);
+         }
+       }
+/*
+***Update the window border.
+*/
+   XStoreName(xdisp,grawin->id.x_id,title);
+/*
+***The end.
+*/
+   return(0);
+ }
+
+/*********************************************************/
 /*!******************************************************/
 
         bool            WPcrgw(
@@ -657,17 +735,17 @@ static void cre_toolbar(WPGWIN *gwinpt);
 
           if ( acttyp == CFUNC )
             {
-            oldfun = actfun;
-            actfun = actnum;
+            oldfun  = actfunc;
+            actfunc = actnum;
 
             switch ( actnum )
               {
               case 102:
-              WPview_dialogue(gwinpt->id.w_id);
+              WPview_dialog(gwinpt->id.w_id);
               break;
 
               case 103:
-              WPgrid_dialogue(gwinpt->id.w_id);
+              WPgrid_dialog(gwinpt->id.w_id);
               break;
 
               case 150:
@@ -683,8 +761,7 @@ static void cre_toolbar(WPGWIN *gwinpt);
               break;
 
               case 190:
-              if ( v3mode == BAS3_MOD ) WPperp(gwinpt,x,y);
-              else XBell(xdisp,100);
+              WPperp(gwinpt,x,y);
               break;
 
               case 191:
@@ -700,15 +777,15 @@ static void cre_toolbar(WPGWIN *gwinpt);
               break;
 
               case 197:
-              WPlevels_dialogue(gwinpt->id.w_id);
+              WPlevel_dialog(gwinpt->id.w_id);
               break;
 
               default:
-              actfun = oldfun;
+              actfunc = oldfun;
               if ( IGdofu(acttyp,actnum) == EXIT ) IGexit(); 
               break;
               }
-            actfun = oldfun;
+            actfunc = oldfun;
             return(TRUE);
             }
           else
@@ -776,8 +853,6 @@ static void cre_toolbar(WPGWIN *gwinpt);
  *      In: gwinpt = C-ptr to WPGWIN.
  *          conev  = C-ptr to ConfigureEvent.
  *
- *      Out: Nothing.   
- *
  *      Return: TRUE.
  *
  *      (C)microform ab 8/2/94 J. Kjellander
@@ -795,7 +870,7 @@ static void cre_toolbar(WPGWIN *gwinpt);
     bool   right,left,up,down;
     Window child;
     XEvent event;
-   
+
 /*
 ***To prevent multiple updates of the window during resize
 ***by the user, remove pending StructureNotify events.
@@ -811,7 +886,7 @@ static void cre_toolbar(WPGWIN *gwinpt);
 /*
 ***Where is the window now ? Only way to be
 ***sure is with XTranslate...
-*/ 
+*/
     XTranslateCoordinates(xdisp,gwinpt->id.x_id,
                       DefaultRootWindow(xdisp),0,0,&newx,&newy,&child);
 /*
@@ -844,14 +919,13 @@ static void cre_toolbar(WPGWIN *gwinpt);
       else           up   = TRUE;
       }
 /*
-***Om f�nstret �nnu inte har "reparentiserats" av WM
-***kan en flyttning av f�nstret inte bero p� anv�ndaren
-***av systemet utan m�ste bero p� WM:s garnering av
-***f�nstret med egna ramar etc. Is�fall sparar vi p�
-***oss denna f�rflyttning s� att vi vet hur stor den �r.
-***F�r att detta s�kert bara ska ske en g�n s�tter vi
-***reprntflaggan till TRUE. Det verkar som tex. KDE inte
-***g�r reparent �ver huvud taget. 2007-02-02 J.Kjellander
+***If the window is not yet "reparentisized" by the WM
+***the event is probably not caused by the user but rather
+***by the fact that the WM has dressed the window with it's
+***own borders etc.
+***If that is the case, we save the move so we know
+***how big it is and set the reprnt flag = TRUE. Some WM's
+***may not reparentisize at all, KDE for example.
 */
     if ( !gwinpt->reprnt )
       {
@@ -860,10 +934,9 @@ static void cre_toolbar(WPGWIN *gwinpt);
       gwinpt->reprnt = TRUE;
       }
 /*
-***Om ovanst�ende garnering �nnu inte skett, dvs. (wmandx,wmandy) = 0
-***men f�nstret �nd� "reparentiserats" har WM valt att g�ra saker i
-***en annan ordning �n normalt. Is�fall tolkar vi denna f�rsta f�rflyttning
-***som garnering i alla fall.
+***If dressing has not yet been done (wmandx,wmandy) = 0 but the
+***window has been reparented the WM is doing things in another order.
+***In that case we treat the first move as dressing anyway.
 */
     else if ( gwinpt->wmandx == 0  &&  gwinpt->wmandy == 0 )
       {
@@ -871,7 +944,7 @@ static void cre_toolbar(WPGWIN *gwinpt);
       gwinpt->wmandy += dy;
       }
 /*
-***Lagra den nya f�nstergeometrin i WPGWIN-posten.
+***Save new window geometry with WPGWIN.
 */
     gwinpt->geo.x  = newx;
     gwinpt->geo.y  = newy;
@@ -879,19 +952,14 @@ static void cre_toolbar(WPGWIN *gwinpt);
     gwinpt->geo.dy = newdy;
     gwinpt->geo.bw = conev->border_width;
 /*
-***Vad �r det som har h�nt ?
-***Om f�nstret har �ndrat storlek ber�knar vi nytt modell-
-***f�nster, viewport mm. s� att bilden efter automatisk repaint
-***ligger kvar p� samma st�lle som f�rut �ven om f�nstrets origo
-***pga. �ndringen har flyttats.
+***If the window changed size set up a new model window and viewport
+***so that the image after repaint stays in the same position with
+***the same scale.
 */
     if ( ( ddx != 0.0 ) || ( ddy != 0.0 ) )
       {
 /*
-***Under all omst�ndigheter skall grafiska arean �ndra storlek.
-***Detta g�r vi genom att flytta origo till det nya nedre v�nstra
-***h�rnet och justera xmax och ymax d�refter oavsett om det �r
-***h�gra eller v�nstra alt. �vre eller nedre kanten som har �ndrats.
+***Under all circomstances the graphical area changed size.
 */
       gwinpt->vy.scrwin.xmax += ddx;
       gwinpt->vy.scrwin.ymax += ddy;
@@ -900,26 +968,32 @@ static void cre_toolbar(WPGWIN *gwinpt);
 */
       gwinpt->mcw_ptr->geo.y  = gwinpt->geo.dy - gwinpt->mcw_ptr->geo.dy;
       gwinpt->mcw_ptr->geo.dx = gwinpt->geo.dx;
+
       XMoveResizeWindow(xdisp,gwinpt->mcw_ptr->messcom_xid,gwinpt->mcw_ptr->geo.x,
                                                             gwinpt->mcw_ptr->geo.y,
                                                             gwinpt->mcw_ptr->geo.dx,
                                                             gwinpt->mcw_ptr->geo.dy);
+
       XMoveResizeWindow(xdisp,gwinpt->mcw_ptr->resize_xid,gwinpt->mcw_ptr->geo.x,
                                                            gwinpt->mcw_ptr->geo.y-5,
                                                            gwinpt->mcw_ptr->geo.dx,
                                                            5);
-      gwinpt->mcw_ptr->cmdptr->geo.x = gwinpt->mcw_ptr->geo.dx - gwinpt->mcw_ptr->cmdptr->geo.dx - 5;
-      gwinpt->mcw_ptr->cmdptr->geo.y = gwinpt->mcw_ptr->geo.dy - gwinpt->mcw_ptr->cmdptr->geo.dy - 5;
-      XMoveResizeWindow(xdisp,gwinpt->mcw_ptr->cmdptr->id.x_id,gwinpt->mcw_ptr->cmdptr->geo.x,
-                                                                gwinpt->mcw_ptr->cmdptr->geo.y,
-                                                                gwinpt->mcw_ptr->cmdptr->geo.dx,
-                                                                gwinpt->mcw_ptr->cmdptr->geo.dy);
+
+      gwinpt->mcw_ptr->cmdptr->geo.x = gwinpt->mcw_ptr->geo.dx -
+                                       gwinpt->mcw_ptr->cmdptr->geo.dx - 5;
+      gwinpt->mcw_ptr->cmdptr->geo.y = gwinpt->mcw_ptr->geo.dy -
+                                       gwinpt->mcw_ptr->cmdptr->geo.dy - 5;
+
+      XMoveResizeWindow(xdisp,gwinpt->mcw_ptr->cmdptr->id.x_id,
+                              gwinpt->mcw_ptr->cmdptr->geo.x,
+                              gwinpt->mcw_ptr->cmdptr->geo.y,
+                              gwinpt->mcw_ptr->cmdptr->geo.dx,
+                              gwinpt->mcw_ptr->cmdptr->geo.dy);
 /*
-***Hur blir det med modellf�nstret ? H�r justerar vi den kant som
-***verkligen har �ndrats s� att bilden ligger still p� sk�rmen.
+***Update the model window so that the image stays in the same position.
 */
-    oldmdx = gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin;
-    oldmdy = gwinpt->vy.modwin.ymax - gwinpt->vy.modwin.ymin;
+      oldmdx = gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin;
+      oldmdy = gwinpt->vy.modwin.ymax - gwinpt->vy.modwin.ymin;
 
       if ( right )
         gwinpt->vy.modwin.xmax += (double)ddx/(double)olddx*oldmdx;
@@ -933,7 +1007,7 @@ static void cre_toolbar(WPGWIN *gwinpt);
       if ( down )
         gwinpt->vy.modwin.ymin -= (double)ddy/(double)olddy*oldmdy;
 /*
-***Nya 2D transformationskonstanter.
+***New 2D transformation constants.
 */
       gwinpt->vy.k2x =
         (gwinpt->vy.scrwin.xmax - gwinpt->vy.scrwin.xmin) /
@@ -946,12 +1020,11 @@ static void cre_toolbar(WPGWIN *gwinpt);
       gwinpt->vy.k1y =
         gwinpt->vy.scrwin.ymin - gwinpt->vy.modwin.ymin * gwinpt->vy.k2y;
 /*
-***Rita om f�nstret.
+***Repaint.
 */
       WPrepaint_GWIN((wpw_id)gwinpt->id.w_id);
 /*
-***F�reg�ende vy skall nu kunna visas i det nya f�nstret, allts�
-***m�ste �ven dennas modellf�nster uppdateras.
+***Update previous view.
 */
       if ( gwinpt->old_vy.status != VIEW_NOT_USED )
         {
@@ -985,14 +1058,14 @@ static void cre_toolbar(WPGWIN *gwinpt);
         }
       }
 /*
-***Om f�nstret inte har �ndrat storlek beh�ver vi inte g�ra s� mycket.
+***Om the window didn't change size we do nothing.
 */
     else
       {
       ;
       }
 /*
-***Slut.
+***The end.
 */
     return(TRUE);
   }
@@ -1376,6 +1449,7 @@ static void cre_toolbar(WPGWIN *gwinpt);
           {
           gwinpt->wintab[nsub].typ = TYP_BUTTON;
           gwinpt->wintab[nsub].ptr = (char *)buttpt;
+          buttpt->type = FUNCBUTTON;
 /*
 ***Action code, default = "f0".
 */

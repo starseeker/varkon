@@ -1,0 +1,43 @@
+##########################################################
+#
+#   Makefile for EX on MacOSX
+#
+#  (c)2008-01-12 J.Kjellander
+#
+##########################################################
+
+RM = rm -f
+
+CC = gcc
+
+distr :     CFLAGS =                \
+            -ansi                   \
+            -pedantic               \
+            -Wall                   \
+            -ffloat-store           \
+            -fsigned-char           \
+            -O                      \
+            -DUNIX                  \
+            -DVARKON                \
+            -I/usr/X11R6/include
+
+debug :     CFLAGS =                \
+            -ansi                   \
+            -Wall                   \
+            -ffloat-store           \
+            -fsigned-char           \
+            -g3                     \
+            -DDEBUG                 \
+            -DUNIX                  \
+            -DVARKON                \
+            -I/usr/X11R6/include
+
+ifeq ($(DV3ODBC),TRUE) 
+COMPILE = $(CC) -c $(CFLAGS -DV3_ODBC)
+else
+COMPILE = $(CC) -c $(CFLAGS)
+endif
+
+include Makefile.EX
+
+##########################################################

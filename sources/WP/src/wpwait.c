@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON WindowPac Library.
-*    URL: http://www.tech.oru.se/cad/varkon
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes:
 *
@@ -13,9 +13,7 @@
 *    WPlinc();   Catches alarm signal
 *    WPwait();   Handles Wait...
 *    WPwton();   Returns wait status On/Off
-*    WPupwb();   Updates WPGWIN title text
 *    WPposw();   Positions windows
-*    WPwlma();   Dsiplays message text
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -54,10 +52,7 @@ static WPGWIN *wt_win = NULL;
    wt_win �r en pekare till det f�nster d�r drwait()
    skall visa v�ntameddelandet. */
 
-
-extern char        pidnam[],jobnam[];
-extern MNUALT      smbind[];
-extern V3MDAT      sydata;
+extern MNUALT smbind[];
 
 /*!*******************************************************/
 
@@ -375,106 +370,6 @@ static  WPBUTT *buttpt = 0;
 /*********************************************************/
 /*!*******************************************************/
 
-       short WPupwb(
-       WPGWIN *gwinpt)
-
-/*     Uppdaterar texten i ett WPGWIN-f�nsters ram.
- *
- *     In: gwinpt => C-pekare till grafiskt f�nster
- *                   eller NULL f�r huvudf�nstret.
- *
- *     Ut: Inget.
- *
- *     FV: 0
- *
- *     (C)microform ab 28/1/95 J. Kjellander
- *
- *     2/9/95  varkon.title.project, J. Kjellander
- *     28/9/95 NULL = GWIN_MAIN, J. Kjellander
- *
- *******************************************************!*/
-
- {
-   char      title[V3STRLEN+1],tmpbuf[V3STRLEN+1];
-   WPGWIN   *grawin;
-   WPWIN    *winptr;
-/*
-***Initiering.
-*/
-   title[0] = '\0';
-/*
-***Fixa fram f�nstrets C-pekare.
-*/
-   if ( gwinpt == NULL )
-     {
-     if ( (winptr=WPwgwp((wpw_id)GWIN_MAIN)) != NULL  &&
-         winptr->typ == TYP_GWIN ) grawin = (WPGWIN *)winptr->ptr;
-     else return(0);
-     }
-   else grawin = gwinpt;
-/*
-***Om det �r huvudf�nstret inleder vi med en s�rskild titel-resurs.
-*/
-   if ( grawin->id.w_id == GWIN_MAIN )
-     {
-     if ( !WPgrst("varkon.title",title) )
-       {
-       if ( sydata.opmode == BAS_MOD )
-         sprintf(title,"VARKON-3D/B %d.%d%c",sydata.vernr,sydata.revnr,
-                                             sydata.level);
-       else
-         sprintf(title,"VARKON-3D/R %d.%d%c",sydata.vernr,sydata.revnr,
-                                             sydata.level);
-       }
-/*
-***Om varkon.title.project �r satt skriver vi �ven ut projektnamn i 
-***huvudf�rnstret.
-*/
-     if ( WPgrst("varkon.title.project",tmpbuf) &&
-          strcmp(tmpbuf,"True") == 0 )
-         {
-         strcat(title," - ");
-         strcat(title,pidnam);
-         }
-     }
-/*
-***Alla f�nster kan ha jobnamn och/eller vynamn.
-*/  
-   if ( WPgrst("varkon.title.jobname",tmpbuf) &&
-        strcmp(tmpbuf,"True") == 0 )
-       {
-       if ( grawin->id.w_id == GWIN_MAIN )
-         {
-         strcat(title," - ");
-         strcat(title,jobnam);
-         }
-         else strcpy(title,jobnam);
-       }
-
-   if ( WPgrst("varkon.title.viewname",tmpbuf) &&
-        strcmp(tmpbuf,"True") == 0 )
-       {
-       if ( grawin->vy.name[0] != '\0' )
-         {
-         if ( title[0] != '\0' )
-           {
-           strcat(title," - ");
-           strcat(title,grawin->vy.name);
-           }
-         else strcpy(title,grawin->vy.name);
-         }
-       }
-/*
-***Uppdatera f�nsterramen.
-*/
-   XStoreName(xdisp,grawin->id.x_id,title);
-
-   return(0);
- }
-
-/*********************************************************/
-/*!*******************************************************/
-
        short WPposw(
        int  rx,
        int  ry,
@@ -519,35 +414,6 @@ static  WPBUTT *buttpt = 0;
   *px = x;
   *py = y;
 
-   return(0);
- }
-
-/*********************************************************/
-/*!*******************************************************/
-
-     short WPwlma(char *s)
-
-/*   Skriver ut meddelande i meddelandef�nster.
- *
- *   In: s  = Str�ng
- *
- *   Ut: Inget.
- *
- *   FV: 0
- *
- *   (C)microform ab 31/1/95 J. Kjellander
- *
- *******************************************************!*/
-
- {
-
-/*
-***Test av WPMCWIN.
-*/
-   WPaddmess_mcwin(s,WP_MESSAGE);
-/*
-***Slut.
-*/
    return(0);
  }
 

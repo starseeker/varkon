@@ -4,15 +4,15 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  IGcs3p();    Generate csys_3p... statement                      */
-/*  IGcs1p();    Generate csys_1p... statement                      */
+/*  IGcsy_3p();  Generate csys_3p... statement                      */
+/*  IGcsy_1p();  Generate csys_1p... statement                      */
 /*  IGmodb();    Genererate mode_basic.... statement                */
 /*  IGmodg();    Genererate mode_global.... statement               */
 /*  IGmodl();    Genererate mode_local.... statement                */
 /*  IGupcs();    Redisplay currently active coordinate system       */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -44,7 +44,7 @@ extern DBTmat *lsyspk;
 
 /*!******************************************************/
 
-       short IGcs3p()
+       short IGcsy_3p()
 
 /*      Genererar csys_3p.... sats.
  *
@@ -132,7 +132,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short IGcs1p()
+       short IGcsy_1p()
 
 /*      Genererar csys_1p.... sats.
  *

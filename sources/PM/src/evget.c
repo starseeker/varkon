@@ -4,12 +4,12 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
 *    evsrgm();      Evaluates SET_ROOT_GM
 *    evgngm();      Evaluates GET_NEXT_GM
-*    evgtid();      Evaluates GETID
 *    evgtyp();      Evaluates GETTYP
 *    evgint();      Evaluates GETINT
 *    evgflt();      Evaluates GETFLT
@@ -20,10 +20,9 @@
 *    evghdr();      Evaluates GETHDR
 *    evuhdr();      Evaluates UPDHDR
 *    evgwdt();      Evaluates GETWIDTH
-*    evgpoi();      Evaluates GETPOI 
-*    evglin();      Evaluates GETLIN 
-*    evgarc();      Evaluates GETARC 
-*    evgcur();      Evaluates GETCUR 
+*    evgpoi();      Evaluates GETPOI
+*    evglin();      Evaluates GETLIN
+*    evgarc();      Evaluates GETARC
 *    evgcuh();      Evaluates GETCURH
 *    evgseg();      Evaluates GETSEG
 *    evgsuh();      Evaluates GETSURH
@@ -154,7 +153,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    if ( *grupp == '*' &&  *(grupp+1) == '\0'  ) grupp = NULL;
 /*
 ***Hämta LA till nästa storhet från GM.
-*/   
+*/
    status = DBget_next_ptr(func_pv[1].par_va.lit.int_va,
                   (DBetype)func_pv[2].par_va.lit.int_va,
                    namn,
@@ -175,30 +174,6 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 ***Slut.
 */
    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short evgtid()
-
-/*      Evaluerar funktionen GETID.
- *
- *      In: Global  func_pv  => Parameter value array
- *          Global *func_vp  => Pointer to result value.
- *
- *      Ut: Global *func_vp  =  ID.
- *
- *      FV:   return - error severity code
- *
- *      (C)microform ab 24/3/86 J. Kjellander
- *
- *      2001-03-06 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
-
-  {
-    return(EXgtid(&func_vp->lit.ref_va[0],func_pv[1].par_va.lit.str_va));
   }
 
 /********************************************************/
@@ -650,103 +625,6 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 ***Returnera parameter 8 = segment.
 */
      return(evwseg(arc.ns_a,arcseg,9,proc_pv));
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short evgcur()
-
-/*      Evaluerar proceduren GETCUR.
- *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar anropade rutiners status.
- *
- *      Felkoder: PM1032 = Kan ej mallokera minne för offset
- *
- *      (C)microform ab 14/3/86 J. Kjellander
- *
- *      23/11/91 Nytt format på kurvor, J. Kjellander
- *      7/6/93   Dynamisk allokering av minne, J. Kjellander
- *      2001-02-13 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
-
-  {
-     short    status;
-     DBint    i,j,index[2];
-     DBfloat *offs,*matpek;
-     DBCurve  cur;
-     DBSeg   *segpek;
-     PMLITVA  litval[3];
-
-/*
-***Hämta cur från GM.
-*/
-     if ( (status=EXgtcu(&proc_pv[1].par_va.lit.ref_va[0],
-                         &cur,NULL,&segpek)) < 0 ) return(status);
-/*
-***Kopiera font, strlgd och nseg till PMLITVA. Skriv till
-***motsvarande MBS-variabler.
-*/
-     litval[0].lit.int_va   = cur.fnt_cu;
-     litval[1].lit.float_va = cur.lgt_cu;
-     litval[2].lit.int_va   = cur.ns_cu;
-     evwval(litval, 3, proc_pv);
-/*
-***Returnera segment.
-*/
-     if ( (status=evwseg(cur.ns_cu,segpek,5,proc_pv)) < 0 ) goto end;
-/*
-***Returnera offset.
-*/
-     if ( (offs=(DBfloat *)v3mall(cur.ns_cu*sizeof(gmflt),"evgcur")) == NULL )
-       {
-       status = erpush("PM1032","");
-       goto end;
-       }
-     for ( i=0; i<cur.ns_cu; ++i ) *(offs+i) = (segpek+i)->ofs;
-     status = evwfvk(offs,cur.ns_cu,6,proc_pv);
-     v3free(offs,"evgcur");
-     if ( status < 0 ) goto end;
-/*
-***Returnera plank.
-*/
-     litval[0].lit.int_va = cur.plank_cu;
-     inwvar(proc_pv[7].par_ty, proc_pv[7].par_va.lit.adr_va, 
-             0, NULL, litval);
-/*
-***Returnera parameter 8, kurvplan.
-***Om inget kurvplan finns, returnera nollor, annars
-***blir det problem på VAX:en.
-*/
-     matpek = (DBfloat *) &cur.csy_cu;
-
-     for ( i=0; i<4; ++i )
-        {
-        index[0] = i+1;
-        for ( j=0; j<4; ++j )
-           {
-           index[1] = j+1;
-           if ( cur.plank_cu == TRUE )
-             litval[0].lit.float_va = *matpek;
-           else
-             litval[0].lit.float_va = 0.0;
-           status = inwvar(proc_pv[8].par_ty, proc_pv[8].par_va.lit.adr_va,
-                                           2, index, litval);
-           ++matpek;
-           }
-        }
-/*
-***Lämna tillbaks allokerat minne.
-*/
-end:
-     DBfree_segments(segpek);
-
-     return(status);
   }
 
 /********************************************************/

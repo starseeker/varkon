@@ -6,7 +6,7 @@
 *    EXos();      Interface routine for OS
 *
 *    This file is part of the VARKON Execute Library.
-*    URL:  http://www.varkon.com
+*    URL:  http://varkon.sourceforge.net
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -28,7 +28,6 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-/*#include "../../GP/include/GP.h"*/
 #include <string.h>
 
 #ifdef UNIX
@@ -46,27 +45,21 @@
 
 #include "../include/EX.h"
 
-#ifdef DEBUG
-#include "../../IG/include/debug.h"
-#endif
-
 #ifdef UNIX
 /*!******************************************************/
 
-       short   EXos(
+       int     EXos(
        char    oscmd[],
        DBshort mode)
 
-/*      Proceduren OS i UNIX-version.
+/*      Execute a OS command.
  *
- *      In: oscmd => Kommandosträng.
- *          mode  => 0 = Asynkront (Batch) med wait
- *                   1 = Interaktivt
- *                   2 = Asynkront utan wait
+ *      In: oscmd => Command.
+ *          mode  => 0 = Asynchronous with wait
+ *                   1 = Interactive
+ *                   2 = Asynchronous without wait
  *
- *      Ut: Inget.
- *
- *      FV: Inget.
+ *      Return: Status from system()
  *
  *      (C)microform ab 22/11/85 J. Kjellander
  *
@@ -79,81 +72,35 @@
  ******************************************************!*/
 
   {
-    int   system_stat;
+    int system_stat;
 
-
-#ifdef DEBUG
-    int wait_stat;
-
-    if ( dbglev(EXEPAC) == 50 )
-      {
-      fprintf(dbgfil(EXEPAC),"***Start-EXos***\n");
-      fprintf(dbgfil(EXEPAC),"oscmd=%s\n",oscmd);
-      fprintf(dbgfil(EXEPAC),"mode=%hd\n",mode);
-      fflush(dbgfil(EXEPAC));
-      }
-#endif
 /*
-***Batch-mode med eller utan wait..
+***Batch-mode with or without wait..
 */
     if ( mode != 1 )
       {
 /*
-***UNIX, system() gör alltid wait() själv !
-***För att subprocesser inte skall avbrytas av WINPAC-
-***klockan tex. under kör aktiv modul stänger vi av den
-***under OS-anropet.
+***Turn of interrupts during system call and
+***return status.
 */
-#ifdef UNIX
       if ( WPwton() ) WPlset(FALSE);
-#endif
+
       system_stat = system(oscmd);
-#ifdef UNIX
+
       if ( WPwton()  ) WPlset(TRUE);
-#endif
 
-#ifdef DEBUGJK
-    if ( dbglev(EXEPAC) == 50 )
-      {
-      pid_t pid;
-
-      fprintf(dbgfil(EXEPAC),"system_stat=%d\n",system_stat);
-      if ( system_stat == -1 )
-        fprintf(dbgfil(EXEPAC),"errno=%d\n",errno);
-      pid = wait(&wait_stat);
-      fprintf(dbgfil(EXEPAC),"pid=%d\n",pid);
-      fprintf(dbgfil(EXEPAC),"wait_stat=%d\n",wait_stat);
-      if ( pid == -1 )
-        fprintf(dbgfil(EXEPAC),"errno=%d\n",errno);
-      else
-        {
-        if ( WIFEXITED(wait_stat) )
-          fprintf(dbgfil(EXEPAC),"WIFEXITED = TRUE\n");
-        if ( WIFSIGNALED(wait_stat) )
-          fprintf(dbgfil(EXEPAC),"WIFSIGNALED = TRUE\n");
-        }
-      fflush(dbgfil(EXEPAC));
-      if ( system_stat == -1 ) return(erpush("EX1662",oscmd));
-      }
-#endif
+      return(system_stat);
       }
 /*
-***Interaktiv mode, IGcmos() fixar skärmen och anropar sedan
-***EXos() igen med mode = 0, dvs. batch med wait.
+***Interactive mode.
 */
-    else IGcmos(oscmd);
-
-#ifdef DEBUG
-    if ( dbglev(EXEPAC) == 50 )
+    else
       {
-      fprintf(dbgfil(EXEPAC),"***Slut-EXos***\n\n");
-      fflush(dbgfil(EXEPAC));
+      IGcmos(oscmd);
+      return(0);
       }
-#endif
-
-    return(0);
   }
-  
+
 /********************************************************/
 #endif
 

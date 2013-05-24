@@ -4,17 +4,16 @@
 *    =======
 *
 *    This file is part of the VARKON Program Module Library.
-*    URL: http://www.varkon.com
+*    URL: http://varkon.sourceforge.net
 *
 *    This file includes the following routines:
 *
-*    evalev();     Evaluates ACT_LEV
+*    evalev();     Evaluates ACT_LEVEL
 *    evablk();     Evaluates ACT_BLANK
 *    evavin();     Evaluates ACT_VNAM
 *    evapen();     Evaluates ACT_PEN
 *    evawdt();     Evaluates ACT_WIDTH
 *    evascl();     Evaluates ACT_SCL
-*    evadsc();     Evaluates ACT_DSCL
 *    evacac();     Evaluates ACT_CACC
 *    evagrx();     Evaluates ACT_GRIDX
 *    evagry();     Evaluates ACT_GRIDY
@@ -22,7 +21,6 @@
 *    evagdy();     Evaluates ACT_GRIDDY
 *    evagrd();     Evaluates ACT_GRID
 *    evajbn();     Evaluates ACT_JOBNAM
-*    evamtp();     Evaluates ACT_MTYPE
 *    evamat();     Evaluates ACT_MATTR
 *    evajbd();     Evaluates ACT_JOBDIR
 *    evapft();     Evaluates ACT_PFONT
@@ -43,9 +41,8 @@
 *    evadnd();     Evaluates ACT_DNDIG
 *    evadau();     Evaluates ACT_DAUTO
 *    evacsy();     Evaluates ACT_CSY
-*    evapid();     Evaluates ACT_PID
 *    evavvr();     Evaluates ACT_VARKON_VERS
-*    evavsr();     Evaluates ACT_VARKON_SERIAL
+*    evasvr();     Evaluates ACT_SVN_VERS
 *    evaost();     Evaluates ACT_OSTYPE
 *    evahst();     Evaluates ACT_HOST
 *
@@ -77,37 +74,33 @@
 
 extern V2NAPA defnap;
 extern V3MDAT sydata;
-extern char   pidnam[],jobnam[],jobdir[];
+extern char   jobnam[],jobdir[],svnversion[];
 extern pm_ptr actmod;
 extern DBptr  lsysla;
 
 extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
-/*!******************************************************/
+/********************************************************/
 
         short evalev()
 
-/*      Evaluerar funktionen ACT_LEV.
+/*      Evaluate MBS function ACT_LEVEL().
  *
- *      In: 
+ *      Out: Global *func_vp  =  Active level.
  *
- *      Ut: Global *func_vp  =  Activ level.
+ *      (C)2007-11-30 J.Kjellander
  *
- *      FV:
- *
- *      (C)microform ab 31/5/86 R. Svedin
- *
- *      31/10/86 Nytt namn och flyttad från eval3.c, R. Svedin
- *      2001-03-06 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
+ ********************************************************/
 
   {
-
+/*
+***Return currently active level.
+*/
     func_vp->lit.int_va = defnap.level;
-
+/*
+***The end.
+*/
     return(0);
-
   }
 
 /********************************************************/
@@ -262,33 +255,6 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    func_vp->lit.float_va = skala;
 
    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short evadsc()
-
-/*      Evaluerar funktionen ACT_DSCL.
- *
- *      In:
- *
- *      Ut: Global *func_vp  =  Pointer to result value.
- *
- *      FV:
- *
- *      (C)microform ab 31/10/86 R. Svedin
- *
- *      2001-03-06 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
-
-  {
-
-    func_vp->lit.float_va = 1.0;
-
-    return(0);
-
   }
 
 /********************************************************/
@@ -536,50 +502,6 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
   {
 
     strcpy(func_vp->lit.str_va , jobnam);
-
-    return(0);
-
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short evamtp()
-
-/*      Evaluerar funktionen ACT_MTYPE. Returnerar
- *      modultyp för aktiv modul, dvs. modulen på
- *      högsta nivån, inte den som exekverar just nu.
- *
- *      In:
- *
- *      Ut: Global *func_vp  =  Pointer to result value.
- *
- *      FV:
- *
- *      (C)microform ab 31/10/86 R. Svedin
- *
- *      23/9/93  pmrmod(), J. Kjellander
- *      2001-03-06 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
-
-  {
-    pm_ptr   oldmod;
-    PMMODULE modhed;
-
-/*
-***Sätt aktiv basadress till aktiv modul och spara
-***nuvarande. Läs modulhuvudet och sätt tillbaks
-***aktiv basadress till det gamla värdet igen.
-*/
-    oldmod = pmgbla();
-    pmsbla(actmod);
-    pmrmod(&modhed);
-    pmsbla(oldmod);
-/*
-***Returnera modultyp.
-*/
-    func_vp->lit.int_va = modhed.mtype;
 
     return(0);
 
@@ -1116,40 +1038,11 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /********************************************************/
 /*!******************************************************/
 
-        short evapid()
-
-/*      Evaluerar funktionen ACT_PID.
- *
- *      In:
- *
- *      Ut: Global *func_vp  =  Pointer to result value.
- *
- *      FV:
- *
- *      (C)microform ab 13/9/95 J. Kjellander
- *
- *      2001-03-06 In-Param changed to Global variables, R Svedin
- *
- ******************************************************!*/
-
-  {
-    strcpy(func_vp->lit.str_va,pidnam);
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
         short evavvr()
 
-/*      Evaluerar funktionen ACT_VARKON_VERSION.
+/*      Evaluates function ACT_VARKON_VERSION().
  *
- *      In:
- *
- *      Ut: Global *func_vp  =  Pointer to result value.
- *
- *      FV:
+ *      Out: Global *func_vp  =  Pointer to result value.
  *
  *      (C)microform ab 13/9/95 J. Kjellander
  *
@@ -1167,24 +1060,19 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /********************************************************/
 /*!******************************************************/
 
-        short evavsr(PMLITVA *valp)
+        short evasvr()
 
-/*      Evaluerar funktionen ACT_VARKON_SERIAL.
+/*      Evaluates function ACT_SVN_VERSION().
  *
- *      In:
+ *      Out: Global *func_vp  =  Pointer to result value.
  *
- *      Ut: Global *func_vp  =  Pointer to result value.
- *
- *      FV:
- *
- *      (C)microform ab 13/9/95 J. Kjellander
- *
- *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      (C)2007-09-02 J. Kjellander
  *
  ******************************************************!*/
 
   {
-    func_vp->lit.int_va = (DBint)sydata.sernr;
+    strncpy(func_vp->lit.str_va,svnversion,V3STRLEN-1);
+    func_vp->lit.str_va[V3STRLEN] = '\0';
 
     return(0);
   }

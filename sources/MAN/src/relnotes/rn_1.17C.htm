@@ -1,0 +1,75 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>VARKON - A Parametric CAD-tool</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
+	<META NAME="AUTHOR" CONTENT="Johan Kjellander">
+	<META NAME="CREATED" CONTENT="20070816;13092700">
+	<META NAME="CHANGEDBY" CONTENT="Johan Kjellander">
+	<META NAME="CHANGED" CONTENT="20070823;10330800">
+	<META NAME="DESCRIPTION" CONTENT="The homepage of the VARKON system">
+	<META NAME="KEYWORDS" CONTENT="CAD, parametric design, geometric modeling, variation, visualization">
+	<META HTTP-EQUIV="expires" CONTENT="Tue, 10 Aug 1996 14:26:12 CET">
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+</HEAD>
+<BODY LANG="en-US" BGCOLOR="#99ccff" DIR="LTR">
+<P ALIGN=RIGHT><A HREF="http://sourceforge.net/"><IMG SRC="http://sflogo.sourceforge.net/sflogo.php?group_id=195464&amp;type=4" NAME="graphics1" ALT="SourceForge.net Logo" ALIGN=BOTTOM WIDTH=125 HEIGHT=37 BORDER=0></A>
+</P>
+<hr WIDTH="100%">
+<center><p><b><font size=+1>Release notes for VARKON version 1.17C</font></b></center>
+
+<p>A minor bug in the DXF import function related to unknown sections has
+been corrected.
+<p>A new font for graphical text has been added. Fontfile 6.FNT includes
+a sans serif version of the ISO8859-2 character set also known as Central&nbsp;
+or Eastern Europeean. This font was created by Juraj Kurimsky as a free
+contribution to Varkon and is now included in the ordinary distribution.
+Thanks Juraj !
+<p>New spline algorithms have been implemented. The CUR_SPLINE-routine
+in MBS can now be used to create Ferguson, Chordlength or Variable Stiffness
+splines with prescribed or free end tangents. The create/curve/spline-menu
+in Varkon has been updated to support the new spline algorithms.
+<p>The hide-function now supports 3D text.
+<p>3D DXF export now supports points as well as B_planes and facetted surfaces.
+Blanked entities are not exported. These changes are made to faciliate
+export of Varkon models to Finite Element Programs.&nbsp; Some FEM programs
+support DXF import with automatic conversion of points to nodes and facets
+to elements.
+<p>A new graphical attribute CFONT=3 has been added for curves. A curve
+with CFONT=3 is automatically closed with a straight line and filled with
+the current color. This can be used to create 2D-shapes of any kind and
+fill with any color. Something similar to XHATCH but filled with solid
+color instead of hatchlines. CFONT=3 is currently supported in X, WIN32(display/printer)
+and postscript but not in older type plotter filters.
+<p>The TIME() procedure in MBS has been&nbsp; changed to make it easier
+to interpret the current year. The year parameter previousely returned
+the integer number of years since 1900. During 1999 this meant it returned
+the integer value 99 and with year 2000 it returned the value 100. MBS
+programs using the TIME() procedure had to cope with this to by adding
+1900 to produce the right 4 digit year number. In 1.17B the year parameter
+of the TIME() procedure returns the actual year as a 4 digit integer number
+ie. 2000 during yerar 2000 and 2001 during year 2001 and so on. Existing
+MBS programs using the TIME() procedure may need to be changed to work
+as expected.
+<p>The full C-sources of the X version of Varkon have now been released
+under the GNU/LGPL license.
+<p>A bug in the SECTION_AREA() function has been corrected. SECTION_AREA()
+sometimes returned a slightly erronous value.
+<p>A new MBS function SECTION_CGRAV() has been added. SECTION_CGRAV() returns
+the center of gravity for a closed or open curve section.
+<p>A bug in the SUR_RULED() procedure has been corrected. SUR_RULED() sometimes
+didn't manage to create it's graphical representation because of tolerance
+problems.
+<p>Multiline comments in MBS using C syntax (/*......*/) have been added
+as a free contribution by Iouri Simernitski. Thanks Iouri.
+<p>More work on the IGES import functions has been contributed by Roy Kastelein.
+Roy has added support for entity type 110 (line) as well as some other
+improvments.
+<p>
+<center>
+<hr WIDTH="100%">
+<p><a href="../index.htm">VARKON homepage</a></center>
+
+</body>
+</html>

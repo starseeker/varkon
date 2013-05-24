@@ -8,7 +8,7 @@
 /*  IGpopr();     Generate poi_proj.. statement                     */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.tech.oru.se/cad/varkon                         */
+/*  URL:  http://varkon.sourceforge.net                             */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -35,23 +35,17 @@
 
 static short poipm(char *typ);
 
-/*!******************************************************/
+/********************************************************/
 
        short IGpofr()
 
-/*      Genererar poi_free... sats
+/*      Create poi_free... statement
  *
- *      In: Inget.
+ *      Return: 0      = OK
+ *              REJECT = Operation cancelled
+ *              GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0 = OK, REJECT = avsluta, GOMAIN = huvudmenyn
- *
- *      Felkod: Inga.
- *
- *      (C)microform ab  19/11/85 J. Kjellander
- *
- *      3/10/86  GOMAIN, J. Kjellander
+ *      (C)2007-11-11 J.Kjellander
  *
  ******************************************************!*/
 
@@ -60,23 +54,17 @@ static short poipm(char *typ);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
        short IGpopr()
 
-/*      Genererar poi_proj... sats
+/*      Create poi_proj... statement
  *
- *      In: Inget.
+ *      Return: 0      = OK
+ *              REJECT = Operation cancelled
+ *              GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0 = OK, REJECT = avsluta, GOMAIN = huvudmenyn
- *
- *      Felkod: Inga.
- *
- *      (C)microform ab  19/11/85 J. Kjellander
- *
- *      3/10/86  GOMAIN, J. Kjellander
+ *      (C)2007-11-11 J.Kjellander
  *
  ******************************************************!*/
 
@@ -85,19 +73,19 @@ static short poipm(char *typ);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
  static short poipm(char *typ)
 
-/*      Huvudrutin för poi_free.....
+/*      Create point.
  *
- *      In: typ = "POI_FREE" eller "POI_PROJ"
+ *      In: typ = "POI_FREE" or "POI_PROJ"
  *
- *      Ut: Inget.
+ *      Return: 0      = OK
+ *              REJECT = Operation cancelled
+ *              GOMAIN = Main menu
  *
- *      FV: 0 = OK, REJECT = avsluta, GOMAIN = huvudmenyn
- *
- *      Felkod: IG5023 = Kan ej skapa POI_FREE sats
+ *      Error: IG5023 = Can't create point statement
  *
  *      (C)microform ab 10/1/85 J. Kjellander
  *
@@ -108,6 +96,7 @@ static short poipm(char *typ);
  *      23/3/86  IGcpos(pnr, B. Doverud
  *      24/3/86  Felutgång, B. Doverud
  *      3/10/86  GOMAIN, J. Kjellander
+ *      2007-11-11 2.0, J.Kjellander
  *
  ******************************************************!*/
 
@@ -117,27 +106,29 @@ static short poipm(char *typ);
     pm_ptr  exnpt,dummy;
 
 /*
-***Skapa position.
+***Create position.
 */
 start:
-    if ( (status=IGcpos(264,&exnpt)) < 0 ) goto end;
+    if ( (status=IGcpos(71,&exnpt)) < 0 ) goto end;
 /*
-***Skapa listan med obligatoriska parametrar.
+***Create parameter list.
 */
     pmtcon(exnpt,(pm_ptr)NULL,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Create statement.
 */
     if ( IGcges(typ,valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
-
+/*
+***The end.
+*/
 end:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Error exit.
 */
 error:
     erpush("IG5023",typ);
