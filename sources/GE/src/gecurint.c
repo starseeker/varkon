@@ -414,9 +414,21 @@
    nstart = RESTRT + 1;
 /*
 ***Some arc/arc cases need an extra restart.
+This statement should not be needed any more ?
 */
    if ( typ1 == ARCTYP  &&   typ2  == ARCTYP  &&
         noseg1 == 2  &&  noseg2 == 2 ) nstart = nstart + 1;
+
+
+/*
+Ruvens exempel funkar bättre om man ökar nstart. Med radie = 1001
+funkar det dock fortfarande inte ävenb om  nstart=8;
+GE102 bör studeras noggrannare. Fallet måste först renodlas bättre
+så att det inte blir skärning 4 seg med 4 seg.
+*/
+
+
+
 /*
 ***Loop for all the segments in curve 1
 */

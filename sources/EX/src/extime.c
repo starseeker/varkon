@@ -61,7 +61,7 @@
 /*
 ***Get current time.
 */
-    reltim = time ((time_t *)0);
+    reltim = time (NULL);
     timpek = localtime(&reltim);
 /*
 ***Return data.

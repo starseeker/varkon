@@ -1,9 +1,9 @@
 #########################################
 #
-#   Makefile for Varkon version 1.19D
+#   Makefile for Varkon version 1.19E
 #   ---------------------------------
 #
-#   2009-02-10 J.Kjellander
+#   2012-11-17 J.Kjellander
 #
 ##########################################
 
@@ -35,6 +35,12 @@ export DV3RAP
 # for Örebro University.
 # DV3ORU=TRUE
 export DV3ORU
+
+# Uncomment the line below to include support for
+# the EIGASYM() function in MBS. You also need to install
+# the ATLAS library.
+# DV3ATLAS=TRUE
+export DV3ATLAS
 
 #=========================================================
 # End build options

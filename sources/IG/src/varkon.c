@@ -42,7 +42,7 @@
 #include <string.h>
 
 #ifdef UNIX
-#include "/usr/include/sys/utsname.h"
+#include <sys/utsname.h>
 #endif
 
 
@@ -54,7 +54,7 @@ V3MDAT  sydata =
            { 1000,       /* Serial number, default = 1000 */
              1,          /* Version number*/
              19,         /* Revision */
-            'D',         /* 2009-02-10 */
+            'E',         /* 2012-11-07 */
              0,0,0,0,0,  /* Dummy times */
              0,0,0,0,0,
              " ",        /* OS name */
@@ -503,7 +503,7 @@ end:
 
    if ( status == EREXIT )
      {
-     WPinla("Startup log !");
+     WPinla("Startu log !");
      fclose(startup_logfile);
      startup_logfile=fopen(lfname,"r");
      while ( fgets(line,V3STRLEN,startup_logfile) != NULL )

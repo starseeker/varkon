@@ -522,6 +522,11 @@ short evrand(void);
 #endif
 
 /*
+***evmatrix.c
+*/
+short eveigasym(void);
+
+/*
 ***evmbs.c
 */
 short evaddm(void);

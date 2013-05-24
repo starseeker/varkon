@@ -58,6 +58,7 @@
 /*  1997-12-20   Originally written                                 */
 /*  1999-12-18   Free source code modifications                     */
 /*  2000-03-22   Error fixed with sign for triangles                */
+/*  2010-09-07   Bugfix n_add < 0, J. Kjellander                    */
 /*                                                                  */
 /*                                                                  */
 /******************************************************************!*/
@@ -320,7 +321,8 @@ if      ( delta <= 0.0  )
 #endif
 
    n_add = (DBint)(tot_leng/delta/(DBfloat)iend);
-   if ( n_add > 5000 ) n_add = 5000;
+   if      ( n_add > 5000 ) n_add = 5000;
+   else if ( n_add < 1 )    n_add = 2;        /* Bugfix 2010-09-08 J. Kjellander */
 
 #ifdef DEBUG
 if ( dbglev(SURPAC) == 1 )

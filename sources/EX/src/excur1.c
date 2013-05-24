@@ -1329,12 +1329,12 @@ end:
  ******************************************************!*/
 
   {
-   char   errbuf[V3STRLEN+1];
-   short  i,status;
+   char     errbuf[V3STRLEN+1];
+   short    i,status;
    DBfloat  dist;
    DBfloat  idpoint;
-   DBVector  start[GMMXCO],slut[GMMXCO],diff;
-   EVALC  seg;
+   DBVector start[GMMXCO],slut[GMMXCO],diff;
+   EVALC    seg;
    DBCurve  tmpcur;
 
 /*
@@ -1516,29 +1516,31 @@ end:
 
  static short  reverse(
         DBCurve *cur,
-        DBSeg *seg)
+        DBSeg   *pseg)
 
-/*      Reverserar segmenten i en kurva.
+/*      Reverse a curve segment.
  *
- *      In: cur => Kurvpost
- *          seg => Segment
+ *      In: cur => Pointer to curve
+ *          pseg => Pointer to segment
  *
- *      Ut: Inget.
+ *      Out: Always returns Ok.
  *
  *      (C)microform ab 1997-04-14 J. Kjellander
+ *
+ *      2012-11-16 Fixed name scope problem, J.Kjellander
  *
  ******************************************************!*/
 
   {
-   short  status;
-   DBfloat  t1,t2;
-   DBCurve  newcur;
-   DBSeg *newseg;
+   short   status;
+   DBfloat t1,t2;
+   DBCurve newcur;
+   DBSeg  *newseg;
 /*
-***If this is NURB segment, use reverseNURB() instead
+***If this is a NURB segment, use reverseNURB() instead
 */
-   if (seg[0].typ==NURB_SEG || seg[0].typ==UV_NURB_SEG)
-     return(reverseNURB(cur,seg));
+   if (pseg[0].typ==NURB_SEG || pseg[0].typ==UV_NURB_SEG)
+     return(reverseNURB(cur,pseg));
 /*
 ***Allokera minne för nya segment.
 */
@@ -1549,12 +1551,12 @@ end:
 */
    t1 = (DBfloat)cur->ns_cu + 1.0;
    t2 = 1.0;
-   status = GE817((DBAny *)cur,seg,&newcur,newseg,t1,t2);
+   status = GE817((DBAny *)cur,pseg,&newcur,newseg,t1,t2);
    if ( status < 0 ) return(status);
 /*
 ***Ersätt dom gamla.
 */
-   V3MOME(newseg,seg,(int)cur->ns_cu*sizeof(DBSeg));
+   V3MOME(newseg,pseg,(int)cur->ns_cu*sizeof(DBSeg));
 /*
 ***Lämna tillbaks minne.
 */
@@ -1564,7 +1566,7 @@ end:
 */
    return(0);
   }
-  
+
 /********************************************************/
 /*!******************************************************/
 

@@ -4,10 +4,10 @@
 *    ======
 *
 *    This README-file includes information about how
-*    to build and install Varkon 1.19D from the C-
+*    to build and install Varkon 1.19E from the C-
 *    and MBS sources.
 *
-*    2009-02-10 J.Kjellander
+*    2012-11-17 J.Kjellander
 *
 *    URL: http://varkon.sourceforge.net
 *
@@ -16,7 +16,7 @@
 1.  Select a directory where to install the Varkon system
     and unzip and untar the distribution file into this
     directory. The distribution file tree has a top
-    directory named Varkon_1.19D. This will become
+    directory named Varkon_1.19E. This will become
     the varkon root directory, VARKON_ROOT.
 
 2.  Make sure you have read and write privileges to all
@@ -29,11 +29,11 @@
     default so if you have a GNU/linux system  with gcc you
     don't need to change anything.  If you are running another
     UNIX system you have to change the PLATFORM variable in the
-    makefile  accordingly. Varkon 1.19D supports linux, FreeBSD
+    makefile  accordingly. Varkon 1.19E supports linux, FreeBSD
     and MacOSX.
 
 5.  The makefiles, by default, assume you have X11 and OpenGL
-    installed. It is not possible to build Varkon 1.19D and
+    installed. It is not possible to build Varkon 1.19E and
     later versions without X11 and OpenGL. If the compiler
     complains about missing X11/OpenGL includefiles or libs
     you must install them. If they are installed and it still

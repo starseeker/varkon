@@ -341,8 +341,8 @@ loop:
  ******************************************************!*/
 
 {
-   int    i,j;
-   long   reltim;
+   int        i,j;
+   time_t     reltim;
    struct tm *timpek;
 
 /*
@@ -359,7 +359,7 @@ loop:
 /*
 ***Vad är klockan ?
 */
-    reltim = time((long *)0);
+    reltim = time(NULL);
     timpek = localtime(&reltim);
 /*
 ***Generera "header item"

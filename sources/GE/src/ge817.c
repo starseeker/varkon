@@ -64,6 +64,7 @@
  *  1999-05-21 Rewritten, J.Kjellander
  *  1999-12-18 sur778->varkon_ini_gmcur  G Liden
  *  2003-03-03 error msg if NURBS segment Sören Larsson
+ *  2012-11-16 Ubuntu 12, flags added, J.Kjelander
  *
  *****************************************************************!*/
 
@@ -86,6 +87,17 @@
                          /* utmp(0) = u0   Start                   */ 
                          /* utmp(1) = u1   End                     */
     DBint   status;      /* Error code from a called function      */
+
+/*
+***When built for the first time on Ubuntu 12 (with libc-6 etc.) comparing two floats
+***behaved differently than earlier. In this function the DBfloat utmp[] was used as a flag
+***to know if ends need extrapolation or not, ie. utmp[0] != 123.456. In Ubuntu 12 this comparison
+***seems to return the wrong answer. Since using a float as a flag is wrong anyway I didn't
+***care to investigate in detail why things had changed. Instead i did the right thing, added
+***two following boolean flags. The old code is left commented. 2012-11-16, J.Kjellander.
+*/
+    tbool   extrapolate_start; /* Indicates that the start of the segment is to be extrapolated */
+    tbool   extrapolate_end;   /* Indicates that the end of the segment is to be extrapolated */
 
 
 /*
@@ -110,7 +122,6 @@
 ***3D arc:        Not implemented
 ***Curve:         Retrieve number of segments noseg
 */
-   
    if      ( type == LINTYP ) return(erpush("GE7373","GE817"));
 
    else if ( type == ARCTYP ) return(erpush("GE7373","GE817"));
@@ -119,10 +130,10 @@
 */
    else if ( type == CURTYP )
      {
-     if(pseg[0].typ==NURB_SEG)return(erpush("GE7373","GE817"));
-     
-     pcur     = (DBCurve *)pstr;
-     noseg    = pcur->ns_cu;
+     if (pseg[0].typ==NURB_SEG) return(erpush("GE7373","GE817"));
+
+     pcur  = (DBCurve *)pstr;
+     noseg = pcur->ns_cu;
 /*
 ***Initialize GMCUR
 */
@@ -142,32 +153,40 @@
    if ( glob_s < glob_e )
      { 
      utmp[0] = 123.456;
+     extrapolate_start = FALSE;
      if ( glob_s < 1.0 ) 
        {
        utmp[0]  = glob_s;
+       extrapolate_start = TRUE;
        glob_s   = 1.0;
        }
 
      utmp[1] = 123.456;
+     extrapolate_end = FALSE;
      if ( glob_e > (noseg+1) ) 
        {
        utmp[1]  = glob_e;
+       extrapolate_end = TRUE;
        glob_e   = noseg + 0.999; 
        }
      } 
    else 
      {
      utmp[0] = 123.456;
+     extrapolate_start = FALSE;
      if ( glob_s > (noseg+1) ) 
        {
        utmp[0]  = glob_s;
+       extrapolate_start = TRUE;
        glob_s   = noseg + 0.999;
        }
 
      utmp[1] = 123.456;
+     extrapolate_end = FALSE;
      if ( glob_e < 1.0 ) 
        {
        utmp[1]  = glob_e;
+       extrapolate_end = TRUE;
        glob_e   = 1.0; 
        }
      } 
@@ -276,9 +295,9 @@
 /*
 ***Compute, call GE135
 */
-         status = GE135(pseg+iseg-1,uextr,pseg_out+noseg_tr-1);      
+         status = GE135(pseg+iseg-1,uextr,pseg_out+noseg_tr-1);
          if ( status < 0 ) return(erpush("GE1253","GE817")); 
-         }  
+         }
 /*
 ***Intermediate segment.
 */
@@ -369,7 +388,8 @@ _10050: /* All segment data for the trimmed curve is calculated     */
 */
    if (glob_s < glob_e)
      {
-     if (utmp[0] != 123.456)
+ /*    if (utmp[0] != 123.456) */
+     if ( extrapolate_start )
        {
        if ( pseg->typ ==  UV_CUB_SEG )
          {
@@ -385,7 +405,8 @@ _10050: /* All segment data for the trimmed curve is calculated     */
        status = GE135(pseg,uextr,pseg_out);      
        if ( status < 0 ) return(erpush("GE1253","GE817")); 
        }
-     if (utmp[1] != 123.456)
+/*     if (utmp[1] != 123.456) */
+     if ( extrapolate_end )
        {
        if ( (pseg+noseg-1)->typ ==  UV_CUB_SEG )
          {
@@ -404,7 +425,8 @@ _10050: /* All segment data for the trimmed curve is calculated     */
      }
    else   
      {
-     if (utmp[0] != 123.456)
+/*     if (utmp[0] != 123.456) */
+     if ( extrapolate_start )
        {
        glob_s = utmp[0];
        uextr[0] = glob_s-(gmint)floor(glob_s)+1.0;
@@ -416,7 +438,8 @@ _10050: /* All segment data for the trimmed curve is calculated     */
        if ( status < 0 ) return(erpush("GE1253","GE817")); 
        }
 
-     if (utmp[1] != 123.456)
+/*     if (utmp[1] != 123.456) */
+     if ( extrapolate_end )
        {
        glob_e = utmp[1];
        uextr[0] = 1.0;

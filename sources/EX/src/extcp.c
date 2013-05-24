@@ -225,7 +225,7 @@ extern short erpush();
       addr = inet_addr(name);
       hp = gethostbyaddr((char *)&addr,4,AF_INET);
       }
-   if (hp == NULL ) 
+   if (hp == NULL )
       {
       #ifdef WIN32
       WSACleanup();
@@ -237,7 +237,7 @@ extern short erpush();
    /* Copy the resolved information into the 'sockaddr_in' structure  */
    /*-----------------------------------------------------------------*/ 
    memset(&server_addr,0,sizeof(server_addr)); 
-   memcpy(&(server_addr.sin_addr),hp->h_addr,hp->h_length);
+   memcpy(&(server_addr.sin_addr),hp->h_addr_list[0],hp->h_length);
    server_addr.sin_family = hp->h_addrtype;
    server_addr.sin_port = htons((unsigned short)port);
                           /* Port must be in n.w.byte order */

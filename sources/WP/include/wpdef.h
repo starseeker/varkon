@@ -263,7 +263,7 @@ short      color;              /* Fill color */
 } WPDECRN;
 
 /*
-***A Button.
+***A Button. 81 changed to V3STRLEN+1, 7/11 2012 JK.
 */
 #define    LABELBUTTON  1      /* A static text */
 #define    PUSHBUTTON   2      /* A push button */
@@ -278,13 +278,13 @@ WPWGEO     geo;                /* Geometry */
 WPWCOL     color;              /* Colors */
 int        type;               /* Button type */
 int        font;               /* Font number */
-char       stron[81];          /* Text ON */
-char       stroff[81];         /* Text OFF */
+char       stron[V3STRLEN+1];  /* Text ON */
+char       stroff[V3STRLEN+1]; /* Text OFF */
 bool       status;             /* Logical state, default = FALSE */
 short      acttyp;             /* Action type, MENU/FUNC etc. */
 short      actnum;             /* Akcion number */
 bool       hlight;             /* Highlight, TRUE/FALSE */
-char       tt_str[81];         /* Tooltip string */
+char       tt_str[V3STRLEN+1];         /* Tooltip string */
 } WPBUTT;
 
 /*
@@ -308,7 +308,7 @@ DBint      curpos;             /* Cursor-position */
 bool       fuse;               /* Default-säkring */
 bool       focus;              /* TRUE = Input focus */
 int        symbol;             /* Senast inmatade symbol */
-char       tt_str[81];         /* Tooltip string */
+char       tt_str[V3STRLEN+1]; /* Tooltip string */
 } WPEDIT;
 
 /*
@@ -488,12 +488,12 @@ DBint      nl_vis;                /* Number of lines visible in window */
 
 typedef struct
 {
-WPWID      id;                 /* ID */
-WPWGEO     geo;                /* Geometry */
-Pixmap     pixmap;             /* Pixmap */
-Pixmap     mask;               /* Mask */
-GC         gc;                 /* The icon graphics context */
-short      acttyp;             /* Action type, MENU/CFUNC etc. */
-short      actnum;             /* Action number */
-char       tt_str[81];         /* Tooltip string */
+WPWID      id;                    /* ID */
+WPWGEO     geo;                   /* Geometry */
+Pixmap     pixmap;                /* Pixmap */
+Pixmap     mask;                  /* Mask */
+GC         gc;                    /* The icon graphics context */
+short      acttyp;                /* Action type, MENU/CFUNC etc. */
+short      actnum;                /* Action number */
+char       tt_str[V3STRLEN+1];    /* Tooltip string */
 } WPICON;

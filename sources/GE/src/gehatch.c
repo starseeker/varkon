@@ -48,6 +48,8 @@
 #pragma optimize("",off)
 #endif
 
+extern DBTmat *lsyspk;
+
 /*!******************************************************/
 
         DBstatus GEhatch2D(
@@ -535,7 +537,7 @@ cirklar:
        {
        noint  = -1;
        status = GE710((DBAny *)&lin,NULL,(DBAny *)apvek[ii],aspvek[ii],
-                                                NULL,&noint,uout1,uout2);
+                                                lsyspk,&noint,uout1,uout2);
        if ( status < 0 ) return(erpush("GE8232",""));
 /*
 ***GE710() använder GEsort_1() för att sortera och ta bort dubletter.
@@ -589,7 +591,7 @@ kurvor:
        {
        noint  = -1;
        status = GE710((DBAny *)&lin,NULL,(DBAny *)cpvek[ii],cspvek[ii],
-                                                NULL,&noint,uout1,uout2);
+                                                lsyspk,&noint,uout1,uout2);
        if ( status < 0 ) return(erpush("GE8232",""));
 /*
 ***Remove duplicates.

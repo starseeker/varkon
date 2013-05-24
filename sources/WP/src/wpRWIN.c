@@ -1136,6 +1136,7 @@ evloop:
    if ( clmev->message_type  ==  XInternAtom(xdisp,"WM_PROTOCOLS",False) &&
         clmev->data.l[0]     ==  XInternAtom(xdisp,"WM_DELETE_WINDOW",False) )
      {
+     WPbell();
      WPwdel((DBint)rwinpt->id.w_id);
      return(TRUE);
      }

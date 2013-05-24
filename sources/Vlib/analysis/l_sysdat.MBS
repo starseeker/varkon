@@ -19,7 +19,7 @@
    lst_lin(get_tstr(1547) + act_varkon_vers());              ! Varkon version
    lst_lin(get_tstr(65)   + act_svn_vers());                 ! SVN version
    lst_lin(get_tstr(1549) + act_ostype());                   ! OS-type
-   lst_lin(get_tstr(1550) + act_host());                     ! Node name
+   lst_lin(get_tstr(1550) + act_host());                     ! Host name
 
    lst_exi();
 

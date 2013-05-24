@@ -36,7 +36,23 @@
 
 #define JMAX  20             /* The maximum number of iterations    */
 
+/*!-------------- Function calls (internal) ------------------------*/
+/*                                                                  */
 static short fix_tol2(DBAny *pstr, DBSeg *pseg, DBfloat *ptol2);
+static DBstatus int_two_rat(DBAny  *pstr1, DBSeg  *pseg1, 
+                            DBAny  *pstr2, DBSeg  *pseg2,
+                            DBTmat *pc, short nstart, short *pnoint,
+                            DBfloat uout1[], DBfloat uout2[],
+                            short *pnum_saddle, DBfloat *pmin_dist);
+static short int_two_rat_cont(DBAny  *pstr1, DBSeg  *pseg1, 
+                            DBAny  *pstr2, DBSeg  *pseg2, short *pnoint,
+                            short *pnum_saddle, DBfloat *pmin_dist); 
+static DBstatus add_split_sol(DBAny  *pstri, DBSeg  *psegi,  DBTmat *pc,
+                          DBfloat u_trim_start, short n_int_split, 
+                     DBfloat usplit[],short n_int_in,DBfloat uout[]);
+/*                                                                  */
+/*-----------------------------------------------------------------!*/
+
 
 /********************************************************************/
 
@@ -230,7 +246,142 @@ static short fix_tol2(DBAny *pstr, DBSeg *pseg, DBfloat *ptol2);
  *                and vectors. Problems with UV_CUB_SEG and curve
  *                planes otherwise.
  *     1999-04-19 Rewritten, J.Kjellander
+ *     2010-05-14 Bug ID: 2503035 fixed Gunnar Liden
  *
+ *****************************************************************!*/
+
+ {
+   DBstatus  status;    /* Error code from a called function       */
+   DBfloat  min_dist;   /* Returned minimum distance no solution   */
+   short   num_saddle;  /* Number of saddle points                 */
+   short   n_split;     /* Number of split segments                */
+   DBSeg   sseg1,sseg2; /* Split (trimmed) segments                */
+   short   n_split_int; /* Number of intersects for split segments */
+   DBfloat u_trim_1[2]; /* Start and end trim value segment 1      */
+   DBfloat u_trim_2[2]; /* Start and end trim value segment 2      */
+   DBfloat us1[INTMAX]; /* The unordered array of u solutions from */
+                        /* GE102 ( the curve 1 segment )           */
+   DBfloat us2[INTMAX]; /* The unordered array of u solutions from */
+                        /* GE102 ( the curve 2 segment )           */   
+   short   i_split_1;   /* Loop index split of segment 1           */
+   short   i_split_2;   /* Loop index split of segment 2           */
+   DBfloat delta_p;     /* Delta parameter value for split         */
+   
+   
+   status = int_two_rat(pstr1, pseg1, pstr2, pseg2, pc, nstart, 
+                    pnoint, uout1, uout2, &num_saddle,&min_dist);
+   if(status<0)return(erpush("GE1993","int_two_rat"));
+   
+   if (0 == int_two_rat_cont(pstr1, pseg1, pstr2, pseg2, pnoint, &num_saddle, &min_dist)) 
+     return(0);
+   
+   n_split=2;
+   
+   delta_p = 1.0/(DBfloat)(n_split+1);
+   
+   for ( i_split_1 = 1 ; i_split_1 <= n_split+1; i_split_1 = i_split_1 + 1 )
+   {
+     for ( i_split_2 = 1 ; i_split_2 <= n_split+1; i_split_2 = i_split_2 + 1 )
+     {
+        u_trim_1[0] = (DBfloat)(i_split_1-1)* delta_p;
+        u_trim_1[1] = (DBfloat)(i_split_1)* delta_p;
+        u_trim_2[0] = (DBfloat)(i_split_2-1)* delta_p;
+        u_trim_2[1] = (DBfloat)(i_split_2)* delta_p;
+        status = GE135(pseg1, u_trim_1, &sseg1);     
+        if ( status < 0 ) return(erpush("GE1253","GE102"));
+        status = GE135(pseg2, u_trim_2, &sseg2);     
+        if ( status < 0 ) return(erpush("GE1253","GE102"));
+
+        status = int_two_rat(pstr1, &sseg1, pstr2,  &sseg2, pc, nstart, 
+                    &n_split_int, us1, us2, &num_saddle,&min_dist);
+        if(status<0)return(erpush("GE1993","int_two_rat"));
+        
+        status = add_split_sol(pstr1, pseg1, pc, u_trim_1[0], n_split_int, us1, *pnoint,  uout1);
+        if(status<0)return(erpush("GE1993","int_two_rat"));
+        status = add_split_sol(pstr2, pseg2, pc, u_trim_2[0], n_split_int, us2, *pnoint,  uout2);
+        if(status<0)return(erpush("GE1993","int_two_rat"));
+          
+        *pnoint =  *pnoint + n_split_int;
+     }     
+   }
+ 
+   return (0);
+ }
+ 
+/********************************************************************/ 
+
+static DBstatus add_split_sol(DBAny  *pstri, DBSeg  *psegi, DBTmat *pc,
+                          DBfloat u_trim_start, short n_int_split, 
+                           DBfloat usplit[], short n_int_in,  DBfloat uout[]) 
+                           
+/*  Add intersects from trimmed (split) segments
+ *
+ *  2010-05-14 Gunnar Liden
+ *****************************************************************!*/ 
+{
+  short    i_int;          /* Loop index intersection              */
+  DBfloat  arc_l_start;    /* Arclength to u_trim_start            */
+  DBfloat  arc_l_int;      /* Arclength intersect on trimmed curve */  
+  DBfloat  arc_l_rel;      /* Relative arclength                   */
+  DBfloat  u_trim[2];      /* Start and end trim value for segment */
+  DBSeg    trim_seg;       /* Trimmed segment                      */
+  DBfloat  param_int;      /* Parameter value for intersect point  */  
+  DBstatus status;         /* Error code from a called function    */
+   
+  arc_l_start = 0.0;
+  u_trim[0] = 0.0;
+  u_trim[1] = u_trim_start;   
+  if (u_trim_start > 0.01)
+  {
+    status = GE135(psegi, u_trim, &trim_seg); 
+    if ( status < 0 ) return(erpush("GE1253","add_split_sol"));
+    
+    status = GEarclength(pstri,&trim_seg,&arc_l_int);
+    if(status<0)return(erpush("GE1993","add_split_sol"));  
+  }
+  
+  for ( i_int = 0 ; i_int < n_int_split; i_int = i_int + 1 )
+  {
+    u_trim[0] = u_trim_start;
+    u_trim[1] = usplit[i_int];     
+    status = GE135(psegi, u_trim, &trim_seg); 
+    if ( status < 0 ) return(erpush("GE1253","add_split_sol"));
+    
+    status = GEarclength(pstri,&trim_seg,&arc_l_int);
+    if(status<0)return(erpush("GE1993","add_split_sol"));    
+    
+    arc_l_rel = 0.0;
+    if (psegi->sl > 0.000001)
+    {
+      arc_l_rel = (arc_l_start+arc_l_int)/(psegi->sl);
+    }
+    
+    status = GE717(pstri, psegi, pc, arc_l_rel , &param_int );
+    if(status<0)return(erpush("GE1993","add_split_sol"));
+    
+    uout[n_int_in+i_int] = param_int - 1.0; 
+  }
+   
+  return(0);
+}
+/********************************************************************/
+
+static DBstatus int_two_rat(
+      DBAny  *pstr1,
+      DBSeg  *pseg1,
+      DBAny  *pstr2,
+      DBSeg  *pseg2,
+      DBTmat *pc,
+      short   nstart,
+      short  *pnoint,
+      DBfloat uout1[],
+      DBfloat uout2[],
+      short *pnum_saddle,
+      DBfloat *pmin_dist)
+
+/*    Intersect between two rational cubic segments.
+ *
+ *    2010-05-14 Identical(almost) to previous GEO102 Gunnar Liden
  *****************************************************************!*/
 
  {
@@ -278,6 +429,9 @@ static short fix_tol2(DBAny *pstr, DBSeg *pseg, DBfloat *ptol2);
    DBint    status;         /* Error code from a called function    */
    char     errbuf[80];     /* String for error message fctn erpush */
 
+   *pnum_saddle = 0;
+   *pmin_dist = 5000000000.0;
+   
 /*
 ***The step for the restarts
 ***Min should be 2 and note that last u will be < 1.0 )
@@ -511,6 +665,8 @@ _010:   /* Restart point for m2 < m */
                 gradl < 200000.0*TOL2 &&
                 dum1 < 0.0 )  
              { /* Start saddle point */
+              *pnum_saddle = *pnum_saddle + 1;      
+              
 /*
 ***Make an extra restart if i and/or j <= nstart
 */
@@ -735,7 +891,12 @@ _010:   /* Restart point for m2 < m */
 */
           dum1 = ABS(m);
           dum1 = SQRT(dum1);
-
+          
+          if (SQRT(ABS(m)) < *pmin_dist)
+          {
+            *pmin_dist =  SQRT(ABS(m));
+          }
+              
           if ( dum1 <= TOL2 ) 
             { /* Start intersect point found  */
 /*
@@ -927,5 +1088,26 @@ static short fix_tol2(
 
    return(0);
  }
+
+/********************************************************************/
+
+static short int_two_rat_cont(DBAny  *pstr1, DBSeg  *pseg1, 
+                            DBAny  *pstr2, DBSeg  *pseg2, short *pnoint,
+                            short *pnum_saddle, DBfloat *pmin_dist)
+                            
+/*   Determine if the search for intersect points shall continue
+ *
+ *   2010-05-14  Gunnar Liden
+ *
+ *****************************************************************!*/
+{  
+   if (*pnoint > 0) return(0);
+
+   if (0 == *pnum_saddle) return(0);
+  
+   if (*pmin_dist < 0.2*pseg1->sl || *pmin_dist < 0.2*pseg2->sl) return(1);
+     
+   return(0);
+}
 
 /********************************************************************/

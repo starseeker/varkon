@@ -114,4 +114,4 @@ $VARKON_BIN/xvarkon -GLOBAL -i$VARKON_INI/linux
 #
 # If you want to specify a default job directory use the -jd
 # option on the command line. Here is an example:
-# $VARKON_BIN/xvarkon -GLOBAL -jd /home/my_directory/my_varkon_jobs
+# $VARKON_BIN/xvarkon -GLOBAL -jd/home/my_directory/my_varkon_jobs

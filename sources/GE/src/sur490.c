@@ -57,6 +57,7 @@
 /*  1998-02-12   Max number of errors in array SWMAX exceeded       */
 /*  1998-02-22   Bug: whole array was always written                */
 /*  1999-11-28   Free source code modif's and n_w_max for Debug     */
+/*  2012-11-11   Increased size of local arrays, J.Kjellander       */
 /*                                                                  */
 /******************************************************************!*/
 
@@ -118,7 +119,7 @@ extern char  jobnam[];          /* Current job name                 */
 
 /*!--------------- Internal variables ------------------------------*/
 /*                                                                  */
-   char   f_name[133];   /* File name                               */
+   char   f_name[1330];   /* File name                               */
    FILE  *f_dat;         /* Output file                       (ptr) */
 /*                                                                  */
 /*-----------------------------------------------------------------!*/
@@ -126,25 +127,26 @@ extern char  jobnam[];          /* Current job name                 */
    DBint   i_w;          /* Loop index warning                      */
    DBint   n_w_max;      /* Loop index end (max SWMAX)              */
 
-   long    reltim;       /* Relative time January 1, 1970           */
-   struct  tm *p_time;   /* Local time                        (ptr) */
-   char    c_hour[3];    /* Hour   as string                        */
-   char    c_min [3];    /* Minute as string                        */
-   char    c_sec [3];    /* Second as string                        */
-   char    c_year[5];    /* Year   as string                        */
-   char    c_mon [3];    /* Month  as string                        */
-   char    c_day [3];    /* Day    as string                        */
+   time_t  reltim;        /* Relative time January 1, 1970           */
+   struct  tm *p_time;    /* Local time                        (ptr) */
+   char    c_hour[30];    /* Hour   as string                        */
+   char    c_min [30];    /* Minute as string                        */
+   char    c_sec [30];    /* Second as string                        */
+   char    c_year[50];    /* Year   as string                        */
+   char    c_mon [30];    /* Month  as string                        */
+   char    c_day [30];    /* Day    as string                        */
 
    DBint   nu;           /* Number of patches in U direction        */
    DBint   nv;           /* Number of patches in V direction        */
    DBint   surtype;      /* Type CUB_SUR, RAT_SUR, or .....         */
-   char    c_styp[80];   /* Surface type                            */
+   char    c_styp[1330];   /* Surface type                            */
 
-   char   errbuf[80];    /* String for error message fctn erpush    */
-   short  status;        /* Error code from called function         */
-   char   error_str[80]; /* String for output to file               */
+   char   errbuf[1330];    /* String for error message fctn erpush    */
+   short  status;          /* Error code from called function         */
+   char   error_str[1330]; /* String for output to file               */
 
 /*--------------end-of-declarations---------------------------------*/
+
 
 /*!New-Page--------------------------------------------------------!*/
 
@@ -328,7 +330,7 @@ fflush(dbgfil(SURPAC));
 
 /* Get date and time                                                */
 
-   reltim = time((long *)0);
+   reltim = time(NULL);
    p_time = localtime(&reltim);
 
   if  (  p_time->tm_hour <  10 )

@@ -491,7 +491,10 @@ short EXcapp(V2REFVA *id, V2REFVA *rid, char *segtyp, DBint metod,
 ***excugl.c
 */
 short EXcugl(DBId *id, DBId *rid, char *str, V2NAPA *pnp);
-
+/*
+***exmatrix.c
+*/
+short EXeigasym(DBint n, DBfloat m[], DBfloat eval[], DBfloat evec[]);
 /*
 ***exmesh.c
 */

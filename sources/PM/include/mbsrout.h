@@ -429,6 +429,7 @@
 #define VHSVRGB    395  /* evhsvrgb    HSV_TO_RGB        */
 #define VCSYSUD    396  /* evcsud      CSYS_USRDEF       */
 #define VPCATMAT   397  /* evpcatm     PCA               */
+#define VEIGASYM   398  /* eveigasym   EIGASYM           */
 /*
 ***If you are building your own application,
 ***include your own file here.

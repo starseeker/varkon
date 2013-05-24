@@ -41,6 +41,7 @@ OBJS = ../lib/PMlib.a(evact.o)     \
        ../lib/PMlib.a(evlev.o)     \
        ../lib/PMlib.a(evlin.o)     \
        ../lib/PMlib.a(evmath.o)    \
+       ../lib/PMlib.a(evmatrix.o)  \
        ../lib/PMlib.a(evmbs.o)     \
        ../lib/PMlib.a(evmesh.o)    \
        ../lib/PMlib.a(evos.o)      \

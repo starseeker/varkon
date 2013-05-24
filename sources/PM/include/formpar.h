@@ -1662,12 +1662,16 @@
      "-5:ie.ie.ie.iv.iv.iv",
 /*
 ***VCSYSUD = 396, CSYS_USRDEF(id,namn,tmat).
-*/    
+*/
      "-5:se.jv", 
 /*
 ***VPCATMAT = 397, status:=PCA(npts,pts,tmat).
-*/  
-     "i5:ie.nv.jv"
+*/
+     "i5:ie.nv.jv",
+/*
+***VEIGASYM = 398, status:=EIGASYM(n,m,eigval,eigvec).
+*/
+     "i5:ie.lv.lv.nv"
 /*
 ***Remember, no comma after the last parameter list definition.
 */

@@ -30,6 +30,7 @@ OBJECTS = ../lib/EXlib.a(exarc.o)      \
           ../lib/EXlib.a(exget2.o)     \
           ../lib/EXlib.a(exgroup.o)    \
           ../lib/EXlib.a(exline.o)     \
+          ../lib/EXlib.a(exmatrix.o)   \
           ../lib/EXlib.a(exmesh.o)     \
           ../lib/EXlib.a(exmove.o)     \
           ../lib/EXlib.a(exodbc.o)     \

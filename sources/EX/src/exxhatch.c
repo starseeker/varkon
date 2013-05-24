@@ -199,7 +199,7 @@ extern DBTmat  lklsyi;
          DBread_curve(&cur[ncur],NULL,&cspvek[ncur],la);
          cpvek[ncur] = &cur[ncur];
          if ( lsyspk != NULL )
-           GEtfCurve_to_local(cpvek[narc],cspvek[narc],NULL,lsyspk,cpvek[narc],cspvek[narc],NULL);
+           GEtfCurve_to_local(cpvek[ncur],cspvek[ncur],NULL,lsyspk,cpvek[ncur],cspvek[ncur],NULL);
        ++ncur;
          break;
 

@@ -5,7 +5,7 @@
 #
 #   Top level makefile for Varkon with GNU/Linux
 #
-#  (C)2008-01-12 J.Kjellander
+#  (C)2010-09-09 J.Kjellander
 #
 ##########################################################
 
@@ -41,6 +41,13 @@ ifeq ($(DV3ODBC),TRUE)
 SQLLIBS = -L/usr/lib/unixODBC -lmyodbc3
 endif
 
+# If you want to use the EIGASYM() function in MBS you need
+# the Atlas math library.
+
+ifeq ($(DV3ATLAS),TRUE)
+ATLASLIBS = -L/usr/lib/atlas -llapack -lblas
+endif
+
 # The actual executable, xvarkon.
 
 XVARKON = ../bin/xvarkon
@@ -48,7 +55,7 @@ XVARKON = ../bin/xvarkon
 # Targets
 
 $(XVARKON): $(LIBS)
-	cc $(LIBS) $(SQLLIBS) $(XLIBS) $(GLIBS) $(TIFFLIBS) -lm -o $(XVARKON)
+	cc $(LIBS) $(SQLLIBS) $(XLIBS) $(GLIBS) $(TIFFLIBS) $(ATLASLIBS) -lm -o $(XVARKON)
 
 
 ##########################################################

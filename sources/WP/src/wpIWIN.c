@@ -483,7 +483,7 @@
         clmev->data.l[0]    == 
         XInternAtom(xdisp,"WM_DELETE_WINDOW",False) )
      {
-     XBell(xdisp,100);
+     WPbell();
      return(TRUE);
      }
    else return(FALSE);

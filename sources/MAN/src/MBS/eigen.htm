@@ -1,0 +1,224 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"></head><body>changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- eig - Function})
+define({_INDEXLINK_},{<a href="https://stensmacka.oru.se/attach/entiindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>eigasym - <small>Function</small></h1>
+
+<h2>Description</h2>
+
+<p>
+Low level routine computes real eigen values and eigen vectors of an NxN real non-symmetric matrix.
+</p>
+<p>
+The function depends on LAPACK and BLAS libraries , be sure they installed into your system.
+</p>
+
+<h2>Syntax</h2>
+<pre>status:=eigasym(n,m,eigval,evec);
+</pre>
+
+<table>
+<tbody><tr>
+<td>INT</td>
+<td>status;</td>
+</tr>
+<tr>
+<td>INT</td>
+<td>n;</td>
+</tr>
+
+<tr>
+<td>FLOAT</td>
+<td>m(n);</td>
+</tr>
+
+<tr>
+<td>FLOAT</td>
+<td>eigval(n);</td>
+</tr>
+
+<tr>
+<td>VECTOR</td>
+<td>evec(n);</td>
+</tr>
+
+</tbody></table>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tbody><tr>
+<td>n</td>
+<td>- The order of matrix "m"</td>
+</tr>
+<tr>
+<td>m</td>
+<td>- One dimension array, stores elements of an NxN matrix</td>
+</tr>
+<tr><td>eigval</td>
+<td>- One dimension array, stores the real eigenvalues of the matrix "m"</td>
+</tr>
+
+<tr><td>evec</td>
+<td>- One dimension array, stores the real eigenvectors  of the matrix "m", one after one in the same order as their eigenvalues.</td>
+</tr>
+</tbody></table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return Value</h2>
+
+<table>
+<tbody><tr>
+<td>0</td> 
+<td>=&gt;</td> 
+<td>Operation is successful.</td>
+</tr>
+<tr>
+<td>&gt; 0</td> 
+<td>=&gt;</td> 
+<td> The QR algorithm faild to compute all the eigenvalues, and no eigenvectors have been computed, (lapack lib. error).</td>
+</tr>
+<tr>
+<td>-1</td>
+<td>=&gt;</td> 
+<td> One of dgeev function's parameters has illegal value, (lapack lib. error).</td>
+</tr>
+<tr>
+<td>-2</td>
+<td>=&gt;</td>
+<td>One or more of the eigenvalues is a complex number, Varkon dose not support complex numbers.</td>
+</tr>
+</tbody></table>
+
+<h2>Comments</h2>
+<p>
+Suppose the real non-symmetric matrix  has order "3" like:
+</p>
+
+<table>
+<tbody><tr>
+<td>Xx</td>
+<td>Xy</td>
+<td>Xz</td>
+</tr>
+<tr>
+<td>Yx</td>
+<td>Yy</td>
+<td>Yz</td>
+</tr>
+<tr>
+<td>Zx</td>
+<td>Zy</td>
+<td>Zz</td>
+</tr>
+</tbody></table>
+<p>
+the length of the input matrix m  is 3*3 = 9, the input matrix is:
+</p>
+
+<table>
+<tbody><tr>
+<td>m(1)</td>
+<td>=</td>
+<td>Xx</td>
+</tr>
+<tr>
+<td>m(2)</td>
+<td>=</td>
+<td>Yx</td>
+</tr>
+<tr>
+<td>m(3)</td>
+<td>=</td>
+<td>Zx</td>
+</tr>
+<tr>
+<td>m(4)</td>
+<td>=</td>
+<td>Xy</td>
+</tr>
+<tr>
+<td>m(5)</td>
+<td>=</td>
+<td>Yy</td>
+</tr>
+<tr>
+<td>m(6)</td>
+<td>=</td>
+<td>Zy</td>
+</tr>
+<tr>
+<td>m(7)</td>
+<td>=</td>
+<td>Xz</td>
+</tr>
+<tr>
+<td>m(8)</td>
+<td>=</td>
+<td>Yz</td>
+</tr>
+<tr>
+<td>m(9)</td>
+<td>=</td>
+<td>Zz</td>
+</tr>
+</tbody></table>
+<p>
+The elements are entered column after column.
+</p>
+<p>
+The real eigen values:
+</p>
+<table>
+<tbody><tr>
+<td>eigval(1)</td>
+<td>=</td>
+<td>val_1</td>
+</tr>
+<tr>
+<td>eigval(2)</td>
+<td>=</td>
+<td>val_2</td>
+</tr><tr>
+<td>eigval(1)</td>
+<td>=</td>
+<td>val_3</td>
+</tr>
+</tbody></table>
+<p>
+The real eigen vectors:
+</p>
+<table>
+<tbody><tr>
+<td>eigen vector 1</td>
+<td>=</td>
+<td>evec(1)</td>
+</tr>
+<tr>
+<td>eigen vector 2</td>
+<td>=</td>
+<td>evec(2)</td>
+</tr><tr>
+<td>eigen vector 3</td>
+<td>=</td>
+<td>evec(3)</td>
+</tr>
+</tbody></table>
+<h2>Important</h2>
+<p>
+Be aware that in the three cases of the return value not equal "0", when
+ (status = &gt; 0, -1  or -2) the returned eigenvalues and eigenvectors 
+arrays not correct. The return value of the function should be equal to 0
+ (status = 0).
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)
+</body></html>

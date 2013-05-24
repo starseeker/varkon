@@ -50,7 +50,7 @@
 #undef VSTART
 #include "fcntl.h"
 #include <unistd.h>
-#include "/usr/include/sys/utsname.h"
+#include <sys/utsname.h>
 #endif
 
 /*

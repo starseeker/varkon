@@ -37,7 +37,7 @@
 #include <string.h>
 
 #ifdef UNIX
-#include "/usr/include/sys/utsname.h"
+#include <sys/utsname.h>
 #endif
 
 

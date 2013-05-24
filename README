@@ -3,7 +3,7 @@
                            README
                            ======
 
-      Installation guide for Varkon 1.19D. This README includes specific
+      Installation guide for Varkon 1.19E. This README includes specific
       information for Linux users but should also be used for other
       Unix systems like FreeBSD and MacOSX.
 
@@ -24,13 +24,13 @@
       VARKON_ROOT/man/index.htm
 
       The full documentation is also available online at:
-      http://varkon.sourceforge.net/man_1.19D/index.htm
+      http://varkon.sourceforge.net/man_1.19E/index.htm
 
       To finish the installation and start Varkon, follow the instructions
       in the System administrators manual at:
       VARKON_ROOT/man/sysadm/index.htm
 
-      Varkon 1.19D includes new functionality as well as bugfixes. You will find
+      Varkon 1.19E includes new functionality as well as bugfixes. You will find
       a link to the releasenotes on the start page of the Varkon documentation.
 
       To get in contact with the developers or with other Varkon users,
@@ -42,26 +42,36 @@
       Information for Linux users
       ---------------------------
 
-      Version 1.19D of VARKON for Linux is dynamically linked to the
-      following Linux libary modules (printout from ldd):
+      Version 1.19E of VARKON for Linux is dynamically linked to the
+      following Linux libary modules (printout from ldd):	
 
-        linux-gate.so.1 =>  (0xffffe000)
-        libX11.so.6 => /usr/X11R6/lib/libX11.so.6 (0x4003c000)
-        libXext.so.6 => /usr/X11R6/lib/libXext.so.6 (0x40135000)
-        libXpm.so.4 => /usr/X11R6/lib/libXpm.so.4 (0x40143000)
-        libGL.so.1 => /usr/lib/libGL.so.1 (0x40159000)
-        libGLU.so.1 => /usr/lib/libGLU.so.1 (0x401c0000)
-        libtiff.so.3 => /usr/lib/libtiff.so.3 (0x4023f000)
-        libm.so.6 => /lib/tls/libm.so.6 (0x40293000)
-        libc.so.6 => /lib/tls/libc.so.6 (0x402b9000)
-        libdl.so.2 => /lib/libdl.so.2 (0x403d8000)
-        libpthread.so.0 => /lib/tls/libpthread.so.0 (0x403dc000)
-        libXxf86vm.so.1 => /usr/X11R6/lib/libXxf86vm.so.1 (0x403ee000)
-        libstdc++.so.6 => /usr/lib/libstdc++.so.6 (0x403f3000)
-        libgcc_s.so.1 => /lib/libgcc_s.so.1 (0x404d0000)
-        libjpeg.so.62 => /usr/lib/libjpeg.so.62 (0x404db000)
-        libz.so.1 => /lib/libz.so.1 (0x404fb000)
-        /lib/ld-linux.so.2 (0x40000000)
+        linux-gate.so.1 =>  (0xb7712000)
+	libX11.so.6 => /usr/lib/i386-linux-gnu/libX11.so.6 (0xb75c7000)
+	libXpm.so.4 => /usr/lib/i386-linux-gnu/libXpm.so.4 (0xb75b5000)
+	libGL.so.1 => /usr/lib/i386-linux-gnu/mesa/libGL.so.1 (0xb755b000)
+	libGLU.so.1 => /usr/lib/i386-linux-gnu/libGLU.so.1 (0xb74e6000)
+	libtiff.so.4 => /usr/lib/i386-linux-gnu/libtiff.so.4 (0xb7483000)
+	libm.so.6 => /lib/i386-linux-gnu/libm.so.6 (0xb7457000)
+	libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb72ad000)
+	libxcb.so.1 => /usr/lib/i386-linux-gnu/libxcb.so.1 (0xb728b000)
+	libdl.so.2 => /lib/i386-linux-gnu/libdl.so.2 (0xb7286000)
+	libglapi.so.0 => /usr/lib/i386-linux-gnu/libglapi.so.0 (0xb7270000)
+	libXext.so.6 => /usr/lib/i386-linux-gnu/libXext.so.6 (0xb725e000)
+	libXdamage.so.1 => /usr/lib/i386-linux-gnu/libXdamage.so.1 (0xb725a000)
+	libXfixes.so.3 => /usr/lib/i386-linux-gnu/libXfixes.so.3 (0xb7253000)
+	libX11-xcb.so.1 => /usr/lib/i386-linux-gnu/libX11-xcb.so.1 (0xb7250000)
+	libxcb-glx.so.0 => /usr/lib/i386-linux-gnu/libxcb-glx.so.0 (0xb7238000)
+	libXxf86vm.so.1 => /usr/lib/i386-linux-gnu/libXxf86vm.so.1 (0xb7232000)
+	libdrm.so.2 => /usr/lib/i386-linux-gnu/libdrm.so.2 (0xb7225000)
+	libpthread.so.0 => /lib/i386-linux-gnu/libpthread.so.0 (0xb7209000)
+	libstdc++.so.6 => /usr/lib/i386-linux-gnu/libstdc++.so.6 (0xb7124000)
+	libgcc_s.so.1 => /lib/i386-linux-gnu/libgcc_s.so.1 (0xb7106000)
+	libjpeg.so.8 => /usr/lib/i386-linux-gnu/libjpeg.so.8 (0xb70af000)
+	libz.so.1 => /lib/i386-linux-gnu/libz.so.1 (0xb7099000)
+	/lib/ld-linux.so.2 (0xb7713000)
+	libXau.so.6 => /usr/lib/i386-linux-gnu/libXau.so.6 (0xb7094000)
+	libXdmcp.so.6 => /usr/lib/i386-linux-gnu/libXdmcp.so.6 (0xb708d000)
+	librt.so.1 => /lib/i386-linux-gnu/librt.so.1 (0xb7084000)
 
       These files are not included in the Varkon distribution.
       If you don't have these files on your Linux system we
@@ -73,8 +83,8 @@
       OpenGL
       ------
 
-      The binary version of Varkon 1.19D is comiled and linked on
-      a Linux system with Suse Linux 10.0. This Linux distribution
+      The binary version of Varkon 1.19E is compiled and linked on
+      a Linux system with Ubuntu linux 12.04. This Linux distribution
       and many others of recent date include support for OpenGL so
       normally you should not need to do anything to get OpenGL
       working.

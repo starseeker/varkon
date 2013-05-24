@@ -129,6 +129,7 @@
 {"HSV_TO_RGB",        ST_PROC,     FALSE,  ST_ORD,    VHSVRGB},
 {"CSYS_USRDEF",       ST_PROC,     FALSE,  ST_GEO,    VCSYSUD},
 {"PCA",               ST_FUNC,     FALSE,  ST_ORD,    VPCATMAT},
+{"EIGASYM",           ST_FUNC,     FALSE,  ST_ORD,    VEIGASYM},
 /*
 ***The global symbol table ends here.
 */

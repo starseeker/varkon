@@ -81,7 +81,7 @@ extern FILE *fdopen();
 /*
 ***In explicit mode, tmpres is the temp name of the RES-file.
 */
-char tmpres[V3PTHLEN+1];
+char tmpres[V3PTHLEN+JNLGTH+10+1];
 
 /*
 ***Prototypes for internal functions.
@@ -252,7 +252,12 @@ static short main_loop()
 */
       if ( (status=load_DB()) == -1 )
         {
+     extern FILE* startup_logfile;
+     fprintf(startup_logfile,"Hit kom vi !\n");
+     fflush(startup_logfile);
         if ( init_DB() < 0 ) goto errend;
+     fprintf(startup_logfile,"Hit kom vi också!\n");
+     fflush(startup_logfile);
         newjob = TRUE;
         }
       else if ( status < 0 ) goto errend;
@@ -714,6 +719,8 @@ static short init_DB()
  *      Error: IG0183 => Can', create RES-file
  *
  *      (C)2008-02-13 J.Kjellander
+ * 
+ *      2012-11-09 Bugfix tmpres, J. Kjellander
  *
  ******************************************************!*/
 
@@ -721,7 +728,6 @@ static short init_DB()
    char  filnam[V3PTHLEN+JNLGTH+10];
    int   fd;
    FILE *fp;
-
 
 /*
 ***In EXPLICIT mode, create path/jobname + temporary extension using mkstemp().
@@ -2190,7 +2196,7 @@ static short iginjb()
 /*
 ***Create the default graphical window.
 */
-     if ( status=WPcgws() < 0 ) return(status);
+     if ( (status=WPcgws()) < 0 ) return(status);
 /*
 ***Initiera diverse flaggor.
 */
@@ -2224,7 +2230,7 @@ static short iginjb()
 
 static short load_jobdata()
 
-/*      Load jobdata.
+/*      Load job data.
  *
  *      FV:   0 = Ok.
  *           -1 = Filen finns ej.
@@ -2238,6 +2244,7 @@ static short load_jobdata()
  *      26/12/86 hit och save, J. Kjellander
  *      15/11/88 EXldjb() och posmod, J. Kjellander
  *      30/1-95  Multifönster, J. Kjellander
+ *      9/11/12  startup_complete, J.Kjellander
  *
  ******************************************************!*/
 
@@ -2246,22 +2253,29 @@ static short load_jobdata()
    char   filnam[V3PTHLEN+1];
 
 /*
-***Bilda filnamn och prova att ladda.
+***Make filename and try to load.
 */
    strcpy(filnam,jobdir);
    strcat(filnam,jobnam);
    strcat(filnam,JOBEXT);
    status = EXload_job(filnam);
 /*
-***Om status < 0 och felkod = EX1862 finns filen inte.
+***If status < 0 and error code = EX1862 the file does not exist.
 */
-   if ( status < 0  &&  erlerr() == 186 )
+   if ( status < 0 )
      {
-     erinit();
-     return(-1);
+     if ( startup_complete == TRUE &&  erlerr() == 186 )
+       {
+       erinit();
+       return(-1);
+       }
+     else  if ( startup_complete == FALSE )
+       {
+       return(-1);
+       }
      }
 /*
-***Annars om status < 0, felmeddelande.
+***Else if status < 0, error message.
 */
    else if ( status < 0 ) return(status);
 /*
@@ -2270,7 +2284,7 @@ static short load_jobdata()
 ***resursfil nu.
 */
      if ( WPngws() == 0 )
-       if ( status=WPcgws() < 0 ) return(status);
+       if ( (status=WPcgws()) < 0 ) return(status);
 /*
 ***Initiera koordinatsystem.
 */

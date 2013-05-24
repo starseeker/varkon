@@ -279,13 +279,13 @@ readerr:
  ******************************************************!*/
 
   {
-   long       reltim;
+   time_t     reltim;
    struct tm *timpek;
 
 /*
 ***Current time.
 */
-   reltim = time((long *)0);
+   reltim = time(NULL);
    timpek = localtime(&reltim);
 
    gmsdat_db.year_c = (short)timpek->tm_year;
@@ -350,13 +350,13 @@ readerr:
  ******************************************************!*/
 
   {
-   long       reltim;
+   time_t     reltim;
    struct tm *timpek;
 
 /*
 ***Current time.
 */
-   reltim = time((long *)0);
+   reltim = time(NULL);
    timpek = localtime(&reltim);
 
    gmsdat_db.year_u = (short)timpek->tm_year;
