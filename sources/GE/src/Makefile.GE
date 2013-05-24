@@ -336,6 +336,7 @@ VARKON_OBJS = ../lib/GElib.a(suinit.o)      \
               ../lib/GElib.a(getfseg.o)     \
               ../lib/GElib.a(getfang.o)     \
               ../lib/GElib.a(gemktf.o)      \
+              ../lib/GElib.a(gepca.o)       \
               ../lib/GElib.a(gesort.o)      \
               ../lib/GElib.a(geinvon.o)     \
               ../lib/GElib.a(geinvtan.o)    \

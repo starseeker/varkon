@@ -1,4 +1,4 @@
-/*!******************************************************************/
+/********************************************************************/
 /*  igexpr.c                                                        */
 /*  ========                                                        */
 /*                                                                  */
@@ -1148,7 +1148,7 @@ static short gnpend(pm_ptr *pexnpt)
     DBVector posvec;
 
 /*
-***Temp ref.
+***Temporary reference (MACRO call for example).
 */
     if ( tmpref)
       {
@@ -1478,7 +1478,7 @@ exit:
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short    IGgsid(
         DBId    *idvek,
@@ -1493,28 +1493,27 @@ exit:
  *      rutinen avsluta med status = utstat förutom de
  *      vanliga REJECT och GOMAIN.
  *
- *      In: idvek  => Pekare till array av DBId   .
- *                    Arrayen behï¿½ver ej vara lï¿½nkad.
- *                    Mï¿½ste finnas minst MXINIV element.
- *          typ    => ï¿½nskad typ.
- *          end    => Slutï¿½nde, TRUE/FALSE.
- *          right  => Sida, TRUE/FALSE.
+ *      In: idvek  => Ptr to array of MXINIV DBId
+ *          typ    => Requested type (mask)
+ *          end    => End, TRUE/FALSE
+ *          right  => Side, TRUE/FALSE
  *          utstat => 0 or WINDOW
  *
- *      Ut: *idvek => Lï¿½nkad lista med identitet.
- *          *typ   => GM-typ.
+ *      Out: *idvek => ID (linked list).
+ *           *typ   => Typecode.
  *
- *      FV:       0 => Ok.
- *           REJECT => Operationen avbruten.
- *           GOMAIN => Huvudmenyn
- *           IG3532 => Storheten ingï¿½r ej i en part
- *           IG2242 => Syntaxfel i id-strï¿½ng = %s
- *           IG2272 => Storheten %s finns ej
+ *      Return:   0  => Ok, ID returned
+ *           REJECT  => Operation cancelled
+ *           GOMAIN  => Main menu
+ *           SMBPOSM => Pos button
+ *           IG3532  => Entity does not belong to a part
+ *           IG2242  => Syntax error in ID string
+ *           IG2272  => Entity %s does not exist
  *
  *      (C)microform ab 4/2/85 J. Kjellander
  *
- *      28/10/85 ï¿½nde och sida, J. Kjellander
- *      30/12/85 Pekmï¿½rke, J. Kjellander
+ *      28/10/85 Ände och sida, J. Kjellander
+ *      30/12/85 Pekmärke, J. Kjellander
  *      30/12/85 Symbol, J. Kjellander
  *      10/3/86  Part, J. Kjellander
  *      13/3/86  Pektecken "i", J. Kjellander
@@ -1523,10 +1522,11 @@ exit:
  *      23/12/86 Global ref, J. Kjellander
  *      27/8/87  B_plan, J. Kjellander
  *      17/11/88 utstat, J. Kjellander
- *      10/1-95  Multifï¿½nster, J. Kjellander
- *      1996-04-30 Pekning pï¿½ part, J. Kjellander
+ *      10/1-95  Multifönster, J. Kjellander
+ *      1996-04-30 Pekning på part, J. Kjellander
  *      1997-04-10 WIN32, J.Kjellander
  *      2006-12-08 Tagit bort gpgtla(), J.Kjellander
+ *      2008-07-08 Comments, J.Kjellander
  *
  ******************************************************!*/
 
@@ -2058,10 +2058,10 @@ loop:
 
 static short igpcrh_2D(DBVector *vecptr)
 
-/*      Lï¿½s in 2D position med hï¿½rkors eller
- *      position pï¿½ en rasterpunkt. Positionen 
+/*      Läs in 2D position med hårkors eller
+ *      position på en rasterpunkt. Positionen 
  *      transformeras till aktivt koordinatsystem.
- *      <SP> och h ger hï¿½rkorsposition.
+ *      <SP> och h ger hårkorsposition.
  *      r ger rasterposition.
  *
  *      In: vecptr => Pekare till DBVector.
@@ -2075,8 +2075,8 @@ static short igpcrh_2D(DBVector *vecptr)
  *
  *      (C)microform ab
  *
- *      9/9/85   Hï¿½rkors/raster sammanslaget, R. Svedin
- *      30/12/85 Pekmï¿½rke, J. Kjellander
+ *      9/9/85   Hårkors/raster sammanslaget, R. Svedin
+ *      30/12/85 Pekmärke, J. Kjellander
  *      3/10/86  GOMAIN, J. Kjellander
  *      20/10/86 HELP, J. Kjellander
  *      2007-03-12 1.19, J.Kjellander
@@ -2159,45 +2159,47 @@ loop:
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
  static short igpend(DBVector *vecptr)
 
-/*      Position i ena ï¿½nden av en storhet.
+/*      Explicit position at the end of a line/arc/curve.
  *
- *      In: vecptr => Pekare till DBVector.
+ *      In: vecptr => Ptr to output coordinates.
  *
- *      Ut: *vecptr => Vektor.
+ *      Out: *vecptr => The position (coordinates).
  *
- *      FV:      0 => Ok.
- *          REJECT => Operationen avbruten.
- *          GOMAIN => Huvudmenyn.
+ *      Return:   0 => Ok, coordinates returned
+ *          SMBPOSM => Position method
+ *          REJECT  => Operation rejected
+ *          GOMAIN  => Main menu
  *
  *      (C)microform ab 28/10/85 J. Kjellander
  *
- *      26/3/86  Felutskrift frï¿½n EXon, B. Doverud
- *      6/10/86  GOMAIN, J. Kjellander
+ *      26/3/86    Felutskrift från EXon, B. Doverud
+ *      6/10/86    GOMAIN, J. Kjellander
+ *      2008-07-08 SMBPOSM, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
-    DBfloat   t;
-    DBetype   typ;
+    DBfloat t;
+    DBetype typ;
     DBptr   la;
     bool    end,right;
     short   status;
     DBId    idvek[MXINIV];
-    DBAny  gmpost;
+    DBAny   gmpost;
 
 /*
-***Hï¿½mta id fï¿½r den refererade storheten.
+***Get the ID of the entity.
 */
 loop:
     typ = LINTYP+ARCTYP+CURTYP;
     WPaddmess_mcwin(IGgtts(331),WP_PROMPT);
-    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) != 0 ) goto exit;
 /*
-***Kolla typ och ï¿½nde och vï¿½lj rï¿½tt parametervï¿½rde.
+***Select parameter value.
 */
     if ( end )
       {
@@ -2211,7 +2213,7 @@ loop:
       }
     else t = 0.0;
 /*
-***Berï¿½kna positionen.
+***Calculate explicit position.
 */
     if ( EXon(idvek,t,(DBfloat)0.0,vecptr) < 0 )
       {
@@ -2219,7 +2221,7 @@ loop:
       goto loop;
       }
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPclear_mcwin();
@@ -2227,68 +2229,69 @@ exit:
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
  static short igpon(DBVector *vecptr)
 
-/*      Position pï¿½ en storhet.
+/*      Explicit position on entity.
  *
- *      In: vecptr => Pekare till DBVector.
+ *      In: vecptr => Ptr to output coordinates.
  *
- *      Ut: *vecptr => Vektor.
+ *      Out: *vecptr => The position (coordinates).
  *
- *      FV:      0 => Ok.
- *          REJECT => Operationen avbruten.
- *          GOMAIN => Huvudmenyn.
+ *      Return:   0 => Ok, coordinates returned
+ *          SMBPOSM => Position method
+ *          REJECT  => Operation rejected
+ *          GOMAIN  => Main menu
  *
  *      (C)microform ab 20/1/85 J. Kjellander
  *
- *      28/10/85 ï¿½nde och sida, J. Kjellander
+ *      28/10/85 Ände och sida, J. Kjellander
  *      29/12/85 Symbol, J. Kjellander
- *      26/3/86  Felutskrift frï¿½n EXon, B. Doverud
+ *      26/3/86  Felutskrift från EXon, B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *      22/2/93  Nytt anrop till EXon(), J. Kjellander
+ *      2008-07-08 SMBPOSM, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
     double  t;
     DBetype typ;
-    bool     end,right;
-    short    status;
-    DBId     idvek[MXINIV];
+    bool    end,right;
+    short   status;
+    DBId    idvek[MXINIV];
 
 /*
-***Hï¿½mta id fï¿½r den refererade storheten.
+***Get the ID of the entity.
 */
 loop:
     typ = POITYP+LINTYP+ARCTYP+CURTYP+CSYTYP+
           TXTTYP+LDMTYP+CDMTYP+RDMTYP+ADMTYP;
     WPaddmess_mcwin(IGgtts(52),WP_PROMPT);
-    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) != 0 ) goto exit;
 /*
-***Kolla typ. Om punkt etc. sï¿½tt parametervï¿½rdet = 0.
+***Select parameter value.
 */
     if ( typ == POITYP || typ == CSYTYP || typ == TXTTYP ||
          typ == LDMTYP || typ == CDMTYP || typ == RDMTYP ||
          typ == ADMTYP ) t = 0.0;
     else
        {
-       IGptma(208,IG_INP);
+       WPaddmess_mcwin(IGgtts(208),WP_PROMPT);
        status=IGsfip(IGgtts(320),&t);
        if ( status < 0 ) goto exit;
        }
 /*
-***Berï¿½kna positionen.
+***Calculate explicit position.
 */
     if ( EXon (idvek,t,(DBfloat)0.0,vecptr) < 0 )
       {
-      WPclear_mcwin();
       errmes();
       goto loop;
       }
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPclear_mcwin();
@@ -2296,111 +2299,98 @@ exit:
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
 static short igpint(DBVector *vecptr)
 
-/*      Position i skï¿½rningspunkt.
+/*      Explicit intersect position.
  *
- *      In: vecptr => Pekare till DBVector.
+ *      In: vecptr => Ptr to output coordinates.
  *
- *      Ut: *vecptr => Vektor.
+ *      Out: *vecptr => The position (coordinates).
  *
- *      FV:      0 => Ok.
- *          REJECT => Operationen avbruten.
- *          GOMAIN => Huvudmenyn.
+ *      Return:   0 => Ok, coordinates returned
+ *          SMBPOSM => Position method
+ *          REJECT  => Operation rejected
+ *          GOMAIN  => Main menu
  *
  *      (C)microform ab 4/2/85 J. Kjellander 
  *
- *      28/10/85 ï¿½nde och sida, J. Kjellander
- *      26/3/86  Felutskrift frï¿½n EXsect, B. Doverud
+ *      28/10/85 Ände och sida, J. Kjellander
+ *      26/3/86  Felutskrift från EXsect, B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *      26/11/89 Neg intnr, J. Kjellander
+ *      2008-07-08 SMBPOSM, J.Kjellander
  *
- ******************************************************!*/
+ ********************************************************/
 
   {
     short   alt,status;
     int     ival;
     DBetype typ1,typ2;
-    DBptr   la;
-    bool    end,right,enkel=FALSE;
+    bool    end,right,simple;
     DBId    idv1[MXINIV],idv2[MXINIV];
-    DBAny  gmpost;
-    DBSeg   arcseg[4];
 
 /*
-***1:a storheten.
+***Get the ID of the first entity.
 */
 loop:
     WPaddmess_mcwin(IGgtts(324),WP_PROMPT);
-    typ1 = LINTYP+ARCTYP+CURTYP;
-    if ( modtyp == 3 ) typ1 += BPLTYP+CSYTYP;
-    if ( (status=IGgsid(idv1,&typ1,&end,&right,(short)0)) < 0 ) goto exit;
+    typ1 = LINTYP+ARCTYP+CURTYP+BPLTYP+CSYTYP;
+    if ( (status=IGgsid(idv1,&typ1,&end,&right,(short)0)) != 0 ) goto exit;
     WPclear_mcwin();
 /*
-***2:a storheten.
+***Get the ID of the second entity.
 */
     typ2 = LINTYP+ARCTYP+CURTYP;
-    if ( modtyp == 3  &&  typ1 != BPLTYP  &&  typ1 != CSYTYP )
-      typ2 += BPLTYP+CSYTYP;
+    if ( typ1 != BPLTYP  &&  typ1 != CSYTYP ) typ2 += BPLTYP+CSYTYP;
     WPaddmess_mcwin(IGgtts(325),WP_PROMPT);
-    if ( (status=IGgsid(idv2,&typ2,&end,&right,(short)0)) < 0 ) goto exit;
+    if ( (status=IGgsid(idv2,&typ2,&end,&right,(short)0)) != 0 ) goto exit;
     WPclear_mcwin();
 /*
-***Om skï¿½rning linje/linje, alt = -1.
+***Intersect line/line means that only one intersect
+***position is possible and that we can use alt = -1.
 */
     if ( typ1 == LINTYP  &&  typ2 == LINTYP ) alt = -1;
 /*
-***ï¿½r det en enkel 2D-skï¿½rning ?
+***How many possible intersects ? simple = TRUE means 2,
+***simple = FALSE means more.
 */
     else
       {
       if ( typ1 == LINTYP  &&  typ2 == ARCTYP )
         {
-        DBget_pointer('I',idv2,&la,&typ2);
-        DBread_arc(&gmpost.arc_un,arcseg,la);
-        if ( gmpost.arc_un.ns_a == 0 ) enkel = TRUE;
+        simple = TRUE;
         }
       else if ( typ1 == ARCTYP  &&  typ2 == LINTYP )
         {
-        DBget_pointer('I',idv1,&la,&typ1);
-        DBread_arc(&gmpost.arc_un,arcseg,la);
-        if ( gmpost.arc_un.ns_a == 0 ) enkel = TRUE;
+        simple = TRUE;
         }
       else if ( typ1 == ARCTYP  &&  typ2 == ARCTYP )
         {
-        DBget_pointer('I',idv1,&la,&typ1);
-        DBread_arc(&gmpost.arc_un,arcseg,la);
-        if ( gmpost.arc_un.ns_a == 0 )
-          {
-          DBget_pointer('I',idv2,&la,&typ2);
-          DBread_arc(&gmpost.arc_un,arcseg,la);
-          if ( gmpost.arc_un.ns_a == 0 ) enkel = TRUE;
-          } 
+        simple = TRUE;
         }
-      else enkel = FALSE;
+      else simple = FALSE;
 /*
-***Om det ï¿½r en enkel 2D-skï¿½rning, frï¿½ga efter 1:a eller
-***2:a skï¿½rningen.
+***With only 2 possible intersects ask for first or second.
 */
-      if ( enkel )
+      if ( simple )
         {
-        if ( IGialt(160,161,162,FALSE) ) alt = -1;
-        else alt = -2;
+        if ( IGialt(160,161,162,FALSE) ) alt = 1;
+        else alt = 2;
         }
 /*
-***Nej det ï¿½r inte en enkel 2D-skï¿½rning, lï¿½s in alternativ.
+***If not, ask for alternative.
 */
       else
         {
-        IGptma(327,IG_INP);
+        WPaddmess_mcwin(IGgtts(327),WP_PROMPT);
         if ( (status=IGsiip(IGgtts(46), &ival)) < 0 ) goto exit;
         alt = (short)ival;
         }
       }
 /*
-***Berï¿½kna skï¿½rningen.
+***Calculate explicit position.
 */
     if ( EXsect (idv1,idv2,alt,0,vecptr) < 0 )
       {
@@ -2408,66 +2398,69 @@ loop:
       goto loop;
       }
 /*
-***Utgï¿½ng fï¿½r avbruten operation.
+***The end.
 */
 exit:
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
  static short igpcen(DBVector *vecptr)
 
-/*      Position i krï¿½kningscentrum.
+/*      Explicit center position.
  *
- *      In: vecptr => Pekare till DBVector.
+ *      In: vecptr => Ptr to output coordinates.
  *
- *      Ut: *vecptr => Vektor.
+ *      Out: *vecptr => The position (coordinates).
  *
- *      FV:      0 => Ok.
- *          REJECT => Operationen avbruten.
- *          GOMAIN => Huvudmenyn.
+ *      Return:   0 => Ok, coordinates returned
+ *          SMBPOSM => Position method
+ *          REJECT  => Operation rejected
+ *          GOMAIN  => Main menu
  *
  *      (C)microform ab 26/4/87 J. Kjellander
  *
- ******************************************************!*/
+ *      2008-07-08 SMBPOSM, J.Kjellander
+ *
+ ********************************************************/
 
   {
     double  t;
-    DBetype   typ;
+    DBetype typ;
     bool    end,right;
     short   status;
     DBId    idvek[MXINIV];
 
 /*
-***Hï¿½mta id fï¿½r den refererade storheten.
+***Get the ID of the entity.
 */
 loop:
     typ = ARCTYP+CURTYP;
     WPaddmess_mcwin(IGgtts(53),WP_PROMPT);
-    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) != 0 ) goto exit;
 /*
-***Kolla typ. Om arc sï¿½tt parametervï¿½rdet = 0.
+***Select parameter value.
 */
     if ( typ == ARCTYP ) t = 0.0;
     else
        {
-       IGptma(208,IG_INP);
+       WPaddmess_mcwin(IGgtts(208),WP_PROMPT);
        status=IGsfip(IGgtts(320),&t);
        if ( status < 0 ) goto exit;
        }
 /*
-***Berï¿½kna positionen.
+***Calculate explicit position.
 */
     if ( EXcen(idvek,t,lsyspk,vecptr) < 0 )
       {
-      WPclear_mcwin();
       errmes();
       goto loop;
       }
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPclear_mcwin();

@@ -1,120 +1,92 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-   <TITLE>area </TITLE>
-   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
-</HEAD>
-<BODY BGCOLOR="#99CCFF">
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- section_area - Function})
+define({_INDEXLINK_},{<a href="geomindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-12-22</FONT></P></CENTER>
 
-<P>
-<HR width="100%" align="center"></P>
+<h1>section_area - Function</h1>
 
-<BLOCKQUOTE>
-<H2>section_area -<FONT SIZE=+0> Function</FONT></H2>
+<h2>Description</h2>
 
-<P>Geometrical function<BR>
-<BR>
-<BR>
-<B>Description<BR>
-<BR>
-</B>Returns the area bounded by a planar curve. If the curve is not closed
-VARKON&nbsp;automatically closes the curve by inserting a straight line
+<p>Returns the area bounded by a planar curve. If the curve is not closed
+Varkon automatically closes the curve by inserting a straight line
 between its start and end positions. Accuracy is controlled by an optional
-parameter.<BR>
-<BR>
-<B>Syntax<BR>
-<BR>
-</B>section_area(curve, accuracy)<BR>
-<BR>
-</P>
+parameter.
+</p>
 
-<TABLE WIDTH="728" >
-<TR>
-<TD width="67">REF</TD>
+<h2>Syntax</h2>
 
-<TD width="653">curve;</TD>
-</TR>
+<pre>
+  a:=section_area(id, accuracy);
 
-<TR>
-<TD width="67">FLOAT</TD>
+  float a;
+  ref   id;
+  float accuracy;
+</pre>
 
-<TD width="653">accuracy;</TD>
-</TR>
-</TABLE>
+<h2>Principal parameters</h2>
 
-<P><BR>
-<B>Principal parameters</B><BR>
-<BR>
-</P>
+<table>
+<tr>
+<td>id</td>
+<td>- Identity of curve or arc.</td>
+</tr>
+</table>
 
-<TABLE WIDTH="728" >
-<TR>
-<TD width="56">curve</TD>
+<h2>Optional parameters</h2>
 
-<TD width="664">- Identity of curve or arc</TD>
-</TR>
-</TABLE>
+<table>
+<tr>
+<td>accuracy</td>
+<td>- Maximum error relative to the curve arclength. Default
+is 0.005 = 0.5 %.</td>
+</tr>
+</table>
 
-<P><BR>
-<B>Optional parameters</B><BR>
-<BR>
-</P>
+<h2>Return value</h2>
 
-<TABLE WIDTH="728" >
-<TR>
-<TD width="55">accuracy</TD>
+<p>A FLOAT value equal to the calculated area.</p>
 
-<TD width="665">- Maximum relative error of the curve arclength. Default
-is 0.005 = 0.5 % </TD>
-</TR>
-</TABLE>
+<h2>Example</h2>
 
-<P><BR>
-<B>Return value<BR>
-<BR>
-</B>A FLOAT value equal to the calculated area<BR>
-<BR>
-<B>Example<BR>
-<BR>
-</B>a:=section_area(#4);<BR>
-<BR>
-Calculates the area for curve with ID = #4. Default numerical accuracy
-is used.<BR>
-<BR>
-<B>Comments<BR>
-<BR>
-</B>The area is computed by numerical integration. The number of calculations
+<pre>
+  a:=section_area(#4);
+
+  ! Calculates the area for curve with ID = #4.
+  ! Default numerical accuracy is used.
+
+  a:=section_area(#4,0.001);
+
+  ! Same as above but with higher accuracy.
+</pre>
+
+<h2>Comments</h2>
+
+<p>
+The area is computed by numerical integration. The number of calculations
 (iterations) is at least two. Smaller and smaller elements (triangles with
 one side equal to a short straight line, which approximates the curve)
 are used in each iteration and the calculation is ended when the error
 in the approximative arclength (the sum of the short straight lines) is
 less than the given accuracy, i.e. ( Total arclength - approximative arclength
-)/ ( Total arclength ) &lt; accuracy.</P>
+)/ ( Total arclength ) &lt; accuracy.
+</p>
 
-<P>The input curve must be a planar curve. The calculation is always made,
+<p>The input curve must be a planar curve. The calculation is always made,
 but there will be a warning (with the maximum deviation from a plane) if
 the curve is non-planar. The criterion is 5 X Identical points criterion
-(default 0.01). </P>
+(default 0.01).
+</p>
 
-<P>The maximum number of iterations is ten (10). </P>
-</BLOCKQUOTE>
+<p>
+The maximum number of iterations is ten (10).
+</p>
 
-<P>
-<HR width="100%" align="center"></P>
+<h2>See also</h2>
 
+<a href=area.htm>area()</a>
 
-
-</FONT></P></CENTER>
-
-<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
-<TR>
-<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
-
-<TD><A HREF="geomindx.htm">Index</A></TD>
-</TR>
-</TABLE></CENTER>
-
-</BODY>
-</HTML>
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

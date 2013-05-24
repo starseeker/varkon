@@ -127,6 +127,8 @@
 {"GET_LIGHT",         ST_FUNC,     FALSE,  ST_ORD,    VGETLIGHT},
 {"RGB_TO_HSV",        ST_PROC,     FALSE,  ST_ORD,    VRGBHSV},
 {"HSV_TO_RGB",        ST_PROC,     FALSE,  ST_ORD,    VHSVRGB},
+{"CSYS_USRDEF",       ST_PROC,     FALSE,  ST_GEO,    VCSYSUD},
+{"PCA",               ST_FUNC,     FALSE,  ST_ORD,    VPCATMAT},
 /*
 ***The global symbol table ends here.
 */

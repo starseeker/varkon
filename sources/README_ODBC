@@ -6,7 +6,7 @@
 *    This README-file includes information about how to
 *    build the UNIX version of Varkon with support for ODBC.
 *
-*    (C)Örebro University 2004-09-30    http://www.oru.se/tech/cad
+*    (C)Örebro University 2004-09-30    http://www.oru.se/nt/cad
 *
 *
 ***********************************************************************/
@@ -97,13 +97,11 @@ course. We have not done this yet, we have only built the system so far.
 If anyone tries to actually use Varkon with MySQL (or another database)
 we would be glad to know the result. Contact:
 
-johan.kjellander@tech.oru.se
+johan.kjellander@oru.se
 
 or
 
-soren.larsson@tech.oru.se
-
-
+soren.larsson@oru.se
 
 
 /**********************************************************************/

@@ -1,0 +1,32 @@
+##########################################################
+#
+#   Makefile for VUlib
+#
+#  (C)2006-11-18 J.Kjellander
+#
+##########################################################
+
+
+# Options to CC
+
+CFLAGS   = -ansi                        \
+           -Wall                        \
+           -ffloat-store                \
+           -fsigned-char                \
+           -O                           \
+           -DUNIX
+
+# The contents of VUlib.a
+
+OBJECTS = ../lib/VUlib.a(memory.o)      \
+          ../lib/VUlib.a(error.o)       \
+          ../lib/VUlib.a(file.o)        \
+          ../lib/VUlib.a(env.o)         \
+          ../lib/VUlib.a(iggtts.o)
+
+# VUlib.a depends on the objects. Rules are implicit.
+
+VUlib : $(OBJECTS)
+
+clean:
+	rm ../lib/VUlib.a

@@ -1,91 +1,59 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- length - Function})
+define({_INDEXLINK_},{<a href="striindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<head>
-<title>length </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
+<h1>length - Function</h1>
 
-<body bgcolor="#99CCFF">
+<h2>Description</h2>
 
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+<p>
+Returns the number of characters in a string.
+</p>
 
-<hr width="100%" align="center">
+<h2>Syntax</h2>
 
-<blockquote>
-  <h2>length - <small><small>Function</small></small></h2>
-  <p>The number of charaters in a string<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Returns the length of a string by counting its number of individual characters.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  length(str)<br>
-  <br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 04 Row 01 -->
-    <tr>
-      <td width="71">STRING</td>
-      <td width="588">str*132;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 05 Row 01 -->
-    <tr>
-      <td width="62">str </td>
-      <td width="597">- Any valid string</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="95%" border="0">
-<!-- Table 06 Row 01 -->
-    <tr>
-      <td>None.</td>
-      <td></td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Return value</b><br>
-  <br>
-  An INT value in the range 0 &lt;= n &lt;=132.<br>
-  <br>
-  <b>Examples<br>
-  </b><br>
-  length(&quot;ABC&quot;) = 3<br>
-  <br>
-  length(&quot; &quot;) = 1<br>
-  <br>
-  length(&quot;&quot;) = 0<br>
-  <br>
-  <b>Comments<br>
-  </b><br>
-  The maximum length of a string is 132 characters.</p>
-</blockquote>
+<pre>
+  n:=length(s);
 
-<hr width="100%" align="center">
+  int    n;
+  string s;
+</pre>
 
+<h2>Principal parameters</h2>
 
-
-</small></p>
-<div align="center"><center>
-
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="striindx.htm">Index</a></td>
-  </tr>
+<table>
+<tr>
+<td>s</td>
+<td>- Any string.</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>An INT value in the range 0 &lt;= n &lt;=132.</p>
+
+<h2>Comment</h2>
+
+<p>
+The maximum length of a string is 132 characters.
+</p>
+
+<h2>Examples</h2>
+
+<pre>
+   n:=length(&quot;ABC&quot;);   ! Equal to n:=3;
+
+   n:=length(&quot; &quot;);     ! Equal to n:=1;
+
+   n:=length(&quot;&quot;);      ! Equal to n:=0;
+</pre>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -1,0 +1,26 @@
+/**********************************************************************
+*
+*    README
+*    ======
+*
+*    This README-file includes information about
+*    the VU (VarkonUtility) module.
+*
+*    (C)Örebro University 2007-01-18    http://www.tech.oru.se/cad
+*
+***********************************************************************/
+
+The VU module contains a number of general utility routines
+used by the Varkon system.
+
+We decided to supply the VU module as a default replacement
+for the original Varkon code in order to make it possible
+to build the DB and GE module without including the rest
+of the Varkon system. VU is also needed by some of the demos.
+
+All routines in the VU module are fairly simple and well
+documented so it should be rather simple to replace them
+with something of your own choice if you want to.
+
+To make the VU module, cd to the VU/src directory and read
+its README file.

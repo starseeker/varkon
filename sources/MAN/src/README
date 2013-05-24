@@ -12,7 +12,7 @@ VARKON_ROOT/sources/MAN/src directory.
 
 All documentation (except this README) is in html format.
 
-Documentation source pages usually #include a header and a
+Documentation source pages usually include a header and a
 footer located in VARKON_ROOT/sources/MAN/include. The footer
 depends the file svnversion.inc to include the current SVN version
 number on each page.

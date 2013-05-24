@@ -41,7 +41,7 @@
 #include "../include/EX.h"
 
 extern bool    intrup;
-extern DBTmat *lsyspk;
+extern DBTmat lklsyi,*lsyspk;
 
 /*!******************************************************/
 
@@ -51,156 +51,197 @@ extern DBTmat *lsyspk;
         DBshort  end,
         DBshort  inr)
 
-/*      Interface-rutin för proceduren TRIM.
+/*      Interface routine for MBS procedure TRIM().
  *
- *      In: idp1   => Pekare till 1:a storhetens identitet.
- *          idp2   => Pekare till 2:a storhetens identitet.
- *          sida   => 0 = Start, 1 = slut.
- *          inr    => Skärningsnummer.
- *
- *      Ut: Inget.
+ *      In: idp1   => Ptr to ID of first entity (line/arc).
+ *          idp2   => Ptr to ID of second entity (line/arc/curve).
+ *          end    => 0 = Start, 1 = End.
+ *          inr    => Intersect number.
  *
  *      FV:  0     => Ok.
- *          EX1402 => Hittar ej storheten
- *          EX1412 => Otillåten typ 
- *          EX1942 => Ingen skärning
- *          EX1932 => Oändligt kort
+ *          EX1402 => Entity does not exist
+ *          EX1412 => Illegal entity type
+ *          EX1942 => No intersect found
+ *          EX1932 => Result to short
  *
  *      (C)microform ab 3/1/86 J. Kjellander
  *
- *      13/4/86  EXdren(), J. Kjellander
- *      7/12/89  Extend, längdkoll, J. Kjellander
- *      5/1/92   Status från GEintersect_pv(), J. Kjellander
- *      9/6/93   Dynamiska segment, J. Kjellander
+ *      13/4/86    EXdren(), J. Kjellander
+ *      7/12/89    Extend, längdkoll, J. Kjellander
+ *      5/1/92     Status från GEintersect_pv(), J. Kjellander
+ *      9/6/93     Dynamiska segment, J. Kjellander
+ *      2008-05-13 3D arc, J.Kjellander
+ *      2008-12-14 Bugfix arclengths, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    DBfloat  u1,u2,v,l;
-    DBptr  la1,la2;
+    DBfloat  u1,u2,v,l,dummy;
+    DBptr    la1,la2;
     DBetype  typ1,typ2;
-    short  status;
-    DBSeg  arcseg[4];
-    DBSeg *segpek;
-    DBAny  gmstr1,gmstr2;
-    DBVector  pos,p12;
+    short    status;
+    DBSeg    arcseg1[4],arcseg2[4];
+    DBSeg   *segpt1,*segpt2;
+    DBAny    entity1,entity2;
+    DBVector pos,p12;
+    DBArc    newarc;
+    DBSeg    newseg[4];
 
 /*
-***Hämta den 1:a storhetens la och typ.
+***Get DBptr and type of first entity.
 */
     if ( DBget_pointer( 'I', idp1, &la1, &typ1) < 0 )
       return ( erpush("EX1402",""));
 /*
-***Testa typ, läs geometridata.
+***Get entity data from DB.
 */
     switch (typ1)
       {
       case LINTYP:
-      DBread_line((DBLine *)&gmstr1, la1);
+      segpt1 = NULL;
+      DBread_line((DBLine *)&entity1, la1);
       break;
 
       case ARCTYP:
-      DBread_arc((DBArc *)&gmstr1,NULL,la1);
-      if ( gmstr1.arc_un.ns_a > 0 ) return(erpush("EX1412",""));
+      segpt1 = arcseg1;
+      DBread_arc((DBArc *)&entity1,segpt1,la1);
       break;
 
       default:
       return(erpush("EX1412",""));
       }
 /*
-***Hämta den 2:a storhetens la och typ.
+***Get DBptr and type of second entity.
 */
     if ( DBget_pointer( 'I', idp2, &la2, &typ2) < 0 )
       return ( erpush("EX1402",""));
 /*
-***Testa typ, läs geometridata.
+***Get entity data from DB.
 */
     switch (typ2)
       {
       case LINTYP:
-      segpek = NULL;
-      DBread_line((DBLine *)&gmstr2,la2);
+      segpt2 = NULL;
+      DBread_line((DBLine *)&entity2,la2);
       break;
 
       case ARCTYP:
-      segpek = arcseg;
-      DBread_arc((DBArc *)&gmstr2,segpek,la2);
+      segpt2 = arcseg2;
+      DBread_arc((DBArc *)&entity2,segpt2,la2);
       break;
 
       case CURTYP:
-      DBread_curve((DBCurve *)&gmstr2,NULL,&segpek,la2);
+      DBread_curve((DBCurve *)&entity2,NULL,&segpt2,la2);
       break;
 
       default:
       return(erpush("EX1412",""));
       }
 /*
-***Beräkna skärningen.
+***Calculate the parameter value of the intersect position.
 */
-    status=GEintersect_pv(&gmstr1,NULL,&gmstr2,(char *)segpek,
+    status=GEintersect_pv(&entity1,(char *)segpt1,&entity2,(char *)segpt2,
                                                lsyspk,inr,&u1,&u2);
-    if ( typ2 == CURTYP ) DBfree_segments(segpek);
+
+    if ( typ2 == CURTYP ) DBfree_segments(segpt2);
     if ( status < 0 ) return(erpush("EX1942",""));
 /*
-***Uppdatera storhetens ände.
+***Uppdate entity1.
 */
     switch (typ1)
       {
 /*
-***Linje.
+***Line.
 */
       case LINTYP:
-      GEposition(&gmstr1,NULL,u1-1.0,(DBfloat)0.0,&pos);
+      GEposition(&entity1,(char *)segpt1,u1-1.0,(DBfloat)0.0,&pos);
 
       if ( end == 0 )
         {
-        gmstr1.lin_un.crd1_l.x_gm = pos.x_gm;
-        gmstr1.lin_un.crd1_l.y_gm = pos.y_gm;
+        entity1.lin_un.crd1_l.x_gm = pos.x_gm;
+        entity1.lin_un.crd1_l.y_gm = pos.y_gm;
         }
       else
         {
-        gmstr1.lin_un.crd2_l.x_gm = pos.x_gm;
-        gmstr1.lin_un.crd2_l.y_gm = pos.y_gm;
+        entity1.lin_un.crd2_l.x_gm = pos.x_gm;
+        entity1.lin_un.crd2_l.y_gm = pos.y_gm;
         }
 /*
-***Testa att den inte blev oändligt kort. 0.001 = TOL2.
+***Check length.
 */
-      p12.x_gm = gmstr1.lin_un.crd1_l.x_gm - gmstr1.lin_un.crd2_l.x_gm;
-      p12.y_gm = gmstr1.lin_un.crd1_l.y_gm - gmstr1.lin_un.crd2_l.y_gm;
+      p12.x_gm = entity1.lin_un.crd1_l.x_gm - entity1.lin_un.crd2_l.x_gm;
+      p12.y_gm = entity1.lin_un.crd1_l.y_gm - entity1.lin_un.crd2_l.y_gm;
       l = GEvector_length2D(&p12);
 
       if ( l < 0.001 ) return(erpush("EX1932",""));
+/*
+***Update DB and display.
+*/
       else
         {
         EXdren(la1,typ1,FALSE,GWIN_ALL);
-        DBupdate_line((DBLine *)&gmstr1, la1);
+        DBupdate_line((DBLine *)&entity1,la1);
         EXdren(la1,typ1,TRUE,GWIN_ALL);
         }
       break;
 /*
-***Cirkel.
+***Arc.
 */
       case ARCTYP:
-      v = gmstr1.arc_un.v1_a + (u1-1.0)*(gmstr1.arc_un.v2_a-
-                                         gmstr1.arc_un.v1_a);
+      v = entity1.arc_un.v1_a + (u1-1.0)*(entity1.arc_un.v2_a-
+                                         entity1.arc_un.v1_a);
 
-      if ( end == 0 ) gmstr1.arc_un.v1_a = v;
-      else gmstr1.arc_un.v2_a = v;
+      if ( end == 0 ) entity1.arc_un.v1_a = v;
+      else            entity1.arc_un.v2_a = v;
 /*
-***Kolla att inte v1 = v2.
+***Check length.
 */
-      if ( GE312(&gmstr1.arc_un.v1_a,&gmstr1.arc_un.v2_a) < 0 )
+      if ( GE312(&entity1.arc_un.v1_a,&entity1.arc_un.v2_a) < 0 )
         return(erpush("EX1932",""));
+/*
+***Create the trimmed arc.
+*/
       else
         {
+        pos.x_gm = entity1.arc_un.x_a;
+        pos.y_gm = entity1.arc_un.y_a;
+        pos.z_gm = 0.0;
+
+        if ( lsyspk != NULL )
+          {
+          GEtfang_to_basic(entity1.arc_un.v1_a,&lklsyi,&entity1.arc_un.v1_a);
+          GEtfang_to_basic(entity1.arc_un.v2_a,&lklsyi,&entity1.arc_un.v2_a);
+          }
+
+        status = GE300(&pos,
+                       entity1.arc_un.r_a,
+                       entity1.arc_un.v1_a,
+                       entity1.arc_un.v2_a,
+                       lsyspk,
+                      &newarc,
+                       newseg,
+                       3);
+       if ( status < 0 )  return(status);
+/*
+***Update number of segs after trimming.
+*/
+       entity1.arc_un.ns_a = newarc.ns_a;
+/*
+***Update lengths after trimming. Bugfix 2008-12-14, JK
+*/
+       status = GEarclength((DBAny *)&entity1,newseg,&dummy);
+       if ( status < 0 )  return(status);
+/*
+***Update DB and display.
+*/
         EXdren(la1,typ1,FALSE,GWIN_ALL);
-        DBupdate_arc((DBArc *)&gmstr1, NULL, la1);
+        DBupdate_arc((DBArc *)&entity1,newseg,la1);
         EXdren(la1,typ1,TRUE,GWIN_ALL);
         }
       break;
       }
 /*
-***Slut.
+***The end.
 */
     return(0);
   }

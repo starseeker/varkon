@@ -3,7 +3,7 @@
                            README
                            ======
 
-      Installation guide for Varkon 1.19C. This README includes specific
+      Installation guide for Varkon 1.19D. This README includes specific
       information for Linux users but should also be used for other
       Unix systems like FreeBSD and MacOSX.
 
@@ -24,16 +24,13 @@
       VARKON_ROOT/man/index.htm
 
       The full documentation is also available online at:
-      http://varkon.sourceforge.net/man_1.19C/index.htm
+      http://varkon.sourceforge.net/man_1.19D/index.htm
 
       To finish the installation and start Varkon, follow the instructions
       in the System administrators manual at:
       VARKON_ROOT/man/sysadm/index.htm
 
-      Varkon 1.19C includes many changes compared to 1.19B. For old users
-      of Varkon the new concept of a job directory instead of a project
-      with a PID file requires special attention. Please read the Release
-      notes for 1.19C before you start your new installation. You will find
+      Varkon 1.19D includes new functionality as well as bugfixes. You will find
       a link to the releasenotes on the start page of the Varkon documentation.
 
       To get in contact with the developers or with other Varkon users,
@@ -45,7 +42,7 @@
       Information for Linux users
       ---------------------------
 
-      Version 1.19C of VARKON for Linux is dynamically linked to the
+      Version 1.19D of VARKON for Linux is dynamically linked to the
       following Linux libary modules (printout from ldd):
 
         linux-gate.so.1 =>  (0xffffe000)
@@ -76,7 +73,7 @@
       OpenGL
       ------
 
-      The binary version of Varkon 1.19C is comiled and linked on
+      The binary version of Varkon 1.19D is comiled and linked on
       a Linux system with Suse Linux 10.0. This Linux distribution
       and many others of recent date include support for OpenGL so
       normally you should not need to do anything to get OpenGL
@@ -103,7 +100,7 @@
       Good Luck
 
       The CAD research group
-      Department of Technology
+      School of Science and Technology
       Orebro University
       S-70182 Orebro
       SWEDEN

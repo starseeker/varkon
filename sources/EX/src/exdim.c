@@ -398,11 +398,12 @@ extern DBTmat  lklsyi;
  ******************************************************!*/
 
   {
-    DBptr   la;
-    DBetype typ;
-    DBArc   oldarc;
-    DBSeg   seg[4];
-    DBRdim  rdim;
+    DBptr    la;
+    DBetype  typ;
+    DBArc    oldarc;
+    DBSeg    seg[4];
+    DBRdim   rdim;
+    DBstatus status;
 
  /*
 ***Varkon pre SVN#30 saved RDIM DB-geometry in BASIC.
@@ -431,7 +432,8 @@ extern DBTmat  lklsyi;
 /*
 ***Calculate RDIM data (3 pos).
 */
-    GE822(&oldarc,seg,p1,p2,lsyspk,&rdim);
+    status = GE822(&oldarc,seg,p1,p2,lsyspk,&rdim);
+    if ( status < 0 ) return(status);
 /*
 ***Store in DB and display.
 */

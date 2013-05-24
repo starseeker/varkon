@@ -1,123 +1,95 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- outflt - Procedure})
+define({_INDEXLINK_},{<a href="fileindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<head>
-<title>outflt </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
 
-<body bgcolor="#99CCFF">
+<h1>outflt - Procedure</h1>
 
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+<h2>Description</h2>
 
-<hr width="100%" align="center">
+<p>
+Converts a float to a string with optional formatting and writes the result to an open file or pipe.
+</p>
 
-<blockquote>
-  <h2>outflt - <small><small>Procedure</small></small></h2>
-  <p>Write float to a file<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Converts a float to a string, formats and writes the result to an open file or pipe.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  outflt(f, x, width, precision)<br>
-  <br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 20 Row 01 -->
-    <tr>
-      <td width="65">FILE</td>
-      <td width="594">f;</td>
-    </tr>
-<!-- Table 20 Row 02 -->
-    <tr>
-      <td width="65">FLOAT</td>
-      <td width="594">x;</td>
-    </tr>
-<!-- Table 20 Row 03 -->
-    <tr>
-      <td width="65">INT</td>
-      <td width="594">width;</td>
-    </tr>
-<!-- Table 20 Row 04 -->
-    <tr>
-      <td width="65">INT</td>
-      <td width="594">precision;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 21 Row 01 -->
-    <tr>
-      <td width="56">f</td>
-      <td width="603">- The name of a filevariable accociated with a file open for write, append
+<h2>Syntax</h2>
+
+<pre>
+  outflt(f, x, width, precision);
+
+  file  f;
+  float x;
+  int   width;
+  int   presicion;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>f</td>
+<td>- The name of a filevariable associated with a file open for write, append
       or update (W, A or U)</td>
-    </tr>
-<!-- Table 21 Row 02 -->
-    <tr>
-      <td width="56">x</td>
-      <td width="603">- The float to write</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 22 Row 01 -->
-    <tr>
-      <td width="58">width</td>
-      <td width="601">- Controls the amount of padding. If width is less than the actual space
-      required no padding</td>
-    </tr>
-<!-- Table 22 Row 02 -->
-    <tr>
-      <td width="58"></td>
-      <td width="601">&nbsp;&nbsp; is performed. If width is larger than the space required the
-      result is padded with blanks.</td>
-    </tr>
-<!-- Table 22 Row 03 -->
-    <tr>
-      <td width="58"></td>
-      <td width="601">&nbsp;&nbsp; The sign of width controls weather padding is done on the
-      left side of the result (+) or the</td>
-    </tr>
-<!-- Table 22 Row 04 -->
-    <tr>
-      <td width="58"></td>
-      <td width="601">&nbsp;&nbsp; right side (-).</td>
-    </tr>
-<!-- Table 22 Row 05 -->
-    <tr>
-      <td width="58">precision</td>
-      <td width="601">- Controls the number of decimal places. A value of -1 gives E-notation.</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Examples<br>
-  </b><br>
-  See the in-memory float to string conversion routine str() for examples.</p>
-</blockquote>
+</tr>
 
-<hr width="100%" align="center">
-
-
-
-</small></p>
-<div align="center"><center>
-
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="fileindx.htm">Index</a></td>
-  </tr>
+<tr>
+<td>x</td>
+<td>- The float to write</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>width</td>
+<td>- Controls the amount of padding. If width is less than the actual space
+      required no padding</td>
+</tr>
+
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; is performed. If width is larger than the space required the
+      result is padded with blanks.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; The sign of width controls weather padding is done on the
+      left side of the result (+) or the</td>
+</tr>
+
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; right side (-). If not specified, width is set to zero = no
+      padding.</td>
+</tr>
+
+<tr>
+<td>precision</td>
+<td>- Controls the number of decimal places. A value of -1 gives E-notation.</td>
+</tr>
+</table>
+
+<h2>Examples</h2>
+
+<pre>
+  outflt(f, 12345.0) => "12345"
+
+  outflt(f, 12345.0, 10) => "     12345"
+
+  outflt(f, 12345.0, -10) => "12345     "
+
+  outflt(f, 12345.0, -10, 2) => "12345.00  "
+
+  outflt(f, 12345.0, 10, -1) => " 1.2345e+04"
+</pre>
+
+<h2>See also</h2>
+
+<p><a href="outint.htm">outint()</a> and <a href="str.htm">str()</a></p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

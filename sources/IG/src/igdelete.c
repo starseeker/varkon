@@ -50,14 +50,11 @@ static char *mk_dppart(V2REFVA *id);
 
         short IGdelete_entity()
 
-/*      Varkonfunktion f�r att ta bort en geometrisats
- *      via h�rkors.
+/*      Interactive function for "Delete entity".
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: 0 = OK, REJECT = avsluta, GOMAIN = huvudmenyn
+ *      Return:      0 = OK, entity deleted
+ *              REJECT = Operation cancelled
+ *              GOMAIN = Main menu
  *
  *      (C)microform ab 12/3/86 J. Kjellander
  *
@@ -68,13 +65,14 @@ static char *mk_dppart(V2REFVA *id);
  ******************************************************!*/
 
   {
-    short    status;
-    int      i,nid;
-    DBId     idmat[IGMAXID][MXINIV];
-    DBetype    typv[IGMAXID];
+    short   status;
+    int     i,nid;
+    DBId    idmat[IGMAXID][MXINIV];
+    DBetype typv[IGMAXID];
 
 /*
-***H�mta id f�r n�gon av storhetens instanser.
+***Get the ID of the entity. In explicit mode multiple
+***ID's are allowed. In generic mode only one.
 */
     if ( sysmode == EXPLICIT )
       {
@@ -92,18 +90,14 @@ static char *mk_dppart(V2REFVA *id);
     WPclear_mcwin();
     if ( status < 0 ) goto exit;
 /*
-***Om RITPAK, fr�ga om OK innan allt f�rsvinner. och
-***ta sedan bort allt utan vidare kontroller.
+***In explicit mode, confirm before delete.
 */
     if ( sysmode == EXPLICIT )
       {
       if ( nid > 0  &&  IGialt(1630,67,68,FALSE) == FALSE ) goto exit;
       for ( i=0; i<nid; ++i) igdlgs(&idmat[i][0]);
       }
-/*
-***I basmodulen tar vi bara bort en storhet i taget.
-*/
-    igdlgs((DBId *)idmat);
+    else igdlgs((DBId *)idmat);
 /*
 ***Update WPRWIN's.
 */

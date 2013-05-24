@@ -119,15 +119,20 @@ errend:
 */
     incrts();
 /*
+***Executing...
+*/
+    sprintf(mesbuf,"%s %s",IGgtts(62),jobnam);
+    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
 ***Execute the currently active module.
 */
     status = IGream();
 /*
-***Informational message.
+***Done !.
 */
     if ( status == 0 )
       {
-      sprintf(mesbuf,"%s %s",jobnam,IGgtts(62));
+      sprintf(mesbuf,"%s",IGgtts(77));
       WPaddmess_mcwin(mesbuf,WP_MESSAGE);
       }
 /*

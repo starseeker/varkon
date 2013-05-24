@@ -7,7 +7,7 @@
 *    This file includes the following public functions:
 *
 *    DBset_root_id();    Set root in DB hiearchy
-*    DBget_next_ptr();    Search/traverse for next entity
+*    DBget_next_ptr();   Search/traverse for next entity
 *
 *
 *    This file is part of the VARKON Database Library.

@@ -304,6 +304,8 @@ short evcrmp(void);
 */
 short evcs3p(void);
 short evcs1p(void);
+short evcsud(void);
+short evpcatm(void);
 
 /*
 ***evcsys.c

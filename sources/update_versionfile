@@ -1,1 +1,46 @@
-# This is a dummy file
+#!/bin/sh
+#######################################################
+#
+# update_versionfile
+#
+# This is a shell script that is called by the main
+# makefile for Varkon during the build process.
+#
+# If the Varkon sources used to build the system are
+# downloaded from the SourceForge SVN repository this
+# script updates
+# ./sources/IG/include/svnversion.h  and
+# ./sources/MAN/include/svnversion.inc
+# with the current SVN version.
+#
+# If SVN is not used the script does nothing. In that
+# case the existing svnversion.h will be used.
+#
+# Latest update: 2008-02-27 J.Kjellander
+#
+#####################################################
+#
+if test -d ../.svn; then
+  if which svnversion; then
+    #only replace include file if this is a new version
+    #start by making svnversion.tmp, then compare to existing svnversion.inc
+    printf 'define(_SVNVERSION_,' > ./MAN/include/svnversion.tmp
+    svnversion -n . >> ./MAN/include/svnversion.tmp
+    printf ')\n' >> ./MAN/include/svnversion.tmp
+    svnversion_tmp=`cat ./MAN/include/svnversion.tmp`
+    if test -r "./MAN/include/svnversion.inc" ; then
+      svnversion_inc=`cat ./MAN/include/svnversion.inc`
+    fi
+    if test  "$svnversion_tmp" != "$svnversion_inc" ; then
+      #replace the old svnversion.inc with the new svnversion.tmp
+      cp ./MAN/include/svnversion.tmp ./MAN/include/svnversion.inc
+      #also make svnversion.h 
+      printf '\043define SVNVERSION \042' > ./IG/include/svnversion.h
+      svnversion -n . >> ./IG/include/svnversion.h
+      printf '\042\n' >> ./IG/include/svnversion.h
+    fi
+    rm ./MAN/include/svnversion.tmp
+  fi
+fi
+#
+#####################################################

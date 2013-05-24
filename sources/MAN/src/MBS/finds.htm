@@ -1,96 +1,60 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
-
-<head>
-<title>finds </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
-
-<body bgcolor="#99CCFF">
-
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
-
-<hr width="100%" align="center">
-
-<blockquote>
-  <h2>finds - <small><small>Function</small></small></h2>
-  <p>Searches a string<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Searces a string for the occurence of another string and returns its location.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  finds(str1,str2)<br>
-  <br>
-  </p>
-  <table width="733" border="0">
-<!-- Table 25 Row 01 -->
-    <tr>
-      <td width="71">STRING</td>
-      <td width="654">str1*132;</td>
-    </tr>
-<!-- Table 25 Row 02 -->
-    <tr>
-      <td width="71">STRING</td>
-      <td width="654">str2*132;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="733" border="0">
-<!-- Table 26 Row 01 -->
-    <tr>
-      <td width="62">str1</td>
-      <td width="663">- The string to search in</td>
-    </tr>
-<!-- Table 26 Row 02 -->
-    <tr>
-      <td width="62">str2 </td>
-      <td width="663">- The string to search for</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="95%" border="0">
-<!-- Table 27 Row 01 -->
-    <tr>
-      <td>None.</td>
-      <td></td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Return value</b><br>
-  <br>
-  The position of str2 in str1 as an INT value. Zero is returned if str2 is not found in
-  str1.<br>
-  <br>
-  <b>Examples<br>
-  </b><br>
-  finds(&quot;ABCDE&quot;,&quot;CD&quot;) = 3<br>
-  <br>
-  finds(&quot;ABCDE&quot;,&quot;P&quot;) = 0</p>
-</blockquote>
-
-<hr width="100%" align="center">
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- finds - Function})
+define({_INDEXLINK_},{<a href="striindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
 
+<h1>finds - Function</h1>
 
-</small></p>
-<div align="center"><center>
+<h2>Description</h2>
 
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="striindx.htm">Index</a></td>
-  </tr>
+<p>
+Searces a string for the occurence of another string and returns the location.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  pos:=finds(s1, s2);
+
+  int    pos;
+  string s1;
+  string s2;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>s1</td>
+<td>- The string to search in.</td>
+</tr>
+<tr>
+<td>s2</td>
+<td>- The string to search for.</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>An INT value equal to the start position of s2 in s1. A value of zero is returned
+if s2 is not found in s1.
+</p>
+
+<h2>Examples</h2>
+
+<pre>
+  pos:=finds(&quot;ABCDE&quot;,&quot;CD&quot;);  ! Equal to pos:=3;
+
+  pos:=finds(&quot;ABCDE&quot;,&quot;P&quot;);   ! Equal to pos:=0;
+</pre>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)
+

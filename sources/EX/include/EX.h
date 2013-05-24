@@ -96,6 +96,10 @@ short EXcs3p(DBId *id, char *str, DBVector *p1, DBVector *p2,
              DBVector *p3, V2NAPA *pnp);
 short EXcs1p(DBId *id, char *str, DBVector *p, DBfloat v1,
              DBfloat v2, gmflt v3, V2NAPA *pnp);
+short EXcsud(DBId *id, char *str, DBTmat *tmat, V2NAPA *pnp);
+short EXpcatm(DBVector *ppts, DBint npoi, DBTmat *tmat);
+             
+short EXcsmp(DBint npoi, DBVector *ppts, DBTmat *tmat);             
 short EXmoba();
 short EXmogl();
 short EXmolo(DBId *idvek);

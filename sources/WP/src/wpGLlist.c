@@ -477,13 +477,13 @@ static void  set_lightmodel(WPRWIN *rwinpt, int model);
 
    if ( mprop > gprop )
      {
-     rwinpt->xmin -= (mdy/gprop - mdx)/2.0;
-     rwinpt->xmax += (mdy/gprop - mdx)/2.0;
+     xmin -= (mdy/gprop - mdx)/2.0;
+     xmax += (mdy/gprop - mdx)/2.0;
      }
    else if ( mprop < gprop )
      {
-     rwinpt->ymin -= (gprop*mdx - mdy)/2.0;
-     rwinpt->ymax += (gprop*mdx - mdy)/2.0;
+     ymin -= (gprop*mdx - mdy)/2.0;
+     ymax += (gprop*mdx - mdy)/2.0;
      }
 /*
 ***Save viewbox in WPRWIN.
@@ -1072,9 +1072,9 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
    vdx = mdx*rwinpt->scale;
    vdy = mdy*rwinpt->scale;
 /*
-***Vyboxens placering i X- och Y-led �r alltid
-***symmetriskt runt (0,0). Storleken beror av
-***aktuellt prespektiv. Formler fr�n Brian Paul.
+***Viewbox position in X,Y is always symmetric around (0,0).
+***Size depends on the current perspective.
+***Size calculation after discussion with Brian Paul.
 */
    vxmax = 0.5*vdx*(fd-vdz05)/fd;
    vxmin = -vxmax;
@@ -1082,19 +1082,19 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
    vymax = 0.5*vdy*(fd-vdz05)/fd;
    vymin = -vymax;
 /*
-***Vyboxens placering i Z-led �r alltid symmetriskt
-***runt fokalplanet.
+***Viewbox position in Z is symmetrical with respect
+***to the focal plane.
 */
    vzmax = fd+vdz05;
    vzmin = fd-vdz05;
 /*
-***Skapa projektionsmatris. Om pfactor=0 k�r vi med Ortho
-***vilket b�r vara snabbare.
+***Create the projection matrix. With no perspective, use
+***glOrtho() which may be faster ?
 */
    if ( rwinpt->pfactor > 0.0 ) glFrustum(vxmin,vxmax,vymin,vymax,vzmin,vzmax);
    else                         glOrtho(vxmin,vxmax,vymin,vymax,vzmin,vzmax);
 /*
-***Modellboxens mittpunkt.
+***Model centre point.
 */
    midx = rwinpt->xmin + 0.5*mdx;
    midy = rwinpt->ymin + 0.5*mdy;
@@ -1113,13 +1113,10 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
      glClipPlane(GL_CLIP_PLANE0,plane);
      }
 /*
-***Eftersom transformationerna "utf�rs" i
-***omv�nd ordning mot den man multiplicerar
-***ihop matriserna med kommer h�r sista
-***transformationen. Den f�rflyttar den roterade
-***modellen fr�n (0,0,0) till den position
-***i XY-planet den panorerats till och till
-***det st�lle i Z-led som perspektivet kr�ver.
+***Here is the last transformetion that moves the
+***model back to it's right position in XY according
+***to the current pan state and to the position in Z
+***that is required by the perspective.
 */
    glTranslated(-rwinpt->movx,-rwinpt->movy,-fd);
 /*
@@ -1231,7 +1228,7 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
 
 /*
 ***Get the current viewport and set up the pick matrix. The
-***difference between normal rendering and rendering for 
+***difference between normal rendering and rendering for
 ***selection is that the PickMatrix is part of the projection.
 */
    glGetIntegerv(GL_VIEWPORT, viewport);
@@ -1252,8 +1249,8 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
 
    fd = mdz + 0.2*(100.0-rwinpt->pfactor)*mdz;
 
-   vdx = 1.2*mdx*rwinpt->scale;
-   vdy = 1.2*mdy*rwinpt->scale;
+   vdx = mdx*rwinpt->scale;
+   vdy = mdy*rwinpt->scale;
 
    vxmax = 0.5*vdx*(fd-vdz05)/fd;
    vxmin = -vxmax;

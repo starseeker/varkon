@@ -474,9 +474,7 @@ error:
  *                 Usually = lsysla.
  *          mode = V3_CS_NORMAL eller V3_CS_ACTIVE
  *
- *      (C)microform ab 1997-03-11 J. Kjellander
- *
- *      2007-03-18 1.19, J.Kjellander
+ *      (C)2008-03-15 J.Kjellander
  *
  ******************************************************!*/
 
@@ -484,12 +482,14 @@ error:
    DBCsys  csy;
 
 /*
-***Read the csys from DB and call WPupcs().
+***Read the csys from DB and update WPGWIN's (WPupcs())
+***and WPRWIN's (WPrepaint_RWIN()).
 */
    if ( la != DBNULL )
      {
      DBread_csys(&csy,NULL,la);
      WPupcs(&csy,la,mode,GWIN_ALL);
+     WPrepaint_RWIN(RWIN_ALL,FALSE);
      }
 /*
 ***The end.

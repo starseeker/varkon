@@ -1,87 +1,54 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-   <TITLE>close </TITLE>
-   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
-</HEAD>
-<BODY BGCOLOR="#99CCFF">
-
-<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1998-01-08</FONT></P></CENTER>
-
-<P>
-<HR width="100%" align="center"></P>
-
-<BLOCKQUOTE>
-<H2>close - <FONT SIZE=+0>Procedure</FONT></H2>
-
-<P>Closes a file that has been opened with the open procedure.<BR>
-<BR>
-<B>Description<BR>
-<BR>
-</B>Closes the connection with one or all open files or pipes. If no file
-is specified all files currently opened by the open procedure are closed.<BR>
-<BR>
-<BR>
-<B>Syntax<BR>
-<BR>
-</B>close(f)<BR>
-<BR>
-</P>
-
-<TABLE WIDTH="667" >
-<CAPTION></CAPTION>
-
-<TR>
-<TD width="47">FILE</TD>
-
-<TD width="612">f;</TD>
-</TR>
-</TABLE>
-
-<P><BR>
-<B>Principal parameters</B></P>
-
-<P>None.</P>
-
-<P><B>Optional parameters</B><BR>
-<BR>
-</P>
-
-<TABLE WIDTH="667" >
-<CAPTION></CAPTION>
-
-<TR>
-<TD width="38">f</TD>
-
-<TD width="621">- The name of a filevariable accociated with an open file</TD>
-</TR>
-</TABLE>
-
-<P><BR>
-<B>Comments<BR>
-<BR>
-</B>Any attempt to close a file or pipe which is not open is treated as
-an error.</P>
-
-<P><B>See also</B></P>
-
-<P><A HREF="open.htm">open</A></P>
-</BLOCKQUOTE>
-
-<P>
-<HR width="100%" align="center"></P>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- close - Procedure})
+define({_INDEXLINK_},{<a href="fileindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
 
+<h1>close - Procedure</h1>
 
-</FONT></P></CENTER>
+<h2>Description</h2>
 
-<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
-<TR>
-<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+<p>
+Closes the connection with one or all open files or pipes. If no file
+is specified all files currently opened by the open procedure are closed.
+</p>
 
-<TD><A HREF="fileindx.htm">Index</A></TD>
-</TR>
-</TABLE></CENTER>
+<h2>Syntax</h2>
 
-</BODY>
-</HTML>
+<pre>
+  close(f);
+
+  file f;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<p>None.</p>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>f</td>
+<td>- The name of a filevariable associated with an open file. If not supplied, all files are closed.</td>
+</tr>
+</table>
+
+<h2>Comments</h2>
+
+<p>
+Trying to close a file or pipe which is not open is treated as an error.
+</p>
+
+<p>
+All files opened by the <a href="open.htm">open()</a> procedure are automatically closed when you exit Varkon.
+</p>
+
+<h2>See also</h2>
+
+<p><a href="open.htm">open()</a></p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

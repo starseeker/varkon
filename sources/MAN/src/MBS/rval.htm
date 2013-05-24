@@ -1,97 +1,57 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-   <TITLE>rval </TITLE>
-   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
-</HEAD>
-<BODY BGCOLOR="#99CCFF">
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- rval - Function})
+define({_INDEXLINK_},{<a href="striindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-24</FONT></P></CENTER>
+<h1>rval - Function</h1>
 
-<P>
-<HR width="100%" align="center"></P>
+<h2>Description</h2>
 
-<BLOCKQUOTE>
-<H2>rval - <FONT SIZE=+0>Function</FONT></H2>
+<p>
+Converts a string of characters to a reference.
+</p>
 
-<P>String to reference conversion<BR>
-<BR>
-<BR>
-<B>Description<BR>
-<BR>
-</B>Converts a string of characters to a reference.<BR>
-<BR>
-<B>Syntax<BR>
-<BR>
-</B>rval(str)</P>
+<h2>Syntax</h2>
 
-<TABLE WIDTH="667" >
-<CAPTION></CAPTION>
+<pre>
+  id:=rval(s);
 
-<TR>
-<TD width="72">STRING</TD>
+  ref    id;
+  string s;
+</pre>
 
-<TD width="587">str*132;</TD>
-</TR>
-</TABLE>
+<h2>Principal parameters</h2>
 
-<P><BR>
-<B>Principal parameters</B></P>
+<table>
+<tr>
+<td>s</td>
+<td>- The string to convert.</td>
+</tr>
+</table>
 
-<TABLE WIDTH="667" >
-<CAPTION></CAPTION>
+<h2>Optional parameters</h2>
 
-<TR>
-<TD width="62">str</TD>
+<p>None.</p>
 
-<TD width="597">- The string to convert</TD>
-</TR>
-</TABLE>
+<h2>Return value</h2>
 
-<P><BR>
-<B>Optional parameters</B></P>
+<p>
+The corresponding REF value. If the contents of s is not possible
+to convert Varkon will stop execution and issue an error message.
+</p>
 
-<TABLE WIDTH="95%" >
-<CAPTION></CAPTION>
+<h2>Examples</h2>
 
-<TR>
-<TD>None.</TD>
+<pre>
+  id:=rval(&quot;#5.2#7&quot;);    ! Returns id = #5.2#7
+</pre>
 
-<TD></TD>
-</TR>
-</TABLE>
+<h2>See also</h2>
 
-<P><BR>
-<B>Return value<BR>
-<BR>
-</B>The corresponding REF value. If the contents of str is not possible
-to convert an error occurs.<BR>
-<BR>
-<B>Example<BR>
-<BR>
-</B>If str = &quot;#5.2#7 then<BR>
-<BR>
-rval(str) = #5.2#7</P>
+<a href="ival.htm">ival()</a>,
+<a href="fval.htm">fval()</a>
 
-<P><B>See also</B></P>
-
-<P><A HREF="ival.htm">ival()</A> <A HREF="fval.htm">fval()</A></P>
-</BLOCKQUOTE>
-
-<P>
-<HR width="100%" align="center"></P>
-
-
-
-</FONT></P></CENTER>
-
-<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
-<TR>
-<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
-
-<TD><A HREF="striindx.htm">Index</A></TD>
-</TR>
-</TABLE></CENTER>
-
-</BODY>
-</HTML>
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

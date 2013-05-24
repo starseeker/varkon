@@ -61,7 +61,7 @@ t58  = "Added: "
 t59  = "Deleted: "
 t60  = "Blanked: "
 t61  = "updated !"
-t62  = "executed !"
+t62  = "Executing"
 t63  = "One entity updated !"
 t64  = "entities updated !"
 t65  = "SVN version      : "
@@ -76,6 +76,7 @@ t73  = "RES-file already exists ! Replace (y/n) ?"
 t74  = "JOB-file already exists ! Replace (y/n) ?"
 t75  = "MBS-file already exists ! Replace (y/n) ?"
 t76  = "TIFF-file already exists ! Replace (y/n) ?"
+t77  = "Done !"
 
 t79  = "m" ! Mesh
 t80  = "p" ! Point

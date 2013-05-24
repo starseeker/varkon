@@ -1,104 +1,67 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
-
-<head>
-<title>substr </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
-
-<body bgcolor="#99CCFF">
-
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
-
-<hr width="100%" align="center">
-
-<blockquote>
-  <h2>substr - <small><small>Function</small></small></h2>
-  <p>Extracts a part of a string<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Creates a substring by copying one or more characters from another string. <br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  `substr'(str, start, count)<br>
-  <br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 10 Row 01 -->
-    <tr>
-      <td width="72">STRING</td>
-      <td width="587">str*132;</td>
-    </tr>
-<!-- Table 10 Row 02 -->
-    <tr>
-      <td width="72">INT</td>
-      <td width="587">start;</td>
-    </tr>
-<!-- Table 10 Row 03 -->
-    <tr>
-      <td width="72">INT</td>
-      <td width="587">count;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 11 Row 01 -->
-    <tr>
-      <td width="62">str</td>
-      <td width="597">- The original string</td>
-    </tr>
-<!-- Table 11 Row 02 -->
-    <tr>
-      <td width="62">start</td>
-      <td width="597">- Position of first character to copy, 1&lt;= start &lt;=132</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 12 Row 01 -->
-    <tr>
-      <td width="62">count</td>
-      <td width="597">- Number of characters to copy, default is the rest of the string</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Return value</b><br>
-  <br>
-  A new STRING.<br>
-  <br>
-  <b>Examples<br>
-  </b><br>
-  `substr'(&quot;ABCDE&quot;,2,3) = &quot;BCD&quot;<br>
-  <br>
-  `substr'(&quot;ABCDE&quot;,4,1)&quot; = &quot;D&quot;<br>
-  <br>
-  `substr'(&quot;ABCDE&quot;,3) = &quot;CDE&quot;<br>
-  <br>
-  `substr'(&quot;ABCDE&quot;,1) = &quot;ABCDE&quot;</p>
-</blockquote>
-
-<hr width="100%" align="center">
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- substr - Function})
+define({_INDEXLINK_},{<a href="striindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
 
+<h1>substr - Function</h1>
 
-</small></p>
-<div align="center"><center>
+<h2>Description</h2>
 
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="striindx.htm">Index</a></td>
-  </tr>
+<p>
+Creates a new (sub-) string by copying one or more characters from an existing string.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  s2:={substr}(s1, start, count);
+
+  string s2;
+  string s1;
+  int    start;
+  int    count;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>s1</td>
+<td>- The original string.</td>
+</tr>
+<tr>
+<td>start</td>
+<td>- Position of first character to copy, 1&lt;= start &lt;=132.</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>count</td>
+<td>- Number of characters to copy, default is the rest of the string.</td>
+</tr>
+</table>
+
+<h2>Return value</h2>
+
+<p>A STRING value equal to the new string.</p>
+
+<h2>Examples</h2>
+
+<pre>
+  s2:={substr}(&quot;ABCDE&quot;,2,3);   ! Equal to s2:=&quot;BCD&quot;;
+
+  s2:={substr}(&quot;ABCDE&quot;,4,1);   ! Equal to s2:=&quot;D&quot;;
+
+  s2:={substr}(&quot;ABCDE&quot;,3);     ! Equal to s2:=&quot;CDE&quot;;
+
+  s2:={substr}(&quot;ABCDE&quot;,1);     ! Equal to s2:=&quot;ABCDE&quot;;
+</pre>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

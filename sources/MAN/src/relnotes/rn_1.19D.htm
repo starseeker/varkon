@@ -1,0 +1,157 @@
+changequote({,})
+define({_TITLE_},{Release notes 1.19D})
+define({_SUBTITLE_},{- index})
+define({_INDEXLINK_},{<a href="index.htm">Release notes</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+
+<h1>Release notes for Varkon 1.19D</h1>
+
+<p>
+The release of Varkon 1.19D is not as dramatic as the release of 1.19C
+when many things were changed. Most of the changes in 1.19D are bugfixes
+but new functionality has also been added, mainly related to the new mbs
+function PCA(), (see below). The following is a list of updates made to
+the svn source code repository since the release of Varkon 1.19C.
+</p>
+
+
+<h2>svn#100</h2>
+
+<p>
+In order to make it possible to run Varkon without write privileges
+to the installation directory VARKON_ROOT, the startup logfile (Varkon.LOG)
+is moved from VARKON_ROOT to VARKON_TMP and the default job directory is
+changed from VARKON_ROOT to the users home directory ($HOME).
+</p>
+
+<h2>svn#101</h2>
+
+<p>
+Bug (SourceForge Tracker ID = 1864384) "Trim with arcs does not work" fixed.
+This bug appeared in 1.19C as a result of the merged 2D and 3D mode. Note
+that Trim is still basically a 2D operation and only works as it should in
+the XY-plane of the BASIC coordinate system. 
+</p>
+
+<h2>svn#102</h2>
+
+<p>
+In order to implement a new method to create a coordinate system, CSYS_USRDEF(), its manual pages and skeleton of all  C functions has been added to the system. Be aware that the implementation is not finished yet.
+</p>
+
+<h2>svn#103</h2>
+
+<p>
+The final commit of CSYS_USRDEF() procedure.
+</p>
+
+<h2>svn#104</h2>
+
+<p>
+In order to implement a new MBS function, PCA(), its manual pages and skeleton of all  C functions has been added to the system. Be aware that the implementation is not finished yet.
+</p>
+
+<h2>svn#105</h2>
+
+<p>
+The second commit of PCA() function, some error messages added.
+</p>
+
+<h2>svn#106</h2>
+
+<p>
+The third commit of PCA() function, code is added and the manual page is updated
+</p>
+
+<h2>svn#107</h2>
+
+<p>
+The Fourth commit of PCA() function, as backup of some changes have been done.
+</p>
+
+<h2>svn#108</h2>
+
+<p>
+A bug related to interactive input of positions corrected. System crached if the user switched position method from on/end/int/cent during input in a MACRO call.
+</p>
+
+<h2>svn#109</h2>
+
+<p>
+A bug related to interactive entity delete in generic mode corrected. If the user selected an entity defined by a labled statement for delete and the entity was referenced the entity was not blanked and a system error (IG3523) was issued.
+</p>
+
+<h2>svn#110</h2>
+
+<p>
+The Fifth commit of PCA() function, errors messages are removed to be handled as return values of the function.
+</p>
+
+<h2>svn#111</h2>
+
+<p>
+Test of SVN commit command.
+</p>
+
+<h2>svn#112</h2>
+
+<p>
+Another SVN commit test.
+</p>
+
+<h2>svn#113</h2>
+
+<p>
+The Sixth commit of PCA() function, included its manual pages and its implemetation. This
+is meant to be the final commit of the PCA() function.
+</p>
+
+<h2>svn#114</h2>
+
+<p>
+A bugfix related to batch mode. In batch mode, some graphics functions did not work
+properly because no graphics windows were created. Graphics windows are now created
+but invisible.
+</p>
+
+<h2>svn#115</h2>
+
+<p>
+Fixed a font problem in the english ini-file. Swedish and english inifiles now
+use identical fonts, ie. only standard X11 fonts.
+</p>
+
+<h2>svn#116</h2>
+
+<p>
+MBS file routines section in doc pages updated to 1.19.
+</p>
+
+<h2>svn#117</h2>
+
+<p>
+Arc trimming bug related to 3D fixed.
+</p>
+
+<h2>svn#118</h2>
+
+<p>
+Another arc trimming bug related to 3D fixed.
+</p>
+
+<h2>svn#119</h2>
+
+<p>
+An arc intersect bug related to 3D fixed.
+</p>
+
+<h2>svn#120</h2>
+
+<p>
+1.19D released.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

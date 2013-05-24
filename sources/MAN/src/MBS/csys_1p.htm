@@ -1,256 +1,210 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html><head><title>csys_1p</title>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- csys_1p - Geometric procedure})
+define({_INDEXLINK_},{<a href="entiindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0"></head>
-
-
-<body bgcolor="#99ccff">
-
-<p align="center"><small>VARKON Version 1.18 2006-3-16</small></p>
-
-<hr align="center" width="100%">
-
-<blockquote>
-  <h2>csys_1p - <small><small>Geometric procedure</small></small></h2>
-  <p>Creates a coordinate system<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Creates a local coordinate system using one position and three optional angles of
-  rotation.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  csys_1p(id, name, p, rotx, roty, rotz:attributes);<br>
-  <br>
-  </p>
-  <table border="0" width="570">
-<!-- Table 01 Row 01 -->
-    <tbody><tr>
-      <td width="77">REF</td>
-      <td width="485">id;</td>
-    </tr>
-<!-- Table 01 Row 02 -->
-    <tr>
-      <td width="77">STRING</td>
-      <td width="485">name*10;</td>
-    </tr>
-<!-- Table 01 Row 03 -->
-    <tr>
-      <td width="77">VECTOR</td>
-      <td width="485">p;</td>
-    </tr>
-<!-- Table 01 Row 04 -->
-    <tr>
-      <td width="77">FLOAT</td>
-      <td width="485">rotx;</td>
-    </tr>
-<!-- Table 01 Row 05 -->
-    <tr>
-      <td width="77">FLOAT</td>
-      <td width="485">roty;</td>
-    </tr>
-<!-- Table 01 Row 06 -->
-    <tr>
-      <td width="77">FLOAT</td>
-      <td width="485">rotz;</td>
-    </tr>
-  </tbody></table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table border="0" width="570">
-<!-- Table 02 Row 01 -->
-    <tbody><tr>
-      <td width="68">id </td>
-      <td width="494">- Local identity</td>
-    </tr>
-<!-- Table 02 Row 02 -->
-    <tr>
-      <td width="68">name</td>
-      <td width="494">- User defined name</td>
-    </tr>
-<!-- Table 02 Row 03 -->
-    <tr>
-      <td width="68">p</td>
-      <td width="494">- Position of origin</td>
-    </tr>
-  </tbody></table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table border="0" width="570">
-<!-- Table 03 Row 01 -->
-    <tbody><tr>
-      <td width="68">rotx</td>
-      <td width="494">- Rotation around X-axis, default = 0</td>
-    </tr>
-<!-- Table 03 Row 02 -->
-    <tr>
-      <td width="68">roty</td>
-      <td width="494">- Rotation around Y-axis, default = 0</td>
-    </tr>
-<!-- Table 03 Row 03 -->
-    <tr>
-      <td width="68">rotz</td>
-      <td width="494">- Rotation around Z-axis, default = 0</td>
-    </tr>
-  </tbody></table>
-  <p><br>
-  <b>Attributes<br>
-  </b><br>
-  </p>
-  <table border="0" width="570">
-<!-- Table 04 Row 01 -->
-    <tbody><tr>
-      <td width="68">PEN </td>
-      <td width="494">- Pen or colour number</td>
-    </tr>
-<!-- Table 04 Row 02 -->
-    <tr>
-      <td width="68">LEVEL</td>
-      <td width="494">- Level number</td>
-    </tr>
-<!-- Table 04 Row 03 -->
-    <tr>
-      <td width="68">BLANK</td>
-      <td width="494">- Visible(0) or invisible(1)</td>
-    </tr>
-  </tbody></table>
-  <p><br>
+<h1>csys_1p - <small>Geometric procedure</small></h1>
   
- 
+<h2>Description</h2>
   
-  <b>Example-1<br>
-  <u><br>
-  </u></b><pre>csys_1p(#1,"Origin",vec(0,0), , ,30);</pre>
-  <br>
-  Creates a coordinate system rotated 30 degrees around the active Z-axis.<br>
-  <br>
-  
-  <b>Example-2</b> 
-  <br>
-  
-  <pre> 
-BASIC GEOMETRY MODULE coor_sys();
-BEGINMODULE
- csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
- csys_1p(#2,"ROTATED", vec(1, 0, 0), 0.0, 0.0, 0.0);
- mode_local(#2);
-ENDMODULE  
-</pre>  
-<br>
-    
-   This module creates two coordinate systems, the first as a Basic "Reference" coordinate system with Origin at point (0,0,0)  without any rotation around the Axes , The second is a Local coordinate system  with Origin at point (1,0,0), also without any rotation as in figure 1. <br> To illustrate how the coordinate system works, we will use the second coordinate system with diferent orientations in following examples.
-<br><br>  
-<center>
-<img SRC="images/coor_sys_1.png"> <br> 
-<b>Figure 1</b><br> </center>
-In figure 1 the two coordinate  systems had  the  same  orientation for   
-all Axes.<br>
-To rotate the second coordinate system 90 degrees around  X-axis, use the module listed below. The result is shown in figure 2. 
-<br>
-<pre> 
-BASIC GEOMETRY MODULE coor_sys();
+<p>
+Creates a local coordinate system using one position and three optional angles of
+rotation.
+</p>
 
-BEGINMODULE
-
- csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
- csys_1p(#2,"ROTATED", vec(1, 0, 0), 90.0, 0.0, 0.0);
- mode_local(#2);
-
-ENDMODULE
-</pre> 
-<center>
-<img SRC="images/coor_sys_2.png"><br> 
-<b>Figure 2 </b><br> </center><br>
-To therafter rotate the local coordinate system 90 degrees around Y-axis, use the module listed below. The result is shown in figure 3.<br>
+<h2>Syntax</h2>
 <pre>
-BASIC GEOMETRY MODULE coor_sys();
-
-
-BEGINMODULE
-
-  csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
-  mode_local(#1);
-  csys_1p(#2,"ROTATED", vec(1, 0, 0), 90, 0, 0:BLANK=1);
-  mode_local(#2);
-  csys_1p(#3,"ROTATED", vec(0, 0, 0), 0, 90, 0:BLANK=0);
-  mode_local(#3);
-
-ENDMODULE
-
+  csys_1p(id, name, p, rotx, roty, rotz:attributes);
 </pre>
-<center>
-<img SRC="images/coor_sys_3.png"><br> 
-<b>Figure 3 </b><br> </center><br>
-Finally to rotate the local coordinate system also 90 degrees around Z-axis, use the module listed below .The result is shown in fingure 4.<br><br>
+ 
+<table>
+<tbody><tr>
+<td>REF</td>
+<td>id;</td>
+</tr>
+<tr>
+<td>STRING</td>
+<td>name*10;</td>
+</tr>
+<tr>
+<td >VECTOR</td>
+<td>p;</td>
+</tr>
+<tr>
+<td>FLOAT</td>
+<td>rotx;</td>
+</tr>
+<tr>
+<td>FLOAT</td>
+<td>roty;</td>
+</tr>
+<tr>
+<td>FLOAT</td>
+<td>rotz;</td>
+</tr>
+</tbody>
+</table>
+  
+<h2>Principal parameters</h2>
+
+<table>
+<tbody><tr>
+<td>id </td>
+<td>- Local identity</td>
+</tr>
+<tr>
+<td>name</td>
+<td>- User defined name</td>
+</tr>
+<tr>
+<td>p</td>
+<td>- Position of origin</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tbody><tr>
+<td>rotx</td>
+<td>- Rotation around X-axis, default = 0</td>
+</tr>
+<tr>
+<td>roty</td>
+<td>- Rotation around Y-axis, default = 0</td>
+</tr>
+<tr>
+<td>rotz</td>
+<td>- Rotation around Z-axis, default = 0</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Attributes</h2>
+
+<table>
+<tbody><tr>
+<td>PEN </td>
+<td>- Pen or colour number</td>
+</tr>
+<tr>
+<td>LEVEL</td>
+<td>- Level number</td>
+</tr>
+<tr>
+<td>BLANK</td>
+<td>- Visible(0) or invisible(1)</td>
+</tr>
+</tbody>
+</table>
+ 
+<h2>Example-1</h2>
 <pre>
+csys_1p(#1,"Origin",vec(0,0), , ,30);
+</pre>
+<p>
+Creates a coordinate system rotated 30 degrees around the active Z-axis.
+</p>
+  
+<h2>Example-2</h2> 
+<pre class="box"> 
+BASIC GEOMETRY MODULE coor_sys();   
+ BEGINMODULE
+   csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
+   csys_1p(#2,"ROTATED", vec(1, 0, 0), 0.0, 0.0, 0.0);
+   mode_local(#2);
+ ENDMODULE  
+</pre>  
+<p>    
+This module creates two coordinate systems, the first as a Basic "Reference" coordinate system with Origin at point (0,0,0)  without any rotation around the Axes , The second is a Local coordinate system  with Origin at point (1,0,0), also without any rotation as in figure 1. <br> To illustrate how the coordinate system works, we will use the second coordinate system with diferent orientations in following examples.
+</p> 
+
+<img src="images/coor_sys_1.png"></img>
+<p class="caption"> Figure 1 </p>
+
+<p>
+In figure 1 the two coordinate  systems had  the  same  orientation for   
+all Axes. To rotate the second coordinate system 90 degrees around  X-axis, use the module listed below. The result is shown in figure 2. 
+</p> 
+
+<pre class="box"> 
 BASIC GEOMETRY MODULE coor_sys();
+ BEGINMODULE
+   csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
+   csys_1p(#2,"ROTATED", vec(1, 0, 0), 90.0, 0.0, 0.0);
+   mode_local(#2);
+ ENDMODULE
+</pre> 
 
-BEGINMODULE
+<img class="center" src="images/coor_sys_2.png"></img>
+<p class="caption"> Figure 2 </p>
 
-  csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
-  mode_local(#1);
-  csys_1p(#2,"ROTATED", vec(1, 0, 0), 90, 0, 0:BLANK=1);
-  mode_local(#2);
-  csys_1p(#3,"ROTATED", vec(0, 0, 0), 0, 90, 0:BLANK=1);
-  mode_local(#3);
-  csys_1p(#4,"ROTATED", vec(0, 0, 0), 0, 0, 90:BLANK=0);
-  mode_local(#4);
+<p>
+To therafter rotate the local coordinate system 90 degrees around Y-axis, use the module listed below. The result is shown in figure 3.
+</p>
+<pre class="box">
+  BASIC GEOMETRY MODULE coor_sys();
+    BEGINMODULE
+      csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
+      mode_local(#1);
+      csys_1p(#2,"ROTATED", vec(1, 0, 0), 90, 0, 0:BLANK=1);
+      mode_local(#2);
+      csys_1p(#3,"ROTATED", vec(0, 0, 0), 0, 90, 0:BLANK=0);
+      mode_local(#3);
+    ENDMODULE
+</pre>
 
-ENDMODULE
-</pre><br>
+<img class="center" src="images/coor_sys_3.png"></img>
+<p class="caption"> Figure 3 </p>
 
-<center>
-<img SRC="images/coor_sys_4.png"><br> 
-<b>Figure 4 </b><br> </center><br>
- <b>Comments<br>
-  </b><br>
-In the last three active modules and figures  specified rotation is done in three steps around local coordinate system ,
-the first around the X-axis  ,Then around Y-axis, the last around Z-axis.<br>
+<p>
+Finally to rotate the local coordinate system also 90 degrees around Z-axis, use the module listed below .The result is shown in fingure 4.
+</p>
 
-When all three angles are specified in one csys_1p-instruction, varkon calculates the rotaion
-in order X,Y,Z. To confirm this investigate the module listed below . The result is shown in figure 5.<br>
-<pre>
+<pre class="box">
+  BASIC GEOMETRY MODULE coor_sys();
+    BEGINMODULE
+      csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
+      mode_local(#1);
+      csys_1p(#2,"ROTATED", vec(1, 0, 0), 90, 0, 0:BLANK=1);
+      mode_local(#2);
+      csys_1p(#3,"ROTATED", vec(0, 0, 0), 0, 90, 0:BLANK=1);
+      mode_local(#3);
+      csys_1p(#4,"ROTATED", vec(0, 0, 0), 0, 0, 90:BLANK=0);
+      mode_local(#4);
+    ENDMODULE
+</pre>
 
+<img class="center" src="images/coor_sys_4.png"></img>
+<p class="caption"> Figure 4 </p>
+
+<h2>Comments</h2>
+<p>
+In the last three active modules and figures  specified rotation is done in three steps around local coordinate system , the first around the X-axis  ,Then around Y-axis, the last around Z-axis. When all three angles are specified in one csys_1p-instruction, varkon calculates the rotaion in order X,Y,Z. To confirm this investigate the module listed below . The result is shown in figure 5.
+</p>
+
+<pre class="box">
 BASIC GEOMETRY MODULE coor_sys();
+  BEGINMODULE
+    csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
+    mode_local(#1);
+    csys_1p(#2,"ROTATED", vec(1, 0, 0), 90, 90, 90);
+    mode_local(#2);
+  ENDMODULE
+</pre>
 
+<img class="center" src="images/coor_sys_4.png"></img>
+<p class="caption"> Figure 5 </p>
 
-BEGINMODULE
+<h2>See also</h2>
 
-  csys_1p(#1,"BASIC", vec(0, 0, 0), 0.0, 0.0, 0.0);
-  mode_local(#1);
-  csys_1p(#2,"ROTATED", vec(1, 0, 0), 90, 90, 90);
-  mode_local(#2);
-
-ENDMODULE
-
-</pre><br>
-<center>
-<img SRC="images/coor_sys_4.png"><br> 
-<b>Figure 5 </b><br> </center><br>  
-   
+<p>
+<a href="csys_usrdef.htm">csys_usrdef()</a> and
+<a href="csys_3p.htm">csys_3p()</a>
+</p>
   
-  
-  
-</blockquote>
-
-<hr align="center" width="100%">
-
-
-
-<p></p>
-<div align="center"><center>
-
-<table align="center" cellpadding="0" cellspacing="10">
-  <tbody><tr>
-    <td><a href="http://www.tech.oru.se/cad/varkon/index.htm">VARKON Homepage</a></td>
-    <td><a href="http://www.tech.oru.se/cad/varkon/m_man/entiindx.htm">Index</a></td>
-  </tr>
-</tbody></table>
-</center></div>
-</body></html>
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

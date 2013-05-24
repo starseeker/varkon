@@ -64,8 +64,8 @@ t57  = "Storlek          : "
 t58  = "Skapat: "
 t59  = "Tagit bort: "
 t60  = "Blankat: "
-t61  = "updaterad !"
-t62  = "exekverad !"
+t61  = "uppdaterad !"
+t62  = "Exekverar"
 t63  = "En storhet uppdaterad !"
 t64  = "storheter uppdaterade !"
 t65  = "SVN version      : "
@@ -80,6 +80,7 @@ t73  = "RES-filen finns redan ! Skriva över (j/n) ?"
 t74  = "JOB-filen finns redan ! Skriva över (j/n) ?"
 t75  = "MBS-filen finns redan ! Skriva över (j/n) ?"
 t76  = "TIFF-filen finns redan ! Skriva över (j/n) ?"
+t77  = "Klar !"
 
 !
 ! Pektecken

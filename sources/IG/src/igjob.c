@@ -328,9 +328,10 @@ static short main_loop()
 /*
 ***Update display.
 */
+    WPreload_view(GWIN_ALL);
+
     if ( !igbflg )
       {
-      WPreload_view(GWIN_ALL);
       WPrepaint_GWIN(GWIN_ALL);
       WPrepaint_RWIN(RWIN_ALL,TRUE);
       }
@@ -2189,7 +2190,7 @@ static short iginjb()
 /*
 ***Create the default graphical window.
 */
-     if ( ! igbflg && (status=WPcgws()) < 0 ) return(status);
+     if ( status=WPcgws() < 0 ) return(status);
 /*
 ***Initiera diverse flaggor.
 */
@@ -2269,7 +2270,7 @@ static short load_jobdata()
 ***resursfil nu.
 */
      if ( WPngws() == 0 )
-       if ( !igbflg  &&  (status=WPcgws()) < 0 ) return(status);
+       if ( status=WPcgws() < 0 ) return(status);
 /*
 ***Initiera koordinatsystem.
 */

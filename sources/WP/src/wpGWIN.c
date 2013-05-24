@@ -651,23 +651,17 @@ static void cre_toolbar(WPGWIN *gwinpt);
         XButtonEvent *butev,
         wpw_id       *serv_id)
 
-/*      Button-rutin f�r WPGWIN med vidh�ngande sub-f�nster.
- *      Kollar om muspekning skett i n�got av WPGWIN-f�nstrets
- *      subf�nster och servar is�fall eventet.
+/*      Button handler for WPGWIN with children.
  *
- *      In: iwinptr = C-pekare till WPGWIN.
- *          butev   = X-but event.
- *          serv_id = Pekare till utdata.
+ *      In: iwinptr = C ptr to WPGWIN.
+ *          butev   = C ptr to X-button event.
  *
- *      Ut: *serv_id = ID f�r subf�nster som servat eventet.
+ *      Out: *serv_id = ID of child that served the event.
  *
- *      Fv: TRUE  = Eventet servat.
- *          FALSE = Detta f�nster ej inblandat.
+ *      Return: TRUE  = Event served.
+ *              FALSE = Event not served.
  *
- *      (C)microform ab 16/12/94 J. Kjellander
- *
- *      1997-02-18 f189, J.Kjellander
- *      1998-09-14 EXIT, J.Kjellander
+ *      (C)2008 J. Kjellander
  *
  ******************************************************!*/
 
@@ -680,7 +674,7 @@ static void cre_toolbar(WPGWIN *gwinpt);
     WPICON *icoptr;
 
 /*
-***Check all subwindows for hit.
+***Check all icon/button subwindows for hit.
 */
     hit = FALSE;
 
@@ -797,7 +791,12 @@ static void cre_toolbar(WPGWIN *gwinpt);
         }
       }
 /*
-***It could also be a resize of the Message and Command window...
+***It could also be a rightclick in the Message and Command window...
+*/
+   if ( butev->window == gwinpt->mcw_ptr->messcom_xid )
+     return(WPbutton_mcwin(gwinpt->mcw_ptr,butev));
+/*
+***...or a resize of the Message and Command window...
 */
    if ( butev->window == gwinpt->mcw_ptr->resize_xid )
      return(WPbutton_mcwin(gwinpt->mcw_ptr,butev));
@@ -1200,40 +1199,39 @@ static void cre_toolbar(WPGWIN *gwinpt);
         short WPrepaint_GWIN(
         DBint win_id)
 
-/*      Riatr om ett grafiskt f�nster med tillh�rande
- *      pixmap f�r save_under.
+/*      Repaint one or all WPGWIN's.
  *
- *      In: win_id = ID f�r ett WPGWIN.
+ *      In: win_id = WPGWIN ID or GWIN_ALL
  *
- *      Ut: Inget.   
- *
- *      Felkoder: WP1362 = F�nstret %s finns ej.
- *
- *      (C)microform ab 1996-02-13 J. Kjellander
- *
- *      1997-03-11 igupcs(), J.Kjellander
+ *      (C)2008-03-15 J. Kjellander
  *
  ******************************************************!*/
 
   {
+   DBCsys csy;
+
 /*
 ***Erase.
 */
-    WPergw(win_id);
+   WPergw(win_id);
 /*
 ***Display grid if on. Do this before displaying
 ***the model so that the model surley becomes visible
 ***and not overwritten by the grid.
 */
-    WPdraw_grid(win_id);
+   WPdraw_grid(win_id);
 /*
-***Update WPGWIN's.
+***Display model.
 */
-    EXdral(win_id);
+   EXdral(win_id);
 /*
-***Active coordinate tsystem.
+***Display possible active coordinate system.
 */
-    IGupcs(lsysla,V3_CS_ACTIVE);
+   if ( lsysla != DBNULL )
+     {
+     DBread_csys(&csy,NULL,lsysla);
+     WPupcs(&csy,lsysla,V3_CS_ACTIVE,GWIN_ALL);
+     }
 /*
 ***The end.
 */

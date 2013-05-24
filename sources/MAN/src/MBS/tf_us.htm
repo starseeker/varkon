@@ -1,107 +1,75 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- tform_usrdef - Geometric procedure})
+define({_INDEXLINK_},{<a href="entiindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<head>
-<title>tform_usrdef </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
+<h1>tform_usrdef - <small>Geometric procedure</small></h1>
 
-<body bgcolor="#99CCFF">
+<h2>Description</h2>
+ 
+<p> 
+Creates a user defined transformation. 16 coefficients of an arbitrary 4 by 4
+transfomation matrix are supplied as the input.
+</p>
+  
+<h2>Syntax</h2>
+<pre> 
+  tform_usrdef(id, tmat:attributes);
+</pre>
 
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
-
-<hr width="100%" align="center">
-
-<blockquote>
-  <h2>tform_usrdef - <small><small>Geometric procedure</small></small></h2>
-  <p>Creates a transformation<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Creates a user defined transformation. 16 coefficients of an arbitrary 4 by 4
-  transfomation matrix are supplied as the input.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  tform_usrdef(id, tmat:attributes);<br>
-  <br>
-  </p>
-  <table width="570" border="0">
-<!-- Table 53 Row 01 -->
-    <tr>
-      <td width="66">REF</td>
-      <td width="496">id;</td>
-    </tr>
-<!-- Table 53 Row 02 -->
-    <tr>
-      <td width="66">FLOAT</td>
-      <td width="496">tmat(4,4);</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="570" border="0">
-<!-- Table 54 Row 01 -->
-    <tr>
-      <td width="56">id </td>
-      <td width="506">- Local identity</td>
-    </tr>
-<!-- Table 54 Row 02 -->
-    <tr>
-      <td width="56">tmat</td>
-      <td width="506">- 4 by 4 transformation matrix</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="95%" border="0">
-<!-- Table 55 Row 01 -->
-    <tr>
-      <td>None.</td>
-      <td></td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Attributes<br>
-  </b><br>
-  </p>
-  <table width="570" border="0">
-<!-- Table 56 Row 01 -->
-    <tr>
-      <td width="58">PEN </td>
-      <td width="504">- Pen or colour number</td>
-    </tr>
-<!-- Table 56 Row 02 -->
-    <tr>
-      <td width="58">LEVEL</td>
-      <td width="504">- Level number</td>
-    </tr>
-<!-- Table 56 Row 03 -->
-    <tr>
-      <td width="58">BLANK</td>
-      <td width="504">- Visible(0) or invisible(1)</td>
-    </tr>
-  </table>
-</blockquote>
-
-<hr width="100%" align="center">
-
-
-
-</small></p>
-<div align="center"><center>
-
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="entiindx.htm">Index</a></td>
-  </tr>
+<table>
+<tr>
+<td>REF</td>
+<td >id;</td>
+</tr>
+<tr>
+<td>FLOAT</td>
+<td>tmat(4,4);</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>id </td>
+<td>- Local identity</td>
+</tr>
+<tr>
+<td>tmat</td>
+<td>- 4 by 4 transformation matrix</td>
+</tr>
+</table>
+ 
+<h2>Optional parameters</h2>
+ 
+<p>None.</p>
+  
+<h2>Attributes</h2>
+
+<table>
+<tr>
+<td>PEN</td>
+<td>- Pen or colour number</td>
+</tr>
+<tr>
+<td>LEVEL</td>
+<td>- Level number</td>
+</tr>
+<tr>
+<td>BLANK</td>
+<td>- Visible(0) or invisible(1)</td>
+</tr>
+</table>
+
+<h2>See also</h2>
+
+<p>
+<a href="csys_usrdef.htm">csys_usrdef()</a> and 
+<a href="pca.htm">pca</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

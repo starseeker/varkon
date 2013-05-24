@@ -191,6 +191,7 @@
    DBLine   lin;
    DBfloat  dx,dy,dist;
    DBfloat  u1[2],u2[2],u;
+   DBstatus status;
    short    noint;
 
 /*
@@ -269,7 +270,8 @@
 /*
 ***Calculate the coordinates of P0.
 */
-   GEposition((DBAny *)parc,(char *)seg,u,(DBfloat)0.0,&p0);
+   status = GEposition((DBAny *)parc,(char *)seg,u,(DBfloat)0.0,&p0);
+   if ( status < 0 ) return(status);
    if ( dimsys != NULL ) GEtfpos_to_local(&p0,dimsys,&p0);
 /*
 ***Store positions in RDIM.

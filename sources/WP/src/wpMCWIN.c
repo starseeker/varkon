@@ -38,6 +38,8 @@
 #include "../include/WP.h"
 #include <X11/xpm.h>
 
+extern char jobnam[];
+
 /*
 ***The message buffer.
 */
@@ -137,6 +139,10 @@ static GC     icon_gc = 0;                  /* X GC with clip mask for transpare
     messcom_xid = XCreateWindow(xdisp,parent_xid,mcw_x,mcw_y,mcw_dx,mcw_dy,0,
                             CopyFromParent,InputOutput,
                             CopyFromParent,xwinm,&xwina);
+/*
+***Allow (right-)button press in the message window.
+*/
+    XSelectInput(xdisp,messcom_xid,ButtonPressMask);
 /*
 ***Create the command edit.
 */
@@ -238,7 +244,7 @@ static GC     icon_gc = 0;                  /* X GC with clip mask for transpare
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short  WPaddmess_mcwin(
         char  *message,
@@ -331,7 +337,7 @@ expose:
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         void WPclear_mcwin()
 
@@ -488,22 +494,61 @@ expose:
         WPMCWIN      *mcwptr,
         XButtonEvent *butev)
 
-/*      Button handler for WPMCWIN. Handles resize.
+/*      Button handler for WPMCWIN. Handles right click
+ *      and resize.
  *
  *      In: mcwptr = C ptr to WPMCWIN.
  *
  *      (C)2007-05-29 J. Kjellander
  *
+ *      2008-03-29 Right click, J.Kjellander
+ *
  ******************************************************!*/
 
   {
-   int     mcw_org_y,mcw_org_dy,mouse_y,grw_dy;
+   int     i,mindex,mcw_org_y,mcw_org_dy,mouse_y,
+           grw_dy;
+   char    message[V3STRLEN+10];
    XEvent  event;
    WPWIN  *winptr;
    WPGWIN *gwinpt;
    WPRWIN *rwinpt;
 
 /*
+***Right click.
+*/
+   if ( butev->window == mcwptr->messcom_xid )
+     {
+     if ( butev->type == ButtonPress  &&  butev->button == 3 )
+       {
+       if ( WPialt("Show the full list ?","Yes","No",FALSE) )
+         {
+         strncpy(message,"Message list for: ",19);
+         strncat(message,jobnam,JNLGTH+1);
+         WPinla(message);
+
+         for ( i=0; i<message_count; ++i )
+           {
+           if ( i < WP_MCWBUFSIZ ) mindex = oldest_message + i;
+           else                    mindex = oldest_message + i - WP_MCWBUFSIZ;
+
+           switch ( message_types[mindex] )
+             {
+             case WP_ERROR:   strncpy(message,"ERROR: ",8);    break;
+             case WP_PROMPT:  strncpy(message,"PROMPT: ",9);   break;
+             case WP_MESSAGE: strncpy(message,"MESSAGE: ",10); break;
+             default:         strncpy(message,"",1);           break;
+             }
+           strncat(message,message_buffer[mindex],V3STRLEN+10);
+           WPalla(message,1);
+           }
+         WPexla(TRUE);
+         }
+       }
+     return(TRUE);
+     }
+/*
+***Resize.
 ***Remember original size and assume first mouse position = 0.
 */
    mcw_org_y  = mcwptr->geo.y;

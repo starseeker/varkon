@@ -122,7 +122,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evgngm()
 
-/*      Evaluerar funktionen GET_NEXT_GM().
+/*      Evaluates function GET_NEXT_GM().
  *
  *      In: Global  func_pv  => Parameter value array
  *          Global *func_vp  => Pointer to result value.

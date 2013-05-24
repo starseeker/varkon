@@ -1,95 +1,51 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-   <TITLE>copy_file</TITLE>
-   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
-</HEAD>
-<BODY BGCOLOR="#99CCFF">
-
-<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1998-04-02</FONT></P></CENTER>
-
-<P>
-<HR width="100%" align="center"></P>
-
-<BLOCKQUOTE>
-<H2>copy_file - <FONT SIZE=+0>Procedure</FONT></H2>
-
-<P>Copies a file<BR>
-<BR>
-<BR>
-<B>Description<BR>
-<BR>
-</B>Makes a copy of a file.<BR>
-<BR>
-<B>Syntax<BR>
-<BR>
-</B>copy_file(file1, file2)</P>
-
-<TABLE WIDTH="667" >
-<CAPTION></CAPTION>
-
-<TR>
-<TD width="71">STRING</TD>
-
-<TD width="588">file1*132;</TD>
-</TR>
-
-<TR>
-<TD width="71">STRING</TD>
-
-<TD width="588">file2*132;</TD>
-</TR>
-</TABLE>
-
-<P><B>Principal parameters</B></P>
-
-<TABLE WIDTH="667" >
-<CAPTION></CAPTION>
-
-<TR>
-<TD width="62">file1</TD>
-
-<TD width="597">- The original file</TD>
-</TR>
-
-<TR>
-<TD width="62">file2</TD>
-
-<TD width="597">- The new file</TD>
-</TR>
-</TABLE>
-
-<P><B>Optional parameters</B></P>
-
-<TABLE WIDTH="95%" >
-<CAPTION></CAPTION>
-
-<TR>
-<TD>None.</TD>
-
-<TD></TD>
-</TR>
-</TABLE>
-
-<P><B>Comments<BR>
-<BR>
-</B>VARKON resumes execution until the operation is completed.</P>
-</BLOCKQUOTE>
-
-<P>
-<HR width="100%" align="center"></P>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- copy_file - Procedure})
+define({_INDEXLINK_},{<a href="fileindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
 
+<h1>copy_file - Procedure</h1>
 
-</FONT></P></CENTER>
+<h2>Description</h2>
 
-<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
-<TR>
-<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
+<p>
+Creates a copy of an existing file, with a new name.
+</p>
 
-<TD><A HREF="fileindx.htm">Index</A></TD>
-</TR>
-</TABLE></CENTER>
+<h2>Syntax</h2>
 
-</BODY>
-</HTML>
+<pre>
+  copy_file(file1, file2);
+
+  string file1;
+  string file2;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>file1</td>
+<td>- Name (including optional path) of the original file</td>
+</tr>
+
+<tr>
+<td>file2</td>
+<td>- Name (including optional path) of the new file</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Comments</h2>
+
+<p>
+Varkon resumes execution until the operation is completed.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

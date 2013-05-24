@@ -359,9 +359,10 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Some part is visible. k = korg means that probably all was visible.
 ***Same number of vectors in polyline before/after clip.
-***2D arc first.
+***2D arc first. From 1.19C all arcs are 3D !
 */
-     if ( arcpek->ns_a == 0  &&  k == korg )
+     /*if ( arcpek->ns_a == 0  &&  k == korg )*/
+     if (  k == korg )
        {
        if ( ABS(arcpek->v2_a - arcpek->v1_a - 360.0) > TOL7 )
          fprintf(filpek,"  0\nARC\n");

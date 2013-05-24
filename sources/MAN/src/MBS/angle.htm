@@ -1,102 +1,71 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- angle - Function})
+define({_INDEXLINK_},{<a href="geomindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<head>
-<title>angle</title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
+<h1>angle - Function</h1>
 
-<body bgcolor="#99CCFF">
+<h2>Description</h2>
 
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+<p>
+Returns the angle (0-360) between the positive X-axis and a line from X=Y=0 to a given position.
+</p>
 
-<hr width="100%" align="center">
+<h2>Syntax</h2>
 
-<blockquote>
-  <h2>angle -<small><small> Function</small></small></h2>
-  <p>Geometrical function<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Returns the angle between the positive X-axis and a line from X=Y=0 to a given position.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  angle(x, y)<br>
-  <br>
-  </p>
-  <table width="722" border="0">
-<!-- Table 48 Row 01 -->
-    <tr>
-      <td width="67">FLOAT</td>
-      <td width="647">x;</td>
-    </tr>
-<!-- Table 48 Row 02 -->
-    <tr>
-      <td width="67">FLOAT</td>
-      <td width="647">y;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="722" border="0">
-<!-- Table 49 Row 01 -->
-    <tr>
-      <td width="54">x</td>
-      <td width="660">- X-coordinate of position</td>
-    </tr>
-<!-- Table 49 Row 02 -->
-    <tr>
-      <td width="54">y</td>
-      <td width="660">- Y-coordinate of position</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="722" border="0">
-<!-- Table 50 Row 01 -->
-    <tr>
-      <td width="55">None.</td>
-      <td width="659"></td>
-    </tr>
-  </table>
-  <p><br>
-  <b><u>Return value</u></b><br>
-  <br>
-  A FLOAT value equal to the corresponding angle in degrees.<br>
-  <br>
-  <b>Example<br>
-  </b><br>
-  angle(1,0) = 0 Degrees<br>
-  angle(1,1) = 45 Degrees<br>
-  angle(0,1) = 90 Degrees<br>
-  angle(1,-1) = -45 Degrees<br>
-  angle(-1,1) = 135 Degrees<br>
-  <br>
-  <b>Comments<br>
-  </b><br>
-  Basically does the same job as the trigonometric function angle but deals with angles
-  larger than or equal to 90 degrees.</p>
-</blockquote>
+<pre>
+  a:=angle(x, y);
 
-<hr width="100%" align="center">
+  float a;
+  float x;
+  float y;
+</pre>
 
+<h2>Principal parameters</h2>
 
-
-</small></p>
-<div align="center"><center>
-
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="fileindx.htm">Index</a></td>
-  </tr>
+<table>
+<tr>
+<td>x</td>
+<td>- The x coordinate.</td>
+</tr>
+<tr>
+<td>y</td>
+<td>- The y coordinate.</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>
+A FLOAT value equal to the corresponding angle in degrees.
+</p>
+
+<h2>Examples</h2>
+
+<pre>
+  a:=angle(1,0);  ! Equal to a:=0.0;
+
+  a:=angle(1,1);  ! Equal to a:=45.0;
+
+  a:=angle(0,1);  ! Equal to a:=90.0;
+
+  a:=angle(1,-1); ! Equalto a:=-45.0;
+
+  a:=angle(-1,1); ! Equal to a:=135.0;
+</pre>
+
+<h2>Comments</h2>
+
+<p>
+angle(x,y) is basically the same thing as <a href="arctan.htm">arctan(y/x)</a> but angle() deals with angles
+larger than or equal to 90 degrees.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

@@ -48,12 +48,16 @@
 !*
 !***Fonter.
 !*
-!varkon.font.normal:             fixed
-!varkon.font.small:              6x13
 varkon.font.small:              7x13
+!varkon.font.small:              6x13
+!varkon.font.small:              lucidasans-bold-10
+
 varkon.font.normal:             9x15
+!varkon.font.normal:             fixed
+
 varkon.font.big:                10x20
 !varkon.font.big:                12x24
+!varkon.font.big:                -adobe-times-medium-r-normal--18-180-75-75-p-94-iso8859-1
 !*
 !***varkon.mbsedit är resurser för funktionen "editera aktiv
 !***modul", f216. När funktionen aktiveras skapar VARKON ett

@@ -41,7 +41,7 @@
 extern V3MDAT  sydata;
 extern int     sysmode;
 extern int     posmode;
-extern bool    relpos,igbflg;
+extern bool    relpos;
 extern char    jobnam[],jobdir[],tmpres[],actcnm[],svnversion[];
 extern DBTmat *lsyspk;
 extern DBptr   lsysla;
@@ -268,6 +268,7 @@ werror:
  *      (C)2007-04-10 1.19 J.Kjellander
  *
  *      2008-01-19 Pentable added, J.Kjellander
+ *      2008-10-21 Batch mode, J.Kjellander
  *
  ******************************************************!*/
 
@@ -352,14 +353,14 @@ werror:
 */
        else if ( strncmp(line,"#WPGWIN",7) == 0 )
          {
-         if ( !igbflg  &&  WPload_WPGWIN(jf) < 0 ) return(erpush("EX1893",filename));
+         if ( WPload_WPGWIN(jf) < 0 ) return(erpush("EX1893",filename));
          }
 /*
 ***#WPRWIN
 */
        else if ( strncmp(line,"#WPRWIN",7) == 0 )
          {
-         if ( !igbflg  &&  WPload_WPRWIN(jf) < 0 ) return(erpush("EX1893",filename));
+         if ( WPload_WPRWIN(jf) < 0 ) return(erpush("EX1893",filename));
          }
        }
      }

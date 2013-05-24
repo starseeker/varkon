@@ -1,133 +1,95 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-   <TITLE>area </TITLE>
-   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.29 i586) [Netscape]">
-</HEAD>
-<BODY BGCOLOR="#99CCFF">
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- area - Function})
+define({_INDEXLINK_},{<a href="geomindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1997-10-24</FONT></P></CENTER>
+<h1>area - Function</h1>
 
-<P>
-<HR width="100%" align="center"></P>
+<h2>Description</h2>
 
-<BLOCKQUOTE>
-<H2>area -<FONT SIZE=+0> Function</FONT></H2>
+<p>
+Returns the area projected on the active XY-plane by of a planar region bounded
+by any combination of lines, arcs or curves. Optional interior holes or islands
+are excluded. Accuracy is controlled by a step parameter.
+</p>
 
-<P>Geometrical function<BR>
-<BR>
-<BR>
-<B>Description<BR>
-<BR>
-</B>Returns the area of a planar region bounded by 2D lines, arcs and curves.
-Optional interior holes or islands are not included. Accuracy is controlled
-by a step parameter.<BR>
-<BR>
-<B>Syntax<BR>
-<BR>
-</B>area(step, ref1, refn)<BR>
-<BR>
-</P>
+<h2>Syntax</h2>
 
-<TABLE WIDTH="728" >
-<CAPTION></CAPTION>
+<pre>
+  a:=area(step, id_1, id_2....id_n);
 
-<TR>
-<TD width="67">FLOAT</TD>
+  float a;
+  float step;
+  ref   id_1, id_2...id_n;
+</pre>
 
-<TD width="653">step;</TD>
-</TR>
+<h2>Principal parameters</h2>
 
-<TR>
-<TD width="67">REF</TD>
+<table>
+<tr>
+<td>step</td>
+<td>- Step length for numerical accuracy.</td>
+</tr>
+<tr>
+<td>id_1</td>
+<td>- Identity of first line, arc or curve in boundary.</td>
+</tr>
+</table>
 
-<TD width="653">ref1;</TD>
-</TR>
+<h2>Optional parameters</h2>
 
-<TR>
-<TD width="67">REF </TD>
+<table>
+<tr>
+<td>id_2...id_n</td>
+<td>- Identity of additional lines, arcs or curves in exterior
+or interior boundary.</td>
+</tr>
+</table>
 
-<TD width="653">refn;</TD>
-</TR>
-</TABLE>
+<h2>Return value</h2>
 
-<P><BR>
-<B>Principal parameters</B><BR>
-<BR>
-</P>
+<p>
+A FLOAT value equal to the calculated area.
+</p>
 
-<TABLE WIDTH="728" >
-<CAPTION></CAPTION>
+<h2>Example</h2>
 
-<TR>
-<TD width="56">step</TD>
+<pre>
+  a:=area(0.01, #4, #5, #19);
 
-<TD width="664">- Step length for numerical accuracy</TD>
-</TR>
+  ! Calculates the area bounded by #4, #5 and #19. Step length is set to 0.01.
+</pre>
 
-<TR>
-<TD width="56">ref1</TD>
+<h2>Comments</h2>
 
-<TD width="664">- Identity of first line, arc or curve in boundary</TD>
-</TR>
-</TABLE>
-
-<P><BR>
-<B>Optional parameters</B><BR>
-<BR>
-</P>
-
-<TABLE WIDTH="728" >
-<CAPTION></CAPTION>
-
-<TR>
-<TD width="55">refn</TD>
-
-<TD width="665">- Identity of additional lines, arcs or curves in exterior
-or interior boundary</TD>
-</TR>
-</TABLE>
-
-<P><BR>
-<B>Return value<BR>
-<BR>
-</B>A FLOAT value equal to the calculated area<BR>
-<BR>
-<B>Example<BR>
-<BR>
-</B>area(0.01, #4, #5, #19)<BR>
-<BR>
-Calculates the area bounded by #4, #5 and #19. Step length is set to 0.01<BR>
-<BR>
-<B>Comments<BR>
-<BR>
-</B>The area is computed by numerical integration along the positive X-axis
+<p>
+The area is computed by numerical integration along the positive X-axis
 in steps equal to parameter step. A small value for step gives a more accurate
 result but takes longer time to compute. For a circle with radius = 1 a
 step of 0.1 gives an area = 3.15. A step of 0.01 gives an area of 3.1419.
-The exact area is PI = 3.1415927...<BR>
-<BR>
+The exact area is PI = 3.1415927
+</p>
+
+<p>
 Boundary entities can be specified in any order of choice but must form
 one or more well defined boundaries where all entities in each boundary
 are connected in their endpoints. If more than one boundary is defined
 one of them must enclose all the other. Boundaries should not cross or
-touch each other.</P>
-</BLOCKQUOTE>
+touch each other.
+</p>
 
-<P>
-<HR width="100%" align="center"></P>
+<p>
+Before the calculation starts, the boundary is projected to the XY-plane of
+the currently active coordinate system. It is thus possible to create the
+boundary in one plane and calculate the area of the projection in another
+not neccesarily parallell plane.
+</p>
 
+<h2>See also</h2>
 
+<a href=searea.htm>section_area()</a>
 
-</FONT></P></CENTER>
-
-<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
-<TR>
-<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
-
-<TD><A HREF="geomindx.htm">Index</A></TD>
-</TR>
-</TABLE></CENTER>
-
-</BODY>
-</HTML>
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

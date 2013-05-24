@@ -129,7 +129,7 @@ extern char    svnversion[];
 */
     WPwciw(x,y,dx,dy,title,&iwin_id);
 /*
-***Create promt, if ps1 <> "" use two lines.
+***Create promt, if ps2 <> "" use two lines.
 */
     x  = lx;
     y  = ly;

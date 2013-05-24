@@ -198,51 +198,47 @@ static int csmode = V3_CS_NORMAL;
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-        short WPupcs(
-        DBCsys  *csypek,
+        short   WPupcs(
+        DBCsys *csypek,
         DBptr   la,
         int     mode,
         DBint   win_id)
 
-/*      Uppdaterar ett koordinatsystem.
+/*      Redisplays a coordinate system in normal or active
+ *      mode in one or all WPGWIN's.
  *
- *      In: csypek = Pekare till GM-post
- *          pmat   = Transformationsmatris
- *          la     = Planets GM-adress.
- *          mode   = V3_CS_NORMAL eller V3_CS_ACTIVE
+ *      In: csypek = C ptr to csys
+ *          la     = DB ptr to csys
+ *          mode   = V3_CS_NORMAL or V3_CS_ACTIVE
+ *          win_id = ID of WPGWIN to update or GWIN_ALL
  *
- *      Ut: Inget.
- *
- *      FV:     0 => Ok.
- *
- *      (C)microform ab 1997-03-11 J. Kjellander
+ *      (C)2008-03-15 J.Kjellander
  *
  ******************************************************!*/
 
   {
 
 /*
-***Sätt mode.
+***Set mode for WPplcs().
 */
    csmode = mode;
 /*
-***Sudda. Det gamla utseendet finns i DF och
-***suddas därifrån.
+***Erase 
 */
    WPdlcs(csypek,la,win_id);
 /*
-***Rita igen.
+***Display.
 */
    WPdrcs(csypek,la,win_id);
-
-   WPrepaint_RWIN(RWIN_ALL,FALSE);
 /*
-***Återställ mode.
+***Reset original mode.
 */
    csmode = V3_CS_NORMAL;
-
+/*
+***The end.
+*/
    return(0);
   }
 

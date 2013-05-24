@@ -548,6 +548,7 @@ found:
  *      (C)microform ab 1986-03-21 Per-Ove Agne'
  *
  *      1999-11-18 Rewritten, R. Svedin
+ *      2008-07-10 Labled statements, J.Kjellander
  *
  ******************************************************!*/
 
@@ -579,27 +580,36 @@ found:
    if ( listla != (pm_ptr)NULL )
       {
 /*
-***get statement node and set return value for statement pointer
+***Get statement node and set return value for statement pointer
 */
       pmglin( listla, &nextla, retla );
       pmgsta( *retla, &stp );
-
+/*
+***If the statement is labled, get the actual statement node.
+*/
+      if ( stp->suclst == LAB_ST )
+        {
+        nplla = stp->stsubc.labest.lastat;
+        pmgsta(nplla,&stp);
+        }
+/*
+***Part or geometric ?
+*/
       if ( stp->suclst == PART_ST )
          nplla = stp->stsubc.partst.partacna;
-      else 
-         nplla = stp->stsubc.geo_st.geacna;      /* Geo-stat */
-
-      if ( nplla == (pm_ptr)NULL )
-         {  
+      else
+         nplla = stp->stsubc.geo_st.geacna;
 /*
-***empty list, create np-node and tconc-node
+***Empty list, create np-node and tconc-node
 */
+      if ( nplla == (pm_ptr)NULL )
+         {
          pmcnpa( npid, new_expr, &napala );
          pmtcon( napala, (pm_ptr)NULL, &nplla, &nodli );
 
          if ( stp->suclst == PART_ST )
             stp->stsubc.partst.partacna = nplla; 
-         else 
+         else
             stp->stsubc.geo_st.geacna = nplla;      /* Geo-stat */
          }
       else
@@ -658,6 +668,7 @@ found:
  *      (C)microform ab 1986-03-21 Per-Ove Agne'
  *
  *      1999-11-18 Rewritten, R. Svedin
+ *      2008-07-10 Labled statements, J.Kjellander
  *
  ******************************************************!*/
 
@@ -709,6 +720,7 @@ found:
        pmgsta( statla, &stp );
        if ( stp->noclst != STAT ) return( erpush( "PM0084", "" ) );
 
+labled:
        switch( stp->suclst )
          {
 /*
@@ -760,6 +772,13 @@ found:
            *retla = listla;
            }
          break;
+/*
+***Labled statement.
+*/
+         case LAB_ST:
+         statla = stp->stsubc.labest.lastat;
+         pmgsta(statla,&stp);
+         goto labled;
          }
        }
 /*

@@ -1,89 +1,51 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
-
-<head>
-<title>append_file</title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
-
-<body bgcolor="#99CCFF">
-
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
-
-<hr width="100%" align="center">
-
-<blockquote>
-  <h2>append_file -<small><small> Procedure</small></small></h2>
-  <p>Merges two files<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Appends a file to the end of another file.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  append_file(file1, file2)<br>
-  <br>
-  </p>
-  <table width="728" border="0">
-<!-- Table 45 Row 01 -->
-    <tr>
-      <td width="81">STRING</td>
-      <td width="639">file1*132;</td>
-    </tr>
-<!-- Table 45 Row 02 -->
-    <tr>
-      <td width="81">STRING</td>
-      <td width="639">file2*132;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="728" border="0">
-<!-- Table 46 Row 01 -->
-    <tr>
-      <td width="68">file1</td>
-      <td width="652">- The file added to the end of file2</td>
-    </tr>
-<!-- Table 46 Row 02 -->
-    <tr>
-      <td width="68">file2</td>
-      <td width="652">- The file to which file1 is appended</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="652" border="0">
-<!-- Table 47 Row 01 -->
-    <tr>
-      <td width="57">None.</td>
-      <td width="587"></td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Comments<br>
-  </b><br>
-  VARKON resumes execution until the operation is completed.</p>
-</blockquote>
-
-<hr width="100%" align="center">
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- append_file - Procedure})
+define({_INDEXLINK_},{<a href="fileindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
 
+<h1>append_file - Procedure</h1>
 
-</small></p>
-<div align="center"><center>
+<h2>Description</h2>
 
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="fileindx.htm">Index</a></td>
-  </tr>
+<p>
+Appends a file to the end of another file.
+</p>
+
+<h2>Syntax</h2>
+
+<pre>
+  append_file(file1, file2);
+
+  string file1;
+  string file2;
+</pre>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>file1</td>
+<td>- Name (including optional path) of file to be added to the end of file2</td>
+</tr>
+
+<tr>
+<td>file2</td>
+<td>- Name (including optional path) of file to which file1 is appended</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Comments</h2>
+
+<p>
+Varkon resumes execution until the operation is completed.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

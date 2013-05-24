@@ -74,7 +74,7 @@ extern int actpen;
   {
 #define BUFSIZE    512   /* Select buffer size */
 #define MAX_PM_SIZE 100  /* Max size of pick matrix */
-   
+
    GLuint  *hlptr,hitlist[BUFSIZE];
    int      i,n_hits,n_names,pm_size;
    float    zmax,zmin,zmin_all;
@@ -104,7 +104,7 @@ start:
     WPmodl_all(rwinpt);
     WPeodls(rwinpt,ix,iy,pm_size,pm_size);
     n_hits = glRenderMode(GL_RENDER);
-    pm_size += 10.0;
+    pm_size *= 2;
     if ( n_hits > 0 ) break;
     } while ( pm_size < MAX_PM_SIZE);
 /*
@@ -133,8 +133,8 @@ start:
      ++hlptr;
 /*
 ***Find the hit closest to the eye. For each hit that
-***is closer than the previous, check entity type againts
-***the type mask. 
+***is closer than the previous, check entity type against
+***the type mask.
 */
        if ( zmax <= zmin_all )
          {
@@ -160,7 +160,7 @@ start:
 /*
 ***If this doesn't help, return -1.
 */
-   else          return(-1);
+   else return(-1);
   }
 
 /******************************************************!*/

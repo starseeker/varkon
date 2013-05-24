@@ -427,6 +427,8 @@
 #define VGETLIGHT  393  /* evgtlt      GET_LIGHT         */
 #define VRGBHSV    394  /* evrgbhsv    RGB_TO_HSV        */
 #define VHSVRGB    395  /* evhsvrgb    HSV_TO_RGB        */
+#define VCSYSUD    396  /* evcsud      CSYS_USRDEF       */
+#define VPCATMAT   397  /* evpcatm     PCA               */
 /*
 ***If you are building your own application,
 ***include your own file here.

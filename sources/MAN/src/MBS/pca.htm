@@ -1,0 +1,159 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- pca - Function})
+define({_INDEXLINK_},{<a href="entiindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>pca - <small>Function</small></h1>
+  
+<h2>Description</h2>
+  
+<p>
+Low level routine to create a 4x4 matrix by using a statistical method called Principal Component Analysis(PCA) and specifying a set of points (point cloud) stored in a one dimension array. The result is a 4x4 matrix, which might be used to create a coordinate system or transformation matrix. 
+</p>
+<p>
+For more details see "Mathematics for 3D Game Programming and Computer Graphics" Authored by Eric Lengyel - second edition, pages 217--221.
+</p>
+ 
+<h2>Syntax</h2>
+<pre>
+status:=pca(npts,pts,tmat);
+</pre>
+  
+<table>
+<tr>
+<td>INT</td>
+<td>status;</td>
+</tr>
+<tr>
+<td>INT</td>
+<td>npts;</td>
+</tr>
+<tr>
+<td>VECTOR</td>
+<td>pts(npts);</td>
+</tr>
+<td>FLOAT</td>
+<td>tmat(4,4);</td>
+</tr>
+</table>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>npts</td>
+<td>- Number of points</td>
+</tr>
+<tr>
+<td>pts</td>
+<td>- Array of points</td>
+</tr>
+<td>tmat</td>
+<td>- 4x4 transformation matrix</td>
+</tr>
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return Value</h2>
+
+<table>
+<tr>
+<td>0</td> 
+<td>=></td> 
+<td>Operation is successful.</td>
+</tr>
+<tr>
+<td>-1</td>
+<td>=></td> 
+<td> No. of input points is less than 4.</td>
+</tr>
+<tr>
+<td>-2</td> 
+<td>=></td> 
+<td>The input points are identical.</td>
+</tr>
+<tr>
+<td>-3</td>
+<td>=></td>
+<td>The input points are are on straight line.</td>
+</tr>
+</table>
+
+<h2>Comments</h2>
+<p>
+The created 4x4 matrix will be like the following matrix:
+</p>
+
+<table>
+<tr>
+<td>Xx</td>
+<td>Xy</td>
+<td>Xz</td>
+<td>Ox</td>
+</tr>
+<tr>
+<td>Yx</td>
+<td>Yy</td>
+<td>Yz</td>
+<td>Oy</td>
+</tr>
+<tr>
+<td>Zx</td>
+<td>Zy</td>
+<td>Zz</td>
+<td>OZ</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</table>
+<p>Since:</p>
+<table>
+<tr>
+<td>Xx, Yx, Zx</td> 
+<td>=></td> 
+<td>The unit length eigenvector components correspond to the largest eigenvalue.</td>
+</tr>
+<tr>
+<td>Xy, Yy, Zy</td>
+<td>=></td> 
+<td>The unit length eigenvector components correspond to the second largest eigen value.</td>
+</tr>
+<tr>
+<td>Xz, Yz, Zz</td> 
+<td>=></td> 
+<td>The unit length eigenvector components correspond to the smallest eigen value.</td>
+</tr>
+<tr>
+<td>Ox, Oy, Oz</td>
+<td>=></td>
+<td>The mean of the set of points represents the translation transformation.</td>
+</tr>
+</table>
+<p>
+The three eigen vectors are orthogonal to each other.
+</p>
+<p>
+Be aware that in the last two cases of the return value when (status = -2 or -3), the created 4x4 transformation matrix not represents some characetristics of the given data like the planarity property. In other words in case of calculate a point on the fitted plane to the given data and its normal vector, the return value of the function should be equal to 0 (status= 0).
+</p>
+<p>
+To visualize or use the 4x4 matrix that represents the coordinate system, use csys_usrdef(), in this case the fitted plane to the given data is XY - plane and the normal vector is the Z axis of the created coordinate system, see below.
+</p>
+
+<h2>See also</h2>
+
+<p>
+<a href="csys_usrdef.htm">csys_usrdef()</a> and 
+<a href="tf_us.htm">tform_usrdef</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

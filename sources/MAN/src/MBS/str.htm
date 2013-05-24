@@ -1,124 +1,97 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- str - Function})
+define({_INDEXLINK_},{<a href="striindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<head>
-<title>str </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
 
-<body bgcolor="#99CCFF">
+<h1>str - Function</h1>
 
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+<h2>Description</h2>
 
-<hr width="100%" align="center">
+<p>
+Converts an int or float value to a string of characters with optional formatting.
+</p>
 
-<blockquote>
-  <h2>str - <small><small>Function</small></small></h2>
-  <p>Float to string conversion<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Converts a float value to a string of characters with optional formatting.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  str(x, width, precision)<br>
-  <br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 13 Row 01 -->
-    <tr>
-      <td width="66">FLOAT</td>
-      <td width="593">x;</td>
-    </tr>
-<!-- Table 13 Row 02 -->
-    <tr>
-      <td width="66">INT</td>
-      <td width="593">width;</td>
-    </tr>
-<!-- Table 13 Row 03 -->
-    <tr>
-      <td width="66">INT</td>
-      <td width="593">precision;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 14 Row 01 -->
-    <tr>
-      <td width="55">x</td>
-      <td width="604">- The float number to convert. Integer numbers are automatically converted
-      to float.</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 15 Row 01 -->
-    <tr>
-      <td width="58">width</td>
-      <td width="601">- Controls the amount of padding. If width is less than the actual space
-      required no padding</td>
-    </tr>
-<!-- Table 15 Row 02 -->
-    <tr>
-      <td width="58"></td>
-      <td width="601">&nbsp;&nbsp; is performed. If width is larger than the space required the
-      result is padded with blanks.</td>
-    </tr>
-<!-- Table 15 Row 03 -->
-    <tr>
-      <td width="58"></td>
-      <td width="601">&nbsp;&nbsp; The sign of width controls weather padding is done on the
-      left side of the result (+) or the</td>
-    </tr>
-<!-- Table 15 Row 04 -->
-    <tr>
-      <td width="58"></td>
-      <td width="601">&nbsp;&nbsp; right side (-).</td>
-    </tr>
-<!-- Table 15 Row 05 -->
-    <tr>
-      <td width="58">precision</td>
-      <td width="601">- Controls the number of decimal places. A value of -1 gives E-notation.</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Return value</b><br>
-  <br>
-  A STRING of characters.<br>
-  <br><br>
-  <b>Examples<br>
-  </b>
+<h2>Syntax</h2>
+
 <pre>
-str(12345,1,0)    = &quot;12345&quot;<br>
-str(12345,10,0)   = &quot;     12345&quot;<br>
-str(12345,-10,0)  = &quot;12345     &quot;<br>
-str(12345,-10,2)  = &quot;12345.00  &quot;<br>
-str(12345,-15,-1) = &quot;1.234500e+04   &quot;<br>
-&quot;The value of PI is &quot;+str(pi,1,5) = &quot;The value of PI is 3.14159&quot;
+  s:=str(number, width, precision);
+
+  string    s;
+  int/float number;
+  int       width;
+  int       precision;
 </pre>
-</blockquote>
 
-<hr width="100%" align="center">
+<h2>Principal parameters</h2>
 
-
-
-</small></p>
-<div align="center"><center>
-
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="striindx.htm">Index</a></td>
-  </tr>
+<table>
+<tr>
+<td>number</td>
+<td>- The int or float value to convert.</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<table>
+
+<tr>
+<td>width</td>
+<td>- The number of character positions that will be used.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>- If width is negative, characters will be left justified.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>- If width is positive, characters will be right justified.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>- If width is less than the characters needed,
+      it is automatically increased.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>- If width is larger than the characters needed,
+      spaces are added.</td>
+</tr>
+
+<tr>
+<td>precision</td>
+<td>- Controls the number of decimal places. A value of -1 gives E-notation.</td>
+</tr>
+
+</table>
+
+<h2>Return value</h2>
+
+<p>A STRING value equal to the result of the conversion.</p>
+
+
+<h2>Examples</h2>
+
+<pre>
+  s:=str(12345,1,0);     ! Eeual to s:=&quot;12345&quot;;
+  s:=str(12345,10,0);    ! Equal to s:=&quot;     12345&quot;;
+  s:=str(12345,-10,0);   ! Equal to s:=&quot;12345     &quot;;
+  s:=str(12345,-10,2);   ! Equal to s:=&quot;12345.00  &quot;:
+  s:=str(12345,-15,-1);  ! Equal to s:=&quot;1.234500e+04   &quot;:
+  s:=&quot;PI=&quot;+str(pi,1,5);  ! Equal to s:=&quot;PI=3.14159&quot;;
+</pre>
+
+
+<h2>See also</h2>
+
+<a href="rstr.htm">rstr()</a>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

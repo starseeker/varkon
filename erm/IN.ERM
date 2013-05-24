@@ -168,3 +168,5 @@ VARKON Error messages for Interpreter routines
 585  2  RGB_TO_HSV, Green value out of range
 586  2  RGB_TO_HSV, Blue value out of range
 587  2  RGB_TO_HSV, R=G=B=0
+589  2  Number of pos > declared size, PCA
+590  2  Can't malloc for %s pos, PCA

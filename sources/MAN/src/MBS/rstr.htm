@@ -1,107 +1,90 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- rstr - Function})
+define({_INDEXLINK_},{<a href="striindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<head>
-<title>rstr </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
+<h1>rstr - Function</h1>
 
-<body bgcolor="#99CCFF">
+<h2>Description</h2>
 
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+<p>
+Converts a reference value to a string of characters with optional formatting.
+</p>
 
-<hr width="100%" align="center">
+<h2>Syntax</h2>
 
-<blockquote>
-  <h2>rstr - <small><small>Function</small></small></h2>
-  <p>Reference to string conversion<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Converts a reference value to a string of characters with optional formatting.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  rstr(ref, width)<br>
-  <br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 19 Row 01 -->
-    <tr>
-      <td width="46">REF</td>
-      <td width="613">ref;</td>
-    </tr>
-<!-- Table 19 Row 02 -->
-    <tr>
-      <td width="46">INT</td>
-      <td width="613">width;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 20 Row 01 -->
-    <tr>
-      <td width="37">ref</td>
-      <td width="622">- The value to convert.</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="667" border="0">
-<!-- Table 21 Row 01 -->
-    <tr>
-      <td width="37">width</td>
-      <td width="622">- Controls the amount of padding. If width is less than the actual space
-      required no padding</td>
-    </tr>
-<!-- Table 21 Row 02 -->
-    <tr>
-      <td width="37"></td>
-      <td width="622">&nbsp;&nbsp; is performed. If width is larger than the space required the
-      result is padded with blanks.</td>
-    </tr>
-<!-- Table 21 Row 03 -->
-    <tr>
-      <td width="37"></td>
-      <td width="622">&nbsp;&nbsp; The sign of width controls weather padding is done on the
-      left side (+) or the right side (-).</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Return value</b><br>
-  <br>
-  A STRING of characters.<br>
-  <br>
-  <b>Examples<br>
-  </b><br>
-  If ref = #5.2#7 then<br>
-  <br>
-  rstr(ref) = &quot;#5.2#7&quot;<br>
-  <br>
-  rstr(ref,12) = &quot; #5.2#7&quot;<br>
-  <br>
-  rstr(ref,-12) = &quot;#5.2#7 &quot;</p>
-</blockquote>
+<pre>
+  s:=rstr(id, width);
 
-<hr width="100%" align="center">
+  string s;
+  ref    id;
+  int    width;
+</pre>
 
+<h2>Principal parameters</h2>
 
-
-</small></p>
-<div align="center"><center>
-
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="striindx.htm">Index</a></td>
-  </tr>
+<table>
+<tr>
+<td>id</td>
+<td>- The value to convert.</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<table>
+<tr>
+<td>width</td>
+<td>- The number of character positions that will be used.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>- If width is negative, characters will be left justified.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>- If width is positive, characters will be right justified.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>- If width is less than the characters needed,
+      it is automatically increased.</td>
+</tr>
+
+<tr>
+<td></td>
+<td>- If width is larger than the characters needed,
+      spaces are added.</td>
+</tr>
+
+</table>
+
+<h2>Return value</h2>
+
+<p>
+<p>A STRING value equal to the result of the conversion.</p>
+</p>
+
+<h2>Examples</h2>
+
+<pre>
+  id:=#5.2#7;
+
+  s:=rstr(id);    ! Equal to s:=&quot;#5.2#7&quot;;
+
+  s:=rstr(id,12)  ! Equal to s:=&quot;      #5.2#7&quot;;
+
+  s:=rstr(id,-12) ! Equal to s:=&quot;#5.2#7      &quot;;
+</pre>
+
+<h2>See also</h2>
+
+<a href="str.htm">str()</a>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

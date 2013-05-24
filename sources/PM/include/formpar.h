@@ -1659,7 +1659,15 @@
 /*
 ***VHSVRGB = 395, HSV_TO_RGB(h,s,v,r,g,b);
 */
-     "-5:ie.ie.ie.iv.iv.iv"
+     "-5:ie.ie.ie.iv.iv.iv",
+/*
+***VCSYSUD = 396, CSYS_USRDEF(id,namn,tmat).
+*/    
+     "-5:se.jv", 
+/*
+***VPCATMAT = 397, status:=PCA(npts,pts,tmat).
+*/  
+     "i5:ie.nv.jv"
 /*
 ***Remember, no comma after the last parameter list definition.
 */

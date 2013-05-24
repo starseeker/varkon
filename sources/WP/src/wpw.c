@@ -50,6 +50,8 @@
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 
+extern bool igbflg;
+
 WPWIN wpwtab[WTABSIZ];
 
 /* wpwtab[] is the global window table. All elements of wpwtab[]
@@ -623,16 +625,16 @@ WPWIN wpwtab[WTABSIZ];
 /********************************************************/
 /*!******************************************************/
 
-        short WPwshw(
-        DBint w_id)
+        short WPwshw(DBint w_id)
 
-/*      Show a window.
+/*      Show (display) a window.
  *
  *      In: w_id  = Entry i wpwtab.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
  *      1998-01-04 WPRWIN, J.Kjellander
+ *      2008-10-22 Batch mode, J.Kjellander
  *
  ******************************************************!*/
 
@@ -646,19 +648,23 @@ WPWIN wpwtab[WTABSIZ];
     WPRWIN  *rwinpt;
 
 /*
-***Fixa en C-pekare till f�nstrets entry i wpwtab.
+***In batch mode windows are invisible ie. not mapped.
+*/
+    if ( igbflg ) return(0);
+/*
+***Else, get a C ptr to the window.
 */
     if ( (winptr=WPwgwp(w_id)) == NULL ) return(-2);
 /*
-***Vilken typ av f�nster �r det ?
+***What type of window ?
 */
     switch ( winptr->typ )
       {
 /*
-***WPIWIN-f�nster. Mappa f�nster och subf�nster. Om
-***f�nstret inneh�ller WPEDIT:s s�tter vi input-focus
-***p� det f�rsta. S�tt mapped = TRUE s� att subf�nster
-***som skapas fr�n och med nu mappas direkt n�r dom skapas.
+***WPIWIN-window. Map window and subwindows. If the
+***window contains WPEDIT:s set input-focus on the first one.
+***Also, set mapped = TRUE so that new subwindows will be
+***mapped immediately.
 */
       case TYP_IWIN:
       iwinpt = (WPIWIN *)winptr->ptr;
@@ -670,7 +676,7 @@ WPWIN wpwtab[WTABSIZ];
       iwinpt->mapped = TRUE;
       break;
 /*
-***WPLWIN-f�nster. Mappa f�nster och subf�nster.
+***WPLWIN-window.
 */
       case TYP_LWIN:
       lwinpt = (WPLWIN *)winptr->ptr;
@@ -679,7 +685,7 @@ WPWIN wpwtab[WTABSIZ];
       XMapWindow(xdisp,xwin_id);
       break;
 /*
-***WPGWIN-f�nster. Mappa f�nster och subf�nster.
+***WPGWIN-window.
 */
       case TYP_GWIN:
       gwinpt = (WPGWIN *)winptr->ptr;
@@ -688,7 +694,7 @@ WPWIN wpwtab[WTABSIZ];
       XMapWindow(xdisp,xwin_id);
       break;
 /*
-***WPRWIN-f�nster. Mappa f�nster och subf�nster.
+***WPRWIN-window.
 */
       case TYP_RWIN:
       rwinpt = (WPRWIN *)winptr->ptr;
@@ -701,10 +707,12 @@ WPWIN wpwtab[WTABSIZ];
       return(-2);
       }
 /*
-***Flusha s� att de s�kert syns p� sk�rmen.
+***Flush the X buffer.
 */
     XFlush(xdisp);
-
+/*
+***The end.
+*/
     return(0);
   }
 

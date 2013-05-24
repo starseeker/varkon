@@ -42,6 +42,7 @@ extern DBptr   lsysla;
 extern DBTmat *lsyspk;
 extern DBTmat  lklsyi;
 
+
 /*!******************************************************/
 
        short   EXearc(
@@ -73,7 +74,7 @@ extern DBTmat  lklsyi;
 
   {
     DBptr   la;
-    DBfloat   dummy;
+    DBfloat dummy;
     short   status;
 
 /*

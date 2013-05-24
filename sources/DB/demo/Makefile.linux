@@ -1,0 +1,42 @@
+##########################################################
+#
+#   Makefile for the DB demo programs
+#
+#  (C)2007-01-18 J.Kjellander
+#
+##########################################################
+
+
+# Options to the C-compiler
+
+CFLAGS   = -ansi                          \
+           -ffloat-store                  \
+           -fsigned-char                  \
+           -O                             \
+           -DUNIX
+
+# Libraries that the linker needs to know
+
+LIBES    = ../lib/DBlib.a ../../VU/lib/VUlib.a
+
+# Programs to make
+
+PROGRAMS = DBdemo1 DBdemo2 DBdemo3
+
+# Target
+
+DBdemos: $(PROGRAMS)
+
+# Dependency rules
+
+DBdemo1 : DBdemo1.c ../lib/DBlib.a
+	$(CC) $(CFLAGS) $< $(LIBES) -o $@
+
+DBdemo2 : DBdemo2.c ../lib/DBlib.a
+	$(CC) $(CFLAGS) $< $(LIBES) -o $@
+
+DBdemo3 : DBdemo3.c ../lib/DBlib.a
+	$(CC) $(CFLAGS) $< $(LIBES) -o $@
+
+clean:
+	rm $(PROGRAMS) *.RIT

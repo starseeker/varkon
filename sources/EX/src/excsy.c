@@ -6,6 +6,8 @@
 *    EXecsy();    Create coordinatesystem
 *    EXcs3p();    Create CSYS_3P
 *    EXcs1p();    Create CSYS_1P
+*    EXcsud();    Create CSYS_USRDEF
+*    EXpcatm();   Create a tf matrix by array of points
 *
 *    EXmoba();    Interface routine for MODE_BASIC
 *    EXmogl();    Interface routine for MODE_GLOBAL
@@ -59,7 +61,7 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 
        short EXecsy(
        DBId    *id,
-       DBCsys   *crdpek,
+       DBCsys  *crdpek,
        DBTmat  *pmat,
        V2NAPA  *pnp)
 
@@ -230,6 +232,165 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 /********************************************************/
 /*!******************************************************/
 
+       short EXcsud(
+       DBId     *id,
+       char     *str,
+       DBTmat   *tmat,
+       V2NAPA   *pnp)
+
+/*      Create a user defined coordinate system.
+ *
+ *      In: id     => Pointer to identity. 
+ *          str    => Pointer to name string.
+ *          tmat   => Pointer to 4x4 matrix.
+ *          pnp    => pointer to attributes.
+ *
+ *      Out: None.
+ *
+ *      Return:     0 => Ok.
+ *             EX1382 => Can't calculate csys data
+ *
+ *      (C) Örebo university 26/05/2008 M. Rahayem
+ *
+ ********************************************************/
+
+  {
+    DBVector vx,vy,vz;
+    DBTmat   tmati;
+    DBTmat   tcsud;
+    DBTmat   tmpmat;
+    DBCsys   csy;
+
+/*
+***Extract X-axis vector from the given 4x4 matrix.
+*/
+    vx.x_gm = tmat->g11;
+    vx.y_gm = tmat->g12;
+    vx.z_gm = tmat->g13;
+/*
+***Extract y-axis vector from the given 4x4 matrix.
+*/
+    vy.x_gm = tmat->g21;
+    vy.y_gm = tmat->g22;
+    vy.z_gm = tmat->g23;
+/*
+***Extract z-axis vector from the given 4x4 matrix.
+*/
+    vz.x_gm = tmat->g31;
+    vz.y_gm = tmat->g32;
+    vz.z_gm = tmat->g33;
+/*
+***Normalisation and check of axes vector lengths.
+*/
+   if ( GEnormalise_vector3D(&vx,&vx) < 0 )
+     return(erpush("EX4332","X"));         /* EX4332 The length of X axis vector is Zero */
+
+   if ( GEnormalise_vector3D(&vy,&vy) < 0 )
+     return(erpush("EX4332","Y"));         /* EX4332 The length of Y axis vector is Zero */
+
+   if ( GEnormalise_vector3D(&vz,&vz) < 0 )
+     return(erpush("EX4332","Z"));         /* EX4332 The length of Y axis vector is Zero */
+/*
+***Check if x and y axes are perpendicular to each other.
+*/
+   if ( GEscalar_product3D(&vx,&vy) > COMPTOL )
+     return(erpush("EX4342","X%Y"));       /* EX4332 X&Y NOT Perp. */
+/*
+***Check if x and z axes are perpendicular to each other.
+*/
+   if ( GEscalar_product3D(&vx,&vz) > COMPTOL )
+     return(erpush("EX4342","X%Z"));       /* EX4332 X&Z NOT Perp. */ 
+/*
+***Check if y and z axes are perpendicular to each other.
+*/
+   if ( GEscalar_product3D(&vy,&vz) > COMPTOL )
+     return(erpush("EX4342","Y%Z"));       /* EX4332 Z&Y NOT Perp. */
+/*
+***Create user defined coordinate system matrix.
+*/
+   if ( lsyspk != NULL )
+     {
+     GEtform_inv(tmat,&tmati); 
+     GEtform_mult(&tmati,&lklsys,&tmpmat);
+     V3MOME(&tmpmat,&tcsud,sizeof(DBTmat));
+     }
+   else
+     {
+     GEtform_inv(tmat,&tmati);
+     V3MOME(&tmati,&tcsud,sizeof(DBTmat));
+     }
+/*
+***Fill in the name.
+*/
+    *(str+JNLGTH) = '\0';
+    strncpy(csy.name_pl,str,JNLGTH);
+/*
+***Store csys_usrdef 4x4 matrix into DB and visualize.
+*/
+    return(EXecsy(id,&csy,&tcsud,pnp));
+  }
+  
+/********************************************************/
+/*!******************************************************/
+
+       short EXpcatm(
+       DBVector *ppts,
+       DBint     npoi,
+       DBTmat   *tmat)
+
+/*      Create a transformation matrix by array of points.
+ *
+ *      In: npoi   => Number of points 
+ *          ppts   => Pointer to points.
+ *          tmat   => Pointer to the created 4x4 matrix.
+ *
+ *      Out: nothing.
+ *
+ *
+ *     (C) Örebo university 26/05/2008 M. Rahayem
+ *
+ ******************************************************!*/
+
+  {
+    short    status;
+    DBfloat  varxy, varxz, varyz;
+    DBVector eigenvalues;
+    DBTmat   tmat_inv;
+
+/*
+***Create the matrix
+*/
+    status = GEmktf_pca(ppts,npoi,&eigenvalues,&tmat_inv);
+    GEtform_inv(&tmat_inv,tmat);
+/*
+***Calculate the variance by check the differences between the calculated eigen values.
+*/
+    varxy = fabs( eigenvalues.x_gm) - fabs( eigenvalues.y_gm );
+    varxz = fabs( eigenvalues.x_gm) - fabs( eigenvalues.z_gm );
+    varyz = fabs( eigenvalues.y_gm) - fabs( eigenvalues.z_gm );
+/*
+***Check if the input points are identical.
+*/
+    if ( varxy <= 0.00001 && varxz <= 0.00001 && varyz <= 0.00001 )
+      {
+      status = -2;
+      }
+/*
+***Check if the input points are on straight line in any orientation.
+*/
+    else if ( varxy <= 0.00001 || varxz <= 0.00001 || varyz <= 0.00001) 
+      {
+      status = -3;
+      }
+/*
+*** Return status.
+*/
+    return(status);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
        short EXmoba()
 
 /*      Executes the MODE_BASIC() procedure.
@@ -253,7 +414,7 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 
     return(0);
   }
-  
+
 /********************************************************/
 /*!******************************************************/
 
@@ -305,7 +466,7 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 
     return(0);
   }
-  
+
 /********************************************************/
 /*!******************************************************/
 
@@ -339,7 +500,7 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 */
     return(EXmlla(la));
   }
-  
+
 /********************************************************/
 /*!******************************************************/
 
@@ -379,6 +540,6 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 
     return(0);
   }
-  
+
 /********************************************************/
 

@@ -1,0 +1,168 @@
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- csys_usrdef - Geometric procedure})
+define({_INDEXLINK_},{<a href="entiindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>csys_usrdef - <small>Geometric procedure</small></h1>
+  
+<h2>Description</h2>
+  
+<p>
+Low level routine to create a user defined coordinate system by specifying 16 values 
+orderd in a 4 by 4 matrix. The coordinate system created is based on (relative to) 
+the currently active coordinate system.
+</p>
+ 
+<p>
+The matrix supplied is inverted and multiplied with the matrix of the currently active coordinate system
+before it is stored in the database. This means that the matrix that is returned if you fetch the coordinate
+system from the database is not the same as the matrix you initially supplied. See the figure below.
+</p>
+
+<img src="images/Csys_Usrded3.png"></img>
+<p class="caption">Transformation matrices order from BASIC to LOCAL and vice versa</p>
+
+<p>
+The coordinate system represented by 4x4 matrix like:
+</p>
+
+<table>
+<tr>
+<td>Xx</td>
+<td>Xy</td>
+<td>Xz</td>
+<td>Ox</td>
+</tr>
+<tr>
+<td>Yx</td>
+<td>Yy</td>
+<td>Yz</td>
+<td>Oy</td>
+</tr>
+<tr>
+<td>Zx</td>
+<td>Zy</td>
+<td>Zz</td>
+<td>OZ</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</table>
+
+<p>
+Where:
+</p>
+
+<table>
+<tr>
+<td>Xx, Yx, Zx</td> 
+<td>=></td> 
+<td>X-axis direction vector</td>
+</tr>
+<tr>
+<td>Xy, Yy, Zy</td>
+<td>=></td> 
+<td>Y-axis direction vector</td>
+</tr>
+<tr>
+<td>Xz, Yz, Zz</td> 
+<td>=></td> 
+<td>Z-axis direction vector</td>
+</tr>
+<tr>
+<td>Ox, Oy, Oz</td>
+<td>=></td>
+<td>Origin position</td>
+</tr>
+</table>
+
+<h2>Syntax</h2>
+<pre>
+csys_usrdef(id, name,tmat:attributes);
+</pre>
+  
+<table>
+<tr>
+<td>REF</td>
+<td>id;</td>
+</tr>
+<tr>
+<td>STRING</td>
+<td>name*10;</td>
+</tr>
+<tr>
+<td>FLOAT</td>
+<td>tmat(4,4);</td>
+</tr>
+</table>
+
+<h2>Principal parameters</h2>
+
+<table>
+<tr>
+<td>id </td>
+<td>- Local identity</td>
+</tr>
+<tr>
+<td>name</td>
+<td>- User defined name</td>
+</tr>
+<tr>
+<td>tmat</td>
+<td>- 4 by 4 transformation matrix</td>
+</tr>
+
+</table>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Attributes</h2>
+
+<table>
+<tr>
+<td>PEN </td>
+<td>- Pen or colour number</td>
+</tr>
+<tr>
+<td>LEVEL</td>
+<td>- Level number</td>
+</tr>
+<tr>
+<td>BLANK</td>
+<td>- Visible(0) or invisible(1)</td>
+</tr>
+</table>
+
+<h2>Example</h2>
+<pre class="box">
+tmat(1,1):=1.0; tmat(1,2):=0.0; tmat(1,3):=0.0; tmat(1,4):=0.0;
+tmat(2,1):=0.0; tmat(2,2):=1.0; tmat(2,3):=0.0; tmat(2,4):=0.0;
+tmat(3,1):=0.0; tmat(3,2):=0.0; tmat(3,3):=1.0; tmat(3,4):=0.0;
+tmat(4,1):=0.0; tmat(4,2):=0.0; tmat(4,3):=0.0; tmat(4,4):=1.0;
+
+csys_usrdef(#1,"Origin",tmat);
+</pre>
+<p>
+Creates a coordinate system equal to the basic coordinate system.
+</p>
+<h2>Comments</h2>
+<p>
+Directions of axes are represented by the three direction vectors in the matrix, therefore they should be perpendicular to each other, otherwise an error message will be generated.
+</p>
+
+<h2>See also</h2>
+<p>
+<a href="csys_1p.htm">csys_1p()</a> and
+<a href="csys_3p.htm">csys_3p()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

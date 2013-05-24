@@ -1,184 +1,126 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-   <TITLE>open </TITLE>
-   <META NAME="GENERATOR" CONTENT="Mozilla/3.01Gold (X11; I; Linux 2.0.31 i586) [Netscape]">
-</HEAD>
-<BODY BGCOLOR="#99CCFF">
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- open - Procedure})
+define({_INDEXLINK_},{<a href="fileindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<CENTER><P><FONT SIZE=-1>VARKON Version 1.15 1998-01-08</FONT></P></CENTER>
 
-<P>
-<HR width="100%" align="center"></P>
+<h1>open - Procedure</h1>
 
-<BLOCKQUOTE>
-<H2>open - <FONT SIZE=+0>Procedure</FONT></H2>
+<h2>Description</h2>
 
-<P><BR>
-Opens a file<BR>
-<BR>
-<BR>
-<B>Description<BR>
-<BR>
-</B>Used to establish connection with a named file or to create a pipe
-to another program.<BR>
-<BR>
-<B>Syntax<BR>
-<BR>
-</B>open(f, mode, name)<BR>
-<BR>
-</P>
+<p>
+Used to establish connection with an existing file or to create a new file or pipe to another program.
+</p>
 
-<TABLE WIDTH="733" >
-<CAPTION></CAPTION>
+<h2>Syntax</h2>
 
-<TR>
-<TD width="71">FILE</TD>
+<pre>
+  open(f, mode, name);
 
-<TD width="654">f;</TD>
-</TR>
+  file f;
+  string mode;
+  string name;
+</pre>
 
-<TR>
-<TD width="71">STRING</TD>
+<h2>Principal parameters</h2>
 
-<TD width="654">mode*2;</TD>
-</TR>
+<table>
+<tr>
+<td>f</td>
+<td>- The name of a filevariable to be used for successive
+operations</td>
+</tr>
 
-<TR>
-<TD width="71">STRING</TD>
+<tr>
+<td>mode</td>
+<td>- Type of operations to be allowed on the opened file or
+pipe</td>
+</tr>
 
-<TD width="654">name*132;</TD>
-</TR>
-</TABLE>
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; R = Read from file</td>
+</tr>
 
-<P><BR>
-<B>Principal parameters</B><BR>
-<BR>
-</P>
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; W = Write to file (if file exists it is overwritten
+otherwise it is created)</td>
+</tr>
 
-<TABLE WIDTH="733" >
-<CAPTION></CAPTION>
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; A = Append to file (if no file exists it is
+created)</td>
+</tr>
 
-<TR>
-<TD width="62">f</TD>
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; U = Update (read, write and seek)</td>
+</tr>
 
-<TD width="663">- The name of a filevariable to be used for successive
-operations</TD>
-</TR>
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; RP = Read from pipe</td>
+</tr>
 
-<TR>
-<TD width="62">mode</TD>
+<tr>
+<td></td>
+<td>&nbsp;&nbsp; WP = Write to pipe</td>
+</tr>
 
-<TD width="663">- Type of operations to be allowed on the opened file or
-pipe</TD>
-</TR>
+<tr>
+<td>name</td>
+<td>- Name and path of file to open or command to create the pipe</td>
+</tr>
+</table>
 
-<TR>
-<TD width="62"></TD>
+<h2>Optional parameters</h2>
 
-<TD width="663">&nbsp;&nbsp; R = Read from file</TD>
-</TR>
+<p>None.</p>
 
-<TR>
-<TD width="62"></TD>
+<h2>Examples</h2>
 
-<TD width="663">&nbsp;&nbsp; W = Write to file (if file exists it is overwritten
-otherwise it is created)</TD>
-</TR>
+<pre>
+  FILE f;
 
-<TR>
-<TD width="62"></TD>
+  open(f, &quot;r&quot; , &quot;/usr/mydir/job.dat&quot;); ! Opens a file named job.dat in /usr/mydir for reading only.
 
-<TD width="663">&nbsp;&nbsp; A = Append to file (if no file exists it is
-created)</TD>
-</TR>
+  open(f, &quot;w&quot;, &quot;new.dat&quot;); ! Creates a new file named new.dat in current directory.
 
-<TR>
-<TD width="62"></TD>
+  open(f, &quot;rp&quot;, &quot;cd /usr/mydir;ls&quot;); ! Creates a read-pipe to the output of the ls-program.
+</pre>
 
-<TD width="663">&nbsp;&nbsp; U = Update (read, write and seek)</TD>
-</TR>
 
-<TR>
-<TD width="62"></TD>
+<h2>Comments</h2>
 
-<TD width="663">&nbsp;&nbsp; RP = Read from pipe</TD>
-</TR>
+<p>
+Mode codes may be upper or lower case.
+</p>
 
-<TR>
-<TD width="62"></TD>
+<p>
+open() automatically resets the current filepointer position within the file to zero.
+</p>
 
-<TD width="663">&nbsp;&nbsp; WP = Write to pipe</TD>
-</TR>
-
-<TR>
-<TD width="61">name</TD>
-
-<TD width="664">- Name of file to open or command to create the pipe</TD>
-</TR>
-</TABLE>
-
-<P><BR>
-<B>Optional parameters</B><BR>
-<BR>
-</P>
-
-<TABLE WIDTH="95%" >
-<CAPTION></CAPTION>
-
-<TR>
-<TD>None.</TD>
-
-<TD></TD>
-</TR>
-</TABLE>
-
-<P><BR>
-<B>Examples<BR>
-<BR>
-</B>FILE f;<BR>
-<BR>
-open(f, &quot;r&quot; , &quot;/usr/mydir/job.dat&quot;) ! Opens a file
-named job.dat in /usr/mydir for reading only<BR>
-<BR>
-open(f, &quot;w&quot;, &quot;new.dat&quot;) ! Creates a new file named
-new.dat in current directory<BR>
-<BR>
-open(f, &quot;rp&quot;, &quot;cd /usr/mydir;ls&quot;) ! Creates a read-pipe
-to the output of the ls-program<BR>
-<BR>
-<BR>
-<B>Comments<BR>
-<BR>
-</B>The codes for mode may be upper or lower case.<BR>
-<BR>
-open automatically resets the current position within the file to zero.<BR>
-<BR>
+<p>
 An attempt to open a file more than once without first closing it is treated
 as an error. It is also important to close the file before accessing it
-from other programs.<BR>
-<BR>
-The iostat function can be used to detect any errors.</P>
+from other programs than Varkon.
+</p>
 
-<P><B>See also</B></P>
+<p>
+The <a href="iostat.htm">iostat()</a> function can be used to detect errors.
+</p>
 
-<P><A HREF="close.htm">close</A></P>
-</BLOCKQUOTE>
+<p>
+All files opened by the open() procedure are automatically closed when you exit Varkon.
+</p>
 
-<P>
-<HR width="100%" align="center"></P>
+<h2>See also</h2>
 
+<p><a href="close.htm">close()</a></p>
 
-
-</FONT></P></CENTER>
-
-<CENTER><TABLE CELLSPACING=10 CELLPADDING=0 >
-<TR>
-<TD><A HREF="../index.htm">VARKON Homepage</A></TD>
-
-<TD><A HREF="fileindx.htm">Index</A></TD>
-</TR>
-</TABLE></CENTER>
-
-</BODY>
-</HTML>
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

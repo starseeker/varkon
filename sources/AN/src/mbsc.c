@@ -55,7 +55,7 @@ V3MDAT sydata = {                  /* System constants */
                 1000,              /* Serienummer      */
                 1,                 /* Version          */
                 19,                /* Revision         */
-                'C',               /* "upplaga"        */
+                'D',               /* "upplaga"        */
                 0, 0, 0, 0, 0,     /* tider            */
                 0, 0, 0, 0, 0,
                 "",                /* Sysname          */

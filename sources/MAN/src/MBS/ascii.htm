@@ -1,84 +1,57 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
+changequote({,})
+define({_TITLE_},{Varkon MBS Programmers manual})
+define({_SUBTITLE_},{- ascii - Function})
+define({_INDEXLINK_},{<a href="striindx.htm">index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
 
-<head>
-<title>ascii </title>
-<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
-</head>
+<h1>ascii - Function</h1>
 
-<body bgcolor="#99CCFF">
+<h2>Description</h2>
 
-<p align="center"><small>VARKON Version 1.15 1997-10-24</small></p>
+<p>
+Maps a character to its corresponding integer ASCII value.
+</p>
 
-<hr width="100%" align="center">
+<h2>Syntax</h2>
 
-<blockquote>
-  <h2>ascii - <small><small>Function</small></small></h2>
-  <p>Character to ASCII conversion<br>
-  <br>
-  <br>
-  <b>Description<br>
-  </b><br>
-  Maps a character to its corresponding integer ASCII value.<br>
-  <br>
-  <b>Syntax<br>
-  </b><br>
-  ascii(c)<br>
-  <br>
-  </p>
-  <table width="728" border="0">
-<!-- Table 08 Row 01 -->
-    <tr>
-      <td width="73">STRING</td>
-      <td width="647">c*1;</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Principal parameters<br>
-  </b><br>
-  </p>
-  <table width="728" border="0">
-<!-- Table 09 Row 01 -->
-    <tr>
-      <td width="21">c</td>
-      <td width="699">- Any character</td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Optional parameters<br>
-  </b><br>
-  </p>
-  <table width="728" border="0">
-<!-- Table 10 Row 01 -->
-    <tr>
-      <td width="78">None.</td>
-      <td width="642"></td>
-    </tr>
-  </table>
-  <p><br>
-  <b>Return value</b><br>
-  <br>
-  An INT value in the range 0 &lt;= n &lt;= 255.<br>
-  <br>
-  <b>Example<br>
-  </b><br>
-  10 + ascii(&quot;B&quot;) evaluates to the integer value of 76 since 66 is the ASCII-code
-  for B.</p>
-</blockquote>
+<pre>
+  n:=chr(c);
 
-<hr width="100%" align="center">
+  int    n;
+  string c*1;
+</pre>
 
+<h2>Principal parameters</h2>
 
-
-</small></p>
-<div align="center"><center>
-
-<table align="ABSCENTER" cellspacing="10" cellpadding="0">
-  <tr>
-    <td><a href="../index.htm">VARKON Homepage</a></td>
-    <td><a href="striindx.htm">Index</a></td>
-  </tr>
+<table>
+<tr>
+<td>c</td>
+<td>- Any character.</td>
+</tr>
 </table>
-</center></div>
-</body>
-</html>
+
+<h2>Optional parameters</h2>
+
+<p>None.</p>
+
+<h2>Return value</h2>
+
+<p>An INT value in the range 0 &lt;= n &lt;= 255.</p>
+
+<h2>Comment</h2>
+
+<p>
+If the argument c is a string variable with size greater than 1, the
+first character in the string is used.
+</p>
+
+<h2>Example</h2>
+
+<p>
+10 + ascii(&quot;B&quot;) evaluates to the integer value of 76 since 66
+is the ASCII-code for B.
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

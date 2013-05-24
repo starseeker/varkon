@@ -1,0 +1,29 @@
+/**********************************************************************
+*
+*    README
+*    ======
+*
+*    This README-file includes information about how to
+*    build and run the Varkon EXdemo programs.
+*
+*    (C)Microform AB 1984-1999, http://www.microform.se
+*
+*    Johan Kjellander, johan@microform.se
+*
+***********************************************************************/
+
+1. Make sure you have built the DB library and
+   VU library, DBlib.a and VUlib.a
+   See DB/src/README and VU/src/README
+
+2. You must also make the EX library.
+   See EX/src/README
+
+3. cd to the EX/demo directory
+
+4. Run make. This  compiles and
+   links the EXdemo programs
+
+5. Run the programs. Too see what they do, read
+   the sources of each program.
+   They are fairly well commented.

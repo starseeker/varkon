@@ -1,0 +1,43 @@
+changequote({,})
+define({_TITLE_},{VARKON - Documentation})
+define({_SUBTITLE_},{- Set active attributes})
+define({_INDEXLINK_},{<a href="../index.htm">Varkon documentation index</a>})
+define({_STYLE_},{../varkonstyle.css})
+include(../../include/header.inc)
+
+<h1>Set active attributes</h1>
+
+<p>
+All entities in Varkon have graphical attributes. For a complete list of all graphical attributes see the <a href="../MBS/set.htm">set()</a> procedure. When you create an
+entity it automatically inherits the currently active attribute values that apply to it.
+The set active attributes dialog can be used to set the current value of all graphical
+attributes except PEN, LEVEL and WIDTH which are available in the menu window.
+</p>
+
+<p>
+Select the entity type from the tabs in the top of the dialog and then edit
+the settings for this entity type. Next time you create an entity of this type
+it will get the new attribute value. Existing entities are not affected. To edit
+the attributes of an existing entity use <code>menu/edit</code>.
+</p>
+
+<p>
+
+</p>
+
+<h2>Interactive function</h2>
+
+<p>f16</p>
+
+<h2>MBS Correspondence</h2>
+
+<p>set(attribute=value);</p>
+
+<h2>See also</h2>
+
+<p>
+<a href="../MBS/set.htm">set()</a>
+</p>
+
+include(../../include/svnversion.inc)
+include(../../include/footer.inc)

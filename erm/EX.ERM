@@ -141,6 +141,9 @@ VARKON Error messages for EXEPAC
 430  2  CUR_COMPARR, %s is outside the UV-bounds of the surface
 431  2  CUR_COMPARR, %s is not a 2D curve (z < > 0)
 432  2  CUR_COMP/CUR_COMPARR, NURBS degree not equal (degree elevaton is to be implemented)
+433  2  The length of %s axis vector is zero
+434  2  CSYS_USRDEF, %s- and %s-axis are not ortogonal
+435  2  Can't calculate tranform matrix (%s)
 
 600  2  TCP/IP - %s
 601  2  Robot Application Protocol (RAP) is not included in this build of Varkon

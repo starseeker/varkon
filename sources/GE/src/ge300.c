@@ -45,14 +45,14 @@
       GMSEG   *basseg,
       short    alt)
 
-/*   Creates a 2D or 3D circle.
+/*   Creates a 3D circle from orgigin, radius and angles.
  *
  *   In: por  = Pointer to center position
  *       rad  = Radius
  *       ang1 = Start angle
  *       ang2 = End angle
  *       pt   = Pointer to active coordinate system
- *       alt  = 2=2D, 3=3D
+ *       alt  = Obsolete.
  *
  *   Out: *arcpek = Arc
  *        *basseg = Arc segments
@@ -60,6 +60,7 @@
  *   (C)Microform AB 1984-11-18 Thomas Schierwagen
  *
  *   1999-04-14 Rewritten, J.Kjellander
+ *   2009-02-02 Circle rep. changed to 4 segs, J.Kjellander
  *
  *******************************************************************!*/
 
@@ -96,12 +97,13 @@
    arcpek->v2_a = ang2t;
 /*
 ***If alt == 2 create 2D-circle.
-*/
+*
    if ( alt == 2 )
      {
      arcpek->ns_a = 0;
      return(0);
      }
+*/
 /*
 ***Alt = 3, thus create 3D circle. Transform origin to active system.
 */
@@ -117,14 +119,16 @@
 
    if ( ang2 - ang1 <= 0.0 ) ang1 = ang1 - 360.0;
 /*
-***How many segments do we need ?
+***How many segments do we need ? The old 2 seg. circle rep.
+***was removed 2009-02-02, J.Kjellander because of numerical
+***instability.
 */
    if      ( ang2 - ang1 <= 90.0 + 2.0 * TOL1 )  no=1;
    else if ( ang2 - ang1 <= 180.0 + 2.0 * TOL1 ) no=2;
    else if ( ang2 - ang1 <= 270.0 + 2.0 * TOL1 ) no=3;
    else if ( ang2 - ang1 <= 360.0 - 2.0 * TOL1 ) no=4;
    else if ( ang2 - ang1 > 360.0 - 2.0 * TOL1 
-          && ang2 - ang1 < 360.0 + 2.0 * TOL1)   no=5;
+          && ang2 - ang1 < 360.0 + 2.0 * TOL1)   no=4;
    else return(erpush("GE3022","GE300" ));
 
    arcpek->ns_a = no;
@@ -146,7 +150,7 @@
      stat = GE301(&pos,rad,ang1,ang3,segdat,&pval);
      stat = GE133(segdat,pval,&locseg);
      GEtfseg_to_basic(&locseg,pt,basseg);
-  
+
      stat = GE301(&pos,rad,ang3,ang2,segdat,&pval);
      stat = GE133(segdat,pval,&locseg);
      GEtfseg_to_basic(&locseg,pt,&basseg[1]);
@@ -182,7 +186,7 @@
      stat = GE301(&pos,rad,ang3,ang4,segdat,&pval);
      stat = GE133(segdat,pval,&locseg);
      GEtfseg_to_basic(&locseg,pt,&basseg[1]);
-       
+
      ang5 = ang1 + 270.0;
      stat = GE301(&pos,rad,ang4,ang5,segdat,&pval);
      stat = GE133(segdat,pval,&locseg);
@@ -194,11 +198,12 @@
      break;
 /*
 ***5=full circle, special case with only two segments.
-*/
+*This code was removed 2009-02-02, J.Kjellander, see above.
      case 5:
      arcpek->ns_a = 2;
      stat = GE350(por,rad,pt,arcpek,basseg);
      break;
+*/
    }
 
    return(stat);
