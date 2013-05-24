@@ -32,7 +32,7 @@
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 
-extern short  actpen;
+extern int actpen;
 
 static short drawpt(WPGWIN *gwinpt, DBPoint *pointp, DBptr la, bool draw);
 
@@ -84,7 +84,7 @@ static short drawpt(WPGWIN *gwinpt, DBPoint *pointp, DBptr la, bool draw);
 /*
 ***Yes, check if the corresponding LEVEL is unblanked.
 */
-         if ( WPnivt(gwinpt,poipek->hed_p.level) )
+         if ( WPnivt(gwinpt->nivtab,poipek->hed_p.level) )
            {
 /*
 ***Set color and width.
@@ -132,7 +132,6 @@ static short drawpt(WPGWIN *gwinpt, DBPoint *pointp, DBptr la, bool draw);
    DBetype typ;
    WPWIN  *winptr;
    WPGWIN *gwinpt;
-   WPGRPT  pt;
 
 /*
 ***Loop through all WPGWIN-windows.
@@ -157,7 +156,7 @@ static short drawpt(WPGWIN *gwinpt, DBPoint *pointp, DBptr la, bool draw);
 ***If the point is BLANK or on a blanked LEVEL there is
 ***nothing more to do.
 */
-         if ( !WPnivt(gwinpt,poipek->hed_p.level)  ||
+         if ( !WPnivt(gwinpt->nivtab,poipek->hed_p.level)  ||
                             poipek->hed_p.blank ) return(0);
 /*
 ***Erase it from the display.
@@ -175,7 +174,7 @@ static short drawpt(WPGWIN *gwinpt, DBPoint *pointp, DBptr la, bool draw);
 /********************************************************/
 /*!******************************************************/
 
-        static short drawpt(
+ static short    drawpt(
         WPGWIN  *gwinpt,
         DBPoint *pointp,
         DBptr    la,
@@ -221,7 +220,7 @@ static short drawpt(WPGWIN *gwinpt, DBPoint *pointp, DBptr la, bool draw);
 ***Clip the polyline to the window borders.
 ***Display or erase visible parts.
 */
-   if ( WPcply(gwinpt,(short)-1,&k,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,(short)-1,&k,x,y,a) )
      {
      if ( draw  &&  pointp->hed_p.hit )
        {
@@ -262,54 +261,122 @@ static short drawpt(WPGWIN *gwinpt, DBPoint *pointp, DBptr la, bool draw);
  *
  *      (C)2006-12-28 J.Kjellander
  *
+ *      2007-03-22 Font & size, J.Kjellander
+ *
  ******************************************************!*/
 
  {
-    int    k;
-    double d;
+   int    k;
+   double d;
 /*
 ***Initializations.
 */
-    k = *n;
-    d =  size/2.0;
+   k = *n;
+   d =  pointp->size_p*size/4.0;
+
+   switch ( pointp->fnt_p )
+     {
 /*
-***Make a 3D cross.
+***Font 0 -> X
 */
-  ++k;
-    x[k] = pointp->crd_p.x_gm - d;
-    y[k] = pointp->crd_p.y_gm - d;
-    z[k] = pointp->crd_p.z_gm;
-    a[k] = 0;
-
-  ++k;
-    x[k] = pointp->crd_p.x_gm + d;
-    y[k] = pointp->crd_p.y_gm + d;
-    z[k] = pointp->crd_p.z_gm;
-    a[k] = 1;
-
-  ++k;
-    x[k] = pointp->crd_p.x_gm + d;
-    y[k] = pointp->crd_p.y_gm - d;
-    z[k] = pointp->crd_p.z_gm;
-    a[k] = 0;
-
-  ++k;
-    x[k] = pointp->crd_p.x_gm - d;
-    y[k] = pointp->crd_p.y_gm + d;
-    z[k] = pointp->crd_p.z_gm;
-    a[k] = 1;
-
-  ++k;
-    x[k] = pointp->crd_p.x_gm;
-    y[k] = pointp->crd_p.y_gm;
-    z[k] = pointp->crd_p.z_gm + d;
-    a[k] = 0;
-
-  ++k;
-    x[k] = pointp->crd_p.x_gm;
-    y[k] = pointp->crd_p.y_gm;
-    z[k] = pointp->crd_p.z_gm - d;
-    a[k] = 1;
+     case 0:
+   ++k;
+     x[k] = pointp->crd_p.x_gm - d;
+     y[k] = pointp->crd_p.y_gm - d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 0;
+   ++k;
+     x[k] = pointp->crd_p.x_gm + d;
+     y[k] = pointp->crd_p.y_gm + d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 1;
+   ++k;
+     x[k] = pointp->crd_p.x_gm + d;
+     y[k] = pointp->crd_p.y_gm - d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 0;
+   ++k;
+     x[k] = pointp->crd_p.x_gm - d;
+     y[k] = pointp->crd_p.y_gm + d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 1;
+   ++k;
+     x[k] = pointp->crd_p.x_gm;
+     y[k] = pointp->crd_p.y_gm;
+     z[k] = pointp->crd_p.z_gm + d;
+     a[k] = 0;
+   ++k;
+     x[k] = pointp->crd_p.x_gm;
+     y[k] = pointp->crd_p.y_gm;
+     z[k] = pointp->crd_p.z_gm - d;
+     a[k] = 1;
+          break;
+/*
+***Font 1 -> +
+*/
+     case 1:
+   ++k;
+     x[k] = pointp->crd_p.x_gm + d;
+     y[k] = pointp->crd_p.y_gm;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 0;
+   ++k;
+     x[k] = pointp->crd_p.x_gm - d;
+     y[k] = pointp->crd_p.y_gm;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 1;
+   ++k;
+     x[k] = pointp->crd_p.x_gm;
+     y[k] = pointp->crd_p.y_gm + d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 0;
+   ++k;
+     x[k] = pointp->crd_p.x_gm;
+     y[k] = pointp->crd_p.y_gm - d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 1;
+   ++k;
+     x[k] = pointp->crd_p.x_gm;
+     y[k] = pointp->crd_p.y_gm;
+     z[k] = pointp->crd_p.z_gm + d;
+     a[k] = 0;
+   ++k;
+     x[k] = pointp->crd_p.x_gm;
+     y[k] = pointp->crd_p.y_gm;
+     z[k] = pointp->crd_p.z_gm - d;
+     a[k] = 1;
+     break;
+/*
+***Font 2 -> .
+*/
+     case 2:
+   ++k;
+     x[k] = pointp->crd_p.x_gm - d;
+     y[k] = pointp->crd_p.y_gm - d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 0;
+   ++k;
+     x[k] = pointp->crd_p.x_gm + d;
+     y[k] = pointp->crd_p.y_gm - d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 1;
+   ++k;
+     x[k] = pointp->crd_p.x_gm + d;
+     y[k] = pointp->crd_p.y_gm + d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 1;
+   ++k;
+     x[k] = pointp->crd_p.x_gm - d;
+     y[k] = pointp->crd_p.y_gm + d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 1;
+   ++k;
+     x[k] = pointp->crd_p.x_gm - d;
+     y[k] = pointp->crd_p.y_gm - d;
+     z[k] = pointp->crd_p.z_gm;
+     a[k] = 1;
+     break;
+     }
 /*
 ***End.
 */

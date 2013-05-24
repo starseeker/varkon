@@ -46,6 +46,7 @@
 /*  1997-02-09   Elimination of compilation warnings                */
 /*  1997-03-16   NURBS and BBOX added                               */
 /*  1999-11-27   Free source code modifications                     */
+/*  2007-01-08   Trim curves and tesselation steps, Sören L         */
 /*                                                                  */
 /******************************************************************!*/
 
@@ -130,11 +131,10 @@
 /*  Type of surface                                                 */
     p_sur->typ_su=          I_UNDEF;    
 
-
 /*  Font                                                            */
     p_sur->fnt_su=          I_UNDEF;    
 
-/*  Font                                                            */
+/*  Dash length                                                     */
     p_sur->lgt_su=          F_UNDEF;     
 
 /*  Number of patches in U and V direction                          */
@@ -151,13 +151,13 @@
 /*  Pointer to active coordinate system                             */
     p_sur->pcsy_su=         DBNULL;       
 
-/*  Number of segments for graphical representation curves          */
-    p_sur->ngseg_su[0]=     I_UNDEF;    
-    p_sur->ngseg_su[1]=     I_UNDEF;    
-    p_sur->ngseg_su[2]=     I_UNDEF;    
-    p_sur->ngseg_su[3]=     I_UNDEF;    
-    p_sur->ngseg_su[4]=     I_UNDEF;    
-    p_sur->ngseg_su[5]=     I_UNDEF;    
+/*  Number of segments for graphical representation curves (not used)*/
+    p_sur->ngseg_su[0]=     0;    
+    p_sur->ngseg_su[1]=     0;    
+    p_sur->ngseg_su[2]=     0;    
+    p_sur->ngseg_su[3]=     0;    
+    p_sur->ngseg_su[4]=     0;    
+    p_sur->ngseg_su[5]=     0;    
 
 /*  GMSEG array pointers for font= 0                                */
     p_sur->pgseg_su[0]=     DBNULL;       
@@ -188,6 +188,20 @@
 /*                                                                 !*/
 
       varkon_ini_bbox (&p_sur->box_su);
+
+/*  Trim curves and tesselation steps                               */
+
+      p_sur->ntrim_su         = 0;
+      p_sur->getrim_su        = DBNULL;
+      p_sur->ngrwborder_su    = 0;
+      p_sur->grwborder_su     = DBNULL;
+      p_sur->ngrwiso_su       = 0;
+      p_sur->grwiso_su        = DBNULL;
+      p_sur->vertextype_su    = GL_MAP2_VERTEX_3;
+      p_sur->grstrim_su       = DBNULL;
+      p_sur->nustep_su        = -1.0;
+      p_sur->nvstep_su        = -1.0;
+
 
     return(SUCCED);
 

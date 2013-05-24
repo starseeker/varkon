@@ -45,9 +45,9 @@ extern char *mktemp();
 
 static WPLWIN  *actlwin = NULL;
 
-/* actlwin är en C-pekare till ett WPLWIN som skapats (WPinla) men
-   ännu ej blivit färdig (WPexla). Om actlwin = NULL finns inget
-   sådant fönster på gång. */
+/* actlwin ï¿½r en C-pekare till ett WPLWIN som skapats (WPinla) men
+   ï¿½nnu ej blivit fï¿½rdig (WPexla). Om actlwin = NULL finns inget
+   sï¿½dant fï¿½nster pï¿½ gï¿½ng. */
 
 
 static char title [81];        /* varkon.list.title  */
@@ -72,7 +72,7 @@ static short savelw(WPLWIN *lwinpt);
         char *hs)
 
 
-/*      Skapar nytt list-fönster, wp:s WPinla(). MBS-
+/*      Skapar nytt list-fï¿½nster, wp:s WPinla(). MBS-
  *      LST_INI(rubrik);
  *
  *      In: hs = Rubriktext.  
@@ -84,9 +84,9 @@ static short savelw(WPLWIN *lwinpt);
  *      (C)microform ab 22/7/92 U. Andersson
  *
  *      7/12/93  Omarbetad, J. Kjellander
- *      8/11/94  Resurser för texterna, J. Kjellander
+ *      8/11/94  Resurser fï¿½r texterna, J. Kjellander
  *      1996-04-25 6 st. "X", J. Kjellander
- *      1997-01-15 v3genv(), J.Kjellander
+ *      1997-01-15 IGgenv(), J.Kjellander
  *
  ******************************************************!*/
 
@@ -99,9 +99,9 @@ static short savelw(WPLWIN *lwinpt);
     FILE    *fp;
 
 /*
-***Kolla att inte ett listfönster redan är på gång.
-***Isåfall, stäng det och returnera felkod. Därmed
-***borde det vara OK för errmes() att skapa ny lista
+***Kolla att inte ett listfï¿½nster redan ï¿½r pï¿½ gï¿½ng.
+***Isï¿½fall, stï¿½ng det och returnera felkod. Dï¿½rmed
+***borde det vara OK fï¿½r errmes() att skapa ny lista
 ***med felmeddelanden.
 */
     if ( actlwin != NULL )
@@ -110,11 +110,11 @@ static short savelw(WPLWIN *lwinpt);
       return(-2);
       }
 /*
-***Allra först ser vi till att öppna en ny temporär-fil.
-***Skulle det misslyckas är ju ingen skada skedd och vi 
-***slipper jobbig felhantering med malloc() och sånt.
+***Allra fï¿½rst ser vi till att ï¿½ppna en ny temporï¿½r-fil.
+***Skulle det misslyckas ï¿½r ju ingen skada skedd och vi 
+***slipper jobbig felhantering med malloc() och sï¿½nt.
 */  
-    strcpy(templ,v3genv(VARKON_TMP));
+    strcpy(templ,IGgenv(VARKON_TMP));
     strcat(templ,jobnam);
     strcat(templ,".XXXXXX");
     mktemp(templ);
@@ -122,16 +122,14 @@ static short savelw(WPLWIN *lwinpt);
 
     if ( (fp=fopen(tmpfil,"w+")) == NULL ) return(-2);
 /*
-***Skapa fönstertitel (den text som skrivs ut i ramen).
-***Hårdprogrammerat default är " ". Tom sträng "" tolkas
-***av Motif som ingen titel och ersätts med stjärnor. Det
+***Skapa fï¿½nstertitel (den text som skrivs ut i ramen).
+***Hï¿½rdprogrammerat default ï¿½r " ". Tom strï¿½ng "" tolkas
+***av Motif som ingen titel och ersï¿½tts med stjï¿½rnor. Det
 ***vill vi inte ha.
 */
     if ( !WPgrst("varkon.list.title",title) ) strcpy(title," ");
     if (  WPgrst("varkon.list.title.jobnam",tmpbuf)  &&
           strcmp(tmpbuf,"True") == 0 ) strcat(title,jobnam);
-
-    WPmaps(title);
 /*
 ***Initiera knapptexter.
 */
@@ -140,13 +138,13 @@ static short savelw(WPLWIN *lwinpt);
     if ( !WPgrst("varkon.list.save",save) ) strcpy(save,"Spara");
     if ( !WPgrst("varkon.list.kill",kill) ) strcpy(kill,"St{ng");
 /*
-***Skapa ett ledigt fönster-ID.
+***Skapa ett ledigt fï¿½nster-ID.
 */
     if ( (id=WPwffi()) < 0 ) return(-2);
 /*
 ***Skapa ett interimistiskt WPLWIN.
-***Alla data finns ännu inte. X-fönstret är tex. inte skapat.
-***Detta görs först i WPexla() som då får fylla i resten.
+***Alla data finns ï¿½nnu inte. X-fï¿½nstret ï¿½r tex. inte skapat.
+***Detta gï¿½rs fï¿½rst i WPexla() som dï¿½ fï¿½r fylla i resten.
 */
     if ( (lwinptr=(WPLWIN *)v3mall(sizeof(WPLWIN),"WPinla"))
                                                    == NULL ) return(-2);
@@ -169,7 +167,7 @@ static short savelw(WPLWIN *lwinpt);
 
     strcpy(lwinptr->rubrik,hs);
 /*
-***Fönstrets måste minst vara så brett att alla 
+***Fï¿½nstrets mï¿½ste minst vara sï¿½ brett att alla 
 ***knappar samt rubrik och titel syns.
 */
     dx = WPstrl(page);
@@ -189,14 +187,14 @@ static short savelw(WPLWIN *lwinpt);
     lwinptr->frant  = 0;
     lwinptr->sscrol = TRUE;
 /*
-***Lagra fönstret i fönstertabellen.
-***Fönstret är ännu ej komplett med alla data tex. X-id eller
-***geometri men detta skall inte vara något problem.
+***Lagra fï¿½nstret i fï¿½nstertabellen.
+***Fï¿½nstret ï¿½r ï¿½nnu ej komplett med alla data tex. X-id eller
+***geometri men detta skall inte vara nï¿½got problem.
 */
     wpwtab[id].typ = TYP_LWIN;
     wpwtab[id].ptr = (char *)lwinptr;
 /*
-***Sätt pekaren till aktivt listfönster.
+***Sï¿½tt pekaren till aktivt listfï¿½nster.
 */
     actlwin = lwinptr;
 /*
@@ -214,8 +212,8 @@ static short savelw(WPLWIN *lwinpt);
 
 /*      Skriver in en rad text i listfilen.
  *
- *      In: s  = textsträng. 
- *          rs = radsprång.
+ *      In: s  = textstrï¿½ng. 
+ *          rs = radsprï¿½ng.
  *
  *      Ut: Inget.
  *
@@ -224,7 +222,7 @@ static short savelw(WPLWIN *lwinpt);
  *      (C)microform ab 22/7/92 U. Andersson 
  *
  *      931207 Omarbetad, J. Kjellander
- *      1998-03-11 Längre rader, J.Kjellander
+ *      1998-03-11 Lï¿½ngre rader, J.Kjellander
  *
  ******************************************************!*/
 
@@ -233,11 +231,11 @@ static short savelw(WPLWIN *lwinpt);
     char mell[V3STRLEN+1],rad[V3STRLEN+1];
 
 /*
-***Kolla att aktivt listfönster verkligen finns.
+***Kolla att aktivt listfï¿½nster verkligen finns.
 */
     if ( actlwin == NULL ) return(-2);
 /*
-***Kolla att raden inte är längre än V3STRLEN tecken.
+***Kolla att raden inte ï¿½r lï¿½ngre ï¿½n V3STRLEN tecken.
 */
     nstkn = strlen(s); 
     if ( nstkn > V3STRLEN )
@@ -246,12 +244,12 @@ static short savelw(WPLWIN *lwinpt);
       nstkn = V3STRLEN;
       }
 /*
-***Beräkna textradens längd i pixels.
+***Berï¿½kna textradens lï¿½ngd i pixels.
 */  
     lt = WPstrl(s);
     if ( lt > actlwin->maxrln ) actlwin->maxrln = lt;
 /*
-***Om raden är kortare än V3STRLEN tecken, padda med space.
+***Om raden ï¿½r kortare ï¿½n V3STRLEN tecken, padda med space.
 ***Alla rader i list-filen skall vara V3STRLEN tecken + \n.
 */
     rest  = V3STRLEN - nstkn; 
@@ -261,7 +259,7 @@ static short savelw(WPLWIN *lwinpt);
     strcat(rad,mell);
     fprintf(actlwin->filpek,"%s\n",rad);
 /*
-***Räkna upp antalet textrader.
+***Rï¿½kna upp antalet textrader.
 */  
     ++actlwin->trant;
 /*
@@ -270,7 +268,7 @@ static short savelw(WPLWIN *lwinpt);
       for (i=0;i<V3STRLEN;i++) mell[i] = ' ';
       mell[V3STRLEN] = '\0';
 /*
-***Beräkna antalet radsprång.
+***Berï¿½kna antalet radsprï¿½ng.
 ***Skriv till listfilen.
 */
       for ( i=0; i<rs - 1; i++ )
@@ -290,11 +288,11 @@ static short savelw(WPLWIN *lwinpt);
         short WPexla(
         bool  show)
 
-/*      Avslutar en listning till ett listfönster.
- *      Stänger temporär-filen, skapar fönstret i X.
+/*      Avslutar en listning till ett listfï¿½nster.
+ *      Stï¿½nger temporï¿½r-filen, skapar fï¿½nstret i X.
  *
  *      In: show = TRUE  => Visa.
- *                 FALSE => Stäng utan att visa.
+ *                 FALSE => Stï¿½ng utan att visa.
  *
  *      Ut: Inget.
  *
@@ -303,7 +301,7 @@ static short savelw(WPLWIN *lwinpt);
  *      (C)microform ab 22/7/92 U. Andersson 
  *
  *       8/12/93    Omarbetad, J. Kjellander
- *       7/11/94    Resurser för placering, J. Kjellander
+ *       7/11/94    Resurser fï¿½r placering, J. Kjellander
  *       1996-02-05 show, J. Kjellander
  *
  ******************************************************!*/
@@ -318,20 +316,20 @@ static short savelw(WPLWIN *lwinpt);
     WPBUTT  *butptr;
 
 /*
-***Kolla att ett listfönster verkligen är på gång.
+***Kolla att ett listfï¿½nster verkligen ï¿½r pï¿½ gï¿½ng.
 */
     if ( actlwin == NULL ) return(-2);
 /*
-***Stäng temporärfilen.
+***Stï¿½ng temporï¿½rfilen.
 */
     fclose(actlwin->filpek);
 /*
-***Om inget skall visas är det enkelt. Ta bort temporärfilen och
-***det interimistiska fönster som skapats i WPinla();
+***Om inget skall visas ï¿½r det enkelt. Ta bort temporï¿½rfilen och
+***det interimistiska fï¿½nster som skapats i WPinla();
 */
    if ( !show)
      {
-     v3fdel(actlwin->filnam);
+     IGfdel(actlwin->filnam);
      if ( (winptr=WPwgwp(actlwin->id.w_id)) != NULL )
        {
        winptr->typ = TYP_UNDEF;
@@ -342,7 +340,7 @@ static short savelw(WPLWIN *lwinpt);
      return(0);
      }
 /*
-***Beräkning av av max höjd på listfönstret.
+***Berï¿½kning av av max hï¿½jd pï¿½ listfï¿½nstret.
 */
     mar = (int)(0.6*DisplayHeight(xdisp,xscr)/WPstrh());
     ar = actlwin->trant;
@@ -351,11 +349,11 @@ static short savelw(WPLWIN *lwinpt);
 
     dy = 4*WPstrh() + ar*WPstrh() + WPstrh();
 /*
-***Beräkning av av min bredd på listfönstret.
+***Berï¿½kning av av min bredd pï¿½ listfï¿½nstret.
 */
     dx = WPstrh() + actlwin->maxrln + WPstrh();
 /*
-***Listfönstrets läge.
+***Listfï¿½nstrets lï¿½ge.
 */
     x  = 90;
     y  = DisplayHeight(xdisp,xscr) - dy - 50; 
@@ -363,26 +361,26 @@ static short savelw(WPLWIN *lwinpt);
     if ( XrmGetResource(xresDB,"varkon.list.geometry","Varkon.List.Geometry",
          type,&value) ) XParseGeometry((char *)value.addr,&x,&y,&dum1,&dum2);
 /*
-***Skapa listfönstret.
+***Skapa listfï¿½nstret.
 */
     crlwin(x,y,dx,dy,title);
 /*
-***Fråga hur stort listfönstret blev.
+***Frï¿½ga hur stort listfï¿½nstret blev.
 */
     WPgwsz(actlwin->id.x_id,&a,&b,&px,&py,&c,&d);
 /*
-***Sätt antal rader i fönstret.
+***Sï¿½tt antal rader i fï¿½nstret.
 */
     actlwin->frant = py/WPstrh() - 6;
 /*
-***Beräkna knapparnas storlek.
+***Berï¿½kna knapparnas storlek.
 */
     dx = WPstrl(page);
     if ( WPstrl(row) > dx ) dx = WPstrl(row);
     if ( WPstrl(save) > dx ) dx = WPstrl(save);
     if ( WPstrl(kill) > dx ) dx = WPstrl(kill);
 /*
-***Skapa sida/rad-subfönstret.
+***Skapa sida/rad-subfï¿½nstret.
 */
     x  = WPstrh();
     y  = (int)(0.25*x);
@@ -390,7 +388,7 @@ static short savelw(WPLWIN *lwinpt);
     dy = (int)(2*x);
 
     WPwcbu(actlwin->id.x_id,x,y,dx,dy,2,page,row,"",
-                                     WP_BGND,WP_FGND,&butptr);
+                                     WP_BGND2,WP_FGND,&butptr);
 
     butptr->id.p_id = actlwin->id.w_id;
     butptr->id.w_id = 0;
@@ -398,12 +396,12 @@ static short savelw(WPLWIN *lwinpt);
     actlwin->wintab[0].typ = TYP_BUTTON;
     actlwin->wintab[0].ptr = (char *)butptr;
 /*
-***Skapa spara-subfönstret.
+***Skapa spara-subfï¿½nstret.
 */
     x = x + dx + x;
 
     WPwcbu(actlwin->id.x_id,x,y,dx,dy,2,save,save,"",
-                                     WP_BGND,WP_FGND,&butptr);
+                                     WP_BGND2,WP_FGND,&butptr);
 
     butptr->id.p_id = actlwin->id.w_id;
     butptr->id.w_id = 1;
@@ -411,12 +409,12 @@ static short savelw(WPLWIN *lwinpt);
     actlwin->wintab[1].typ = TYP_BUTTON;
     actlwin->wintab[1].ptr = (char *)butptr;
 /*
-***Skapa stäng-subfönstret.
+***Skapa stï¿½ng-subfï¿½nstret.
 */
     x = x + dx + WPstrh();
 
     WPwcbu(actlwin->id.x_id,x,y,dx,dy,2,kill,kill,"",
-                                     WP_BGND,WP_FGND,&butptr);
+                                     WP_BGND2,WP_FGND,&butptr);
 
     butptr->id.p_id = actlwin->id.w_id;
     butptr->id.w_id = 2;
@@ -424,11 +422,11 @@ static short savelw(WPLWIN *lwinpt);
     actlwin->wintab[2].typ = TYP_BUTTON;
     actlwin->wintab[2].ptr = (char *)butptr;
 /*
-***Visa listfönstret.
+***Visa listfï¿½nstret.
 */
     WPwshw(actlwin->id.w_id);
 /*
-***Aktivt listfönster finns ej nu längre.
+***Aktivt listfï¿½nster finns ej nu lï¿½ngre.
 */
     actlwin = NULL;
 /*
@@ -446,11 +444,11 @@ static short savelw(WPLWIN *lwinpt);
         int   dy,
         char *wtitle)
 
-/*      Skapar listfönster.   
+/*      Skapar listfï¿½nster.   
  *
- *      In: x,y    = startkoordinater listfönstret.
- *          dx,dy  = bredd resp höjd på listfönster.
- *          wtitel = pekare till listfönstertitel. 
+ *      In: x,y    = startkoordinater listfï¿½nstret.
+ *          dx,dy  = bredd resp hï¿½jd pï¿½ listfï¿½nster.
+ *          wtitel = pekare till listfï¿½nstertitel. 
  *
  *      Ut: Inget.
  *
@@ -459,7 +457,7 @@ static short savelw(WPLWIN *lwinpt);
  *      (C)microform ab 19/7/92 U. Andersson
  *
  *      8/12/93 Omarbetad, J. Kjellander
- *      1998-03-11 Längre rader, J.Kjellander
+ *      1998-03-11 Lï¿½ngre rader, J.Kjellander
  *      2006-12-19 ButtonReleaseMAsk, J.Kjellander
  *
  ******************************************************!*/
@@ -471,14 +469,14 @@ static short savelw(WPLWIN *lwinpt);
     char                 titel[V3STRLEN];
 
 /*
-***Tilldelning av värden. 
+***Tilldelning av vï¿½rden. 
 */
     strcpy(titel,"l-");
     strcat(titel,jobnam); 
 /*
-***Sätt färg mm.
+***Sï¿½tt fï¿½rg mm.
 */
-    xwina.background_pixel = WPgcol(WP_BGND);
+    xwina.background_pixel = WPgcol(WP_BGND1);
     xwina.border_pixel = BlackPixel( xdisp, xscr );
     xwina.override_redirect = False;
     xwina.save_under = False;
@@ -486,7 +484,7 @@ static short savelw(WPLWIN *lwinpt);
     xwinm = ( CWBackPixel        | CWBorderPixel |
               CWOverrideRedirect | CWSaveUnder );  
 /*
-***Skapa ett listfönster med 3 pixels ram.
+***Skapa ett listfï¿½nster med 3 pixels ram.
 */
     actlwin->id.x_id = XCreateWindow(xdisp,DefaultRootWindow(xdisp),
                                      x,y,dx,dy,3,
@@ -509,12 +507,12 @@ static short savelw(WPLWIN *lwinpt);
     XStoreName(xdisp,actlwin->id.x_id,wtitle);   
     XSetIconName(xdisp,actlwin->id.x_id,titel);
 /*
-***Sätt upp delete-protokollet mot fönsterhanteraren för
-***listfönstret. 
+***Sï¿½tt upp delete-protokollet mot fï¿½nsterhanteraren fï¿½r
+***listfï¿½nstret. 
 */   
     WPsdpr(actlwin->id.x_id);
 /*
-***Events som vi är intresserade av. 
+***Events som vi ï¿½r intresserade av. 
 */   
     XSelectInput(xdisp,actlwin->id.x_id,ExposureMask    |
                                         ButtonPressMask |
@@ -531,7 +529,7 @@ static short savelw(WPLWIN *lwinpt);
         bool    WPxplw(
         WPLWIN *lwinpt)
 
-/*      Expose-rutin för WPLWIN.
+/*      Expose-rutin fï¿½r WPLWIN.
  *
  *      In: lwinpt = C-pekare till WPLWIN.
  *
@@ -542,7 +540,7 @@ static short savelw(WPLWIN *lwinpt);
  *      (C)microform ab 11/7/92 U. Andersson.
  *
  *      7/12/93  Omarbetad, J. Kjellander
- *      1998-03-11 Längre rader, J.Kjellander
+ *      1998-03-11 Lï¿½ngre rader, J.Kjellander
  *
  ******************************************************!*/
 
@@ -553,7 +551,7 @@ static short savelw(WPLWIN *lwinpt);
     WPBUTT *butptr;
 
 /*
-***Först expose på subfönster.
+***Fï¿½rst expose pï¿½ subfï¿½nster.
 */
     butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
     WPxpbu(butptr);
@@ -564,15 +562,19 @@ static short savelw(WPLWIN *lwinpt);
     butptr = (WPBUTT *) lwinpt->wintab[2].ptr;
     WPxpbu(butptr);
 /*
-***Ta reda på list-fönstrets storlek.
+***Ta reda pï¿½ list-fï¿½nstrets storlek.
 */  
     WPgwsz(lwinpt->id.x_id,&a,&b,&px,&py,&c,&d);
 /*
-***Antal rader i fönstret.
+***Aktivera rï¿½tt fï¿½rg.
+*/
+    XSetBackground(xdisp,xgc,WPgcol(WP_BGND1));
+/*
+***Antal rader i fï¿½nstret.
 */   
     lwinpt->frant = py/WPstrh() - 6;
 /*
-***Tilldelning av värden.
+***Tilldelning av vï¿½rden.
 */
     n = WPstrh();
     tx = n;
@@ -586,16 +588,16 @@ static short savelw(WPLWIN *lwinpt);
 */
     n = n + WPstrh();
 /*
-***Öppna listfil för läsning.
+***ï¿½ppna listfil fï¿½r lï¿½sning.
 */
     lwinpt->filpek = fopen(lwinpt->filnam,"r");
 /*
-***Vilken rad ska vi börja läsningen ifrån.
+***Vilken rad ska vi bï¿½rja lï¿½sningen ifrï¿½n.
 */
     fseek(lwinpt->filpek,lwinpt->rstart*(V3STRLEN+1),SEEK_SET);
 /*
-***Läs rad och skriv ut i listfönstret. I filen avslutas
-***raderna med '\n' men här skall de avslutas med '\0'.
+***Lï¿½s rad och skriv ut i listfï¿½nstret. I filen avslutas
+***raderna med '\n' men hï¿½r skall de avslutas med '\0'.
 */
     for ( j=0; j<lwinpt->frant; ++j )
       {  
@@ -608,7 +610,7 @@ static short savelw(WPLWIN *lwinpt);
       else break; 
       }
 /*
-***Stäng listfil och återställ färg.
+***Stï¿½ng listfil och ï¿½terstï¿½ll fï¿½rg.
 */
     fclose(lwinpt->filpek); 
 
@@ -623,16 +625,16 @@ static short savelw(WPLWIN *lwinpt);
         XButtonEvent *butev,
         wpw_id       *serv_id)
 
-/*      Button-rutin för WPLWIN med vidhängande sub-fönster.
+/*      Button-rutin fï¿½r WPLWIN med vidhï¿½ngande sub-fï¿½nster.
  *
  *      In: iwinpt  = C-pekare till WPLWIN.
  *          butev   = Pekare till X-event.
  *          serv_id = Pekare till utdata.
  *
- *      Ut: *serv_id = ID för subfönster som servat eventet.
+ *      Ut: *serv_id = ID fï¿½r subfï¿½nster som servat eventet.
  *
  *      FV: TRUE =  Eventet har servats.
- *          FALSE = Eventet gällde nåt annat fönster. 
+ *          FALSE = Eventet gï¿½llde nï¿½t annat fï¿½nster. 
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -644,8 +646,8 @@ static short savelw(WPLWIN *lwinpt);
     WPBUTT *butptr;
 
 /*
-***Till att börja med kollar vi om mus-tryckningen
-***skett i själva list-fönstret.
+***Till att bï¿½rja med kollar vi om mus-tryckningen
+***skett i sjï¿½lva list-fï¿½nstret.
 */
     if ( butev->window == lwinpt->id.x_id )
       {
@@ -653,7 +655,7 @@ static short savelw(WPLWIN *lwinpt);
       switch ( butev->button )
         {
 /*
-***Knapp 1 = scrolla texten uppåt.
+***Knapp 1 = scrolla texten uppï¿½t.
 */
         case 1:
         butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
@@ -661,14 +663,14 @@ static short savelw(WPLWIN *lwinpt);
         else                          scrpup(lwinpt);
         break;
 /*
-***Knapp nr. 2 (mittenknappen på en 3-knappars mus) i ett
-***list-fönster används för att döda det.
+***Knapp nr. 2 (mittenknappen pï¿½ en 3-knappars mus) i ett
+***list-fï¿½nster anvï¿½nds fï¿½r att dï¿½da det.
 */
         case 2:
         WPwdel(lwinpt->id.w_id);
         break;
 /*
-***Knapp 3 = scrolla texten neråt.
+***Knapp 3 = scrolla texten nerï¿½t.
 */
         case 3:
         butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
@@ -676,8 +678,8 @@ static short savelw(WPLWIN *lwinpt);
         else                          scrpdn(lwinpt);
         break;
 /*
-***Är det nån annan knapp bryr vi oss inte om den.
-***Observera att vi då måste göra return() här.
+***ï¿½r det nï¿½n annan knapp bryr vi oss inte om den.
+***Observera att vi dï¿½ mï¿½ste gï¿½ra return() hï¿½r.
 */
         default:
         return(FALSE);
@@ -685,9 +687,9 @@ static short savelw(WPLWIN *lwinpt);
       return(TRUE);
       }
 /*
-***Rad/sida-knappen. På samma sätt som i crossing-
+***Rad/sida-knappen. Pï¿½ samma sï¿½tt som i crossing-
 ***rutinen kan man komma hit utan att knapparna
-***finns ännu.
+***finns ï¿½nnu.
 */
     butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
     if ( butptr != NULL  &&  butev->window == butptr->id.x_id )
@@ -707,7 +709,7 @@ static short savelw(WPLWIN *lwinpt);
       return(TRUE);
       }
 /*
-***Stäng-knappen.
+***Stï¿½ng-knappen.
 */
     butptr = (WPBUTT *) lwinpt->wintab[2].ptr;
     if ( butptr != NULL  &&  butev->window == butptr->id.x_id )
@@ -726,14 +728,14 @@ static short savelw(WPLWIN *lwinpt);
         WPLWIN         *lwinpt,
         XCrossingEvent *croev)
 
-/*      Crossing-rutin för WPLWIN med vidhängande sub-fönster.
+/*      Crossing-rutin fï¿½r WPLWIN med vidhï¿½ngande sub-fï¿½nster.
  *
  *      In: lwinpt = C-pekare till WPLWIN.
  *
  *      Ut: Inget.   
  *
  *      FV: TRUE  => Eventet servat.
- *          FALSE => Detta fönster inte inblandat.
+ *          FALSE => Detta fï¿½nster inte inblandat.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -745,8 +747,8 @@ static short savelw(WPLWIN *lwinpt);
     WPBUTT *butptr;
 
 /*
-***Rad/sida-knappen. Om inte WPexla() anropats ännu, dvs
-***listan håller på att skapas är inga knappar ännu skapade
+***Rad/sida-knappen. Om inte WPexla() anropats ï¿½nnu, dvs
+***listan hï¿½ller pï¿½ att skapas ï¿½r inga knappar ï¿½nnu skapade
 ***men ett WPLWIN finns och butptr = NULL.
 */
     butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
@@ -787,13 +789,13 @@ static short savelw(WPLWIN *lwinpt);
         WPLWIN               *lwinpt,
         XClientMessageEvent  *clmev)
 
-/*      ClientMessage-rutinen för WPLWIN.
+/*      ClientMessage-rutinen fï¿½r WPLWIN.
  *
  *      In: iwinpt  = C-pekare till WPLWIN.
  *          clmev   = X-event.
  *
  *      FV: TRUE  = Eventet servat.
- *          FALSE = Detta fönster ej inblandat.
+ *          FALSE = Detta fï¿½nster ej inblandat.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -801,8 +803,8 @@ static short savelw(WPLWIN *lwinpt);
 
   {
 /*
-***Om det är WM_DELETE_WINDOW servar vi genom att döda
-***fönstret ifråga.
+***Om det ï¿½r WM_DELETE_WINDOW servar vi genom att dï¿½da
+***fï¿½nstret ifrï¿½ga.
 */
    if ( clmev->message_type ==
         XInternAtom(xdisp,"WM_PROTOCOLS",False) &&
@@ -821,7 +823,7 @@ static short savelw(WPLWIN *lwinpt);
         short   WPdllw(
         WPLWIN *lwinpt)
 
-/*      Dödar ett WPLWIN-fönster.
+/*      Dï¿½dar ett WPLWIN-fï¿½nster.
  *
  *      In: lwinpt = C-pekare till WPLWIN.
  *
@@ -838,11 +840,11 @@ static short savelw(WPLWIN *lwinpt);
    {
     WPBUTT *butptr;
 /*
-***Ta bort rätt temporärfilen.
+***Ta bort rï¿½tt temporï¿½rfilen.
 */
-    v3fdel(lwinpt->filnam);
+    IGfdel(lwinpt->filnam);
 /*
-***Lämna tillbaks allokerat minne för subfönstren.
+***Lï¿½mna tillbaks allokerat minne fï¿½r subfï¿½nstren.
 */
     butptr = (WPBUTT *) lwinpt->wintab[0].ptr;
     v3free((char *)butptr,"WPdllw");
@@ -853,7 +855,7 @@ static short savelw(WPLWIN *lwinpt);
     butptr = (WPBUTT *) lwinpt->wintab[2].ptr;
     v3free((char *)butptr,"WPdllw");
 /*
-***Lämna tillbaks allokerat minne för själva listfönstret.
+***Lï¿½mna tillbaks allokerat minne fï¿½r sjï¿½lva listfï¿½nstret.
 */
     v3free((char *)lwinpt,"WPdllw");
 /*
@@ -867,9 +869,9 @@ static short savelw(WPLWIN *lwinpt);
  static short scrrup(
         WPLWIN *lwinpt)
 
-/*      Scrollar listan en rad uppåt.
+/*      Scrollar listan en rad uppï¿½t.
  *
- *      In: lwinpt = C-pekare till list-fönster.
+ *      In: lwinpt = C-pekare till list-fï¿½nster.
  *
  *      Ut: Inget.
  *
@@ -884,7 +886,7 @@ static short savelw(WPLWIN *lwinpt);
    {
     int nyradb;
 /*
-***Scrollar listan en rad uppåt.
+***Scrollar listan en rad uppï¿½t.
 */  
     nyradb = lwinpt->rstart + 1;
 
@@ -906,9 +908,9 @@ static short savelw(WPLWIN *lwinpt);
  static short scrrdn(
         WPLWIN *lwinpt)
 
-/*      Scrollar listan en rad nedåt.
+/*      Scrollar listan en rad nedï¿½t.
  *
- *      In: lwinpt = C-pekare till list-fönster.
+ *      In: lwinpt = C-pekare till list-fï¿½nster.
  *
  *      Ut: Inget.
  *
@@ -922,7 +924,7 @@ static short savelw(WPLWIN *lwinpt);
 
   {
 /*
-***Scrollar listan en rad nedåt.
+***Scrollar listan en rad nedï¿½t.
 */  
     if ( lwinpt->rstart > 0 && lwinpt->rstart < lwinpt->trant )
       {
@@ -939,9 +941,9 @@ static short savelw(WPLWIN *lwinpt);
  static short scrpup(
         WPLWIN *lwinpt)
 
-/*      Scrollar listan en hel sida uppåt.
+/*      Scrollar listan en hel sida uppï¿½t.
  *
- *      In: lwinptr = C-pekare till listfönster.
+ *      In: lwinptr = C-pekare till listfï¿½nster.
  *
  *      Ut: Inget.
  *
@@ -957,7 +959,7 @@ static short savelw(WPLWIN *lwinpt);
     int nyradb;
 
 /*
-***Scrolla listan en hel sida uppåt.
+***Scrolla listan en hel sida uppï¿½t.
 */    
     nyradb = lwinpt->rstart + lwinpt->frant - 1;
 
@@ -977,9 +979,9 @@ static short savelw(WPLWIN *lwinpt);
  static short scrpdn(
         WPLWIN *lwinpt)
 
-/*      Scrollar listan en hel sida nedåt.
+/*      Scrollar listan en hel sida nedï¿½t.
  *
- *      In: lwinpt = C-pekare till listfönster.
+ *      In: lwinpt = C-pekare till listfï¿½nster.
  *
  *      Ut: Inget.
  *
@@ -994,7 +996,7 @@ static short savelw(WPLWIN *lwinpt);
   {
 
 /*
-***Scrolla listan en hel sida nedåt.
+***Scrolla listan en hel sida nedï¿½t.
 */  
     if ( lwinpt->rstart - lwinpt->frant + 2 >  0  &&
                              lwinpt->rstart <= lwinpt->trant )
@@ -1014,10 +1016,10 @@ static short savelw(WPLWIN *lwinpt);
  static short savelw(
         WPLWIN *lwinpt)
 
-/*      Sparar det angivna listfönstret eller
- *      hela listfilen på fil eller utskrift till valfri skrivare.
+/*      Sparar det angivna listfï¿½nstret eller
+ *      hela listfilen pï¿½ fil eller utskrift till valfri skrivare.
  *
- *      In: lwinpt = C-pekare till list-fönster.
+ *      In: lwinpt = C-pekare till list-fï¿½nster.
  *
  *      Ut: Inget.
  *
@@ -1027,8 +1029,8 @@ static short savelw(WPLWIN *lwinpt);
  *
  *      8/12/93 Omarbetad, J. Kjellander
  *      1997-01-25 printer, J.Kjellander
- *      1998-03-11 Längre rader, J.Kjellander
- *      2004-09-03 English texts, Johan Kjellander, Örebro university
+ *      1998-03-11 Lï¿½ngre rader, J.Kjellander
+ *      2004-09-03 English texts, Johan Kjellander, ï¿½rebro university
  *
  ******************************************************!*/
 
@@ -1050,11 +1052,11 @@ static short savelw(WPLWIN *lwinpt);
 
 /*
 ***Anrop till alternativ funktionen WPialt
-***ska vi spara hela listan eller bara fönstret?. 
+***ska vi spara hela listan eller bara fï¿½nstret?. 
 */
     hela = WPialt(slt,est,wst,FALSE);
 /*
-***Spara aktiv radbörjan.
+***Spara aktiv radbï¿½rjan.
 */
     radb = lwinpt->rstart;
 /*
@@ -1063,7 +1065,7 @@ static short savelw(WPLWIN *lwinpt);
     if ( hela == TRUE )  lwinpt->rstart = 0;
 /*
 ***Anrop till alternativ funktionen WPialt
-***spara på fil eller skrivare. 
+***spara pï¿½ fil eller skrivare. 
 */
     fil = WPialt(spt,fst,pst,FALSE);
 /*
@@ -1078,7 +1080,7 @@ static short savelw(WPLWIN *lwinpt);
 
     if ( fil == TRUE )
       {
-      status = igssip("Enter filename :",fnam,dstr,V3PTHLEN);
+      status = IGssip("Enter filename :",fnam,dstr,V3PTHLEN);
       if ( status < 0 ) goto end;
       strcpy(dstr,fnam);
       }
@@ -1087,20 +1089,20 @@ static short savelw(WPLWIN *lwinpt);
       strcpy(fnam,dstr);
       }
 /*
-***Öppna listfil för läsning.
+***ï¿½ppna listfil fï¿½r lï¿½sning.
 */
     lwinpt->filpek = fopen(lwinpt->filnam,"r");
 /*
-***Öppna  ny fil för skrivning.
+***ï¿½ppna  ny fil fï¿½r skrivning.
 */
     tempfil = fopen(fnam,"w+");
 /*
-***Skriv in överskrift och en tomrad först i tmpfil.
+***Skriv in ï¿½verskrift och en tomrad fï¿½rst i tmpfil.
 */
     fprintf(tempfil,"%s\n\n",lwinpt->rubrik);
 /*
-***Spara listfilen på en valfri fil.
-***Vilken rad ska vi börja läsningen ifrån.
+***Spara listfilen pï¿½ en valfri fil.
+***Vilken rad ska vi bï¿½rja lï¿½sningen ifrï¿½n.
 */
      fseek(lwinpt->filpek,lwinpt->rstart*81,SEEK_SET);
 
@@ -1123,16 +1125,16 @@ static short savelw(WPLWIN *lwinpt);
          }
        }
 /*
-***Stäng filerna.
+***Stï¿½ng filerna.
 */
     fclose(lwinpt->filpek);
     fclose(tempfil);
 /*
-***Tilldela radbörjan sitt ursprungliga värde.
+***Tilldela radbï¿½rjan sitt ursprungliga vï¿½rde.
 */
     lwinpt->rstart = radb;
 /*
-***Ev. utskrift på skrivare.
+***Ev. utskrift pï¿½ skrivare.
 */
     if ( !WPgrst("varkon.list.printer",printer) ) strcpy(printer,"lp");
 

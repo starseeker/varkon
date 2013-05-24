@@ -8,9 +8,10 @@
 *
 *    This file includes:
 *
-*    WPdrsu();    Draw surface
-*    WPdlsu();    Delete surface
-*    WPplsu();    Create 3D polyline
+*    WPdrsu();     Draw surface
+*    WPdlsu();     Delete surface
+*    WPplsu();     Create 3D polyline
+*    WPuvstepsu(); Calculate u/v tesselation steps
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -33,20 +34,21 @@
 #include "../include/WP.h"
 #include <math.h>
 
-extern short actpen;
+extern int actpen;
 
-static short drawsu(WPGWIN *gwinpt, DBSurf *surpek, DBSeg *sptarr[],
-                    DBptr la, bool draw);
+static short drawsu(WPGWIN *gwinpt, DBSurf *surpek, DBSegarr *pborder,
+                    DBSegarr *piso, DBptr la, bool draw);
 static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
              double z[], char a[]);
 
 /*!******************************************************/
 
-        short   WPdrsu(
-        DBSurf *surpek,
-        DBSeg  *sptarr[],
-        DBptr   la,
-        DBint   win_id)
+        short     WPdrsu(
+        DBSurf   *surpek,
+        DBSegarr *pborder,
+        DBSegarr *piso,
+        DBptr     la,
+        DBint     win_id)
 
 /*      Display a surface.
  *
@@ -60,6 +62,8 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
  *      FV:      0 => Ok.
  *
  *      (C) microform ab 22/1/95 J. Kjellander
+ *
+ *       2007-01-08 pborder, piso,   Sören L.
  *
  ******************************************************!*/
 
@@ -89,16 +93,18 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
 /*
 ***Ja, ligger ytan på en nivå som är tänd i detta fönster ?
 */
-         if ( WPnivt(gwinpt,surpek->hed_su.level) )
+         if ( WPnivt(gwinpt->nivtab,surpek->hed_su.level) )
            {
 /*
-***Ja. Kolla att rätt färg är inställd.
+***Ja. Kolla att rätt färg och linjebredd är inställd.
 */
            if ( surpek->hed_su.pen != actpen ) WPspen(surpek->hed_su.pen);
+           if ( surpek->wdt_su != 0.0 ) WPswdt(gwinpt->id.w_id,surpek->wdt_su);
 /*
 ***Sen är det bara att rita.
 */
-           drawsu(gwinpt,surpek,sptarr,la,TRUE);
+           drawsu(gwinpt,surpek,pborder,piso,la,TRUE);
+           if ( surpek->wdt_su != 0.0 ) WPswdt(gwinpt->id.w_id,0.0);
            }
          }
        }
@@ -110,11 +116,12 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
 /********************************************************/
 /*!******************************************************/
 
-        short   WPdlsu(
-        DBSurf *surpek,
-        DBSeg  *sptarr[],
-        DBptr   la,
-        DBint   win_id)
+        short     WPdlsu(
+        DBSurf   *surpek,
+        DBSegarr *pborder,
+        DBSegarr *piso,
+        DBptr     la,
+        DBint     win_id)
 
 /*      Erase a surface.
  *
@@ -128,6 +135,8 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
  *      FV:      0 => Ok.
  *
  *      (C) microform ab 21/1/95 J. Kjellander
+ *
+ *      2007-01-08 pborder, piso,   Sören L.
  *
  ******************************************************!*/
 
@@ -165,9 +174,11 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
 */
          else
            {
-           if ( !WPnivt(gwinpt,surpek->hed_su.level)  ||
+           if ( !WPnivt(gwinpt->nivtab,surpek->hed_su.level)  ||
                                surpek->hed_su.blank) return(0);
-           drawsu(gwinpt,surpek,sptarr,la,FALSE);
+           if ( surpek->wdt_su != 0.0 ) WPswdt(gwinpt->id.w_id,surpek->wdt_su);
+           drawsu(gwinpt,surpek,pborder,piso,la,FALSE);
+           if ( surpek->wdt_su != 0.0 ) WPswdt(gwinpt->id.w_id,0.0);
            }
          }
        }
@@ -179,12 +190,13 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
 /********************************************************/
 /*!******************************************************/
 
- static short   drawsu(
-        WPGWIN *gwinpt,
-        DBSurf *surpek,
-        DBSeg  *sptarr[],
-        DBptr   la,
-        bool    draw)
+ static short     drawsu(
+        WPGWIN   *gwinpt,
+        DBSurf   *surpek,
+        DBSegarr *pborder,
+        DBSegarr *piso,
+        DBptr     la,
+        bool      draw)
 
 /*      Ritar/suddar en yta i ett visst fönster.
  *      Vid ritning lagras objektet samtidigt i DF.
@@ -200,6 +212,8 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
  *      FV: Inget.
  *
  *      (C)microform ab 21/1/95 J. Kjellander
+ *
+ *      2007-01-08 pborder, piso,   Sören L.
  *
  ******************************************************!*/
 
@@ -219,7 +233,7 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
 ***Create polyline.
 */
    k = -1;
-   WPplsu(surpek,sptarr,scale,&k,x,y,z,a);
+   WPplsu(surpek,pborder,piso,scale,&k,x,y,z,a);
 /*
 ***Project on current view of window.
 */
@@ -227,7 +241,7 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
 /*
 ***Clip and draw.
 */
-   if ( WPcply(gwinpt,-1,&k,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,-1,&k,x,y,a) )
      {
      if ( draw  &&  surpek->hed_su.hit )
        {
@@ -243,31 +257,36 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
 /********************************************************/
 /*!******************************************************/
 
-        short WPplsu(
-        DBSurf *surpek,
-        DBSeg  *sptarr[],
-        double  scale,
-        int    *n,
-        double  x[],
-        double  y[],
-        double  z[],
-        char    a[])
+        short     WPplsu(
+        DBSurf   *surpek,
+        DBSegarr *pborder,
+        DBSegarr *piso,
+        double    scale,
+        int      *n,
+        double    x[],
+        double    y[],
+        double    z[],
+        char      a[])
 
-/*      Bygger en GMSUR i form av en polyline.
- *      Resultatet lagras i globala arrayer x,y,z och a.
+/*      Makes the polyline of a surface graphical
+ *      wireframe representation.
  *
- *      In: surpek =  Pekare till yt-structure.
- *          sptarr =  Array med pekare till grafiska segment.
+ *      In: surpek   = C ptr to DBSurf.
+ *          pborder  = C ptr to outer loop (border)
+ *          piso     = C ptr to mid curves
  *
- *      Ut: n      =  Offset till sista vektorn i polylinjen
+ *      Out: n       = Offset to last vector in polyline.
+ *           x,y,z,a = Polyline.
  *
- *      FV: 0 => Ok.
+ *      Return: 0 = Ok.
+ *            < 0 = Error fron WPplcu().
  *
  *      (C)microform ab 31/1/94 J. Kjellander
  *
  *      5/12/94  kurvlängd=0, J. Kjellander
  *      9/1/96   FAC_SUR, J. Kjellander
  *      2006-12-28 Removed GP, J.Kjellander
+ *      2007-01-08 pborder, piso, Sören L.
  *
  ******************************************************!*/
 
@@ -275,6 +294,7 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
     short   status;
     DBCurve cur;
     double  cn;
+    DBint   bcount,icount;
 
 /*
 ***Get current value of curve accuracy.
@@ -283,7 +303,7 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
 /*
 ***Tills vidare har vi bara en font.
 */
-    if ( surpek->fnt_su != 0 ) return(0);
+   if ( surpek->fnt_su != 0 ) return(0);
 /*
 ***Facettytor har annan grafisk representation.
 */
@@ -291,126 +311,64 @@ static short plyfac(GMSUR *surpek, int *n, double x[], double y[],
      return( plyfac(surpek,n,x,y,z,a));
 /*
 ***Initiera div data i en kurv-post så att vi kan 
-***använda den som indata till gpplcu().
+***använda den som indata till WPplcu().
 */
-    cur.hed_cu.type = CURTYP;
-    cur.plank_cu    = FALSE;
+   cur.hed_cu.type = CURTYP;
+   cur.plank_cu    = FALSE;
 /*
 ***Vi börjar med den kurvnoggrannhet som användaren begärt, men
 ***om det blir för många vektorer minskar vi succesivt.
-***För att kunna återställa curnog sparar vi det ursprungliga 
-***värdet här. För att inte gpplcu() skall perspektivtransformera
-***hela polylinjen vi varje anrop stänger vi tillfälligt av och
-***slår på först på slutet igen.
 */
 start:
-    *n = -1;
+   *n = -1;
 /*
-***Border 1. V=0.
+***Border curves.
 */
-    cur.fnt_cu = 0;
-    cur.lgt_cu = 0;
-    cur.al_cu  = 0.0;
+   cur.fnt_cu = 0;
+   cur.lgt_cu = 0;    
 
-    cur.ns_cu = cur.nsgr_cu = surpek->ngseg_su[0];
-    if ( cur.ns_cu > 0 )
-      {
-      status = WPplcu(&cur,sptarr[0],scale,n,x,y,z,a);
-      if ( status == -1 )
-        {
-        cn /= 2.0;
-        if ( cn < 0.1 ) goto end;
-        else                goto start;
-        }
-      }
+   for ( bcount=0; bcount<surpek->ngrwborder_su; bcount++ ) 
+     {
+     cur.al_cu  = 0.0;
+     cur.ns_cu = cur.nsgr_cu = pborder[bcount].nseg;
+     if ( cur.ns_cu > 0 )
+       {
+       status = WPplcu(&cur, pborder[bcount].segptr_c,scale,n,x,y,z,a);
+       if ( status == -1 )
+         {
+         cn /= 2.0;
+         if ( cn < 0.1 ) goto end;
+         else                goto start;
+         }
+       }
+     }
 /*
-***Border 2. U=1.
+***iso curves.
 */
-    cur.al_cu = 0.0;
-    cur.ns_cu = cur.nsgr_cu = surpek->ngseg_su[1];
+   cur.fnt_cu = 1;
+   cur.lgt_cu = surpek->lgt_su;
 
-    if ( cur.ns_cu > 0 )
-      {
-      status = WPplcu(&cur,sptarr[1],scale,n,x,y,z,a);
-      if ( status == -1 )
-        {
-        cn /= 2.0;
-        if ( cn < 0.1 ) goto end;
-        else                goto start;
-        }
-      }
-/*
-***Border 3. V=1.
-*/
-    cur.al_cu = 0.0;
-    cur.ns_cu = cur.nsgr_cu = surpek->ngseg_su[2];
-
-    if ( cur.ns_cu > 0 )
-      {
-      status = WPplcu(&cur,sptarr[2],scale,n,x,y,z,a);
-      if ( status == -1 )
-        {
-        cn /= 2.0;
-        if ( cn < 0.1 ) goto end;
-        else                goto start;
-        }
-      }
-/*
-***Border 4. U=0.
-*/
-    cur.al_cu = 0.0;
-    cur.ns_cu = cur.nsgr_cu = surpek->ngseg_su[3];
-
-    if ( cur.ns_cu > 0 )
-      {
-      status = WPplcu(&cur,sptarr[3],scale,n,x,y,z,a);
-      if ( status == -1 )
-        {
-        cn /= 2.0;
-        if ( cn < 0.1 ) goto end;
-        else                goto start;
-        }
-      }
-/*
-***Mid curve 1. U=constant.
-*/
-    cur.al_cu  = 0.0;
-    cur.fnt_cu = 1;
-    cur.lgt_cu = surpek->lgt_su;
-    cur.ns_cu  = cur.nsgr_cu = surpek->ngseg_su[4];
-
-    if ( cur.ns_cu > 0 )
-      {
-      status = WPplcu(&cur,sptarr[4],scale,n,x,y,z,a);
-      if ( status == -1 )
-        {
-        cn /= 2.0;
-        if ( cn < 0.1 ) goto end;
-        else                goto start;
-        }
-      }
-/*
-***Mid curve 2. V=constant.
-*/
-    cur.al_cu = 0.0;
-    cur.ns_cu = cur.nsgr_cu = surpek->ngseg_su[5];
-
-    if ( cur.ns_cu > 0 )
-      {
-      status = WPplcu(&cur,sptarr[5],scale,n,x,y,z,a);
-      if ( status == -1 )
-        {
-        cn /= 2.0;
-        if ( cn < 0.1 ) goto end;
-        else                goto start;
-        }
-      }
+   for ( icount=0; icount< surpek->ngrwiso_su; icount++ ) 
+     {
+     cur.al_cu  = 0.0;
+     cur.ns_cu = cur.nsgr_cu = piso[icount].nseg;
+     if ( cur.ns_cu > 0 )
+       {
+       status = WPplcu(&cur, piso[icount].segptr_c,scale,n,x,y,z,a);
+       if ( status == -1 )
+         {
+         cn /= 2.0;
+         if ( cn < 0.1 ) goto end;
+         else                goto start;
+         }
+       }
+     }
 /*
 ***The end.
 */
 end:
 
-    return(0);
+   return(0);
   }
 
 /********************************************************/
@@ -541,5 +499,104 @@ end:
 
    return(0);
   }
+
+/********************************************************/
+/*!******************************************************/
+
+        short     WPuvstepsu(
+        DBSurf   *surpek,
+        DBPatch  *patpek,
+        DBfloat   uscale,
+        DBfloat   vscale)
+
+/*      Calculate u/v tesselation steps.
+ *
+ *      It is possible to develop this function to evaluate u and v
+ *      values separately by samples on the surface instead of using 
+ *      the cone angles. Doing so can reduce the number of u/v steps
+ *      needed in the opengl rendering.
+ *
+ *      In:  surpek => pointer to surface structure.
+ *           patpek => pointer to patches
+ *           uscale => 1 Geo patch / graph. u-unit (normally = 1)
+ *           vscale => 1 Geo patch / graph. v-unit (normally = 1)
+ *
+ *      Out: Sets nustep_su and nvstep_su i the DBSurf.
+ *
+ *      (C) 2007-01-04 Sören Larsson, Örebro university
+ *
+ *      2007-02-12 Flat/trimmed surf. J.Kjellander
+ *
+ ******************************************************!*/
+
+{
+   DBfloat   nustep_su,nvstep_su;
+   DBfloat   this_nustep_su,this_nvstep_su;
+   DBint     i,j;
+   DBPatch  *pthispat;
+   BBOX      box_pat;
+   DBfloat   this_pat_size;
+   DBfloat   cone_angle;
+
+/*
+***Initializations.
+*/
+   nustep_su = 0.5;
+   nvstep_su = 0.5;
+/*
+*** Loop through patches to get the 'worst case'
+*/
+   for ( i=0; i<surpek->nu_su; ++i )
+     {
+     for ( j=0; j<surpek->nv_su; ++j )
+       {
+       pthispat = patpek + i*surpek->nv_su + j;
+
+       box_pat = pthispat->box_pat;
+
+       this_pat_size = sqrt((box_pat.xmax-box_pat.xmin)*(box_pat.xmax-box_pat.xmin)+
+                       (box_pat.ymax-box_pat.ymin)*(box_pat.ymax-box_pat.ymin)+
+                       (box_pat.zmax-box_pat.zmin)*(box_pat.zmax-box_pat.zmin));
+/*
+***If the cone angle of this patch is defined, use it.
+***If not set at all, it to 45 degrees,
+*/
+       if ( pthispat->cone_pat.flag == 1 ) cone_angle = pthispat->cone_pat.ang;
+       else                                cone_angle = 45;
+/*
+***If the surface is trimmed, increase the cone angle. A big surface
+***needs more steps because of the trimcurves even if the cone angle
+***is small so for trimmed surfaces, always use a cone_angle of 5*20
+***or bigger.
+*/
+       if ( surpek->ntrim_su > 0 )
+         {
+         if ( cone_angle < 20.0 ) cone_angle = 20.0;
+         cone_angle *= 5;
+         }
+/*
+***Calculate nustep/nvstep for this patch.
+*/
+       this_nustep_su = this_pat_size * cone_angle /
+                        (pthispat->ue_pat - pthispat->us_pat);
+       this_nvstep_su = this_pat_size * cone_angle /
+                        (pthispat->ve_pat - pthispat->vs_pat);
+/*
+***Is it the biggest so far ?
+*/
+       if ( this_nustep_su > nustep_su ) nustep_su = this_nustep_su;
+       if ( this_nvstep_su > nvstep_su ) nvstep_su = this_nvstep_su;
+       }
+     }
+/*
+***Save result.
+*/
+   surpek->nustep_su = nustep_su * uscale;
+   surpek->nvstep_su = nvstep_su * vscale;
+/*
+***The end.
+*/
+   return(0);
+}
 
 /********************************************************/

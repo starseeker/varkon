@@ -29,8 +29,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*
-*
 *********************************************************/
 
 #include "../../DB/include/DB.h"
@@ -234,24 +232,24 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 
        short EXmoba()
 
-/*      Interface-rutin för proceduren MODE_BASIC.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
+/*      Executes the MODE_BASIC() procedure.
  *
  *      (C)microform ab 2/3/95 J. Kjellander
+ *
+ *      2007-03-18 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
 /*
-***Inget lokalt system aktivt. 
+***No coordinate system at all is now active.
 */
     lsyspk = NULL;
     lsysla = DBNULL;
+/*
+***If the active module is active, set csys-name = BASIC.
+*/
+    if ( mspek == modstk ) strcpy(actcnm,"BASIC");
 
     return(0);
   }
@@ -261,25 +259,22 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 
        short EXmogl()
 
-/*      Interface-rutin för proceduren MODE_GLOBAL.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
+/*      Executes the MODE_GLOBAL() procedure.
  *
  *      (C)microform ab 9/2/85 J. Kjellander
  *
  *      7/11/85  Bugfix, J. Kjellander
  *      16/4/86  Bytt geo607 mot 612, J. Kjellander
  *      20/3/92  lsysla, J. Kjellander
+ *      2007-03-18 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
 /*
-***Om huvudparten är aktiv är modsys och lklsys = BASIC.
+***If the active module is active, this effectively is the
+***same thing as making the BASIC system active but the
+***name = GLOBAL.
 */
     if ( mspek == modstk )
       {
@@ -287,10 +282,11 @@ DBptr   lsysla;      /* DB pointer to active local system. */
       msysla = DBNULL;
       lsyspk = NULL;
       lsysla = DBNULL;
-      strcpy(actcnm,iggtts(223));        /* Aktivt ksys-namn */
+      strcpy(actcnm,"GLOBAL");
       }
 /*
-***Annars skall lsyspk peka på den aktiva modulens globala system.
+***If we are not in the active module, make the global system of
+***the current module active.
 */
     else 
       {
@@ -315,32 +311,31 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 
        short EXmolo(DBId *idvek)
 
-/*      Interface-rutin för proceduren MODE_LOCAL.
+/*      Executes the MODE_LOCAL(#n) procedure.
  *
- *      In: idvek => Pekare till systemets identitet.
+ *      In: idvek => ID of coordinate system.
  *
- *      Ut: Inget.
- *
- *      Felkod: EX1402 = Koordinatsystemet finns ej.
+ *      Error: EX1402 = Csys does not exist
  *
  *      (C)microform ab 9/2/85 J. Kjellander
  *
  *      16/4/86  Bytt geo607 mot 612, J. Kjellander
  *      20/3/92  EXmlla(), J. Kjellander
+ *      2007-03-18 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
     DBptr   la;
-    DBetype   typ;
+    DBetype typ;
 
 /*
-***Hämta koordinatsystemets la.
+***Get csys DBptr.
 */
     if ( DBget_pointer('I',idvek,&la,&typ) < 0  ||  typ != CSYTYP )
          return(erpush("EX1402",""));
 /*
-***Aktivera.
+***Activate.
 */
     return(EXmlla(la));
   }
@@ -350,11 +345,13 @@ DBptr   lsysla;      /* DB pointer to active local system. */
 
        short EXmlla(DBptr la)
 
-/*      Aktiverar koordinatsystemet vid LA.
+/*      Activate local coordinate system.
  *
- *      In: la = Koordinatsystemets adress i DB.
+ *      In: la = DBptr to csys.
  *
  *      (C)microform ab 20/3/92 J. Kjellander
+ *
+ *      2007-03-18 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -362,15 +359,21 @@ DBptr   lsysla;      /* DB pointer to active local system. */
     DBCsys csy;
 
 /*
-***Läs från DB, lagra och invertera.
+***Read the csys from DB and save in lklsys.
 */
     DBread_csys(&csy,&lklsys,la);
-    GEtform_inv(&lklsys,&lklsyi);
     lsyspk = &lklsys;
+/*
+***Also create the inverted version and save in lklsyi.
+*/
+    GEtform_inv(&lklsys,&lklsyi);
+/*
+***Finally update lsysla to point to the new csys.
+*/
     lsysla = la;
 /*
-***Om huvudmodulen är aktiv, uppdatera aktivt ksys-namn
-***och LA för aktiva modulens koordinatsystem.
+***If the active module is active, uppdate csys-name
+***for the csys of the active module.
 */
     if ( mspek == modstk ) strcpy(actcnm,csy.name_pl);
 

@@ -66,6 +66,13 @@ DBVector  crd_p;
 DBptr  pcsy_p;
 } GMPOI1;
 
+typedef struct
+{
+DBHeader   hed_p;
+DBVector   crd_p;
+DBptr      pcsy_p;
+DBfloat    wdt_p;
+} GMPOI2;
 /*
 ***Lines.
 */

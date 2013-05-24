@@ -8,18 +8,18 @@
 *
 *    This file includes:
 *
-*    WPwcgw();   Create WPGWIN
-*    WPnrgw();   Normalize modelwindow
-*    WPxpgw();   Expose routine for WPGWIN 
-*    WPcrgw();   Crossing routine for WPGWIN
-*    WPbtgw();   Button routine for WPGWIN
-*    WPrpgw();   Reparent routine for WPGWIN
-*    WPcogw();   Configure routine for WPGWIN
-*    WPcmgw();   Client message routine for WPGWIN
-*    WPergw();   Erase one or more WPGWIN
-*    WPrepa();   Repaint WPGWIN
-*    WPdlgw();   Kill one WPGWIN
-*   *WPggwp();   Map X-id to WPGWIN-C-pointer
+*    WPwcgw();           Create WPGWIN
+*    WPnrgw();           Normalize modelwindow
+*    WPxpgw();           Expose routine for WPGWIN 
+*    WPcrgw();           Crossing routine for WPGWIN
+*    WPbtgw();           Button routine for WPGWIN
+*    WPrpgw();           Reparent routine for WPGWIN
+*    WPcogw();           Configure routine for WPGWIN
+*    WPcmgw();           Client message routine for WPGWIN
+*    WPergw();           Erase one or more WPGWIN
+*    WPrepaint_GWIN();   Repaint WPGWIN
+*    WPdlgw();           Kill one WPGWIN
+*   *WPggwp();           Map X-id to WPGWIN-C-pointer
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -44,13 +44,18 @@
 #include "../include/v3icon.h"
 #include <string.h>
 
-extern char         jobnam[];
-extern short        actpen,actfun,v3mode;
-extern DBfloat        rstrox,rstroy,rstrdx,rstrdy;
-extern bool         rstron;
-extern DBptr        lsysla;
+extern char    jobnam[];
+extern int     actpen;
+extern short   actfun,v3mode;
+extern bool    rstron;
+extern DBptr   lsysla;
 
-static short creqbt(WPGWIN *gwinpt);
+#define MCWIN_DY 45
+
+/*
+***Prototypes for internal functions.
+*/
+static void cre_toolbar(WPGWIN *gwinpt);
 
 /*!******************************************************/
 
@@ -63,29 +68,30 @@ static short creqbt(WPGWIN *gwinpt);
         bool    main,
         DBint  *id)
 
-/*      Skapar WPGWIN-fönster. V3:s grafiska huvudfönster
- *      får ock skall ovillkorligen ha ID = 0 = GWIN_MAIN.
+/*      Skapar WPGWIN-fï¿½nster. V3:s grafiska huvudfï¿½nster
+ *      fï¿½r ock skall ovillkorligen ha ID = 0 = GWIN_MAIN.
  *
- *      In: x     = Läge i X-led.
- *          y     = Läge i Y-led.   
+ *      In: x     = Lï¿½ge i X-led.
+ *          y     = Lï¿½ge i Y-led.   
  *          dx    = Storlek i X-led.
  *          dy    = Storlek i Y-led.
- *          label = Fönstertitel.
- *          main  = TRUE  = Huvudfönstret
- *                  FALSE = Ytterligare fönster
+ *          label = Fï¿½nstertitel.
+ *          main  = TRUE  = Huvudfï¿½nstret
+ *                  FALSE = Ytterligare fï¿½nster
  *          id    = Pekare till utdata.
  *
  *      Ut: *id = Giltigt entry i wpwtab.
  *
  *      Felkod: WP1052 = wpwtab full.
- *              WP1062 = Fel från malloc().
+ *              WP1062 = Fel frï¿½n malloc().
  *
  *      (C)microform ab 24/1/94 J. Kjellander
  *
  *      13/12/94 Rub_GC, J. Kjellander
- *      27/12/94 Multifönster, J. Kjellander
+ *      27/12/94 Multifï¿½nster, J. Kjellander
  *      1997-06-11 Colormap, J.Kjellander
  *      1997-12-27 Individuella GC:n, J.Kjellander
+ *      2007-05-05 WPMCWIN, J.Kjellander
  *
  ******************************************************!*/
 
@@ -107,13 +113,13 @@ static short creqbt(WPGWIN *gwinpt);
 
 
 /*
-***Skapa ett ledigt fönster-ID. Om det är huvudfönstret
+***Skapa ett ledigt fï¿½nster-ID. Om det ï¿½r huvudfï¿½nstret
 ***som skall skapas tvingar vi ID till GWIN_MAIN = 0.
 */
     if ( main ) *id = GWIN_MAIN;
     else if ( (*id=WPwffi()) < 0 ) return(erpush("WP1052",label));
 /*
-***Sätt färg mm.
+***Sï¿½tt fï¿½rg mm.
 */
     xwina.background_pixel  = WPgcol(0);
     xwina.border_pixel      = WPgcol(1);
@@ -124,14 +130,14 @@ static short creqbt(WPGWIN *gwinpt);
     xwinm = ( CWBackPixel        | CWBorderPixel |
               CWOverrideRedirect | CWSaveUnder   | CWColormap );
 /*
-***Skapa ett fönster.
+***Skapa ett fï¿½nster.
 */
     depth  = DefaultDepth(xdisp,xscr);
 
     xwin_id = XCreateWindow(xdisp,DefaultRootWindow(xdisp),x,y,dx,dy,3,depth,
                             InputOutput,CopyFromParent,xwinm,&xwina);
 /*
-***Skicka hints till fönsterhanteraren.
+***Skicka hints till fï¿½nsterhanteraren.
 */
     width  = DisplayWidth(xdisp,xscr);
     height = DisplayHeight(xdisp,xscr);
@@ -147,9 +153,8 @@ static short creqbt(WPGWIN *gwinpt);
     xhint.max_height = height - 5;  
     XSetNormalHints(xdisp,xwin_id,&xhint);
 /*
-***Fönstertitel och ikon-text.
+***Fï¿½nstertitel och ikon-text.
 */
-    WPmaps(label); 
     XStoreName(xdisp,xwin_id,label);   
     XSetIconName(xdisp,xwin_id,jobnam);
 /*
@@ -165,21 +170,21 @@ static short creqbt(WPGWIN *gwinpt);
    wmhint.flags       = IconPixmapHint;
    XSetWMHints(xdisp,xwin_id,&wmhint);
 /*
-***V3 får ej dödas av en WINDOW-Manager som tex. Motif.
+***V3 fï¿½r ej dï¿½das av en WINDOW-Manager som tex. Motif.
 */
     WPsdpr(xwin_id);
 /*
-***Skapa ett GC för det grafiska fönstret.
-***Sätt graphics_exposures till false så vi slipper sådana
-***event i onödan.
+***Skapa ett GC fï¿½r det grafiska fï¿½nstret.
+***Sï¿½tt graphics_exposures till false sï¿½ vi slipper sï¿½dana
+***event i onï¿½dan.
 */
     Win_GC = XCreateGC(xdisp,xwin_id,0,&values);
     values.graphics_exposures = False;
     XChangeGC(xdisp,Win_GC,GCGraphicsExposures,&values);
 /*
-***Skapa ett GC till för gummibandsritning.
-***Färg nummer 3 ger blått gummiband när bakgrunden är
-***vit men är egentligen grön. Detta beror på XOR. Färger
+***Skapa ett GC till fï¿½r gummibandsritning.
+***Fï¿½rg nummer 3 ger blï¿½tt gummiband nï¿½r bakgrunden ï¿½r
+***vit men ï¿½r egentligen grï¿½n. Detta beror pï¿½ XOR. Fï¿½rger
 ***och XOR funkar tydligen bara med svart bakgrund.
 */
     if ( main )
@@ -194,8 +199,8 @@ static short creqbt(WPGWIN *gwinpt);
       XSetForeground(xdisp,Rub_GC,WPgcol(3));
       }
 /*
-***Om det inte är huvudfönstret det är frågan om utan ytterligare
-***grafiska fönster skall dessa dela Rub_GC med huvudfönstret.
+***Om det inte ï¿½r huvudfï¿½nstret det ï¿½r frï¿½gan om utan ytterligare
+***grafiska fï¿½nster skall dessa dela Rub_GC med huvudfï¿½nstret.
 */
     else
       {
@@ -204,14 +209,14 @@ static short creqbt(WPGWIN *gwinpt);
       Rub_GC = mainpt->rub_gc;
       }
 /*
-***Skapa pixmap för 'save under' på V3:s grafiska fönster.
-***För att pixmappen säkert skall klara ett stort grafiskt
-***fönster gör vi den lika stor som hela skärmen.
+***Skapa pixmap fï¿½r 'save under' pï¿½ V3:s grafiska fï¿½nster.
+***Fï¿½r att pixmappen sï¿½kert skall klara ett stort grafiskt
+***fï¿½nster gï¿½r vi den lika stor som hela skï¿½rmen.
 */
     SavePixmap = XCreatePixmap(xdisp,xwin_id,width,height,depth);
 /*
-***Nollställ den. Samtidigt sätter vi bak- och för-grund i
-***fönstrets GC.
+***Nollstï¿½ll den. Samtidigt sï¿½tter vi bak- och fï¿½r-grund i
+***fï¿½nstrets GC.
 */
     XSetBackground(xdisp,Win_GC,WPgcol(0));
     XSetForeground(xdisp,Win_GC,WPgcol(0));
@@ -227,10 +232,11 @@ static short creqbt(WPGWIN *gwinpt);
     gwinpt->id.p_id =  0;
     gwinpt->id.x_id =  xwin_id;
 
-    gwinpt->geo.x =  x;
-    gwinpt->geo.y =  y;
+    gwinpt->geo.x  =  x;
+    gwinpt->geo.y  =  y;
     gwinpt->geo.dx =  dx;
     gwinpt->geo.dy =  dy;
+
     gwinpt->geo.psiz_x = XDisplayWidthMM(xdisp,xscr) /
                          (double)DisplayWidth(xdisp,xscr);
     gwinpt->geo.psiz_y = XDisplayHeightMM(xdisp,xscr) /
@@ -244,19 +250,16 @@ static short creqbt(WPGWIN *gwinpt);
     gwinpt->reprnt = FALSE;
     gwinpt->wmandx = 0;
     gwinpt->wmandy = 0;
-
-    gwinpt->mesbpt = NULL;
 /*
-***Default aktiv vy. Motsvarar vy:n "xy" med skala = 1.0.
-***och origo i nedre vänstra hörnet.
+***Create a default full 2D view with name "xy".
 */
-    gwinpt->vy.vynamn[0] = '\0';
+    strcpy(gwinpt->vy.name,"xy");
 /*
-***Hur stort skall skärmfönstret vara ? Skall det ha marginaler
-***för tryckknappar ?
+***Hur stort skall skï¿½rmfï¿½nstret vara ? Skall det ha marginaler
+***fï¿½r tryckknappar ?
 */
     gwinpt->vy.scrwin.xmin = 0;
-    gwinpt->vy.scrwin.ymin = 0;
+    gwinpt->vy.scrwin.ymin = MCWIN_DY;
     gwinpt->vy.scrwin.xmax = dx;
     gwinpt->vy.scrwin.ymax = dy;
 
@@ -264,12 +267,12 @@ static short creqbt(WPGWIN *gwinpt);
                         "Varkon.Margin_up",type,&value) &&
          sscanf(value.addr,"%d",&margin) == 1 )
       gwinpt->vy.scrwin.ymax -= margin;
-
+/*
     if ( XrmGetResource(xresDB,"varkon.margin_down",
                         "Varkon.Margin_down",type,&value) &&
          sscanf(value.addr,"%d",&margin) == 1 )
       gwinpt->vy.scrwin.ymin += margin;
-
+*/
     if ( XrmGetResource(xresDB,"varkon.margin_left",
                         "Varkon.Margin_left",type,&value) &&
          sscanf(value.addr,"%d",&margin) == 1 )
@@ -280,7 +283,7 @@ static short creqbt(WPGWIN *gwinpt);
          sscanf(value.addr,"%d",&margin) == 1 )
       gwinpt->vy.scrwin.xmax -= margin;
 /*
-***Modellfönstret gör vi lika med det grafiska fönstret i skala = 1.0.
+***Modellfï¿½nstret gï¿½r vi lika med det grafiska fï¿½nstret i skala = 1.0.
 */
     gwinpt->vy.modwin.xmin = 0;
     gwinpt->vy.modwin.ymin = 0;
@@ -291,61 +294,78 @@ static short creqbt(WPGWIN *gwinpt);
               (gwinpt->vy.scrwin.ymax - gwinpt->vy.scrwin.ymin) *
                DisplayHeightMM(xdisp,xscr) / DisplayHeight(xdisp,xscr);
 
-    gwinpt->vy.vy_3D = FALSE;
-    gwinpt->vy.vydist = 0.0;
+    gwinpt->vy.pdist = 0.0;
 
-    gwinpt->vy.vymat.k11 = 1.0;
-    gwinpt->vy.vymat.k12 = 0.0;
-    gwinpt->vy.vymat.k13 = 0.0;
-    gwinpt->vy.vymat.k21 = 0.0;
-    gwinpt->vy.vymat.k22 = 1.0;
-    gwinpt->vy.vymat.k23 = 0.0;
-    gwinpt->vy.vymat.k31 = 0.0;
-    gwinpt->vy.vymat.k32 = 0.0;
-    gwinpt->vy.vymat.k33 = 1.0;
+    gwinpt->vy.matrix.k11 = 1.0;
+    gwinpt->vy.matrix.k12 = 0.0;
+    gwinpt->vy.matrix.k13 = 0.0;
+    gwinpt->vy.matrix.k21 = 0.0;
+    gwinpt->vy.matrix.k22 = 1.0;
+    gwinpt->vy.matrix.k23 = 0.0;
+    gwinpt->vy.matrix.k31 = 0.0;
+    gwinpt->vy.matrix.k32 = 0.0;
+    gwinpt->vy.matrix.k33 = 1.0;
 /*
-***Denna vy är fullständig och kan användas, valid = TRUE men
-***den har inget namn. Föregående vy finns ännu ej.
+***Denna vy ï¿½r fullstï¿½ndig och kan anvï¿½ndas, valid = TRUE men
+***den har inget namn. Fï¿½regï¿½ende vy finns ï¿½nnu ej.
 */
-    gwinpt->vy.valid     = TRUE;
-    gwinpt->old_vy.valid = FALSE;
+    gwinpt->vy.status     = VIEW_3D_AND_2D;
+    gwinpt->old_vy.status = VIEW_NOT_USED;
 /*
-***Displayfil.
+***Init Display File. Memory will be allocated later.
 */
     gwinpt->df_adr =  NULL;
     gwinpt->df_all =  0;
     gwinpt->df_ptr = -1;
     gwinpt->df_cur = -1;
 /*
-***Tänd alla nivåer.
+***Init levels. All unblanked.
 */
     for ( i=0; i<WP_NTSIZ; ++i ) gwinpt->nivtab[i] = 255;
 /*
-***Fönstret har ännu inga subfönster.
+***Init the table of child windows. No child windows yet.
 */
     for ( i=0; i<WP_GWSMAX; ++i) gwinpt->wintab[i].ptr = NULL;
 /*
-***Eller pekmärken.
+***Or pointer marks.
 */
     gwinpt->pmkant = 0;
 /*
-***Lagra fönstret i fönstertabellen.
+***Default grid.
+*/
+    gwinpt->grid_on = FALSE;
+    gwinpt->grid_x  = 0.0;
+    gwinpt->grid_y  = 0.0;
+    gwinpt->grid_dx = 10.0;
+    gwinpt->grid_dy = 10.0;
+/*
+***Enter the WPGWIN into the global window table.
 */
     wpwtab[*id].typ = TYP_GWIN;
     wpwtab[*id].ptr = (char *)gwinpt;
 /*
-***Skapa ev. tryckknappar för snabbval.
+***Create the Message and Command window before the toolbar.
+***Important.
 */
-    creqbt(gwinpt);
+    if ( main ) WPcreate_mcwin(*id,MCWIN_DY);
+    else        WPcreate_mcwin(*id,1);
 /*
-***Visa resultatet.
+***Create the toolbar. Any errors are reported by cre_toolbar().
+*/
+    cre_toolbar(gwinpt);
+/*
+***Show (map) the result.
 */
     WPwshw(*id);
 /*
-***Normalisera, dvs. fixa till modellfönstrets proportioner
-***och beräkna 2D transformationskonstanter.
+***Normalize, ie. fix model window proportions
+***and calculate 2D transformation constants.
 */
     WPnrgw(gwinpt);
+/*
+***Update window border.
+*/
+    WPupwb(gwinpt);
 /*
 ***Slut.
 */
@@ -358,11 +378,11 @@ static short creqbt(WPGWIN *gwinpt);
         short WPnrgw(
         WPGWIN *gwinpt)
 
-/*      Normaliserar proportionerna för GWIN-fönstrets
- *      modellfönster och beräknar nya 2D-transformations-
+/*      Normaliserar proportionerna fï¿½r GWIN-fï¿½nstrets
+ *      modellfï¿½nster och berï¿½knar nya 2D-transformations-
  *      konstanter.
  *
- *      In: gwinpt => Pekare till fönster.
+ *      In: gwinpt => Pekare till fï¿½nster.
  *
  *      Ut: Inget.   
  *
@@ -374,20 +394,20 @@ static short creqbt(WPGWIN *gwinpt);
    double mdx,mdy,gadx,gady,mprop,gprop;
 
 /*
-***Hur stor är fönstrets grafiska area.
+***Hur stor ï¿½r fï¿½nstrets grafiska area.
 */
    gadx = gwinpt->geo.psiz_x *
         (gwinpt->vy.scrwin.xmax - gwinpt->vy.scrwin.xmin);
    gady = gwinpt->geo.psiz_y *
         (gwinpt->vy.scrwin.ymax - gwinpt->vy.scrwin.ymin);
 /*
-***Hur stort är modellfönstret i millimeter.
+***Hur stort ï¿½r modellfï¿½nstret i millimeter.
 */
    mdx = gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin;
    mdy = gwinpt->vy.modwin.ymax - gwinpt->vy.modwin.ymin;
 /*
-***Förhållandet mellan grafiska areans höjd och bredd är gady/gadx.
-***Se till att modellfönstret får samma förhållande så att cirklar
+***Fï¿½rhï¿½llandet mellan grafiska areans hï¿½jd och bredd ï¿½r gady/gadx.
+***Se till att modellfï¿½nstret fï¿½r samma fï¿½rhï¿½llande sï¿½ att cirklar
 ***blir "runda" tex.
 */
    gprop = gady/gadx;
@@ -404,7 +424,7 @@ static short creqbt(WPGWIN *gwinpt);
      gwinpt->vy.modwin.ymax += (gprop*mdx - mdy)/2.0;
      }
 /*
-***Beräkna nya transformationskonstanter.
+***Berï¿½kna nya transformationskonstanter.
 */
    gwinpt->vy.k2x = (gwinpt->vy.scrwin.xmax - gwinpt->vy.scrwin.xmin) /
                     (gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin);
@@ -422,19 +442,18 @@ static short creqbt(WPGWIN *gwinpt);
 /********************************************************/
 /*!******************************************************/
 
-        bool WPxpgw(
+        bool          WPxpgw(
         WPGWIN       *gwinpt,
         XExposeEvent *expev)
 
-/*      Expose-rutin för WPGWIN.
+/*      Expose handler for WPGWIN.
  *
- *      In: gwinpt = C-pekare till WPGWIN.
- *
- *      Ut: Inget.   
- *
- *      Felkod: .
+ *      In: gwinpt = C-ptr to WPGWIN.
+ *          expev  = C-ptr to Expose event
  *
  *      (C)microform ab 23/1/94 J. Kjellander
+ *
+ *     2007-05-02 WPMCWIN, J.Kjellander
  *
  ******************************************************!*/
 
@@ -443,7 +462,7 @@ static short creqbt(WPGWIN *gwinpt);
     char   *subptr;
 
 /*
-***Först expose på alla sub-fönster.
+***First expose on all buttons/icons in the toolbar.
 */
     for ( i=0; i<WP_GWSMAX; ++i )
       {
@@ -463,17 +482,17 @@ static short creqbt(WPGWIN *gwinpt);
         }
       }
 /*
-***Även "meddelanderaden" är ett subfönster.
+***Then the Message and Command window.
 */
-   if ( gwinpt->mesbpt != NULL ) WPxpbu(gwinpt->mesbpt);
+   WPexpose_mcwin(gwinpt->mcw_ptr);
 /*
-***Kopiera från 'save under'-pixmappen.
+***Finally the graphics, copy from 'save under'-pixmap.
 */
     XCopyArea(xdisp,gwinpt->savmap,gwinpt->id.x_id,gwinpt->win_gc,
                 expev->x,expev->y,expev->width,expev->height,
                 expev->x,expev->y);
 /*
-***Slut.
+***The end.
 */
     return(TRUE);
   }
@@ -481,19 +500,19 @@ static short creqbt(WPGWIN *gwinpt);
 /********************************************************/
 /*!******************************************************/
 
-        bool WPcrgw(
+        bool            WPcrgw(
         WPGWIN         *gwinpt,
         XCrossingEvent *croev)
 
-/*      Crossing-rutin för WPGWIN med vidhängande sub-fönster.
- *      Kollar om Leave/Enter skett i något av WPGWIN-fönstrets
- *      subfönster och servar isåfall eventet.
+/*      Crossing-rutin fï¿½r WPGWIN med vidhï¿½ngande sub-fï¿½nster.
+ *      Kollar om Leave/Enter skett i nï¿½got av WPGWIN-fï¿½nstrets
+ *      subfï¿½nster och servar isï¿½fall eventet.
  *
  *      In: gwinpt = C-pekare till WPGWIN.
  *          croev  = X-cro event.
  *
  *      Ut: TRUE  = Eventet servat.
- *          FALSE = Detta fönster ej inblandat.
+ *          FALSE = Detta fï¿½nster ej inblandat.
  *
  *      Felkod: .
  *
@@ -508,7 +527,7 @@ static short creqbt(WPGWIN *gwinpt);
     WPICON *icoptr;
 
 /*
-***Gå igenom alla sub-fönster.
+***Check the toolbar.
 */
     for ( i=0; i<WP_GWSMAX; ++i )
       {
@@ -540,7 +559,9 @@ static short creqbt(WPGWIN *gwinpt);
           }
         }
       }
-
+/*
+***No hit, return false.
+*/
     return(FALSE);
   }
 
@@ -552,18 +573,18 @@ static short creqbt(WPGWIN *gwinpt);
         XButtonEvent *butev,
         wpw_id       *serv_id)
 
-/*      Button-rutin för WPGWIN med vidhängande sub-fönster.
- *      Kollar om muspekning skett i något av WPGWIN-fönstrets
- *      subfönster och servar isåfall eventet.
+/*      Button-rutin fï¿½r WPGWIN med vidhï¿½ngande sub-fï¿½nster.
+ *      Kollar om muspekning skett i nï¿½got av WPGWIN-fï¿½nstrets
+ *      subfï¿½nster och servar isï¿½fall eventet.
  *
  *      In: iwinptr = C-pekare till WPGWIN.
  *          butev   = X-but event.
  *          serv_id = Pekare till utdata.
  *
- *      Ut: *serv_id = ID för subfönster som servat eventet.
+ *      Ut: *serv_id = ID fï¿½r subfï¿½nster som servat eventet.
  *
  *      Fv: TRUE  = Eventet servat.
- *          FALSE = Detta fönster ej inblandat.
+ *          FALSE = Detta fï¿½nster ej inblandat.
  *
  *      (C)microform ab 16/12/94 J. Kjellander
  *
@@ -581,8 +602,7 @@ static short creqbt(WPGWIN *gwinpt);
     WPICON *icoptr;
 
 /*
-***WPGWIN självt kan inte generera ButtonEvent:s,
-***bara sub-fönstren.
+***Check all subwindows for hit.
 */
     hit = FALSE;
 
@@ -593,6 +613,9 @@ static short creqbt(WPGWIN *gwinpt);
         {
         switch ( gwinpt->wintab[i].typ )
           {
+/*
+***A button.
+*/
           case TYP_BUTTON:
           butptr = (WPBUTT *)subptr;
           if ( butev->window == butptr->id.x_id )
@@ -605,7 +628,9 @@ static short creqbt(WPGWIN *gwinpt);
            *serv_id = butptr->id.w_id;
             }
           break;
-
+/*
+***An icon.
+*/
           case TYP_ICON:
           icoptr = (WPICON *)subptr;
           if ( butev->window == icoptr->id.x_id )
@@ -620,20 +645,35 @@ static short creqbt(WPGWIN *gwinpt);
           break;
           }
 /*
-***Träff kanske ?
+***Hit ?
 */
         if ( hit )
           {
 /*
-***Om så tar vi särskilt hand om vissa snabbval här.
+***Yes, some shortcuts are handled here. Clear possible
+***tooltip first.
 */
-          if ( acttyp == FUNC )
+          WPclear_tooltip();
+
+          if ( acttyp == CFUNC )
             {
             oldfun = actfun;
             actfun = actnum;
 
             switch ( actnum )
               {
+              case 102:
+              WPview_dialogue(gwinpt->id.w_id);
+              break;
+
+              case 103:
+              WPgrid_dialogue(gwinpt->id.w_id);
+              break;
+
+              case 150:
+              WPprint_dialogue(gwinpt->id.w_id);
+              break;
+
               case 188:
               WPscle(gwinpt,x,y);
               break;
@@ -652,28 +692,20 @@ static short creqbt(WPGWIN *gwinpt);
               break;
 
               case 193:
-              WPzoom(gwinpt);
+              WPzoom();
               break;
 
               case 194:
-              WPiaut(gwinpt);
-              break;
-
-              case 195:
-              WPchvi(gwinpt,x,y);
+              WPiaut(gwinpt,NULL,TYP_GWIN);
               break;
 
               case 197:
-              WPnivs(gwinpt,x,y);
-              break;
-
-              case 198:
-              WPshad((int)gwinpt->id.w_id,FALSE);
+              WPlevels_dialogue(gwinpt->id.w_id);
               break;
 
               default:
               actfun = oldfun;
-              if ( igdofu(acttyp,actnum) == EXIT ) v3exit(); 
+              if ( IGdofu(acttyp,actnum) == EXIT ) IGexit(); 
               break;
               }
             actfun = oldfun;
@@ -681,13 +713,25 @@ static short creqbt(WPGWIN *gwinpt);
             }
           else
             {
-            if ( igdofu(acttyp,actnum) == EXIT ) v3exit(); 
+            if ( IGdofu(acttyp,actnum) == EXIT ) IGexit(); 
             else return(TRUE);
             }
           }
         }
       }
-
+/*
+***It could also be a resize of the Message and Command window...
+*/
+   if ( butev->window == gwinpt->mcw_ptr->resize_xid )
+     return(WPbutton_mcwin(gwinpt->mcw_ptr,butev));
+/*
+***...or a mouse click in the command edit.
+*/
+   if ( butev->window == gwinpt->mcw_ptr->cmdptr->id.x_id )
+     return(WPbted(gwinpt->mcw_ptr->cmdptr,butev));
+/*
+***The end and no hit.
+*/
     return(FALSE);
   }
 
@@ -698,7 +742,7 @@ static short creqbt(WPGWIN *gwinpt);
         WPGWIN *gwinpt,
         XReparentEvent *repev)
 
-/*      Reparent-rutin för WPGWIN.
+/*      Reparent-rutin fï¿½r WPGWIN.
  *
  *      In: gwinpt = C-pekare till WPGWIN.
  *          repev  = C-pekare till ReparentEvent.
@@ -713,7 +757,7 @@ static short creqbt(WPGWIN *gwinpt);
 
   {
 /*
-***Sätt reparent-flagga.
+***Sï¿½tt reparent-flagga.
 */
    gwinpt->reprnt = TRUE;
 
@@ -727,7 +771,7 @@ static short creqbt(WPGWIN *gwinpt);
         WPGWIN *gwinpt,
         XConfigureEvent *conev)
 
-/*      Configure-ruutine for WPGWIN.
+/*      Configure-routine for WPGWIN.
  *
  *      In: gwinpt = C-ptr to WPGWIN.
  *          conev  = C-ptr to ConfigureEvent.
@@ -738,15 +782,16 @@ static short creqbt(WPGWIN *gwinpt);
  *
  *      (C)microform ab 8/2/94 J. Kjellander
  *
- *      1994-01-08 Multifönster, J. Kjellander
+ *      1994-01-08 Multifï¿½nster, J. Kjellander
  *      2006-11-27 Pending events, Johan Kjellander
+ *      2007-05-06 WPMCWIN, J.Kjellander
  *
  ******************************************************!*/
 
   {
     int    oldx,oldy,olddx,olddy,newx,newy,newdx,newdy,
            dx,dy,ddx,ddy;
-    double oldmdx,oldmdy,sizx,sizy;
+    double oldmdx,oldmdy;
     bool   right,left,up,down;
     Window child;
     XEvent event;
@@ -770,7 +815,7 @@ static short creqbt(WPGWIN *gwinpt);
     XTranslateCoordinates(xdisp,gwinpt->id.x_id,
                       DefaultRootWindow(xdisp),0,0,&newx,&newy,&child);
 /*
-***What is the new size ?
+***What is the new size and position ?
 */
     newdx = conev->width;
     newdy = conev->height;
@@ -799,21 +844,25 @@ static short creqbt(WPGWIN *gwinpt);
       else           up   = TRUE;
       }
 /*
-***Om fönstret ännu inte har "reparentiserats" av WM
-***kan en flyttning av fönstret inte bero på användaren
-***av systemet utan måste bero på WM:s garnering av
-***fönstret med egna ramar etc. Isåfall sparar vi på
-***oss denna förflyttning så att vi vet hur stor den är.
+***Om fï¿½nstret ï¿½nnu inte har "reparentiserats" av WM
+***kan en flyttning av fï¿½nstret inte bero pï¿½ anvï¿½ndaren
+***av systemet utan mï¿½ste bero pï¿½ WM:s garnering av
+***fï¿½nstret med egna ramar etc. Isï¿½fall sparar vi pï¿½
+***oss denna fï¿½rflyttning sï¿½ att vi vet hur stor den ï¿½r.
+***Fï¿½r att detta sï¿½kert bara ska ske en gï¿½n sï¿½tter vi
+***reprntflaggan till TRUE. Det verkar som tex. KDE inte
+***gï¿½r reparent ï¿½ver huvud taget. 2007-02-02 J.Kjellander
 */
     if ( !gwinpt->reprnt )
       {
       gwinpt->wmandx += dx;
       gwinpt->wmandy += dy;
+      gwinpt->reprnt = TRUE;
       }
 /*
-***Om ovanstående garnering ännu inte skett, dvs. (wmandx,wmandy) = 0
-***men fönstret ändå "reparentiserats" har WM valt att göra saker i
-***en annan ordning än normalt. Isåfall tolkar vi denna första förflyttning
+***Om ovanstï¿½ende garnering ï¿½nnu inte skett, dvs. (wmandx,wmandy) = 0
+***men fï¿½nstret ï¿½ndï¿½ "reparentiserats" har WM valt att gï¿½ra saker i
+***en annan ordning ï¿½n normalt. Isï¿½fall tolkar vi denna fï¿½rsta fï¿½rflyttning
 ***som garnering i alla fall.
 */
     else if ( gwinpt->wmandx == 0  &&  gwinpt->wmandy == 0 )
@@ -822,7 +871,7 @@ static short creqbt(WPGWIN *gwinpt);
       gwinpt->wmandy += dy;
       }
 /*
-***Lagra den nya fönstergeometrin i WPGWIN-posten.
+***Lagra den nya fï¿½nstergeometrin i WPGWIN-posten.
 */
     gwinpt->geo.x  = newx;
     gwinpt->geo.y  = newy;
@@ -830,25 +879,44 @@ static short creqbt(WPGWIN *gwinpt);
     gwinpt->geo.dy = newdy;
     gwinpt->geo.bw = conev->border_width;
 /*
-***Vad är det som har hänt ?
-***Om fönstret har ändrat storlek beräknar vi nytt modell-
-***fönster, viewport mm. så att bilden efter automatisk repaint
-***ligger kvar på samma ställe som förut även om fönstrets origo
-***pga. ändringen har flyttats.
+***Vad ï¿½r det som har hï¿½nt ?
+***Om fï¿½nstret har ï¿½ndrat storlek berï¿½knar vi nytt modell-
+***fï¿½nster, viewport mm. sï¿½ att bilden efter automatisk repaint
+***ligger kvar pï¿½ samma stï¿½lle som fï¿½rut ï¿½ven om fï¿½nstrets origo
+***pga. ï¿½ndringen har flyttats.
 */
     if ( ( ddx != 0.0 ) || ( ddy != 0.0 ) )
       {
 /*
-***Under all omständigheter skall grafiska arean ändra storlek.
-***Detta gör vi genom att flytta origo till det nya nedre vänstra
-***hörnet och justera xmax och ymax därefter oavsett om det är
-***högra eller vänstra alt. övre eller nedre kanten som har ändrats.
+***Under all omstï¿½ndigheter skall grafiska arean ï¿½ndra storlek.
+***Detta gï¿½r vi genom att flytta origo till det nya nedre vï¿½nstra
+***hï¿½rnet och justera xmax och ymax dï¿½refter oavsett om det ï¿½r
+***hï¿½gra eller vï¿½nstra alt. ï¿½vre eller nedre kanten som har ï¿½ndrats.
 */
       gwinpt->vy.scrwin.xmax += ddx;
       gwinpt->vy.scrwin.ymax += ddy;
 /*
-***Hur blir det med modellfönstret ? Här justerar vi den kant som
-***verkligen har ändrats så att bilden ligger still på skärmen.
+***Update the position of the Message and Command window.
+*/
+      gwinpt->mcw_ptr->geo.y  = gwinpt->geo.dy - gwinpt->mcw_ptr->geo.dy;
+      gwinpt->mcw_ptr->geo.dx = gwinpt->geo.dx;
+      XMoveResizeWindow(xdisp,gwinpt->mcw_ptr->messcom_xid,gwinpt->mcw_ptr->geo.x,
+                                                            gwinpt->mcw_ptr->geo.y,
+                                                            gwinpt->mcw_ptr->geo.dx,
+                                                            gwinpt->mcw_ptr->geo.dy);
+      XMoveResizeWindow(xdisp,gwinpt->mcw_ptr->resize_xid,gwinpt->mcw_ptr->geo.x,
+                                                           gwinpt->mcw_ptr->geo.y-5,
+                                                           gwinpt->mcw_ptr->geo.dx,
+                                                           5);
+      gwinpt->mcw_ptr->cmdptr->geo.x = gwinpt->mcw_ptr->geo.dx - gwinpt->mcw_ptr->cmdptr->geo.dx - 5;
+      gwinpt->mcw_ptr->cmdptr->geo.y = gwinpt->mcw_ptr->geo.dy - gwinpt->mcw_ptr->cmdptr->geo.dy - 5;
+      XMoveResizeWindow(xdisp,gwinpt->mcw_ptr->cmdptr->id.x_id,gwinpt->mcw_ptr->cmdptr->geo.x,
+                                                                gwinpt->mcw_ptr->cmdptr->geo.y,
+                                                                gwinpt->mcw_ptr->cmdptr->geo.dx,
+                                                                gwinpt->mcw_ptr->cmdptr->geo.dy);
+/*
+***Hur blir det med modellfï¿½nstret ? Hï¿½r justerar vi den kant som
+***verkligen har ï¿½ndrats sï¿½ att bilden ligger still pï¿½ skï¿½rmen.
 */
     oldmdx = gwinpt->vy.modwin.xmax - gwinpt->vy.modwin.xmin;
     oldmdy = gwinpt->vy.modwin.ymax - gwinpt->vy.modwin.ymin;
@@ -878,14 +946,14 @@ static short creqbt(WPGWIN *gwinpt);
       gwinpt->vy.k1y =
         gwinpt->vy.scrwin.ymin - gwinpt->vy.modwin.ymin * gwinpt->vy.k2y;
 /*
-***Rita om fönstret.
+***Rita om fï¿½nstret.
 */
-      WPrepa((wpw_id)gwinpt->id.w_id);
+      WPrepaint_GWIN((wpw_id)gwinpt->id.w_id);
 /*
-***Föregående vy skall nu kunna visas i det nya fönstret, alltså
-***måste även dennas modellfönster uppdateras.
+***Fï¿½regï¿½ende vy skall nu kunna visas i det nya fï¿½nstret, alltsï¿½
+***mï¿½ste ï¿½ven dennas modellfï¿½nster uppdateras.
 */
-      if ( gwinpt->old_vy.valid )
+      if ( gwinpt->old_vy.status != VIEW_NOT_USED )
         {
         gwinpt->old_vy.scrwin.xmax += ddx;
         gwinpt->old_vy.scrwin.ymax += ddy;
@@ -917,7 +985,7 @@ static short creqbt(WPGWIN *gwinpt);
         }
       }
 /*
-***Om fönstret inte har ändrat storlek behöver vi inte göra så mycket.
+***Om fï¿½nstret inte har ï¿½ndrat storlek behï¿½ver vi inte gï¿½ra sï¿½ mycket.
 */
     else
       {
@@ -936,13 +1004,13 @@ static short creqbt(WPGWIN *gwinpt);
         WPGWIN               *gwinpt,
         XClientMessageEvent  *clmev)
 
-/*      ClientMessage-rutinen för WPGWIN.
+/*      ClientMessage-rutinen fï¿½r WPGWIN.
  *
  *      In: gwinpt  = C-pekare till WPGWIN.
  *          clmev   = X-event.
  *
  *      FV: TRUE  = Eventet servat.
- *          FALSE = Detta fönster ej inblandat.
+ *          FALSE = Detta fï¿½nster ej inblandat.
  *
  *      (C)microform ab 28/12/94 J. Kjellander
  *
@@ -950,9 +1018,9 @@ static short creqbt(WPGWIN *gwinpt);
 
   {
 /*
-***Om det är WM_DELETE_WINDOW servar vi genom att döda
-***fönstret ifråga såvida det inte är huvudfönstret
-***förstås. Detta skall dock inte kunna ta emot ett client-
+***Om det ï¿½r WM_DELETE_WINDOW servar vi genom att dï¿½da
+***fï¿½nstret ifrï¿½ga sï¿½vida det inte ï¿½r huvudfï¿½nstret
+***fï¿½rstï¿½s. Detta skall dock inte kunna ta emot ett client-
 ***message = WM_DELETE_WINDOW.
 */
    if ( clmev->message_type ==
@@ -973,14 +1041,14 @@ static short creqbt(WPGWIN *gwinpt);
         short WPergw(
         DBint win_id)
 
-/*      Suddar ett grafiskt fönster med tillhörande
- *      pixmap för save_under och DF mm.
+/*      Suddar ett grafiskt fï¿½nster med tillhï¿½rande
+ *      pixmap fï¿½r save_under och DF mm.
  *
- *      In: win_id = ID för ett WPGWIN.
+ *      In: win_id = ID fï¿½r ett WPGWIN.
  *
  *      Ut: Inget.   
  *
- *      Felkoder: WP1362 = Fönstret %s finns ej.
+ *      Felkoder: WP1362 = Fï¿½nstret %s finns ej.
  *
  *      (C)microform ab 27/12/94 J. Kjellander
  *
@@ -999,7 +1067,7 @@ static short creqbt(WPGWIN *gwinpt);
    hit = FALSE;
 /*
 ***Loopa igenom alla WPGWIN och sudda det eller de som
-***önskats.
+***ï¿½nskats.
 */
    for ( i=0; i<WTABSIZ; ++i)
      {
@@ -1014,7 +1082,7 @@ static short creqbt(WPGWIN *gwinpt);
          if ( win_id == gwinpt->id.w_id  ||  win_id == GWIN_ALL )
            {
 /*
-***Ja, sudda själva fönstret.
+***Ja, sudda sjï¿½lva fï¿½nstret.
 */
            hit = TRUE;
            XClearWindow(xdisp,gwinpt->id.x_id);
@@ -1027,15 +1095,15 @@ static short creqbt(WPGWIN *gwinpt);
            DisplayWidth(xdisp,xscr),DisplayHeight(xdisp,xscr));
            WPspen(oldpen);
 /*
-***Sudda fönstrets DF.
+***Sudda fï¿½nstrets DF.
 */
            gwinpt->df_ptr = gwinpt->df_cur = -1;
 /*
-***Nollställ pekmärken.
+***Nollstï¿½ll pekmï¿½rken.
 */
            gwinpt->pmkant = 0;
 /*
-***Gammal aktiv linjebredd gäller nu inte längre.
+***Gammal aktiv linjebredd gï¿½ller nu inte lï¿½ngre.
 */
            gwinpt->linwdt = 0.0;
            }
@@ -1056,17 +1124,17 @@ static short creqbt(WPGWIN *gwinpt);
 /********************************************************/
 /*!******************************************************/
 
-        short WPrepa(
+        short WPrepaint_GWIN(
         DBint win_id)
 
-/*      Riatr om ett grafiskt fönster med tillhörande
- *      pixmap för save_under.
+/*      Riatr om ett grafiskt fï¿½nster med tillhï¿½rande
+ *      pixmap fï¿½r save_under.
  *
- *      In: win_id = ID för ett WPGWIN.
+ *      In: win_id = ID fï¿½r ett WPGWIN.
  *
  *      Ut: Inget.   
  *
- *      Felkoder: WP1362 = Fönstret %s finns ej.
+ *      Felkoder: WP1362 = Fï¿½nstret %s finns ej.
  *
  *      (C)microform ab 1996-02-13 J. Kjellander
  *
@@ -1076,27 +1144,25 @@ static short creqbt(WPGWIN *gwinpt);
 
   {
 /*
-***Sudda.
+***Erase.
 */
     WPergw(win_id);
 /*
-***Slå på väntan.
+***Display grid if on. Do this before displaying
+***the model so that the model surley becomes visible
+***and not overwritten by the grid.
 */
-    WPwait(win_id,TRUE);
+    WPdraw_grid(win_id);
 /*
-***Rita om GM.
+***Update WPGWIN's.
 */
     EXdral(win_id);
 /*
-***Uppdatera aktivt koordinatsustem.
+***Active coordinate tsystem.
 */
-    igupcs(lsysla,V3_CS_ACTIVE);
+    IGupcs(lsysla,V3_CS_ACTIVE);
 /*
-***Slå av väntan.
-*/
-    WPwait(win_id,FALSE);
-/*
-***Slut.
+***The end.
 */
     return(0);
   }
@@ -1104,21 +1170,19 @@ static short creqbt(WPGWIN *gwinpt);
 /********************************************************/
 /*!******************************************************/
 
-        short WPdlgw(
+        short   WPdlgw(
         WPGWIN *gwinpt)
 
-/*      Dödar ett WPGWIN.
+/*      Kill a WPGWIN. Releases all memory resources
+ *      allocated by the WPGWIN.
  *
- *      In: gwinptr = C-pekare till WPGWIN.
- *
- *      Ut: Inget.   
- *
- *      Felkod: .
+ *      In: gwinptr = C-ptr to WPGWIN.
  *
  *      (C)microform ab 13/1/94 J. Kjellander
  *
- *      15/3/95  Även subfönster, J. Kjellander
+ *      15/3/95  ï¿½ven subfï¿½nster, J. Kjellander
  *      1998-01-04 Individuella GC:n, J.Kjellander
+ *      2007-05-02 WPMCWIN, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1127,7 +1191,7 @@ static short creqbt(WPGWIN *gwinpt);
     char *subptr;
 
 /*
-***Döda eventuella subfönster.
+***Kill the toolbar buttons/icons.
 */
     for ( i=0; i<WP_GWSMAX; ++i )
       {
@@ -1147,36 +1211,36 @@ static short creqbt(WPGWIN *gwinpt);
         }
       }
 /*
-***Även "meddelanderaden" är ett subfönster.
+***Kill the Message and Command window.
 */
-   if ( gwinpt->mesbpt != NULL ) WPdlbu(gwinpt->mesbpt);
+   WPdelete_mcwin(gwinpt->mcw_ptr);
 /*
-***Lämna tillbaks grafiska fönstrets "Save under"-pixmapp.
+***Free the "Save under"-pixmapp.
 */
     XFreePixmap(xdisp,gwinpt->savmap);
 /*
-***Lämna tillbaks fönstrets GC.
+***Free the GC. 
 */
     XFreeGC(xdisp,gwinpt->win_gc);
 /*
-***Om det är GWIN_MAIN det gäller lämnar vi även tillbaks
-***även gummibands-GC:t som ju delas av alla grafiska fönster.
+***Om det ï¿½r GWIN_MAIN det gï¿½ller lï¿½mnar vi ï¿½ven tillbaks
+***ï¿½ven gummibands-GC:t som ju delas av alla grafiska fï¿½nster.
 */
     if ( gwinpt->id.w_id == GWIN_MAIN )
       {
       XFreeGC(xdisp,gwinpt->rub_gc);
       }
 /*
-***Här borde eventuella grafiska cursors lämnas tillbaks
+***Hï¿½r borde eventuella grafiska cursors lï¿½mnas tillbaks
 ***med XFreeCursor(id); Eller kanske i wp1 eftersom flera
-***grafiska fönster kan använda samma cursor.
+***grafiska fï¿½nster kan anvï¿½nda samma cursor.
 */
 /*
-***Displayfil.
+***Display file.
 */
     if ( gwinpt->df_adr != NULL) v3free((char *)gwinpt->df_adr,"WPdlgw");
 /*
-***Lämna tillbaks dynamiskt allokerat minne.
+***Free the window itself.
 */
     v3free((char *)gwinpt,"WPdlgw");
 
@@ -1189,14 +1253,14 @@ static short creqbt(WPGWIN *gwinpt);
         WPGWIN *WPggwp(
         Window   x_id)
 
-/*      Letar upp det grafiska fönstret med angiven
- *      X-id och returnerar en C-pekare till fönstret.
+/*      Letar upp det grafiska fï¿½nstret med angiven
+ *      X-id och returnerar en C-pekare till fï¿½nstret.
  *
- *      In: x_id  = Fönstrets X-id.
+ *      In: x_id  = Fï¿½nstrets X-id.
  *
  *      Ut: Inget.   
  *
- *      FV: C-adress eller NULL om fönster saknas.
+ *      FV: C-adress eller NULL om fï¿½nster saknas.
  *
  *      (C)microform ab 13/12/94 J. Kjellander
  *
@@ -1207,7 +1271,7 @@ static short creqbt(WPGWIN *gwinpt);
     WPGWIN  *gwinpt;
 
 /*
-***Leta upp fönstret.
+***Look up the window in wpwtab[].
 */
     for ( i=0; i<WTABSIZ; ++i)
       {
@@ -1221,7 +1285,7 @@ static short creqbt(WPGWIN *gwinpt);
         }
       }
 /*
-***Ingen träff.
+***No hit.
 */
     return(NULL);
   }
@@ -1229,20 +1293,19 @@ static short creqbt(WPGWIN *gwinpt);
 /********************************************************/
 /*!******************************************************/
 
- static short creqbt(
+ static void    cre_toolbar(
         WPGWIN *gwinpt)
 
-/*      Skapar grafiska fönstrets snabbvalsknappar.
+/*      Creates WPGWIN toolbar.
  *
- *      In: gwinpt = C-pekare till WPGWIN.
+ *      In: gwinpt = C ptr to WPGWIN.
  *
- *      Ut: Inget.   
- *
- *      Felkod: .
+ *      Error: WP1723 = Can't find icon file %s
  *
  *      (C)microform ab 16/12/94 J. Kjellander
  *
- *      1997-01-15 v3genv(), J.Kjellander
+ *      1997-01-15 IGgenv(), J.Kjellander
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1259,13 +1322,14 @@ static short creqbt(WPGWIN *gwinpt);
     WPICON   *iconpt;
 
 /*
-***Antal subfönster är till att börja med = 0.
+***Init sub window count.
 */
     nsub    = 0;
 /*
-***Vi börjar med textknapparna. varkon.button_n.geometry
-***                             varkon.button_n.text
-***                             varkon.button_n.action
+***Start with buttons. varkon.button_n.geometry
+***                    varkon.button_n.text
+***                    varkon.button_n.action
+***                    varkon.button_n.tooltip
 */
     for ( i=0; i<WP_GWSMAX; ++i )
       {
@@ -1277,7 +1341,7 @@ static short creqbt(WPGWIN *gwinpt);
       strcat(xrmstr1,".geometry");
       strcat(xrmstr2,".Geometry");
 /*
-***Prova att hämta .geometry-resursen.
+***Try .geometry.
 */
       if ( XrmGetResource(xresDB,xrmstr1,xrmstr2,type,&value) )
         {
@@ -1287,8 +1351,7 @@ static short creqbt(WPGWIN *gwinpt);
         if ( YValue & flags )
           if ( YNegative & flags ) y = gwinpt->geo.dy + y - dy;
 /*
-***Geometry finns. Då provar vi med texten.
-***Om inte text finns tar vi knappens nummer istället.
+***Geometry exists. Try the text. If no text use count instead.
 */
         strcpy(xrmstr1,"varkon.button_");
         strcpy(xrmstr2,"Varkon.Button_");
@@ -1303,18 +1366,18 @@ static short creqbt(WPGWIN *gwinpt);
         else
           strcpy(butstr,numstr);
 /*
-***Då skapar vi en tryckknapp.
+***Create the button.
 */
         status = WPwcbu(gwinpt->id.x_id,
                        (short)x,(short)y,(short)dx,(short)dy,(short)1,
-                        butstr,butstr,"",WP_BGND,WP_FGND,&buttpt);
+                        butstr,butstr,"",WP_BGND2,WP_FGND,&buttpt);
 
         if ( status == 0 )
           {
           gwinpt->wintab[nsub].typ = TYP_BUTTON;
           gwinpt->wintab[nsub].ptr = (char *)buttpt;
 /*
-***Nu fattas bara aktionskoden. Om sådan saknas väljer vi "f0".
+***Action code, default = "f0".
 */
           strcpy(xrmstr1,"varkon.button_");
           strcpy(xrmstr2,"Varkon.Button_");
@@ -1331,28 +1394,47 @@ static short creqbt(WPGWIN *gwinpt);
 
           if ( sscanf(&actstr[1],"%hd",&buttpt->actnum) != 1 )
             buttpt->actnum = 0;
-  
+
           switch ( actstr[0] )
             {
-            case 'f': buttpt->acttyp = FUNC; break;
-            case 'm': buttpt->acttyp = MENU; break;
-            case 'p': buttpt->acttyp = PART; break;
+            case 'f': buttpt->acttyp = CFUNC; break;
+            case 'm': buttpt->acttyp = MENU;  break;
+            case 'p': buttpt->acttyp = PART;  break;
             case 'M': buttpt->acttyp = MFUNC; break;
-            case 'r': buttpt->acttyp = RUN; break;
-  
+            case 'r': buttpt->acttyp = RUN;   break;
+
             default:
-            buttpt->acttyp = FUNC;
+            buttpt->acttyp = CFUNC;
             buttpt->actnum = 0;
             break;
             }
 /*
-***Slutligen räknar vi upp nsub.
+***Finally, check for optional tooltip.
 */
-          if ( ++nsub == WP_GWSMAX ) return(0);
+        strcpy(xrmstr1,"varkon.button_");
+        strcpy(xrmstr2,"Varkon.Button_");
+        sprintf(numstr,"%d",i);
+        strcat(xrmstr1,numstr);
+        strcat(xrmstr2,numstr);
+        strcat(xrmstr1,".tooltip");
+        strcat(xrmstr2,".Tooltip");
+
+        if ( XrmGetResource(xresDB,xrmstr1,xrmstr2,type,&value) )
+          {
+          strncpy(buttpt->tt_str,value.addr,80);
+          buttpt->tt_str[80] = '\0';
           }
+        else
+          buttpt->tt_str[0] = '\0';
+/*
+***Increment subwindow count.
+*/
+          if ( ++nsub == WP_GWSMAX ) return;
+          }
+        else errmes();
         }
 /*
-***Kanske finns det en ikon med samma nummer.
+***Now check for icons.
 */
       strcpy(xrmstr1,"varkon.icon_");
       strcpy(xrmstr2,"Varkon.Icon_");
@@ -1362,7 +1444,7 @@ static short creqbt(WPGWIN *gwinpt);
       strcat(xrmstr1,".geometry");
       strcat(xrmstr2,".Geometry");
 /*
-***Prova att hämta .geometry-resursen.
+***Try to get the .geometry resource.
 */
       if ( XrmGetResource(xresDB,xrmstr1,xrmstr2,type,&value) )
         {
@@ -1372,7 +1454,7 @@ static short creqbt(WPGWIN *gwinpt);
         if ( YValue & flags )
           if ( YNegative & flags ) y = gwinpt->geo.dy + y - dy;
 /*
-***Geometry finns. Då provar vi med filnamnet.
+***Geometry exists, try the filename.
 */
         strcpy(xrmstr1,"varkon.icon_");
         strcpy(xrmstr2,"Varkon.Icon_");
@@ -1382,24 +1464,30 @@ static short creqbt(WPGWIN *gwinpt);
         strcat(xrmstr1,".name");
         strcat(xrmstr2,".Name");
 /*
-***Filnamn.
+***Filname.
 */
-        strcpy(iconam,v3genv(VARKON_ICO));
+        strcpy(iconam,IGgenv(VARKON_ICO));
         if ( XrmGetResource(xresDB,xrmstr1,xrmstr2,type,&value) )
           strcat(iconam,value.addr);
+        else
+          {
+          erpush("WP1723",xrmstr1);
+          errmes();
+          return;
+          }
 /*
-***Då skapar vi en ikon.
+***Create the icon.
 */
         status = WPwcic(gwinpt->id.x_id,
                        (short)x,(short)y,(short)1,iconam,
-                       WP_BGND,WP_FGND,&iconpt);
+                       WP_BGND2,WP_FGND,&iconpt);
 
         if ( status == 0 )
           {
           gwinpt->wintab[nsub].typ = TYP_ICON;
           gwinpt->wintab[nsub].ptr = (char *)iconpt;
 /*
-***Nu fattas bara aktionskoden. Om sådan saknas väljer vi "f0".
+***Actioncode, default = "f0".
 */
           strcpy(xrmstr1,"varkon.icon_");
           strcpy(xrmstr2,"Varkon.Icon_");
@@ -1419,29 +1507,50 @@ static short creqbt(WPGWIN *gwinpt);
 
           switch ( actstr[0] )
             {
-            case 'f': iconpt->acttyp = FUNC; break;
-            case 'm': iconpt->acttyp = MENU; break;
-            case 'p': iconpt->acttyp = PART; break;
+            case 'f': iconpt->acttyp = CFUNC; break;
+            case 'm': iconpt->acttyp = MENU;  break;
+            case 'p': iconpt->acttyp = PART;  break;
             case 'M': iconpt->acttyp = MFUNC; break;
-            case 'r': iconpt->acttyp = RUN; break;
-    
+            case 'r': iconpt->acttyp = RUN;   break;
+
             default:
-            iconpt->acttyp = FUNC;
+            iconpt->acttyp = CFUNC;
             iconpt->actnum = 0;
             break;
             }
 /*
-***Slutligen räknar vi upp nsub.
+***Optional tooltip.
 */
-          if ( ++nsub == WP_GWSMAX ) return(0);
+        strcpy(xrmstr1,"varkon.icon_");
+        strcpy(xrmstr2,"Varkon.Icon_");
+        sprintf(numstr,"%d",i);
+        strcat(xrmstr1,numstr);
+        strcat(xrmstr2,numstr);
+        strcat(xrmstr1,".tooltip");
+        strcat(xrmstr2,".Tooltip");
+
+        if ( XrmGetResource(xresDB,xrmstr1,xrmstr2,type,&value) )
+          {
+          strncpy(iconpt->tt_str,value.addr,80);
+          iconpt->tt_str[80] = '\0';
           }
+        else
+          iconpt->tt_str[0] = '\0';
+/*
+***Increment subwindow count.
+*/
+          if ( ++nsub == WP_GWSMAX ) return;
+          }
+       else errmes();
        }
 /*
-***Nästa knapp eller ikon.
+***Next button or icon.
 */
     }
-
-    return(0);
+/*
+***The end.
+*/
+    return;
   }
 
 /********************************************************/

@@ -53,31 +53,31 @@ $(OBJECTS) : $(INCFILES)
 # Each driver is a target
 
 $(POSTSCRIPT): postscript.c  $(OBJECTS)  $(INCFILES)
-	$(COMPILE) postscript.c ../lib/PLlib.a -lm ../../IG/src/ig29.c -o $(POSTSCRIPT)
+	$(COMPILE) postscript.c ../lib/PLlib.a -lm ../../IG/src/igenvpath.c -o $(POSTSCRIPT)
 	strip $(POSTSCRIPT)
 
 $(EPSON) : epson.c  $(OBJECTS) $(INCFILES)
-	$(COMPILE) epson.c ../lib/PLlib.a -lm ../../IG/src/ig29.c -o $(EPSON)
+	$(COMPILE) epson.c ../lib/PLlib.a -lm ../../IG/src/igenvpath.c -o $(EPSON)
 	strip $(EPSON)
 
 $(IBMPRO) : ibmpro.c  $(OBJECTS) $(INCFILES)
-	$(COMPILE) ibmpro.c  ../lib/PLlib.a -lm ../../IG/src/ig29.c  ../lib/PLlib.a -lm -o $(IBMPRO)
+	$(COMPILE) ibmpro.c  ../lib/PLlib.a -lm ../../IG/src/igenvpath.c  ../lib/PLlib.a -lm -o $(IBMPRO)
 	strip $(IBMPRO)
 
 $(HP7475) : hp7475.c  $(OBJECTS) $(INCFILES)
-	$(COMPILE) hp7475.c  ../lib/PLlib.a -lm ../../IG/src/ig29.c  ../lib/PLlib.a -lm -o $(HP7475)
+	$(COMPILE) hp7475.c  ../lib/PLlib.a -lm ../../IG/src/igenvpath.c  ../lib/PLlib.a -lm -o $(HP7475)
 	strip $(HP7475)
 
 $(HPCL5)  : hpcl5.c $(OBJECTS) $(INCFILES)
-	$(COMPILE) hpcl5.c  ../lib/PLlib.a -lm ../../IG/src/ig29.c  ../lib/PLlib.a -lm -o $(HPCL5)
+	$(COMPILE) hpcl5.c  ../lib/PLlib.a -lm ../../IG/src/igenvpath.c  ../lib/PLlib.a -lm -o $(HPCL5)
 	strip $(HPCL5)
 
 $(HPGL2)  : hpgl2.c  $(OBJECTS) $(INCFILES)
-	$(COMPILE) hpgl2.c  ../lib/PLlib.a -lm ../../IG/src/ig29.c  ../lib/PLlib.a -lm -o $(HPGL2)
+	$(COMPILE) hpgl2.c  ../lib/PLlib.a -lm ../../IG/src/igenvpath.c  ../lib/PLlib.a -lm -o $(HPGL2)
 	strip $(HPGL2)
 
 $(GERBER) : gerber.c  $(OBJECTS) $(INCFILES)
-	$(COMPILE) gerber.c  ../lib/PLlib.a -lm ../../IG/src/ig29.c  ../lib/PLlib.a -lm -o $(GERBER)
+	$(COMPILE) gerber.c  ../lib/PLlib.a -lm ../../IG/src/igenvpath.c  ../lib/PLlib.a -lm -o $(GERBER)
 	strip $(GERBER)
 
   

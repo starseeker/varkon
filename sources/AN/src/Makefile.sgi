@@ -24,8 +24,7 @@ CFLAGS =                    \
          -signed            \
          -O                 \
          -DUNIX             \
-         -DANALYZER         \
-         -DWRK_STAT
+         -DANALYZER
 
 LDFLAGS = -mips1
 

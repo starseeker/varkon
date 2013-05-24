@@ -19,9 +19,9 @@ LIBS  = IG/lib/IGlib.a \
         WP/lib/WPlib.a \
         GE/lib/GElib.a
 
-# X Window system libraries 
+# X11 libraries 
 
-XLIBS = -L/usr/X11R6/lib -lX11 -lXext
+XLIBS = -L/usr/X11R6/lib -lX11 -lXext -lXpm
 
 # OpenGL libraries. You may have to change this line
 # to reflect the location of your OpenGL libs.

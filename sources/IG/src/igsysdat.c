@@ -4,14 +4,14 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  igangm();    List GM-metadata                                   */
-/*  iganpm();    List PM-metadata                                   */
-/*  lstitb();    List IDTAB                                         */
-/*  rdgmpk();    Reads DB-pointer                                   */
-/*  lstsyd();    List systemdata                                    */
+/*  IGangm();    List GM-metadata                                   */
+/*  IGanpm();    List PM-metadata                                   */
+/*  IGlitb();    List IDTAB                                         */
+/*  IGrgmp();    Reads DB-pointer                                   */
+/*  IGlsyd();    List systemdata                                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -30,13 +30,12 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../DB/include/DBintern.h"
 #include "../include/IG.h"
+#include "../../WP/include/WP.h"
 
 extern V3MDAT   sydata;
 extern V3MSIZ   sysize;
@@ -44,7 +43,7 @@ extern DBseqnum huvidm;
 
 /*!******************************************************/
 
-       short igangm()
+       short IGangm()
 
 /*      Listar GM-metadata.
  *
@@ -69,42 +68,42 @@ extern DBseqnum huvidm;
 /*
 ***Skriv ut.
 */
-    WPinla(iggtts(270));
+    WPinla(IGgtts(270));
 
-    sprintf(buf,"%s%d",iggtts(27),(int)gmd.pagsiz);
+    sprintf(buf,"%s%d",IGgtts(27),(int)gmd.pagsiz);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(28),(int)gmd.logmax);
+    sprintf(buf,"%s%d",IGgtts(28),(int)gmd.logmax);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(29),(int)gmd.logusd);
+    sprintf(buf,"%s%d",IGgtts(29),(int)gmd.logusd);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(30),(int)gmd.fysmax);
+    sprintf(buf,"%s%d",IGgtts(30),(int)gmd.fysmax);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(31),(int)gmd.fysusd);
+    sprintf(buf,"%s%d",IGgtts(31),(int)gmd.fysusd);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(32),(int)gmd.pfsiz);
+    sprintf(buf,"%s%d",IGgtts(32),(int)gmd.pfsiz);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(33),(int)gmd.pfcnt);
+    sprintf(buf,"%s%d",IGgtts(33),(int)gmd.pfcnt);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(34),(int)gmd.wrcnt);
+    sprintf(buf,"%s%d",IGgtts(34),(int)gmd.wrcnt);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(35),(int)gmd.rdcnt);
+    sprintf(buf,"%s%d",IGgtts(35),(int)gmd.rdcnt);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(36),(int)gmd.ipgnum);
+    sprintf(buf,"%s%d",IGgtts(36),(int)gmd.ipgnum);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(37),(int)gmd.dpgnum);
+    sprintf(buf,"%s%d",IGgtts(37),(int)gmd.dpgnum);
     WPalla(buf,1);
 
-    sprintf(buf,"%s%d",iggtts(38),(int)gmd.datofs);
+    sprintf(buf,"%s%d",IGgtts(38),(int)gmd.datofs);
     WPalla(buf,1);
 
     WPexla(TRUE);
@@ -115,7 +114,7 @@ extern DBseqnum huvidm;
 /********************************************************/
 /*!******************************************************/
 
-       short iganpm()
+       short IGanpm()
 
 /*      Listar PM-metadata.
  *
@@ -147,7 +146,7 @@ extern DBseqnum huvidm;
 /*
 ***Skriv ut.
 */
-    WPinla(iggtts(270));
+    WPinla(IGgtts(270));
 
     sprintf(buf,"PMSIZE = %d",sysize.pm);
     WPalla(buf,1);
@@ -194,7 +193,7 @@ extern DBseqnum huvidm;
 /********************************************************/
 /*!******************************************************/
 
-       short lstitb()
+       short IGlitb()
 
 /*      Listar IDTAB
  *
@@ -217,7 +216,7 @@ extern DBseqnum huvidm;
     char     strbuf[80];
     DBHeader   hdr;
 
-    WPinla(iggtts(270));
+    WPinla(IGgtts(270));
     for (snr=0; snr<=huvidm; ++snr)
       {
       if ( (la=gmrdid(DBNULL,snr)) >= 0 )
@@ -241,7 +240,7 @@ extern DBseqnum huvidm;
 /********************************************************/
 /*!******************************************************/
 
-       short rdgmpk()
+       short IGrgmp()
 
 /*      Läser värde ur GM.
  *
@@ -262,21 +261,21 @@ extern DBseqnum huvidm;
     DBfloat val8;
     char    buf[V3STRLEN];
 
-    if ( igsiip("Adress : ",&adr) == REJECT ) return(0);
+    if ( IGsiip("Adress : ",&adr) == REJECT ) return(0);
     rddat1((char *) &val1, (DBptr)adr, sizeof(val1));
     rddat1((char *) &val2, (DBptr)adr, sizeof(val2));
     rddat1((char *) &val4, (DBptr)adr, sizeof(val4));
     rddat1((char *) &val8, (DBptr)adr, sizeof(val8));
     sprintf(buf,"val1=%d  val2=%d  val4=%d  val8=%g",
                  val1,val2,val4,val8);
-    igplma(buf,IG_MESS);
+    IGplma(buf,IG_MESS);
 
     return(0);
   }
 /********************************************************/
 /*!******************************************************/
 
-       short lstsyd()
+       short IGlsyd()
 
 /*      Listar sydat.
  *
@@ -304,7 +303,7 @@ extern DBseqnum huvidm;
 /*
 ***Listrubrik.
 */
-    WPinla(iggtts(270));
+    WPinla(IGgtts(270));
 /*
 ***Demo-version.
 */
@@ -360,7 +359,7 @@ extern DBseqnum huvidm;
 /*
 ***Grafik-data.
 */
-#ifdef V3_X11
+#ifdef UNIX
     sprintf(buf,"Grafik = X11");
     if ( (status=WPalla(buf,(short)1)) < 0 ) return(status);
 #endif

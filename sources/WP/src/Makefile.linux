@@ -17,10 +17,7 @@ distr :     CFLAGS =                    \
             -ffloat-store               \
             -fsigned-char               \
             -O                          \
-            -DUNIX                      \
-            -DV3_X11                    \
-            -DV3_OPENGL                 \
-            -DWRK_STAT
+            -DUNIX
             
 debug :     CFLAGS =                    \
             -ansi                       \
@@ -29,10 +26,7 @@ debug :     CFLAGS =                    \
             -fsigned-char               \
             -g3                         \
             -DDEBUG                     \
-            -DUNIX                      \
-            -DV3_X11                    \
-            -DV3_OPENGL                 \
-            -DWRK_STAT
+            -DUNIX
 
 COMPILE = $(CC) -c $(CFLAGS)
 

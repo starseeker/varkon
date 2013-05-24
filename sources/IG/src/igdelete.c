@@ -4,16 +4,16 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  igdlen();    Delete entity                                      */
-/*  igdlls();    Delete last entity                                 */
-/*  igdlgp();    Delete named group                                 */
-/*  trimpm();    Generate TRIM statement                            */
-/*  igblnk();    Blank entity                                       */
-/*  igubal();    Unblank all entities                               */
-/*  ightal();    Make all entities hitable                          */
+/*  IGdlen();    Delete entity                                      */
+/*  IGdlls();    Delete last entity (not used)                      */
+/*  IGdlgp();    Delete named group (not used)                      */
+/*  IGtrim();    Generate TRIM statement                            */
+/*  IGblnk();    Blank entity                                       */
+/*  IGubal();    Unblank all entities                               */
+/*  IGhtal();    Make all entities hitable                          */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -32,8 +32,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -51,10 +49,10 @@ static char *mk_dppart(V2REFVA *id);
 
 /*!******************************************************/
 
-        short igdlen()
+        short IGdlen()
 
-/*      Varkonfunktion för att ta bort en geometrisats
- *      via hårkors.
+/*      Varkonfunktion fï¿½r att ta bort en geometrisats
+ *      via hï¿½rkors.
  *
  *      In: Inget.
  *
@@ -65,40 +63,42 @@ static char *mk_dppart(V2REFVA *id);
  *      (C)microform ab 12/3/86 J. Kjellander
  *
  *      5/10/86  GOMAIN, B. Doverud
- *      18/8/88  getmid(), J. Kjellander
+ *      18/8/88  IGgmid(), J. Kjellander
+ *      2007-04-10 1.19 J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short    status,nid,i;
+    short    status;
+    int      i,nid;
     DBId     idmat[IGMAXID][MXINIV];
     DBetype    typv[IGMAXID];
 
 /*
-***Hämta id för någon av storhetens instanser.
+***Hï¿½mta id fï¿½r nï¿½gon av storhetens instanser.
 */
     if ( v3mode == RIT_MOD )
       {
       nid = IGMAXID;
-      igptma(146,IG_MESS);
+      WPaddmess_mcwin(IGgtts(146),WP_PROMPT);
       }
     else
       {
       nid = 1;
-      igptma(145,IG_MESS);
+      WPaddmess_mcwin(IGgtts(145),WP_PROMPT);
       }
 
     typv[0] = ALLTYP;
-    status = getmid(idmat,typv,&nid);
-    igrsma();
+    status = IGgmid(idmat,typv,&nid);
+    WPclear_mcwin();
     if ( status < 0 ) goto exit;
 /*
-***Om RITPAK, fråga om OK innan allt försvinner. och
+***Om RITPAK, frï¿½ga om OK innan allt fï¿½rsvinner. och
 ***ta sedan bort allt utan vidare kontroller.
 */
     if ( v3mode == RIT_MOD )
       {
-      if ( nid > 0  &&  igialt(1630,67,68,FALSE) == FALSE ) goto exit;
+      if ( nid > 0  &&  IGialt(1630,67,68,FALSE) == FALSE ) goto exit;
       for ( i=0; i<nid; ++i) igdlgs(&idmat[i][0]);
       }
 /*
@@ -106,11 +106,14 @@ static char *mk_dppart(V2REFVA *id);
 */
     igdlgs((DBId *)idmat);
 /*
-***Slut.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***The end.
 */
 exit:
     WPerhg();
-
     return(status);
   }
 
@@ -120,18 +123,18 @@ exit:
  static short igdlgs(DBId *idvek)
 
 /*      Tar bort en geometrisats. Om den exekverats
- *      flera gånger tex. i en loop och det finns
- *      flera instanser i GM genereras fel. Det är
- *      dock inte möjligt att kolla om flera instanser
- *      funnits men alla utom första tagits bort med
- *      DEL-anrop. Om så är fallet och den kvarvarande
- *      instansen ej är refererad tas den bort ändå.
+ *      flera gï¿½nger tex. i en loop och det finns
+ *      flera instanser i GM genereras fel. Det ï¿½r
+ *      dock inte mï¿½jligt att kolla om flera instanser
+ *      funnits men alla utom fï¿½rsta tagits bort med
+ *      DEL-anrop. Om sï¿½ ï¿½r fallet och den kvarvarande
+ *      instansen ej ï¿½r refererad tas den bort ï¿½ndï¿½.
  *
  *      In: idvek = ID vars sekvensnummer identifierar
  *                  en viss sats. ID skall vara Lokal!
  *      Ut: Inget.
  *
- *      Felkoder: IG3502 = Storheten ingår i en part
+ *      Felkoder: IG3502 = Storheten ingï¿½r i en part
  *                IG3512 = Storheten har flera instanser.
  *
  *      (C)microform ab 12/3/86 J. Kjellander
@@ -147,47 +150,48 @@ exit:
  ******************************************************!*/
 
   {
+    char     mesbuf[2*V3STRLEN],idstr[V3STRLEN];
     bool     prtflg;
     DBptr    la;
     pm_ptr   exnpt,valparam,dummy,retla;
-    DBHeader   hed;
+    DBHeader hed;
     PMLITVA  litval;
 
 /*
-***Om RITPAK, ta bort storheten utan några kontroller.
+***Om RITPAK, ta bort storheten utan nï¿½gra kontroller.
 */
     if ( v3mode == RIT_MOD ) return(EXdel(idvek));
 /*
-***Kolla om storheten ingår i en part. Om så är fallet
+***Kolla om storheten ingï¿½r i en part. Om sï¿½ ï¿½r fallet
 ***tar vi antingen bort hela parten eller blankar
 ***storheten.
 */
     if ( idvek[0].p_nextre != NULL )
       {
       prtflg = TRUE;
-      if ( igials(mk_dppart(idvek),iggtts(67),iggtts(68),TRUE) )
+      if ( IGials(mk_dppart(idvek),IGgtts(67),IGgtts(68),TRUE) )
         idvek[0].p_nextre = NULL;
-      else if( igialt(249,67,68,FALSE) ) goto blank;
+      else if( IGialt(249,67,68,FALSE) ) goto blank;
       else return(0);
       }
     else prtflg = FALSE;
 /*
-***Kolla om den består av flera instanser.
+***Kolla om den bestï¿½r av flera instanser.
 */
     la = gmrdid(DBNULL,idvek[0].seq_val);
     DBread_header(&hed,la);
     if ( hed.n_ptr != DBNULL || hed.ordnr > 1 )
       {
-      if( igialt(372,67,68,TRUE) ) goto blank;
+      if( IGialt(372,67,68,TRUE) ) goto blank;
       else return(0);
       }
 /*
-***Kolla om parten/storheten är refererad.
+***Kolla om parten/storheten ï¿½r refererad.
 */
     if ( pmamir(idvek) == TRUE )
       {
-      if ( ( prtflg && igialt(174,67,68,TRUE))  ||
-           (!prtflg && igialt(354,67,68,TRUE)) )
+      if ( ( prtflg && IGialt(174,67,68,TRUE))  ||
+           (!prtflg && IGialt(354,67,68,TRUE)) )
         {
         litval.lit_type = C_INT_VA;
         litval.lit.int_va = 1;
@@ -195,20 +199,33 @@ exit:
         if ( pmchnp(idvek,PMBLANK,exnpt,&retla) < 0 ||
              retla == (pm_ptr)NULL ) goto syserr;
         EXblk(idvek);
+        strcpy(mesbuf,IGgtts(60));
+        IGidst(idvek,idstr);
+        strcat(mesbuf,idstr);
+        WPaddmess_mcwin(mesbuf,WP_MESSAGE);
         return(0);
         }
       else return(0);
       }
 /*
-***Storheten/parten är inte refererad, ta bort
-***ur GM och PM. Om det är en enskild storhet har vi ännu
-***inte pratat något, gör det.
+***Storheten/parten ï¿½r inte refererad, ta bort
+***ur GM och PM. Om det ï¿½r en enskild storhet har vi ï¿½nnu
+***inte pratat nï¿½got, gï¿½r det.
 */
-    if ( !prtflg  &&  igials(mk_dpsimple(idvek),iggtts(67),
-                             iggtts(68),FALSE) == FALSE ) return(0);
+    if ( !prtflg  &&  IGials(mk_dpsimple(idvek),IGgtts(67),
+                             IGgtts(68),FALSE) == FALSE ) return(0);
     EXdel(idvek);
     if ( pmdges(idvek) < 0 ) goto syserr;
-
+/*
+***Confirmational message.
+*/
+    strcpy(mesbuf,IGgtts(59));
+    IGidst(idvek,idstr);
+    strcat(mesbuf,idstr);
+    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
+***The end.
+*/
     return(0);
 /*
 ***Blankning.
@@ -221,11 +238,11 @@ blank:
     pmclie(&litval,&exnpt);
  
     pmtcon(exnpt,(pm_ptr)NULL,&valparam,&dummy);
-    if ( igcprs("BLANK",valparam) < 0 ) goto syserr;
+    if ( IGcprs("BLANK",valparam) < 0 ) goto syserr;
 
     return(0);
 /*
-***Felutgång.
+***Felutgï¿½ng.
 */
 syserr:
     erpush("IG3523","");
@@ -236,7 +253,7 @@ syserr:
 /********************************************************/
 /*!******************************************************/
 
-        short igdlls()
+        short IGdlls()
 
 /*      Tar bort sista satsen i PM.
  *
@@ -269,11 +286,11 @@ syserr:
 /********************************************************/
 /*!******************************************************/
 
-        short igdlgp()
+        short IGdlgp()
 
-/*      Varkonfunktion för att ta bort grupp via namn.
+/*      Varkonfunktion fï¿½r att ta bort grupp via namn.
  *      Om flera grupper med samma namn fins i GM tas
- *      bara den första bort.
+ *      bara den fï¿½rsta bort.
  *
  *      In: Inget.
  *
@@ -302,16 +319,16 @@ syserr:
     short   ndel = 0,status;
 
 /*
-***Läs in gruppnamn.
+***Lï¿½s in gruppnamn.
 */
-    igptma(318,IG_INP);
-    if ( (status=igssip(iggtts(267),grpnam,"",JNLGTH)) < 0 ) goto exit;
+    IGptma(318,IG_INP);
+    if ( (status=IGssip(IGgtts(267),grpnam,"",JNLGTH)) < 0 ) goto exit;
 /*
-***Hämta LA och typ för huvud-parten.
+***Hï¿½mta LA och typ fï¿½r huvud-parten.
 */
     DBget_pointer('F',id,&la,&typ);
 /*
-***Leta rätt på la för första gruppen med angivet namn
+***Leta rï¿½tt pï¿½ la fï¿½r fï¿½rsta gruppen med angivet namn
    i den aktiva parten och ta bort den.
 */
     while ( DBget_pointer('N',id,&la,&typ) == 0 )
@@ -341,16 +358,16 @@ syserr:
 ***Slut.
 */
 exit:
-      igrsma();
+      IGrsma();
       return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short trimpm()
+        short IGtrim()
 
-/*      Varkonfunktion för skapa TRIM-sats.
+/*      Varkonfunktion fï¿½r skapa TRIM-sats.
  *
  *      In: Inget.
  *
@@ -363,7 +380,7 @@ exit:
  *      (C)microform ab 15/3/86 J. Kjellander
  *
  *      20/3/86 Anrop till pmtcon pmclie, B. Doverud
- *      24/3/86 Felutgångar, B. Doverud
+ *      24/3/86 Felutgï¿½ngar, B. Doverud
  *      31/3/86 UNBLANK, J. Kjellander
  *      5/10/86  GOMAIN, B. Doverud
  *      20/11/89 Neg. intnr, J. Kjellander
@@ -384,10 +401,10 @@ exit:
 ***Skapa referens till storhet som skall trimmas.
 */
 start:
-    igptma(352,IG_MESS);
+    IGptma(352,IG_MESS);
     typ1 = LINTYP+ARCTYP;
-    if ( (status=getidt(id,&typ1,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(id,&typ1,&end,&right,(short)0)) < 0 ) goto exit;
+    IGrsma();
 
     litval.lit_type = C_REF_VA;
     litval.lit.ref_va[0].seq_val = id[0].seq_val;
@@ -395,7 +412,7 @@ start:
     litval.lit.ref_va[0].p_nextre = id[0].p_nextre;
     pmclie(&litval,&exnpt1);
 /*
-***Ände.
+***ï¿½nde.
 */
     litval.lit_type = C_INT_VA;
     if ( end ) litval.lit.int_va = 1;
@@ -405,10 +422,10 @@ start:
 ***Skapa referens till storhet mot vilken trimmning skall ske.
 */
     typ2 = LINTYP+ARCTYP+CURTYP;
-    if ( (status=genref (353,&typ2,&exnpt3,&end,&right)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGcref (353,&typ2,&exnpt3,&end,&right)) < 0 ) goto exit;
+    IGrsma();
 /*
-***Om skärning linje/linje, alt = -1.
+***Om skï¿½rning linje/linje, alt = -1.
 */
     if ( typ1 == LINTYP && typ2 == LINTYP )
       {
@@ -417,11 +434,11 @@ start:
       pmclie( &litval, &exnpt4);
       }
 /*
-***Annars läs in alternativ.
+***Annars lï¿½s in alternativ.
 */
     else
       {
-      if ( (status=genint(327,"1",istr,&exnpt4)) < 0 ) goto exit;
+      if ( (status=IGcint(327,"1",istr,&exnpt4)) < 0 ) goto exit;
       }
 /*
 ***Skapa listan med obligatoriska parametrar.
@@ -431,23 +448,23 @@ start:
     pmtcon(exnpt3,retla,&retla,&dummy);
     pmtcon(exnpt4,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcprs("TRIM",valparam) < 0 ) 
+    if ( IGcprs("TRIM",valparam) < 0 ) 
       {
       erpush("IG5023","TRIM");
       goto errend;
       }
 /*
-***Om storheten inte ingår i en part, skapa
+***Om storheten inte ingï¿½r i en part, skapa
 ***UNBLANK-anrop, exnpt1 = storhetens id.
 */
     if ( id[0].p_nextre == NULL )
       {
       pmtcon(exnpt1,(pm_ptr)NULL,&valparam,&dummy);
-      igcprs("UNBLANK",valparam);
+      IGcprs("UNBLANK",valparam);
 /*
-***och blanka storheten när den skapas.
+***och blanka storheten nï¿½r den skapas.
 */
       litval.lit_type = C_INT_VA;
       litval.lit.int_va = 1;
@@ -461,11 +478,11 @@ start:
 ***Slut.
 */
 exit:
-    igrsma();
+    IGrsma();
     WPerhg();
     return(status);
 /*
-***Felutgång.
+***Felutgï¿½ng.
 */
 errend:
     WPerhg();
@@ -476,9 +493,9 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-        short igblnk()
+        short IGblnk()
 
-/*      Varkonfunktion för att släcka en storhet.
+/*      Varkonfunktion fï¿½r att slï¿½cka en storhet.
  *
  *      In: Inget.
  *
@@ -493,18 +510,19 @@ errend:
  ******************************************************!*/
 
   {
-    short   status,nid,i;
-    DBetype   typvek[IGMAXID];
+    short   status;
+    int     nid,i;
+    DBetype typvek[IGMAXID];
     DBId    idmat[IGMAXID][MXINIV];
 
 /*
-***Hämta identitet.
+***Hï¿½mta identitet.
 */
-    igptma(149,IG_MESS);
+    IGptma(149,IG_MESS);
     typvek[0] = ALLTYP;
     nid = IGMAXID;
-    status=getmid(idmat,typvek,&nid);
-    igrsma();
+    status=IGgmid(idmat,typvek,&nid);
+    IGrsma();
     if (status < 0 ) return(status);
 /*
 ***Blanka storheten.
@@ -518,9 +536,9 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-        short igubal()
+        short IGubal()
 
-/*      Varkonfunktion för att tända alla storheter.
+/*      Varkonfunktion fï¿½r att tï¿½nda alla storheter.
  *
  *      In: Inget.
  *
@@ -540,11 +558,11 @@ errend:
 
     gpupfl = FALSE;
 /*
-***Hämta LA och typ för huvud-parten.
+***Hï¿½mta LA och typ fï¿½r huvud-parten.
 */
     DBget_pointer('F',&dummy,&la,&typ);
 /*
-***Loopa runt och hämta LA och typ för resten av GM.
+***Loopa runt och hï¿½mta LA och typ fï¿½r resten av GM.
 */
     while ( DBget_pointer('N',&dummy,&la,&typ) == 0 )
       {
@@ -581,9 +599,9 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-        short ightal()
+        short IGhtal()
 
-/*      Varkonfunktion för att göra alla storheter pekbara.
+/*      Varkonfunktion fï¿½r att gï¿½ra alla storheter pekbara.
  *
  *      In: Inget.
  *
@@ -600,11 +618,11 @@ errend:
     DBId    dummy;
 
 /*
-***Hämta LA och typ för huvud-parten.
+***Hï¿½mta LA och typ fï¿½r huvud-parten.
 */
     DBget_pointer('F',&dummy,&la,&typ);
 /*
-***Loopa runt och hämta LA och typ för resten av GM.
+***Loopa runt och hï¿½mta LA och typ fï¿½r resten av GM.
 */
     while ( DBget_pointer('N',&dummy,&la,&typ) == 0 )
       {
@@ -615,7 +633,7 @@ errend:
 /*
 ***Uppdatera.
 */
-    WPrepa(GWIN_MAIN);
+    WPrepaint_GWIN(GWIN_MAIN);
 
     return(0);
     }
@@ -625,15 +643,15 @@ errend:
 
   static char *mk_dpsimple(V2REFVA *id)
 
-/*      Skapar delsträng för enkla storheter.
+/*      Skapar delstrï¿½ng fï¿½r enkla storheter.
  *
  *      In: id = Storhetens ID.
  *
- *      FV: Pekare till sträng.
+ *      FV: Pekare till strï¿½ng.
  *
  *      (C)microform ab 1998-09-17 J. Kjellander
  *
- *      10/7/2004 Mesh, J.Kjellander, Örebro university
+ *      10/7/2004 Mesh, J.Kjellander, ï¿½rebro university
  *
  ******************************************************!*/
 
@@ -647,13 +665,13 @@ errend:
    static char strbuf[V3STRLEN] = "";
 
 /*
-***Ta reda på typ av storhet.
+***Ta reda pï¿½ typ av storhet.
 */
    DBget_pointer('I',id,&la,&typ);
 /*
 ***"Vill du ta bort"
 */
-   strcpy(strbuf,iggtts(409));
+   strcpy(strbuf,IGgtts(409));
    strcat(strbuf," ");
 /*
 ***Storhetens typ.
@@ -679,22 +697,22 @@ errend:
      case MSHTYP: tnum = 558; break;
      default:     tnum = 0;   break;
      }
-   strcat(strbuf,iggtts(tnum));
+   strcat(strbuf,IGgtts(tnum));
 /*
-***Lägg till ID.
+***Lï¿½gg till ID.
 */
-   igidst(id,idbuf);
+   IGidst(id,idbuf);
    n = strlen(idbuf);
    if ( idbuf[n-1] == '1'  &&  idbuf[n-2] == '.' ) idbuf[n-2] = '\0';
    strcat(strbuf," ");
    strcat(strbuf,idbuf);
 /*
-***Lägg till "j/n ?".
+***Lï¿½gg till "j/n ?".
 */
    strcat(strbuf," ");
-   strcat(strbuf,iggtts(67));
+   strcat(strbuf,IGgtts(67));
    strcat(strbuf,"/");
-   strcat(strbuf,iggtts(68));
+   strcat(strbuf,IGgtts(68));
    strcat(strbuf," ?");
 
    return(strbuf);
@@ -705,15 +723,15 @@ errend:
 
   static char *mk_dppart(V2REFVA *id)
 
-/*      Skapa delsträng för part.
+/*      Skapa delstrï¿½ng fï¿½r part.
  *
  *      In: id = Storhetens ID.
  *
- *      FV: Pekare till sträng.
+ *      FV: Pekare till strï¿½ng.
  *
  *      (C)microform ab 1998-09-17 J. Kjellander
  *
- *      10/7/2004 Mesh, J.Kjellander, Örebro university
+ *      10/7/2004 Mesh, J.Kjellander, ï¿½rebro university
  *
  ******************************************************!*/
 
@@ -731,7 +749,7 @@ errend:
 /*
 ***"Denna ".
 */
-   strcpy(strbuf,iggtts(1629));
+   strcpy(strbuf,IGgtts(1629));
    strcat(strbuf," ");
 /*
 ***Storhetens typ.
@@ -759,21 +777,21 @@ errend:
      case MSHTYP: tnum = 558; break;
      default:     tnum = 0;   break;
      }
-   strcat(strbuf,iggtts(tnum));
+   strcat(strbuf,IGgtts(tnum));
 /*
 ***Ta fram partens ID.
 */
    tmpptr = id[0].p_nextre;
    id[0].p_nextre = NULL;
 /*
-***" ingår i "
+***" ingï¿½r i "
 */
-   strcat(strbuf,iggtts(371));
+   strcat(strbuf,IGgtts(371));
    strcat(strbuf," '");
 /*
-***Lägg till ID.
+***Lï¿½gg till ID.
 */
-   igidst(id,idbuf);
+   IGidst(id,idbuf);
    n = strlen(idbuf);
    if ( idbuf[n-1] == '1'  &&  idbuf[n-2] == '.' ) idbuf[n-2] = '\0';
    strcat(strbuf,idbuf);
@@ -784,12 +802,12 @@ errend:
    strcat(strbuf," ");
    strcat(strbuf,part.name_pt);
 /*
-***Lägg till ", Vill du ta bort hela parten ?".
+***Lï¿½gg till ", Vill du ta bort hela parten ?".
 */
    strcat(strbuf,"' ");
-   strcat(strbuf,iggtts(1628));
+   strcat(strbuf,IGgtts(1628));
 /*
-***Återskapa storhetens id.
+***ï¿½terskapa storhetens id.
 */
    id[0].p_nextre = tmpptr;
 

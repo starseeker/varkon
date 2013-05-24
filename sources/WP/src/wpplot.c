@@ -44,14 +44,15 @@ extern V3MDAT  sydata;
         short     WPmkpf(
         WPGWIN   *gwinpt,
         FILE     *filpek,
-        VY       *plotvy,
+        VYWIN    *plotwin,
         DBVector *origo)
 
 /*      Creates plotfile on GKS metafile format.
  *
- *      In:  filpek = Ptr to open plot file.
- *           plotvy = Plot area.
- *           origo  = Plot origin.
+ *      In:  gwinpt  = C ptr to plot window.
+ *           filpek  = Ptr to open plot file.
+ *           plotwin = Plot area.
+ *           origo   = Plot origin.
  *
  *      Return:  0 => Ok
  *              -1 => Keyboard interrupt.
@@ -59,24 +60,26 @@ extern V3MDAT  sydata;
  *
  *      (C)2006-12-25 Johan Kjellander
  *
+ *      2007-01-09 pborder, piso,   Sören L
+ *
  ******************************************************!*/
 {
-   double x[PLYMXV],y[PLYMXV],z[PLYMXV],scale,size;
-   char   a[PLYMXV];
-   int    k;
-
-   DBptr   la;
-   DBetype type;
-   char    buf[MAXMETA];
-   short   status,curpen;
-   char    str[V3STRLEN+1];
-   double  width,curwdt,tmpcn;
-   DBId    dummy;
-   DBAny   gmpost;
-   DBTmat  pmat;
-   DBSeg  *sptarr[6],*segptr,arcseg[4];
-   DBfloat xhcrds[4*GMXMXL];
-   METADEF md;
+   double    x[PLYMXV],y[PLYMXV],z[PLYMXV],scale,size;
+   char      a[PLYMXV];
+   int       k;
+   DBptr     la;
+   DBetype   type;
+   char      buf[MAXMETA];
+   short     status,curpen;
+   char      str[V3STRLEN+1];
+   double    width,curwdt,tmpcn;
+   DBId      dummy;
+   DBAny     gmpost;
+   DBTmat    pmat;
+   DBSeg    *segptr,arcseg[4];
+   DBSegarr *pborder,*piso;
+   DBfloat   xhcrds[4*GMXMXL];
+   METADEF   md;
 
 /*
 ***Increase curve accuracy 3 times during plot.
@@ -91,7 +94,7 @@ extern V3MDAT  sydata;
 ***the "window" is a paper size A4 or A3, say 400 mm in X-dir.
 ***Point and Csys size is not scaled.
 */
-    scale = (double)400.0/(plotvy->vywin[2] - plotvy->vywin[0]);
+    scale = (double)400.0/(plotwin->xmax - plotwin->xmin);
 /*
 ***Other initializations.
 */
@@ -109,7 +112,7 @@ extern V3MDAT  sydata;
 /*
 ***Make "Varkon window item"
 */
-    if ( (status=WPgksm_window(&md,filpek,buf,plotvy,origo)) < 0 )
+    if ( (status=WPgksm_window(&md,filpek,buf,plotwin,origo)) < 0 )
       return(status);
 /*
 ***Traverse DB.
@@ -124,7 +127,7 @@ loop:
 ***If blanked or on a blanked level, go on with the next entity.
 */
       DBread_header((DBHeader *)&gmpost,la);
-      if ( !WPnivt(gwinpt,gmpost.hed_un.level) || gmpost.hed_un.blank ) goto loop;
+      if ( !WPnivt(gwinpt->nivtab,gmpost.hed_un.level) || gmpost.hed_un.blank ) goto loop;
 
       switch ( type )
         {
@@ -133,7 +136,7 @@ loop:
 */
         case POITYP:
         DBread_point(&gmpost.poi_un,la);
-        size  = (double)0.01*(plotvy->vywin[2] - plotvy->vywin[0]);
+        size  = (double)0.01*(plotwin->xmax - plotwin->xmin);
         WPplpt(&gmpost.poi_un,size,&k,x,y,z,a);
         width = gmpost.poi_un.wdt_p;
         break;
@@ -167,16 +170,17 @@ loop:
 */
         case SURTYP:
         DBread_surface(&gmpost.sur_un,la);
-        DBread_sur_grwire(&gmpost.sur_un,sptarr);
-        WPplsu(&gmpost.sur_un,sptarr,scale,&k,x,y,z,a);
-        DBfree_sur_grwire(sptarr);
+        DBread_sur_grwire(&gmpost.sur_un,&pborder,&piso);
+        WPplsu(&gmpost.sur_un,pborder,piso,scale,&k,x,y,z,a);
+        DBfree_sur_grwire(&gmpost.sur_un,pborder,piso);
+        width = gmpost.sur_un.wdt_su;
         break;
 /*
 ***Coordinate system. Size should be approx 15% of output media.
 */
         case CSYTYP:
         DBread_csys(&gmpost.csy_un,&pmat,la);
-        size = (double)0.15*(plotvy->vywin[2] - plotvy->vywin[0]);
+        size = (double)0.15*(plotwin->xmax - plotwin->xmin);
         WPplcs(&gmpost.csy_un,size,V3_CS_NORMAL,&k,x,y,z,a);
         break;
 /*
@@ -192,8 +196,9 @@ loop:
 */
         case MSHTYP:
         DBread_mesh(&gmpost.msh_un,la,MESH_HEADER+MESH_VERTEX+MESH_HEDGE);
-        size  = (double)0.0075*(plotvy->vywin[2] - plotvy->vywin[0]);
+        size  = (double)0.0075*(plotwin->xmax - plotwin->xmin);
         WPplms(&gmpost.msh_un,size,&k,x,y,z,a);
+        width = gmpost.msh_un.wdt_m;
         break;
 /*
 ***Text.
@@ -256,37 +261,43 @@ loop:
 */
         WPpply(gwinpt,k,x,y,z);
 /*
+***Clip to plotview borders and draw polyline if visible.
+*/
+        if ( WPcply(plotwin,(short)-1,&k,x,y,a) )
+          {
+/*
 ***Pen number.
 */
-        if ( gmpost.hed_un.pen != curpen )
-          {
-          curpen = gmpost.hed_un.pen;
-          if ( (status=WPgksm_pen(&md,filpek,curpen,buf) ) < 0 )
-            return(status);
-          }
+          if ( gmpost.hed_un.pen != curpen )
+            {
+            curpen = gmpost.hed_un.pen;
+            if ( (status=WPgksm_pen(&md,filpek,curpen,buf) ) < 0 )
+              return(status);
+            }
 /*
 ***Line width.
 */
-        if ( width != curwdt )
-          {
-          curwdt = width;
-          if ( (status=WPgksm_width(&md,filpek,curwdt,buf) ) < 0 )
-            return(status);
-          }
+          if ( width != curwdt )
+            {
+            curwdt = width;
+            if ( (status=WPgksm_width(&md,filpek,curwdt,buf) ) < 0 )
+              return(status);
+            }
 /*
 ***Write polyline (GKS-11). Curvefont 3 = fill (GKS-14).
 */
-        if ( type == CURTYP  &&  gmpost.cur_un.fnt_cu == 3 )
-          {
-          if ( (status=WPgksm_fill(&md,filpek,k,x,y,plotvy)) < 0 )
-            return(status);
-          }
-        else
-          {
-          if ( (status=WPgksm_polyline(&md,filpek,k,x,y,a,plotvy,buf)) < 0 )
-            return(status);
-           }
-        }
+          if ( type == CURTYP  &&  gmpost.cur_un.fnt_cu == 3 )
+            {
+            if ( (status=WPgksm_fill(&md,filpek,k,x,y,plotwin)) < 0 )
+              return(status);
+            }
+          else
+            {
+            if ( (status=WPgksm_polyline(&md,filpek,k,x,y,a,plotwin,buf)) < 0 )
+              return(status);
+            }
+         }
+       }
     }
 /*
 ***Generate "end item"
@@ -391,7 +402,7 @@ loop:
         METADEF  *mdp,
         FILE     *filpek,
         char      metarec[],
-        VY       *plotvy,
+        VYWIN    *plotwin,
         DBVector *origo)
 
 /*      Write "Window item"
@@ -399,8 +410,8 @@ loop:
  *      In:
  *         mdp:      Ptr to format descriptor.
  *         filpek:   Ptr. to open file.
- *         metarec:  Output bufer.
- *         plotvy:   Plot view.
+ *         metarec:  Output buffer.
+ *         plotwin:  Plot area.
  *         origo:    Plot origin.
  *
  *      Return:  0 => Ok
@@ -416,13 +427,13 @@ loop:
     strcpy(metarec,"GKSM"); i = 4;
     sprintf(&metarec[i],mdp->formtyp,VAR_WINDOW); i += mdp->typlen;
     sprintf(&metarec[i],mdp->formdat,4*mdp->fltlen); i += mdp->datlen;
-    sprintf(&metarec[i],mdp->formflt,plotvy->vywin[ 0 ]);    /* x_min */
+    sprintf(&metarec[i],mdp->formflt,plotwin->xmin);    /* x_min */
     i += mdp->fltlen;
-    sprintf(&metarec[i],mdp->formflt,plotvy->vywin[ 2 ]);    /* x_max */
+    sprintf(&metarec[i],mdp->formflt,plotwin->xmax);    /* x_max */
     i += mdp->fltlen;
-    sprintf(&metarec[i],mdp->formflt,plotvy->vywin[ 1 ]);    /* y_min */
+    sprintf(&metarec[i],mdp->formflt,plotwin->ymin);    /* y_min */
     i += mdp->fltlen;
-    sprintf(&metarec[i],mdp->formflt,plotvy->vywin[ 3 ]);    /* y_max */
+    sprintf(&metarec[i],mdp->formflt,plotwin->ymax);    /* y_max */
     i += mdp->fltlen;
     sprintf(&metarec[i],mdp->formflt,origo->x_gm);           /* origox */
     i += mdp->fltlen;
@@ -451,7 +462,7 @@ loop:
         double   x[],
         double   y[],
         char     a[],
-        VY      *plotvy,
+        VYWIN   *plotwin,
         char     metarec[])
 
 
@@ -462,7 +473,7 @@ loop:
  *         filpek:   Ptr to open file.
  *         k:        Sist upptagna entry i polylinevektorerna
  *         x,y,a:    Polylinevektorerna (x-,y-koordinat och status)
- *         plotvy:   Plot area.
+ *         plotwin:  Plot area.
  *         metarec:  Output buffer.
  *
  *      Return:  0 => Ok
@@ -478,17 +489,14 @@ loop:
      double offsx,offsy;
 
 
-     normx = plotvy->vywin[ 2 ] - plotvy->vywin[ 0 ];
-     normy = plotvy->vywin[ 3 ] - plotvy->vywin[ 1 ];
-     if (normx < normy)
-          normx = normy;
-     else
-          normy = normx;
-     offsx = plotvy->vywin[ 0 ];
-     offsy = plotvy->vywin[ 1 ];
+     normx = plotwin->xmax - plotwin->xmin;
+     normy = plotwin->ymax - plotwin->ymin;
 
+     if (normx < normy) normx = normy;
+     else               normy = normx;
 
-
+     offsx = plotwin->xmin;
+     offsy = plotwin->ymin;
 
      j = 0;
      do {
@@ -568,7 +576,7 @@ loop:
         int      k,
         double   x[],
         double   y[],
-        VY      *plotvy)
+        VYWIN   *plotwin)
 
 /*      Write "GKS metafile fill item".
  *
@@ -577,8 +585,7 @@ loop:
  *         fp:       Ptr to open plotfile
  *         k:        Offset to last point
  *         x,y:      Coordinates
- *         plotvy:   Plotarea
- *         metarec:  Buffer for output
+ *         plotwin:  Plotarea
  *
  *      FV:  0      => Ok
  *           GP0043 => System error
@@ -594,14 +601,14 @@ loop:
 /*
 ***Normalise.
 */
-   normx = plotvy->vywin[2] - plotvy->vywin[0];
-   normy = plotvy->vywin[3] - plotvy->vywin[1];
+   normx = plotwin->xmax - plotwin->xmin;
+   normy = plotwin->ymax - plotwin->ymin;
 
    if ( normx < normy ) normx = normy;
    else                 normy = normx;
 
-   offsx = plotvy->vywin[0];
-   offsy = plotvy->vywin[1];
+   offsx = plotwin->xmin;
+   offsy = plotwin->ymin;
 /*
 ***Header.
 */

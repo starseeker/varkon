@@ -127,9 +127,9 @@ typedef DBuint DBetype;       /* A GM entity type, POITYP, LINTYP etc.. short->i
 
 typedef struct
 {
-DBfloat x_gm;                 /* X or U coordinate */
-DBfloat y_gm;                 /* Y or V coordiante */
-DBfloat z_gm;                 /* Optional Z coordinate */
+DBfloat x_gm;                /* X or U coordinate */
+DBfloat y_gm;                /* Y or V coordiante */
+DBfloat z_gm;                /* Optional Z coordinate */
 } DBVector;
 
 /*
@@ -138,10 +138,10 @@ DBfloat z_gm;                 /* Optional Z coordinate */
 
 typedef struct
 {
-DBfloat x_gm;                 /* X-coordinate */
-DBfloat y_gm;                 /* Y-coordinate */
-DBfloat z_gm;                 /* Z-coordinate */
-DBfloat w_gm;                 /* W-coordinate */
+DBfloat x_gm;                /* X-coordinate */
+DBfloat y_gm;                /* Y-coordinate */
+DBfloat z_gm;                /* Z-coordinate */
+DBfloat w_gm;                /* W-coordinate */
 } DBHvector;
 
 /*
@@ -150,10 +150,10 @@ DBfloat w_gm;                 /* W-coordinate */
 
 typedef struct
 {
-DBfloat g11,g12,g13,g14;      /* First  row */
-DBfloat g21,g22,g23,g24;      /* Second row */
-DBfloat g31,g32,g33,g34;      /* Third  row */
-DBfloat g41,g42,g43,g44;      /* Last   row */
+DBfloat g11,g12,g13,g14;     /* First  row */
+DBfloat g21,g22,g23,g24;     /* Second row */
+DBfloat g31,g32,g33,g34;     /* Third  row */
+DBfloat g41,g42,g43,g44;     /* Last   row */
 } DBTmat;
 
 /*
@@ -161,8 +161,8 @@ DBfloat g41,g42,g43,g44;      /* Last   row */
 */
 typedef struct
 {
-DBVector  p;                  /* Vertex position */
-DBint     i_ehedge;           /* Emanating edge index */
+DBVector  p;                 /* Vertex position */
+DBint     i_ehedge;          /* Emanating edge index */
 } DBVertex;
 
 /*
@@ -170,10 +170,10 @@ DBint     i_ehedge;           /* Emanating edge index */
 */
 typedef struct
 {
-DBint   i_evertex;            /* End vertex index */
-DBint   i_ohedge;             /* Opposite halfedge index */
-DBint   i_nhedge;             /* Next halfedge index */
-DBint   i_pface;              /* Parent face index */
+DBint   i_evertex;           /* End vertex index */
+DBint   i_ohedge;            /* Opposite halfedge index */
+DBint   i_nhedge;            /* Next halfedge index */
+DBint   i_pface;             /* Parent face index */
 } DBHedge;
 
 /*
@@ -181,7 +181,7 @@ DBint   i_pface;              /* Parent face index */
 */
 typedef struct
 {
-DBint   i_hedge;              /* Edge index */
+DBint   i_hedge;             /* Edge index */
 } DBFace;
 
 /*
@@ -189,45 +189,45 @@ DBint   i_hedge;              /* Edge index */
 */
 typedef struct
 {
-DBfloat xmin;                 /* Minimum x value */
-DBfloat ymin;                 /* Minimum y value */
-DBfloat zmin;                 /* Minimum z value */
-DBfloat xmax;                 /* Maximum x value */
-DBfloat ymax;                 /* Maximum y value */
-DBfloat zmax;                 /* Maximum z value */
+DBfloat xmin;                /* Minimum x value */
+DBfloat ymin;                /* Minimum y value */
+DBfloat zmin;                /* Minimum z value */
+DBfloat xmax;                /* Maximum x value */
+DBfloat ymax;                /* Maximum y value */
+DBfloat zmax;                /* Maximum z value */
 } DBBbox;
 
 /*
 ***A curve segment.
 */
 
-#define CUB_SEG      1          /* Rational cubic (offset-)segment */
-#define UV_CUB_SEG   2          /* Rational cubic segment on a surface */
-#define NURB_SEG     3          /* NURBS-span */
-#define UV_NURB_SEG  4          /* NURBS-span on a surface */
+#define CUB_SEG      1       /* Rational cubic (offset-)segment */
+#define UV_CUB_SEG   2       /* Rational cubic segment on a surface */
+#define NURB_SEG     3       /* NURBS-span */
+#define UV_NURB_SEG  4       /* NURBS-span on a surface */
 
 typedef struct
 {
-DBfloat    c0x,c0y,c0z,c0;    /* Segment-coefficients. */
-DBfloat    c1x,c1y,c1z,c1;    /* UV_CUB_SEG only use 12. */
-DBfloat    c2x,c2y,c2z,c2;    /* NURB_SEG and UV_NURB_SEG use none */
+DBfloat    c0x,c0y,c0z,c0;   /* Segment-coefficients. */
+DBfloat    c1x,c1y,c1z,c1;   /* UV_CUB_SEG only use 12. */
+DBfloat    c2x,c2y,c2z,c2;   /* NURB_SEG and UV_NURB_SEG use none */
 DBfloat    c3x,c3y,c3z,c3;
-DBptr      nxt_seg;           /* DB-Pointer to next segment */
-DBfloat    ofs;               /* Optional offset */
-DBfloat    sl;                /* Arclength in R3 */
-DBshort    typ;               /* Segment type CUB_SEG, UV_CUB_SEG or NURB_SEG */
-DBshort    subtyp;            /* Sub type */
-DBptr      spek_gm;           /* Optional DB-pointer to surface */
-DBptr      spek2_gm;          /* Optional DB-pointer to surface */
-DBptr      cpts_db;           /* DB-pointer to 4D controlpoints */
-DBHvector *cpts_c;            /* C-pointer to 4D controlpoints */
-DBint      ncpts;             /* Number of cpts */
-DBint      offset_cpts;       /* Offset for this span */
-DBptr      knots_db;          /* DB-pointer to knotvector */
-DBfloat   *knots_c;           /* C-pointer to knotvector */
-DBint      nknots;            /* Number of knots */
-DBint      offset_knots;      /* Offset for this span */
-DBshort    nurbs_degree;      /* Degree (order-1) for NURB span */
+DBptr      nxt_seg;          /* DB-Pointer to next segment */
+DBfloat    ofs;              /* Optional offset */
+DBfloat    sl;               /* Arclength in R3 */
+DBshort    typ;              /* Segment type CUB_SEG, UV_CUB_SEG or NURB_SEG */
+DBshort    subtyp;           /* Sub type */
+DBptr      spek_gm;          /* Optional DB-pointer to surface */
+DBptr      spek2_gm;         /* Optional DB-pointer to surface */
+DBptr      cpts_db;          /* DB-pointer to 4D controlpoints */
+DBHvector *cpts_c;           /* C-pointer to 4D controlpoints */
+DBint      ncpts;            /* Number of cpts */
+DBint      offset_cpts;      /* Offset for this span */
+DBptr      knots_db;         /* DB-pointer to knotvector */
+DBfloat   *knots_c;          /* C-pointer to knotvector */
+DBint      nknots;           /* Number of knots */
+DBint      offset_knots;     /* Offset for this span */
+DBshort    nurbs_degree;     /* Degree (order-1) for NURB span */
 } DBSeg;
 
 /*
@@ -297,6 +297,8 @@ DBHeader   hed_p;            /* Header */
 DBVector   crd_p;            /* Coordinates */
 DBptr      pcsy_p;           /* DB-pointer to coordinate system */
 DBfloat    wdt_p;            /* Linewidth */
+DBint      fnt_p;            /* Font */
+DBfloat    size_p;           /* Size */
 } DBPoint;
 
 /*
@@ -700,16 +702,17 @@ DBstatus  DBread_one_patch(DBSurf *surptr, DBPatch *patptr, DBshort iu, DBshort 
 char     *DBcreate_patches(DBint pattyp, DBint numpat);
 DBstatus  DBcreate_NURBS(DBPatchNU *patptr);
 DBstatus  DBfree_patches(DBSurf *surptr, DBPatch *patptr);
-DBstatus  DBadd_sur_grwire(DBSurf *surptr, DBSeg *sptarr[]);
-DBstatus  DBread_sur_grwire(DBSurf *surptr, DBSeg *sptarr[]);
+DBstatus  DBadd_sur_grwire(DBSurf *psurf, DBSegarr *pborder, DBSegarr *piso);
+DBstatus  DBread_sur_grwire(DBSurf *psurf, DBSegarr **pborder, DBSegarr **piso);
 DBstatus  DBdelete_sur_grwire(DBSurf *surptr);
-DBstatus  DBfree_sur_grwire(DBSeg *sptarr[]);
+DBstatus  DBfree_sur_grwire(DBSurf *psurf, DBSegarr *pborder, DBSegarr *piso);
 DBstatus  DBadd_sur_grsur(DBSurf *surptr, GLfloat *ku,
-                           GLfloat *kv, GLfloat *cpts);
+                           GLfloat *kv, GLfloat *cpts, DBGrstrimcurve *ptrim);
 DBstatus  DBread_sur_grsur(DBSurf *surptr, GLfloat **ku,
-                            GLfloat **kv, GLfloat **cpts);
+                            GLfloat **kv, GLfloat **cpts, DBGrstrimcurve **trim);
 DBstatus  DBdelete_sur_grsur(DBSurf *surptr);
-DBstatus  DBfree_sur_grsur(GLfloat *ku, GLfloat *kv, GLfloat *cpts);
+DBstatus  DBfree_sur_grsur(DBSurf *surptr, GLfloat *ku,
+                           GLfloat *kv, GLfloat *cpts, DBGrstrimcurve *trim);
 DBstatus  DBread_getrimcurves(DBSurf *surpek, DBSegarr **ppgetrimcurves);
 DBstatus  DBfree_getrimcurves(DBSurf *surpek, DBSegarr *pgetrimcurves);
 DBSegarr *DBcreate_segarrs(DBint nsegarr);

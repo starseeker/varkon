@@ -4,14 +4,14 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  igcges();    Generic create geometrical statement               */
-/*  igcprs();    Generic create procedure call statement            */
-/*  iggnid();    Generate new ID sequencenumber                     */
-/*  igedst();    Edit MBS statement                                 */
-/*  iganrf();    Analyzes reference dependencies                    */
+/*  IGcges();    Generic create geometrical statement               */
+/*  IGcprs();    Generic create procedure call statement            */
+/*  IGgnid();    Generate new ID sequencenumber                     */
+/*  IGedst();    Edit MBS statement                                 */
+/*  IGanrf();    Analyzes reference dependencies                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -30,13 +30,12 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../DB/include/DBintern.h"
 #include "../include/IG.h"
+#include "../../EX/include/EX.h"
 #include "../../AN/include/AN.h"
 #include "../../WP/include/WP.h"
 
@@ -49,7 +48,7 @@ extern struct   ANSYREC sy;
 
 /*!******************************************************/
 
-       short igcges(
+       short IGcges(
        char  *typ,
        pm_ptr pplist)
 
@@ -61,24 +60,26 @@ extern struct   ANSYREC sy;
  *
  *      Ut: Inget.
  *
- *      Felkod: IG5213 = Fel från pmcges i igcges
+ *      Felkod: IG5213 = Fel frï¿½n pmcges i IGcges
  *              IG5222 = Fel vid interpretering av %s-sats
- *              IG5233 = Fel från pmlmst i igcges
+ *              IG5233 = Fel frï¿½n pmlmst i IGcges
  *
  *      (C)microform ab 3/9/85 J. Kjellander
  *
  *      2004-02-21 pmmark()+pmrele(), J.Kjellander
+ *      2007-07-28 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
+    char   mesbuf[2*V3STRLEN],mbsbuf[V3STRLEN];
     pmseqn geid;
     pm_ptr retla,ref;
     stidcl kind;
 /*
 ***Create a new unused ID.
 */
-    geid = iggnid();
+    geid = IGgnid();
 /*
 ***Mark current PM-stack pointer.
 */
@@ -86,8 +87,8 @@ extern struct   ANSYREC sy;
 /*
 ***Create the statement.
 */
-    stlook( typ, &kind, &ref);
-    if ( pmcges( ref, geid, pplist, (pm_ptr)NULL, &retla) < 0)
+    stlook(typ,&kind,&ref);
+    if ( pmcges(ref,geid,pplist,(pm_ptr)NULL,&retla) < 0)
          return(erpush("IG5213",typ));
 /*
 ***Try to execute.
@@ -109,15 +110,27 @@ extern struct   ANSYREC sy;
       {
       pmrele();
       }
-
+/*
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    strcpy(mesbuf,IGgtts(58));
+    pprsts(retla,modtyp,mbsbuf,V3STRLEN);
+    strcat(mesbuf,mbsbuf);
+    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
+***The end.
+*/
     return(0);
-
   }
   
 /********************************************************/
 /*!******************************************************/
 
-       short igcprs(
+       short IGcprs(
        char  *typ,
        pm_ptr pplist)
 
@@ -129,18 +142,20 @@ extern struct   ANSYREC sy;
  *
  *      Ut: Inget.
  *
- *      Felkod: IG5253 = Fel från pmcges i igcprs
+ *      Felkod: IG5253 = Fel frï¿½n pmcges i IGcprs
  *              IG5222 = Fel vid interpretering av %s-sats
- *              IG5263 = Fel från pmlmst i igcprs
+ *              IG5263 = Fel frï¿½n pmlmst i IGcprs
  *
  *      (C)microform ab 3/9/85 J. Kjellander
  *
  *      15/3/88    Ritpaketet, J. Kjellander
  *      2004-02-21 pmmark()+pmrele(), J.Kjellander
+ *      2007-07-28 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
+    char   mesbuf[2*V3STRLEN],mbsbuf[V3STRLEN];
     pm_ptr retla,ref;
     stidcl kind;
 
@@ -173,15 +188,23 @@ extern struct   ANSYREC sy;
       {
       pmrele();
       }
-
+/*
+***Confirmational message.
+*/
+    strcpy(mesbuf,IGgtts(58));
+    pprsts(retla,modtyp,mbsbuf,V3STRLEN);
+    strcat(mesbuf,mbsbuf);
+    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
+***The end.
+*/
     return(0);
-
   }
   
 /********************************************************/
 /*!******************************************************/
 
-       DBseqnum iggnid()
+       DBseqnum IGgnid()
 
 /*      Genererar nytt sekvensnummer.
  *
@@ -193,10 +216,10 @@ extern struct   ANSYREC sy;
  *
  *      (C)microform ab 7/11/85 J. Kjellander
  *
- *      1/2/86  anrop till gmrdid() ändrat, J. Kjellander
+ *      1/2/86  anrop till gmrdid() ï¿½ndrat, J. Kjellander
  *      13/3/86 Slopat ERASED, J. Kjellander
  *      15/3/88 Ritpaketet, J. Kjellander
- *      1998-04-02 Kolla även GM, J.Kjellander
+ *      1998-04-02 Kolla ï¿½ven GM, J.Kjellander
  *
  ******************************************************!*/
 
@@ -214,9 +237,9 @@ extern struct   ANSYREC sy;
       }
 /*
 ***Om basmodulen aktiv, returnera snrmax + 1.
-***Om detta id redan är använt (eller suddat) i GM bör vi
-***inte använda det. Så kan det tex. bli om man laddar ett
-***GM från fil och sen börjar jobba vidare.
+***Om detta id redan ï¿½r anvï¿½nt (eller suddat) i GM bï¿½r vi
+***inte anvï¿½nda det. Sï¿½ kan det tex. bli om man laddar ett
+***GM frï¿½n fil och sen bï¿½rjar jobba vidare.
 */
     else
       {
@@ -231,10 +254,10 @@ extern struct   ANSYREC sy;
 /********************************************************/
 /*!******************************************************/
 
-        short igedst()
+        short IGedst()
 
-/*      Varkonfunktion för att editera en geometri-
- *      eller part-sats på MBS-format.
+/*      f168 = funktion fï¿½r att editera en geometri-
+ *      eller part-sats pï¿½ MBS-format.
  *
  *      In: Inget.
  *
@@ -244,6 +267,8 @@ extern struct   ANSYREC sy;
  *
  *      (C)microform ab 22/1/92 J. Kjellander
  *
+ *      2007-01-05 Removed GP, J.Kjellander
+ *
  ******************************************************!*/
 
   {
@@ -251,22 +276,23 @@ extern struct   ANSYREC sy;
     char     oldpar[V3STRLEN+1],newpar[V3STRLEN+1];
     char     promt[V3STRLEN+1];
 
-    short    status,nid,i,ntkn;
+    short    status;
+    int      nid,i;
     DBetype  typv[1];
     DBptr    csyla;
     pm_ptr   slstla,lstla,nextla,statla,retla;
     PMMONO  *np;
     DBId     idmat[1][MXINIV];
     ANFSET   set;
-    DBCsys    csy;
+    DBCsys   csy;
     V2NAPA   oldnap;
 
 /*
-***Hämta storhetens id.
+***Hï¿½mta storhetens id.
 */
-    nid = 1; igptma(268,IG_MESS); typv[0] = ALLTYP;
-    status = getmid(idmat,typv,&nid);
-    igrsma();
+    nid = 1; IGptma(268,IG_MESS); typv[0] = ALLTYP;
+    status = IGgmid(idmat,typv,&nid);
+    IGrsma();
     if ( status < 0 )
       {
       WPerhg();
@@ -278,18 +304,18 @@ extern struct   ANSYREC sy;
       idmat[0][0].p_nextre = NULL;
       }
 /*
-***Ta reda på det koordinatsystem
-***som var aktivt när den skapades.
+***Ta reda pï¿½ det koordinatsystem
+***som var aktivt nï¿½r den skapades.
 */
     status = EXgatt((DBId *)idmat,&oldnap,&csyla);
     if ( status < 0 ) goto exit;
 /*
 ***Om csyla =  DBNULL var inget lokalt system aktivt.
-***Om lsysla = DBNULL är inget lokalt system aktivt.
-***Jämför dom med varandra och meddela vilket som gäller
-***under ändringen.
+***Om lsysla = DBNULL ï¿½r inget lokalt system aktivt.
+***Jï¿½mfï¿½r dom med varandra och meddela vilket som gï¿½ller
+***under ï¿½ndringen.
 */
-    strcpy(promt,iggtts(116));
+    strcpy(promt,IGgtts(116));
 
     if ( csyla != lsysla )
       {
@@ -298,15 +324,15 @@ extern struct   ANSYREC sy;
         DBread_csys(&csy,NULL,csyla);
         strcat(promt,csy.name_pl);
         }
-      else strcat(promt,iggtts(223));
+      else strcat(promt,IGgtts(223));
       }
     else strcat(promt,actcnm);
 
-    igplma(promt,IG_INP);
+    IGplma(promt,IG_INP);
 /*
-***Var i PM ligger satsen ? Först en C-pekare till aktiv modul.
-***Sen en PM-pekare till list-noden för utpekad sats.
-***Sen en PM-pekare till själva satsen.
+***Var i PM ligger satsen ? Fï¿½rst en C-pekare till aktiv modul.
+***Sen en PM-pekare till list-noden fï¿½r utpekad sats.
+***Sen en PM-pekare till sjï¿½lva satsen.
 */
     np = (PMMONO *)pmgadr((pm_ptr)0);
     slstla = np->pstl_;
@@ -314,12 +340,12 @@ extern struct   ANSYREC sy;
     if ( lstla == (pm_ptr)NULL ) goto exit;
     if ( (status=pmglin(lstla,&nextla,&statla)) < 0 ) goto exit;
 /*
-***De-kompilera dito till en sträng.
+***De-kompilera dito till en strï¿½ng.
 */
     if ( (status=pprsts(statla,modtyp,oldstr,V3STRLEN)) < 0 ) goto exit;
 /*
-***Klipp ut allt fram till 1:a parametern och gör det
-***till promt, resten blir default-värde.
+***Klipp ut allt fram till 1:a parametern och gï¿½r det
+***till promt, resten blir default-vï¿½rde.
 */
 edit:
     for ( i=0; i<(int)strlen(oldstr); ++i ) if ( oldstr[i] == ',' ) break;
@@ -328,13 +354,13 @@ edit:
     strcpy(promt,oldstr); promt[i] = '\0';
     strcpy(oldpar,oldstr+i);
 /*
-***Låt användaren editera.
+***Lï¿½t anvï¿½ndaren editera.
 */
-    ntkn = V3STRLEN;
-    status = igglin(promt,oldpar,&ntkn,newpar);
+    status = IGssip(promt,newpar,oldpar,V3STRLEN);
+
     if ( status < 0 )
       {
-      igrsma();
+      IGrsma();
       WPerhg();
       return(status);
       }
@@ -344,11 +370,11 @@ edit:
    strcpy(newstr,promt);
    strcat(newstr,newpar);
 /*
-***Notera aktuellt läge i PM och initiera scannern.
+***Notera aktuellt lï¿½ge i PM och initiera scannern.
 ***Skapa tomt set.
-***Hämta första token. anascan() returnerar ingen status.
-***Analysera. anunst() är en void.
-***Stäng scannern.
+***Hï¿½mta fï¿½rsta token. anascan() returnerar ingen status.
+***Analysera. anunst() ï¿½r en void.
+***Stï¿½ng scannern.
 */
     pmmark(); anlogi();
     if ( (status=asinit(newstr,ANRDSTR)) < 0 ) goto exit;
@@ -357,7 +383,7 @@ edit:
     anunst(&retla,&set);
     if ( (status=asexit()) < 0 ) goto exit;
 /*
-***Blev det några fel ?
+***Blev det nï¿½gra fel ?
 */
     if ( anyerr() )
       {
@@ -368,7 +394,7 @@ edit:
       goto edit;
       }
 /*
-***Finns det några framåt-referenser i den nya satsen.
+***Finns det nï¿½gra framï¿½t-referenser i den nya satsen.
 */
     if ( pmargs(retla) == TRUE )
       {
@@ -381,19 +407,19 @@ edit:
 /*
 ***Byt ut satsen i modulen. lstla = Den gamla satsens listnod
 ***som returnerats av pmlges(). retla = Den nya satsen som den
-***kommer från anunst().
+***kommer frï¿½n anunst().
 */
     status = pmrgps(lstla,retla);
     if ( status < 0 ) goto exit;
 /*
-***Oavsett om storheten är refererad eller ej provar
-***vi att reinterpretera för att se om det går bra.
+***Oavsett om storheten ï¿½r refererad eller ej provar
+***vi att reinterpretera fï¿½r att se om det gï¿½r bra.
 */
     status = EXrist((DBId *)idmat);
 /*
-***Om det inte gick bra att reinterpretera måste vi
-***länka in den gamla satsen i PM igen så att allt blir
-***som det var från början.
+***Om det inte gick bra att reinterpretera mï¿½ste vi
+***lï¿½nka in den gamla satsen i PM igen sï¿½ att allt blir
+***som det var frï¿½n bï¿½rjan.
 */
     if ( status < 0 ) 
       {
@@ -404,12 +430,12 @@ edit:
       goto edit;
       }
 /*
-***Om storheten är refererad kanske hela modulen skall
-***köras om.
+***Om storheten ï¿½r refererad kanske hela modulen skall
+***kï¿½ras om.
 */
-    if ( pmamir((DBId *)idmat)  &&  igialt(175,67,68,FALSE) )
+    if ( pmamir((DBId *)idmat)  &&  IGialt(175,67,68,FALSE) )
       {
-      status = igramo();
+      status = IGramo();
       if ( status < 0 )
         { 
         pmrgps(lstla,statla);
@@ -420,7 +446,7 @@ edit:
 ***Slut.
 */
 exit:
-    igrsma();
+    IGrsma();
     WPerhg();
     if ( status < 0 ) errmes();
     return(0);
@@ -429,9 +455,9 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-        short iganrf()
+        short IGanrf()
 
-/*      Varkonfunktion för att analysera vilka storheter
+/*      Varkonfunktion fï¿½r att analysera vilka storheter
  *      som refererar till en utpekad storhet.
  *
  *      In: Inget.
@@ -445,22 +471,22 @@ exit:
  ******************************************************!*/
 
   {
-    int      refant;
+    int      i,nid,refant;
     char     buf[80],typstr[20];
-    short    status,nid,i;
+    short    status;
     DBetype  typv[IGMAXID];
     PMREFVA  idmat[IGMAXID][MXINIV],id;
     PMREFL  *reftab;
     DBHeader   hdr;
     DBPart    part;
 /*
-***Hämta id för någon av storhetens instanser.
+***Hï¿½mta id fï¿½r nï¿½gon av storhetens instanser.
 */
     nid = 1;
-    igptma(268,IG_MESS);
+    IGptma(268,IG_MESS);
     typv[0] = ALLTYP;
-    status = getmid(idmat,typv,&nid);
-    igrsma();
+    status = IGgmid(idmat,typv,&nid);
+    IGrsma();
     if ( status < 0 ) goto exit;
 /*
 ***Test av pmwrme().
@@ -482,7 +508,7 @@ exit:
         for ( i=1; i<refant; ++i )
           {
 /*
-***Kolla i GM vilken typ av storhet det är.
+***Kolla i GM vilken typ av storhet det ï¿½r.
 */
           id.seq_val  = reftab[i].snr;
           id.ord_val  = 1;

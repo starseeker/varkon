@@ -32,7 +32,7 @@
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 
-extern short    actpen;
+extern int actpen;
 
 static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
                     DBptr la, bool draw);
@@ -86,7 +86,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
 /*
 ***Ja, ligger snittet på en nivå som är tänd i detta fönster ?
 */
-         if ( WPnivt(gwinpt,xhtpek->hed_xh.level) )
+         if ( WPnivt(gwinpt->nivtab,xhtpek->hed_xh.level) )
            {
 /*
 ***Ja. Kolla att rätt färg är inställd.
@@ -157,7 +157,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
            else
              {
              WProbj(gwinpt);
-             if ( !WPnivt(gwinpt,xhtpek->hed_xh.level)  ||
+             if ( !WPnivt(gwinpt->nivtab,xhtpek->hed_xh.level)  ||
                                  xhtpek->hed_xh.blank) return(0);
              drawxh(gwinpt,xhtpek,crdvek,la,FALSE);
              }
@@ -168,7 +168,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
 */
          else
            {
-           if ( !WPnivt(gwinpt,xhtpek->hed_xh.level)  ||
+           if ( !WPnivt(gwinpt->nivtab,xhtpek->hed_xh.level)  ||
                                xhtpek->hed_xh.blank) return(0);
            drawxh(gwinpt,xhtpek,crdvek,la,FALSE);
            }
@@ -221,7 +221,7 @@ static short drawxh(WPGWIN *gwinpt, DBHatch *xhtpek, DBfloat crdvek[],
 /*
 ***Clip.
 */
-   if ( WPcply(gwinpt,-1,&n,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,-1,&n,x,y,a) )
      {
      if ( draw  &&  xhtpek->hed_xh.hit )
        {

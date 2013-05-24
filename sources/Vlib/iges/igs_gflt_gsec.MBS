@@ -1,0 +1,46 @@
+!*******************************************************
+ 
+ MACRO MODULE igs_gflt_gsec(
+    VAR FILE   infil;
+    VAR STRING row*82;
+    VAR FLOAT  f;
+    VAR INT    status);
+
+!*      Reads and removes next float number from
+!*      the row in question. If the row is at end a new 
+!*      row is read.
+!*
+!*      In: infil  = File to read from.
+!*          row    = Row to read from.
+!*
+!*      Ut: f      = The read number.
+!*          status = 0 => Ok
+!*                  -1 => Error
+!*
+!*      (C)Örebro university, 2006-10-10 Sören Larsson
+!*
+!*******************************************************
+
+   INT  p,pd,n_chars;
+  
+ BEGINMODULE
+     
+   loop:
+     
+   pd:=finds(row,"D");     
+   IF pd > 0 THEN
+     row:=substr(row,1,pd-1)+"E"+substr(row,pd+1);
+   ENDIF;
+     
+   f:=fval(row,status,n_chars);
+ 
+   IF status = -1 THEN
+     row := inlin(infil);
+     goto loop;
+   ENDIF;   
+   
+   row:=substr(row,n_chars+2);
+
+ ENDMODULE
+ 
+ !******************************************************

@@ -1162,7 +1162,35 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                                                                                                                     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

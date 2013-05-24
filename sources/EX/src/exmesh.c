@@ -44,11 +44,6 @@ extern DBTmat  lklsyi;
 extern DBptr   lsysla;
 extern short   modtyp;
 
-#ifdef WIN32
-extern short WPdrpo();
-#endif
-
-
 /*!******************************************************/
 
        DBstatus EXemsh(

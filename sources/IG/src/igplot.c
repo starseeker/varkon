@@ -1,15 +1,15 @@
-/*!******************************************************************/
-/*  igplot.c                                                        */
-/*  ========                                                        */
-/*                                                                  */
+/********************************************************************
+*   igplot.c
+*   ========
+*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  igcgkm();  Create PLT-file GKS formatted                        */
-/*  igcdxf();  Create DXF-file                                      */
-/*  igshll();  Shell command                                        */
-/*  ighid1();  Hide on screen                                       */
-/*  ighid2();  Hide to PLT-file                                     */
-/*  ighid3();  Hide on screen and to file                           */
+/*  IGcgkm();  Create PLT-file GKS formatted                        */
+/*  IGcdxf();  Create DXF-file                                      */
+/*  IGshll();  Shell command                                        */
+/*  IGhid1();  Hide on screen                                       */
+/*  IGhid2();  Hide to PLT-file                                     */
+/*  IGhid3();  Hide on screen and to file                           */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
 /*                                                                  */
@@ -44,7 +44,6 @@ extern char   jobnam[];
 extern bool   tmpref;
 extern DBTmat lklsyi,*lsyspk;
 extern MNUALT smbind[];
-extern VY     actvy,vytab[];
 
 char speed[MAXTXT+1];
 char pltyp[MAXTXT+1];
@@ -55,248 +54,7 @@ static short ighidf(bool screen);
 
 /*!******************************************************/
 
-       short igplot()
-
-/*      Starta plottning.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 25/2/85 J. Kjellander
- *
- *      20/11-85 Plotparametrar, Ulf Johansson
- *      24/11/85 Finjustering, J. Kjellander
- *      1/4/86   Mod. för MF:s plott-program R. Svedin
- *      7/11/86  GOMAIN, VAX, J. Kjellander
- *      29/9/87  Default filnamn, J. Kjellander
- *      15/4/92  EXos(), J. Kjellander
- *
- ******************************************************!*/
-
-  {
-
-     char  *ps[ 4 ];
-     char  *is[ 4 ];
-     char  *ds[ 4 ];
-     short ml[ 4 ];
-     char  str[ 4*(MAXTXT+1) ];
-     short state,status;
-
-     static char filen[ MAXTXT+1 ] = "";
-     static char scale[ MAXTXT+1 ] = "1.0";
-     static char vridn[ MAXTXT+1 ] = "0.0";
-     static char xmin[ MAXTXT+1 ] = "0.0";
-     static char ymin[ MAXTXT+1 ] = "0.0";
-
-/*
-***Initiering.
-*/
-     is[ 0 ] = str;                         /* Input strings */
-     is[ 1 ] = &str[ MAXTXT+1 ];
-     is[ 2 ] = &str[ 2*(MAXTXT+1) ];
-     is[ 3 ] = &str[ 3*(MAXTXT+1) ];
-/*
-***Läs in plotparametrar.
-*/
-     state = 0;
-     do 
-        {
-        switch (state) 
-           {
-/*
-***Fil och  hastighet.
-*/
-           case 0:
-/*
-***Promtsträngar.
-*/
-           ps[ 0 ] = iggtts(342);
-           ps[ 1 ] = iggtts(335);
-/*
-***Defaultvärden.
-*/
-           if ( strcmp(filen,"") == 0 ) ds[0] = jobnam;
-           else ds[0] = filen;
-           ds[1] = speed;
-/*
-***Infältens maxlängd.
-*/
-           ml[ 0 ] = ml[ 1 ] = MAXTXT;
-/*
-***Läs in fil och hastighet.
-*/
-           igptma(347,IG_INP);
-           status = igmsip(ps,is,ds,ml,2);
-           if ( status == GOMAIN ) goto gomain;
-           if ( status == REJECT ) state--;
-           else
-              {
-              strcpy(filen,is[ 0 ]);
-              strcpy(speed,is[ 1 ]);
-              state++;
-              } 
-           igrsma();
-           break;
-/*
-***Plotter och port.
-*/
-           case 1:
-/*
-***Promtsträngar.
-*/
-           ps[ 0 ] = iggtts(340);
-           ps[ 1 ] = iggtts(344);
-/*
-***Defaultvärden.
-*/
-           ds[ 0 ] = pltyp;
-           ds[ 1 ] = port;
-/*
-***Infältens maxlängd.
-*/
-           ml[ 0 ] = ml[ 1 ] = MAXTXT;
-/*
-***Läs in Plottertyp och port.
-*/
-           igptma(347,IG_INP);
-           status = igmsip(ps,is,ds,ml,2);
-           if ( status == GOMAIN ) goto gomain;
-           if ( status == REJECT ) state--;
-           else
-              {
-              strcpy(pltyp,is[ 0 ]);
-              strcpy(port,is[ 1 ]);
-              state++;
-              } 
-           igrsma();
-           break;
-/*
-***Skala, vridning, Xmin och Ymin.
-*/
-           case 2:
-/*
-***Promtsträngar.
-*/
-           ps[ 0 ] = iggtts(338);
-           ps[ 1 ] = iggtts(336);
-           ps[ 2 ] = iggtts(339);
-           ps[ 3 ] = iggtts(341);
-/*
-***Defaultvärden.
-*/
-           ds[ 0 ] = scale;
-           ds[ 1 ] = vridn;
-           ds[ 2 ] = xmin;
-           ds[ 3 ] = ymin;
-/*
-***Infältens maxlängd.
-*/
-           ml[ 0 ] = ml[ 1 ] = ml[ 2 ] = ml[ 3 ] = MAXTXT;
-/*
-***Läs in skala, vridning, Xmin och Ymin.
-*/
-           igptma(337,IG_INP);
-           status = igmsip(ps,is,ds,ml,4);
-           if ( status == GOMAIN ) goto gomain;
-           if ( status == REJECT ) state--;
-           else
-              {
-              strcpy(scale,is[ 0 ]);
-              strcpy(vridn,is[ 1 ]);
-              strcpy(xmin,is[ 2 ]);
-              strcpy(ymin,is[ 3 ]);
-              state++;
-              } 
-           igrsma();
-           break;
-/*
-***Starta upp plottning.
-*/
-           case 3:
-           state = -1;
-/*
-***Bygg kommandosträng.
-*/
-           strcpy(str,pltyp);                   /* plotprogram */
-           strcat(str," ");
-           strcat(str,jobdir);                  /* plotfil */
-           strcat(str,filen);
-           strcat(str,PLTEXT);
-
-           if (strlen(str) > 256) break;
- 
-           if (strcmp(scale,"1.0") != 0)        /* skala */
-              {
-              strcat(str," -s");
-              strcat(str,scale);
-              }
-
-           if (strcmp(speed,iggtts(334)) != 0)  /* hastighet */
-              {
-              strcat(str," -h");
-              strcat(str,speed);
-              }
-
-           if (strcmp(vridn,"0.0") != 0)        /* vridning */
-              {
-              strcat(str," -v");
-              strcat(str,vridn);
-              }
-
-           if (strlen(str) > 256) break;
-
-           if (strcmp(xmin,"0.0") != 0)        /* Xmin */
-              {
-              strcat(str," -x");
-              strcat(str,xmin);
-              }
-
-           if (strcmp(ymin,"0.0") != 0)        /* Ymin */
-              {
-              strcat(str," -y");
-              strcat(str,ymin);
-              }
-
-           if (strlen(str) > 256) break;
-
-           strcat(str,port);                   /* plotport */
-
-           if (strlen(str) > 256) break;
-/*
-***Skicka kommando till OS. Använd EXos() med mode = 2 för
-***asynkron exekvering utan wait.
-*/
-           igplma(str,IG_MESS);
-           EXos(str,(short)2);
-           igrsma();
-           break;
-
-           default:
-               state = -1;
-               break;
-           }
-
-        }
-        while (state >= 0);
-/*
-***Slut.
-*/
-        return(0);
-/*
-***GOMAIN.
-*/
-gomain:
-        igrsma();
-        return(GOMAIN);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-       short igcgkm()
+       short IGcgkm()
 
 /*      Skapa plotfil på GKS-format.
  *
@@ -309,7 +67,7 @@ gomain:
 /********************************************************/
 /*!******************************************************/
 
-       short igcdxf()
+       short IGcdxf()
 
 /*      Skapa plotfil på DXF-format.
  *
@@ -364,9 +122,10 @@ static short igcplf(char *typ)
      double   tmp,dx,dy;
      short    status,alttyp,tsnr;
      bool     tmptrf;
+     wpw_id   grw_id;
      FILE    *filpek;
      MNUALT  *pmualt;
-     VY       plotvy;
+     WPVIEW   plotvy;
      DBVector origo;
      WPWIN   *winptr;
      WPGWIN  *gwinpt;
@@ -386,26 +145,26 @@ static short igcplf(char *typ)
     if ( strcmp(typ,PLTEXT) == 0 ) msshmu(146);
     else                           msshmu(147);
 #else
-    if ( strcmp(typ,PLTEXT) == 0 ) igaamu(146);
-    else                           igaamu(147);   
+    if ( strcmp(typ,PLTEXT) == 0 ) IGaamu(146);
+    else                           IGaamu(147);   
 #endif
 /*
 ***Läs in svar, snabbval ej tillåtet.
 */
 loop:
-    igptma(359,IG_MESS);
-    iggalt(&pmualt,&alttyp);
+    IGptma(359,IG_MESS);
+    IGgalt(&pmualt,&alttyp);
 
     if ( pmualt == NULL )
       {
       switch ( alttyp )
         {
         case SMBRETURN:
-        igrsma();
+        IGrsma();
 #ifdef WIN32
         mshdmu();
 #else
-        igsamu();
+        IGsamu();
 #endif
         return(REJECT);
 
@@ -428,10 +187,10 @@ loop:
 ***Plotta allt på skärmen.
 */
       case 2:
-      plotvy.vywin[0] = gwinpt->vy.modwin.xmin;
-      plotvy.vywin[1] = gwinpt->vy.modwin.ymin;
-      plotvy.vywin[2] = gwinpt->vy.modwin.xmax;
-      plotvy.vywin[3] = gwinpt->vy.modwin.ymax;
+      plotvy.modwin.xmin = gwinpt->vy.modwin.xmin;
+      plotvy.modwin.ymin = gwinpt->vy.modwin.ymin;
+      plotvy.modwin.xmax = gwinpt->vy.modwin.xmax;
+      plotvy.modwin.ymax = gwinpt->vy.modwin.ymax;
       break;
 /*
 ***Plotta del av skärmen.
@@ -441,35 +200,35 @@ loop:
 ***Läs in plot-fönster.
 */
 l1:
-      igptma(322,IG_MESS);
-      WPgtmc(&pektkn,&x1,&y1,FALSE);
-      igrsma();
+      IGptma(322,IG_MESS);
+      WPgmc2(FALSE,&pektkn,&x1,&y1,&grw_id);
+      IGrsma();
       if ( pektkn == *smbind[1].str ) goto reject;
       if ( pektkn == *smbind[7].str ) goto gomain;
       if ( pektkn == *smbind[8].str )
         {
-        ighelp();
+        IGhelp();
         goto l1;
         }
       if ( pektkn != ' ' )
         {
-        igbell();
+        WPbell();
         goto l1;
         }
 l2:
-      igptma(323,IG_MESS);
-      WPgtmc(&pektkn,&x2,&y2,FALSE);
-      igrsma();
+      IGptma(323,IG_MESS);
+      WPgmc2(FALSE,&pektkn,&x2,&y2,&grw_id);
+      IGrsma();
       if ( pektkn == *smbind[1].str ) goto reject;
       if ( pektkn == *smbind[7].str ) goto gomain;
       if ( pektkn == *smbind[8].str )
         {
-        ighelp();
+        IGhelp();
         goto l2;
         }
       if ( pektkn != ' ' )
         {
-        igbell();
+        WPbell();
         goto l2;
         }
 /*
@@ -501,18 +260,18 @@ l2:
 /*
 ***Sätt upp nytt fönster.
 */
-      plotvy.vywin[0] = x1;
-      plotvy.vywin[1] = y1;
-      plotvy.vywin[2] = x2;
-      plotvy.vywin[3] = y2;
+      plotvy.modwin.xmin = x1;
+      plotvy.modwin.ymin = y1;
+      plotvy.modwin.xmax = x2;
+      plotvy.modwin.ymax = y2;
       break;
 /*
 ***Plotta annan vy. OBS !!!!!!!!! Detta alternativ bör utgå !!!!!!!!
 *
       case 4:
-      igptma(220,IG_INP);
-      status=igssip(iggtts(267),vynam,"",GPVNLN);
-      igrsma();
+      IGptma(220,IG_INP);
+      status=IGssip(IGgtts(267),vynam,"",GPVNLN);
+      IGrsma();
       if ( status == REJECT ) goto reject;
       if ( status == GOMAIN ) goto gomain;
 
@@ -535,19 +294,19 @@ l2:
 /*
 ***Sudda "Vad vill du plotta ?"
 */
-     igrsma();
+     IGrsma();
 /*
 ***Fråga efter plotorigo.
 */
-     if ( igialt(380,67,68,FALSE) )
+     if ( IGialt(380,67,68,FALSE) )
        {
        origo.x_gm = origo.y_gm = origo.z_gm = 0.0;
        }
      else
        {
-       igptma(381,IG_MESS); tmptrf = tmpref; tmpref = TRUE;
-       status=genpov(&origo);
-       tmpref = tmptrf; igrsma(); WPerhg();
+       IGptma(381,IG_MESS); tmptrf = tmpref; tmpref = TRUE;
+       status=IGcpov(&origo);
+       tmpref = tmptrf; IGrsma(); WPerhg();
        if ( status == GOMAIN ) goto gomain;
        if ( status == REJECT ) goto reject;
 /*
@@ -565,8 +324,8 @@ l2:
 */
        if ( strcmp(typ,PLTEXT) == 0 )
          {
-         origo.x_gm -= plotvy.vywin[0];
-         origo.y_gm -= plotvy.vywin[1];
+         origo.x_gm -= plotvy.modwin.xmin;
+         origo.y_gm -= plotvy.modwin.ymin;
          }
        }
 /*
@@ -574,10 +333,10 @@ l2:
 */
 getnam:
      if ( strcmp(dstr,"") == 0 )    strcpy(dstr,jobnam);
-     if ( strcmp(typ,PLTEXT) == 0 ) igptma(215,IG_INP);
-     else                           igptma(173,IG_INP);
-     status=igssip(iggtts(267),fnam,dstr,JNLGTH);
-     igrsma();
+     if ( strcmp(typ,PLTEXT) == 0 ) IGptma(215,IG_INP);
+     else                           IGptma(173,IG_INP);
+     status=IGssip(IGgtts(267),fnam,dstr,JNLGTH);
+     IGrsma();
      if ( status == GOMAIN ) goto gomain;
      if ( status == REJECT ) goto reject;
      strcpy(dstr,fnam);
@@ -594,7 +353,7 @@ getnam:
        {
        fclose(filpek);
        if ( strcmp(typ,PLTEXT) == 0 ) tsnr = 382; else tsnr = 383;
-       if ( igialt(tsnr,67,68,TRUE) ) goto opfil;
+       if ( IGialt(tsnr,67,68,TRUE) ) goto opfil;
        else goto getnam;
        }
 /*
@@ -611,12 +370,12 @@ opfil:
 */
      if ( strcmp(typ,PLTEXT) == 0 )
        {
-       igptma(221,IG_MESS);
-       status = WPmkpf(gwinpt,filpek,&plotvy,&origo);
+       IGptma(221,IG_MESS);
+       status = WPmkpf(gwinpt,filpek,&plotvy.modwin,&origo);
        }
      else
        {
-       igptma(172,IG_MESS);
+       IGptma(172,IG_MESS);
        status = WPdxf_out(gwinpt,filpek,&plotvy,&origo);
        }
 
@@ -626,19 +385,19 @@ opfil:
 */
      if ( status == AVBRYT ) 
        {
-       igrsma();
+       IGrsma();
 #ifdef WIN32
         mshdmu();
 #else
-        igsamu();
+        IGsamu();
 #endif
-       igwtma(171);
+       WPaddmess_mcwin(IGgtts(171),WP_ERROR);
        return(REJECT);
        }
 /*
 ***Sudda "Plotfil skapas" och återvänd till Plot-menyn.
 */
-     igrsma();
+     IGrsma();
      goto loop;
 /*
 ***Fel.
@@ -649,7 +408,7 @@ error:
 ***REJECT.
 */
 reject:
-     igrsma();
+     IGrsma();
      goto loop;
 /*
 ***GOMAIN.
@@ -661,7 +420,7 @@ gomain:
 /********************************************************/
 /*!******************************************************/
 
-       short igshll()
+       short IGshll()
 
 /*      Kommando till shell.
  *
@@ -671,7 +430,7 @@ gomain:
  *
  *      22/11/85 v2cmos, J. Kjellander
  *      4/8/87   Fixa skärmen, J. Kjellander
- *      5/3/88   igcmos(), J. Kjellander
+ *      5/3/88   IGcmos(), J. Kjellander
  *
  ******************************************************!*/
 
@@ -684,18 +443,18 @@ gomain:
 /*
 ***Läs in kommando.
 */
-     if ( (status=igssip(iggtts(302),shcmd,dstr,80)) < 0 ) return(status);
+     if ( (status=IGssip(IGgtts(302),shcmd,dstr,80)) < 0 ) return(status);
      strcpy(dstr,shcmd);
 /*
 ***Utför.
 */
-     return(igcmos(shcmd));
+     return(IGcmos(shcmd));
 
   }
 /*********************************************************************/
 /*!******************************************************/
 
-        short ighid1()
+        short IGhid1()
 
 /*      Huvudrutin för hide mot skärm.
  *
@@ -713,19 +472,19 @@ gomain:
 /*
 ***Det här kan ta tid.
 */
-#ifdef V3_X11
+#ifdef UNIX
    WPwait(GWIN_MAIN,TRUE);
 #endif
 
-   status = EXhdvi(actvy.vynamn,TRUE,FALSE,NULL,&origo);
+   status = EXhdvi("xy",TRUE,FALSE,NULL,&origo);
 
-#ifdef V3_X11
+#ifdef UNIX
    WPwait(GWIN_MAIN,FALSE);
 #endif
 
    if ( status == AVBRYT )
      {
-     igwtma(170);
+     WPaddmess_mcwin(IGgtts(170),WP_ERROR);
      return(0);
      }
    else return(status);
@@ -734,7 +493,7 @@ gomain:
 /********************************************************/
 /*!******************************************************/
 
-        short ighid2()
+        short IGhid2()
 
 /*      Huvudrutin för hide mot fil.
  *
@@ -749,7 +508,7 @@ gomain:
 /********************************************************/
 /*!******************************************************/
 
-        short ighid3()
+        short IGhid3()
 
 /*      Huvudrutin för hide både mot skärm och fil.
  *
@@ -791,13 +550,13 @@ static short ighidf(bool screen)
 /*
 ***Fråga efter plotorigo.
 */
-     if ( igialt(380,67,68,FALSE) )
+     if ( IGialt(380,67,68,FALSE) )
        nollp = NULL;
      else
        {
-       igptma(381,IG_MESS); tmptrf = tmpref; tmpref = TRUE;
-       status=genpov(&origo); nollp = &origo;
-       tmpref = tmptrf; igrsma(); WPerhg();
+       IGptma(381,IG_MESS); tmptrf = tmpref; tmpref = TRUE;
+       status=IGcpov(&origo); nollp = &origo;
+       tmpref = tmptrf; IGrsma(); WPerhg();
        if ( status < 0 ) return(status); 
        }
 /*
@@ -805,9 +564,9 @@ static short ighidf(bool screen)
 */
 getnam:
    if ( strcmp(dstr,"") == 0 ) strcpy(dstr,jobnam);
-   igptma(215,IG_INP);
-   status = igssip(iggtts(267),fnam,dstr,JNLGTH);
-   igrsma();
+   IGptma(215,IG_INP);
+   status = IGssip(IGgtts(267),fnam,dstr,JNLGTH);
+   IGrsma();
    if ( status < 0 ) return(status);
    strcpy(dstr,fnam);
 /*
@@ -822,7 +581,7 @@ getnam:
    if ( (filpek=fopen(path,"r")) != NULL )
      {
      fclose(filpek);
-     if ( igialt(382,67,68,TRUE) ) goto opfil;
+     if ( IGialt(382,67,68,TRUE) ) goto opfil;
      else                          goto getnam;
      }
 /*
@@ -835,18 +594,18 @@ opfil:
 ***Gör hide. Hide kan ta tid så här slår vi på vänta-
 ***hanteringen.
 */
-#ifdef V3_X11
+#ifdef UNIX
    WPwait(GWIN_MAIN,TRUE);
 #endif
 
-   status = EXhdvi(actvy.vynamn,screen,TRUE,filpek,nollp);
+   status = EXhdvi("xy",screen,TRUE,filpek,nollp);
    if ( status == AVBRYT )
      {
-     igwtma(170);
+     WPaddmess_mcwin(IGgtts(170),WP_ERROR);
      status = 0;
      }
 
-#ifdef V3_X11
+#ifdef UNIX
    WPwait(GWIN_MAIN,FALSE);
 #endif
 /*

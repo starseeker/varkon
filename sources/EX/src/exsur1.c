@@ -8,7 +8,6 @@
 *    EXscar();     Create SUR_CONARR
 *    EXsnar();     Create SUR_NURBSARR
 *
-*
 *    This file is part of the VARKON Execute  Library.
 *    URL:  http://www.varkon.com
 *
@@ -38,11 +37,7 @@
 #include  <windows.h>
 #endif
 
-#ifdef V3_OPENGL
 #include  <GL/gl.h>
-#else
-#define GLfloat float
-#endif
 
 extern DBTmat *lsyspk;     /* Active coord. system                  */
 extern DBTmat  lklsyi;     /* Active coord. system, inverted        */
@@ -56,22 +51,24 @@ extern short   erpush();   /* Error message to buffer               */
 
 /*!******************************************************/
 
-       short    EXesur(
-       DBId    *id,
-       DBSurf  *surpek,
-       DBPatch *patpek,
-       V2NAPA  *pnp)
+       short     EXesur(
+       DBId     *id,
+       DBSurf   *surpek,
+       DBPatch  *patpek,
+       DBSegarr *pgetrimcvs,
+       DBSegarr *pborder,
+       V2NAPA   *pnp)
 
-/*      Skapar yta.
+/*      Execute surface.
  *
- *      In: id     => Pekare till identitet.
- *          surpek => Pekare till DBSurf-post.
- *          patpek => Pekare till topologiska patchnätet.
- *          pnp    => Pekare till namnparameterblock.
+ *      In: id         => Pekare till identitet.
+ *          surpek     => Pekare till DBSurf-post.
+ *          patpek     => Pekare till topologiska patchnätet.
+ *          pgetrimcvs => Pointer to  geom. trim curves or NULL if untrimmed
+ *          pborder    => Optional pointer to gr wire border cvs or NULL
+ *          pnp        => Pointer to a name parameter block.
  *
- *      Ut: Inget.
- *
- *      Felkod:      0 = Ok.
+ *      Return:      0 = Ok.
  *              EX4032 = Kan ej lagra yta i DB.
  *
  *      (C)microform ab 1/3/93 J. Kjellander
@@ -84,14 +81,19 @@ extern short   erpush();   /* Error message to buffer               */
  *      1999-12-18 sur962->varkon_sur_graphic 
  *                 sur963->varkon_sur_granurbs  G Liden
  *      2006-12-31 Removed GP, J.Kjellander
+ *      2007-01-08 pborder,piso, Sören L.
+ *      2007-01-10 pgetrimcvs Sören L.
+ *      2007-01-11 call WPuvstepsu(), Sören L.
  *
  ******************************************************!*/
 
   {
-    short    status;
-    DBptr    la;
-    DBSeg   *sptarr[6];
-    GLfloat *p_kvu,*p_kvv,*p_cpts;
+    short          status;
+    DBptr          la;
+    DBSegarr       *piso;
+    GLfloat        *p_kvu,*p_kvv,*p_cpts;
+    DBGrstrimcurve *pgrstrimcvs;
+
 
 /*
 ***Add attributes etc.
@@ -103,23 +105,20 @@ extern short   erpush();   /* Error message to buffer               */
     surpek->lgt_su       = pnp->sdashl;  /* Strecklängd */
     surpek->ngu_su       = pnp->nulines; /* Antal "linjer" i U-riktn. */
     surpek->ngv_su       = pnp->nvlines; /* Antal "linjer" i V-riktn. */
+    surpek->wdt_su       = pnp->width;   /* Line width */
     surpek->pcsy_su      = lsysla;       /* DB-pekare till aktivt ksys*/
 /*
 ***Save in DB.
 */
-    igptma(198,IG_MESS);
     if ( pnp->save )
       {
       surpek->hed_su.hit = pnp->hit;
-      if ( DBinsert_surface(surpek,patpek,NULL,id,&la)< 0 )return(erpush("EX4032",""));
+      if ( DBinsert_surface(surpek,patpek,pgetrimcvs,id,&la)< 0 )return(erpush("EX4032",""));
       }
     else surpek->hed_su.hit = 0;
-    igrsma();
 /*
 ***Create graphical representations.
 */
-    sptarr[0]=sptarr[1]=sptarr[2]=sptarr[3]=sptarr[4]=sptarr[5]=NULL;
-
     if ( !surpek->hed_su.blank )
       {
       switch ( surpek->typ_su )
@@ -130,35 +129,43 @@ extern short   erpush();   /* Error message to buffer               */
 */
         case FAC_SUR:
         case BOX_SUR:
-        WPdrsu(surpek,sptarr,la,GWIN_ALL);
+        WPdrsu(surpek,pborder,piso,la,GWIN_ALL);
         break;
 /*
 ***Remaining surface types have explicit wireframe graph. rep....
 */
         default:
-        igptma(455,IG_MESS);
-        status = varkon_sur_graphic(surpek,patpek,la,1,sptarr);
+        status = SUmk_grwire(surpek,patpek,pgetrimcvs,la,1,&pborder,&piso);
         if ( status < 0 ) return(status);
-        DBadd_sur_grwire(surpek,sptarr);
+        DBadd_sur_grwire(surpek,pborder,piso);
         DBupdate_surface(surpek,la);
+
 /*
-***...and also explicit Nurbs surface representation.
+*** ...and also explicit Nurbs surface representation.
+*** call GEmk_grsurftrim to create trim curves if needed
+*** call WPuvstepsu to calculate u/v steps.
 */
         status = varkon_sur_granurbs
                  (surpek,patpek,la,1, &p_kvu,&p_kvv,&p_cpts);
         if ( status < 0 ) return(status);
-        DBadd_sur_grsur(surpek,p_kvu,p_kvv,p_cpts);
+
+        if (surpek->ntrim_su > 0)
+          {
+          status = GEmk_grsurftrim(surpek,pgetrimcvs,&pgrstrimcvs);
+          if ( status < 0 ) return(status);
+          }
+        DBadd_sur_grsur(surpek,p_kvu,p_kvv,p_cpts,pgrstrimcvs); 
+        WPuvstepsu(surpek,patpek,1,1); /* 1,1 as grsur param. = geo parameterization */
         DBupdate_surface(surpek,la);
-        DBfree_sur_grsur(p_kvu,p_kvv,p_cpts);
-        igrsma();
+        DBfree_sur_grsur(surpek,p_kvu,p_kvv,p_cpts,pgrstrimcvs);
 /*
 ***Display wireframe.
 */
-       WPdrsu(surpek,sptarr,la,GWIN_ALL);
+        WPdrsu(surpek,pborder,piso,la,GWIN_ALL);
 /*
 ***Free memory.
 */
-        DBfree_sur_grwire(sptarr);
+        DBfree_sur_grwire(surpek,pborder,piso);
         break;
         }
       }
@@ -216,10 +223,6 @@ extern short   erpush();   /* Error message to buffer               */
    short  status;
 
 /*
-***Et meddelande.
-*/
-   igptma(200,IG_MESS);
-/*
 ***Skapa ytan.
 */
    status = varkon_sur_splarr(metod,nu,nv,p,v_tan,u_tan,twist,
@@ -238,8 +241,7 @@ extern short   erpush();   /* Error message to buffer               */
 /*
 ***Lagra i DB och rita.
 */
-   igrsma();
-   status = EXesur(id,&sur,ptpat,pnp);
+   status = EXesur(id,&sur,ptpat,NULL,NULL,pnp);
    if ( status < 0 ) goto error2;
 /*
 ***Allt verkar ha gått bra !
@@ -307,16 +309,12 @@ error3:
    DBPatch  *ptpat;
 
 /*
-***Et meddelande.
-*/
-   igptma(451,IG_MESS);
-/*
 ***Hämta geometri-data för spine.
 */
    if ( DBget_pointer('I',spine,&la,&typ) < 0 ) return(erpush("EX1402",""));
    if ( typ != CURTYP )
      {
-     igidst(spine,errbuf);
+     IGidst(spine,errbuf);
      return(erpush("EX1412",errbuf));
      }
    DBread_curve(&spicur,NULL,&spiseg,la);
@@ -328,7 +326,7 @@ error3:
      if ( DBget_pointer('I',(lim+i),&la,&typ) < 0 ) return(erpush("EX1402",""));
      if ( typ != CURTYP )
        {
-       igidst((lim+i),errbuf);
+       IGidst((lim+i),errbuf);
        return(erpush("EX1412",errbuf));
        }
      DBread_curve(&limcur[i],NULL,&limseg[i],la);
@@ -341,7 +339,7 @@ error3:
      if ( DBget_pointer('I',(tan+i),&la,&typ) < 0 ) return(erpush("EX1402",""));
      if ( typ != CURTYP )
        {
-       igidst((tan+i),errbuf);
+       IGidst((tan+i),errbuf);
        return(erpush("EX1412",errbuf));
        }
      DBread_curve(&tancur[i],NULL,&tanseg[i],la);
@@ -354,7 +352,7 @@ error3:
      if ( DBget_pointer('I',(mid+i),&la,&typ) < 0 ) return(erpush("EX1402",""));
      if ( typ != CURTYP )
        {
-       igidst((mid+i),errbuf);
+       IGidst((mid+i),errbuf);
        return(erpush("EX1412",errbuf));
        }
      DBread_curve(&midcur[i],NULL,&midseg[i],la);
@@ -371,8 +369,7 @@ error3:
 /*
 ***Lagra i DB och rita.
 */
-   igrsma();
-   status = EXesur(id,&sur,ptpat,pnp);
+   status = EXesur(id,&sur,ptpat,NULL,NULL,pnp);
    if ( status < 0 ) goto error2;
 /*
 ***Allt verkar ha gått bra !
@@ -462,7 +459,7 @@ error3:
 /*
 ***Lagra i DB och rita.
 */
-   status = EXesur(id,&sur,ptpat,pnp);
+   status = EXesur(id,&sur,ptpat,NULL,NULL,pnp);
    if ( status < 0 ) goto error2;
 /*
 ***Allt verkar ha gått bra !

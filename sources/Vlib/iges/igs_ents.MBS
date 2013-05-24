@@ -25,7 +25,7 @@
 !*******************************************************
 
    CONSTANT INT MAXF=600;
-   STRING       rad1*80,rad2*80,row1*80,row2*80,st*1;
+   STRING       rad1*82,rad2*82,row1*82,row2*82,st*1;
    INT          i,typ,f(MAXF),fn,n_ok(MAXF),n_error(MAXF),n_notimpl(MAXF),n_blanked(MAXF),actpos;
    INT          levn,coln,subord,blankst,t_ptr;
    INT          ds_ptr;
@@ -36,8 +36,9 @@
    INT          lftab(0:10);
    INT          usedlevels(0:1999);
    INT          notimpflag;
-   
-   
+
+float rn; string s*1;
+
  BEGINMODULE
 
 !*
@@ -49,9 +50,11 @@
       n_notimpl(i):=0;
       n_blanked(i):=0;
     endfor;
+    
     for i:= 0 to 1999 do
       usedlevels(i):=0;
     endfor;
+    
     ds_ptr:=fpos(infile);
     lftab(0):=act_lfont();
     lftab(1):=0; !solid      -> solid
@@ -67,14 +70,22 @@
     outstr(logfile,"(processing independent entities)"); outlin(logfile);
     outstr(logfile,"--------------------------------------------");outlin(logfile);
 !*
-!***Read 2 lines/entity.
+!***Read 2 lines/entity. DE1 and DE2.
 !*
+!lst_ini("igs_ents");
 loop:
+rn:=fpos(infile);
+rn:=rn/rowlgt;
+!lst_lin("rowlgt="+str(rowlgt,-1,0));
+!lst_lin("rad="+str(rn,-1,2));
+
     rad1:=inlin(infile);
     rad2:=inlin(infile);
     if substr(rad1,73,1) = "D" then             ! If not, we have reached end of DE section
+!lst_lin(rad1);
+!lst_lin(rad2);
 !*
-!***Read data from the DE rows (some of this are maybe not used)
+!***Levels.
 !*   
     IF uselevels="y" THEN 
        levn   :=ival(substr(rad1,33,8));       ! field 5, "level"
@@ -97,6 +108,9 @@ loop:
     ELSE
        levn:= act_lev();
     ENDIF;
+!*
+!***Colors.
+!* 
     IF usecolours="y" THEN 
        coln   :=ival(substr(rad2,17,8));        ! field 13, "color number"
        IF coln=0 THEN coln:= act_pen(); ENDIF;  
@@ -112,15 +126,19 @@ loop:
     ELSE
        coln:= act_pen();
     ENDIF;  
- 
+ !*
+ !***Blank.
+ !*
     IF useblank="y" THEN 
-       blankst:=ival(substr(rad1,65,2));        ! member of field 9, "status number"
+       blankst:=ival(substr(rad1,65,2));        ! field 9, pos 1 and 2
        IF blankst=0 THEN blankst:= act_blank(); ENDIF; !
     ELSE
        blankst:= act_blank();
     ENDIF;    
-    
-    subord :=ival(substr(rad1,67,2));           ! member of field 9, "status number" 
+!*
+!***Extract more data from DE1 and DE2.
+!*
+    subord :=ival(substr(rad1,67,2));           ! field 9, pos 3 and 4
     typ    :=ival(rad1);                        ! field 1, "entity type number"
     lwidth :=ival(substr(rad2,9,8));            ! field 12, "line weight"
     lfontpat:=ival(substr(rad1,25,8));          ! field 47, "line font pattern"
@@ -134,23 +152,34 @@ loop:
     ENDIF;
     lwidth:=lwidth*(n_lweight_grad/max_lweight);
 !*
+!***Error check. DE1 and DE2 must have the same type.
+!*
+!   if typ <> ival(rad2) then
+
+!lst_lin("actpos="+str(actpos,-1,0));
+!lst_lin("fpos="+str(fpos(infile),-1,0));
+
+!     exit("DE1 and DE2 type different !");
+!   endif;
+!*
 !**Create local coordinate system for transformation matrix.
 !*    
     csys_1p(#16,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
-     csysid:=#16;           
-     t_ptr:=ival(substr(rad1,49,8));
-        IF t_ptr<>0 THEN
-           actpos:=fpos(infile);
-           seek(infile,ds_ptr+(t_ptr-1)*rowlgt);  
-           row1:=inlin(infile);
-           row2:=inlin(infile);  
-           part(#17,igs_124(infile,logfile,row1,row2,ps_ptr,rowlgt,csysid,status),csysid:SAVE=1,BLANK=1);
-           seek(infile,actpos);
-        ENDIF;
+    csysid:=#16;           
+    t_ptr:=ival(substr(rad1,49,8));
+    IF t_ptr<>0 THEN
+      actpos:=fpos(infile);
+      seek(infile,ds_ptr+(t_ptr-1)*rowlgt);  
+      row1:=inlin(infile);
+      row2:=inlin(infile);  
+      part(#17,igs_124(infile,logfile,row1,row2,ps_ptr,rowlgt,csysid,status),csysid:SAVE=1,BLANK=1);
+      seek(infile,actpos);
+    ENDIF;
 !*
 !***Process only independent entities here, dependent entities will be
 !***read by their parents.
-!*    
+!*
+!lst_lin("typ="+str(typ,-1,0)+"  subord="+str(subord,-1,0));
     IF subord=INDEPENDENT AND typ<>124 THEN    ! Transformations are regarded as dependent.
        notimpflag:=0;
 !*
@@ -205,11 +234,6 @@ loop:
           else
             n_error(typ):=n_error(typ)+1;
           endif;
-
-
-
-
-
 !*
 !***106=Copious data
 !*
@@ -328,11 +352,24 @@ loop:
             n_error(typ):=n_error(typ)+1;
           endif;
 !*
+!***142=Curve on a parametric surface
+!*
+       elif typ = 142 then
+          actpos:=fpos(infile);
+          part(#14,igs_142(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_ent,status),csysid:
+                          SAVE=1,PEN=coln,LEVEL=levn,BLANK=blankst);
+          seek(infile,actpos);
+          if status = 0 then
+            n_ok(typ):=n_ok(typ)+1;
+          else
+            n_error(typ):=n_error(typ)+1;
+          endif;	  
+!*
 !***144=Trimmed parametric Surface
 !*
         elif typ = 144  then
           actpos:=fpos(infile);
-          part(#14,igs_144(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_ent,status),csysid:
+          part(#15,igs_144(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_ent,status),csysid:
                           SAVE=1,PEN=coln,LEVEL=levn,BLANK=blankst);
           seek(infile,actpos);
           if status = 0 then
@@ -365,6 +402,7 @@ loop:
 !*
       goto loop;
     endif;
+!lst_exi();
 !*
 !***Write to logfilee.
 !*

@@ -4,17 +4,17 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  igchpr();  Change PID                                           */
-/*  igcnpr();  Create new PID                                       */
-/*  igselp();  Select PID                                           */
-/*  iglspr();  List/edit PID                                        */
-/*  igdlpr();  Delete PID                                           */
-/*  igldpf();  Load PID file                                        */
-/*  igdir();   Create directory listing                             */
-/*  igckpr();  Check PID accessability                              */
+/*  IGchpr();  Change PID                                           */
+/*  IGcnpr();  Create new PID                                       */
+/*  IGselp();  Select PID                                           */
+/*  IGlspr();  List/edit PID                                        */
+/*  IGdlpr();  Delete PID                                           */
+/*  IGldpf();  Load PID file                                        */
+/*  IGdir();   Create directory listing                             */
+/*  IGckpr();  Check PID accessability                              */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -33,8 +33,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -47,14 +45,14 @@
 extern char   pidnam[],jobdir[],jobnam[],amodir[],
               asydir[],hlpdir[],mdffil[],tmprit[],
               mbsdir[],mbodir[];
-extern bool   jnflag;
-extern short  v3mode,igtrty,actfun;
+extern bool   jnflag,igbflg;
+extern short  v3mode,actfun;
 
 static char *pidpath();   /* Returnerar path till PID-katalogen */
 
 /*!******************************************************/
 
-       short  igchpr()
+       short  IGchpr()
 
 /*     Varkon-funktion för byt projekt. Om projektet
  *     inte finns skapas ett. 
@@ -81,25 +79,25 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 ***Byta projekt får man inte göra utan att avsluta aktivt jobb.
 ***Skall det lagras eller inte.
 */
-   saveflag = igialt(194,67,68,FALSE);
+   saveflag = IGialt(194,67,68,FALSE);
 /*
 ***Om jobbet skall sparas men inte har nåt namn frågar
 ***vi efter nytt namn här.
 */
    if ( saveflag  &&  !jnflag )
        {
-       igptma(193,IG_INP);
-       if ( (status=igssip(iggtts(400),newjob,"",JNLGTH)) < 0 )
+       IGptma(193,IG_INP);
+       if ( (status=IGssip(IGgtts(400),newjob,"",JNLGTH)) < 0 )
          {
-         igrsma();
+         IGrsma();
          return(status);
          }
-       igrsma();
+       IGrsma();
        }
 /*
 ***Välj ett nytt projektnamn.
 */
-   status = igselp(newpid);
+   status = IGselp(newpid);
    if      ( status == REJECT ) return(REJECT);
    else if ( status <  0 )
      {
@@ -111,11 +109,11 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 */
    sprintf(pidfil,"%s%s%s",pidpath(),newpid,PIDEXT);
 
-   if ( strcmp(newpid,".") != 0  &&  !v3ftst(pidfil) )
+   if ( strcmp(newpid,".") != 0  &&  !IGftst(pidfil) )
      {
-     if ( igialt(195,67,68,TRUE) )
+     if ( IGialt(195,67,68,TRUE) )
        {
-       if ( igcnpr(newpid) < 0 )
+       if ( IGcnpr(newpid) < 0 )
          {
          errmes();
          return(0);
@@ -125,21 +123,21 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
      }
 /*
 ***Vilket jobb på det nya projektet.
-***För att igselj() skall kunna lista dem som finns
+***För att IGselj() skall kunna lista dem som finns
 ***måste vi tillfälligt aktivera projektet och sen
 ***aktivera det gamla igen så att det gamla jobbet
 ***lagras på rätt ställe.
 */
-   if ( igldpf(newpid) < 0  ||  igckpr() < 0 )
+   if ( IGldpf(newpid) < 0  ||  IGckpr() < 0 )
      {
-     igldpf(oldpid);
+     IGldpf(oldpid);
      errmes();
      return(0);
      }
    strcpy(pidnam,newpid);
-   status = igselj(newjob);
+   status = IGselj(newjob);
    strcpy(pidnam,oldpid);
-   igldpf(oldpid);
+   IGldpf(oldpid);
 
    if      ( status == REJECT ) return(REJECT);
    else if ( status <  0 )
@@ -154,14 +152,14 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
      { 
      if ( !jnflag )
        {
-       if ( igchjn(newjob) < 0 )
+       if ( IGchjn(newjob) < 0 )
          {
          errmes();
          return(0);
          }
        else jnflag = TRUE;
        }
-     igsjpg();
+     IGsjpg();
      }
 /*
 ***Aktivt jobb skall inte lagras.
@@ -170,13 +168,13 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
      {
      gmclpf();
 
-     if ( v3mode == RIT_MOD ) v3fdel(tmprit);
+     if ( v3mode == RIT_MOD ) IGfdel(tmprit);
      else
        {
        strcpy(resfil,jobdir);
        strcat(resfil,jobnam);
        strcat(resfil,RESEXT);
-       v3fdel(resfil);
+       IGfdel(resfil);
        }
      }
 /*
@@ -185,9 +183,9 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 ***Om detta inte går laddar vi tillbaks såväl det gamla
 ***projektet som jobbet igen.
 */
-   if ( igldpf(newpid) < 0 )
+   if ( IGldpf(newpid) < 0 )
      {
-     igldpf(oldpid);
+     IGldpf(oldpid);
      errmes();
      }
    else
@@ -200,13 +198,13 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 ***Om inte det går måste vi ladda tilbaks både projekt
 ***och gamla menyer igen.
 */
-   if ( iginit(mdffil) < 0 )
+   if ( IGinit(mdffil) < 0 )
      {
      erpush("IG0262",mdffil);
-     igldpf(oldpid);
+     IGldpf(oldpid);
      strcpy(pidnam,oldpid);
      strcpy(jobnam,oldjob);
-     iginit(mdffil);
+     IGinit(mdffil);
      errmes();
      }
 /*
@@ -215,22 +213,20 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 ***Om allt gick bra laddar vi det nya jobbet.
 */
    WPclrg();
-   WPexfn();
 
-   status = igload();
+   status = IGload();
 
    if ( status < 0 )
      {
      if ( status != REJECT  &&  status != GOMAIN ) errmes();
      if (saveflag )
        {
-       igldpf(oldpid);
+       IGldpf(oldpid);
        strcpy(pidnam,oldpid);
        strcpy(jobnam,oldjob);
-       iginit(mdffil);
+       IGinit(mdffil);
        WPclrg();
-       WPexfn();
-       if ( igload() < 0 ) return(EREXIT);
+       if ( IGload() < 0 ) return(EREXIT);
        else return(GOMAIN);
        }
      else return(EXIT);
@@ -245,7 +241,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /********************************************************/
 /*!******************************************************/
 
-       short  igcnpr(char *newpid)
+       short  IGcnpr(char *newpid)
 
 /*     Varkon-funktion för att skapa nytt projekt.
  *
@@ -260,7 +256,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
  *
  *     1996-12-20 mbs, J.Kjellander
  *     1997-01-20 Skriv ej över MDF-fil, J.Kjellander
- *     1997-01-20 v3facc(), J.Kjellander
+ *     1997-01-20 IGfacc(), J.Kjellander
  *
  ******************************************************!*/
 
@@ -274,11 +270,11 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Skapa fullständig vägbeskrivning till aktuell PID-fil.
 */
-    sprintf(pidfil,"%s%s%s",v3genv(VARKON_PID),newpid,PIDEXT);
+    sprintf(pidfil,"%s%s%s",IGgenv(VARKON_PID),newpid,PIDEXT);
 /*
 ***Kolla att PID-filen inte redan finns.
 */
-   if ( v3ftst(pidfil) == TRUE ) return(-1);
+   if ( IGftst(pidfil) == TRUE ) return(-1);
 /*
 ***Kolla att ny pidfil går att skapa. Filkatalogen för PID-filer
 ***kanske inte finns eller rättigheter kanske saknas etc.
@@ -290,11 +286,11 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 ***Denna tar vi bort så att det inte lämnas tomma filer efter oss
 ***om vi avbryter längre ner.
 */
-   v3fdel(pidfil);
+   IGfdel(pidfil);
 /*
 ***Skapa rootkatalognamn för det nya projektet.
 */
-   sprintf(newrot,"%s%s",v3genv(VARKON_PRD),newpid);
+   sprintf(newrot,"%s%s",IGgenv(VARKON_PRD),newpid);
 /*
 ***Lägg på root-directoryt på katalognamnen.
 */
@@ -316,28 +312,28 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
    sprintf(newmbs,"%s\\mbs",newrot);
 #endif
 /*
-***Om inte filkatalogerna finns, skapa dem. v3ftst() funkar inte
-***på filkataloger i Win95 men v3facc(path,'X') går bra.
+***Om inte filkatalogerna finns, skapa dem. IGftst() funkar inte
+***på filkataloger i Win95 men IGfacc(path,'X') går bra.
 */
-   if ( v3facc(newrot,'X') == FALSE  &&  (status=v3mkdr(newrot)) < 0 )
+   if ( IGfacc(newrot,'X') == FALSE  &&  (status=IGmkdr(newrot)) < 0 )
      return(status);
 
-   if ( v3facc(newjob,'X') == FALSE  &&  (status=v3mkdr(newjob)) < 0 )
+   if ( IGfacc(newjob,'X') == FALSE  &&  (status=IGmkdr(newjob)) < 0 )
      return(status);
 
-   if ( v3facc(newlib,'X') == FALSE  &&  (status=v3mkdr(newlib)) < 0 )
+   if ( IGfacc(newlib,'X') == FALSE  &&  (status=IGmkdr(newlib)) < 0 )
      return(status);
 
-   if ( v3facc(newsym,'X') == FALSE  &&  (status=v3mkdr(newsym)) < 0 )
+   if ( IGfacc(newsym,'X') == FALSE  &&  (status=IGmkdr(newsym)) < 0 )
      return(status);
 
-   if ( v3facc(newdoc,'X') == FALSE  &&  (status=v3mkdr(newdoc)) < 0 )
+   if ( IGfacc(newdoc,'X') == FALSE  &&  (status=IGmkdr(newdoc)) < 0 )
      return(status);
 
-   if ( v3facc(newmdf,'X') == FALSE  &&  (status=v3mkdr(newmdf)) < 0 )
+   if ( IGfacc(newmdf,'X') == FALSE  &&  (status=IGmkdr(newmdf)) < 0 )
      return(status);
 
-   if ( v3facc(newmbs,'X') == FALSE  &&  (status=v3mkdr(newmbs)) < 0 )
+   if ( IGfacc(newmbs,'X') == FALSE  &&  (status=IGmkdr(newmbs)) < 0 )
      return(status);
 /*
 ***Skapa menyfil om den inte finns.
@@ -350,7 +346,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
    sprintf(newmdf,"%s\\%s%s",newmdf,newpid,MDFEXT);
 #endif
 
-   if ( v3ftst(newmdf) == FALSE )
+   if ( IGftst(newmdf) == FALSE )
      {
      if ( (mdffpk=fopen(newmdf,"w+")) == 0 ) return(erpush("IG0412",newmdf));
      else
@@ -393,7 +389,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 ***Ladda den nya PID-filen.
 */
     strcpy(pidnam,newpid);
-    igldpf(pidnam);
+    IGldpf(pidnam);
 
     return(0);
  }
@@ -401,7 +397,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /******************************************************!*/
 /*!******************************************************/
 
-        short igselp(char *projekt)
+        short IGselp(char *projekt)
 
 /*      Interaktiv funktion för att välja projekt.
  *
@@ -437,8 +433,8 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Skapa filförteckning.
 */
-   strcpy(path,v3genv(VARKON_PID));
-   igdir(path,PIDEXT,1000,20000,pekarr,strarr,&nstr);
+   strcpy(path,IGgenv(VARKON_PID));
+   IGdir(path,PIDEXT,1000,20000,pekarr,strarr,&nstr);
 /*
 ***Vilket av dem är aktivt ?
 */
@@ -449,11 +445,11 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Låt användaren välja.
 */   
-#ifdef V3_X11
-   status = WPilse(20,20,iggtts(401),"",pekarr,actalt,nstr,projekt);
+#ifdef UNIX
+   status = WPilse(IGgtts(401),"",pekarr,actalt,nstr,projekt);
 #endif
 #ifdef WIN32
-   status = msilse(20,20,iggtts(401),"",pekarr,actalt,nstr,projekt);
+   status = msilse(20,20,IGgtts(401),"",pekarr,actalt,nstr,projekt);
 #endif
   
    actfun = oldafu;
@@ -474,7 +470,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /********************************************************/
 /*!******************************************************/
 
-       short  iglspr()
+       short  IGlspr()
 
 /*     Interaktiv funktion för att lista/ändra PID-filer.
  *
@@ -485,8 +481,8 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
  *               IG0582 = Ej ändra jobkat då projektet aktivt
  *               IG0592 = Ej ändra menyfil då projektet aktivt
  *
- *     1997-01-03 igmsip(), J.Kjellander
- *     1997-01-20 v3facc(), J.Kjellander
+ *     1997-01-03 IGmsip(), J.Kjellander
+ *     1997-01-20 IGfacc(), J.Kjellander
  *
  *******************************************************!*/
 
@@ -506,7 +502,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Välj ett projekt.
 */
-   status = igselp(projekt);
+   status = IGselp(projekt);
    if      ( status == REJECT ) return(REJECT);
    else if ( status <  0 )
      {
@@ -540,17 +536,17 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Rubrik.
 */
-   strcpy(rubrik,iggtts(187));
+   strcpy(rubrik,IGgtts(187));
    strcat(rubrik,projekt);
 /*
 ***Initiera promtar.
 */
-   strcpy(ps[0],iggtts(188));
-   strcpy(ps[1],iggtts(192));
-   strcpy(ps[2],iggtts(1601));
-   strcpy(ps[3],iggtts(189));
-   strcpy(ps[4],iggtts(191));
-   strcpy(ps[5],iggtts(190));
+   strcpy(ps[0],IGgtts(188));
+   strcpy(ps[1],IGgtts(192));
+   strcpy(ps[2],IGgtts(1601));
+   strcpy(ps[3],IGgtts(189));
+   strcpy(ps[4],IGgtts(191));
+   strcpy(ps[5],IGgtts(190));
 
    for ( i=0; i<6; ++i ) p_ps[i] = ps[i];
 /*
@@ -575,9 +571,9 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Editera.
 */
-   igplma(rubrik,IG_INP);
-   status = igmsip(p_ps,p_is,p_ds,ml,(short)6);
-   igrsma();
+   IGplma(rubrik,IG_INP);
+   status = IGmsip(p_ps,p_is,p_ds,ml,(short)6);
+   IGrsma();
    if ( status == REJECT ) return(REJECT);
 /*
 ***Om inget har ändrats kan vi sluta här.
@@ -603,12 +599,12 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
        }
      else
        {
-       v3trfp(is[0],tmpjob);
-       if ( v3facc(tmpjob,'X') == FALSE )
+       IGtrfp(is[0],tmpjob);
+       if ( IGfacc(tmpjob,'X') == FALSE )
          {
-         if ( igialt(1602,67,68,TRUE) )
+         if ( IGialt(1602,67,68,TRUE) )
            {
-           if ( v3mkdr(tmpjob) < 0 )
+           if ( IGmkdr(tmpjob) < 0 )
              {
              erpush("IG0562",projekt);
              errmes();
@@ -634,8 +630,8 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
        }
      else
        {
-       v3trfp(is[1],tmpmdf);
-       if ( v3ftst(tmpmdf) == FALSE )
+       IGtrfp(is[1],tmpmdf);
+       if ( IGftst(tmpmdf) == FALSE )
          {
          erpush("IG0572",tmpmdf);
          erpush("IG0562",projekt);
@@ -650,12 +646,12 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 */
    if ( strcmp(tmpmbs,is[2]) != 0  )
      {
-     v3trfp(is[2],tmpmbs);
-     if ( v3facc(tmpmbs,'X') == FALSE )
+     IGtrfp(is[2],tmpmbs);
+     if ( IGfacc(tmpmbs,'X') == FALSE )
        {
-       if ( igialt(1603,67,68,TRUE) )
+       if ( IGialt(1603,67,68,TRUE) )
          {
-         if ( v3mkdr(tmpmbs) < 0 )
+         if ( IGmkdr(tmpmbs) < 0 )
            {
            erpush("IG0562",projekt);
            errmes();
@@ -683,14 +679,14 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
        }
      tmpbuf[i] = '\0';
 
-     v3trfp(tmpbuf,tmpmbo);
+     IGtrfp(tmpbuf,tmpmbo);
 
        {
-       if ( v3facc(tmpmbo,'X') == FALSE )
+       if ( IGfacc(tmpmbo,'X') == FALSE )
          {
-         if ( igialt(1604,67,68,TRUE) )
+         if ( IGialt(1604,67,68,TRUE) )
            {
-           if ( v3mkdr(tmpmbo) < 0 )
+           if ( IGmkdr(tmpmbo) < 0 )
              {
              erpush("IG0562",projekt);
              errmes();
@@ -707,12 +703,12 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 */
    if ( strcmp(tmphlp,is[4]) != 0  )
      {
-     v3trfp(is[4],tmphlp);
-     if ( v3facc(tmphlp,'X') == FALSE )
+     IGtrfp(is[4],tmphlp);
+     if ( IGfacc(tmphlp,'X') == FALSE )
        {
-       if ( igialt(1605,67,68,TRUE) )
+       if ( IGialt(1605,67,68,TRUE) )
          {
-         if ( v3mkdr(tmphlp) < 0 )
+         if ( IGmkdr(tmphlp) < 0 )
            {
            erpush("IG0562",projekt);
            errmes();
@@ -728,12 +724,12 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 */
    if ( strcmp(tmpasy,is[5]) != 0  )
      {
-     v3trfp(is[5],tmpasy);
-     if ( v3facc(tmpasy,'X') == FALSE )
+     IGtrfp(is[5],tmpasy);
+     if ( IGfacc(tmpasy,'X') == FALSE )
        {
-       if ( igialt(1606,67,68,TRUE) )
+       if ( IGialt(1606,67,68,TRUE) )
          {
-         if ( v3mkdr(tmpasy) < 0 )
+         if ( IGmkdr(tmpasy) < 0 )
            {
            erpush("IG0562",projekt);
            errmes();
@@ -746,10 +742,10 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Något är ändrat. Fråga om det skall ändras nu !
 */
-   if ( !igialt(1607,67,68,TRUE) ) return(0);
+   if ( !IGialt(1607,67,68,TRUE) ) return(0);
 /*
 ***Uppdatera pid-filen. Här skriver vi ut de strängar
-***som vi fick från igmsip() utan att översätta eventuella
+***som vi fick från IGmsip() utan att översätta eventuella
 ***env-namn till klartext.
 */
    pidfpk = fopen(pfnam,"w+");
@@ -762,7 +758,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 ***vi också att det blir en slash i slutet på dom kataloger som
 ***skall ha det.
 */
-   if ( strcmp(projekt,pidnam) == 0 ) igldpf(projekt);
+   if ( strcmp(projekt,pidnam) == 0 ) IGldpf(projekt);
 /*
 ***Slut.
 */
@@ -772,7 +768,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /******************************************************!*/
 /*!******************************************************/
 
-       short  igdlpr()
+       short  IGdlpr()
 
 /*     Varkon-funktion för att ta bort projekt.
  *
@@ -794,7 +790,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Välj ett projekt.
 */
-   status = igselp(projekt);
+   status = IGselp(projekt);
    if      ( status == REJECT ) return(REJECT);
    else if ( status <  0 )
      {
@@ -828,8 +824,8 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /*
 ***Ta bort PID-filen.
 */
-   v3fdel(pfnam);
-   igwtma(107);
+   IGfdel(pfnam);
+   WPaddmess_mcwin(IGgtts(107),WP_MESSAGE);
 /*
 ***Slut.
 */
@@ -839,7 +835,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /******************************************************!*/
 /*!******************************************************/
 
-        short igldpf(char *filnam)
+        short IGldpf(char *filnam)
 
 /*      Laddar PID-fil.
  *
@@ -888,7 +884,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
    else
      {
 #ifdef _CRAYT3E
-     if ( igtrty == BATCH )
+     if ( igbflg )
        sprintf(pidfil,"%s%s%d%s",pidpath(),filnam,_my_pe(),PIDEXT);
      else
        sprintf(pidfil,"%s%s%s",pidpath(),filnam,PIDEXT);
@@ -905,10 +901,10 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 */
      if ( fscanf(pidfpk,"%s",radbuf) != 1 )
        return(erpush("IG0472",pidfil));
-     else v3trfp(radbuf,jobdir);
+     else IGtrfp(radbuf,jobdir);
 /*
 ***Alternativa modulbibliotek. Evaluering av ev. $ENVPARAM
-***görs inte här utan i pmallo() via v3trfp().
+***görs inte här utan i pmallo() via IGtrfp().
 */
      if ( fscanf(pidfpk,"%s",amodir) != 1 )
        return(erpush("IG0472",pidfil));
@@ -917,17 +913,17 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 */
      if ( fscanf(pidfpk,"%s",radbuf) != 1 )
        return(erpush("IG0472",pidfil));
-     else v3trfp(radbuf,asydir);
+     else IGtrfp(radbuf,asydir);
 /*
 ***Hjälpfiler. Här kan Env-parameter användas.
 */
      if ( fscanf(pidfpk,"%s",radbuf) != 1 )
        return(erpush("IG0472",pidfil));
-     else v3trfp(radbuf,hlpdir);
+     else IGtrfp(radbuf,hlpdir);
 /*
 ***Menyfil. Här kan också env-parameter användas men eftersom
-***iglmdf() packar up en sådan struntar vi i att göra det här
-***också. iglmdf() måste under alla omständigheter göra det eftersom
+***IGlmdf() packar up en sådan struntar vi i att göra det här
+***också. IGlmdf() måste under alla omständigheter göra det eftersom
 ***menyfiler kan göra #include på andra menyfiler.
 */
      if ( fscanf(pidfpk,"%s",mdffil) != 1 )
@@ -938,7 +934,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 */
      if ( fscanf(pidfpk,"%s",radbuf) != 1 )
        strcpy(mbsdir,jobdir);
-     else v3trfp(radbuf,mbsdir);
+     else IGtrfp(radbuf,mbsdir);
 /*
 ***Stäng filen igen.
 */
@@ -961,7 +957,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 
    radbuf[i] = '\0';
 
-   v3trfp(radbuf,mbodir);
+   IGtrfp(radbuf,mbodir);
 /*
 ***Vissa skall ha exakt en slash sist.
 */
@@ -1000,7 +996,7 @@ static char *pidpath();   /* Returnerar path till PID-katalogen */
 /********************************************************/
 /*!******************************************************/
 
-        short igdir(
+        short IGdir(
         char *inpath,
         char *typ,
         int   maxant,
@@ -1072,7 +1068,7 @@ static  char *pidpath()
  *
  *      (C)microform ab 26/9/95 J. Kjellander
  *
- *      1997-01-15 v3genv(), J.Kjellander
+ *      1997-01-15 IGgenv(), J.Kjellander
  *
  ******************************************************!*/
 
@@ -1080,9 +1076,9 @@ static  char *pidpath()
 static char path[V3PTHLEN+1];
 
 /*
-***Ganska enkelt med v3genv().
+***Ganska enkelt med IGgenv().
 */
-    strcpy(path,v3genv(VARKON_PID));
+    strcpy(path,IGgenv(VARKON_PID));
 /*
 ***Slut.
 */
@@ -1092,7 +1088,7 @@ static char path[V3PTHLEN+1];
 /********************************************************/
 /*!******************************************************/
 
-       short igckpr()
+       short IGckpr()
 
 /*     Kollar att filer och kataloger i aktivt
  *     projekt finns. Om inte skapas dom.
@@ -1117,11 +1113,11 @@ static char path[V3PTHLEN+1];
 */
    strcpy(path,jobdir); path[strlen(path)-1] = '\0';
 
-   if ( !v3facc(path,'X') )
+   if ( !IGfacc(path,'X') )
      {
-     if ( igialt(1622,67,68,FALSE) )
+     if ( IGialt(1622,67,68,FALSE) )
        {
-       if ( (status=v3mkdr(path)) < 0 ) return(status);
+       if ( (status=IGmkdr(path)) < 0 ) return(status);
        }
      else return(erpush("IG0652",""));
      }
@@ -1129,7 +1125,7 @@ static char path[V3PTHLEN+1];
 ***Den finns, får vi skriva i den, dvs. skapa nya 
 ***filer där ?
 */
-   if ( !v3facc(path,'W') ) return(erpush("IG0642",path));
+   if ( !IGfacc(path,'W') ) return(erpush("IG0642",path));
 /*
 ***Slut.
 */

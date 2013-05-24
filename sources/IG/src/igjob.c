@@ -4,43 +4,33 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  igmain();     Starts Varkon in generic mode                     */
-/*  irmain();     Starts Varkon in explicit mode                    */
-/*  igebas();     Generic start routine                             */
-/*  iglsjb();     Lists jobs                                        */
-/*  igdljb();     Deletes jobs                                      */
-/*  igmvrr();     Copies RES-file to RIT-file                       */
-/*  igload();     Loads new job                                     */
-/*  iginjb();     Creates new jobdata                               */
-/*  igldjb();     Loads jobdata                                     */
-/*  igsvjb();     Saves jobdata                                     */
-/*  iginmo();     Creates new module                                */
-/*  igldmo();     Loads module                                      */
-/*  igsvmo();     Saves module                                      */
-/*  igingm();     Creates new result                                */
-/*  igldgm();     Loads result                                      */
-/*  igsvgm();     Saves result                                      */
-/*  igsjpg();     Saves all                                         */
-/*  igsaln();     Saves all with new name                           */
-/*  igspmn();     Saves module with new name                        */
-/*  igsgmn();     Saves result with new name                        */
-/*  igsjbn();     Saves jobdata with new name                       */
-/*  igcatt();     Change module attribute                           */
-/*  igcmpc();     Change module protection code                     */
-/*  v3exit();     Exits                                             */
-/*  igexsn();     Exit without saving                               */
-/*  igexsa();     Exit with saving                                  */
-/*  igexsd();     Exit with saving and decompiling                  */
-/*  ignjsd();     Save, decompile and new job                       */
-/*  ignjsa();     Save and new job                                  */
-/*  igsjsa();     Save and continue                                 */
-/*  ignjsn();     New job without saving                            */
-/*  igselj();     Select job from list                              */
-/*  igchjn();     Change name of current job                        */
-/*  iggrst();     Returns resource value                            */
+/*  IGgene();     Starts Varkon in generic mode                     */
+/*  IGexpl();     Starts Varkon in explicit mode                    */
+/*  IGlsjb();     Lists jobs                                        */
+/*  IGdljb();     Deletes jobs                                      */
+/*  IGmvrr();     Copies RES-file to RIT-file                       */
+/*  IGload();     Loads new job                                     */
+/*  IGldmo();     Loads module                                      */
+/*  IGsjpg();     Saves all                                         */
+/*  IGsaln();     Saves all with new name                           */
+/*  IGspmn();     Saves module with new name                        */
+/*  IGsgmn();     Saves result with new name                        */
+/*  IGsjbn();     Saves jobdata with new name                       */
+/*  IGcatt();     Change module attribute                           */
+/*  IGexit();     Exits                                             */
+/*  IGexsn();     Exit without saving                               */
+/*  IGexsa();     Exit with saving                                  */
+/*  IGexsd();     Exit with saving and decompiling                  */
+/*  IGnjsd();     Save, decompile and new job                       */
+/*  IGnjsa();     Save and new job                                  */
+/*  IGsjsa();     Save and continue                                 */
+/*  IGnjsn();     New job without saving                            */
+/*  IGselj();     Select job from list                              */
+/*  IGchjn();     Change name of current job                        */
+/*  IGgrst();     Returns resource value                            */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -58,8 +48,6 @@
 /*  Public License along with this library; if not, write to the    */
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
-/*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
 /*                                                                  */
 /********************************************************************/
 
@@ -79,23 +67,22 @@ char   tmprit[V3PTHLEN+1];
 extern pm_ptr   actmod,pmstkp;
 extern bool     tmpref,rstron,igxflg,igbflg,jnflag;
 extern char     pidnam[],jobnam[],jobdir[],mdffil[],actcnm[];
-extern short    modtyp,modatt,v3mode,menlev,stalev,actfun,
-                rmarg,bmarg,igtrty,posmod,igmatt,igmtyp,pant,mant;
-extern DBfloat  rstrox,rstroy,rstrdx,rstrdy;
+extern short    modtyp,modatt,v3mode,actfun,
+                rmarg,bmarg,igmatt,igmtyp,pant,mant;
+extern short    posmode;
 extern DBptr    msysla,lsysla;
 extern DBseqnum snrmax;
 extern V3MDAT   sydata;
 extern V3MSIZ   sysize;
-extern VY       vytab[];
 extern DBTmat  *lsyspk,*msyspk;
 extern DBTmat   lklsys,lklsyi,modsys;
 extern V2NAPA   defnap;
-
+extern MNUDAT   mnutab[];
 
 extern char *mktemp();
 
 /*
-***Internal routines.
+***Prototypes for internal functions.
 */
 static short iginjb();
 static short igldjb();
@@ -113,9 +100,9 @@ static short igebas();
 
 /*!******************************************************/
 
-       short  igmain()
+       short  IGgene()
 
-/*     Huvudrutin för basmodulen.
+/*     Start Varkon in generic mode.
 *
 *      Felkoder : IG0252 = Kan ej starta Basmodulen
 *
@@ -147,9 +134,9 @@ static short igebas();
 /******************************************************!*/
 /*!******************************************************/
 
-       short  irmain()
+       short  IGexpl()
 
-/*     Huvudrutin för ritpaketet.
+/*     Start Varkon in 2D explicit mode.
 *
 *      (C) microform ab 2/3/88  J. Kjellander.
 *
@@ -207,7 +194,7 @@ static short igebas()
 /*
 ***Ladda menyerna. 
 */
-   if ( iginit(mdffil) < 0 )
+   if ( IGinit(mdffil) < 0 )
      {
      erpush("IG0262",mdffil);
      return(EREXIT);
@@ -222,19 +209,19 @@ static short igebas()
    pant = 0;
    mant = 0;
 
-   if ( (status=igload()) < 0 ) return(status);
+   if ( (status=IGload()) < 0 ) return(status);
 /*
-***Loopa med igexfu() och meny 0 = Huvudmenyn.
+***Loopa med IGexfu() och meny 0 = Huvudmenyn.
 */
    for (;;)
      {
      actfun = -1;
-     status = igexfu(0,&alt);
+     status = IGexfu(0,&alt);
 
      if ( status == GOMAIN )
        {
        pant = 0;
-       igrsma();
+       WPclear_mcwin();
        mant = 0;
        }
      else if ( status == EXIT )
@@ -252,7 +239,7 @@ static short igebas()
 /******************************************************!*/
 /*!******************************************************/
 
-       short  iglsjb()
+       short  IGlsjb()
 
 /*     Varkon-funktion för att lista job.
  *
@@ -265,7 +252,7 @@ static short igebas()
  {
    char buf[JNLGTH+1];
 
-   igselj(buf);
+   IGselj(buf);
 
    return(0);
  }
@@ -273,7 +260,7 @@ static short igebas()
 /******************************************************!*/
 /*!******************************************************/
 
-       short  igdljb()
+       short  IGdljb()
 
 /*     Varkon-funktion för att ta bort job.
  *
@@ -296,7 +283,7 @@ static short igebas()
 /*
 ***Läs in jobbnamn.
 */
-    status = igselj(job);
+    status = IGselj(job);
     if ( status < 0 ) return(status);
 /*
 ***Kolla att det inte är aktivt.
@@ -314,7 +301,7 @@ static short igebas()
    strcat(jobfil,job);
    strcat(jobfil,JOBEXT);
 
-   if ( v3ftst(jobfil)  &&  igialt(442,67,68,FALSE) ) v3fdel(jobfil);
+   if ( IGftst(jobfil)  &&  IGialt(442,67,68,FALSE) ) IGfdel(jobfil);
 /*
 ***Ta bort ev. MBO-fil ?
 */
@@ -322,8 +309,8 @@ static short igebas()
    strcat(mbofil,job);
    strcat(mbofil,MODEXT);
 
-   if ( v3ftst(mbofil)  &&  igialt(443,67,68,FALSE)  &&
-                            igialt(444,67,68,FALSE)  ) v3fdel(mbofil);
+   if ( IGftst(mbofil)  &&  IGialt(443,67,68,FALSE)  &&
+                            IGialt(444,67,68,FALSE)  ) IGfdel(mbofil);
 /*
 ***Ta bort ev. MBS-fil ?
 */
@@ -331,8 +318,8 @@ static short igebas()
    strcat(mbsfil,job);
    strcat(mbsfil,MBSEXT);
 
-   if ( v3ftst(mbsfil)  &&  igialt(445,67,68,FALSE)  &&
-                            igialt(446,67,68,FALSE) ) v3fdel(mbsfil);
+   if ( IGftst(mbsfil)  &&  IGialt(445,67,68,FALSE)  &&
+                            IGialt(446,67,68,FALSE) ) IGfdel(mbsfil);
 /*
 ***Ta bort ev. RES-fil ?
 */
@@ -340,7 +327,7 @@ static short igebas()
    strcat(resfil,job);
    strcat(resfil,RESEXT);
 
-   if ( v3ftst(resfil)  &&  igialt(447,67,68,FALSE) ) v3fdel(resfil);
+   if ( IGftst(resfil)  &&  IGialt(447,67,68,FALSE) ) IGfdel(resfil);
 /*
 ***Ta bort ev. RIT-fil ?
 */
@@ -348,8 +335,8 @@ static short igebas()
    strcat(ritfil,job);
    strcat(ritfil,RITEXT);
 
-   if ( v3ftst(ritfil)  &&  igialt(448,67,68,FALSE)  &&
-                            igialt(449,67,68,FALSE) ) v3fdel(ritfil);
+   if ( IGftst(ritfil)  &&  IGialt(448,67,68,FALSE)  &&
+                            IGialt(449,67,68,FALSE) ) IGfdel(ritfil);
 /*
 ***Ta bort ev. PLT-fil ?
 */
@@ -357,7 +344,7 @@ static short igebas()
    strcat(pltfil,job);
    strcat(pltfil,PLTEXT);
 
-   if ( v3ftst(pltfil)  &&  igialt(450,67,68,FALSE) ) v3fdel(pltfil);
+   if ( IGftst(pltfil)  &&  IGialt(450,67,68,FALSE) ) IGfdel(pltfil);
 
    return(0);
  }
@@ -365,7 +352,7 @@ static short igebas()
 /******************************************************!*/
 /*!******************************************************/
 
-       short  igmvrr()
+       short  IGmvrr()
 
 /*     Varkon-funktion för att kopiera en RES-fil
  *     till en RIT-fil.
@@ -397,7 +384,7 @@ static short igebas()
 /*
 ***Ladda aktuell PID-fil.
 */
-    if ( igldpf(pidnam) < 0 )
+    if ( IGldpf(pidnam) < 0 )
       {
       erpush("IG0242",pidnam);
       errmes();
@@ -406,7 +393,7 @@ static short igebas()
 /*
 ***Läs in jobnamn.
 */
-    status = igssip(iggtts(400),job,"",JNLGTH);
+    status = IGssip(IGgtts(400),job,"",JNLGTH);
     if ( status < 0 ) return(status);
 /*
 ***Kolla om RES-filen finns.
@@ -432,12 +419,12 @@ static short igebas()
    if ( (fpk=fopen(ritfil,"r")) != 0 )
      {
      fclose(fpk);
-     if ( !igialt(419,67,68,TRUE) ) return(0);
+     if ( !IGialt(419,67,68,TRUE) ) return(0);
      }
 /*
 ***Kopiera.
 */
-   if ( v3fcpy(resfil,ritfil) < 0 ) errmes();
+   if ( IGfcpy(resfil,ritfil) < 0 ) errmes();
 
    return(0);
  }
@@ -445,9 +432,9 @@ static short igebas()
 /******************************************************!*/
 /*!******************************************************/
 
-        short igload()
+        short IGload()
 
-/*      Laddar ett jobb.
+/*      Loads a job from disc.
  *
  *      FV: Inget.
  *
@@ -457,7 +444,7 @@ static short igebas()
  *      21/10/88 CGI, J. Kjellander
  *      28/2/92  omflag, J. Kjellander
  *      28/1/95  Multifönster, J. Kjellander
- *      1997-03-11 igupcs(), J.Kjellander
+ *      1997-03-11 IGupcs(), J.Kjellander
  *      1998-03-12 init/newjob_macro, J.Kjellander
  *      1999-04-23 Cray, J.Kjellander
  *      1999-06-05 igbflg, J.Kjellander
@@ -470,14 +457,13 @@ static short igebas()
     bool   newjob;
  
 /*
-***Menus are now loaded but still no output has been made.
-***Init WP text fonts so that messages can be displayed.
-*/
-   WPinfn();
-/*
 ***Init pen number.
 */
    WPspen(1);
+/*
+***Clear level name table.
+*/
+   EXclear_levels();
 /*
 ***Om ritmodulen aktiv, initiera PM först och ladda sedan
 ***jobbfilen. PM-initiering medför ju återställning av
@@ -488,7 +474,7 @@ static short igebas()
       {
       if ( iginmo() < 0 ) goto errend;
       pmgstp(&pmstkp);
-/*
+/*return(erpush("EX1862",filnam));
 ***Ladda jobbfil.
 */
       if ( (status=igldjb()) == -1 ) iginjb();
@@ -512,7 +498,7 @@ static short igebas()
       if ( (status=igldjb()) == -1 ) iginjb();
       else if ( status < 0 ) goto errend;
 
-      if ( (status=igldmo()) == -1 )
+      if ( (status=IGldmo()) == -1 )
         {
         status = iginmo();
         if      ( status == REJECT ) return(REJECT);
@@ -540,17 +526,17 @@ static short igebas()
         if ( igingm() < 0 ) goto errend;
         if ( !newjob )
           {
-          if ( igxflg || igialt(118,67,68,TRUE) )
+          if ( igxflg || IGialt(118,67,68,TRUE) )
             {
-            igramo();
-            if ( igbflg ) return(igexsn());
+            IGramo();
+            if ( igbflg ) return(IGexsn());
             }
           }
         }
       else if ( status == 0  &&  igbflg )
         {
-        igramo();
-        return(igexsn());
+        IGramo();
+        return(IGexsn());
         }
       else if ( status < 0 ) goto errend;
       }
@@ -568,7 +554,7 @@ static short igebas()
 */
    if ( newjob )
      {
-     if ( iggrst("newjob_macro",NULL) )
+     if ( IGgrst("newjob_macro",NULL) )
        {
        if ( newjob_macro() < 0 )
          {
@@ -581,20 +567,16 @@ static short igebas()
 /*
 ***Rita om skärmen.
 */
-#ifdef V3_X11
-    WPwait(GWIN_ALL,TRUE);
-    EXdral(GWIN_ALL);
-    if ( rstron ) WPdrrs(rstrox,rstroy,rstrdx,rstrdy);
-    igupcs(lsysla,V3_CS_ACTIVE);
-    WPwait(GWIN_ALL,FALSE);
-    igrsma();
+#ifdef UNIX
+    WPreload_view(GWIN_ALL);
+    WPrepaint_GWIN(GWIN_ALL);
+    WPrepaint_RWIN(RWIN_ALL,TRUE);
 #endif
 
 #ifdef WIN32
     msrepa(GWIN_ALL);
-    if ( rstron ) WPdrrs(rstrox,rstroy,rstrdx,rstrdy);
-    igupcs(lsysla,V3_CS_ACTIVE);
-    igrsma();
+    if ( rstron ) WPdrrs();
+    IGupcs(lsysla,V3_CS_ACTIVE);
 #endif
 /*
 ***Kör vi WIN32 måste vi ansluta rätt huvudmeny innan
@@ -603,7 +585,7 @@ static short igebas()
 end:
 
 #ifdef WIN32
-    mssmmu((int)iggmmu());
+    mssmmu((int)IGgmmu());
 #endif
 
     return(0);
@@ -612,186 +594,7 @@ end:
 */
 errend:
     WPclrg();
-    WPexfn();
     return(EREXIT);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-static short iginjb()
-
-/*      Initierar (skapar) ett nytt jobb.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: Alltid = 0.
- *
- *      (C)microform ab 20/10/85 J. Kjellander
- *
- *      22/10/85 Släck ej def. nivåer, J. Kjellander
- *      30/9/86  Ny nivåhantering, J. Kjellander
- *      7/10/86  Time, J. Kjellander
- *      5/3/88   stalev, J. Kjellander
- *      15/11/88 posmod, J. Kjellander
- *      31/1/95  Multifönster, J. Kjellander
- *      2007-01-01 Removed nivtb1[], J.Kjellander
- *
- ******************************************************!*/
-
-  {
-    short status,i,y,m,d,h,min,s;
-
-/*
-***Initiera "jobb skapat datum" i sydata.
-*/
-    EXtime(&y,&m,&d,&h,&min,&s);
-    sydata.year_c = y;
-    sydata.mon_c  = m;
-    sydata.day_c  = d;
-    sydata.hour_c = h;
-    sydata.min_c  = min;
-/*
-***Initiera vytab genom att sätta 1:a och sista tecknet i
-***vynamnet till 'Ö0'. Sista tecknet finns alltid för 
-***säkerhets skull.
-*/
-    for (i=0; i<GPMAXV; ++i) 
-      {
-      vytab[i].vynamn[0]= '\0';
-      vytab[i].vynamn[GPVNLN]= '\0';
-      }
-/*
-***Kör vi X11 är det nu dags att skapa grafiska fönster
-***samt default vy och aktivera denna i samtliga fönster.
-*/
-#ifdef V3_X11
-     if ( (status=WPcgws(TRUE)) < 0 ) return(status);
-#endif
-#ifdef WIN32
-     if ( (status=(short)mscdgw(TRUE)) < 0 ) return(status);
-#endif
-/*
-***Initiera diverse flaggor.
-*/
-    tmpref = FALSE;
-    posmod = 0;
-/*
-***Initiera koordinatsystem. Modulens system = BASIC och
-***inget lokalt system aktivt.
-*/
-    msyspk = NULL;
-    msysla = DBNULL;
-
-    lsyspk = NULL;
-    lsysla = DBNULL;
-
-    EXmsini();                     /* Stackpekaren */
-    strcpy(actcnm,iggtts(223));    /* Globala */
-/*
-***Initiera raster.
-*/
-    rstrox = 0.0;
-    rstroy = 0.0;
-    rstrdx = 10.0;
-    rstrdy = 10.0;
-    rstron = FALSE;
-/*
-***Statusarea på.
-*/
-    stalev = 1;
-/*
-***Nytt jobb påbörjat.
-*/
-    igwtma(211);
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-static short igldjb()
-
-/*      Laddar jobb från jobbfil om den finns.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV:   0 = Ok.
- *           -1 = Filen finns ej.
- *          < -1 = Status från EXldjb()
- *
- *      (C)microform ab 20/10/85 J. Kjellander
- *
- *      16/4/86  Bytt geo607 mot 612, J. Kjellander
- *      30/9/86  Ny nivåhantering, J. Kjellander
- *      7/11/86  V1.3, J. Kjellander
- *      26/12/86 hit och save, J. Kjellander
- *      15/11/88 EXldjb() och posmod, J. Kjellander
- *      30/1-95  Multifönster, J. Kjellander
- *
- ******************************************************!*/
-
-  {
-   short  status;
-   char   filnam[V3PTHLEN+1];
-
-/*
-***Bilda filnamn och prova att ladda.
-*/
-   strcpy(filnam,jobdir);
-   strcat(filnam,jobnam);
-   strcat(filnam,JOBEXT);
-   status = EXldjb(filnam,(short)0);
-/*
-***Om status < 0 och felkod = EX1862 finns filen inte.
-*/
-   if ( status < 0  &&  erlerr() == 186 )
-     {
-     erinit();
-     return(-1);
-     }
-/*
-***Annars om status < 0, felmeddelande.
-*/
-   else if ( status < 0 ) return(status);
-/*
-***Kör vi X11 och inga fönster har skapats fanns det inga
-***fönster i jobfilen. Då skapar vi default fönster enl.
-***resursfil nu.
-*/
-#ifdef V3_X11
-     if ( WPngws() == 0 )
-       if ( (status=WPcgws(FALSE)) < 0 ) return(status);
-#endif
-#ifdef WIN32
-     if ( msngws() == 0 )
-       {
-       if ( (status=(short)mscdgw(FALSE)) < 0 ) return(status);
-       }
-#endif
-/*
-***Initiera koordinatsystem.
-*/
-   if ( msyspk != NULL ) msyspk = &modsys;
-
-   if ( lsyspk != NULL )
-     {
-     lsyspk = &lklsys;
-     GEtform_inv(&lklsys,&lklsyi);
-     }
-
-   EXmsini();
-/*
-***Jobbfil inläst.
-*/
-   igwtma(212);
-
-   return(0);
   }
 
 /********************************************************/
@@ -828,11 +631,14 @@ static short igsvjb()
 /*
 ***Skriv ut aktiva jobb-data till fil.
 */
-    if ( EXsvjb(filnam) < 0 ) return(erpush("IG0133",filnam));
+    if ( EXsave_job(filnam) < 0 ) return(erpush("IG0133",filnam));
 /*
 ***Jobbfil lagrad.
 */
-    igwtma(218);
+    WPaddmess_mcwin(IGgtts(218),WP_MESSAGE);
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -859,7 +665,8 @@ static short iginmo()
  ******************************************************!*/
 
   {
-    short    status,y,m,d,h,min,s;
+    short    status;
+    int      y,m,d,h,min,s;
     PMMODULE modhed;
 
 /*
@@ -927,11 +734,11 @@ static short iginmo()
     msysla = DBNULL;
 
     EXmsini();
-    strcpy(actcnm,iggtts(223));
+    strcpy(actcnm,IGgtts(223));
 /*
 ***Modul skapad.
 */
-    igwtma(308);
+    WPaddmess_mcwin(IGgtts(308),WP_MESSAGE);
     }
 
     return(0);
@@ -993,7 +800,7 @@ error:
 #endif
     if ( igmtyp == IGUNDEF )
       {
-      igexfu( 144, &alt);
+      IGexfu( 144, &alt);
       switch ( alt )
         {
         case 1:
@@ -1020,7 +827,7 @@ error:
 */
     if ( igmatt == IGUNDEF )
       {
-      igexfu( 145, &alt);
+      IGexfu( 145, &alt);
       switch ( alt )
         {
         case 1:
@@ -1054,7 +861,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-        short igldmo()
+        short IGldmo()
 
 /*      Laddar modul från fil.
  *
@@ -1101,11 +908,11 @@ error:
 /*
 ***Interpretera modulens parameterlista.
 */
-    igevpl();
+    IGevlp();
 /*
 ***Modul inläst.
 */
-    igwtma(213);
+    WPaddmess_mcwin(IGgtts(213),WP_MESSAGE);
 
     return(0);
 /*
@@ -1135,7 +942,7 @@ static short igsvmo()
  ******************************************************!*/
 
   {
-    short    y,m,d,h,min,s;
+    int      y,m,d,h,min,s;
     PMMODULE modhed;
 
 /*
@@ -1158,7 +965,7 @@ static short igsvmo()
 /*
 ***Modulfil lagrad.
 */
-    igwtma(216);
+    WPaddmess_mcwin(IGgtts(216),WP_MESSAGE);
 
     return(0);
   }
@@ -1207,7 +1014,7 @@ static short igingm()
 /*
 ***Resultatfil skapad.
 */
-    igwtma(309);
+    WPaddmess_mcwin(IGgtts(309),WP_MESSAGE);
 
     return(0);
   }
@@ -1252,13 +1059,13 @@ static short igldgm()
     if ( v3mode == RIT_MOD )
       {
       strcat(filnam,RITEXT);
-      if ( v3ftst(filnam) )
+      if ( IGftst(filnam) )
         {
         strcpy(tmprit,jobdir);
         strcpy(templ,jobnam);
         strcat(templ,".XXXXXX");
         strcat(tmprit,mktemp(templ));
-        v3fcpy(filnam,tmprit);
+        IGfcpy(filnam,tmprit);
         status = DBload(tmprit,sysize.gm,
                     DB_LIBVERSION,DB_LIBREVISION,DB_LIBLEVEL);
         if ( status < 0 )
@@ -1268,7 +1075,7 @@ static short igldgm()
           }
         else
           {
-          igwtma(140);    /* Laddning gick bra */
+          WPaddmess_mcwin(IGgtts(140),WP_MESSAGE);
           return(0);
           }
         }
@@ -1288,7 +1095,7 @@ static short igldgm()
 
       if ( status == 0 )
         {
-        igwtma(214);                        /* Filen laddad */
+        WPaddmess_mcwin(IGgtts(214),WP_MESSAGE);
         return(0);
         }
       else if ( status == -1 ) return(-1);  /* Filen finns ej */
@@ -1328,7 +1135,7 @@ static short igsvgm()
 /*
 ***Resultatfil lagrad.
 */
-    if ( v3mode & BAS_MOD ) igwtma(217);
+    if ( v3mode & BAS_MOD ) WPaddmess_mcwin(IGgtts(217),WP_MESSAGE);
 /*
 ***Om ritpaketet, kopiera den temporära arbetsfilen
 ***till en .RIT-fil.
@@ -1338,9 +1145,9 @@ static short igsvgm()
      strcpy(filnam,jobdir);
      strcat(filnam,jobnam);
      strcat(filnam,RITEXT);
-     v3fcpy(tmprit,filnam);
-     v3fdel(tmprit);
-     igwtma(141);
+     IGfcpy(tmprit,filnam);
+     IGfdel(tmprit);
+     WPaddmess_mcwin(IGgtts(141),WP_MESSAGE);
      }
 
     return(0);
@@ -1349,7 +1156,7 @@ static short igsvgm()
 /********************************************************/
 /*!******************************************************/
 
-        short igsjpg()
+        short IGsjpg()
 
 /*      Lagra jobb, PM och GM.
  *
@@ -1385,7 +1192,7 @@ static short igsvgm()
 /********************************************************/
 /*!******************************************************/
 
-        short igsaln()
+        short IGsaln()
 
 /*      Lagrar allt med nytt namn.
  *
@@ -1414,9 +1221,8 @@ static short igsvgm()
 /*
 ***Läs in nytt jobbnamn.
 */
-    igptma(210,IG_INP);     
-    status = igssip(iggtts(267),newnam,newnam,JNLGTH);
-    igrsma();
+    IGptma(210,IG_INP);     
+    status = IGssip(IGgtts(267),newnam,newnam,JNLGTH);
     if ( status < 0 ) return(status);
 /*
 ***Kolla att namnet är ok.
@@ -1444,29 +1250,29 @@ static short igsvgm()
     strcpy(path,jobdir);
     strcat(path,newnam);
     strcat(path,JOBEXT);
-    if ( v3ftst(path) ) flag = TRUE;
+    if ( IGftst(path) ) flag = TRUE;
 
     if ( v3mode == !RIT_MOD )
       {
       strcpy(path,jobdir);
       strcat(path,newnam);
       strcat(path,MODEXT);
-      if ( v3ftst(path) ) flag = TRUE;
+      if ( IGftst(path) ) flag = TRUE;
 
       strcpy(path,jobdir);
       strcat(path,newnam);
       strcat(path,RESEXT);
-      if ( v3ftst(path) ) flag = TRUE;
+      if ( IGftst(path) ) flag = TRUE;
       }
    else
      {
       strcpy(path,jobdir);
       strcat(path,newnam);
       strcat(path,RITEXT);
-      if ( v3ftst(path) ) flag = TRUE;
+      if ( IGftst(path) ) flag = TRUE;
       }
 
-    if ( flag  &&  !igialt(1626,67,68,TRUE) ) goto exit;
+    if ( flag  &&  !IGialt(1626,67,68,TRUE) ) goto exit;
 /*
 ***Lagra jobfil.
 */
@@ -1512,20 +1318,19 @@ static short igsvgm()
 /*
 ***Kopiera filen.
 */
-    if ( (status=v3fcpy(resfil,newfil)) < 0 )
+    if ( (status=IGfcpy(resfil,newfil)) < 0 )
       return(status);
     else
       {
-      if ( v3mode == RIT_MOD ) igwtma(141);
-      else igwtma(217);
+      if ( v3mode == RIT_MOD ) WPaddmess_mcwin(IGgtts(141),WP_MESSAGE);
+      else                     WPaddmess_mcwin(IGgtts(217),WP_MESSAGE);
       }
 /*
 ***Öppna GM igen.
 */
     DBload(resfil,sysize.gm,
            DB_LIBVERSION,DB_LIBREVISION,DB_LIBLEVEL);
-    igrsma();
-    igptma(196,IG_MESS);     
+    IGptma(196,IG_MESS);     
 /*
 ***Slut.
 */
@@ -1536,7 +1341,7 @@ exit:
 /********************************************************/
 /********************************************************/
 
-        short igspmn()
+        short IGspmn()
 
 /*      Lagra modul med nytt namn.
  *
@@ -1563,8 +1368,8 @@ exit:
 /*
 ***Läs in nytt filnamn.
 */
-    igptma(349,IG_INP);
-    if ( (status=igssip(iggtts(267),newnam,jobnam,JNLGTH)) < 0 )
+    IGptma(349,IG_INP);
+    if ( (status=IGssip(IGgtts(267),newnam,jobnam,JNLGTH)) < 0 )
         goto exit;
 /*
 ***Ändra namnet i modulhuvudet.
@@ -1584,14 +1389,13 @@ exit:
     pmumod(&modhed);
 
 exit:
-    igrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igsgmn()
+        short IGsgmn()
 
 /*      Lagra GM med nytt namn.
  *
@@ -1625,9 +1429,8 @@ exit:
 ***Läs in nytt filnamn.
 */
 loop:
-    igptma(279,IG_INP);     
-    status = igssip(iggtts(267),newnam,"",JNLGTH);
-    igrsma();
+    IGptma(279,IG_INP);     
+    status = IGssip(IGgtts(267),newnam,"",JNLGTH);
     if ( status < 0 ) return(status);
 /*
 ***Kolla att det nya namnet inte är lika med aktuellt jobbnamn.
@@ -1660,38 +1463,27 @@ loop:
       if ( v3mode == RIT_MOD ) strcat(newfil,RITEXT);
       else strcat(newfil,RESEXT);
 /*
-***Kopiera filen, på VAXEN kan inte v3fcpy() användas.
+***Kopiera filen, på VAXEN kan inte IGfcpy() användas.
 */
 #ifdef UNIX
-      if ( (status=v3fcpy(resfil,newfil)) < 0 )
+      if ( (status=IGfcpy(resfil,newfil)) < 0 )
         return(status);
       else
         {
-        if ( v3mode == RIT_MOD ) igwtma(141);
-        else igwtma(217);
+        if ( v3mode == RIT_MOD ) WPaddmess_mcwin(IGgtts(141),WP_MESSAGE);
+        else                     WPaddmess_mcwin(IGgtts(217),WP_MESSAGE);
         }
       }
 #endif
 
 #ifdef WIN32
-      if ( (status=v3fcpy(resfil,newfil)) < 0 )
+      if ( (status=IGfcpy(resfil,newfil)) < 0 )
         return(status);
       else
         {
-        if ( v3mode == RIT_MOD ) igwtma(141);
-        else igwtma(217);
+        if ( v3mode == RIT_MOD ) WPaddmess_mcwin(IGgtts(141),WP_MESSAGE);
+        else                     WPaddmess_mcwin(IGgtts(217),WP_MESSAGE);
         }
-      }
-#endif
-
-#ifdef VMS
-      strcpy(oscmd,"copy ");
-      strcat(oscmd,resfil);
-      strcat(oscmd," ");
-      strcat(oscmd,newfil);
-      EXos(oscmd,(short)0);
-      if ( v3mode == RIT_MOD ) igwtma(141);
-      else igwtma(217);
       }
 #endif
 /*
@@ -1699,7 +1491,6 @@ loop:
 */
     DBload(resfil,sysize.gm,
            DB_LIBVERSION,DB_LIBREVISION,DB_LIBLEVEL);
-    igrsma();
 
     return(0);
   }
@@ -1707,7 +1498,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        short igsjbn()
+        short IGsjbn()
 
 /*      Lagra jobbfil med nytt namn.
  *
@@ -1731,8 +1522,8 @@ loop:
 /*
 ***Läs in nytt filnamn.
 */
-    igptma(357,IG_INP);
-    if ( (status=igssip(iggtts(267),newnam,jobnam,JNLGTH)) < 0 )
+    IGptma(357,IG_INP);
+    if ( (status=IGssip(IGgtts(267),newnam,jobnam,JNLGTH)) < 0 )
         goto exit;
 /*
 ***Lagra jobb.
@@ -1743,14 +1534,13 @@ loop:
     strcpy(jobnam,tmpnam);
 
 exit:
-    igrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcatt()
+        short IGcatt()
 
 /*      Ändra modulens attribut.
  *
@@ -1778,11 +1568,11 @@ exit:
 #ifdef WIN32
     msshmu(145);
 #else
-    igaamu(145);
+    IGaamu(145);
 #endif
 
 l1:
-    iggalt(&pmualt,&alttyp);
+    IGgalt(&pmualt,&alttyp);
 
 #ifdef WIN32
     mshdmu();
@@ -1793,7 +1583,7 @@ l1:
       switch ( alttyp )
         {
         case SMBRETURN:
-        igsamu();
+        IGsamu();
         return(REJECT);
 
         case SMBMAIN:
@@ -1830,7 +1620,7 @@ l1:
 /*
 ***Uppdatera statusarean.
 */
-    igsamu();
+    IGsamu();
 
     return(0);
   }
@@ -1838,63 +1628,7 @@ l1:
 /********************************************************/
 /*!******************************************************/
 
-        short igcmpc()
-
-/*      Ändra modulens skyddskod.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG0092 = Rättighet saknas
- *
- *      (C)microform ab 12/4/86 J. Kjellander
- *
- *      6/10/86  GOMAIN, B. Doverud
- *
- ******************************************************!*/
-
-  {
-    short    status=0;
-    int      value;
-    PMMODULE modhed;
-
-/*
-***Kolla om det är tillåtet att ändra.
-*/
-    pmrmod(&modhed);
-    if ( modhed.system.sernr != sydata.sernr ) 
-      {
-      erpush("IG0092","");
-      errmes();
-      goto exit;
-      }
-/*
-***Ta reda på ny skyddskod.
-*/
-    igptma(355,IG_INP);
-    if ( (status=igsiip(iggtts(4),&value)) < 0 ) goto exit;
-/*
-***Uppdatera modulhuvudet.
-*/
-    modhed.system.mpcode = (short)value;
-    pmumod(&modhed);
-/*
-***Slut.
-*/
-exit:
-    igrsma();
-    return(status);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short v3exit()
+        short IGexit()
 
 /*      Avslutningsrutin. Används av toppnivån (futab4)
  *      och trap-rutiner för att återvända till OS.
@@ -1917,18 +1651,13 @@ exit:
 /*
 ***Här stänger vi fönsterhanteringssystemet.
 */
-#ifdef V3_X11
-   if ( igtrty == X11 ) WPexit();
+#ifdef UNIX
+   WPexit();
 #endif
 
 #ifdef WIN32
    msexit();
 #endif
-/*
-***Stäng IGE.
-*/
-   igwtma(219);
-   igexit();
 /*
 ***Stäng ev. debug-filer.
 */
@@ -1950,55 +1679,62 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-        short igexsn()
+        short IGexsn()
 
-/*      Sluta utan att lagra.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Exit without saving.
  *
  *      (C)microform ab 16/6/85 J. Kjellander
  *
  *      10/2/86  gpexit, J. Kjellander
- *      13/4/86  v3exit, J. Kjellander
+ *      13/4/86  IGexit, J. Kjellander
  *      29/11/88 Temporär .RIT-fil, J. Kjellander
  *      1998-03-12 exit_macro, J.Kjellander
+ *      2007-03-26 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    char resfil[V3PTHLEN+1];
+   char resfil[V3PTHLEN+1];
 
 /*
-***Först av allt, ett ev. exit_macro.
+***In interactive mode (not batch mode) this
+***requires an ok from the user.
 */
-    exit_macro();
+   if ( !igbflg )
+     {
+     if ( !IGialt(69,67,68,TRUE) ) return(0);
+     }
 /*
-***Stäng GM och ta bort resultatfilen.
+***Execute optional exit_macro.
 */
-    gmclpf();
+   exit_macro();
+/*
+***Close DB and delete RES- or temp. RIT-file.
+*/
+   gmclpf();
 
-    if ( v3mode == RIT_MOD ) v3fdel(tmprit);
-    else
-      {
-      strcpy(resfil,jobdir);
-      strcat(resfil,jobnam);
-      strcat(resfil,RESEXT);
-      v3fdel(resfil);
-      }
+   if ( v3mode == RIT_MOD ) IGfdel(tmprit);
+   else
+     {
+     strcpy(resfil,jobdir);
+     strcat(resfil,jobnam);
+     strcat(resfil,RESEXT);
+     IGfdel(resfil);
+     }
 /*
-***Avsluta.
+***Close down.
 */
-    WPclrg();
-    WPexfn();
-    return(EXIT);
+   WPclrg();
+/*
+***The end.
+*/
+   return(EXIT);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igexsa()
+        short IGexsa()
 
 /*      Sluta och lagra allt. f122.
  *
@@ -2009,7 +1745,7 @@ exit:
  *      (C)microform ab 16/6/85 J. Kjellander
  *
  *      10/2/86  gpexit, J. Kjellander
- *      13/4/86  v3exit, J. Kjellander
+ *      13/4/86  IGexit, J. Kjellander
  *      26/9/95  jnflag, J. Kjellander
  *      1998-03-12 exit_macro, J.Kjellander
  *
@@ -2025,11 +1761,11 @@ exit:
 */
    if ( !jnflag )
      {
-     igptma(193,IG_INP);
-     if ( (status=igssip(iggtts(400),newnam,"",JNLGTH)) < 0 )
+     IGptma(193,IG_INP);
+     if ( (status=IGssip(IGgtts(400),newnam,"",JNLGTH)) < 0 )
         return(status);
 
-     if ( igchjn(newnam) < 0 )
+     if ( IGchjn(newnam) < 0 )
        {
        errmes();
        return(0);
@@ -2042,19 +1778,18 @@ exit:
 /*
 ***Lagra allt.
 */
-   igsjpg();
+   IGsjpg();
 /*
 ***Avsluta.
 */
    WPclrg();
-   WPexfn();
    return(EXIT);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igexsd()
+        short IGexsd()
 
 /*      Sluta och lagra allt, även dekompilerad
  *      version av aktiv modul.
@@ -2071,17 +1806,17 @@ exit:
 /*
 ***Dekompilera.
 */
-    if ( prtmod() < 0 ) return(0);
+    if ( IGprtm() < 0 ) return(0);
 /*
 ***Sluta och lagra.
 */
-    else return(igexsa());
+    else return(IGexsa());
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short ignjsd()
+        short IGnjsd()
 
 /*      Nytt jobb och lagra allt, även dekompilerad
  *      version av aktiv modul.
@@ -2098,17 +1833,17 @@ exit:
 /*
 ***Dekompilera.
 */
-    if ( prtmod() < 0 ) return(0);
+    if ( IGprtm() < 0 ) return(0);
 /*
 ***Sluta och lagra.
 */
-    else return(ignjsa());
+    else return(IGnjsa());
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short ignjsa()
+        short IGnjsa()
 
 /*      Lagra allt och nytt jobb.
  *
@@ -2123,7 +1858,7 @@ exit:
  *      (C)microform ab 16/6/85 J. Kjellander
  *
  *      6/10/86  GOMAIN, B. Doverud
- *      26/9/95  igselj(), J. Kjellander
+ *      26/9/95  IGselj(), J. Kjellander
  *      1998-03-12 exit_macro, J.Kjellander
  *
  ******************************************************!*/
@@ -2139,11 +1874,11 @@ exit:
 */
    if ( !jnflag )
      {
-     igptma(193,IG_INP);
-     if ( (status=igssip(iggtts(400),newnam,"",JNLGTH)) < 0 )
+     IGptma(193,IG_INP);
+     if ( (status=IGssip(IGgtts(400),newnam,"",JNLGTH)) < 0 )
         return(status);
 
-     if ( igchjn(newnam) < 0 )
+     if ( IGchjn(newnam) < 0 )
        {
        errmes();
        return(0);
@@ -2152,7 +1887,7 @@ exit:
 /*
 ***Läs in nytt jobnamn.
 */
-   status = igselj(newnam);
+   status = IGselj(newnam);
    if      ( status == REJECT ) return(REJECT);
    else if ( status <  0 )
      {
@@ -2166,7 +1901,7 @@ exit:
 /*
 ***Lagra allt.
 */
-    igsjpg();
+    IGsjpg();
 /*
 ***Lagra nya namnet men spara först det gamla så att
 ***vi kan byta tillbaks om det inte går att ladda det
@@ -2180,26 +1915,37 @@ exit:
 ***vi tillbaks det gamla jobbet igen.
 */
     WPclrg();
-    WPexfn();
 
-    status = igload();
+    status = IGload();
 
     if ( status < 0 )
       {
       if ( status != REJECT  &&  status != GOMAIN ) errmes();
       strcpy(jobnam,oldnam);
       WPclrg();
-      WPexfn();
-      if ( igload() < 0 ) return(EREXIT);
+      if ( IGload() < 0 ) return(EREXIT);
       else return(status);
       }
-    else return(GOMAIN);
+    else
+/*
+***New job loaded. v3mode could now have changed and a new
+***main menu might be needed, ie. 2D->3D etc. If this function
+***was called through the menu handler return(GOMAIN) is enough
+***to fix this but if the function is called by a button GOMAIN
+***will not be propagated back all the way (because buttons can't
+***return that information) so to be sure we fix it by updating
+***the mein menu here.
+*/
+    {
+    WPactivate_menu(&mnutab[IGgmmu()]);
+    return(GOMAIN);
+    }
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igsjsa()
+        short IGsjsa()
 
 /*      Lagra allt och fortsätt.
  *
@@ -2227,12 +1973,11 @@ exit:
 */
    if ( !jnflag )
      {
-     igptma(193,IG_INP);
-     if ( (status=igssip(iggtts(400),newnam,"",JNLGTH)) < 0 )
+     IGptma(193,IG_INP);
+     if ( (status=IGssip(IGgtts(400),newnam,"",JNLGTH)) < 0 )
         return(status);
-     igrsma();
 
-     if ( igchjn(newnam) < 0 )
+     if ( IGchjn(newnam) < 0 )
        {
        errmes();
        return(0);
@@ -2242,14 +1987,12 @@ exit:
 ***Lagra JOB-fil.
 */
    if ( igsvjb() < 0 ) errmes();
-   igrsma();
 /*
 ***Kanske även MBO-fil.
 */
    if ( v3mode & BAS_MOD )
      {
      if ( igsvmo() < 0 ) errmes();
-     igrsma();
      }
 /*
 ***Och kanske även RIT-fil.
@@ -2268,7 +2011,7 @@ exit:
      strcat(ritfil,RITEXT);
 
 #ifdef UNIX
-     if ( v3fcpy(tmprit,ritfil) < 0 )
+     if ( IGfcpy(tmprit,ritfil) < 0 )
        {
        errmes();
        return(0);
@@ -2276,19 +2019,11 @@ exit:
 #endif
 
 #ifdef WIN32
-     if ( v3fcpy(tmprit,ritfil) < 0 )
+     if ( IGfcpy(tmprit,ritfil) < 0 )
        {
        errmes();
        return(0);
        }
-#endif
-
-#ifdef VMS
-     strcpy(oscmd,"copy ");
-     strcat(oscmd,tmprit);
-     strcat(oscmd," ");
-     strcat(oscmd,ritfil);
-     EXos(oscmd,(short)0);
 #endif
 /*
 ***Öppna GM igen.
@@ -2299,7 +2034,7 @@ exit:
 /*
 ***Å så ett litet meddelande.
 */
-   igwtma(196);
+   WPaddmess_mcwin(IGgtts(196),WP_MESSAGE);
 
    return(0);
   }
@@ -2307,7 +2042,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-        short ignjsn()
+        short IGnjsn()
 
 /*      Lagra inget och nytt jobb.
  *
@@ -2323,7 +2058,7 @@ exit:
  *
  *      8/5/87   Defaultsträng, J. Kjellander
  *      26/9/95  tmprit, J. Kjellander
- *      26/9/95  igselj(), J. Kjellander
+ *      26/9/95  IGselj(), J. Kjellander
  *      1998-03-12 exit_macro, J.Kjellander
  *
  ******************************************************!*/
@@ -2336,7 +2071,7 @@ exit:
 /*
 ***Läs in nytt jobnamn.
 */
-   status = igselj(newnam);
+   status = IGselj(newnam);
    if      ( status == REJECT ) return(REJECT);
    else if ( status <  0 )
      {
@@ -2357,9 +2092,9 @@ exit:
      strcpy(resfil,jobdir);
      strcat(resfil,jobnam);
      strcat(resfil,RESEXT);
-     v3fdel(resfil);
+     IGfdel(resfil);
      }
-   else v3fdel(tmprit);
+   else IGfdel(tmprit);
 /*
 ***Lagra nya namnet. Eftersom detta namn är givet av användaren
 ***sätter vi nu jnflaggan till true.
@@ -2370,20 +2105,26 @@ exit:
 ***Ladda/skapa nytt jobb, ny modul och nytt resultat.
 */
     WPclrg();
-    WPexfn();
 
-    status = igload();
+    status = IGload();
 
     if (      status == REJECT ) return(EXIT);
     else if ( status == GOMAIN ) return(EXIT);
     else if ( status < 0 ) return(EREXIT);
-    else return(GOMAIN);
+/*
+***New job loaded. Update the main menu, see IGnjsa().
+*/
+    else
+    {
+    WPactivate_menu(&mnutab[IGgmmu()]);
+    return(GOMAIN);
+    }
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igselj(char *newjob)
+        short IGselj(char *newjob)
 
 /*      Interaktiv funktion för att välja jobb.
  *
@@ -2416,7 +2157,7 @@ exit:
    if ( v3mode & BAS_MOD ) strcpy(typ,MODEXT);
    else                    strcpy(typ,RITEXT);
 
-   igdir(jobdir,typ,1000,20000,pekarr,strarr,&nstr);
+   IGdir(jobdir,typ,1000,20000,pekarr,strarr,&nstr);
 /*
 ***Vilket av dem är aktivt ?
 */
@@ -2432,27 +2173,16 @@ exit:
 /*
 ***Låt användaren välja.
 */
-   sprintf(mesbuf,"%s - %s ",pidnam,iggtts(210));
+   sprintf(mesbuf,"%s - %s ",pidnam,IGgtts(210));
 
    if ( nstr > 0 )
      {
-#ifdef V3_X11
-     if ( igtrty == X11 )
-       status = WPilse(20,20,mesbuf,"",pekarr,actalt,nstr,newjob);
-     else
-       {
-       igplma(mesbuf,IG_INP);
-       status=igssip(iggtts(210),newjob,"",JNLGTH);
-       igrsma();
-       }
-#else
-#ifdef WIN32
-     status = msilse(20,20,mesbuf,"",pekarr,actalt,nstr,newjob);
-#else
-     igplma(mesbuf,IG_INP);
-     status=igssip(iggtts(210),newjob,"",JNLGTH);
-     igrsma();
+#ifdef UNIX
+     status = WPilse(mesbuf,"",pekarr,actalt,nstr,newjob);
 #endif
+
+#ifdef WIN32
+     status = msilse(mesbuf,"",pekarr,actalt,nstr,newjob);
 #endif
      }
 /*
@@ -2461,9 +2191,8 @@ exit:
 */
    else
      {
-     igplma(mesbuf,IG_INP);
-     status=igssip(iggtts(210),newjob,"",JNLGTH);
-     igrsma();
+     IGplma(mesbuf,IG_INP);
+     status=IGssip(IGgtts(210),newjob,"",JNLGTH);
      }
 
    actfun = oldafu;
@@ -2483,7 +2212,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-        short igchjn(char *newnam)
+        short IGchjn(char *newnam)
 
 /*      Ändrar namn på aktivt jobb.
  *
@@ -2513,26 +2242,26 @@ exit:
     strcpy(filnam,jobdir);
     strcat(filnam,newnam);
     strcat(filnam,JOBEXT);
-    if ( v3ftst(filnam) ) return(erpush("IG0422",newnam));
+    if ( IGftst(filnam) ) return(erpush("IG0422",newnam));
 
     if ( v3mode & BAS_MOD )
       {
       strcpy(filnam,jobdir);
       strcat(filnam,newnam);
       strcat(filnam,MODEXT);
-      if ( v3ftst(filnam) ) return(erpush("IG0422",newnam));
+      if ( IGftst(filnam) ) return(erpush("IG0422",newnam));
 
       strcpy(filnam,jobdir);
       strcat(filnam,newnam);
       strcat(filnam,RESEXT);
-      if ( v3ftst(filnam) ) return(erpush("IG0422",newnam));
+      if ( IGftst(filnam) ) return(erpush("IG0422",newnam));
       }
     else
       {
       strcpy(filnam,jobdir);
       strcat(filnam,newnam);
       strcat(filnam,RITEXT);
-      if ( v3ftst(filnam) ) return(erpush("IG0422",newnam));
+      if ( IGftst(filnam) ) return(erpush("IG0422",newnam));
       }
 /*
 ***Kör vi basmodulen skall vi ändra namnet i modulhuvudet....
@@ -2551,7 +2280,7 @@ exit:
       strcpy(newres,jobdir);
       strcat(newres,newnam);
       strcat(newres,RESEXT);
-      v3fmov(oldres,newres);
+      IGfmov(oldres,newres);
       }
 /*
 ***Kör vi ritmodulen räcker det att byta namn på temporärfilen.
@@ -2564,7 +2293,7 @@ exit:
 
       strcpy(newres,jobdir);
       strcat(newres,templ);
-      v3fmov(tmprit,newres);
+      IGfmov(tmprit,newres);
       strcpy(tmprit,newres);
       }
 /*
@@ -2575,8 +2304,8 @@ exit:
 /*
 ***Och uppdaterar fönsterramen.
 */
-#ifdef V3_X11
-   if ( igtrty == X11 ) WPupwb(NULL);
+#ifdef UNIX
+   WPupwb(NULL);
 #endif
 
    return(0);
@@ -2585,7 +2314,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-        bool iggrst(
+        bool IGgrst(
         char *resurs,
         char *pvalue)
 
@@ -2612,7 +2341,7 @@ exit:
 ***X-resurser heter samma sak som WIN32-resurser
 ***men med ordet varkon framför.
 */
-#ifdef V3_X11
+#ifdef UNIX
    char xrmnam[V3STRLEN];
 
    strcpy(xrmnam,"varkon.");
@@ -2658,10 +2387,10 @@ exit:
   {
    char name[V3PTHLEN];
 
-   if ( iggrst("init_macro",name) )
+   if ( IGgrst("init_macro",name) )
      {
      name[JNLGTH] = '\0';
-     return(igcpts(name,MFUNC));
+     return(IGcall_macro(name));
      }
    else return(0);
    }
@@ -2683,10 +2412,10 @@ exit:
   {
    char name[V3PTHLEN];
 
-   if ( iggrst("newjob_macro",name) )
+   if ( IGgrst("newjob_macro",name) )
      {
      name[JNLGTH] = '\0';
-     return(igcpts(name,MFUNC));
+     return(IGcall_macro(name));
      }
    else return(0);
    }
@@ -2709,18 +2438,171 @@ exit:
    short status;
    char  name[V3PTHLEN];
 
-   if ( iggrst("exit_macro",name) )
+   if ( IGgrst("exit_macro",name) )
      {
      name[JNLGTH] = '\0';
-     status = igcpts(name,MFUNC);
+     status = IGcall_macro(name);
      if ( status < 0 )
        {
        errmes();
-       igialt(457,458,458,TRUE);
+       IGialt(457,458,458,TRUE);
        }
      return(status);
      }
    else return(0);
    }
+
+/********************************************************/
+/*!******************************************************/
+
+static short iginjb()
+
+/*      Init's (creates default) job data.
+ *
+ *      (C)microform ab 20/10/85 J. Kjellander
+ *
+ *      22/10/85 Släck ej def. nivåer, J. Kjellander
+ *      30/9/86  Ny nivåhantering, J. Kjellander
+ *      7/10/86  Time, J. Kjellander
+ *      5/3/88   stalev, J. Kjellander
+ *      15/11/88 posmod, J. Kjellander
+ *      31/1/95  Multifönster, J. Kjellander
+ *      2007-01-01 Removed nivtb1[], J.Kjellander
+ *      2007-02-10 Views, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    short status;
+    int   y,m,d,h,min,s;
+
+/*
+***Initiera "jobb skapat datum" i sydata.
+*/
+    EXtime(&y,&m,&d,&h,&min,&s);
+    sydata.year_c = y;
+    sydata.mon_c  = m;
+    sydata.day_c  = d;
+    sydata.hour_c = h;
+    sydata.min_c  = min;
+/*
+***Init views.
+*/
+    WPinit_views();
+/*
+***Create the default graphical window.
+*/
+#ifdef UNIX
+     if ( (status=WPcgws()) < 0 ) return(status);
+#endif
+#ifdef WIN32
+     if ( (status=(short)mscdgw(TRUE)) < 0 ) return(status);
+#endif
+/*
+***Initiera diverse flaggor.
+*/
+    tmpref  = FALSE;
+    posmode = 2;
+/*
+***Initiera koordinatsystem. Modulens system = GLOBAL och
+***inget lokalt system aktivt.
+*/
+    msyspk = NULL;
+    msysla = DBNULL;
+
+    lsyspk = NULL;
+    lsysla = DBNULL;
+
+    EXmsini();                     /* Stackpekaren */
+    strcpy(actcnm,"GLOBAL");
+/*
+***A "New job created !" message.
+*/
+    WPaddmess_mcwin(IGgtts(211),WP_MESSAGE);
+/*
+***The end.
+*/
+    return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+static short igldjb()
+
+/*      Load a .JOB-file from disc.
+ *
+ *      FV:   0 = Ok.
+ *           -1 = Filen finns ej.
+ *          < -1 = Status från EXldjb()
+ *
+ *      (C)microform ab 20/10/85 J. Kjellander
+ *
+ *      16/4/86  Bytt geo607 mot 612, J. Kjellander
+ *      30/9/86  Ny nivåhantering, J. Kjellander
+ *      7/11/86  V1.3, J. Kjellander
+ *      26/12/86 hit och save, J. Kjellander
+ *      15/11/88 EXldjb() och posmod, J. Kjellander
+ *      30/1-95  Multifönster, J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   short  status;
+   char   filnam[V3PTHLEN+1];
+
+/*
+***Bilda filnamn och prova att ladda.
+*/
+   strcpy(filnam,jobdir);
+   strcat(filnam,jobnam);
+   strcat(filnam,JOBEXT);
+   status = EXload_job(filnam);
+/*
+***Om status < 0 och felkod = EX1862 finns filen inte.
+*/
+   if ( status < 0  &&  erlerr() == 186 )
+     {
+     erinit();
+     return(-1);
+     }
+/*
+***Annars om status < 0, felmeddelande.
+*/
+   else if ( status < 0 ) return(status);
+/*
+***Kör vi X11 och inga fönster har skapats fanns det inga
+***fönster i jobfilen. Då skapar vi default fönster enl.
+***resursfil nu.
+*/
+#ifdef UNIX
+     if ( WPngws() == 0 )
+       if ( (status=WPcgws()) < 0 ) return(status);
+#endif
+#ifdef WIN32
+     if ( msngws() == 0 )
+       {
+       if ( (status=(short)mscdgw(FALSE)) < 0 ) return(status);
+       }
+#endif
+/*
+***Initiera koordinatsystem.
+*/
+   if ( msyspk != NULL ) msyspk = &modsys;
+
+   if ( lsyspk != NULL )
+     {
+     lsyspk = &lklsys;
+     GEtform_inv(&lklsys,&lklsyi);
+     }
+
+   EXmsini();
+/*
+***Jobbfil inläst.
+*/
+   WPaddmess_mcwin(IGgtts(212),WP_MESSAGE);
+
+   return(0);
+  }
 
 /********************************************************/

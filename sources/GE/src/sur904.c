@@ -1684,7 +1684,7 @@ sur_norm[2] = xyz_clo[0].n_z;
 cur_tang[0] = xyz_c.drdt.x_gm; 
 cur_tang[1] = xyz_c.drdt.y_gm; 
 cur_tang[2] = xyz_c.drdt.z_gm; 
-angd(sur_norm,cur_tang,&angle);
+varkon_angd(sur_norm,cur_tang,&angle);
 
 if ( dbglev(SURPAC) == 1 )
 {

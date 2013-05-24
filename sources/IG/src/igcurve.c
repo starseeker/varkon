@@ -4,24 +4,24 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  cuftpm();     Generate cur_spline("FERGUSON"... with tangents   */
-/*  cuctpm();     Generate cur_spline("CHORD... with tangents       */
-/*  cuvtpm();     Generate cur_spline("STIFFNESS... with tangents   */
-/*  cufnpm();     Generate cur_spline("FERGUSON"...  no tangents    */
-/*  cucnpm();     Generate cur_spline("CHORD...  no tangents        */
-/*  cuvnpm();     Generate cur_spline("STIFFNESS... no tangents     */
-/*  cucfpm();     Generate cur_conic("FREE... statement             */
-/*  cucppm();     Generate cur_conic("PROJ... statement             */
-/*  comppm();     Generate cur_comp.. statement                     */
-/*  curopm();     Generate cur_offs.. statement                     */
-/*  curipm();     Generate cur_int...statement                      */
-/*  cuispm();     Generate cur_iso...    statement                  */
-/*  curapm();     Generate cur_approx... statement                  */
-/*  curtpm();     Generate cur_trim...   statement                  */
-/*  cusipm();     Generate cur_sil...    statement                  */
+/*  IGcuft();     Generate cur_spline("FERGUSON"... with tangents   */
+/*  IGcuct();     Generate cur_spline("CHORD... with tangents       */
+/*  IGcuvt();     Generate cur_spline("STIFFNESS... with tangents   */
+/*  IGcufn();     Generate cur_spline("FERGUSON"...  no tangents    */
+/*  IGcucn();     Generate cur_spline("CHORD...  no tangents        */
+/*  IGcuvn();     Generate cur_spline("STIFFNESS... no tangents     */
+/*  IGcucf();     Generate cur_conic("FREE... statement             */
+/*  IGcucp();     Generate cur_conic("PROJ... statement             */
+/*  IGcomp();     Generate cur_comp.. statement                     */
+/*  IGcuro();     Generate cur_offs.. statement                     */
+/*  IGcuri();     Generate cur_int...statement                      */
+/*  IGcuis();     Generate cur_iso...    statement                  */
+/*  IGcura();     Generate cur_approx... statement                  */
+/*  IGcurt();     Generate cur_trim...   statement                  */
+/*  IGcusi();     Generate cur_sil...    statement                  */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -40,8 +40,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -55,7 +53,7 @@ static short cucpm(char *typ);
 
 /*!******************************************************/
 
-        short cuftpm()
+        short IGcuft()
 
 /*      Generate cur_spline("FERGUSON.. with tangents.
  *
@@ -72,7 +70,7 @@ static short cucpm(char *typ);
 /********************************************************/
 /*!******************************************************/
 
-        short cuctpm()
+        short IGcuct()
 
 /*      Generate cur_spline("CHORD.. with tangents.
  *
@@ -89,7 +87,7 @@ static short cucpm(char *typ);
 /********************************************************/
 /*!******************************************************/
 
-        short cuvtpm()
+        short IGcuvt()
 
 /*      Generate cur_spline("STIFFNESS.. with tangents.
  *
@@ -106,7 +104,7 @@ static short cucpm(char *typ);
 /********************************************************/
 /*!******************************************************/
 
-        short cufnpm()
+        short IGcufn()
 
 /*      Generate cur_spline("FERGUSON.. without tangents.
  *
@@ -123,7 +121,7 @@ static short cucpm(char *typ);
 /********************************************************/
 /*!******************************************************/
 
-        short cucnpm()
+        short IGcucn()
 
 /*      Generate cur_spline("CHORD.. without tangents.
  *
@@ -140,7 +138,7 @@ static short cucpm(char *typ);
 /********************************************************/
 /*!******************************************************/
 
-        short cuvnpm()
+        short IGcuvn()
 
 /*      Generate cur_spline("STIFFNESS.. without tangents.
  *
@@ -176,11 +174,11 @@ static short curpm(
  *      (C)microform ab  3/2/85 J. Kjellander
  *
  *      3/7/85   Felhantering, B. Doverud
- *      4/9/85   Anrop till igcges(), B. Doverud
+ *      4/9/85   Anrop till IGcges(), B. Doverud
  *      19/11/85 Slagit ihop free och proj, J. Kjellander
  *      20/11/85 Tangenter, J. Kjellander
  *      20/3/86  Anrop till pmtcon pmclie, B. Doverud
- *      23/3/86  genpos(pnr, B. Doverud
+ *      23/3/86  IGcpos(pnr, B. Doverud
  *      24/3/86  Felutgång, B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *      8/12/89  tang, J. Kjellander
@@ -212,14 +210,14 @@ static short curpm(
 */
     while ( npoi < (V2PARMAX-1)/2 )
       {
-      if ( (status=genpos(264,&exnpt)) == REJECT ) break;
+      if ( (status=IGcpos(264,&exnpt)) == REJECT ) break;
       if ( status == GOMAIN) goto end;
 
       pmtcon(exnpt,retla,&retla,&dummy);
 /*
 ***Eventuella tangenter.
 */
-      if ( !tang  ||  ((status=genpos(345,&exnpt)) == REJECT) )
+      if ( !tang  ||  ((status=IGcpos(345,&exnpt)) == REJECT) )
         {
         litstr.lit_type = C_VEC_VA;
         litstr.lit.vec_va.x_val = 0.0;
@@ -238,7 +236,7 @@ static short curpm(
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_SPLINE",retla) < 0 ) goto error1;
+    if ( IGcges("CUR_SPLINE",retla) < 0 ) goto error1;
 
 end:
     WPerhg();
@@ -262,7 +260,7 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-       short cucfpm()
+       short IGcucf()
 
 /*      Genererar cur_conic(id,"free"... sats.
  *
@@ -279,7 +277,7 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-       short cucppm()
+       short IGcucp()
 
 /*      Genererar cur_conic(id,"proj"... sats.
  *
@@ -331,10 +329,10 @@ static short cucpm(char *typ)
 startp:
     pn = 0;
     nseg = 1;
-    sprintf(pbuf,"%s %s %d",iggtts(258),iggtts(429),nseg);
-    igplma(pbuf,IG_MESS);
-    status = genpos(0,&exnpt[pn]);
-    igrsma();
+    sprintf(pbuf,"%s %s %d",IGgtts(258),IGgtts(429),nseg);
+    IGplma(pbuf,IG_MESS);
+    status = IGcpos(0,&exnpt[pn]);
+    IGrsma();
     if ( status == REJECT ) goto end;
     if ( status == GOMAIN) goto end;
 /*
@@ -343,10 +341,10 @@ startp:
 startt:
     pn = 1;
     nseg = 1;
-    sprintf(pbuf,"%s %s %d",iggtts(421),iggtts(429),nseg);
-    igplma(pbuf,IG_MESS);
-    status = genpos(0,&exnpt[pn]);
-    igrsma();
+    sprintf(pbuf,"%s %s %d",IGgtts(421),IGgtts(429),nseg);
+    IGplma(pbuf,IG_MESS);
+    status = IGcpos(0,&exnpt[pn]);
+    IGrsma();
     if ( status == REJECT ) goto startp;
     if ( status == GOMAIN) goto end;
 /*
@@ -354,10 +352,10 @@ startt:
 */
 ploop:
     ++pn;
-    sprintf(pbuf,"%s %s %d",iggtts(259),iggtts(429),nseg);
-    igplma(pbuf,IG_MESS);
-    status=genpos(0,&exnpt[pn]);
-    igrsma();
+    sprintf(pbuf,"%s %s %d",IGgtts(259),IGgtts(429),nseg);
+    IGplma(pbuf,IG_MESS);
+    status=IGcpos(0,&exnpt[pn]);
+    IGrsma();
     if ( status == REJECT )
       {
       --nseg;
@@ -371,10 +369,10 @@ ploop:
 */
 tloop:
     ++pn;
-    sprintf(pbuf,"%s %s %d",iggtts(422),iggtts(429),nseg);
-    igplma(pbuf,IG_MESS);
-    status = genpos(0,&exnpt[pn]);
-    igrsma();
+    sprintf(pbuf,"%s %s %d",IGgtts(422),IGgtts(429),nseg);
+    IGplma(pbuf,IG_MESS);
+    status = IGcpos(0,&exnpt[pn]);
+    IGrsma();
     if ( status == REJECT )
       {
       pn -= 2;
@@ -386,13 +384,13 @@ tloop:
 */
 mloop:
     ++pn;
-    if ( igialt(423,424,425,FALSE) )
+    if ( IGialt(423,424,425,FALSE) )
       {
-      sprintf(pbuf,"%s %s %d",iggtts(426),iggtts(429),nseg);
-      igplma(pbuf,IG_INP);
-      status = genflt(0,dstr,istr,&exnpt[pn]);
+      sprintf(pbuf,"%s %s %d",IGgtts(426),IGgtts(429),nseg);
+      IGplma(pbuf,IG_INP);
+      status = IGcflt(0,dstr,istr,&exnpt[pn]);
       strcpy(dstr,istr);
-      igrsma();
+      IGrsma();
       if ( status == REJECT )
         {
         pn -= 2;
@@ -402,10 +400,10 @@ mloop:
       }
     else
       {
-      sprintf(pbuf,"%s %s %d",iggtts(427),iggtts(429),nseg);
-      igplma(pbuf,IG_MESS);
-      status = genpos(0,&exnpt[pn]);
-      igrsma();
+      sprintf(pbuf,"%s %s %d",IGgtts(427),IGgtts(429),nseg);
+      IGplma(pbuf,IG_MESS);
+      status = IGcpos(0,&exnpt[pn]);
+      IGrsma();
       if ( status == REJECT )
         {
         pn -= 2;
@@ -418,7 +416,7 @@ mloop:
 */
     if ( nseg < (V2PARMAX-3)/3 )
       {
-      if ( igialt(428,67,68,FALSE) )
+      if ( IGialt(428,67,68,FALSE) )
         {
         ++nseg;
         goto ploop;
@@ -450,7 +448,7 @@ mloop:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_CONIC",retla) < 0 )
+    if ( IGcges("CUR_CONIC",retla) < 0 )
       {
       erpush("IG5023","CUR_CONIC");
       errmes();
@@ -466,7 +464,7 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-       short comppm()
+       short IGcomp()
 
 /*      Huvudrutin för cur_comp(#id,ref1,ref2,,,,)
  *
@@ -480,7 +478,7 @@ end:
  *
  *      (C)microform ab 20/8/85 J. Kjellander
  *
- *      6/9/85   Anrop till igcges(), R. Sviden
+ *      6/9/85   Anrop till IGcges(), R. Sviden
  *      31/10/85 Ände och sida, J. Kjellander
  *      20/3/86  Anrop till pmtcon, B. Doverud
  *      24/3/86  Felutgångar B. Doverud
@@ -505,7 +503,7 @@ end:
     while ( nref < V2PARMAX )
       {
       typ = LINTYP+ARCTYP+CURTYP;
-      if ( (status=genref(268,&typ,&exnpt,&end,&right)) == REJECT ) break;
+      if ( (status=IGcref(268,&typ,&exnpt,&end,&right)) == REJECT ) break;
       if ( status == GOMAIN ) goto exit;
       pmtcon(exnpt,retla,&retla,&dummy);
       ++nref;
@@ -515,7 +513,7 @@ end:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_COMP",retla) < 0 )
+    if ( IGcges("CUR_COMP",retla) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -529,7 +527,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short curopm()
+       short IGcuro()
 
 /*      Huvudrutin för cur_offs.....
  *
@@ -557,11 +555,11 @@ exit:
 ***Skapa referens till annan kurva.
 */
     typ = CURTYP;
-    if ( (status=genref (430,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref (430,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa offset.
 */
-    if ( (status=genflt(278,ofstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcflt(278,ofstr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(ofstr,istr);
 /*
 ***Gör offset negativt om pekningen skedde på vänster sida.
@@ -575,7 +573,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_OFFS",valparam) < 0 )
+    if ( IGcges("CUR_OFFS",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -589,7 +587,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short curipm()
+       short IGcuri()
 
 /*      Huvudrutin för cur_int.....
  *
@@ -616,16 +614,16 @@ exit:
 ***Skapa referens till yta.
 */
     typ = SURTYP;
-    if ( (status=genref (1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref (1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa referens till plan.
 */
     typ = CSYTYP+BPLTYP;
-    if ( (status=genref (1609,&typ,&exnpt2,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref (1609,&typ,&exnpt2,&end,&right)) < 0 ) goto exit;
 /*
 ***Kurvgren.
 */
-    if ( (status=genint(1610,"1",istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcint(1610,"1",istr,&exnpt3)) < 0 ) goto exit;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
@@ -635,7 +633,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_INT",valparam) < 0 )
+    if ( IGcges("CUR_INT",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -649,7 +647,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short cuispm()
+       short IGcuis()
 
 /*      Huvudrutin för cur_iso......
  *
@@ -682,12 +680,12 @@ exit:
 ***Skapa referens till yta.
 */
     typ = SURTYP;
-    if ( (status=genref (1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref (1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***U eller V parameter.
 */
     litval.lit_type = C_STR_VA;
-    if ( igialt( 550, 548, 549,FALSE) )
+    if ( IGialt( 550, 548, 549,FALSE) )
       strcpy(litval.lit.str_va,"U");
     else
       strcpy(litval.lit.str_va,"V");
@@ -695,17 +693,17 @@ exit:
 /*
 ***Skapa isoparametervärde.
 */
-    if ( (status=genflt( 551,isostr,istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcflt( 551,isostr,istr,&exnpt3)) < 0 ) goto exit;
     strcpy(isostr,istr);
 /*
 ***Skapa start parametervärde.
 */
-    if ( (status=genflt( 552,stastr,istr,&exnpt4)) < 0 ) goto exit;
+    if ( (status=IGcflt( 552,stastr,istr,&exnpt4)) < 0 ) goto exit;
     strcpy(stastr,istr);
 /*
 ***Skapa slut  parametervärde.
 */
-    if ( (status=genflt( 553,endstr,istr,&exnpt5)) < 0 ) goto exit;
+    if ( (status=IGcflt( 553,endstr,istr,&exnpt5)) < 0 ) goto exit;
     strcpy(endstr,istr);
 /*
 ***Skapa listan med obligatoriska parametrar.
@@ -718,7 +716,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_ISO",valparam) < 0 )
+    if ( IGcges("CUR_ISO",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -731,7 +729,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short curapm()
+       short IGcura()
 
 /*      Huvudrutin för cur_approx...
  *
@@ -765,28 +763,28 @@ exit:
 ***Skapa referens till kurva.
 */
     typ = CURTYP;
-    if ( (status=genref(1539,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(1539,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa typ av utkurva.
 */
-    if ( (status=genstr(547,typstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcstr(547,typstr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(typstr,istr);
 /*
 ***Skapa metod för approximation.
 */
-    if ( (status=genint(546,metstr,istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcint(546,metstr,istr,&exnpt3)) < 0 ) goto exit;
     strcpy(metstr,istr);
 /*
 ***Skapa antal segment eller koordinat tolerans.
 */
     if ( strcmp(metstr,"1") == 0 )
       {
-      if ( (status=genint(545,nosstr,istr,&exnpt4)) < 0 ) goto exit;
+      if ( (status=IGcint(545,nosstr,istr,&exnpt4)) < 0 ) goto exit;
       strcpy(nosstr,istr);
       }
     else
       {
-      if ( (status=genflt(544,tolstr,istr,&exnpt4)) < 0 ) goto exit;
+      if ( (status=IGcflt(544,tolstr,istr,&exnpt4)) < 0 ) goto exit;
       strcpy(tolstr,istr);
       }
 /*
@@ -799,7 +797,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_APPROX",valparam) < 0 )
+    if ( IGcges("CUR_APPROX",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -812,7 +810,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short curtpm()
+       short IGcurt()
 
 /*      Huvudrutin för cur_trim...  
  *
@@ -844,16 +842,16 @@ exit:
 ***Skapa referens till kurva.
 */
     typ = CURTYP;
-    if ( (status=genref(1539,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(1539,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa start parametervärde.
 */
-    if ( (status=genflt(552,stastr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcflt(552,stastr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(stastr,istr);
 /*
 ***Skapa slut  parametervärde.
 */
-    if ( (status=genflt(553,endstr,istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcflt(553,endstr,istr,&exnpt3)) < 0 ) goto exit;
     strcpy(endstr,istr);
 /*
 ***Skapa listan med obligatoriska parametrar.
@@ -864,7 +862,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_TRIM",valparam) < 0 )
+    if ( IGcges("CUR_TRIM",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -877,7 +875,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short cusipm()
+       short IGcusi()
 
 /*      Huvudrutin för cur_sil......
  *
@@ -907,20 +905,20 @@ exit:
 ***Skapa referens till yta.
 */
     typ = SURTYP;
-    if ( (status=genref (1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref (1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa betraktelseriktning.
 */
-    if ( (status=genpos(49,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcpos(49,&exnpt2)) < 0 ) goto exit;
 /*
 ***Skapa typ av silhuette.
 */
-    if ( (status=genint( 543,typstr,istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcint( 543,typstr,istr,&exnpt3)) < 0 ) goto exit;
     strcpy(typstr,istr);
 /*
 ***Kurvgren.
 */
-    if ( (status=genint(1610,"1",istr,&exnpt4)) < 0 ) goto exit;
+    if ( (status=IGcint(1610,"1",istr,&exnpt4)) < 0 ) goto exit;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
@@ -931,7 +929,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CUR_SIL",valparam) < 0 )
+    if ( IGcges("CUR_SIL",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();

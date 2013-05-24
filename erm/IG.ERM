@@ -1,8 +1,7 @@
 VARKON Error messages for IGEPAC
-(C) Microform AB 1996
 
 001  4  Icon missing
-002  4  Menu %s undefined
+002  2  Menu %s undefined
 003  4  Illegal functiontable
 004  3  Function "f%s" can not be used in this context
 006  3  Error writing to %s
@@ -53,7 +52,7 @@ VARKON Error messages for IGEPAC
 052  2  Can't include menufile %s
 053  2  Illegal recordnumber
 054  2  # followed by %s, not include
-055  3  VARKON Demoversion, testperiod over !
+055  2  MDF error: %s
 056  2  Error changing project : %s
 057  2  Can't access MDF-file : %s 
 058  2  Can't change jobdirectory while the project is active !
@@ -91,11 +90,15 @@ VARKON Error messages for IGEPAC
 223  2  Expression of wrong type, %s expected
 224  2  Syntax error in ID-string, string = "%s"
 225  2  Parameter "%s" already exists
-226  2  Global csys is already active
+226  2  GLOBAL coordinate system is already active
 227  2  Entity %s does not exist
 228  2  Function "f%s" can only be called from a window
 229  2  Function "f%s" can only be used with X-Windows
 230  2  Function "f%s" can not be used with X-Windows
+231  2  BASIC coordinate system is already active
+232  2  This coordinate system is already active
+233  2  Attribute is already set to this value
+234  2  Illegal attribute value
 
 300  2  Can't create view
 301  2  View %s does not exist
@@ -189,4 +192,5 @@ VARKON Error messages for IGEPAC
 532  2  Can't change PART-ststement
 533  2  Can't find part-statement in PM
 534  2  One of the parameters is "call by reference"
-535  2  Module %s has attribute MACRO but is called like a PART
+535  2  Module %s is MACRO module
+536  2  Module %s is not a MACRO module

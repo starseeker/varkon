@@ -1,0 +1,55 @@
+basic drawing module jkc();
+constant float KX=6000.0/85.0,KY=10000.0/76.0;
+constant int MOVE=32768;
+file f,fn;
+string s*10,xs*20,ys*20;
+string rad*132;
+int kpos,ix,iy;
+float x,y;
+
+beginmodule
+
+open(f,"r","jk");
+open(fn,"w","jknew");
+
+loop1:
+   rad:=inlin(f);
+   if iostat(f) = 0 then
+     if finds(rad,"/*") > 0 then
+       outstr(fn,rad); outlin(fn);
+     else
+loop2:
+       kpos:=finds(rad,",");
+       if kpos > 0 then
+         xs:=substr(rad,1,kpos-1);
+         rad:=substr(rad,kpos+1);
+         kpos:=finds(rad,",");
+         ys:=substr(rad,1,kpos-1);
+         rad:=substr(rad,kpos+1);
+         ix:=round(val(xs));
+         iy:=round(val(ys));
+!* ix>127 = T{nd till ix-128
+         if ix > 127 then
+           ix:=ix-128;
+           x:=KX*ix;
+           iy:=iy-32;
+           y:=KY*iy+5000;
+         else
+           x:=KX*ix+MOVE;
+           iy:=iy-32;
+           y:=KY*iy+5000;
+         endif;
+         ix:=round(x);
+         iy:=round(y);
+         outstr(fn,"          "+str(ix,-1,0)+","+str(iy,-1,0)+",");
+         outlin(fn);
+         goto loop2;
+       endif;
+     endif;
+     goto loop1;
+   endif;
+
+close(f);
+close(fn);
+
+endmodule

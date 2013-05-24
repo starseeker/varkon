@@ -64,7 +64,7 @@ loop:
 !*
 !***Give back the last read row.
 !*
-    seek(infile,fpos(infile)-( rowlgt));
+    seek(infile,fpos(infile)-(rowlgt));
 !*
 !**END
 !*

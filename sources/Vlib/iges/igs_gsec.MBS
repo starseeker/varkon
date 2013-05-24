@@ -21,10 +21,10 @@
    STRING row*132;
    INT    nl,i,tmpi;
    INT    n_chars;
-   STRING readstring*81;
-   STRING tmp*81,prod_id*81,syst_id*81;
+   STRING readstring*82,par_delimiter*1,rec_delimiter*1;
+   STRING tmp*82,prod_id*82,syst_id*82;
    FLOAT  tmpf;
-   
+!string s*1;   
  BEGINMODULE
 
 !*
@@ -34,9 +34,12 @@
     outstr(logfile,"Global Section");    outlin(logfile);
     outstr(logfile,"--------------");    outlin(logfile);    
 !*
-!***Reads a 1:st row and checks that it is a global section.
+!***Reads a 1:st line and check that it is a global section.
+!***!:st line begins with parameter- and record delimiter. See
+!***p15 in the doc's
 !*
     row:=inlin(infile);
+    
     if substr(row,73,1) <> "G" then
       outstr(logfile,"This is not a Global Section");
       outlin(logfile);
@@ -47,34 +50,51 @@
       nl:=1;
     endif;
 !*    
-!***read some data from global section
+!***Parse first line.
 !*
     IF substr(row,1,1)="," THEN
+       par_delimiter:=",";
        row:=substr(row,2); 
     ELSE
-       part(#1,igs_gstr(infile,row,n_chars,tmp,status));      !index 1
+       part(#1,igs_gstr(infile,row,n_chars,par_delimiter,status)); !index 1
     ENDIF;
-    IF substr(row,1,1)="," THEN
-       row:=substr(row,2); 
-    ELSE
-       part(#21,igs_gstr(infile,row,n_chars,tmp,status));     !index 2
-    ENDIF;
+!s:=inpmt("par_delimiter=",par_delimiter);
 
+    IF substr(row,1,1)="," THEN
+       rec_delimiter:=",";
+       row:=substr(row,2); 
+    ELSE
+       part(#21,igs_gstr(infile,row,n_chars,rec_delimiter,status));     !index 2
+    ENDIF;
+!s:=inpmt("rec_delimiter=",rec_delimiter);
     part(#3,igs_gstr(infile,row,n_chars,prod_id,status));     !index 3
+!s:=inpmt("prod_id=",prod_id);
     part(#4,igs_gstr(infile,row,n_chars,tmp,status));         !index 4
+!s:=inpmt("file name=",tmp);
     part(#5,igs_gstr(infile,row,n_chars,syst_id,status));     !index 5
-    part(#6,igs_gstr(infile,row,n_chars,tmp,status));         !index 6   
+!s:=inpmt("syts_id=",syst_id);
+    part(#6,igs_gstr(infile,row,n_chars,tmp,status));         !index 6
+!s:=inpmt("preprocesor version=",tmp);
+
     FOR i:= 7 TO 11 DO
        part(#7,igs_gint_gsec(infile,row,tmpi,status));        !index 7-11
+!s:=inpmt("index 7-11",str(tmpi,-1,0));
     ENDFOR;
-    part(#8,igs_gstr(infile,row,n_chars,tmp,status));         !index 12 
-    part(#9,igs_gflt_gsec(infile,row,tmpf,status));           !index 13    
-    part(#10,igs_gint_gsec(infile,row,tmpi,status));          !index 14    
+    
+    part(#8,igs_gstr(infile,row,n_chars,tmp,status));         !index 12
+!s:=inpmt("index 12=",tmp);
+    part(#9,igs_gflt_gsec(infile,row,tmpf,status));           !index 13
+!s:=inpmt("index 13=",str(tmpf,-1,2));
+    part(#10,igs_gint_gsec(infile,row,tmpi,status));          !index 14
+!s:=inpmt("index 14=",str(tmpi,-1,0));
     part(#11,igs_gstr(infile,row,n_chars,tmp,status));        !index 15
+!s:=inpmt("index 15=",tmp);
     part(#12,igs_gint_gsec(infile,row,n_lweight_grad,status));!index 16
-    part(#13,igs_gflt_gsec(infile,row,max_lweight,status));   !index 17        
+!s:=inpmt("index 16=",str(n_lweight_grad,-1,0));
+    part(#13,igs_gflt_gsec(infile,row,max_lweight,status));   !index 17
+!s:=inpmt("index 17=",str(tmpf,-1,2));
 !*    
-!***write to logfilee
+!***Write to logfile
 !*
     outstr(logfile,"Sending system: " + syst_id);
     outlin(logfile);
@@ -85,13 +105,14 @@
 !*
 loop:
     row:=inlin(infile);
+!s:=inpmt("GSEC",row);
     if substr(row,73,1) = "G" then
       goto loop;
     endif;
 !*
 !***Give back the last read row.
 !*
-    seek(infile,fpos(infile)-( rowlgt));
+    seek(infile,fpos(infile)-(rowlgt));
 !*
 !**END
 !*    

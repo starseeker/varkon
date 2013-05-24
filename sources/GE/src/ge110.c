@@ -63,7 +63,7 @@
     short   status,rcode=0;
     int     evltyp;
     char    errbuf[80];
-    DBfloat out[16];
+    DBfloat out[17];
 
 /*
 ***Curves.

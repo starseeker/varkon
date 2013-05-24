@@ -24,8 +24,7 @@ CFLAGS =                    \
          -qchars=signed     \
          -O                 \
          -DUNIX             \
-         -DANALYZER         \
-         -DWRK_STAT
+         -DANALYZER
 
 LDFLAGS =
 

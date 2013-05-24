@@ -248,19 +248,19 @@
 */
      "-5:se",
 /*
-***VBLEV = 45, BLANK_LEV(<int>�<int>�
+***VBLEV = 45, BLANK_LEV(). Replaced by 386=BLANK_LEVEL()
 */
      "-5:ie.1(id<0>)",
 /*
-***VUBLEV = 46, UNBLANK_LEV(<int>�<int>�
+***VUBLEV = 46, UNBLANK_LEV(). Replaced by 387=UNBLANK_LEVEL()
 */
      "-5:ie.1(id<0>)",
 /*
-***VGTLEV = 47, GET_LEV(<int>,<int>,<str>)
+***VGTLEV = 47, GET_LEV(). Replaced by 388=GET_LEVEL()
 */
      "-5:ie.iv.sv",
 /*
-***VACLEV = 48, ACT_LEV()
+***VACLEV = 48, ACT_LEV(). Replaced by 389=ACT_LEVEL()
 */
      "i5:",
 /*
@@ -573,7 +573,7 @@
 */
      "-5:fe",
 /*
-***VPLTVI = 126, PLOT_VIEW.
+***VPLTVI = 126, PLOT_VIEW, Removed !!!.
 */
      "-5:se.se",
 /*
@@ -827,7 +827,7 @@
 /*
 ***VPLTWI = 189, PLOT_WIN.
 */
-     "-5:ve.ve.se.1(ve)",
+     "-5:ie.ve.ve.se.1(ve)",
 /*
 ***VUPHDR  = 190, UPDHDR.
 */
@@ -1025,9 +1025,9 @@
 */
      "s5:ie.ie",
 /*
-***VGTICO = 238, status:=GET_ICON(win_id,sub_id);
+***VUPEDI = 238, status:=UPD_EDIT(win_id,sub_id,string);
 */
-     "i5:ie.ie",
+     "-5:ie.ie.se",
 /*
 ***VGTBUT = 239, status:=GET_BUTTON(win_id,sub_id);
 */
@@ -1290,9 +1290,9 @@
 */
      "-3:ie.ve.1(ve.fe.fe)",
 /*
-***VSHVIEW = 304, SHADE_VIEW([win_id][smooth]);
+***VGTCOL = 304, GET_COLOR(pen,red,green,blue);
 */
-     "-3:1(id<0>.1(id<0>))",
+     "-5:ie.iv.iv.iv",
 /*
 ***VCRCOL = 305, CRE_COLOR(pen,red,green,blue);
 */
@@ -1612,9 +1612,36 @@
 /*
 ***VSURTUSRD = 383, SUR_TRIM_USRDEF(id,surid,nloops,looparr);
 */
-     "-3:re.ie.mv"     
+     "-3:re.ie.mv",
+/*
+***VACPFNT = 384, ACT_PFONT
+*/
+     "i5:",
+/*
+***VACPSIZ = 385, ACT_PSIZE
+*/
+     "f5:",
+/*
+***VBLLEVEL = 386, BLANK_LEVEL()
+*/
+     "-5:ie.1(id<0>)",
+/*
+***VUBLEVEL = 387, UNBLANK_LEVEL()
+*/
+     "-5:ie.1(id<0>)",
+/*
+***VGTLEVEL = 388, GET_LEVEL()
+*/
+     "-5:ie.ie.iv.1(sv)",
+/*
+***VACLEVEL = 389, ACT_LEVEL()
+*/
+     "i5:",
+/*
+***VNMLEVEL = 390, NAME_LEVEL()
+*/
+     "-5:ie.se"
      
-
 /*
 ***Remember, no comma after the last parameter list definition.
 */

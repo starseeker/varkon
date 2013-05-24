@@ -15,6 +15,7 @@
 !*      10/1/94  GETCURH och GETSEG, J. Kjellander
 !*      1996-06-03 Engelska,J.Kjellander
 !*      1998-01-01, J.Kjellander
+!*      2007-02-18, Nya segmenttyper, J.Kjellander
 !*
 !*******************************************************
 
@@ -66,6 +67,11 @@
 
    for i := 1 to ns_geo do
      getseg(global_ref(id,2),i,0,sdat,offset,typ,subtyp,yt_id1,yt_id2);
+!* 
+!***CUB_SEG      1       /* Rational cubic (offset-)segment */
+!***UV_CUB_SEG   2       /* Rational cubic segment on a surface */
+!***NURB_SEG     3       /* NURBS-span */
+!***UV_NURB_SEG  4       /* NURBS-span on a surface */
 !*
 !***Segment typ 1 = CUB_SEG.
 !*
@@ -82,7 +88,7 @@
                  "," + str(sdat(j,4),-12,5));
        endfor;
 !*
-!***Segment typ 2 = UV_SEG.
+!***Segment typ 2 = UV_CUB_SEG.
 !*
      elif typ = 2 then
        lst_lin(get_tstr(402)+str(i,-5,0)+get_tstr(404)+str(subtyp,-1,0));
@@ -105,6 +111,16 @@
                  "," + str(sdat(j,2),-12,5) + 
                  "," + str(sdat(j,4),-12,5));
        endfor;
+!*
+!***Segment typ 3 = NURB_SEG.
+!*
+     elif typ = 3 then
+       lst_lin(get_tstr(402)+str(i,-5,0)+" NURBS");
+!*
+!***Segment typ 4 = UV_NURB_SEG.
+!*
+     elif typ = 4 then
+       lst_lin(get_tstr(402)+str(i,-5,0)+" UV_NURBS");
      endif;
 !*
 !***Ev. offset.

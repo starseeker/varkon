@@ -8,20 +8,20 @@
 *
 *    This file includes:
 *
-*    WPnivt();    Check if level is visible
-*    WPspen();    Set active pen
-*    WPswdt();    Set active linewidth
-*    WPmsiz();    Get model size
-*    WPclin();    Clip line to window
-*    WPcply();    Clip polyline to window
-*    WPdply();    Draw/erase polyline
-*    WPpply();    Project polyline to view
-*    WPcpmk();    Create pickmarker
-*    WPepmk();    Erase pickmarker
-*    WPdpmk();    Draw pickmarker
-*    WPscur();    Change graphical cursor
-*    WPppos();    Projects a pos on the viewplane of a WPGWIN
-*    WPcpos();    Clip a pos to the borders of a WPGWIN
+*    WPswdt();     Set active linewidth
+*    WPmsiz();     Get model size
+*    WPclin();     Clip line to window
+*    WPcply();     Clip polyline to window
+*    WPdply();     Draw/erase polyline
+*    WPpply();     Project polyline to view
+*    WPcpmk();     Create pickmarker
+*    WPepmk();     Erase pickmarker
+*    WPdpmk();     Draw pickmarker
+*    WPscur();     Change graphical cursor
+*    WPppos();     Projects a pos on the viewplane of a WPGWIN
+*    WPcpos();     Clip a pos to the borders of a WPGWIN
+*    WPset_cacc(); Set curve accuracy
+*    WPget_cacc(); Get current curve accuracy
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -43,100 +43,25 @@
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 
-extern short actpen;
+extern int actpen;
 
 #ifdef WIN32
 extern int msgrgb();
 #endif
 
-/********************************************************/
-
-        bool WPnivt(
-        WPGWIN *gwinpt,
-        short   level)
-
-/*      Kollar om viss nivå i visst fönster är tänd.
- *
- *      In: gwinpt => Pekare till fönster.
- *          level  => Nivå.
- *
- *      Ut: Inget.
- *
- *      FV:  TRUE  = Nivån är tänd.
- *           FALSE = Nivån är släckt.
- *
- *      (C)microform ab 15/1/95 J. Kjellander
- *
- ********************************************************/
-
- {
-   int  bytofs,bitmsk;
-
-   bytofs = (int)level;
-   bytofs = bytofs>>3;
-   bitmsk = 1;
-   bitmsk = bitmsk<<(level&7);
-   if ( gwinpt->nivtab[bytofs] & bitmsk ) return(TRUE);
-   else                                   return(FALSE);
- }
-
-/********************************************************/
-/********************************************************/
-
-        short WPspen(
-        short pen)
-
-/*      Sätter om aktiv penna, dvs. färg.
- *
- *      In: pen = Pennummer.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 31/12/94 J. Kjellander
- *
- *       1997-12-26 Separata GC, J.Kjellander
- *
- ********************************************************/
-
-{
-   int     i;
-   WPGWIN *gwinpt;
-
 /*
-***Gå igenom alla grafiska fönster och byt förgrundsfärg
-***i deras respektive GC/DC.
+***The current global value for curve accuracy is kept in curnog.
+***Functions using this value access it through WPget_cacc() and
+***WPset_cacc(). The value of curnog is used in polyline generation
+***for curved entities to establish the number of polylines to use.
+***Each such routine first establishes a suitable density of lines
+***and then multiplies this number with curnog. User can set
+***0.01<=curnog<=100.0 through IG. curnog can also be set
+***by MBS routine. 
 */
-#ifdef V3_X11
-   XFlush(xdisp);
-#endif
-   if ( pen != actpen )
-     {
-     for ( i=0; i<WTABSIZ; ++i)
-       {
-       if ( wpwtab[i].ptr != NULL )
-         {
-         if ( wpwtab[i].typ == TYP_GWIN )
-           {
-           gwinpt = (WPGWIN *)wpwtab[i].ptr;
-#ifdef WIN32
-           SelectObject(gwinpt->dc,msgcol(pen));
-           SelectObject(gwinpt->bmdc,msgcol(pen));
-#endif
-#ifdef V3_X11
-           XSetForeground(xdisp,gwinpt->win_gc,WPgcol(pen));
-#endif
-           }
-         }
-       }
-     actpen = pen;
-     }
+static double curnog = 1.0;
 
-    return(0);
-}
 
-/********************************************************/
 /********************************************************/
 
         short  WPswdt(
@@ -169,7 +94,7 @@ extern int msgrgb();
    static COLORREF color;
 #endif
 
-#ifdef V3_X11
+#ifdef UNIX
    XFlush(xdisp);
 #endif
 /*
@@ -206,7 +131,7 @@ extern int msgrgb();
 
        oldpen = newpen;
 #endif
-#ifdef V3_X11
+#ifdef UNIX
        XSetLineAttributes(xdisp,gwinpt->win_gc,npix,
                                      LineSolid,CapRound,JoinRound);
 #endif
@@ -222,7 +147,7 @@ extern int msgrgb();
 
         short   WPmsiz(
         WPGWIN *gwinpt,
-        VY     *pminvy)
+        WPVIEW *pminvy)
 
 /*      Calculate projected model 2D bounding rectangle.
  *
@@ -236,37 +161,40 @@ extern int msgrgb();
  *
  *      2004-07-21 Mesh, J.Kjellander
  *      2006-12-28 Removed GP, J.Kjellander
+ *      2007-01-08 piso, pborder,  Sören L
+ *      2007-04-23 Bug, text projection, J.Kjellander
  *
  ******************************************************!*/
 
  {
-    DBptr    la;
-    DBetype  typ;
-    int      k,i,n;
-    char     str[V3STRLEN+1];
-    double   x[PLYMXV],y[PLYMXV],z[PLYMXV];
-    char     a[PLYMXV];
-    double   size,crdvek[4*GMXMXL];
-    DBId     dummy;
-    DBPoint  poi;
-    DBLine   lin;
-    DBArc    arc;
-    DBCurve  cur;
-    DBSurf   sur;
-    DBText   txt;
-    DBHatch  xht;
-    DBAny    dim;
-    DBCsys   csy;
-    DBBplane bpl;
-    DBMesh   msh;
-    DBSeg   *sptarr[6],*segptr,arcseg[4];
-    WPGRPT   pt1,pt2;
+    DBptr     la;
+    DBetype   typ;
+    int       k,i,n;
+    char      str[V3STRLEN+1];
+    double    x[PLYMXV],y[PLYMXV],z[PLYMXV];
+    char      a[PLYMXV];
+    double    size,crdvek[4*GMXMXL];
+    DBId      dummy;
+    DBPoint   poi;
+    DBLine    lin;
+    DBArc     arc;
+    DBCurve   cur;
+    DBSurf    sur;
+    DBText    txt;
+    DBHatch   xht;
+    DBAny     dim;
+    DBCsys    csy;
+    DBBplane  bpl;
+    DBMesh    msh;
+    DBSeg    *segptr,arcseg[4];
+    DBSegarr *pborder,*piso;
+    WPGRPT    pt1,pt2;
 
 /*
 ***The worlds smallest rectangle !
 */
-    pminvy->vywin[0] = pminvy->vywin[1] =  1e20;
-    pminvy->vywin[2] = pminvy->vywin[3] = -1e20;
+    pminvy->modwin.xmin = pminvy->modwin.ymin =  1e20;
+    pminvy->modwin.xmax = pminvy->modwin.ymax = -1e20;
 /*
 ***Traverse DB.
 */
@@ -284,7 +212,7 @@ extern int msgrgb();
         {
         case POITYP:
         DBread_point(&poi,la);
-        if ( !poi.hed_p.blank  &&  WPnivt(gwinpt,poi.hed_p.level) )
+        if ( !poi.hed_p.blank  &&  WPnivt(gwinpt->nivtab,poi.hed_p.level) )
           {
           WPppos(gwinpt,&poi.crd_p,&pt1);
           x[0] = pt1.x;
@@ -295,7 +223,7 @@ extern int msgrgb();
 
         case LINTYP:
         DBread_line(&lin,la);
-        if ( !lin.hed_l.blank  &&  WPnivt(gwinpt,lin.hed_l.level) )
+        if ( !lin.hed_l.blank  &&  WPnivt(gwinpt->nivtab,lin.hed_l.level) )
           {
           WPppos(gwinpt,&lin.crd1_l,&pt1);
           x[0] = pt1.x; y[0] = pt1.y;
@@ -307,7 +235,7 @@ extern int msgrgb();
 
         case ARCTYP:
         DBread_arc(&arc,arcseg,la);
-        if ( !arc.hed_a.blank  &&  WPnivt(gwinpt,arc.hed_a.level) )
+        if ( !arc.hed_a.blank  &&  WPnivt(gwinpt->nivtab,arc.hed_a.level) )
           {
           arc.fnt_a = 0;
           WPplar(&arc,arcseg,1.0,&k,x,y,z,a);
@@ -317,7 +245,7 @@ extern int msgrgb();
 
         case CURTYP:
         DBread_curve(&cur,&segptr,NULL,la);
-        if ( !cur.hed_cu.blank  &&  WPnivt(gwinpt,cur.hed_cu.level) )
+        if ( !cur.hed_cu.blank  &&  WPnivt(gwinpt->nivtab,cur.hed_cu.level) )
           {
           cur.fnt_cu = 0;
           WPplcu(&cur,segptr,1.0,&k,x,y,z,a);
@@ -328,29 +256,38 @@ extern int msgrgb();
 
         case SURTYP:
         DBread_surface(&sur,la);
-        DBread_sur_grwire(&sur,sptarr);
-        if ( !sur.hed_su.blank  &&  WPnivt(gwinpt,sur.hed_su.level) )
+        if ( !sur.hed_su.blank  &&  WPnivt(gwinpt->nivtab,sur.hed_su.level) )
           {
-          sur.lgt_su = 100000;
-          k = -1;
-          WPplsu(&sur,sptarr,1.0,&k,x,y,z,a);
+          if ( sur.typ_su == FAC_SUR )
+            {
+            k = -1;
+            WPplsu(&sur,NULL,NULL,1.0,&k,x,y,z,a);
+            }
+          else
+            {
+            DBread_sur_grwire(&sur,&pborder,&piso);
+            sur.lgt_su = 100000;
+            k = -1;
+            WPplsu(&sur,pborder,piso,1.0,&k,x,y,z,a);
+            DBfree_sur_grwire(&sur,pborder,piso);
+            }
+          WPpply(gwinpt,k,x,y,z);
           }
-        DBfree_sur_grwire(sptarr);
         break;
 
         case TXTTYP:
         DBread_text(&txt,str,la);
-        if ( !txt.hed_tx.blank  &&  WPnivt(gwinpt,txt.hed_tx.level) )
+        if ( !txt.hed_tx.blank  &&  WPnivt(gwinpt->nivtab,txt.hed_tx.level) )
           {
           txt.fnt_tx = 0;
           WPpltx(&txt,(unsigned char *)str,&k,x,y,z,a);
-          WPpply(gwinpt,k,x,y,z);
+          WPprtx(gwinpt,&txt,k+1,x,y,z);
           }
         break;
 
         case XHTTYP:
         DBread_xhatch(&xht,crdvek,la);
-        if ( !xht.hed_xh.blank  &&  WPnivt(gwinpt,xht.hed_xh.level) )
+        if ( !xht.hed_xh.blank  &&  WPnivt(gwinpt->nivtab,xht.hed_xh.level) )
           {
           i =  0;
           n =  4*xht.nlin_xh;
@@ -367,7 +304,7 @@ extern int msgrgb();
 
         case LDMTYP:
         DBread_ldim(&dim.ldm_un,la);
-        if ( !dim.hed_un.blank  &&  WPnivt(gwinpt,dim.hed_un.level) )
+        if ( !dim.hed_un.blank  &&  WPnivt(gwinpt->nivtab,dim.hed_un.level) )
           {
           dim.ldm_un.auto_ld = FALSE;
           WPplld(&dim.ldm_un,&k,x,y,z,a);
@@ -376,7 +313,7 @@ extern int msgrgb();
 
         case CDMTYP:
         DBread_cdim(&dim.cdm_un,la);
-        if ( !dim.hed_un.blank  &&  WPnivt(gwinpt,dim.hed_un.level) )
+        if ( !dim.hed_un.blank  &&  WPnivt(gwinpt->nivtab,dim.hed_un.level) )
           {
           dim.cdm_un.auto_cd = FALSE;
           WPplcd(&dim.cdm_un,&k,x,y,z,a);
@@ -385,7 +322,7 @@ extern int msgrgb();
 
         case RDMTYP:
         DBread_rdim(&dim.rdm_un,la);
-        if ( !dim.hed_un.blank  &&  WPnivt(gwinpt,dim.hed_un.level) )
+        if ( !dim.hed_un.blank  &&  WPnivt(gwinpt->nivtab,dim.hed_un.level) )
           {
           dim.rdm_un.auto_rd = FALSE;
           WPplrd(&dim.rdm_un,&k,x,y,z,a);
@@ -394,7 +331,7 @@ extern int msgrgb();
 
         case ADMTYP:
         DBread_adim(&dim.adm_un,la);
-        if ( !dim.hed_un.blank  &&  WPnivt(gwinpt,dim.hed_un.level) )
+        if ( !dim.hed_un.blank  &&  WPnivt(gwinpt->nivtab,dim.hed_un.level) )
           {
           dim.adm_un.auto_ad = FALSE;
           WPplad(&dim.adm_un,1.0,&k,x,y,z,a);
@@ -403,7 +340,7 @@ extern int msgrgb();
 
         case CSYTYP:
         DBread_csys(&csy,NULL,la);
-        if ( !csy.hed_pl.blank  &&  WPnivt(gwinpt,csy.hed_pl.level) )
+        if ( !csy.hed_pl.blank  &&  WPnivt(gwinpt->nivtab,csy.hed_pl.level) )
           {
           size = (gwinpt->vy.modwin.xmax-gwinpt->vy.modwin.xmin)/10.0;
           WPplcs(&csy,size,V3_CS_NORMAL,&k,x,y,z,a);
@@ -413,7 +350,7 @@ extern int msgrgb();
 
         case BPLTYP:
         DBread_bplane(&bpl,la);
-        if ( !bpl.hed_bp.blank  &&  WPnivt(gwinpt,bpl.hed_bp.level) )
+        if ( !bpl.hed_bp.blank  &&  WPnivt(gwinpt->nivtab,bpl.hed_bp.level) )
           {
           WPplbp(&bpl,&k,x,y,z,a);
           WPpply(gwinpt,k,x,y,z);
@@ -423,7 +360,7 @@ extern int msgrgb();
         case MSHTYP:
         DBread_mesh(&msh,la,MESH_HEADER);
         msh.font_m = 1;
-        if ( !msh.hed_m.blank  &&  WPnivt(gwinpt,msh.hed_m.level) )
+        if ( !msh.hed_m.blank  &&  WPnivt(gwinpt->nivtab,msh.hed_m.level) )
           {
           WPplms(&msh,1.0,&k,x,y,z,a);
           WPpply(gwinpt,k,x,y,z);
@@ -435,11 +372,11 @@ extern int msgrgb();
 */
     for ( i=0; i<=k; ++i )
       {
-      if ( x[i] > pminvy->vywin[2] ) pminvy->vywin[2] = x[i];
-      if ( x[i] < pminvy->vywin[0] ) pminvy->vywin[0] = x[i];
+      if ( x[i] > pminvy->modwin.xmax ) pminvy->modwin.xmax = x[i];
+      if ( x[i] < pminvy->modwin.xmin ) pminvy->modwin.xmin = x[i];
 
-      if ( y[i] > pminvy->vywin[3] ) pminvy->vywin[3] = y[i];
-      if ( y[i] < pminvy->vywin[1] ) pminvy->vywin[1] = y[i];
+      if ( y[i] > pminvy->modwin.ymax ) pminvy->modwin.ymax = y[i];
+      if ( y[i] < pminvy->modwin.ymin ) pminvy->modwin.ymin = y[i];
       }
 /*
 ***Next entity.
@@ -454,15 +391,15 @@ extern int msgrgb();
 /********************************************************/
 /*!******************************************************/
 
-        short WPclin(
-        WPGWIN *gwinpt,
+        short   WPclin(
+        VYWIN  *clipwin,
         WPGRPT *pt1,
         WPGRPT *pt2)
 
 /*      Klipper en grafisk linje mot ett fönster.
  *
- *      In: gwinpt  => Pekare till fönster.
- *          pt1,pt2 => Pekare till indata/utdata.
+ *      In: clipwin  => Pekare till klippfönster.
+ *          pt1,pt2  => Pekare till indata/utdata.
  *
  *      Ut: *pt1,*pt2 = Ändpunkter, ev. klippta.
  *
@@ -480,10 +417,10 @@ extern int msgrgb();
    short  sts1,sts2;
    double p1x,p1y,p2x,p2y,xmin,xmax,ymin,ymax;
 
-   xmin = gwinpt->vy.modwin.xmin;
-   ymin = gwinpt->vy.modwin.ymin;
-   xmax = gwinpt->vy.modwin.xmax;
-   ymax = gwinpt->vy.modwin.ymax;
+   xmin = clipwin->xmin;
+   ymin = clipwin->ymin;
+   xmax = clipwin->xmax;
+   ymax = clipwin->ymax;
 
    p1x = pt1->x;
    p1y = pt1->y;
@@ -599,22 +536,22 @@ extern int msgrgb();
 /********************************************************/
 /*!******************************************************/
 
-   bool WPcply(
-        WPGWIN  *gwinpt,
-        int      kmin,
-        int     *kmax,
-        double   x[],
-        double   y[],
-        char     a[])
+   bool         WPcply(
+        VYWIN  *clipwin,
+        int     kmin,
+        int    *kmax,
+        double  x[],
+        double  y[],
+        char    a[])
 
 /*      Klipper en polylinje mot ett visst fönster.
 *
-*       In: gwinpt => Pekare till grafiskt fönster.
-*           kmin+1 => Offset till polylinjestart.
-*           kmax   => Offset till polylinjeslut.
-*           x      => X-koordinater.
-*           y      => Y-koordinater.
-*           a      => Tänd/Släck.
+*       In: clipwin => Pekare till klippfönster.
+*           kmin+1  => Offset till polylinjestart.
+*           kmax    => Offset till polylinjeslut.
+*           x       => X-koordinater.
+*           y       => Y-koordinater.
+*           a       => Tänd/Släck.
 *
 *           xÄkmin+1Å,yÄ min+1Å,aÄkmin+1Å = Startpunkt med status
 *            !
@@ -628,6 +565,8 @@ extern int msgrgb();
 *       FV: TRUE = Någon del av polylinjen är synlig.
 *
 *       (C)microform ab 31/12/94 J. Kjellander
+*
+*       2007-04-08 1.19, J.Kjellander
 *
 ********************************************************!*/
 
@@ -654,7 +593,7 @@ extern int msgrgb();
      pt1.y = y[i];
      pt2.x = sav0 = x[++i];
      pt2.y = sav1 = y[i];
-     } while ( WPclin(gwinpt,&pt1,&pt2) == -1 );
+     } while ( WPclin(clipwin,&pt1,&pt2) == -1 );
 /*
 ***I vec ligger nu en vektor som efter klippning syns, helt
 ***eller delvis! Börja med en släckt förflyttning till
@@ -680,7 +619,7 @@ extern int msgrgb();
 ***Klipp aktuell vektor. 0 => Vektorn helt innanför.
 ***                      2 => Ände 2 utanför.
 */
-     switch ( WPclin(gwinpt,&pt1,&pt2) )
+     switch ( WPclin(clipwin,&pt1,&pt2) )
        {
        case 0:
        case 2:
@@ -728,7 +667,7 @@ extern int msgrgb();
 /********************************************************/
 /********************************************************/
 
-  short WPdply(
+        short   WPdply(
         WPGWIN *gwinpt,
         int     k,
         double  x[],
@@ -736,16 +675,14 @@ extern int msgrgb();
         char    a[],
         bool    s)
 
-/*      Ritar (suddar) en polylinje.
+/*      Draw or erase a polyline.
  *
  *      In: gwinpt => Pekare till fönster att rita i.
  *          k      => Antal vektorer
  *          x      => X-koordinater
  *          y      => Y-koordinater
- *          a      => Tänd/Släck.
- *          s      => TRUE = Rita (FALSE = Sudda).
- *
- *      Ut: Inget.
+ *          a      => Pen up/down.
+ *          s      => TRUE = Draw, FALSE = Erase.
  *
  *      Felkod: WP1373 = Otillåtet antal vektorer.
  *
@@ -758,7 +695,7 @@ extern int msgrgb();
   {
    int    i,np;
 
-#ifdef V3_X11
+#ifdef UNIX
    XPoint ip[PLYMXV];
 #endif
 #ifdef WIN32
@@ -793,7 +730,7 @@ extern int msgrgb();
          {
          if ( np > 0 )
            {
-#ifdef V3_X11
+#ifdef UNIX
            XDrawLines(xdisp,gwinpt->id.x_id,
                             gwinpt->win_gc,ip,np,CoordModeOrigin);
            XDrawLines(xdisp,gwinpt->savmap,
@@ -813,7 +750,7 @@ extern int msgrgb();
        }
      if ( np > 0 )
        {
-#ifdef V3_X11
+#ifdef UNIX
        XDrawLines(xdisp,gwinpt->id.x_id,
                         gwinpt->win_gc,ip,np,CoordModeOrigin);
        XDrawLines(xdisp,gwinpt->savmap,
@@ -839,7 +776,7 @@ extern int msgrgb();
 /*
 ***Töm outputbufferten.
 */
-#ifdef V3_X11
+#ifdef UNIX
    XFlush(xdisp);
 #endif
 
@@ -875,32 +812,27 @@ extern int msgrgb();
    double xt,yt,zt,d,dz;
 
 /*
-***Only project if view is 3D.
-*/
-   if ( gwinpt->vy.vy_3D )
-     {
-/*
 ***Transform all X- and Y in the polyline.
 */
      for ( i=0; i<=k; i++ )
        {
-       xt = gwinpt->vy.vymat.k11 * x[i] +
-            gwinpt->vy.vymat.k12 * y[i] +
-            gwinpt->vy.vymat.k13 * z[i];
+       xt = gwinpt->vy.matrix.k11 * x[i] +
+            gwinpt->vy.matrix.k12 * y[i] +
+            gwinpt->vy.matrix.k13 * z[i];
 
-       yt = gwinpt->vy.vymat.k21 * x[i] +
-            gwinpt->vy.vymat.k22 * y[i] +
-            gwinpt->vy.vymat.k23 * z[i];
+       yt = gwinpt->vy.matrix.k21 * x[i] +
+            gwinpt->vy.matrix.k22 * y[i] +
+            gwinpt->vy.matrix.k23 * z[i];
 /*
 ***If the view is a perspective view we must also transform Z.
 */
-       if ( gwinpt->vy.vydist > 0 )
+       if ( gwinpt->vy.pdist > 0 )
          {
-         zt = gwinpt->vy.vymat.k31 * x[i] +
-              gwinpt->vy.vymat.k32 * y[i] +
-              gwinpt->vy.vymat.k33 * z[i];
+         zt = gwinpt->vy.matrix.k31 * x[i] +
+              gwinpt->vy.matrix.k32 * y[i] +
+              gwinpt->vy.matrix.k33 * z[i];
 
-         d  = gwinpt->vy.vydist;
+         d  = gwinpt->vy.pdist;
          dz = d - zt;
 
          if ( dz > 0.0 )
@@ -913,7 +845,6 @@ extern int msgrgb();
        x[i] = xt;
        y[i] = yt;
        }
-     }
 
    return(0);
   }
@@ -945,7 +876,7 @@ extern int msgrgb();
 /*
 ***X version.
 */
-#ifdef V3_X11
+#ifdef UNIX
    int    i;
    XPoint p[PLYMXV+1];
 
@@ -1039,10 +970,6 @@ extern int msgrgb();
  *
  *      In: win_id  => ID för fönster att rita i.
  *          ix,iy   => Pekmärkets position i fönstret.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
  *
  *      (C) microform ab 19/1/95 J. Kjellander
  *
@@ -1188,13 +1115,9 @@ extern int msgrgb();
 
 /*      Sets/unsets active mouse cursor.
  *
- *      In: win_id => Fönster att byta cursor i.
- *          set    => TRUE = sätt, FALSE = återställ
- *          cursor => Om set, X-cursor.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
+ *      In: win_id => Window ID or GWIN_ALL
+ *          set    => TRUE or FALSE
+ *          cursor => X-cursor
  *
  *      (C) microform ab 23/1/95 J. Kjellander
  *
@@ -1209,7 +1132,7 @@ extern int msgrgb();
    WPRWIN *rwinpt;
 
 /*
-***Loopa igenom alla WPGWIN/WPRWIN-fönster.
+***Loop through alla WPGWIN/WPRWIN windows.
 */
    for ( i=0; i<WTABSIZ; ++i )
      {
@@ -1233,16 +1156,21 @@ extern int msgrgb();
        else if (  winptr->typ == TYP_RWIN ) 
          {
          rwinpt = (WPRWIN *)winptr->ptr;
-         if ( win_id == rwinpt->id.w_id )
+         if ( win_id == GWIN_ALL  ||  rwinpt->id.w_id )
            {
            if ( set ) XDefineCursor(xdisp,rwinpt->id.x_id,cursor);
            else       XUndefineCursor(xdisp,rwinpt->id.x_id);
-           XFlush(xdisp);
            }
          }
        }
      }
-
+/*
+***Flush X.
+*/
+   XFlush(xdisp);
+/*
+***The end.
+*/
    return(0);
  }
 
@@ -1272,47 +1200,35 @@ extern int msgrgb();
  {
    double d,dz;
 
-/*
-***If the view is 3D we must at least transform X and Y.
-*/
-   if ( gwinpt->vy.vy_3D )
-     {
-     pt->x = gwinpt->vy.vymat.k11 * po->x_gm +
-             gwinpt->vy.vymat.k12 * po->y_gm +
-             gwinpt->vy.vymat.k13 * po->z_gm;
+   pt->x = gwinpt->vy.matrix.k11 * po->x_gm +
+           gwinpt->vy.matrix.k12 * po->y_gm +
+           gwinpt->vy.matrix.k13 * po->z_gm;
 
-     pt->y = gwinpt->vy.vymat.k21 * po->x_gm +
-             gwinpt->vy.vymat.k22 * po->y_gm +
-             gwinpt->vy.vymat.k23 * po->z_gm;
+   pt->y = gwinpt->vy.matrix.k21 * po->x_gm +
+           gwinpt->vy.matrix.k22 * po->y_gm +
+           gwinpt->vy.matrix.k23 * po->z_gm;
 /*
 ***If the view is a perspective view we must also transform Z.
 */
-     if ( gwinpt->vy.vydist > 0 )
+   if ( gwinpt->vy.pdist > 0 )
+     {
+     pt->z = gwinpt->vy.matrix.k31 * po->x_gm +
+             gwinpt->vy.matrix.k32 * po->y_gm +
+             gwinpt->vy.matrix.k33 * po->z_gm;
+
+     d  = gwinpt->vy.pdist;
+     dz = d - pt->z;
+
+     if ( dz > 0.0 )
        {
-       pt->z = gwinpt->vy.vymat.k31 * po->x_gm +
-               gwinpt->vy.vymat.k32 * po->y_gm +
-               gwinpt->vy.vymat.k33 * po->z_gm;
-
-       d  = gwinpt->vy.vydist;
-       dz = d - pt->z;
-
-       if ( dz > 0.0 )
-         {
-         pt->x /= dz; pt->x *= d;
-         pt->y /= dz; pt->y *= d;
-         }
-       else return(FALSE);
+       pt->x /= dz; pt->x *= d;
+       pt->y /= dz; pt->y *= d;
        }
+     else return(FALSE);
      }
 /*
-***If the view is not 3D no transformation is needed.
+***The end.
 */
-   else
-     {
-     pt->x = po->x_gm;
-     pt->y = po->y_gm;
-     }
-
    return(TRUE);
  }
 
@@ -1342,5 +1258,47 @@ extern int msgrgb();
              (pt->y > gwinpt->vy.modwin.ymin ) &&
              (pt->y < gwinpt->vy.modwin.ymax ));
  }
+
+/********************************************************/
+/*!******************************************************/
+
+        void   WPset_cacc(
+        double newacc)
+
+/*      Sets curve accuracy for polyline generation.
+ *
+ *      In: newacc = 0.01<= The new curve accuracy <=100.0
+ *
+ *      (C)2006-12-31 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    double c;
+
+    if      ( newacc < 0.01 )  c = 0.01;
+    else if ( newacc > 100.0 ) c = 100.0;
+    else                       c = newacc;
+
+    curnog = c;
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        void    WPget_cacc(
+        double *caccpt)
+
+/*      Returns current curve accuracy.
+ *
+ *      Out: *caccpt => Curve accuracy
+ *
+ *      (C)2006-12-31 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   *caccpt = curnog;
+  }
 
 /********************************************************/

@@ -8,11 +8,13 @@
 *
 *    This file includes:
 *
-*    WPmmod();    Measures size of model
-*    WPmodl();    Creates OpenGL displaylist
-*    WPsodl();    Displays OpenGL displaylist
-*    WPscog();    Sets active color
-*    WPnrrw();    Normalizes view box
+*    WPmmod();           Measures size of model
+*    WPmodl_all();       Make OpenGL displaylist for all entities
+*    WPmodl_highlight(); Make OpenGL displaylist for highlighted entities
+*    WPdodl_highlight(); Delete all highlight lists.
+*    WPsodl_all();       Show (execute) all OpenGL displaylists in a window
+*    WPeodls();          Executes OpenGL DisplayList 1 for Selection
+*    WPnrrw();           Normalizes view box
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -37,16 +39,30 @@
 #include <GL/glu.h>
 #include <math.h>
 
-static short        actpen;    /* Current pen */
-static DBfloat      actwdt;    /* Current linewidth */
-static GLUnurbsObj *gl_nobj;   /* Nurbs-object */
+extern DBptr  lsysla;                     /* Currently active csys */
+extern int    actpen_gl;                  /* Active pen for OpenGL */
 
-extern DBptr  lsysla;          /* Currently active csys */
+static DBfloat      actwdt;               /* Current linewidth */
+static GLUnurbsObj *gl_nobj;              /* Nurbs-object */
+static DBfloat      nurbs_display_factor; /* For NURBS tesselation */
 
-#ifdef WIN32
-extern int   msgrgb();
-#endif
+/*
+***Open GL list ID 1 is always the list with all the visible entities.
+***Additional lists with ID 2,3,4,5... are used for highlighted entities.
+***n_hllits is used to keep track of how many highlight lists currently
+***exist.
+*/
+static int          n_hllists = 0;
 
+/*
+***Wireframes and surfaces use different light models.
+*/
+#define WIREFRAME_MODEL 1
+#define SURFACE_MODEL   2
+
+/*
+***Prototypes for internal functions.
+*/
 static void  pr_poi(WPRWIN *rwinpt, DBPoint *poi);
 static void  pr_lin(WPRWIN *rwinpt, DBLine *lin);
 static void  pr_arc(WPRWIN *rwinpt, DBArc *arc, DBSeg *arcseg);
@@ -60,10 +76,11 @@ static void  pr_adm(WPRWIN *rwinpt, DBAdim *adm);
 static void  pr_bpl(WPRWIN *rwinpt, DBBplane *bpl);
 static void  pr_msh(WPRWIN *rwinpt, DBMesh *mesh);
 static void  pr_csy(WPRWIN *rwinpt, DBCsys *csy, DBptr la);
-static void  pr_sur1(WPRWIN *rwinpt, DBSurf *sur, GLfloat *p_kvu,
-                     GLfloat *p_kvv, GLfloat *p_cpts);
-static void  pr_sur2(WPRWIN *rwinpt, DBSurf *sur, DBPatch *patpek);
+static void  pr_sur1(WPRWIN *rwinpt, DBSurf *sur);
+static void  pr_sur2(WPRWIN *rwinpt, DBSurf *sur);
 static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
+static int   width_to_pixels(WPRWIN *rwinpt, DBfloat width);
+static void  set_lightmodel(WPRWIN *rwinpt, int model);
 
 /*!******************************************************/
 
@@ -79,8 +96,8 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
  *    (C)microform ab 1998-01-09 J. Kjellander
  *
  *    1998-10-27 Bugfix deallokering, J.Kjellander
- *    2004-07-10 Mesh J.Kjellander, Örebro university
- *    2006-12-09 Removed gpxxxx() calls, J.Kjellander
+ *    2004-07-10 Mesh J.Kjellander, ï¿½rebro university
+ *    2007-06-16 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -108,18 +125,11 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
    char     a[PLYMXV];
    double   x[PLYMXV],y[PLYMXV],z[PLYMXV],crdvek[4*GMXMXL];
    double   xmin,xmax,ymin,ymax,zmin,zmax;
-   WPWIN   *winptr;
-   WPGWIN  *gwinpt;
 
-/*
-***Get a ptr to the main graphics window.
-*/
-   winptr = WPwgwp((wpw_id)GWIN_MAIN);
-   gwinpt = (WPGWIN *)winptr->ptr;
 /*
 ***This might take time.
 */
-#ifdef V3_X11
+#ifdef UNIX
    WPscur(rwinpt->id.w_id,TRUE,xwcur);
 #endif
 #ifdef WIN32
@@ -138,7 +148,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
    while ( DBget_pointer('N',NULL,&la,&type ) == 0 )
      {
      DBread_header(&hdr,la);
-     if ( !hdr.blank  &&  WPnivt(gwinpt,hdr.level) )
+     if ( !hdr.blank  &&  WPnivt(rwinpt->nivtab,hdr.level) )
        {
        switch ( type )
          {
@@ -174,9 +184,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
          if ( lin.crd2_l.z_gm > zmax ) zmax = lin.crd2_l.z_gm;
          break;
 /*
-***An arc.
-***En Cirkelbåge, scale=1 bör bytas ut mot smartare beräkning som
-***oavsett curnog ger rimligt få vektorer i polylinjen.
+***An arc. TODO, fix scale.
 */
          case ARCTYP:
          DBread_arc(&arc,seg,la);
@@ -196,7 +204,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
            }
          break;
 /*
-***A curve. Scale must be fixed.
+***A curve. TODO fix scale.
 */
          case CURTYP:
          DBread_curve(&cur,&graseg,NULL,la);
@@ -428,7 +436,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 /*
 ***Turn off wait....
 */
-#ifdef V3_X11
+#ifdef UNIX
    WPscur(rwinpt->id.w_id,FALSE,(Cursor)0);
 #endif
 #ifdef WIN32
@@ -441,28 +449,32 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-    short   WPmodl(
-    WPRWIN *rwinpt)
+    short WPmodl_all(WPRWIN *rwinpt)
 
-/*      Make OpenGL display list. Traverse DB and
- *      process all visible entities.
+/*      Make OpenGL displaylist for all entities (List 1).
+ *      Traverse DB and process all visible entities
+ *      into a single OpenGL display list.
+ *
+ *      NOTE: The RC for this window must be activated
+ *             before calling. 
  *
  *      (C)microform ab 1998-01-04 J. Kjellander
  *
  *      1998-09-22 DBCsys, J.Kjellander
  *      1998-10-27 Bugfix deallokering, J.Kjellander
  *      2000-08-25 Linewidth added, J.Kjellander
- *      2004-07-10 Mesh, J.Kjellander, Örebro university
+ *      2004-07-10 Mesh, J.Kjellander, ï¿½rebro university
+ *      2007-06-17 1.19 J.Kjellander
  *
  ******************************************************!*/
 
  {
+   int       i;
    DBetype  type;
    DBptr    la;
    char     str[V3STRLEN+1];
-   GLfloat *p_kvu,*p_kvv,*p_cpts,tol;
    DBfloat  crdvek[4*GMXMXL],cn;
    DBHeader hdr;
    DBPoint  poi;
@@ -479,59 +491,59 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
    DBCsys   csy;
    DBSurf   sur;
    DBSeg    arcseg[4],*graseg;
-   DBPatch *patpek;
    DBMesh   mesh;
-   WPWIN   *winptr;
-   WPGWIN  *gwinpt;
+   DBfloat  model_size;
 
 /*
-***Get a ptr to the main graphics window.
+***Initialization. Make pen and width invalid so
+***that the first entity in the list forces them
+***to be set.
 */
-   winptr = WPwgwp((wpw_id)GWIN_MAIN);
-   gwinpt = (WPGWIN *)winptr->ptr;
+   actpen_gl = -1;
+   actwdt    = -1.0;
 /*
-***Turn on Wait....
+***Empty the namestack and push a default name.
+***glLoadName() will replace the default name
+***when entities from DB are processed.
 */
-#ifdef UNIX
-   WPscur(rwinpt->id.w_id,TRUE,xwcur);
-#endif
-#ifdef WIN32
-   SetCursor(LoadCursor(NULL,IDC_WAIT));
-#endif
+   glInitNames();
+   glPushName(0);
 /*
-***Initialization.
+***Delete the current main list (if it exists).
 */
-   actpen = -1;
-   actwdt = 0.0;
+   if ( glIsList((GLuint)1) ) glDeleteLists((GLuint)1,(GLsizei)1);
 /*
-***Inte säker på att man behöver sätta upp
-***modelltransformation innan man skapar listan
-***men det kostar så lite.
-*/
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-/*
-***Skapa ny lista. Vi använder bara list-id 1.
+***Create a new main list (list 1).
 */
    glNewList(1,GL_COMPILE);
 /*
-***Diverse andra inställningar.
+***Render in Smooth mode.
 */
    glShadeModel(GL_SMOOTH);
+/*
+***Calculate normal's automatically.
+*/
    glEnable(GL_AUTO_NORMAL);
    glEnable(GL_NORMALIZE);
-
-   gl_nobj = gluNewNurbsRenderer();
-   WPget_cacc(&cn);
-   if ( (tol=(GLfloat)(100.0/cn)) < 1.0 ) tol = 1.0;
-   gluNurbsProperty(gl_nobj,GLU_SAMPLING_METHOD,GLU_PATH_LENGTH);
-   gluNurbsProperty(gl_nobj,GLU_SAMPLING_TOLERANCE,tol);
-   gluNurbsProperty(gl_nobj,GLU_DISPLAY_MODE,GLU_FILL);
 /*
-***Linewidth and pointsize.
+***Display both sides of polygons filled (shaded).
+***This applies to B_planes, Mesh and FAC_SUR.
 */
-   glPointSize((GLfloat)2);
-   set_linewidth(rwinpt,actwdt);
+   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+/*
+***Display NURBS surfaces filled (shaded) and
+***use Varkon's displayfactor to control tesselation.
+*/
+   gl_nobj = gluNewNurbsRenderer();
+
+   WPget_cacc(&cn);
+   model_size = sqrt((rwinpt->xmax - rwinpt->xmin) * (rwinpt->xmax - rwinpt->xmin)+
+                     (rwinpt->ymax - rwinpt->ymin) * (rwinpt->ymax - rwinpt->ymin)+
+                     (rwinpt->zmax - rwinpt->zmin) * (rwinpt->zmax - rwinpt->zmin));
+   nurbs_display_factor = cn / model_size;
+
+   gluNurbsProperty(gl_nobj,GLU_DISPLAY_MODE,GLU_FILL);  
+   gluNurbsProperty(gl_nobj,GLU_SAMPLING_METHOD,GLU_DOMAIN_DISTANCE); 
 /*
 ***Traverse DB.
 */
@@ -540,8 +552,22 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
    while ( DBget_pointer('N',NULL,&la,&type ) == 0 )
      {
      DBread_header(&hdr,la);
-     if ( !hdr.blank  &&  WPnivt(gwinpt,hdr.level) )
+     if ( !hdr.blank  &&  WPnivt(rwinpt->nivtab,hdr.level) )
        {
+/*
+***Color/material.
+*/
+       if ( hdr.pen != actpen_gl )
+         {
+         WPspenGL(rwinpt,hdr.pen);
+         }
+/*
+***Load the DB pointer to the name stack.
+*/
+       glLoadName(la);
+/*
+***Process geometry.
+*/
        switch ( type )
          {
 /*
@@ -549,6 +575,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case POITYP:
          DBread_point(&poi,la);
+         if ( poi.wdt_p != actwdt ) set_linewidth(rwinpt,poi.wdt_p);
          pr_poi(rwinpt,&poi);
          break;
 /*
@@ -556,6 +583,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case LINTYP:
          DBread_line(&lin,la);
+         if ( lin.wdt_l != actwdt ) set_linewidth(rwinpt,lin.wdt_l);
          pr_lin(rwinpt,&lin);
          break;
 /*
@@ -563,6 +591,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case ARCTYP:
          DBread_arc(&arc,arcseg,la);
+         if ( arc.wdt_a != actwdt ) set_linewidth(rwinpt,arc.wdt_a);
          pr_arc(rwinpt,&arc,arcseg);
          break;
 /*
@@ -570,6 +599,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case CURTYP:
          DBread_curve(&cur,&graseg,NULL,la);
+         if ( cur.wdt_cu != actwdt ) set_linewidth(rwinpt,cur.wdt_cu);
          pr_cur(rwinpt,&cur,graseg);
          DBfree_segments(graseg);
          break;
@@ -578,6 +608,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case TXTTYP:
          DBread_text(&txt,str,la);
+         if ( txt.wdt_tx != actwdt ) set_linewidth(rwinpt,txt.wdt_tx);
          pr_txt(rwinpt,&txt,str);
          break;
 /*
@@ -585,6 +616,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case XHTTYP:
          DBread_xhatch(&xht,crdvek,la);
+         if ( actwdt != 0.0 ) set_linewidth(rwinpt,0.0);
          pr_xht(rwinpt,&xht,crdvek);
          break;
 /*
@@ -592,6 +624,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case LDMTYP:
          DBread_ldim(&ldm,la);
+         if ( actwdt != 0.0 ) set_linewidth(rwinpt,0.0);
          pr_ldm(rwinpt,&ldm);
          break;
 /*
@@ -599,6 +632,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case CDMTYP:
          DBread_cdim(&cdm,la);
+         if ( actwdt != 0.0 ) set_linewidth(rwinpt,0.0);
          pr_cdm(rwinpt,&cdm);
          break;
 /*
@@ -606,6 +640,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case RDMTYP:
          DBread_rdim(&rdm,la);
+         if ( actwdt != 0.0 ) set_linewidth(rwinpt,0.0);
          pr_rdm(rwinpt,&rdm);
          break;
 /*
@@ -613,6 +648,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case ADMTYP:
          DBread_adim(&adm,la);
+         if ( actwdt != 0.0 ) set_linewidth(rwinpt,0.0);
          pr_adm(rwinpt,&adm);
          break;
 /*
@@ -620,6 +656,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case BPLTYP:
          DBread_bplane(&bpl,la);
+         if ( bpl.wdt_bp != actwdt ) set_linewidth(rwinpt,bpl.wdt_bp);
          pr_bpl(rwinpt,&bpl);
          break;
 /*
@@ -627,6 +664,7 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case MSHTYP:
          DBread_mesh(&mesh,la,MESH_ALL);
+         if ( mesh.wdt_m != actwdt ) set_linewidth(rwinpt,mesh.wdt_m);
          pr_msh(rwinpt,&mesh);
          break;
 /*
@@ -634,6 +672,20 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case CSYTYP:
          DBread_csys(&csy,NULL,la);
+         if ( actwdt != 0.0 ) set_linewidth(rwinpt,0.0);
+
+         if ( la == lsysla )
+           {
+           if ( WPgrst("varkon.act_csys_pen",str)  &&  sscanf(str,"%d",&i) == 1 )
+             {
+             WPspenGL(rwinpt,(short)i);
+             }
+           }
+          else if ( csy.hed_pl.pen != actpen_gl )
+           {
+           WPspenGL(rwinpt,csy.hed_pl.pen);
+           }
+
          pr_csy(rwinpt,&csy,la);
          break;
 /*
@@ -641,18 +693,9 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
          case SURTYP:
          DBread_surface(&sur,la);
-         if ( sur.typ_su == FAC_SUR )
-           {
-           DBread_patches(&sur,&patpek);
-           pr_sur2(rwinpt,&sur,patpek);
-           DBfree_patches(&sur,patpek);
-           }
-         else
-           {
-           DBread_sur_grsur(&sur,&p_kvu,&p_kvv,&p_cpts);
-           pr_sur1(rwinpt,&sur,p_kvu,p_kvv,p_cpts);
-           DBfree_sur_grsur(p_kvu,p_kvv,p_cpts);
-           }
+         if ( sur.wdt_su != actwdt ) set_linewidth(rwinpt,sur.wdt_su);
+         if ( sur.typ_su == FAC_SUR ) pr_sur2(rwinpt,&sur);
+         else                         pr_sur1(rwinpt,&sur);
          break;
          }
        }
@@ -662,39 +705,262 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 */
    glEndList();
 /*
-***Turn off Wait....
-*/
-#ifdef V3_X11
-   WPscur(rwinpt->id.w_id,FALSE,(Cursor)0);
-#endif
-#ifdef WIN32
-   SetCursor(LoadCursor(NULL,IDC_ARROW));
-#endif
-/*
 ***End.
 */
    return(0);
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-    short   WPsodl(
+    short   WPmodl_highlight(
     WPRWIN *rwinpt,
-    GLuint  list)
+    int     n_ents,
+    DBptr   la_arr[])
 
-/*      Visar en OpenGL Display List.
- * 
- *      Felkoder: 
+/*      Make OpenGL display list for one or more
+ *      highlighted entities.
+ *
+ *      In: rwinpt = C ptr to the WPRWIN
+ *          n_ents = Number of entities
+ *          la_arr = Array of entity DBptr's
+ *
+ *      (C)2007-06-16 J. Kjellander
+ *
+ ******************************************************!*/
+
+ {
+   int      i;
+   bool     org_fill;
+   DBptr    la;
+   char     str[V3STRLEN+1];
+   DBfloat  crdvek[4*GMXMXL];
+   DBHeader hdr;
+   DBPoint  poi;
+   DBLine   lin;
+   DBArc    arc;
+   DBCurve  cur;
+   DBText   txt;
+   DBHatch  xht;
+   DBLdim   ldm;
+   DBCdim   cdm;
+   DBRdim   rdm;
+   DBAdim   adm;
+   DBBplane bpl;
+   DBCsys   csy;
+   DBSurf   sur;
+   DBSeg    arcseg[4],*graseg;
+   DBMesh   mesh;
+
+/*
+***Activate the RC of this window.
+*/
+   glXMakeCurrent(xdisp,rwinpt->id.x_id,rwinpt->rc);
+/*
+***Create new highlight list.
+*/
+ ++n_hllists;
+   glNewList(n_hllists + 1,GL_COMPILE);
+/*
+***Highlight color.
+*/
+   WPspenGL(rwinpt,WP_ENTHG);
+/*
+***No depth test.
+*/
+   glDepthFunc(GL_ALWAYS);
+/*
+***Loop through all entities in la_arr.
+*/
+   for ( i=0; i<n_ents; ++i )
+     {
+     la = la_arr[i];
+     DBread_header(&hdr,la);
+/*
+***Process geometry.
+*/
+     switch ( hdr.type )
+       {
+/*
+***A point.
+*/
+       case POITYP:
+       DBread_point(&poi,la);
+       glLineWidth((GLfloat)width_to_pixels(rwinpt,poi.wdt_p) + 1);
+       pr_poi(rwinpt,&poi);
+       break;
+/*
+***A line.
+*/
+       case LINTYP:
+       DBread_line(&lin,la);
+       glLineWidth((GLfloat)width_to_pixels(rwinpt,lin.wdt_l) + 1);
+       pr_lin(rwinpt,&lin);
+       break;
+/*
+***An arc.
+*/
+       case ARCTYP:
+       DBread_arc(&arc,arcseg,la);
+       glLineWidth((GLfloat)width_to_pixels(rwinpt,arc.wdt_a) + 1);
+       pr_arc(rwinpt,&arc,arcseg);
+       break;
+/*
+***A curve.
+*/
+       case CURTYP:
+       DBread_curve(&cur,&graseg,NULL,la);
+       glLineWidth((GLfloat)width_to_pixels(rwinpt,cur.wdt_cu) + 1);
+       pr_cur(rwinpt,&cur,graseg);
+       DBfree_segments(graseg);
+       break;
+/*
+***A text.
+*/
+       case TXTTYP:
+       DBread_text(&txt,str,la);
+       glLineWidth((GLfloat)width_to_pixels(rwinpt,txt.wdt_tx) + 1);
+       pr_txt(rwinpt,&txt,str);
+       break;
+/*
+***A hatch.
+*/
+       case XHTTYP:
+       DBread_xhatch(&xht,crdvek,la);
+       glLineWidth((GLfloat)2);
+       pr_xht(rwinpt,&xht,crdvek);
+       break;
+/*
+***A linear dimension.
+*/
+       case LDMTYP:
+       DBread_ldim(&ldm,la);
+       glLineWidth((GLfloat)2);
+       pr_ldm(rwinpt,&ldm);
+       break;
+/*
+***A circular dimension.
+*/
+       case CDMTYP:
+       DBread_cdim(&cdm,la);
+       glLineWidth((GLfloat)2);
+       pr_cdm(rwinpt,&cdm);
+       break;
+/*
+***A radius dimension.
+*/
+       case RDMTYP:
+       DBread_rdim(&rdm,la);
+       glLineWidth((GLfloat)2);
+       pr_rdm(rwinpt,&rdm);
+       break;
+/*
+***An angular dimension.
+*/
+       case ADMTYP:
+       DBread_adim(&adm,la);
+       glLineWidth((GLfloat)2);
+       pr_adm(rwinpt,&adm);
+       break;
+/*
+***A B-plane.
+*/
+       case BPLTYP:
+       org_fill = rwinpt->fill;
+       rwinpt->fill = FALSE;
+       DBread_bplane(&bpl,la);
+       glLineWidth((GLfloat)width_to_pixels(rwinpt,bpl.wdt_bp) + 1);
+       pr_bpl(rwinpt,&bpl);
+       rwinpt->fill = org_fill;
+       break;
+/*
+***A mesh.
+*/
+       case MSHTYP:
+       DBread_mesh(&mesh,la,MESH_ALL);
+       glLineWidth((GLfloat)width_to_pixels(rwinpt,mesh.wdt_m) + 1);
+       pr_msh(rwinpt,&mesh);
+       break;
+/*
+***A coordinate system.
+*/
+       case CSYTYP:
+       DBread_csys(&csy,NULL,la);
+       glLineWidth((GLfloat)2);
+       pr_csy(rwinpt,&csy,la);
+       break;
+/*
+***A surface.
+*/
+       case SURTYP:
+       org_fill = rwinpt->fill;
+       rwinpt->fill = FALSE;
+       DBread_surface(&sur,la);
+       glLineWidth((GLfloat)width_to_pixels(rwinpt,sur.wdt_su) + 1);
+       if ( sur.typ_su == FAC_SUR ) pr_sur2(rwinpt,&sur);
+       else                         pr_sur1(rwinpt,&sur);
+       rwinpt->fill = org_fill;
+       break;
+       }
+     }
+/*
+***Close list.
+*/
+   actwdt = -1;
+   glDepthFunc(GL_LESS);
+   glEndList();
+/*
+***The end.
+*/
+   return(0);
+ }
+
+/********************************************************/
+/********************************************************/
+
+    void WPdodl_highlight(WPRWIN *rwinpt)
+
+/*      Delete all highlight lists in this window.
+ *
+ *      (C)2007-06-6 J. Kjellander
+ *
+ ******************************************************!*/
+
+ {
+
+/*
+***Delete all highligt lists (if there are any ).
+*/
+   if ( n_hllists > 0 )
+     {
+     glXMakeCurrent(xdisp,rwinpt->id.x_id,rwinpt->rc);
+     glDeleteLists((GLuint)(2),(GLsizei)n_hllists);
+     n_hllists = 0;
+     }
+/*
+***The end.
+*/
+   return;
+ }
+
+/********************************************************/
+/********************************************************/
+
+    short WPsodl_all(WPRWIN *rwinpt)
+
+/*      Show (execute) all OpenGL Display Lists in
+ *      this window.
  *
  *      (C)microform ab 1998-01-04 J. Kjellander
  *
  *      1998-12-09 Perspektiv mm. J.Kjellander
  *      1999-01-04 Z-klipp, J.Kjellander
+ *      2007-06-14 1.19, J.Kjellander
  *
  ******************************************************!*/
 
  {
+   int      i;
    double   mdx,mdy,mdz,midx,midy,midz,vxmax,vxmin,vymax,
             vymin,vzmax,vzmin,vdx,vdy,vdz05,fd;
    GLfloat  gl_matrix[16];
@@ -702,23 +968,18 @@ static void  set_linewidth(WPRWIN *rwinpt, DBfloat width);
 static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
 
 /*
-***Det här kan ta tid.
+***Activate the OpenGL RC of this window.
 */
-#ifdef V3_X11
-   WPscur(rwinpt->id.w_id,TRUE,xwcur);
-#endif
-#ifdef WIN32
-   SetCursor(LoadCursor(NULL,IDC_WAIT));
-#endif
+   glXMakeCurrent(xdisp,rwinpt->id.x_id,rwinpt->rc);
 /*
-***Sudda.
+***Each new frame must start with clearing the previous.
+***This is done here but may be moved to the calling functions
+***in the future if we need to be able to display a list without
+***clearing.
 */
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 /*
-***Hur stor är modellboxen, dvs. den
-***låda som WPmodl() skapat och som säkert
-***rymmer hela modellen och dessutom tillåter att den
-***roteras inuti lådan utan att sticka ut utanför.
+***The size of the model box.
 */
    mdx = rwinpt->xmax - rwinpt->xmin;
    mdy = rwinpt->ymax - rwinpt->ymin;
@@ -729,32 +990,32 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
 /*
-***Vyboxens storlek i Z-led är konstant och
+***Vyboxens storlek i Z-led ï¿½r konstant och
 ***lika stor som modellboxen i Z-led.
 ***vdz05 = halva vyboxens storlek.
 */
    vdz05 = 0.5*mdz;
 /*
-***Fokalplanet och därmed hela boxens läge i Z-led beror
-***av aktuell perspektiv-faktor. Får ej vara mindre
-***än halva vyboxens dz och skall variera inom vettiga värden
-***så att lagom variation i perspektiv-effekt uppnås
-***när rwinpt->pfactor musstyrs från 0 -> 100. Default
-***pfaktor = 0%, se wp10.c.
+***Fokalplanet och dï¿½rmed hela boxens lï¿½ge i Z-led beror
+***av aktuell perspektiv-faktor. Fï¿½r ej vara mindre
+***ï¿½n halva vyboxens dz och skall variera inom vettiga vï¿½rden
+***sï¿½ att lagom variation i perspektiv-effekt uppnï¿½s
+***nï¿½r rwinpt->pfactor musstyrs frï¿½n 0 -> 100. Default
+***pfaktor = 0%.
 */
    fd = mdz + 0.2*(100.0-rwinpt->pfactor)*mdz;
 /*
 ***Vyboxens storlek i X- och Y-led beror av modellboxens
-***storlek och aktuell skala. Faktorn 1.3 är godtycklig.
-***1.3 är "lagom" för att modellen skall bli lite mindre
-***än fönstret.
+***storlek och aktuell skala. Faktorn 1.1 ï¿½r godtycklig.
+***1.1 ï¿½r "lagom" fï¿½r att modellen skall bli lite mindre
+***ï¿½n fï¿½nstret.
 */
-   vdx = 1.3*mdx*rwinpt->scale;
-   vdy = 1.3*mdy*rwinpt->scale;
+   vdx = 1.1*mdx*rwinpt->scale;
+   vdy = 1.1*mdy*rwinpt->scale;
 /*
-***Vyboxens placering i X- och Y-led är alltid
+***Vyboxens placering i X- och Y-led ï¿½r alltid
 ***symmetriskt runt (0,0). Storleken beror av
-***aktuellt prespektiv. Formler från Brian Paul.
+***aktuellt prespektiv. Formler frï¿½n Brian Paul.
 */
    vxmax = 0.5*vdx*(fd-vdz05)/fd;
    vxmin = -vxmax;
@@ -762,14 +1023,14 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
    vymax = 0.5*vdy*(fd-vdz05)/fd;
    vymin = -vymax;
 /*
-***Vyboxens placering i Z-led är alltid symmetriskt
+***Vyboxens placering i Z-led ï¿½r alltid symmetriskt
 ***runt fokalplanet.
 */
    vzmax = fd+vdz05;
    vzmin = fd-vdz05;
 /*
-***Skapa projektionsmatris. Om pfactor=0 kör vi med Ortho
-***vilket bör vara snabbare.
+***Skapa projektionsmatris. Om pfactor=0 kï¿½r vi med Ortho
+***vilket bï¿½r vara snabbare.
 */
    if ( rwinpt->pfactor > 0.0 ) glFrustum(vxmin,vxmax,vymin,vymax,vzmin,vzmax);
    else                         glOrtho(vxmin,vxmax,vymin,vymax,vzmin,vzmax);
@@ -785,8 +1046,8 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 /*
-***Om Z-klipp är aktivt börjar vi med att lägga
-***klipplanet på rätt Z.
+***Om Z-klipp ï¿½r aktivt bï¿½rjar vi med att lï¿½gga
+***klipplanet pï¿½ rï¿½tt Z.
 */
    if ( rwinpt->zclip )
      {
@@ -794,41 +1055,41 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
      glClipPlane(GL_CLIP_PLANE0,plane);
      }
 /*
-***Eftersom transformationerna "utförs" i
-***omvänd ordning mot den man multiplicerar
-***ihop matriserna med kommer här sista
-***transformationen. Den förflyttar den roterade
-***modellen från (0,0,0) till den position
+***Eftersom transformationerna "utfï¿½rs" i
+***omvï¿½nd ordning mot den man multiplicerar
+***ihop matriserna med kommer hï¿½r sista
+***transformationen. Den fï¿½rflyttar den roterade
+***modellen frï¿½n (0,0,0) till den position
 ***i XY-planet den panorerats till och till
-***det ställe i Z-led som perspektivet kräver.
+***det stï¿½lle i Z-led som perspektivet krï¿½ver.
 */
    glTranslated(-rwinpt->movx,-rwinpt->movy,-fd);
 /*
 ***Justera rotationskoefficienterna i den aktuella
-***OpenGL-matrisen så att de motsvarar modellens aktuella
-***rotationsläge. Gunnars kod.
+***OpenGL-matrisen sï¿½ att de motsvarar modellens aktuella
+***rotationslï¿½ge.
 */
    glGetFloatv(GL_MODELVIEW_MATRIX,gl_matrix); 
-   gl_matrix[ 0] = (GLfloat)rwinpt->vy.vymat.k11;
-   gl_matrix[ 1] = (GLfloat)rwinpt->vy.vymat.k12;
-   gl_matrix[ 2] = (GLfloat)rwinpt->vy.vymat.k13;
+   gl_matrix[ 0] = (GLfloat)rwinpt->vy.matrix.k11;
+   gl_matrix[ 1] = (GLfloat)rwinpt->vy.matrix.k21;
+   gl_matrix[ 2] = (GLfloat)rwinpt->vy.matrix.k31;
    gl_matrix[ 3] = 0.0;
-   gl_matrix[ 4] = (GLfloat)rwinpt->vy.vymat.k21;
-   gl_matrix[ 5] = (GLfloat)rwinpt->vy.vymat.k22;
-   gl_matrix[ 6] = (GLfloat)rwinpt->vy.vymat.k23;
+   gl_matrix[ 4] = (GLfloat)rwinpt->vy.matrix.k12;
+   gl_matrix[ 5] = (GLfloat)rwinpt->vy.matrix.k22;
+   gl_matrix[ 6] = (GLfloat)rwinpt->vy.matrix.k32;
    gl_matrix[ 7] = 0.0;
-   gl_matrix[ 8] = (GLfloat)rwinpt->vy.vymat.k31;
-   gl_matrix[ 9] = (GLfloat)rwinpt->vy.vymat.k32;
-   gl_matrix[10] = (GLfloat)rwinpt->vy.vymat.k33;
+   gl_matrix[ 8] = (GLfloat)rwinpt->vy.matrix.k13;
+   gl_matrix[ 9] = (GLfloat)rwinpt->vy.matrix.k23;
+   gl_matrix[10] = (GLfloat)rwinpt->vy.matrix.k33;
    gl_matrix[11] = 0.0;
    glLoadMatrixf(gl_matrix);
 /*
 ***Rotera modellen runt aktuella axlar. Gunnars kod.
 */
-   glRotated(rwinpt->rotx,gl_matrix[ 0],gl_matrix[ 4],gl_matrix[ 8] );
-   glRotated(rwinpt->roty,gl_matrix[ 1],gl_matrix[ 5],gl_matrix[ 9] );
+   glRotated(rwinpt->rotx,gl_matrix[0],gl_matrix[4],gl_matrix[8] );
+   glRotated(rwinpt->roty,gl_matrix[1],gl_matrix[5],gl_matrix[9] );
 /*
-***Nollställ rotationsvinklar igen.
+***Nollstï¿½ll rotationsvinklar igen.
 */
    rwinpt->rotx = 0.0;
    rwinpt->roty = 0.0;
@@ -838,32 +1099,36 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
    glRotated(rwinpt->rotz,gl_matrix[ 2],gl_matrix[ 6],gl_matrix[10] );
    rwinpt->rotz = 0.0;
 *
-***Spara nya vymatrisen. Gunnars kod.
+***Spara nya vymatrisen.
 */
    glGetFloatv(GL_MODELVIEW_MATRIX,gl_matrix);
-   rwinpt->vy.vymat.k11 = (DBfloat)gl_matrix[ 0];
-   rwinpt->vy.vymat.k12 = (DBfloat)gl_matrix[ 1];
-   rwinpt->vy.vymat.k13 = (DBfloat)gl_matrix[ 2];
-   rwinpt->vy.vymat.k21 = (DBfloat)gl_matrix[ 4];
-   rwinpt->vy.vymat.k22 = (DBfloat)gl_matrix[ 5];
-   rwinpt->vy.vymat.k23 = (DBfloat)gl_matrix[ 6];
-   rwinpt->vy.vymat.k31 = (DBfloat)gl_matrix[ 8];
-   rwinpt->vy.vymat.k32 = (DBfloat)gl_matrix[ 9];
-   rwinpt->vy.vymat.k33 = (DBfloat)gl_matrix[10];
+   rwinpt->vy.matrix.k11 = (DBfloat)gl_matrix[ 0];
+   rwinpt->vy.matrix.k21 = (DBfloat)gl_matrix[ 1];
+   rwinpt->vy.matrix.k31 = (DBfloat)gl_matrix[ 2];
+   rwinpt->vy.matrix.k12 = (DBfloat)gl_matrix[ 4];
+   rwinpt->vy.matrix.k22 = (DBfloat)gl_matrix[ 5];
+   rwinpt->vy.matrix.k32 = (DBfloat)gl_matrix[ 6];
+   rwinpt->vy.matrix.k13 = (DBfloat)gl_matrix[ 8];
+   rwinpt->vy.matrix.k23 = (DBfloat)gl_matrix[ 9];
+   rwinpt->vy.matrix.k33 = (DBfloat)gl_matrix[10];
 /*
-***Här kommer 1:a transformationen. Modellen
+***Hï¿½r kommer 1:a transformationen. Modellen
 ***translateras till origo.
 */
    glTranslated(-midx,-midy,-midz);
 /*
-***Exekvera displaylistan.
+***Execute the main list.
 */
-   glCallList(list);
+   glCallList((GLuint)1);
 /*
-***Visa.
+***Execute optional highligt lists.
+*/
+   for ( i=0; i<n_hllists; ++i ) glCallList((GLuint)(2 + i));
+/*
+***Display.
 */
    if ( rwinpt->double_buffer )
-#ifdef V3_X11
+#ifdef UNIX
      glXSwapBuffers(xdisp,rwinpt->id.x_id);
 #endif
 #ifdef WIN32
@@ -871,22 +1136,84 @@ static GLdouble plane[4] = {0.0,0.0,-1.0,0.0};
 #endif
    else glFlush();
 /*
-***Slå av vänta.
-*/
-#ifdef V3_X11
-   WPscur(rwinpt->id.w_id,FALSE,(Cursor)0);
-#endif
-#ifdef WIN32
-   SetCursor(LoadCursor(NULL,IDC_ARROW));
-#endif
-/*
-***Slut.
+***The end.
 */
    return(0);
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
+
+    short   WPeodls(
+    WPRWIN *rwinpt,
+    int     ix,
+    int     iy,
+    int     dix,
+    int     diy)
+
+/*   Sets up a GL projection with a pick matrix and executes
+ *   the GL list for selection.
+ *
+ *      (C)2007-02-14 J.Kjellander
+ *
+ ******************************************************!*/
+
+ {
+   double  mdx,mdy,mdz,vxmax,vxmin,vymax,
+           vymin,vzmax,vzmin,vdx,vdy,vdz05,fd;
+   GLint   viewport[4];
+
+/*
+***Get the current viewport and set up the pick matrix. The
+***difference between normal rendering and rendering for 
+***selection is that the PickMatrix is part of the projection.
+*/
+   glGetIntegerv(GL_VIEWPORT, viewport);
+
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+
+   gluPickMatrix((GLdouble)ix,(GLdouble)iy,(GLdouble)dix,(GLdouble)diy,viewport);
+/*
+***Continue with the same projection setup as for normal
+***display, see WPsodl().
+*/
+   mdx = rwinpt->xmax - rwinpt->xmin;
+   mdy = rwinpt->ymax - rwinpt->ymin;
+   mdz = rwinpt->zmax - rwinpt->zmin;
+
+   vdz05 = 0.5*mdz;
+
+   fd = mdz + 0.2*(100.0-rwinpt->pfactor)*mdz;
+
+   vdx = 1.2*mdx*rwinpt->scale;
+   vdy = 1.2*mdy*rwinpt->scale;
+
+   vxmax = 0.5*vdx*(fd-vdz05)/fd;
+   vxmin = -vxmax;
+
+   vymax = 0.5*vdy*(fd-vdz05)/fd;
+   vymin = -vymax;
+
+   vzmax = fd+vdz05;
+   vzmin = fd-vdz05;
+/*
+***Here comes the final transformation.
+*/
+   if ( rwinpt->pfactor > 0.0 ) glFrustum(vxmin,vxmax,vymin,vymax,vzmin,vzmax);
+   else                         glOrtho(vxmin,vxmax,vymin,vymax,vzmin,vzmax);
+/*
+***Call the main list.
+*/
+   glCallList((GLuint)1);
+/*
+***The end.
+*/
+   return(0);
+ }
+
+/********************************************************/
+/********************************************************/
 
 static void     pr_poi(
        WPRWIN  *rwinpt,
@@ -908,21 +1235,15 @@ static void     pr_poi(
    int    i,k;
 
 /*
-***Color.
+***Light model.
 */
-   if ( poi->hed_p.pen != actpen )
-     {
-     actpen = poi->hed_p.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( poi->wdt_p != actwdt ) set_linewidth(rwinpt, poi->wdt_p);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Point size = 1.5% of current frustum size.
 */
-   size = 0.015*(rwinpt->xmax - rwinpt->xmin);
+   size = 1.5/((rwinpt->vy.scrwin.xmax - rwinpt->vy.scrwin.xmin) *
+                rwinpt->geo.psiz_x /
+               (rwinpt->xmax - rwinpt->xmin));
 /*
 ***Create graphical representation.
 */
@@ -946,14 +1267,10 @@ static void     pr_poi(
        i++;
        }
      }
-/*
-***Slut.
-*/
-   return;
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
 static void    pr_lin(
        WPRWIN *rwinpt,
@@ -974,17 +1291,9 @@ static void    pr_lin(
    int    i,k;
 
 /*
-***Color.
+***Light model.
 */
-   if ( lin->hed_l.pen != actpen )
-     {
-     actpen = lin->hed_l.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( lin->wdt_l != actwdt ) set_linewidth(rwinpt, lin->wdt_l);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Create graphical representation.
 */
@@ -1008,10 +1317,6 @@ static void    pr_lin(
        i++;
        }
      }
-/*
-***Slut.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1038,17 +1343,9 @@ static void    pr_arc(
    double x[PLYMXV],y[PLYMXV],z[PLYMXV],scale;
 
 /*
-***Färg.
+***Light model.
 */
-   if ( arc->hed_a.pen != actpen )
-     {
-     actpen = arc->hed_a.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( arc->wdt_a != actwdt ) set_linewidth(rwinpt, arc->wdt_a);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Current scale factor in this window =
 ***(n_pixels * pixel_size) / frustum_size
@@ -1076,12 +1373,7 @@ static void    pr_arc(
        glVertex3d(x[i],y[i],z[i]);
        }
      }
-
    if ( i > 0 ) glEnd();
-/*
-***End.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1107,17 +1399,9 @@ static void     pr_cur(
    DBfloat x[PLYMXV],y[PLYMXV],z[PLYMXV],scale;
 
 /*
-***Color.
+***Light model.
 */
-   if ( cur->hed_cu.pen != actpen )
-     {
-     actpen = cur->hed_cu.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( cur->wdt_cu != actwdt ) set_linewidth(rwinpt, cur->wdt_cu);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Current scale factor in this window =
 ***(n_pixels * pixel_size) / frustum_size
@@ -1145,12 +1429,7 @@ static void     pr_cur(
        glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
        }
      }
-
    if ( i > 0 ) glEnd();
-/*
-***Slut.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1176,17 +1455,9 @@ static void    pr_txt(
    DBfloat x[PLYMXV],y[PLYMXV],z[PLYMXV];
 
 /*
-***Color.
+***Light model.
 */
-   if ( txt->hed_tx.pen != actpen )
-     {
-     actpen = txt->hed_tx.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( txt->wdt_tx != actwdt ) set_linewidth(rwinpt, txt->wdt_tx);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Create 3D polyline.
 */
@@ -1208,12 +1479,7 @@ static void    pr_txt(
        glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
        }
      }
-
    if ( i > 0 ) glEnd();
-/*
-***End.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1236,17 +1502,9 @@ static void     pr_xht(
    DBfloat x[PLYMXV],y[PLYMXV],z[PLYMXV];
 
 /*
-***Color.
+***Light model.
 */
-   if ( xht->hed_xh.pen != actpen )
-     {
-     actpen = xht->hed_xh.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( actwdt != 0.0 ) set_linewidth(rwinpt, 0.0);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Create 3D polyline.
 */
@@ -1268,12 +1526,7 @@ static void     pr_xht(
        glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
        }
      }
-
    if ( i > 0 ) glEnd();
-/*
-***End.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1295,17 +1548,9 @@ static void    pr_ldm(
    int    i,k;
 
 /*
-***Color.
+***Light model.
 */
-   if ( ldmptr->hed_ld.pen != actpen )
-     {
-     actpen = ldmptr->hed_ld.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( actwdt != 0.0 ) set_linewidth(rwinpt, 0.0);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Create graphical representation.
 */
@@ -1329,10 +1574,6 @@ static void    pr_ldm(
      }
 
    if ( i > 0 ) glEnd();
-/*
-***Slut.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1354,17 +1595,9 @@ static void    pr_cdm(
    int    i,k;
 
 /*
-***Color.
+***Light model.
 */
-   if ( cdmptr->hed_cd.pen != actpen )
-     {
-     actpen = cdmptr->hed_cd.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( actwdt != 0.0 ) set_linewidth(rwinpt, 0.0);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Create graphical representation.
 */
@@ -1373,25 +1606,20 @@ static void    pr_cdm(
 /*
 ***Give the polyline to OpenGL.
 */
-   if ( k > 0  &&  k < PLYMXV )
+   for ( i=0; i<=k; ++i )
      {
-     i = 0;
-     while ( i <= k )
+     if ( (a[i] & VISIBLE) == VISIBLE ) 
        {
-       if ( (a[i] & VISIBLE) == VISIBLE ) 
-         {
-         glBegin(GL_LINES);
-         glVertex3d(x[i-1], y[i-1], z[i-1]);
-         glVertex3d(x[i], y[i], z[i]);                  
-         glEnd();
-         }
-       i++;
+       glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
+       }
+     else
+       {
+       if ( i > 0 ) glEnd();
+       glBegin(GL_LINE_STRIP);
+       glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
        }
      }
-/*
-***Slut.
-*/
-   return;
+   if ( i > 0 ) glEnd();
  }
 
 /********************************************************/
@@ -1413,17 +1641,9 @@ static void    pr_rdm(
    int    i,k;
 
 /*
-***Color.
+***Light model.
 */
-   if ( rdmptr->hed_rd.pen != actpen )
-     {
-     actpen = rdmptr->hed_rd.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( actwdt != 0.0 ) set_linewidth(rwinpt, 0.0);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Create graphical representation.
 */
@@ -1432,25 +1652,20 @@ static void    pr_rdm(
 /*
 ***Give the polyline to OpenGL.
 */
-   if ( k > 0  &&  k < PLYMXV )
+   for ( i=0; i<=k; ++i )
      {
-     i = 0;
-     while ( i <= k )
+     if ( (a[i] & VISIBLE) == VISIBLE ) 
        {
-       if ( (a[i] & VISIBLE) == VISIBLE ) 
-         {
-         glBegin(GL_LINES);
-         glVertex3d(x[i-1], y[i-1], z[i-1]);
-         glVertex3d(x[i], y[i], z[i]);                  
-         glEnd();
-         }
-       i++;
+       glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
+       }
+     else
+       {
+       if ( i > 0 ) glEnd();
+       glBegin(GL_LINE_STRIP);
+       glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
        }
      }
-/*
-***Slut.
-*/
-   return;
+   if ( i > 0 ) glEnd();
  }
 
 /********************************************************/
@@ -1472,17 +1687,9 @@ static void    pr_adm(
    int    i,k;
 
 /*
-***Color.
+***Light model.
 */
-   if ( admptr->hed_ad.pen != actpen )
-     {
-     actpen = admptr->hed_ad.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( actwdt != 0.0 ) set_linewidth(rwinpt, 0.0);
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Current scale factor in this window =
 ***(n_pixels * pixel_size) / frustum_size
@@ -1497,25 +1704,20 @@ static void    pr_adm(
 /*
 ***Give the polyline to OpenGL.
 */
-   if ( k > 0  &&  k < PLYMXV )
+   for ( i=0; i<=k; ++i )
      {
-     i = 0;
-     while ( i <= k )
+     if ( (a[i] & VISIBLE) == VISIBLE ) 
        {
-       if ( (a[i] & VISIBLE) == VISIBLE ) 
-         {
-         glBegin(GL_LINES);
-         glVertex3d(x[i-1], y[i-1], z[i-1]);
-         glVertex3d(x[i], y[i], z[i]);                  
-         glEnd();
-         }
-       i++;
+       glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
+       }
+     else
+       {
+       if ( i > 0 ) glEnd();
+       glBegin(GL_LINE_STRIP);
+       glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
        }
      }
-/*
-***Slut.
-*/
-   return;
+   if ( i > 0 ) glEnd();
  }
 
 /********************************************************/
@@ -1530,6 +1732,7 @@ static void      pr_bpl(
  *      (C)microform ab 1998-01-04 J. Kjellander
  *
  *      2000-08-25 Linewidth added, J.Kjellander
+ *      2007-01-14 Wire/surf, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1538,99 +1741,122 @@ static void      pr_bpl(
    double   d,x1,x2,x3,x4,y1,y2,y3,y4,z1,z2,z3,z4;
    GLfloat  nx,ny,nz;
    DBVector p21,p32,p41,prod;
+   double   x[PLYMXV],y[PLYMXV],z[PLYMXV];
+   char     a[PLYMXV];
+   int      i,k;
 
 /*
-***Linewidth.
+***If we are in fill mode, calculate normal = vecn(vprod(p2-p1,p4-p1))
+***and display as GL_TRIANGLES or GL_QUADS.
 */
-   if ( bpl->wdt_bp != actwdt ) set_linewidth(rwinpt, bpl->wdt_bp);
-/*
-***Initiering.
-*/
-   x1 = bpl->crd1_bp.x_gm;
-   y1 = bpl->crd1_bp.y_gm;
-   z1 = bpl->crd1_bp.z_gm;
-
-   x2 = bpl->crd2_bp.x_gm;
-   y2 = bpl->crd2_bp.y_gm;
-   z2 = bpl->crd2_bp.z_gm;
-
-   x3 = bpl->crd3_bp.x_gm;
-   y3 = bpl->crd3_bp.y_gm;
-   z3 = bpl->crd3_bp.z_gm;
-
-   x4 = bpl->crd4_bp.x_gm;
-   y4 = bpl->crd4_bp.y_gm;
-   z4 = bpl->crd4_bp.z_gm;
-/*
-***Beräkna normalvektor vecn(vprod(p2-p1,p4-p1)).
-*/
-   p21.x_gm = x2 - x1;
-   p21.y_gm = y2 - y1;
-   p21.z_gm = z2 - z1;
-
-   p41.x_gm = x4 - x1;
-   p41.y_gm = y4 - y1;
-   p41.z_gm = z4 - z1;
-
-   prod.x_gm = p21.y_gm*p41.z_gm - p21.z_gm*p41.y_gm;
-   prod.y_gm = p21.z_gm*p41.x_gm - p21.x_gm*p41.z_gm;
-   prod.z_gm = p21.x_gm*p41.y_gm - p21.y_gm*p41.x_gm;
-
-   d = prod.x_gm*prod.x_gm + prod.y_gm*prod.y_gm + prod.z_gm*prod.z_gm;
-
-   if ( d > DTOL )
+   if ( rwinpt->fill )
      {
-     d = 1.0/SQRT(d);
-     nx = (GLfloat)(prod.x_gm * d);
-     ny = (GLfloat)(prod.y_gm * d);
-     nz = (GLfloat)(prod.z_gm * d);
-     }
-   else return;
 /*
-***3- eller 4-sidigt plan ?
+***Light model.
 */
-   p32.x_gm = x3 - x2;
-   p32.y_gm = y3 - y2;
-   p32.z_gm = z3 - z2;
+     set_lightmodel(rwinpt,SURFACE_MODEL);
+/*
+***Vertex coordinates.
+*/
+     x1 = bpl->crd1_bp.x_gm;
+     y1 = bpl->crd1_bp.y_gm;
+     z1 = bpl->crd1_bp.z_gm;
 
-   d = p32.x_gm*p32.x_gm + p32.y_gm*p32.y_gm + p32.z_gm*p32.z_gm;
+     x2 = bpl->crd2_bp.x_gm;
+     y2 = bpl->crd2_bp.y_gm;
+     z2 = bpl->crd2_bp.z_gm;
 
-   if ( d < DTOL ) triangle = TRUE;
-   else            triangle = FALSE;
+     x3 = bpl->crd3_bp.x_gm;
+     y3 = bpl->crd3_bp.y_gm;
+     z3 = bpl->crd3_bp.z_gm;
+
+     x4 = bpl->crd4_bp.x_gm;
+     y4 = bpl->crd4_bp.y_gm;
+     z4 = bpl->crd4_bp.z_gm;
 /*
-***Färg.
+***3 or 4 sided ?
 */
-   if ( bpl->hed_bp.pen != actpen )
-     {
-     actpen = bpl->hed_bp.pen;
-     WPscog(rwinpt,actpen);
+     p32.x_gm = x3 - x2;
+     p32.y_gm = y3 - y2;
+     p32.z_gm = z3 - z2;
+
+     d = p32.x_gm*p32.x_gm + p32.y_gm*p32.y_gm + p32.z_gm*p32.z_gm;
+
+     if ( d < DTOL ) triangle = TRUE;
+     else            triangle = FALSE;
+/*
+***Calculate normal.
+*/
+     p21.x_gm = x2 - x1;
+     p21.y_gm = y2 - y1;
+     p21.z_gm = z2 - z1;
+
+     p41.x_gm = x4 - x1;
+     p41.y_gm = y4 - y1;
+     p41.z_gm = z4 - z1;
+
+     prod.x_gm = p21.y_gm*p41.z_gm - p21.z_gm*p41.y_gm;
+     prod.y_gm = p21.z_gm*p41.x_gm - p21.x_gm*p41.z_gm;
+     prod.z_gm = p21.x_gm*p41.y_gm - p21.y_gm*p41.x_gm;
+
+     d = prod.x_gm*prod.x_gm + prod.y_gm*prod.y_gm + prod.z_gm*prod.z_gm;
+
+     if ( d > DTOL )
+       {
+       d = 1.0/SQRT(d);
+       nx = (GLfloat)(prod.x_gm * d);
+       ny = (GLfloat)(prod.y_gm * d);
+       nz = (GLfloat)(prod.z_gm * d);
+       }
+     else return;
+/*
+***Give to GL.
+*/
+     if ( triangle )
+       {
+       glBegin(GL_TRIANGLES);
+       glNormal3f(nx,ny,nz);
+       glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+       glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
+       glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
+       glEnd();
+       }
+     else
+       {
+       glBegin(GL_QUADS);
+       glNormal3f(nx,ny,nz);
+       glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+       glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
+       glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
+       glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
+       glEnd();
+       }
      }
 /*
-***Ge planet till OpenGL.
+***In wireframe mode, cretae polyline and display as
+***GL_LINE_STRIP.
 */
-   if ( triangle )
-     {
-     glBegin(GL_TRIANGLES);
-     glNormal3f(nx,ny,nz);
-     glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
-     glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
-     glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
-     glEnd();
-     }
    else
      {
-     glBegin(GL_QUADS);
-     glNormal3f(nx,ny,nz);
-     glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
-     glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
-     glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
-     glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
-     glEnd();
+     set_lightmodel(rwinpt,WIREFRAME_MODEL);
+     k = -1;
+     WPplbp(bpl,&k,x,y,z,a);
+
+     for ( i=0; i<=k; ++i )
+       {
+       if ( (a[i] & VISIBLE) == VISIBLE ) 
+         {
+         glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
+         }
+       else
+         {
+         if ( i > 0 ) glEnd();
+         glBegin(GL_LINE_STRIP);
+         glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
+         }
+       }
+     if ( i > 0 ) glEnd();
      }
-/*
-***Slut.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1642,7 +1868,9 @@ static void    pr_msh(
 
 /*     Process Mesh.
  * 
- *      (C)2004-07-11, J. Kjellander, Örebro university
+ *      (C)2004-07-11, J. Kjellander, ï¿½rebro university
+ *
+ *      2007-01-14 Wire/surf, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1657,22 +1885,14 @@ static void    pr_msh(
    DBVector p21,p31,prod;
 
 /*
-***Color.
+***If (faces exist) and (the font is 0 or 4) and
+***(the display mode is fill), use face representation.
 */
-   if ( mesh->hed_m.pen != actpen )
+   if ( mesh->nf_m > 0  &&
+       (mesh->font_m == 0  ||  mesh->font_m == 4) &&
+        rwinpt->fill ) 
      {
-     actpen = mesh->hed_m.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( actwdt != 0.0) set_linewidth(rwinpt, 0.0);
-/*
-***Face representation.
-*/
-   if ( mesh->nf_m > 0  &&  (mesh->font_m == 0  ||  mesh->font_m == 4) ) 
-     {
+     set_lightmodel(rwinpt,SURFACE_MODEL);
      glBegin(GL_TRIANGLES);
      for ( i=0; i<mesh->nf_m; ++i )
        {
@@ -1733,10 +1953,13 @@ static void    pr_msh(
      glEnd();
      }
 /*
-***Edge representation.
+***If (edges exist) and (the font is 0 or 3 or displaymode = wireframe)
+***use edge representation.
 */
-   else if ( mesh->nh_m > 0  &&  (mesh->font_m == 0 || mesh->font_m == 3) ) 
+   else if ( mesh->nh_m > 0  &&
+            (mesh->font_m == 0 || mesh->font_m == 3  || !rwinpt->fill) ) 
      {
+     set_lightmodel(rwinpt,WIREFRAME_MODEL);
      glBegin(GL_LINES);
      for ( i=0; i<mesh->nh_m; ++i )
        {
@@ -1762,6 +1985,7 @@ static void    pr_msh(
 */
    else if ( mesh->font_m == 1 )
      {
+     set_lightmodel(rwinpt,WIREFRAME_MODEL);
      x1 = mesh->bbox_m.xmin;
      y1 = mesh->bbox_m.ymin;
      z1 = mesh->bbox_m.zmin;
@@ -1842,6 +2066,7 @@ static void    pr_msh(
 */
    else
      {
+     set_lightmodel(rwinpt,WIREFRAME_MODEL);
      glBegin(GL_POINTS);
      for ( i=0; i<mesh->nv_m; ++i )
        {
@@ -1852,10 +2077,6 @@ static void    pr_msh(
        }
      glEnd();
      }
-/*
-***End.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1878,13 +2099,17 @@ static void    pr_csy(
  {
    int    i,k,mode;
    double size;
-   char   a[PLYMXV],buf[80];
+   char   a[PLYMXV];
    double x[PLYMXV],y[PLYMXV],z[PLYMXV];
 
 /*
 ***Axis length depend on size of window.
 */
    size = rwinpt->xmax - rwinpt->xmin;
+/*
+***Light model.
+*/
+   set_lightmodel(rwinpt,WIREFRAME_MODEL);
 /*
 ***Currently acvtive coordinate system looks different.
 */
@@ -1895,23 +2120,6 @@ static void    pr_csy(
 */
    k = -1;
    WPplcs(csy,size,mode,&k,x,y,z,a);
-/*
-***Color.
-*/
-   if ( mode == V3_CS_ACTIVE )
-     {
-     if ( WPgrst("varkon.act_csys_pen",buf)  &&
-          sscanf(buf,"%d",&i) == 1 ) WPscog(rwinpt,(short)i);
-     }
-   else if ( csy->hed_pl.pen != actpen )
-     {
-     actpen = csy->hed_pl.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( actwdt != 0.0) set_linewidth(rwinpt, 0.0);
 /*
 ***Give polyline to OpenGL.
 */
@@ -1928,12 +2136,7 @@ static void    pr_csy(
        glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
        }
      }
-
    glEnd();
-/*
-***End.
-*/
-   return;
  }
 
 /********************************************************/
@@ -1941,51 +2144,149 @@ static void    pr_csy(
 
 static void     pr_sur1(
        WPRWIN  *rwinpt,
-       DBSurf  *sur,
-       GLfloat *p_kvu,
-       GLfloat *p_kvv,
-       GLfloat *p_cpts)
+       DBSurf  *sur)
 
-/*     Process Surface with NURBS-representation.
+/*     Process Surface (not FAC_SUR).
  * 
  *      (C)microform ab 1998-01-08 J. Kjellander
  *
  *      2000-08-25 Linewidth added, J.Kjellander
+ *      2007-01-08 Vertextype, Sï¿½ren L
+ *      2007-01-08 usteps, vsteps, Sï¿½ren L
+ *      2007-01-14 Wire/surf, J.Kjellander
+ *      2007-01-19 Trimmed surfaces, Sï¿½ren L
  *
  ******************************************************!*/
 
  {
- 
+   DBPatch        *patpek;
+   DBfloat         uscale,vscale;
+   GLfloat        *p_kvu,*p_kvv,*p_cpts;
+   GLfloat         ustep,vstep;
+   int             i,k;
+   char            a[PLYMXV];
+   double          x[PLYMXV],y[PLYMXV],z[PLYMXV],scale;
+   DBSegarr       *pborder;
+   DBSegarr       *piso;
+   DBGrstrimcurve *pgrstrimcvs;
+
 /*
-***Color.
+***If we are in fill mode, read NURBS data from DB and
+***display as a NURBS object.
 */
-   if ( sur->hed_su.pen != actpen )
+   if ( rwinpt->fill )
      {
-     actpen = sur->hed_su.pen;
-     WPscog(rwinpt,actpen);
-     }
+     DBread_sur_grsur(sur,&p_kvu,&p_kvv,&p_cpts,&pgrstrimcvs);
 /*
-***Linewidth.
+***Call WPuvstepsu if needed (this should normally be precalculated and stored in DB)
 */
-   if ( actwdt != 0.0) set_linewidth(rwinpt, 0.0);
+     if ( sur->nustep_su == -1 || sur->nvstep_su == -1)
+       {
+       uscale = ((DBfloat)sur->nu_su) / (p_kvu[sur->nku_su-1] - p_kvu[0]);
+       vscale = ((DBfloat)sur->nv_su) / (p_kvv[sur->nkv_su-1] - p_kvv[0]);
+       DBread_patches(sur,&patpek);
+       WPuvstepsu(sur,patpek,uscale,vscale);
+       DBfree_patches(sur,patpek);
+       }
+/*
+***Calculate OpenGL usteps and vsteps for this rendering.
+*/
+     ustep = 1 + floor(sur->nustep_su*nurbs_display_factor);
+     vstep = 1 + floor(sur->nvstep_su*nurbs_display_factor);
+
+     gluNurbsProperty(gl_nobj,GLU_U_STEP,ustep);
+     gluNurbsProperty(gl_nobj,GLU_V_STEP,vstep);
 /*
 ***Give NURBS data to OpenGL.
-*/ 
-   gluBeginSurface(gl_nobj);
-
-   gluNurbsSurface(gl_nobj,
-                   sur->nku_su, p_kvu,
-                   sur->nkv_su, p_kvv,
-                  (sur->nkv_su-sur->vorder_su)*3, 3,
-                   p_cpts,
-                   sur->uorder_su, sur->vorder_su,                         
-                   GL_MAP2_VERTEX_3);
-
-   gluEndSurface(gl_nobj);
-/*
-***Slut.
 */
-   return;
+     set_lightmodel(rwinpt,SURFACE_MODEL);
+     gluBeginSurface(gl_nobj);
+
+     if ( sur->vertextype_su == GL_MAP2_VERTEX_3 )
+       {
+       gluNurbsSurface(gl_nobj,
+                       sur->nku_su, p_kvu,
+                       sur->nkv_su, p_kvv,
+                      (sur->nkv_su-sur->vorder_su)*3, 3,
+                       p_cpts,
+                       sur->uorder_su, sur->vorder_su,
+                       GL_MAP2_VERTEX_3);
+       }
+     else if ( sur->vertextype_su == GL_MAP2_VERTEX_4 )
+       {
+       gluNurbsSurface(gl_nobj,
+                       sur->nku_su, p_kvu,
+                       sur->nkv_su, p_kvv,
+                      (sur->nkv_su-sur->vorder_su)*4, 4,
+                       p_cpts,
+                       sur->uorder_su, sur->vorder_su,
+                       GL_MAP2_VERTEX_4);
+       }
+     else
+       {
+       erpush("WP1673",""); /* undefined vertex type */
+       errmes();
+       }
+/*
+***Trim curves if any
+*/
+     if ( sur->ntrim_su > 0  )
+       {
+       for ( i=0; i<sur->ntrim_su; i++ )
+         {
+         gluBeginTrim(gl_nobj);
+         if ( pgrstrimcvs[i].vertextype == GLU_MAP1_TRIM_2 )
+           {
+           gluNurbsCurve(gl_nobj,(GLint) pgrstrimcvs[i].nknots, pgrstrimcvs[i].knots_c,
+                   2, pgrstrimcvs[i].cpts_c,(GLint) pgrstrimcvs[i].order,GLU_MAP1_TRIM_2);
+           }
+         else if ( pgrstrimcvs[i].vertextype == GLU_MAP1_TRIM_3 )
+           {
+           gluNurbsCurve(gl_nobj,(GLint) pgrstrimcvs[i].nknots, pgrstrimcvs[i].knots_c,
+                   3, pgrstrimcvs[i].cpts_c,(GLint) pgrstrimcvs[i].order,GLU_MAP1_TRIM_3);
+           }
+         else
+           {
+           erpush("WP1673",""); /* undefined vertex type */
+           errmes();
+           }
+         gluEndTrim(gl_nobj);
+         }
+       }
+     DBfree_sur_grsur(sur,p_kvu,p_kvv,p_cpts,pgrstrimcvs);
+     gluEndSurface(gl_nobj);
+     }
+/*
+***In wireframe mode, read curves from DB, create polyline
+***and display as GL_LINE_STRIP.
+*/
+   else
+     {
+     DBread_sur_grwire(sur,&pborder,&piso);
+
+     scale = (rwinpt->vy.scrwin.xmax - rwinpt->vy.scrwin.xmin) *
+              rwinpt->geo.psiz_x / (rwinpt->xmax - rwinpt->xmin);
+     k = -1;
+     WPplsu(sur,pborder,piso,scale,&k,x,y,z,a);
+     set_lightmodel(rwinpt,WIREFRAME_MODEL);
+
+     for ( i=0; i<=k; ++i )
+       {
+       if ( (a[i] & VISIBLE) == VISIBLE ) 
+         {
+         glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
+         }
+       else
+         {
+         if ( i > 0 ) glEnd();
+         glBegin(GL_LINE_STRIP);
+         glVertex3f((GLfloat)x[i],(GLfloat)y[i],(GLfloat)z[i]);
+         }
+       }
+     if ( i > 0 ) glEnd();
+
+     DBfree_sur_grwire(sur,pborder,piso);
+     }
  }
 
 /********************************************************/
@@ -1993,37 +2294,29 @@ static void     pr_sur1(
 
 static void     pr_sur2(
        WPRWIN  *rwinpt,
-       DBSurf  *sur,
-       DBPatch *patpek)
+       DBSurf  *sur)
 
 /*     Process Surface with facet representation (FAC_SUR).
  * 
  *      (C)microform ab 1998-11-23 J. Kjellander
  *
  *      2000-08-25 Linewidth added, J.Kjellander
+ *      2007-01-14 Wire/surf, J.Kjellander
  *
  ******************************************************!*/
 
  {
-   int      i,j;
-   double   d,x1,x2,x3,x4,y1,y2,y3,y4,z1,z2,z3,z4;
-   GLfloat  nx,ny,nz;
-   DBVector p21,p41,prod;
-   DBPatch *toppat;
-   DBPatchF  *facpat;
+   int       i,j;
+   double    d,x1,x2,x3,x4,y1,y2,y3,y4,z1,z2,z3,z4;
+   GLfloat   nx,ny,nz;
+   DBVector  p21,p41,prod;
+   DBPatch  *toppat,*patpek;
+   DBPatchF *facpat;
  
 /*
-***Color.
+***Read patches from DB.
 */
-   if ( sur->hed_su.pen != actpen )
-     {
-     actpen = sur->hed_su.pen;
-     WPscog(rwinpt,actpen);
-     }
-/*
-***Linewidth.
-*/
-   if ( actwdt != 0.0) set_linewidth(rwinpt, 0.0);
+   DBread_patches(sur,&patpek);
 /*
 ***Give facetts to OpenGL.
 */ 
@@ -2044,219 +2337,137 @@ static void     pr_sur2(
 */
          if ( !facpat->triangles )
            {
-           glBegin(GL_QUADS);
-           p21.x_gm = x2 - x1;
-           p21.y_gm = y2 - y1;
-           p21.z_gm = z2 - z1;
-           p41.x_gm = x4 - x1;
-           p41.y_gm = y4 - y1;
-           p41.z_gm = z4 - z1;
-           prod.x_gm = p21.y_gm*p41.z_gm - p21.z_gm*p41.y_gm;
-           prod.y_gm = p21.z_gm*p41.x_gm - p21.x_gm*p41.z_gm;
-           prod.z_gm = p21.x_gm*p41.y_gm - p21.y_gm*p41.x_gm;
-           d = prod.x_gm*prod.x_gm + prod.y_gm*prod.y_gm + prod.z_gm*prod.z_gm;
-
-           if ( d > DTOL )
+/*
+***A filled quad.
+*/
+           if ( rwinpt->fill )
              {
-             d = 1.0/SQRT(d);
-             nx = (GLfloat)(prod.x_gm * d);
-             ny = (GLfloat)(prod.y_gm * d);
-             nz = (GLfloat)(prod.z_gm * d);
-             }
+             set_lightmodel(rwinpt,SURFACE_MODEL);
+             glBegin(GL_QUADS);
+             p21.x_gm = x2 - x1;
+             p21.y_gm = y2 - y1;
+             p21.z_gm = z2 - z1;
+             p41.x_gm = x4 - x1;
+             p41.y_gm = y4 - y1;
+             p41.z_gm = z4 - z1;
+             prod.x_gm = p21.y_gm*p41.z_gm - p21.z_gm*p41.y_gm;
+             prod.y_gm = p21.z_gm*p41.x_gm - p21.x_gm*p41.z_gm;
+             prod.z_gm = p21.x_gm*p41.y_gm - p21.y_gm*p41.x_gm;
+             d = prod.x_gm*prod.x_gm + prod.y_gm*prod.y_gm + prod.z_gm*prod.z_gm;
 
-           glNormal3f(nx,ny,nz);
-           glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
-           glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
-           glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
-           glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
-           glEnd();
+             if ( d > DTOL )
+               {
+               d = 1.0/SQRT(d);
+               nx = (GLfloat)(prod.x_gm * d);
+               ny = (GLfloat)(prod.y_gm * d);
+               nz = (GLfloat)(prod.z_gm * d);
+               }
+
+             glNormal3f(nx,ny,nz);
+             glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+             glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
+             glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
+             glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
+             glEnd();
+             }
+/*
+***A wireframe quad.
+*/
+           else
+             {
+             set_lightmodel(rwinpt,WIREFRAME_MODEL);
+             glBegin(GL_LINE_STRIP);
+             glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+             glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
+             glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
+             glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
+             glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+             glEnd();
+             }
            }
 /*
-***Or 2 triangles.
+***...or 2 triangles.
 */
          else
            {
-           glBegin(GL_TRIANGLES);
-           p21.x_gm = x2 - x1;
-           p21.y_gm = y2 - y1;
-           p21.z_gm = z2 - z1;
-           p41.x_gm = x3 - x1;
-           p41.y_gm = y3 - y1;
-           p41.z_gm = z3 - z1;
-           prod.x_gm = p21.y_gm*p41.z_gm - p21.z_gm*p41.y_gm;
-           prod.y_gm = p21.z_gm*p41.x_gm - p21.x_gm*p41.z_gm;
-           prod.z_gm = p21.x_gm*p41.y_gm - p21.y_gm*p41.x_gm;
-           d = prod.x_gm*prod.x_gm + prod.y_gm*prod.y_gm + prod.z_gm*prod.z_gm;
-
-           if ( d > DTOL )
+/*
+***2 filled triangles.
+*/
+           if ( rwinpt->fill )
              {
-             d = 1.0/SQRT(d);
-             nx = (GLfloat)(prod.x_gm * d);
-             ny = (GLfloat)(prod.y_gm * d);
-             nz = (GLfloat)(prod.z_gm * d);
+             set_lightmodel(rwinpt,SURFACE_MODEL);
+             glBegin(GL_TRIANGLES);
+             p21.x_gm = x2 - x1;
+             p21.y_gm = y2 - y1;
+             p21.z_gm = z2 - z1;
+             p41.x_gm = x3 - x1;
+             p41.y_gm = y3 - y1;
+             p41.z_gm = z3 - z1;
+             prod.x_gm = p21.y_gm*p41.z_gm - p21.z_gm*p41.y_gm;
+             prod.y_gm = p21.z_gm*p41.x_gm - p21.x_gm*p41.z_gm;
+             prod.z_gm = p21.x_gm*p41.y_gm - p21.y_gm*p41.x_gm;
+             d = prod.x_gm*prod.x_gm + prod.y_gm*prod.y_gm + prod.z_gm*prod.z_gm;
+
+             if ( d > DTOL )
+               {
+               d = 1.0/SQRT(d);
+               nx = (GLfloat)(prod.x_gm * d);
+               ny = (GLfloat)(prod.y_gm * d);
+               nz = (GLfloat)(prod.z_gm * d);
+               }
+
+             glNormal3f(nx,ny,nz);
+             glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+             glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
+             glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
+
+             p21.x_gm = x3 - x1;
+             p21.y_gm = y3 - y1;
+             p21.z_gm = z3 - z1;
+             p41.x_gm = x4 - x1;
+             p41.y_gm = y4 - y1;
+             p41.z_gm = z4 - z1;
+             prod.x_gm = p21.y_gm*p41.z_gm - p21.z_gm*p41.y_gm;
+             prod.y_gm = p21.z_gm*p41.x_gm - p21.x_gm*p41.z_gm;
+             prod.z_gm = p21.x_gm*p41.y_gm - p21.y_gm*p41.x_gm;
+             d = prod.x_gm*prod.x_gm + prod.y_gm*prod.y_gm + prod.z_gm*prod.z_gm;
+
+             if ( d > DTOL )
+               {
+               d = 1.0/SQRT(d);
+               nx = (GLfloat)(prod.x_gm * d);
+               ny = (GLfloat)(prod.y_gm * d);
+               nz = (GLfloat)(prod.z_gm * d);
+               }
+
+             glNormal3f(nx,ny,nz);
+             glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+             glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
+             glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
+             glEnd();
              }
-
-           glNormal3f(nx,ny,nz);
-           glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
-           glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
-           glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
-
-           p21.x_gm = x3 - x1;
-           p21.y_gm = y3 - y1;
-           p21.z_gm = z3 - z1;
-           p41.x_gm = x4 - x1;
-           p41.y_gm = y4 - y1;
-           p41.z_gm = z4 - z1;
-           prod.x_gm = p21.y_gm*p41.z_gm - p21.z_gm*p41.y_gm;
-           prod.y_gm = p21.z_gm*p41.x_gm - p21.x_gm*p41.z_gm;
-           prod.z_gm = p21.x_gm*p41.y_gm - p21.y_gm*p41.x_gm;
-           d = prod.x_gm*prod.x_gm + prod.y_gm*prod.y_gm + prod.z_gm*prod.z_gm;
-
-           if ( d > DTOL )
+/*
+***2 wireframe triangles.
+*/
+           else
              {
-             d = 1.0/SQRT(d);
-             nx = (GLfloat)(prod.x_gm * d);
-             ny = (GLfloat)(prod.y_gm * d);
-             nz = (GLfloat)(prod.z_gm * d);
+             set_lightmodel(rwinpt,WIREFRAME_MODEL);
+             glBegin(GL_LINE_STRIP);
+             glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+             glVertex3f((GLfloat)x2,(GLfloat)y2,(GLfloat)z2);
+             glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
+             glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
+             glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
+             glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
+             glEnd();
              }
-
-           glNormal3f(nx,ny,nz);
-           glVertex3f((GLfloat)x1,(GLfloat)y1,(GLfloat)z1);
-           glVertex3f((GLfloat)x3,(GLfloat)y3,(GLfloat)z3);
-           glVertex3f((GLfloat)x4,(GLfloat)y4,(GLfloat)z4);
-           glEnd();
            }
          }
        ++toppat;
        }
      }
-/*
-***End.
-*/
-   return;
+   DBfree_patches(sur,patpek);
  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short   WPscog(
-        WPRWIN *rwinpt,
-        short   pen)
-
-/*      Sätter aktiv färg eller material. Pena 1 tom MTTABSIZ
- *      kan användas för att definiera material.
- *
- *      In: VARKON pennummer.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 1998-01-04 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-   GLfloat mat[4];
-
-
-#ifdef V3_X11
-   GLint   cind[3];
-   XColor rgb;
-#endif
-
-#ifdef WIN32
-   COLORREF col;
-#endif
-
-
-#ifdef V3_X11
-   if ( rwinpt->rgb_mode )
-     {
-     WPgrgb(pen,&rgb);
-     mat[0] = rgb.red/65536.0;
-     mat[1] = rgb.green/65536.0;
-     mat[2] = rgb.blue/65536.0;
-     mat[3] = 1.0;
-
-     glMaterialfv(GL_FRONT,GL_AMBIENT,mat);
-     glMaterialfv(GL_FRONT,GL_DIFFUSE,mat);
-     glMaterialfv(GL_FRONT,GL_SPECULAR,mat);
-     mat[0] = mat[1] = mat[2] = 0.0;
-     glMaterialfv(GL_FRONT,GL_EMISSION,mat);
-     glMaterialf(GL_FRONT,GL_SHININESS,(GLfloat)40.0);
-     }
-   else
-     {
-     cind[0] = cind[1] = cind[2] = (GLint)pen;
-     glMaterialiv(GL_FRONT,GL_COLOR_INDEXES,cind);
-     }
-#endif
-/*
-***eller om vi kör WIN32 
-*/
-#ifdef WIN32
-   msgrgb(pen,&col);
-   mat[0] = (GLfloat)(GetRValue(col)/255.0);
-   mat[1] = (GLfloat)(GetGValue(col)/255.0);
-   mat[2] = (GLfloat)(GetBValue(col)/255.0);
-   mat[3] = 1.0;
-
-   glMaterialfv(GL_FRONT,GL_AMBIENT,mat);
-   glMaterialfv(GL_FRONT,GL_DIFFUSE,mat);
-   glMaterialfv(GL_FRONT,GL_SPECULAR,mat);
-   mat[0] = mat[1] = mat[2] = 0.0;
-   glMaterialfv(GL_FRONT,GL_EMISSION,mat);
-   glMaterialf(GL_FRONT,GL_SHININESS,(GLfloat)40.0);
-#endif
-
-   return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-  static void    set_linewidth(
-         WPRWIN *rwinpt,
-         DBfloat width)
-
-/*      Sets current linewidth.
- *
- *      In: Linewidth in millimeters.
- *          Ptr to rendering window.
- *
- *      Out: -
- *
- *      Return: 0
- *
- *      (C)Örebro University 2000-08-25 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-   int    npix;
-   double scale;
-
-/*
-***Calculate linewidth in pixels and notify OpenGL.
-*/
-   if ( width == 0.0 ) npix = 1;
-   else
-     {
-     scale = (rwinpt->geo.psiz_x *
-             (rwinpt->vy.scrwin.xmax - rwinpt->vy.scrwin.xmin))/
-             (rwinpt->xmax - rwinpt->xmin);
-     npix  = (int)((scale*width)/((rwinpt->geo.psiz_x+rwinpt->geo.psiz_y)/2.0) + 0.5);
-     }
-
-   glLineWidth((GLfloat)npix);
-/*
-***Set current linewidth global variable.
-*/
-   actwdt = width;
-
-   return;
-  }
 
 /********************************************************/
 /*!******************************************************/
@@ -2264,10 +2475,10 @@ static void     pr_sur2(
         short   WPnrrw(
         WPRWIN *rwinpt)
 
-/*      Normaliserar proportionerna för RWIN-fönstrets
+/*      Normaliserar proportionerna fï¿½r RWIN-fï¿½nstrets
  *      vy-box.
  *
- *      In: rwinpt => Pekare till fönster.
+ *      In: rwinpt => Pekare till fï¿½nster.
  *
  *      Ut: Inget.   
  *
@@ -2279,20 +2490,20 @@ static void     pr_sur2(
    double mdx,mdy,mdz,gadx,gady,mprop,gprop;
 
 /*
-***Hur stor är fönstrets grafiska area.
+***Hur stor ï¿½r fï¿½nstrets grafiska area.
 */
    gadx = rwinpt->geo.psiz_x *
         (rwinpt->vy.scrwin.xmax - rwinpt->vy.scrwin.xmin);
    gady = rwinpt->geo.psiz_y *
         (rwinpt->vy.scrwin.ymax - rwinpt->vy.scrwin.ymin);
 /*
-***Hur stort är modellfönstret i millimeter.
+***Hur stort ï¿½r modellfï¿½nstret i millimeter.
 */
    mdx = rwinpt->xmax - rwinpt->xmin;
    mdy = rwinpt->ymax - rwinpt->ymin;
 /*
-***Förhållandet mellan grafiska areans höjd och bredd är gady/gadx.
-***Se till att modellfönstret får samma förhållande så att cirklar
+***Fï¿½rhï¿½llandet mellan grafiska areans hï¿½jd och bredd ï¿½r gady/gadx.
+***Se till att modellfï¿½nstret fï¿½r samma fï¿½rhï¿½llande sï¿½ att cirklar
 ***blir "runda" tex.
 */
    gprop = gady/gadx;
@@ -2309,7 +2520,7 @@ static void     pr_sur2(
      rwinpt->ymax += (gprop*mdx - mdy)/2.0;
      }
 /*
-***Gör boxen lite större.
+***Gï¿½r boxen lite stï¿½rre.
 */
    mdx = rwinpt->xmax - rwinpt->xmin;
    mdy = rwinpt->ymax - rwinpt->ymin;
@@ -2321,7 +2532,7 @@ static void     pr_sur2(
    rwinpt->ymin -= 0.2*mdy;
    rwinpt->ymax += 0.2*mdy;
 /*
-***Sätt boxens storlek i Z-led så stor att den klarar
+***Sï¿½tt boxens storlek i Z-led sï¿½ stor att den klarar
 ***en full rotation utan att klippas.
 */
    if ( mdx > mdz )
@@ -2342,6 +2553,116 @@ static void     pr_sur2(
    rwinpt->zmax += 0.6*mdz;
 
    return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+  static void    set_linewidth(
+         WPRWIN *rwinpt,
+         DBfloat width)
+
+/*      Sets current linewidth.
+ *
+ *      In: rwinpt = C-ptr to rendering window.
+ *          width  = Linewidth in millimeters.
+ *
+ *      (C)ï¿½rebro University 2000-08-25 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+
+/*
+***Calculate linewidth in pixels and notify OpenGL.
+*/
+   glLineWidth((GLfloat)width_to_pixels(rwinpt,width));
+/*
+***Set current linewidth global variable.
+*/
+   actwdt = width;
+
+   return;
+  }
+
+/********************************************************/
+/********************************************************/
+
+  static int     width_to_pixels(
+         WPRWIN *rwinpt,
+         DBfloat width)
+
+/*      Calculates linewidth in pixels.
+ *
+ *      In: rwinpt = C-ptr to rendering window.
+ *          width  = Linewidth in millimeters.
+ *
+ *      (C)2007-06-17 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   int    npix;
+   double scale;
+
+/*
+***Calculate linewidth in pixels and notify OpenGL.
+*/
+   if ( width == 0.0 ) npix = 1;
+   else
+     {
+     scale = (rwinpt->geo.psiz_x *
+             (rwinpt->vy.scrwin.xmax - rwinpt->vy.scrwin.xmin))/
+             (rwinpt->xmax - rwinpt->xmin);
+     npix  = (int)((scale*width)/((rwinpt->geo.psiz_x+rwinpt->geo.psiz_y)/2.0) + 0.5);
+     }
+/*
+***The end.
+*/
+   return(npix);
+  }
+
+/********************************************************/
+/********************************************************/
+
+  static void    set_lightmodel(
+         WPRWIN *rwinpt,
+         int     model)
+
+/*      Sets the current lightmodel. Wireframes are
+ *      rendered in GL_LIGHT_MODEL_AMBIENT mode. Surfaces
+ *      are rendered using the currentlu active light
+ *      sources.
+ *
+ *      In: rwinpt = C ptr to OpenGL window.
+ *          model  = WIREFRAME_model or SURFACE_MODEL
+ *
+ *      (C)2007-01-29 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   static GLfloat ambient_su[4] = {0.4, 0.4, 0.4, 1.0 };
+   static GLfloat ambient_wf[4] = {1.0, 1.0, 1.0, 1.0 };
+   static int     current_model = -1;
+
+   if ( model != current_model )
+     {
+     switch ( model )
+       {
+       case WIREFRAME_MODEL:
+       glDisable(GL_LIGHT0);
+       glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient_wf);
+       current_model = WIREFRAME_MODEL;
+       break;
+
+       case SURFACE_MODEL:
+       glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient_su);
+       glEnable(GL_LIGHT0);
+       current_model = SURFACE_MODEL;
+       break;
+       }
+     }
   }
 
 /********************************************************/

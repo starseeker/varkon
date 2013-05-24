@@ -27,7 +27,6 @@ CFLAGS = -ansi \
          -D_POSIX_SOURCE \
          -DUNIX \
          -DANALYZER \
-         -DWRK_STAT \
          -DVARKON
 
 LDFLAGS =

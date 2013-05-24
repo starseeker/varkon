@@ -33,7 +33,7 @@
 #include "../include/WP.h"
 #include <math.h>
 
-extern short  actpen;
+extern int actpen;
 
 
 static short drawli(WPGWIN *gwinpt, DBLine *linpek, DBptr la, bool draw);
@@ -88,7 +88,7 @@ static short drawli(WPGWIN *gwinpt, DBLine *linpek, DBptr la, bool draw);
 /*
 ***Ja, är den nivå som punkten ligger på tänd i detta fönster.
 */
-         if ( WPnivt(gwinpt,linpek->hed_l.level) )
+         if ( WPnivt(gwinpt->nivtab,linpek->hed_l.level) )
            {
 /*
 ***Set color and width.
@@ -160,7 +160,7 @@ static short drawli(WPGWIN *gwinpt, DBLine *linpek, DBptr la, bool draw);
 /*
 ***Om den ligger på en släckt nivå eller är blankad gör vi inget mer.
 */
-         if ( !WPnivt(gwinpt,linpek->hed_l.level) ||
+         if ( !WPnivt(gwinpt->nivtab,linpek->hed_l.level) ||
                              linpek->hed_l.blank) return(0);
 /*
 ***Annars suddar vi från skärmen också.
@@ -215,7 +215,7 @@ static short drawli(WPGWIN *gwinpt, DBLine *linpek, DBptr la, bool draw);
 ***Clip the polyline to the window borders.
 ***Display or erase visible parts.
 */
-   if ( WPcply(gwinpt,(short)-1,&n,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,(short)-1,&n,x,y,a) )
      {
      if ( draw  &&  linpek->hed_l.hit )
        {

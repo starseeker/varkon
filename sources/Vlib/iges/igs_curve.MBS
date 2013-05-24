@@ -51,7 +51,7 @@
      part(#1,igs_100(infile,logfile,dl1,dl2,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1);
          
    elif curtyp = 102 then
-      part(#2,igs_102(infile,logfile,dl1,dl2,ps_ptr,ds_ptr,rowlgt,id_ent,status),csysid:SAVE=1);     
+      part(#2,igs_102(infile,logfile,dl1,dl2,ps_ptr,ds_ptr,rowlgt,id_ent,status),csysid:SAVE=1);      
     
    elif curtyp = 110 then
       part(#4,igs_110(infile,logfile,dl1,dl2,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1);
@@ -66,7 +66,7 @@
    ELSE
    
      outlin(logfile);
-     outstr(logfile,"iges_curve, entity refer to not implemented curve type: "+ str(curtyp,1,0));
+     outstr(logfile,"igs_curve, entity refers to not implemented curve type: "+ str(curtyp,1,0));
      outlin(logfile);
      outstr(logfile,dl1);
      outlin(logfile);
@@ -80,7 +80,6 @@
 !*
 !***End.
 !*
-  status:=0;   
 
  ENDMODULE
 

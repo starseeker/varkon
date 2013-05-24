@@ -14,9 +14,7 @@ CFLAGS =                    \
          -qlanglvl=ansi     \
          -qchars=signed     \
          -O                 \
-         -DUNIX             \
-         -DV3_X11           \
-         -DWRK_STAT
+         -DUNIX
 
 COMPILE = $(CC) -c $(CFLAGS)
 

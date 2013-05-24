@@ -74,8 +74,6 @@ OBJECTS = $(LIBDIR)/l_akedja.MBO     \
           $(LIBDIR)/l_searea.MBO     \
           $(LIBDIR)/l_sniv1.MBO      \
           $(LIBDIR)/l_sniv2.MBO      \
-          $(LIBDIR)/l_stattr.MBO     \
-          $(LIBDIR)/l_stgraf.MBO     \
           $(LIBDIR)/l_stjobb.MBO     \
           $(LIBDIR)/l_suarea.MBO     \
           $(LIBDIR)/l_sureval.MBO    \

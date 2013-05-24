@@ -306,7 +306,7 @@ fprintf(dbgfil(EXEPAC),
       break;
 
       default:
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
 
@@ -516,9 +516,9 @@ if ( dbglev(EXEPAC) == 1 )
 /* Call of varkon_sur_wferguson (sur290).                           */
 /*                                                                 !*/
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
-  igplma("Writing Ferguson surface data to file",IG_MESS);
+  IGplma("Writing Ferguson surface data to file",IG_MESS);
 
   status = varkon_sur_wferguson (p_sur,p_pat,fname); 
   if ( status < 0 )
@@ -534,7 +534,7 @@ if ( dbglev(EXEPAC) == 1 )
       return(erpush("SU2943",errbuf));
       }
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
   return(SUCCED);
 
@@ -640,9 +640,9 @@ if ( dbglev(EXEPAC) == 1 )
 /* Call of varkon_sur_rferguson (sur291).                           */
 /*                                                                 !*/
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
-  igplma("Converting Ferguson surface from file to CUB_SUR",IG_MESS);
+  IGplma("Converting Ferguson surface from file to CUB_SUR",IG_MESS);
 
   status = varkon_sur_rferguson (fname,&surout,&p_patout); 
   if ( status < 0 )
@@ -686,7 +686,7 @@ if ( dbglev(EXEPAC) == 1 )
   }
 #endif
 
-  status = EXesur(id,&surout,p_patout,pnp);
+  status = EXesur(id,&surout,p_patout,NULL,NULL,pnp);
   if ( status < 0 )
       {
       sprintf(errbuf,"EXesur%%EXcugl*reaferg");
@@ -711,7 +711,7 @@ if ( dbglev(EXEPAC) == 1 )
 
   DBfree_patches(&surout,p_patout);
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
 #ifdef DEBUG
 if ( dbglev(EXEPAC) == 1 )
@@ -826,9 +826,9 @@ if ( dbglev(EXEPAC) == 1 )
 /* Call of varkon_sur_wnmgcatia (sur292).                           */
 /*                                                                 !*/
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
-  igplma("Writing NMG->Catia surface data to file",IG_MESS);
+  IGplma("Writing NMG->Catia surface data to file",IG_MESS);
 
   status = varkon_sur_wnmgcatia (p_sur,p_pat,fname,s_model); 
   if ( status < 0 )
@@ -844,7 +844,7 @@ if ( dbglev(EXEPAC) == 1 )
       return(erpush("SU2943",errbuf));
       }
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
   return(SUCCED);
 
@@ -997,9 +997,9 @@ fflush(dbgfil(EXEPAC)); /* To file from buffer      */
 /* Call of varkon_sur_aface (sur190).                               */
 /*                                                                 !*/
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
-  igplma("Processing SUR_AFACE",IG_MESS);
+  IGplma("Processing SUR_AFACE",IG_MESS);
 
  if ( strcmp(surtyp,"CUB_SUR" ) == 0 )
    {
@@ -1117,7 +1117,7 @@ if ( dbglev(EXEPAC) == 1 )
   }
 #endif
 
-  status = EXesur(id,&surout,p_patout,pnp);
+  status = EXesur(id,&surout,p_patout,NULL,NULL,pnp);
   if ( status < 0 ) goto  err1;
 
 
@@ -1142,7 +1142,7 @@ if ( dbglev(EXEPAC) == 1 )
 
 err2:;
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
 #ifdef DEBUG
 if ( dbglev(EXEPAC) == 1 )
@@ -1274,9 +1274,9 @@ fflush(dbgfil(EXEPAC)); /* To file from buffer      */
 /* Call of varkon_pat_biccre1  (sur254).                            */
 /*                                                                 !*/
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
-  igplma("Processing BICPAT ",IG_MESS);
+  IGplma("Processing BICPAT ",IG_MESS);
 
 /* Initialize EVALS variables                                       */
   varkon_ini_evals(&r00);
@@ -1642,7 +1642,7 @@ if ( dbglev(EXEPAC) == 1 )
   }
 #endif
 
-  status = EXesur(id,&surout,&patout,pnp);
+  status = EXesur(id,&surout,&patout,NULL,NULL,pnp);
   if ( status < 0 ) goto  err1;
 
 /*  #endif */  /* TILLSVIDARE */
@@ -1650,7 +1650,7 @@ if ( dbglev(EXEPAC) == 1 )
 
 err1:;
 
-  igrsma();      /* Clear message zone                              */
+  IGrsma();      /* Clear message zone                              */
 
 #ifdef DEBUG
 if ( dbglev(EXEPAC) == 1 )

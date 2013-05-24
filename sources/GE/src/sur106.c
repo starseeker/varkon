@@ -150,7 +150,7 @@
   DBint   i_s;           /* Loop index segment record               */
   DBfloat geodesictol;   /* Geodesic curvature zero criterion       */
   DBfloat ctol;          /* Coordinate tolerance                    */
-#ifdef TILLSVIDARE
+#ifdef DEBUG
   EPOINT  eprec;         /* Patch entry and exit point record       */
   DBfloat sumuv;         /* Sum of U,V tangent components           */
 #endif

@@ -11,9 +11,9 @@
 *    evltvi();     Evaluerar LIGHT_VIEW
 *    evlton();     Evaluerar LIGHT_ON
 *    evltof();     Evaluerar LIGHT_OFF
-*    evshvi();     Evaluerar SHADE_VIEW
-*    evmtvi();     Evaluerar MATERIAL_VIEW
 *    evcrco();     Evaluerar CRE_COLOR
+*    evgtco();     Evaluerar GET_COLOR
+*    evcrmt();     Evaluerar CRE_MATERIAL
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -35,7 +35,7 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#ifdef V3_X11
+#ifdef UNIX
 #include "../../WP/include/WP.h"
 #endif
 
@@ -147,29 +147,50 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
 /********************************************************/
 /*!******************************************************/
 
-        short evshvi()
+        short evgtco()
 
-/*      Evaluerar SHADE_VIEW.
+/*      Evaluates GET_COLOR().
  *
- *      In: extern pv   => Pekare till array med parametervärden
+ *      In: extern pv => Pekare till array med parametervärden
  *
- *      Felkod: 
- *
- *      (C)microform ab 1997-02-18 J. Kjellander
- *
- *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      (C)2007-02-02 J. Kjellander
  *
  ******************************************************!*/
 
  {
-   return(WPshad(proc_pv[1].par_va.lit.int_va,
-                 proc_pv[2].par_va.lit.int_va));
+    short   i,status;
+    int     red,green,blue;
+    PMLITVA litval[3];
+
+/*
+***Get the RGB values for this pen.
+*/
+    status = WPgpen(proc_pv[1].par_va.lit.int_va,&red,&green,&blue);
+    if ( status < 0 ) return(status);
+/*
+***Copy values to PMLITVA.
+*/
+    litval[0].lit.int_va = red;
+    litval[1].lit.int_va = green;
+    litval[2].lit.int_va = blue;
+/*
+***Write to MBS variables.
+*/
+    for ( i=0; i<3; ++i )
+      {
+      inwvar(proc_pv[i+2].par_ty, proc_pv[i+2].par_va.lit.adr_va,
+             0, NULL, &litval[i]);
+      }
+/*
+***The end.
+*/
+    return(0);
  }
 
 /********************************************************/
 /*!******************************************************/
 
-        short evmtvi()
+        short evcrmt()
 
 /*      Evaluerar MATERIAL_VIEW.
  *
@@ -184,7 +205,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
  ******************************************************!*/
 
  {
-   return(WPmtvi(proc_pv[1].par_va.lit.int_va,
+   return(WPcmat(proc_pv[1].par_va.lit.int_va,
                  proc_pv[2].par_va.lit.float_va,
                  proc_pv[3].par_va.lit.float_va,
                  proc_pv[4].par_va.lit.float_va,
@@ -218,7 +239,7 @@ extern short    proc_pc;  /* inproc.c parcount Number of actual parameters */
  ******************************************************!*/
 
  {
-#ifdef V3_X11
+#ifdef UNIX
 
    return(WPccol(proc_pv[1].par_va.lit.int_va,
                  proc_pv[2].par_va.lit.int_va,

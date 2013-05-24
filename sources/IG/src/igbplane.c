@@ -4,10 +4,10 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  bplnpm();     Generate b_plane... statement                     */
+/*  IGbpln();     Generate b_plane... statement                     */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -26,8 +26,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -36,7 +34,7 @@
 
 /*!******************************************************/
 
-       short bplnpm()
+       short IGbpln()
 
 /*      Genererar b_plan.... sats.
  *
@@ -62,10 +60,10 @@
 ***Skapa 4 positioner.
 */
 start:
-    if ( (status=genpos(384,&exnpt1)) < 0 ) goto end;
-    if ( (status=genpos(385,&exnpt2)) < 0 ) goto end;
-    if ( (status=genpos(386,&exnpt3)) < 0 ) goto end;
-    if ( (status=genpos(387,&exnpt4)) < 0 ) goto end;
+    if ( (status=IGcpos(384,&exnpt1)) < 0 ) goto end;
+    if ( (status=IGcpos(385,&exnpt2)) < 0 ) goto end;
+    if ( (status=IGcpos(386,&exnpt3)) < 0 ) goto end;
+    if ( (status=IGcpos(387,&exnpt4)) < 0 ) goto end;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
@@ -76,7 +74,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("B_PLANE",valparam) < 0 ) goto error;
+    if ( IGcges("B_PLANE",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;

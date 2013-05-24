@@ -1,5 +1,4 @@
-VARKON Error messages for GMPAC
-(C) Microform AB 1999
+VARKON Error messages for DB
 
 001  3  Can't create new resultfile "%s"
 002  3  Can't close resultfile
@@ -35,6 +34,9 @@ VARKON Error messages for GMPAC
 108  3  Can't malloc for %s cpts
 109  3  Can't malloc for %s knots
 110  3  Can't malloc for mesh
+111  3  Can't malloc for surface wireframe rep
+112  3  Can't malloc for trimcurves
 
-200  3  Can't malloc() för GETDAT
+200  3  Can't malloc() for GETDAT
 201  3  Can't create new key entry for %s
+202  2  PUTDAT, array size <= 0, key = %s

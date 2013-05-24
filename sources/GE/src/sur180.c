@@ -354,7 +354,7 @@ if ( dbglev(SURPAC) == 2 )
    acc = 0;         /* Calculation of BBOX and BCONE                */
 
    status=varkon_sur_bound (p_surin,p_patin,acc);
-    if (status<0) 
+   if (status<0) 
         {
         sprintf(errbuf,"varkon_sur_bound%%varkon_sur_offset(sur180)");
         return(varkon_erpush("SU2943",errbuf));

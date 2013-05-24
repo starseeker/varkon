@@ -58,7 +58,7 @@ static void  nextnv(double scale, double ug);
 /*
 ***External variables.
 */
-extern short  actpen;
+extern int  actpen;
 
 /*!******************************************************/
 
@@ -111,7 +111,7 @@ extern short  actpen;
 /*
 ***Ja, ligger kurvan på en nivå som är tänd i detta fönster ?
 */
-         if ( WPnivt(gwinpt,curpek->hed_cu.level) )
+         if ( WPnivt(gwinpt->nivtab,curpek->hed_cu.level) )
            {
 /*
 ***Ja. Kolla att rätt färg är inställd.
@@ -185,7 +185,7 @@ extern short  actpen;
 ***Om den nu ligger på en släckt nivå eller är blankad gör vi
 ***inget mer. Annars får vi återskapa polylinjen och sudda från skärm.
 */
-         if ( !WPnivt(gwinpt,curpek->hed_cu.level)  ||
+         if ( !WPnivt(gwinpt->nivtab,curpek->hed_cu.level)  ||
                              curpek->hed_cu.blank) return(0);
 
          if ( curpek->wdt_cu != 0.0 ) WPswdt(gwinpt->id.w_id,curpek->wdt_cu);
@@ -249,7 +249,7 @@ extern short  actpen;
 ***Clip the polyline to the window borders.
 ***Display or erase visible parts.
 */
-   if ( curpek->fnt_cu == 3  ||  WPcply(gwinpt,(short)-1,&n,x,y,a) )
+   if ( curpek->fnt_cu == 3  ||  WPcply(&gwinpt->vy.modwin,(short)-1,&n,x,y,a) )
      {
      if ( draw  &&  curpek->hed_cu.hit )
        {
@@ -364,10 +364,12 @@ extern short  actpen;
  *
  *      (C)2006-12-16 J. Kjellander
  *
+ *      2007-01-12 n_zero, J.Kjellander
+ *
  ******************************************************!*/
 
   {
-   int     i,j,k,nvec1,nvec2,nvec3,nt,status;
+   int     i,j,k,nvec1,nvec2,nvec3,n_zero,nt,status;
    double  out[17],t;
    double  dt1,dt2,dt3,dsdt1,dsdt2,dsdt3,kap1,kap2,kap3;
    double  tv[15*100];    /* 15 = 3*5 = max vectors/seg */
@@ -421,50 +423,72 @@ loop:
      nvec2 = (int)(0.3*SQRT(kap2)*dsdt2 + 0.5);
      nvec3 = (int)(0.3*SQRT(kap3)*dsdt3 + 0.5);
 /*
-***More than 15 vectors/seg is no meaning.
+***More than 15 vectors/seg with cn = 1.0 is no meaning.
 */
      if ( nvec1 > 5 ) nvec1 = 5;
      if ( nvec2 > 5 ) nvec2 = 5;
      if ( nvec3 > 5 ) nvec3 = 5;
 /*
 ***Now it's time to adjust nvec for the global curve
-***accuracy factor cn. If nvec < 1 we need a special
-***treatment so that the user will see the difference
-***even for very short segments.
+***accuracy factor cn.
 */
      nvec1 = (int)(nvec1*cn);
      nvec2 = (int)(nvec2*cn);
      nvec3 = (int)(nvec3*cn);
-
-     if ( cn > 1.0 )
-       {
-       if ( nvec1 < 1 ) nvec1 = (int)(cn/25.0);
-       if ( nvec2 < 1 ) nvec2 = (int)(1 + cn/35.0); 
-       if ( nvec3 < 1 ) nvec3 = (int)(cn/25.0); 
-       }
 /*
-***If nvec now is = 1 or more we can calculate dt.
-***If nvec is < 1 no vectors are generated.
+***Make sure nvec never becomes negative.
 */
-     if ( nvec1 < 1 ) nvec1 = 0; else dt1 = 1.0/(3.0*nvec1);
-     if ( nvec2 < 1 ) nvec2 = 0; else dt2 = 1.0/(3.0*nvec2);
-     if ( nvec3 < 1 ) nvec3 = 0; else dt3 = 1.0/(3.0*nvec3);
+     if ( nvec1 < 1 ) nvec1 = 0;
+     if ( nvec2 < 1 ) nvec2 = 0;
+     if ( nvec3 < 1 ) nvec3 = 0;
+/*
+***Check if any of the three nvec's < 0.
+*/
+     n_zero = 0;
+
+     if ( nvec1 == 0 ) ++n_zero;
+     if ( nvec2 == 0 ) ++n_zero;
+     if ( nvec3 == 0 ) ++n_zero;
+/*
+***Calculate dt for all combinations of nvec so
+***that nvec1*dt1 + nvec2*dt2 + nvec3*dt3 = 1.0
+***and then remove the last vector. Always create
+***at least 2 vectors / segment.
+*/
+     switch (n_zero)
+       {
+       case 3:
+       nvec1 = 1;     /* All 3 are zero, set nvec1=1 and continue to case 2 */
+
+       case 2:
+       if      ( nvec1 > 0 ) {if ( nvec1 == 1 ) ++nvec1; dt1 = 1.0/nvec1; --nvec1;}
+       else if ( nvec2 > 0 ) {if ( nvec2 == 1 ) ++nvec2; dt2 = 1.0/nvec2; --nvec2;}
+       else                  {if ( nvec3 == 1 ) ++nvec3; dt3 = 1.0/nvec3; --nvec3;}
+       break;
+
+       case 1:
+       if      ( nvec1 == 0 ) {dt2 = 0.5/nvec2; dt3 = 0.5/nvec3; --nvec3;}
+       else if ( nvec2 == 0 ) {dt1 = 0.5/nvec1; dt3 = 0.5/nvec3; --nvec3;}
+       else                   {dt1 = 0.5/nvec1; dt2 = 0.5/nvec2; --nvec2;}
+       break;
+
+       case 0:
+       dt1 = 1.0/(3.0*nvec1);
+       dt2 = 1.0/(3.0*nvec2);
+       dt3 = 1.0/(3.0*nvec3);
+     --nvec3;
+       break;
+       }
 /*
 ***Calculate t-values. 
 */
-     t = 0.0;
+     t     = 0.0;
      tv[0] = t;
-     nt = 1;
+     nt    = 1;
 
      for ( j=0; j<nvec1; ++j ) { t += dt1; tv[nt++] = t; }
-
-     if ( nvec1 == 0  && nvec2 > 0 )
-       { t = 1.0/3.0 - dt2; nvec2++; }
      for ( j=0; j<nvec2; ++j ) { t += dt2; tv[nt++] = t; }
-
-     if ( nvec2 == 0  && nvec3 > 0 )
-       { t = 2.0/3.0 - dt3;nvec3++; }
-     for ( j=0; j<nvec3-1; ++j ) { t += dt3; tv[nt++] = t; }
+     for ( j=0; j<nvec3; ++j ) { t += dt3; tv[nt++] = t; }
 /*
 ***If there is no room for more vectors, restart from first
 ***segment with lower value of cn or exit.
@@ -799,9 +823,12 @@ error:
  *
  *      (C)2006-12-16 J. Kjellander
  *
+ *      2007-01-12 ns_geo, J.Kjellander
+ *
  ******************************************************!*/
 
  {
+   int   ns_geo;
    short status;
 
 /*
@@ -813,9 +840,17 @@ error:
 */
    actl += ds;
 /*
-***Beräkna ett nytt actu.
+***Beräkna ett nytt actu. Här anropar vi GE717() med den
+***grafiska representationen som indata. GE717() tror att
+***det är de geometriska segmenten vi skickar och tror
+***därför att antal segment = cp->ns_cu. För NURBS-kurvor
+***stämmer detta inte så vi sätter här tillfälligt antalet
+***geometriska segment = antalet grafiska segment.
 */
+   ns_geo = cp->ns_cu;
+   cp->ns_cu = cp->nsgr_cu;
    status = GE717((DBAny *)cp,sp,NULL,actl,&actu);
+   cp->ns_cu = ns_geo;
 
    if ( status < 0 ) return(status);
 

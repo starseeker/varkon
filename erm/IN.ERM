@@ -77,6 +77,7 @@ VARKON Error messages for Interpreter routines
 341  3  Array-index outside limits for return value
 342  2  INBIN(), bytecount < 1 or > 132
 343  2  INBIN, Illegal bytecount for this variable
+344  2  Module %s is calling itself
 
 401  4  Error allocating system memory
 
@@ -153,6 +154,10 @@ VARKON Error messages for Interpreter routines
 571  2  Illegal value for number of positions in PTS_IN_CONE
 572  2  Illegal declaration of array for %s, PTS_IN_CONE
 573  2  Can't allocate memory for %s positions, PTS_IN_CONE()
-574  2  Minimum 1 input curve/line entity is needed to create loop
-575  2  Number of input entities > declared size, LOOP_ARR
-
+574  2  Minimum 1 input curve/line entity is needed to create CUR_COMPARR
+575  2  Number of input entities > declared size, CUR_COMPARR
+576  2  Minimum 1 curve required, SUR_TRIM_USRDEF
+577  2  Number of curves > declared size, SUR_TRIM_USRDEF
+578  2  Can't malloc for %s trim-curves, SUR_TRIM_USRDEF
+579  2  Error executing procedure %s
+580  2  This module needs to be compiled with a newer MBS compiler

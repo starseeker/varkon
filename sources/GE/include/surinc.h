@@ -406,6 +406,19 @@
               DBSurf  *p_sur_2, DBPatch *p_pat_2, SURCOMP *p_scomp,
               DBSurf  *p_surout, DBPatch *p_patout );
 
+/* gesurtrim.c  GEsur_trim_usrdef   Creates a trimmed surface         */
+   DBstatus   GEsur_trim_usrdef (
+              DBint ncur, DBCurve cur[NTRIMMAX], DBSeg *pseg[NTRIMMAX], 
+              DBSeg *pgraseg[NTRIMMAX], DBSurf  *psur,DBptr db_sur, DBPatch *ppat, 
+              DBSegarr **ppborder, DBSegarr **ppgetrimcvs);
+
+   DBstatus   GEmk_grsurftrim(
+              DBSurf *psur, DBSegarr *pgetrimcvs, DBGrstrimcurve **ppgrstrimcvs);
+
+   DBshort    GEis_inside_trim (DBfloat u, DBfloat v, DBint ncur,DBSegarr *pgetrimcvs);
+
+   DBshort    GEtrim_loop_direction (DBint ncur, DBSegarr *pgetrimcvs);
+
 /*
 ***NURBS surfaces
 */
@@ -802,10 +815,11 @@
    DBstatus   varkon_sur_scur_gra (
               DBCurve *p_cur, DBSeg   *p_seg, DBSeg  **pp_graseg );
               
-/* sur962.c   varkon_sur_graphic    Surface graphical representation  */
-   DBstatus   varkon_sur_graphic (
-              DBSurf  *p_sur, DBPatch *p_pat, DBptr pgm_sur,
-              DBint g_case, DBSeg *p_gseg[6] );
+/* sur962.c   SUmk_grwire    Surface graphical representation  */
+   DBstatus   SUmk_grwire (
+              DBSurf  *p_sur, DBPatch *p_pat, DBSegarr  *pgetrimcvs,
+              DBptr pgm_sur, DBint g_case, DBSegarr **ppborder, 
+              DBSegarr **ppiso);
 
 /* sur963.c   varkon_sur_granurbs   Surface graphical NURBS represen. */
    DBstatus   varkon_sur_granurbs (

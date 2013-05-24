@@ -53,7 +53,7 @@
 #ifdef UNIX
 /*!******************************************************/
 
-       short EXos(
+       short   EXos(
        char    oscmd[],
        DBshort mode)
 
@@ -104,11 +104,11 @@
 ***klockan tex. under kör aktiv modul stänger vi av den
 ***under OS-anropet.
 */
-#ifdef V3_X11
+#ifdef UNIX
       if ( WPwton() ) WPlset(FALSE);
 #endif
       system_stat = system(oscmd);
-#ifdef V3_X11
+#ifdef UNIX
       if ( WPwton()  ) WPlset(TRUE);
 #endif
 
@@ -138,10 +138,10 @@
 #endif
       }
 /*
-***Interaktiv mode, igcmos() fixar skärmen och anropar sedan
+***Interaktiv mode, IGcmos() fixar skärmen och anropar sedan
 ***EXos() igen med mode = 0, dvs. batch med wait.
 */
-    else igcmos(oscmd);
+    else IGcmos(oscmd);
 
 #ifdef DEBUG
     if ( dbglev(EXEPAC) == 50 )

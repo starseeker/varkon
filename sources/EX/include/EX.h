@@ -38,7 +38,7 @@ int EXimport_dxf(char *file,char *name, double x, double y, double angle,
 int EXall_to_dxf(char *file, double x, double y);
 
 /*
-***ex1.c
+***exgeofun1.c
 */
 short EXstrt(DBId *idpek, DBVector *vecptr);
 short EXend(DBId *idpek, DBVector *vecptr);
@@ -62,7 +62,6 @@ short EXnsec(DBId *idp1, DBId *idp2, DBshort inr,
 short EXidnt(DBetype *typmsk, DBId ident[], bool  *end, bool  *right);
 short EXpos(double *px, double *py, char *pc);
 short EXscr(DBshort *pix, DBshort *piy, DBint *win_id);
-short EXos(char oscmd[], DBshort mode);
 short EXarea(DBId *ridvek,DBshort nref, DBfloat dist, gmflt *area, DBVector *tp);
 short EXusec(DBId *idp1, DBId *idp2, DBshort inr,
              DBTmat *crdptr, DBVector *vecptr);
@@ -70,15 +69,47 @@ short EXpinc(DBVector *p1, DBVector *p2, DBfloat r1, DBfloat r2, DBint npos,
              DBVector *pos, DBint *pst, bool *any);
 
 /*
-***ex2.c
+***exgeofun2.c
+*/
+short EXions(DBId *rid, DBVector *r3pos, DBint kod, DBint sol_no,
+             DBVector *uv_start, DBVector *ut_pos);
+short EXeval(DBId *rid, char *fall, DBVector *in_val, DBVector *ut_val);
+short EXncui(DBId *rid1, DBId *rid2, DBint *pnsect);
+short EXails(DBId *rid, DBVector *punkt, DBVector *riktn, DBint sort,
+             DBVector *start, DBint *nint, DBVector uv[], DBVector xyz[]);
+short EXailm(V2LITVA ref[], DBint nref, DBVector *punkt, DBVector *riktn,
+             DBint sort, DBint *nint, DBVector uv[], DBVector xyz [],
+             DBint **snum);
+short EXaios(DBId *rid, DBVector *punkt, DBint sort, DBint *nsol,
+             DBVector uv[], DBVector xyz[]);
+
+/*
+***exos.c
+*/
+short EXos(char oscmd[], DBshort mode);
+
+/*
+***excsy.c
 */
 short EXecsy(DBId *id, DBCsys *crdpek, DBTmat *pmat, V2NAPA *pnp);
 short EXcs3p(DBId *id, char *str, DBVector *p1, DBVector *p2,
              DBVector *p3, V2NAPA *pnp);
 short EXcs1p(DBId *id, char *str, DBVector *p, DBfloat v1,
              DBfloat v2, gmflt v3, V2NAPA *pnp);
+short EXmoba();
+short EXmogl();
+short EXmolo(DBId *idvek);
+short EXmlla(DBptr la);
+
+/*
+***extext.c
+*/
 short EXetxt(DBId *id, DBText *txtpek, char strpek[], V2NAPA *pnp);
 short EXtext(DBId *id, DBVector *pos, DBfloat vridn, char *strpek, V2NAPA *pnp);
+
+/*
+***exgroup.c
+*/
 short EXgrp(DBId *id, DBId *ridvek, DBGroup *grppek);
 
 /*
@@ -89,7 +120,7 @@ short EXpofr(DBId *id, DBVector *pv, V2NAPA *pnp);
 short EXpopr(DBId *id, DBVector *pv, V2NAPA *pnp);
 
 /*
-***ex4.c
+***exline.c
 */
 short EXelin(DBId *id, DBLine *linpek, V2NAPA *pnp);
 short EXlifr(DBId *id, DBVector *p1, DBVector *p2, V2NAPA *pnp);
@@ -101,7 +132,7 @@ short EXli2t(DBId *id, DBId *refid1, DBId *refid2, DBshort alt, V2NAPA *pnp);
 short EXlipe(DBId *id, DBVector *pos, DBId *refid, DBfloat length, V2NAPA *pnp);
 
 /*
-***ex5.c
+***exarc.c
 */
 short EXearc(DBId *id, DBArc *arcpek, DBSeg segmnt[], V2NAPA *pnp);
 short EXarfr(DBId *id, DBVector *pos, DBfloat r, gmflt v1, gmflt v2, V2NAPA *pnp);
@@ -112,7 +143,7 @@ short EXarfl(DBId *id, DBId *refid1, DBId *refid2, DBfloat r,
              DBshort alt, V2NAPA *pnp);
 
 /*
-***ex6.c
+***exdim.c.c
 */
 short EXeldm(DBId *id, DBLdim *ldmpek, V2NAPA *pnp);
 short EXldim(DBId *id, DBVector *p1, DBVector *p2, DBVector *p3,
@@ -124,21 +155,29 @@ short EXrdim(DBId *id, DBId *refid, DBVector *p1, DBVector *p2, V2NAPA *pnp);
 short EXeadm(DBId *id, DBAdim *admpek, V2NAPA *pnp);
 short EXadim(DBId *id, DBId *refid1, DBId *refid2, DBVector *pos,
              DBshort alt, V2NAPA *pnp);
+
+/*
+***exxhatch.c
+*/
 short EXexht(DBId *id, DBHatch *xhtpek, DBfloat crdvek[], V2NAPA *pnp);
 short EXxht(DBId *id, DBId *ridvek, DBshort nref, DBfloat dist,
             DBfloat ang, V2NAPA *pnp);
 
 /*
-***ex7.c
+***exsymb.c
 */
 short EXsymb(DBId *id, char *nam, DBVector *pos, DBfloat size,
              DBfloat ang, V2NAPA *pnp);
+
+/*
+***exbplane.c
+*/
 short EXebpl(DBId *id, DBBplane *bplpek, V2NAPA *pnp);
 short EXbpln(DBId *id, DBVector *p1, DBVector *p2, DBVector *p3,
              DBVector *p4, V2NAPA *pnp);
 
 /*
-***ex8.c
+***exdraw.c
 */
 short EXtrim(DBId *idp1, DBId *idp2, DBshort end, DBshort inr);
 short EXblk(DBId *idvek);
@@ -153,15 +192,31 @@ short EXdral(DBint win_id);
 */
 short EXdel(DBId *idpek);
 short EXdlla(DBptr la, DBetype typ);
+
+/*
+***exjob.c
+*/
+short EXsave_job(char *filnam);
+short EXload_job(char *filnam);
+
 short EXclgm();
 short EXldgm(char *filnam);
 short EXsvgm(char *filnam);
-short EXsvjb(char *filnam);
-short EXldjb(char *filnam, DBshort kod);
-short EXbllv(DBint levnum, DBint win_id);
-short EXublv(DBint levnum,DBint win_id);
-short EXgtlv(DBshort levnum, bool *blank, char *name);
-short EXcrvp(char name[], VYVEC *bpos);
+
+/*
+***exlevel.c
+*/
+void  EXinit_levels(void);
+void  EXclear_levels(void);
+short EXblank_level(DBint levnum, DBint win_id);
+short EXunblank_level(DBint levnum,DBint win_id);
+short EXget_level(DBint levnum, DBint win_id, bool *blank, char *name);
+short EXname_level(DBint levnum, char *name);
+
+/*
+***exview.c
+*/
+short EXcrvp(char name[], DBVector *bpos);
 short EXcrvc(char name[], DBId *idvek);
 short EXacvi(char name[], DBint win_id);
 short EXscvi(char name[], double scl);
@@ -170,14 +225,11 @@ short EXhdvi(char name[], bool flag1, bool flag2, FILE *pfil, DBVector *origo);
 short EXprvi(char name[], double dist);
 short EXervi(DBint win_id);
 short EXrpvi(DBint autoz, DBint win_id);
-short EXgvnl(char *namptr[], DBint *numptr);
 short EXcavi(double newcn);
-short EXplvi(char *vynam, char *filnam);
-short EXplwi(DBVector *p1, DBVector *p2, char *filnam, DBVector *p0);
-short vyindx(char vynamn[]);
+short EXplwi(DBint w_id, DBVector *p1, DBVector *p2, char *filnam, DBVector *p0);
 
 /*
-***ex10.c
+***exget1.c
 */
 short EXgtid(DBId *id, char *code);
 short EXgthd(DBId *id, DBHeader *header);
@@ -204,7 +256,7 @@ short EXgttf(DBId *id, DBTform *ptrf);
 short EXgtbp(DBId *id, DBBplane *bplan);
 
 /*
-***ex11.c
+***exget2.c
 */
 short EXgtpt(DBId *id, DBPart *part);
 short EXgtyp(DBId *id, DBshort pnum, V2LITVA *typ);
@@ -213,27 +265,23 @@ short EXgflt(DBId *id, DBshort pnum, V2LITVA *fltval);
 short EXgstr(DBId *id, DBshort pnum, V2LITVA *strval);
 short EXgvec(DBId *id, DBshort pnum, V2LITVA *vecval);
 short EXgref(DBId *id, DBshort pnum, V2LITVA *refval);
-short EXtime(DBshort *y, DBshort *mo, DBshort *d, DBshort *h,
-             DBshort *mi, DBshort *s);
 short EXuphd(DBId *id, DBshort blank, DBshort level, DBshort pen);
-short EXinpt(char *pmt, char *dstr, DBshort ntkn, char *istr);
-short EXinfn(char *pmt, char *dstr, char *path, char *pattern, char *name);
-short EXdirl(char *inpath, char *pattern, DBint maxant, DBint maxsiz,
-             char *pekarr[], char *strarr, DBint *nf);
 
 /*
-***ex12.c
+***extime.c
+*/
+short EXtime(int *y, int *mo, int *d, int *h, int *mi, int *s);
+
+/*
+***exref.c
 */
 short EXrstr(DBId *id, DBshort form, char *idstr);
 short EXrval(char  *idstr, DBId *id);
-short EXlsin(char *rubr);
-short EXlsex();
-short EXlsln(char *utstr);
 short EXglor(DBId *inref, DBshort lev, DBId *utref);
 short EXfins(char str1[], char str2[], DBshort *strpos);
 
 /*
-***ex13.c
+***exdia1.c
 */
 short EXpspt(char *pstr);
 short EXpopt();
@@ -244,9 +292,20 @@ short EXpsmy(DBshort mnr);
 short EXpomy();
 short EXgtal(char *prstr, V2LITVA *akod);
 short EXgtmy(DBshort mnr, char *rubr);
+short EXlsin(char *rubr);
+short EXlsex();
+short EXlsln(char *utstr);
 
 /*
-***ex14.c
+***exdia2.c
+*/
+short EXinpt(char *pmt, char *dstr, DBshort ntkn, char *istr);
+short EXinfn(char *pmt, char *dstr, char *path, char *pattern, char *name);
+short EXdirl(char *inpath, char *pattern, DBint maxant, DBint maxsiz,
+             char *pekarr[], char *strarr, DBint *nf);
+
+/*
+***exodbc.c
 */
 short EXdbop(char *namn, DBint *status);
 short EXdbbg(char *mode, DBint *status);
@@ -266,7 +325,7 @@ short EXdbrl(DBint *status);
 short EXdbcl(DBint *status);
 
 /*
-***ex15.c
+***exmove.c
 */
 short EXmove(DBId idmat[][MXINIV], DBshort idant, DBVector *p1, DBVector *p2);
 short EXmvla(DBptr la, DBetype typ, DBTmat *ptr);
@@ -281,26 +340,14 @@ short EXrot(DBId idmat[][MXINIV], DBshort idant, DBVector *p, DBfloat v);
 short EXrola(DBptr la, DBetype typ, DBTmat *ptr);
 
 /*
-***ex16.c
+***exgatt.c
 */
 short EXgatt(DBId *id, V2NAPA *pnp, DBptr *pcsypk);
 short EXgala(DBptr la, DBetype typ, V2NAPA *pnp, DBptr *pcsypk);
 short EXrist(DBId *id);
 
 /*
-***ex17.c
-*/
-short EXesur(DBId *id, DBSurf *surpek, DBPatch *patpek, V2NAPA *pnp);
-short EXssar(DBId *id, char *metod, DBint nu, DBint nv, DBVector *p,
-             DBVector *u_tan, DBVector *v_tan, DBVector *twist, V2NAPA *pnp);
-short EXscar(DBId *id, char *param_case, DBId *spine, DBint ncur, DBId *lim,
-             DBId *tan, DBint *metod, DBId *mid, V2NAPA *pnp);
-short EXsnar(DBId *id, DBint order_u, DBint order_v, DBint nk_u, DBint nk_v,
-             DBVector *cpts, DBfloat *uknots, gmflt *vknots, gmflt *w,
-             V2NAPA *pnp);
-
-/*
-***ex18.c
+***extform.c
 */
 short EXetrf(DBId *id, DBTform *trfpek, V2NAPA *pnp);
 short EXtrmv(DBId *id, DBVector *p1, DBVector *p2, DBfloat sx, gmflt sy,
@@ -316,57 +363,20 @@ short EXtcla(DBId *id, DBptr la, DBetype typ, DBTmat *ptr,
              DBshort mode, V2NAPA *pnp);
 
 /*
-***ex19.c
+***exsur1.c
 */
-short EXions(DBId *rid, DBVector *r3pos, DBint kod, DBint sol_no,
-             DBVector *uv_start, DBVector *ut_pos);
-short EXeval(DBId *rid, char *fall, DBVector *in_val, DBVector *ut_val);
-short EXncui(DBId *rid1, DBId *rid2, DBint *pnsect);
-short EXails(DBId *rid, DBVector *punkt, DBVector *riktn, DBint sort,
-             DBVector *start, DBint *nint, DBVector uv[], DBVector xyz[]);
-short EXailm(V2LITVA ref[], DBint nref, DBVector *punkt, DBVector *riktn,
-             DBint sort, DBint *nint, DBVector uv[], DBVector xyz [],
-             DBint **snum);
-short EXaios(DBId *rid, DBVector *punkt, DBint sort, DBint *nsol,
-             DBVector uv[], DBVector xyz[]);
+short EXesur(DBId *id, DBSurf *surpek, DBPatch *patpek, DBSegarr *pgetrimcvs,
+             DBSegarr *pborder, V2NAPA *pnp);
+short EXssar(DBId *id, char *metod, DBint nu, DBint nv, DBVector *p,
+             DBVector *u_tan, DBVector *v_tan, DBVector *twist, V2NAPA *pnp);
+short EXscar(DBId *id, char *param_case, DBId *spine, DBint ncur, DBId *lim,
+             DBId *tan, DBint *metod, DBId *mid, V2NAPA *pnp);
+short EXsnar(DBId *id, DBint order_u, DBint order_v, DBint nk_u, DBint nk_v,
+             DBVector *cpts, DBfloat *uknots, gmflt *vknots, gmflt *w,
+             V2NAPA *pnp);
 
 /*
-***ex20.c
-*/
-short EXsusr(V2REFVA *sur_id, V2REFVA *geo_id, char *hea_name,
-             char *top_name, char *cub_name, V2NAPA *pnp);
-short EXsusrh(V2REFVA *geo_id, char hea_name[20], DBint *p_n_u,
-              DBint *p_n_v, DBint *p_sur_type );
-short EXsusrt(DBPatch *p_pat, V2REFVA *geo_id, char top_name[20],
-              DBint n_u, DBint n_v, DBint sur_type);
-short EXsusrg(DBPatch *p_pat, V2REFVA *geo_id, char cub_name[20],
-              DBint n_u, DBint n_v, DBint sur_type);
-
-/*
-***ex21.c
-*/
-short EXsexd(DBId *id, char *str1, char *str2, char *str3, DBfloat trim[4],
-             DBint new, V2NAPA *pnp);
-short EXsexdv(DBId *sur_id, char *str1, char *str2, char *str3, DBfloat trim[4],
-              DBint sur_no_in, V2NAPA *pnp);
-
-/*
-***ex22.c
-*/
-short EXcsil(V2REFVA *id, V2REFVA *rid, DBVector *pos, DBshort fall,
-             DBshort gren, V2NAPA *pnp);
-short EXcint(V2REFVA *id, V2REFVA *yta, V2REFVA *plan,DBshort en, V2NAPA *pnp);
-short EXciso(V2REFVA *id, V2REFVA *rid, char *fall, DBfloat value,
-             DBfloat start, gmflt slut, V2NAPA *pnp);
-short EXcfan(V2REFVA *id, V2REFVA *rid, DBVector *rikt_1, DBVector *rikt_2,
-             DBint sstart, DBint sslut, DBfloat ustart, gmflt uslut, V2NAPA *pnp);
-short EXcged(V2REFVA *id, V2REFVA *rid, char *metod, DBVector *p1,
-             DBVector *p2, V2NAPA *pnp);
-short EXcapp(V2REFVA *id, V2REFVA *rid, char *segtyp, DBint metod,
-             DBfloat tol1, gmflt tol2, V2NAPA *pnp);
-
-/*
-***ex23.c
+***exsur2.c
 */
 short EXsswp(DBId *sur_id, DBId *cur_id, DBId *spine_id, DBint reverse,
              DBVector *p_yaxis, V2NAPA *pnp);
@@ -378,7 +388,7 @@ short EXsrul(DBId *id, DBId *ref1, DBId *ref2, DBint reverse,
              DBint par, V2NAPA *pnp);
 
 /*
-***ex24.c
+***exsur3.c
 */
 short EXscon(DBId *id, DBId *spine, DBint nstrips, DBId *limarr[],
              DBId *tanarr[], DBint typarr[], DBId *midarr[], V2NAPA *pnp);
@@ -390,7 +400,43 @@ short EXstrm(DBId *id, DBId *rid, DBfloat u1, gmflt u2, gmflt v1, gmflt v2,
              DBint fall, V2NAPA *pnp);
 
 /*
-***ex25.c
+***exsurcur.c
+*/
+   short EXscur( DBId  *sur_id, DBint nu_cur, DBint nv_cur, 
+                 DBId  *pVlines, char *twistmethod,
+                 V2NAPA  *pnp);  
+/*
+***exsurtrim.c
+*/
+short EXstrimusrd(DBId *sur_id, DBId *suru, DBint ncur, DBId *pcurves, V2NAPA  *pnp); 
+
+/*
+***exsugl.c
+*/
+short EXsugl(DBId *id, DBId *rid, char *str, V2NAPA *pnp);
+
+/*
+***exsurusr.c
+*/
+short EXsusr(V2REFVA *sur_id, V2REFVA *geo_id, char *hea_name,
+             char *top_name, char *cub_name, V2NAPA *pnp);
+short EXsusrh(V2REFVA *geo_id, char hea_name[20], DBint *p_n_u,
+              DBint *p_n_v, DBint *p_sur_type );
+short EXsusrt(DBPatch *p_pat, V2REFVA *geo_id, char top_name[20],
+              DBint n_u, DBint n_v, DBint sur_type);
+short EXsusrg(DBPatch *p_pat, V2REFVA *geo_id, char cub_name[20],
+              DBint n_u, DBint n_v, DBint sur_type);
+
+/*
+***exsurexd.c
+*/
+short EXsexd(DBId *id, char *str1, char *str2, char *str3, DBfloat trim[4],
+             DBint new, V2NAPA *pnp);
+short EXsexdv(DBId *sur_id, char *str1, char *str2, char *str3, DBfloat trim[4],
+              DBint sur_no_in, V2NAPA *pnp);
+
+/*
+***exodbc.c
 */
 short EXodco(char *source, char *user, char *passw, DBint *pstat);
 short EXoded(char *sqlstr, DBint *pstat);
@@ -400,25 +446,15 @@ short EXoddc(DBint *pstat);
 short EXoder(char *buf);
 
 /*
-***ex26.c
+***expart.c
 */
 short EXoppt(DBId *id, DBId *refid, DBPart *prtpek, DBPdat *datpek,
              V2PATLOG typarr[], char valarr[]);
 short EXclpt();
 void  EXmsini();
-short EXmoba();
-short EXmogl();
-short EXmolo(DBId *idvek);
-short EXmlla(DBptr la);
 
 /*
-***ex27.c
-*/
-   short EXscur( DBId  *sur_id, DBint nu_cur, DBint nv_cur, 
-                 DBId  *pVlines, char *twistmethod,
-                 V2NAPA  *pnp);  
-/*
-***excurve.c
+***excur1.c
 */
 short EXecur(DBId *id, DBCurve *curpek, DBSeg *grsegp,
              DBSeg *gesegp, V2NAPA *pnp);
@@ -436,14 +472,24 @@ short EXcurt(DBId *id, DBId *rid, DBfloat t1, gmflt t2, V2NAPA *pnp);
 short EXcuru(DBId *id, DBshort nseg, DBSeg geoseg[] , DBId *surid, V2NAPA *pnp);
 
 /*
+***excur2.c
+*/
+short EXcsil(V2REFVA *id, V2REFVA *rid, DBVector *pos, DBshort fall,
+             DBshort gren, V2NAPA *pnp);
+short EXcint(V2REFVA *id, V2REFVA *yta, V2REFVA *plan,DBshort en, V2NAPA *pnp);
+short EXciso(V2REFVA *id, V2REFVA *rid, char *fall, DBfloat value,
+             DBfloat start, gmflt slut, V2NAPA *pnp);
+short EXcfan(V2REFVA *id, V2REFVA *rid, DBVector *rikt_1, DBVector *rikt_2,
+             DBint sstart, DBint sslut, DBfloat ustart, gmflt uslut, V2NAPA *pnp);
+short EXcged(V2REFVA *id, V2REFVA *rid, char *metod, DBVector *p1,
+             DBVector *p2, V2NAPA *pnp);
+short EXcapp(V2REFVA *id, V2REFVA *rid, char *segtyp, DBint metod,
+             DBfloat tol1, gmflt tol2, V2NAPA *pnp);
+
+/*
 ***excugl.c
 */
 short EXcugl(DBId *id, DBId *rid, char *str, V2NAPA *pnp);
-
-/*
-***exsugl.c
-*/
-short EXsugl(DBId *id, DBId *rid, char *str, V2NAPA *pnp);
 
 /*
 ***exmesh.c
@@ -468,578 +514,8 @@ short  EXtcpinint(DBint sock,DBint bytecount, DBint byteorder, DBfloat timeout, 
 short  EXtcpoutfloat(DBint sock,DBint bytecount, DBint byteorder, DBfloat timeout, DBfloat data, DBint *pstat);
 short  EXtcpinfloat(DBint sock,DBint bytecount, DBint byteorder, DBfloat timeout, DBfloat *data, DBint *pstat);
 
-short  EXtcpoutvec(DBint sock,DBint bytecount, DBint byteorder, DBfloat timeout, DBfloat datax, DBfloat datay, DBfloat dataz, DBint 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*pstat);
-short  EXtcpinvec(DBint sock,DBint bytecount, DBint byteorder, DBfloat timeout, DBfloat *datax, DBfloat *datay,DBfloat *dataz, DBint
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- *pstat);
+short  EXtcpoutvec(DBint sock,DBint bytecount, DBint byteorder, DBfloat timeout, DBfloat datax, DBfloat datay, DBfloat dataz, DBint *pstat);
+short  EXtcpinvec(DBint sock,DBint bytecount, DBint byteorder, DBfloat timeout, DBfloat *datax, DBfloat *datay,DBfloat *dataz, DBint *pstat);
 
 short  EXtcpoutchar(DBint sock, DBfloat timeout, char *data, DBint *pstat);
 short  EXtcpinchar(DBint sock, DBfloat timeout, char *data, DBint *pstat);

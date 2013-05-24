@@ -1,0 +1,94 @@
+!****************************************************************
+
+ LOCAL GEOMETRY MODULE igs_142(
+   VAR FILE infile,logfile;
+   STRING   dl1*80,dl2*80;
+   INT      ds_ptr;
+   INT      ps_ptr;
+   INT      rowlgt;
+   VAR REF  id_ent;
+   VAR INT  status);
+
+!*      Curve on a parametric surface entity (TYPE 142)
+!*
+!*      In: infil  = File to read from.
+!*          logfil = Logfile.
+!*          dl1    = Read 1st Directory Entry Section.
+!*          dl2    = Read 2nd Directory Entry Section.
+!*          ds_ptr = Pointer to Directory Entry Section
+!*          ps_ptr = Pointer to Parameter Section.
+!*          rowlgt = Rowlength used
+!*
+!*     Out: id_ent = Identity of created entity
+!*          status = 0 => Ok
+!*                  -1 => Error
+!*        
+!*      (c)2007-02-15 J.Kjellander
+!*
+!*      2007-03-03 igs_curve(), J.Kjellander
+!*
+!*****************************************************************
+
+   INT    i,radnummer,curtyp; 
+   STRING row*132,row1*132,row2*132;
+   INT    CRTN,SPTR,BPTR,CPTR,PREF;
+
+ BEGINMODULE
+ 
+!*
+!***Position to PS of trimcurve and reead PS data.
+!***Strip "142,".
+!*
+   radnummer:=ival(substr(dl1,9,8));
+   seek(infile,ps_ptr+(radnummer-1)*rowlgt);
+   row:=inlin(infile);
+   row:=substr(row,finds(row,",")+1);
+!*
+!***Read parameter data
+!*
+   part(#2,igs_gint(infile,row,CRTN,status):SAVE=0); ! Creation method
+   part(#3,igs_gint(infile,row,SPTR,status):SAVE=0); ! DE of surface geometry
+   part(#4,igs_gint(infile,row,BPTR,status):SAVE=0); ! DE of UV-curve geometry
+   part(#5,igs_gint(infile,row,CPTR,status):SAVE=0); ! DE of C-curve ?
+   part(#6,igs_gint(infile,row,PREF,status):SAVE=0); ! Preferred rep. in sending system
+!*
+!***Read DE of BPTR = Trimcurve rep. as UV-curve.
+!*
+   seek(infile,ds_ptr+(BPTR-1)*rowlgt);  ! Geometry of UV-curve
+   row1:=inlin(infile);                  ! Curve DE1
+   row2:=inlin(infile);                  ! Curve DE2
+   curtyp:=ival(row1);                   ! Type of curve
+!*
+!**Create local coordinate system for transformation matrix.
+!*    
+   csys_1p(#7,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);
+!*
+!***Composite curve 102.
+!*
+   IF curtyp = 102 THEN
+     part(#8,igs_102(infile,logfile,row1,row2,ds_ptr,ps_ptr,rowlgt,id_ent,status),#7);
+!*
+!***Single curve.
+!*
+   ELSE
+     part(#9,igs_curve(infile,logfile,row1,row2,ds_ptr,ps_ptr,rowlgt,id_ent,status),#7);
+   ENDIF;
+!*
+!***Not supported curve type.
+!*
+   IF status < 0 THEN
+     outstr(logfile,"igs_142,Error - Curve type "+str(curtyp,-1,0)+" is not implemented !");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     status:=-1;
+   ENDIF;
+!*
+!**END.
+!*
+ 
+ ENDMODULE
+ 
+!***********************************************************************************

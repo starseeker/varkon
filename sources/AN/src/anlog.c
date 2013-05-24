@@ -631,7 +631,7 @@ static void  act();
        
    if ( msopen == FALSE )
      {
-     sprintf(errfil,"%sAN.ERM",v3genv(VARKON_ERM));
+     sprintf(errfil,"%sAN.ERM",IGgenv(VARKON_ERM));
 
      if ( (almsgf=fopen(errfil,"r")) == NULL )
        {

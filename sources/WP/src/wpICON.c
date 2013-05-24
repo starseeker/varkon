@@ -36,6 +36,7 @@
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
+#include <X11/xpm.h>
 
 /*!******************************************************/
 
@@ -177,7 +178,7 @@
 
     switch ( akod[0] )
       {
-      case 'f': action = FUNC;  break;
+      case 'f': action = CFUNC; break;
       case 'm': action = MENU;  break;
       case 'p': action = PART;  break;
       case 'r': action = RUN;   break;
@@ -221,7 +222,7 @@
 ***Prova att skapa en ikon.
 */
     status = WPwcic(gwinpt->id.x_id,x,y,(short)1,
-                        filnam,WP_BGND,WP_FGND,&icoptr);
+                        filnam,WP_BGND2,WP_FGND,&icoptr);
 
     if ( status < 0 ) return(status);
 /*
@@ -246,7 +247,7 @@
 /********************************************************/
 /*!******************************************************/
 
-        short WPwcic(
+        short    WPwcic(
         Window   px_id,
         short    x,
         short    y,
@@ -256,46 +257,67 @@
         short    cf,
         WPICON **outptr)
 
-/*      Skapar WPICON-fönster.
+/*      Create WPICON.
  *
- *      In: px_id  = Föräldra fönstrets X-id.
- *          x      = Läge i X-led.
- *          y      = Läge i Y-led.   
- *          fnam   = Bitmap-fil.
- *          cb     = Bakgrundsfärg.
- *          cf     = Förgrundsfärg.
- *          outptr = Pekare till utdata.
+ *      In: px_id  = Parent window X-id.
+ *          x      = X-position.
+ *          y      = Y-position.   
+ *          fnam   = Pixmap file.
+ *          cb     = Not used.
+ *          cf     = Not used.
  *
- *      Ut: *outptr = Pekare till WPICON.
+ *      Ut: *outptr = Ptr to a WPICON.
  *
- *      Felkod: WP1212 = Kan ej läsa bitmapfilen %s
- *              WP1292 = Fel från malloc()
+ *      Felkod: WP1212 = Can't load pixmap file %s
+ *              WP1292 = Can't malloc()
+ *              WP1712 = XPM error code = %s
  *
  *      (C)microform ab 13/1/94 J. Kjellander
  *
- ******************************************************!*/
+ *      2007-06-17 Xpm, J.Kjellander
+ *
+ ********************************************************/
 
   {
+    char                 errbuf[V3STRLEN];
     XSetWindowAttributes xwina;
     unsigned long        xwinm;
     unsigned int         dx,dy;
-    int                  status,x_hot,y_hot;
+    int                  status;
     Window               xwin_id;
-    Pixmap               bitmap;
+    Pixmap               icon_pixmap,icon_mask;
+    XGCValues            values;
+    XpmAttributes        attributes;
     WPICON              *icoptr;
 
 /*
-***Prova att läsa bitmap från fil.
+***Read the xpm-file and create a pixmap. Set attributes to XpmSize so
+***that the size of the icon is returned.
+***XpmColorError  =  1
+***XpmSuccess     =  0
+***XpmOpenFailed  = -1
+***XpmFileInvalid = -2
+***XpmNoMemory    = -3
+***XpmColorFailed = -4
 */
-    status = XReadBitmapFile(xdisp,px_id,fnam,&dx,&dy,
-                                       &bitmap,&x_hot,&y_hot);
+    attributes.valuemask = XpmSize;
 
-    if ( status != BitmapSuccess ) return(erpush("WP1212",fnam));
+    status = XpmReadFileToPixmap(xdisp,px_id,fnam,&icon_pixmap,&icon_mask,&attributes);
+
+    if ( status != XpmSuccess )
+      {
+      sprintf(errbuf,"%d",status);
+      erpush("WP1712",errbuf);
+      return(erpush("WP1212",fnam));
+      }
+
+    dx = attributes.width;
+    dy = attributes.height;
 /*
-***Skapa fönstret i X.
+***Create the X window.
 */
     xwina.background_pixel  = WPgcol(cb);
-    xwina.border_pixel      = WPgcol(WP_BGND);
+    xwina.border_pixel      = WPgcol(WP_BGND2);
     xwina.override_redirect = True;
     xwina.save_under        = False;
 
@@ -314,11 +336,12 @@
 /*
 ***Input events.
 */
-    if ( bw > 0 ) XSelectInput(xdisp,xwin_id,ButtonPressMask |
-                                             EnterWindowMask |
+    if ( bw > 0 ) XSelectInput(xdisp,xwin_id,ButtonPressMask   |
+                                             ButtonReleaseMask |
+                                             EnterWindowMask   |
                                              LeaveWindowMask);
 /*
-***Skapa en WPICON.
+***Create a WPICON.
 */
     if ( (icoptr=(WPICON *)v3mall(sizeof(WPICON),"WPwcic")) == NULL )
        return(erpush("WP1292",fnam));
@@ -332,32 +355,35 @@
     icoptr->geo.dx =  (short)dx;
     icoptr->geo.dy =  (short)dy;
     icoptr->geo.bw =  bw;
-
-    icoptr->color.bckgnd = cb;
-    icoptr->color.forgnd = cf;
-
-    icoptr->bitmap = bitmap;
+    icoptr->pixmap = icon_pixmap;
+    icoptr->mask   = icon_mask;
+    icoptr->tt_str[0] = '\0';
+/*
+***Set up a private GC for this icon.
+*/
+    icoptr->gc = XCreateGC(xdisp,icoptr->id.x_id,0,&values);
+    XSetClipMask(xdisp,icoptr->gc,icoptr->mask);
 
    *outptr = icoptr;
-
+/*
+***The end.
+*/
     return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         bool WPxpic(
         WPICON *icoptr)
 
-/*      Expose-rutin för WPICON.
+/*      Expose handler for WPICON.
  *
- *      In: icoptr = C-pekare till WPICON.
- *
- *      Ut: Inget.   
- *
- *      Felkod: .
+ *      In: icoptr = C-ptr to WPICON
  *
  *      (C)microform ab 13/1/94 J. Kjellander
+ *
+ *      2007-05-19 Xpm, J.Kjellander
  *
  ******************************************************!*/
 
@@ -365,44 +391,30 @@
     int dst;
 
 /*
-***Färger.
-*/
-    if ( icoptr->color.bckgnd != WP_BGND )
-      XSetBackground(xdisp,xgc,WPgcol(icoptr->color.bckgnd));
-    if ( icoptr->color.forgnd != WP_FGND )
-      XSetForeground(xdisp,xgc,WPgcol(icoptr->color.forgnd));
-/*
-***Kopiera bitmappen till fönstret. Om fönstret har ram
-***kompenserar vi positionen för detta.
+***Compensate position for optional frame.
 */
     if ( icoptr->geo.bw > 0 )
       dst = icoptr->geo.bw + 1;
     else
       dst = 0;
-
-    XCopyPlane(xdisp,icoptr->bitmap,icoptr->id.x_id,xgc,0,0,
-                          icoptr->geo.dx,icoptr->geo.dy,
-                          dst,dst,1);
 /*
-***Tills vidare återställer vi färger till default igen.
+***Copy pixmap to window.
 */
-    if ( icoptr->color.bckgnd != WP_BGND )
-      XSetBackground(xdisp,xgc,WPgcol(WP_BGND));
-    if ( icoptr->color.forgnd != WP_FGND )
-      XSetForeground(xdisp,xgc,WPgcol(WP_FGND));
+    XSetClipOrigin(xdisp,icoptr->gc,dst,dst);
+    XCopyArea(xdisp,icoptr->pixmap,icoptr->id.x_id,icoptr->gc,0,0,icoptr->geo.dx,icoptr->geo.dy,dst,dst);
 /*
-***Ev. 3D-ram.
+***Optional 3D-frame.
 */
     if ( icoptr->geo.bw > 0 )
       WPd3db((char *)icoptr,TYP_ICON);
 /*
-***Slut.
+***The end.
 */
     return(TRUE);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         bool WPbtic(
         WPICON *icoptr)
@@ -424,7 +436,7 @@
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         bool WPcric(
         WPICON         *icoptr,
@@ -441,30 +453,39 @@
  *
  *      (C)microform ab 17/1/94 J. Kjellander
  *
+ *      2007-05-28 Tooltips, J.Kjellander
+ *
  ******************************************************!*/
 
   {
+    int x,y;
 
 /*
-***Enter => Highligt, dvs. tjockare ram i annan färg.
+***Enter => Highligt border.
 */
     if ( croev->type == EnterNotify )
       {
       XSetWindowBorder(xdisp,croev->window,WPgcol(WP_NOTI));
+      if ( icoptr->tt_str[0] != '\0' )
+        {
+        WPgtmp(&x,&y);
+        WPorder_tooltip(x+5,y+10,icoptr->tt_str);
+        }
       }
 /*
-***Leave => Normal ram igen.
+***Leave => Normal border again.
 */
     else                            
       {
-      XSetWindowBorder(xdisp,croev->window,WPgcol(WP_BGND));
+      XSetWindowBorder(xdisp,croev->window,WPgcol(WP_BGND2));
+      WPclear_tooltip();
       }
 
     return(TRUE);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short WPgtic(
         DBint  iwin_id,
@@ -492,7 +513,7 @@
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short WPdlic(
         WPICON *icoptr)
@@ -514,7 +535,7 @@
 /*
 ***Lämna tillbaks pixmappen.
 */
-    XFreePixmap(xdisp,icoptr->bitmap);
+    XFreePixmap(xdisp,icoptr->pixmap);
 /*
 ***Lämna tillbaks dynamiskt allokerat minne.
 */

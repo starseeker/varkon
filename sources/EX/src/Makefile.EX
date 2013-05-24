@@ -5,11 +5,12 @@
 #
 #  Make rules for the EX module
 #
-#  (C)2006 J.Kjellander, Sören Larsson
+#  (C)2007 J.Kjellander, Sören Larsson
 #
 ##########################################################
 
 INCFILES = ../include/EX.h              \
+           ../../GE/include/GE.h        \
            ../../DB/include/DB.h
 
 OBJECTS = ../lib/EXlib.a(exarc.o)      \
@@ -38,6 +39,7 @@ OBJECTS = ../lib/EXlib.a(exarc.o)      \
           ../lib/EXlib.a(expoint.o)    \
           ../lib/EXlib.a(exrap.o)      \
           ../lib/EXlib.a(exref.o)      \
+          ../lib/EXlib.a(exjob.o)      \
           ../lib/EXlib.a(exsugl.o)     \
           ../lib/EXlib.a(exsur1.o)     \
           ../lib/EXlib.a(exsur2.o)     \
@@ -52,6 +54,7 @@ OBJECTS = ../lib/EXlib.a(exarc.o)      \
           ../lib/EXlib.a(extform.o)    \
           ../lib/EXlib.a(extime.o)     \
           ../lib/EXlib.a(exview.o)     \
+          ../lib/EXlib.a(exlevel.o)    \
           ../lib/EXlib.a(exxhatch.o)   \
           ../lib/EXlib.a(rap_clnt.o)   \
           ../lib/EXlib.a(rap_xdr.o

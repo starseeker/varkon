@@ -77,7 +77,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
    win_id = proc_pv[1].par_va.lit.int_va;
 
-#ifdef V3_X11
+#ifdef UNIX
    WPgtvi(win_id,vynamn,&skala,&xmin,&ymin,&xmax,&ymax,&vymat,&persp);
 #else
 #ifdef WIN32
@@ -166,7 +166,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    VYVEC    bpos;
+    DBVector bpos;
 
 /*
 ***Betraktelseposition (VECTOR) eller koordinatsystem (REF).
@@ -177,9 +177,9 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /*
 ***Betraktelseposition.
 */
-      bpos.x_vy = proc_pv[2].par_va.lit.vec_va.x_val;
-      bpos.y_vy = proc_pv[2].par_va.lit.vec_va.y_val;
-      bpos.z_vy = proc_pv[2].par_va.lit.vec_va.z_val;
+      bpos.x_gm = proc_pv[2].par_va.lit.vec_va.x_val;
+      bpos.y_gm = proc_pv[2].par_va.lit.vec_va.y_val;
+      bpos.z_gm = proc_pv[2].par_va.lit.vec_va.z_val;
       return(EXcrvp(proc_pv[1].par_va.lit.str_va,&bpos));
       break;
 /*
@@ -470,7 +470,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
   {
    short   status;
-   VY      modvy;
+   WPVIEW  modvy;
    PMLITVA litval;
    WPWIN  *winptr;
 
@@ -485,21 +485,21 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /*
 ***If there is no model or it has no size, return zeros.
 */
-    if ( (modvy.vywin[2] < modvy.vywin[0]) &&
-         (modvy.vywin[3] < modvy.vywin[1]) )
+    if ( (modvy.modwin.xmax < modvy.modwin.xmin) &&
+         (modvy.modwin.ymax < modvy.modwin.ymin) )
       {
-      modvy.vywin[0] = modvy.vywin[1] =
-      modvy.vywin[2] = modvy.vywin[3] = 0.0;
+      modvy.modwin.xmin = modvy.modwin.ymin =
+      modvy.modwin.xmax = modvy.modwin.ymax = 0.0;
       }
 /*
 ***Else return 2D view limits in p1 and p2.
 */    
-    litval.lit.vec_va.x_val = modvy.vywin[0];
-    litval.lit.vec_va.y_val = modvy.vywin[1];
+    litval.lit.vec_va.x_val = modvy.modwin.xmin;
+    litval.lit.vec_va.y_val = modvy.modwin.ymin;
     inwvar(proc_pv[1].par_ty,
 		   proc_pv[1].par_va.lit.adr_va,0,NULL,&litval);
-    litval.lit.vec_va.x_val = modvy.vywin[2];
-    litval.lit.vec_va.y_val = modvy.vywin[3];
+    litval.lit.vec_va.x_val = modvy.modwin.xmax;
+    litval.lit.vec_va.y_val = modvy.modwin.ymax;
     inwvar(proc_pv[2].par_ty,
 		   proc_pv[2].par_va.lit.adr_va,0,NULL,&litval);
 

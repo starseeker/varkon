@@ -111,7 +111,7 @@ static bool   hitable(BBOX *box, DBVector *p, DBVector *v);
     if ( DBget_pointer('I',rid,&la,&typ) < 0 ) return(erpush("EX1402",""));
     if ( typ != SURTYP )
       {
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
     if ( (status=DBread_surface(&sur,la)) < 0 ) return(status);
@@ -218,7 +218,7 @@ fprintf(dbgfil(EXEPAC),
 
     if ( typ != SURTYP )
       {
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
     if ( (status=DBread_surface(&sur,la)) < 0 ) return(status);
@@ -377,7 +377,7 @@ fprintf(dbgfil(EXEPAC),
       break;
 
       default:
-      igidst(rid1,errbuf);
+      IGidst(rid1,errbuf);
       return(erpush("EX1412",errbuf));
       }
 
@@ -409,7 +409,7 @@ fprintf(dbgfil(EXEPAC),
       isys.g44 = csy.mat_pl.g44;
       if ( int_case == 3 )
          {
-         igidst(rid2,errbuf);  /* Inf|r s{rskilt fel f|r detta !!! */
+         IGidst(rid2,errbuf);  /* Inf|r s{rskilt fel f|r detta !!! */
          status = erpush("EX1412",errbuf);
          goto c_lin;
          }
@@ -437,7 +437,7 @@ fprintf(dbgfil(EXEPAC),
       case SURTYP:
       if ( int_case == 3 )
          {
-         igidst(rid2,errbuf);  /* Inf|r s{rskilt fel f|r detta !!! */
+         IGidst(rid2,errbuf);  /* Inf|r s{rskilt fel f|r detta !!! */
          status = erpush("EX1412",errbuf);
          goto c_lin;
          }
@@ -455,7 +455,7 @@ fprintf(dbgfil(EXEPAC),
       break;
 
       default:
-      igidst(rid2,errbuf);
+      IGidst(rid2,errbuf);
       erpush("EX1412",errbuf);
       if      ( int_case == 1 ) goto err3;
       else if ( int_case == 3 ) goto c_lin;
@@ -595,7 +595,7 @@ fprintf(dbgfil(EXEPAC),
    if ( DBget_pointer('I',rid,&la,&typ) < 0 ) return(erpush("EX1402",""));
    if ( typ != SURTYP )
      {
-     igidst(rid,errbuf);
+     IGidst(rid,errbuf);
      return(erpush("EX1412",errbuf));
      }
    if ( (status=DBread_surface(&sur,la)) < 0 ) return(status);
@@ -734,7 +734,7 @@ end:
        return(erpush("EX1402",""));
      if ( typ != SURTYP )
        {
-       igidst(ref[i].lit.ref_va,errbuf);
+       IGidst(ref[i].lit.ref_va,errbuf);
        return(erpush("EX1412",errbuf));
        }
 /*
@@ -906,7 +906,7 @@ next:;                    /* ; behövs för SGI-kompilatorn */
     if ( DBget_pointer('I',rid,&la,&typ) < 0 ) return(erpush("EX1402",""));
     if ( typ != SURTYP )
       {
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
     if ( (status=DBread_surface(&sur,la)) < 0 ) return(status);

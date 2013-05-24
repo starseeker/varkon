@@ -23,12 +23,16 @@
 !*
 !*      (C)2006-09-14, Mohamed Rahayem, Örebro University
 !*
+!*      2007-02-18, MAXPTS, J.Kjellander
+!*
 !*********************************************************
 
+   CONSTANT INT MAXPTS=1000;
+   
    INT    i,rownumber, x(6),K,M,ncpts,nknots,order;
    STRING row*132;
-   FLOAT knot(50),w(50);     
-   VECTOR cpts(50);        ! maximum number of control points  =50.!
+   FLOAT knot(MAXPTS),w(MAXPTS);     
+   VECTOR cpts(MAXPTS);
 
  BEGINMODULE
 
@@ -66,17 +70,30 @@
 !**calculate Order,number of control point and
 !**number of values in knot vector.  
 !*  
-  K:= x(1);
-  M:= x(2); 
-  order:= M+1;
-  ncpts:= k+1;
-  nknots:= ncpts + order;
+   K:= x(1);
+   M:= x(2); 
+   order:= M+1;
+   ncpts:= k+1;
+   nknots:= ncpts + order;
+  
+   if ncpts < 0  or ncpts > MAXPTS then
+     outstr(logfile,"igs_126, This NURBS curve has "+str(ncpts,-1,0)+" controlpoints");
+     outlin(logfile);
+     outstr(logfile,"igs_126, Max number of controlpoints supported="+str(MAXPTS,-1,0));
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
+     status:=-1;
+     exit();
+   endif;
 !*
 !**Read Knot vector.
 !*   
-  for i:=1 to nknots do
+   for i:=1 to nknots do
      part(#2,igs_gflt(infile,row,knot(i),status):SAVE=0);
-  endfor;
+   endfor;
 !*
 !***Check status from igs_gflt()
 !*
@@ -93,9 +110,9 @@
 !*
 !**Read weights.
 !*      
-  for i:=1 to ncpts do
+   for i:=1 to ncpts do
      part(#3,igs_gflt(infile,row,w(i),status):SAVE=0);
-  endfor;
+   endfor;
 !*
 !***Check status from igs_gflt()
 !*
@@ -130,17 +147,12 @@
 !*
 !***Draw B_spline curve 126.
 !*
-  cur_nurbsarr(#8, order, ncpts, cpts, w, knot :SAVE=1);
-  
-! To remove curve approximate after improne NURBUS implementation  !.  
-!----------------------------------------------------------------
-  cur_approx(#9,#8, "CUBIC", 1, 4:SAVE=1);
-  id_ent:=global_ref(#9); 
-!----------------------------------------------------------------  
+   cur_nurbsarr(#8, order, ncpts, cpts, w, knot :SAVE=1);
+   id_ent:=global_ref(#8); 
 !*
 !**END
 !*  
-  status:=0;
+   status:=0;
   
  ENDMODULE
  

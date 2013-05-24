@@ -676,12 +676,12 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-     short   status;
-     DBint   i,j,index[2];
-     DBfloat  *offs,*matpek;
-     DBCurve   cur;
-     DBSeg  *segpek;
-     PMLITVA litval[3];
+     short    status;
+     DBint    i,j,index[2];
+     DBfloat *offs,*matpek;
+     DBCurve  cur;
+     DBSeg   *segpek;
+     PMLITVA  litval[3];
 
 /*
 ***Hämta cur från GM.
@@ -770,7 +770,7 @@ end:
 
   {
      short   status;
-     DBCurve   cur;
+     DBCurve cur;
      PMLITVA litval[4];
 
 /*
@@ -812,13 +812,13 @@ end:
  ******************************************************!*/
 
   {
-     char    errbuf[80];
-     short   status,segnum,segant;
-     DBint   i,j,index[2];
-     DBfloat  *datpek;
-     DBCurve   cur;
-     DBSeg  *segpek,*actpek;
-     PMLITVA litval;
+     char     errbuf[80];
+     short    status,segnum,segant;
+     DBint    i,j,index[2];
+     DBfloat *datpek;
+     DBCurve  cur;
+     DBSeg   *segpek,*actpek;
+     PMLITVA  litval;
 
 /*
 ***Vilken typ av segment önskas ? reptyp = 0 => geometrisk

@@ -22,8 +22,7 @@ CC = cc
 CFLAGS =                    \
          -O                 \
          -DUNIX             \
-         -DANALYZER         \
-         -DWRK_STAT
+         -DANALYZER
 
 LDFLAGS =
 

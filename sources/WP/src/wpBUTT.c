@@ -12,6 +12,7 @@
 *    WPmcbu();      Create WPBUTT, CRE_BUTTON in MBS
 *    WPwcbu();      Create WPBUTT, wpw-version
 *    WPxpbu();      Expose routine for WPBUTT
+*    WPscbu();      Set button color
 *    WPbtbu();      Button routine for WPBUTT
 *    WPcrbu();      Crossing routine for WPBUT
 *    WPgtbu();      Get routine for WPBUTT, GET_BUTTON in MBS
@@ -53,7 +54,7 @@
 
 /*      Create button in graphical window.
  *
- *      In: pid    = ID för grafiskt fönster.
+ *      In: pid    = ID fï¿½r grafiskt fï¿½nster.
  *          x,y    = Placering.
  *          dx,dy  = Storlek.
  *          butstr = Knapptext.
@@ -64,10 +65,10 @@
  *      Ut: *bid = Button ID.
  *
  *      Felkod: 
- *              WP1512 = %s är en otillåten aktionskod.
- *              WP1482 = Fönstret %s finns ej
- *              WP1492 = Fönstret %s är av fel typ
- *              WP1502 = Fönster %s är fullt
+ *              WP1512 = %s ï¿½r en otillï¿½ten aktionskod.
+ *              WP1482 = Fï¿½nstret %s finns ej
+ *              WP1492 = Fï¿½nstret %s ï¿½r av fel typ
+ *              WP1502 = Fï¿½nster %s ï¿½r fullt
  *
  *      (C)microform ab 1996-05-20 J. Kjellander
  *
@@ -88,7 +89,7 @@
 
     switch ( akod[0] )
       {
-      case 'f': action = FUNC;  break;
+      case 'f': action = CFUNC; break;
       case 'm': action = MENU;  break;
       case 'p': action = PART;  break;
       case 'r': action = RUN;   break;
@@ -98,7 +99,7 @@
       break;
       }
 /*
-***Fixa C-pekare till det grafiska fönstrets entry i wpwtab.
+***Fixa C-pekare till det grafiska fï¿½nstrets entry i wpwtab.
 */
     if ( (winptr=WPwgwp(pid)) == NULL )
       {
@@ -106,8 +107,8 @@
       return(erpush("WP1482",errbuf));
       }
 /*
-***Kolla att det är ett WPGWIN och fixa en pekare till
-***förälder-fönstret självt.
+***Kolla att det ï¿½r ett WPGWIN och fixa en pekare till
+***fï¿½rï¿½lder-fï¿½nstret sjï¿½lvt.
 */
     if ( winptr->typ != TYP_GWIN )
       {
@@ -116,8 +117,8 @@
       }
     else gwinpt = (WPGWIN *)winptr->ptr;
 /*
-***Skapa ID för den nya knappen, dvs fixa
-***en ledig plats i förälderns fönstertabell.
+***Skapa ID fï¿½r den nya knappen, dvs fixa
+***en ledig plats i fï¿½rï¿½lderns fï¿½nstertabell.
 */
     i = 0;
     while ( i < WP_GWSMAX  &&  gwinpt->wintab[i].ptr != NULL ) ++i;
@@ -132,11 +133,11 @@
 ***Prova att skapa en tryckknapp.
 */
     status = WPwcbu(gwinpt->id.x_id,x,y,dx,dy,(short)1,
-                        butstr,butstr,"",WP_BGND,WP_FGND,&butptr);
+                        butstr,butstr,"",WP_BGND2,WP_FGND,&butptr);
 
     if ( status < 0 ) return(status);
 /*
-***Länka in den i WPGWIN-fönstret.
+***Lï¿½nka in den i WPGWIN-fï¿½nstret.
 */
     gwinpt->wintab[*bid].typ = TYP_BUTTON;
     gwinpt->wintab[*bid].ptr = (char *)butptr;
@@ -171,27 +172,27 @@
         short   cf,
         DBint  *bid)
 
-/*      Skapar WPBUTT-fönster och länkar in i ett WPIWIN.
+/*      Skapar WPBUTT-fï¿½nster och lï¿½nkar in i ett WPIWIN.
  *      CRE_BUTTON i MBS.
  *
- *      In: pid   = Förälder.
- *          x     = Läge i X-led.
- *          y     = Läge i Y-led.   
+ *      In: pid   = Fï¿½rï¿½lder.
+ *          x     = Lï¿½ge i X-led.
+ *          y     = Lï¿½ge i Y-led.   
  *          dx    = Storlek i X-led.
  *          dy    = Storlek i Y-led.
  *          bw    = Border-width.
- *          str1  = Text i läge off/FALSE.
- *          str2  = Text i läge on/TRUE.
+ *          str1  = Text i lï¿½ge off/FALSE.
+ *          str2  = Text i lï¿½ge on/TRUE.
  *          fstr  = Fontnamn eller "" (default).
- *          cb    = Bakgrundsfärg.
- *          cf    = Förgrundsfärg.
+ *          cb    = Bakgrundsfï¿½rg.
+ *          cf    = Fï¿½rgrundsfï¿½rg.
  *          bid   = Pekare till utdata.
  *
- *      Ut: *bid = Giltigt entry i förälderns wintab.
+ *      Ut: *bid = Giltigt entry i fï¿½rï¿½lderns wintab.
  *
- *      Felkod: WP1072 = Föräldern %s finns ej.
- *              WP1082 = Föräldern %s är ej ett WPIWIN.
- *              WP1092 = För många subfönster i %s.
+ *      Felkod: WP1072 = Fï¿½rï¿½ldern %s finns ej.
+ *              WP1082 = Fï¿½rï¿½ldern %s ï¿½r ej ett WPIWIN.
+ *              WP1092 = Fï¿½r mï¿½nga subfï¿½nster i %s.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -205,7 +206,7 @@
     WPBUTT              *butptr;
 
 /*
-***Fixa C-pekare till förälderns entry i wpwtab.
+***Fixa C-pekare till fï¿½rï¿½lderns entry i wpwtab.
 */
     if ( (winptr=WPwgwp(pid)) == NULL )
       {
@@ -213,8 +214,8 @@
       return(erpush("WP1072",errbuf));
       }
 /*
-***Kolla att det är ett WPIWIN och fixa en pekare till
-***förälder-fönstret självt.
+***Kolla att det ï¿½r ett WPIWIN och fixa en pekare till
+***fï¿½rï¿½lder-fï¿½nstret sjï¿½lvt.
 */
     if ( winptr->typ != TYP_IWIN )
       {
@@ -223,8 +224,8 @@
       }
     else iwinptr = (WPIWIN *)winptr->ptr;
 /*
-***Skapa ID för den nya knappen, dvs fixa
-***en ledig plats i förälderns fönstertabell.
+***Skapa ID fï¿½r den nya knappen, dvs fixa
+***en ledig plats i fï¿½rï¿½lderns fï¿½nstertabell.
 */
     i = 0;
     while ( i < WP_IWSMAX  &&  iwinptr->wintab[i].ptr != NULL ) ++i;
@@ -241,7 +242,7 @@
     if ( (status=WPwcbu(iwinptr->id.x_id,x,y,dx,dy,bw,
                         str1,str2,fstr,cb,cf,&butptr)) < 0 ) return(status);
 /*
-***Länka in den i WPIWIN-fönstret.
+***Lï¿½nka in den i WPIWIN-fï¿½nstret.
 */
     iwinptr->wintab[*bid].typ = TYP_BUTTON;
     iwinptr->wintab[*bid].ptr = (char *)butptr;
@@ -249,7 +250,7 @@
     butptr->id.w_id = *bid;
     butptr->id.p_id =  pid;
 /*
-***Om WPIWIN-fönstret redan är mappat skall knappen mappas nu.
+***Om WPIWIN-fï¿½nstret redan ï¿½r mappat skall knappen mappas nu.
 */
     if ( iwinptr->mapped ) XMapWindow(xdisp,butptr->id.x_id);
 
@@ -259,7 +260,7 @@
 /********************************************************/
 /*!******************************************************/
 
-        short WPwcbu(
+        short    WPwcbu(
         Window   px_id,
         short    x,
         short    y,
@@ -273,19 +274,19 @@
         short    cf,
         WPBUTT **outptr)
 
-/*      Skapar WPBUTT-fönster.
+/*      Skapar WPBUTT-fï¿½nster.
  *
- *      In: px_id  = Föräldra fönstrets X-id.
- *          x      = Läge i X-led.
- *          y      = Läge i Y-led.   
+ *      In: px_id  = Fï¿½rï¿½ldra fï¿½nstrets X-id.
+ *          x      = Lï¿½ge i X-led.
+ *          y      = Lï¿½ge i Y-led.   
  *          dx     = Storlek i X-led.
  *          dy     = Storlek i Y-led.
  *          bw     = Border-width.
- *          str1   = Text i läge off/FALSE.
- *          str2   = Text i läge on/TRUE.
+ *          str1   = Text i lï¿½ge off/FALSE.
+ *          str2   = Text i lï¿½ge on/TRUE.
  *          fstr   = Fontnamn eller "".
- *          cb     = Bakgrundsfärg.
- *          cf     = Förgrundsfärg.
+ *          cb     = Bakgrundsfï¿½rg.
+ *          cf     = Fï¿½rgrundsfï¿½rg.
  *          outptr = Pekare till utdata.
  *
  *      Ut: *outptr = Pekare till WPBUTT.
@@ -295,6 +296,7 @@
  *      (C)microform ab 6/12/93 J. Kjellander
  *
  *      2006-12-11 Added ButtonReleaseMask, J.Kjellander
+ *      2007-03-08 Tooltips, J.Kjellander
  *
  ******************************************************!*/
 
@@ -305,10 +307,10 @@
     WPBUTT              *butptr;
 
 /*
-***Skapa fönstret i X.
+***Skapa fï¿½nstret i X.
 */
     xwina.background_pixel  = WPgcbu(WPwfpx(px_id),cb);
-    xwina.border_pixel      = WPgcbu(WPwfpx(px_id),WP_BGND);
+    xwina.border_pixel      = WPgcbu(WPwfpx(px_id),WP_BGND1);
     xwina.override_redirect = True;
     xwina.save_under        = False;
 
@@ -318,9 +320,9 @@
     xwin_id = XCreateWindow(xdisp,px_id,x,y,dx,dy,bw,CopyFromParent,
                             InputOutput,CopyFromParent,xwinm,&xwina);
 /*
-***Om knappen har ram skall den också kunna clickas i och
+***Om knappen har ram skall den ocksï¿½ kunna clickas i och
 ***highligtas.
-***Utan ram är den bara en "label".
+***Utan ram ï¿½r den bara en "label".
 */
     if ( bw > 0 ) XSelectInput(xdisp,xwin_id,ButtonPressMask | ButtonReleaseMask |
                                              EnterWindowMask | LeaveWindowMask);
@@ -354,58 +356,60 @@
     if ( fstr[0] == '\0' ) butptr->font = 0;
     else if ( (butptr->font=WPgfnr(fstr)) < 0 )
                          return(erpush("WP1102",fstr));
-
+/*
+***Init tooltip text.
+*/
+    butptr->tt_str[0] = '\0';
+/*
+***Return ptr to button.
+*/
    *outptr = butptr;
-
+/*
+***The end.
+*/
     return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        bool WPxpbu(
+        bool    WPxpbu(
         WPBUTT *butptr)
 
-/*      Expose-rutin för WPBUTT.
+/*      Expose handler for WPBUTT.
  *
- *      In: buttptr = C-pekare till WPBUTT.
- *
- *      Ut: Inget.   
+ *      In: buttptr = C ptr to WPBUTT.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
- *      1996-12-12 Vänsterjust. lablar, J.Kjellander
- *      1998-03-27 OpenGL för AIX, J.Kjellander
+ *      1996-12-12 Vï¿½nsterjust. lablar, J.Kjellander
+ *      1998-03-27 OpenGL fï¿½r AIX, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    int      x,y;
-    char     text[81];
-    GC       but_gc;
-    WPRWIN  *rwinpt;
-    XFontStruct *xfs;         /*********ny********/
+    int          x,y;
+    char         text[81];
+    GC           but_gc;
+    WPRWIN      *rwinpt;
+    XFontStruct *xfs;
 
 /*
-***Vilken text skall fönstret innehålla ?
+***Vilken text skall fï¿½nstret innehï¿½lla ?
 */
     if ( butptr->status ) strcpy(text,butptr->stron);
     else                  strcpy(text,butptr->stroff);
 /*
-***Mappa till 8-bitar ASCII.
-*/
-    WPmaps(text);
-/*
-***Om det är en knapp med ram, beräkna textens läge så
-***att den hamnar mitt i fönstret.
+***Om det ï¿½r en knapp med ram, berï¿½kna textens lï¿½ge sï¿½
+***att den hamnar mitt i fï¿½nstret.
 */
     x = (butptr->geo.dx - WPstrl(text))/2;
     y =  WPftpy(butptr->geo.dy);
 /*
-***Vilket GC skall användas ? Om knappen sitter i
-***ett WPRWIN måste vi använda  dess GC eftersom
-***knappen isåfall delar dess visual. Knappar i
-***övriga typer av fönster kan använda xgc.
+***Vilket GC skall anvï¿½ndas ? Om knappen sitter i
+***ett WPRWIN mï¿½ste vi anvï¿½nda  dess GC eftersom
+***knappen isï¿½fall delar dess visual. Knappar i
+***ï¿½vriga typer av fï¿½nster kan anvï¿½nda xgc.
 */
     switch ( wpwtab[butptr->id.p_id].typ )
       {
@@ -422,24 +426,23 @@
       break;
       }
 /*
-***Sätt färger.
+***Set the button backgrund color and the background for writing.
 */
-    if ( butptr->color.bckgnd != WP_BGND )
-      XSetBackground(xdisp,but_gc,WPgcbu(butptr->id.p_id,butptr->color.bckgnd));
-    if ( butptr->color.forgnd != WP_FGND )
-      XSetForeground(xdisp,but_gc,WPgcbu(butptr->id.p_id,butptr->color.forgnd));
+    XSetWindowBackground(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,butptr->color.bckgnd));
+    XSetBackground(xdisp,but_gc,WPgcbu(butptr->id.p_id,butptr->color.bckgnd));
 /*
-***Skriv ut.
+***Set the forground color for writing and write.
 */
+    XSetForeground(xdisp,but_gc,WPgcbu(butptr->id.p_id,butptr->color.forgnd));
     XDrawImageString(xdisp,butptr->id.x_id,but_gc,x,y,text,strlen(text));
 /*
-***Tills vidare återställer vi aktiv font och
-***färger till default igen.
+***Tills vidare ï¿½terstï¿½ller vi aktiv font och
+***fï¿½rger till default igen.
 */
     WPsfnt(0);
 
-    if ( butptr->color.bckgnd != WP_BGND )
-      XSetBackground(xdisp,but_gc,WPgcbu(butptr->id.p_id,WP_BGND));
+    if ( butptr->color.bckgnd != WP_BGND2 )
+      XSetBackground(xdisp,but_gc,WPgcbu(butptr->id.p_id,WP_BGND2));
     if ( butptr->color.forgnd != WP_FGND )
       XSetForeground(xdisp,but_gc,WPgcbu(butptr->id.p_id,WP_FGND));
 /*
@@ -456,16 +459,44 @@
 /********************************************************/
 /*!******************************************************/
 
+        void    WPscbu(
+        WPBUTT *butptr,
+        int     color)
+
+/*      Sets the background color of a button.
+ *
+ *      In: buttptr = C-ptr to WPBUTT.
+ *          color   = Color number.
+ *
+ *      (C)2007-03-24 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+
+/*
+***Set the button backgrund color and force an expose
+***to make the new color visible.
+*/
+   butptr->color.bckgnd = color;
+
+   XUnmapWindow(xdisp,butptr->id.x_id);
+
+   XSetWindowBackground(xdisp,butptr->id.x_id,
+                        WPgcbu(butptr->id.p_id,butptr->color.bckgnd));
+
+   XMapWindow(xdisp,butptr->id.x_id);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
         bool WPbtbu(
         WPBUTT *butptr)
 
-/*      Button-rutin för WPBUTT.
+/*      Button handler for WPBUTT.
  *
- *      In: buttptr = C-pekare till WPBUTT.
- *
- *      Ut: Inget.   
- *
- *      Felkod: .
+ *      In: buttptr = C ptr to WPBUTT.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -474,62 +505,84 @@
   {
 
 /*
-***Muspekning i button-fönster. Status togglas
-***till motsatta värdet.
+***Toggle the button status.
 */
-    if ( butptr->status == 0 ) butptr->status = TRUE;
-    else                       butptr->status = FALSE;
+    if ( butptr->status == FALSE )
+      {
+      butptr->status = TRUE;
+/*      WPscbu(butptr,WP_BGND3); */
+      }
+    else
+      {
+      butptr->status = FALSE;
+/*      WPscbu(butptr,WP_BGND2); */
+      }
 /*
-***Sudda fönstret och gör expose.
+***Erase window and expose again.
 */
     XClearWindow(xdisp,butptr->id.x_id);
     WPxpbu(butptr);
- 
+/*
+***The end.
+*/
     return(TRUE);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        bool WPcrbu(
+        bool    WPcrbu(
         WPBUTT *butptr,
         bool    enter)
 
-/*      Crossing-rutin för WPBUTT.
+/*      Crossing handler for WPBUTT.
  *
- *      In: iwinpt = C-pekare till WPBUTT.
- *          enter  = TRUE  => Enter
- *                   FALSE => Leave
+ *      In: butptr = C ptr to WPBUTT.
+ *          enter  = TRUE  => Enter.
+ *                   FALSE => Leave.
  *
- *      Ut: Inget.   
- *
- *      Felkod: .
+ *      Return: Always = TRUE.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
+ *      2007-03-08 Tooltips, J.Kjellander
+ *
  ******************************************************!*/
 
-  {
+ {
+   int x,y;
 
 /*
-***Enter => Highligt, dvs. blå ram.
+***Enter => Change color of window border to WP_NOTI.
 */
-    if ( enter == TRUE )
-      {
-      XSetWindowBorder(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,WP_NOTI));
-      butptr->hlight = TRUE;
-      }
+   if ( enter == TRUE )
+     {
+     XSetWindowBorder(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,WP_NOTI));
+     butptr->hlight = TRUE;
 /*
-***Leave => Ram med samma färg som bakgrunden igen.
+***Order a tooltip in a few seconds if there is one to display.
 */
-    else                            
-      {
-      XSetWindowBorder(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,WP_BGND));
-      butptr->hlight = FALSE;
-      }
+     if ( butptr->tt_str[0] != '\0' )
+       {
+       WPgtmp(&x,&y);
+       WPorder_tooltip(x+5,y+10,butptr->tt_str);
+       }
+     }
+/*
+***Leave => Reset window border color to WP_BGND.
+*/
+   else                            
+     {
+     XSetWindowBorder(xdisp,butptr->id.x_id,WPgcbu(butptr->id.p_id,WP_BGND1));
+     butptr->hlight = FALSE;
+/*
+***Remove ordered or active tooltip.
+*/
+     WPclear_tooltip();
+     }
 
-    return(TRUE);
-  }
+   return(TRUE);
+ }
 
 /********************************************************/
 /*!******************************************************/
@@ -539,17 +592,17 @@
         DBint  butt_id,
         DBint *status)
 
-/*      Get-rutin för WPBUTT.
+/*      Get-rutin fï¿½r WPBUTT.
  *
- *      In: iwin_id = Huvudfönstrets id.
- *          butt_id = Button-fönstrets id.
+ *      In: iwin_id = Huvudfï¿½nstrets id.
+ *          butt_id = Button-fï¿½nstrets id.
  *
  *      Ut: Inget.   
  *
- *      Felkod: WP1122 = Föräldern %s finns ej.
- *              WP1132 = Föräldern %s ej WPIWIN.
+ *      Felkod: WP1122 = Fï¿½rï¿½ldern %s finns ej.
+ *              WP1132 = Fï¿½rï¿½ldern %s ej WPIWIN.
  *              WP1142 = Knappen %s finns ej.
- *              WP1152 = %s är ej en knapp.
+ *              WP1152 = %s ï¿½r ej en knapp.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -562,7 +615,7 @@
     WPBUTT *buttptr;
 
 /*
-***Fixa C-pekare till förälderns entry i wpwtab.
+***Fixa C-pekare till fï¿½rï¿½lderns entry i wpwtab.
 */
     if ( (winptr=WPwgwp((wpw_id)iwin_id)) == NULL )
       {
@@ -570,7 +623,7 @@
       return(erpush("WP1122",errbuf));
       }
 /*
-***Kolla att det är ett WPIWIN.
+***Kolla att det ï¿½r ett WPIWIN.
 */
     if ( winptr->typ != TYP_IWIN )
       {
@@ -582,8 +635,8 @@
 */
     iwinptr = (WPIWIN *)winptr->ptr;
 /*
-***Kolla om subfönstret med angivet id finns och är
-***av rätt typ.
+***Kolla om subfï¿½nstret med angivet id finns och ï¿½r
+***av rï¿½tt typ.
 */
     if ( iwinptr->wintab[(wpw_id)butt_id].ptr == NULL )
       {
@@ -614,7 +667,7 @@
         short WPdlbu(
         WPBUTT *butptr)
 
-/*      Dödar en WPBUTT.
+/*      Dï¿½dar en WPBUTT.
  *
  *      In: buttptr = C-pekare till WPBUTT.
  *
@@ -628,10 +681,14 @@
 
   {
 /*
-***Lämna tillbaks dynamiskt allokerat minne.
+***Check for active tooltip and delete if nessecary.
 */
-    v3free((char *)butptr,"WPdlbu");
-    return(0);
+   WPclear_tooltip();
+/*
+***Release allocated C memory.
+*/
+   v3free((char *)butptr,"WPdlbu");
+   return(0);
   }
 
 /********************************************************/
@@ -641,15 +698,17 @@
         wpw_id p_id,
         int    colnum)
 
-/*      Returnerar färg för WPBUTT. Om föräldern är
- *      en WPRWIN görs särskild hantering.
+/*      Returnerar fï¿½rg fï¿½r WPBUTT. Om fï¿½rï¿½ldern ï¿½r
+ *      en WPRWIN gï¿½rs sï¿½rskild hantering.
  *
- *      In: p_id   = ID för förälder.
- *          colnum = VARKON färgnummer.
+ *      In: p_id   = ID fï¿½r fï¿½rï¿½lder.
+ *          colnum = VARKON fï¿½rgnummer.
  *
- *      FV: Pixelvärde.
+ *      FV: Pixelvï¿½rde.
  *
  *      (C)microform ab 1998-03-27 J. Kjellander
+ *
+ *      2007-04-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -657,9 +716,9 @@
    WPRWIN *rwinpt;
 
 /*
-***Om knappen sitter i ett WPRWIN måste vi returnera
-***ett pixelvärde som är kompatibelt med det fönstrets
-***visual. Övriga fönster använder default visual.
+***Om knappen sitter i ett WPRWIN mï¿½ste vi returnera
+***ett pixelvï¿½rde som ï¿½r kompatibelt med det fï¿½nstrets
+***visual. ï¿½vriga fï¿½nster anvï¿½nder default visual.
 */
    switch ( wpwtab[p_id].typ )
      {
@@ -667,12 +726,14 @@
      rwinpt   = (WPRWIN *)wpwtab[p_id].ptr;
      switch ( colnum )
        {
-       case WP_BGND: return(rwinpt->bgnd);
-       case WP_FGND: return(rwinpt->fgnd);
-       case WP_TOPS: return(rwinpt->tops);
-       case WP_BOTS: return(rwinpt->bots);
-       case WP_NOTI: return(rwinpt->noti);
-       default:      return(0);
+       case WP_BGND1: return(rwinpt->bgnd1);
+       case WP_BGND2: return(rwinpt->bgnd2);
+       case WP_BGND3: return(rwinpt->bgnd3);
+       case WP_FGND:  return(rwinpt->fgnd);
+       case WP_TOPS:  return(rwinpt->tops);
+       case WP_BOTS:  return(rwinpt->bots);
+       case WP_NOTI:  return(rwinpt->noti);
+       default:       return(0);
        }
      break;
 

@@ -34,9 +34,9 @@
 
 #ifdef VARKON
 
-{"MATERIAL_VIEW",     ST_PROC,     FALSE,  ST_ORD,    VMTVIEW},
+{"CRE_MATERIAL",      ST_PROC,     FALSE,  ST_ORD,    VCRMAT},
 {"LIGHT_VIEW",        ST_PROC,     FALSE,  ST_ORD,    VLTVIEW},
-{"SHADE_VIEW",        ST_PROC,     FALSE,  ST_ORD,    VSHVIEW},
+{"GET_COLOR",         ST_PROC,     FALSE,  ST_ORD,    VGTCOL},
 {"CRE_COLOR",         ST_PROC,     FALSE,  ST_ORD,    VCRCOL},
 {"LIGHT_ON",          ST_PROC,     FALSE,  ST_ORD,    VLTON},
 {"LIGHT_OFF",         ST_PROC,     FALSE,  ST_ORD,    VLTOFF},
@@ -117,6 +117,13 @@
 {"TFORM_INV",         ST_PROC,     FALSE,  ST_ORD,    VTINV},
 {"CUR_COMPARR",       ST_PROC,     FALSE,  ST_GEO,    VCCMPARR},
 {"SUR_TRIM_USRDEF",   ST_PROC,     FALSE,  ST_GEO,    VSURTUSRD},
+{"ACT_PFONT",         ST_FUNC,     FALSE,  ST_ORD,    VACPFNT},
+{"ACT_PSIZE",         ST_FUNC,     FALSE,  ST_ORD,    VACPSIZ},
+{"BLANK_LEVEL",       ST_PROC,     FALSE,  ST_ORD,    VBLLEVEL},
+{"UNBLANK_LEVEL",     ST_PROC,     FALSE,  ST_ORD,    VUBLEVEL},
+{"GET_LEVEL",         ST_PROC,     FALSE,  ST_ORD,    VGTLEVEL},
+{"ACT_LEVEL",         ST_FUNC,     FALSE,  ST_ORD,    VACLEVEL},
+{"NAME_LEVEL",        ST_PROC,     FALSE,  ST_ORD,    VNMLEVEL},
 /*
 ***The global symbol table ends here.
 */

@@ -22,6 +22,8 @@
 *    short ineqty()    equal types ?
 *    short incoty()    convert type
 *
+*    short inmiss();   Error report for removed MBS procedures
+*
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
 *    License as published by the Free Software Foundation; either
@@ -42,14 +44,10 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#ifdef V3_X11
-#include "../../WP/include/WP.h"
-#endif
 #include <math.h>
 
 extern pm_ptr ststrp;      /* PM-pointer to literal string type in sym. tab. */
 extern DBint  stgldz;      /* global data area size */
-extern bool intrup;        /* <CTRL>c-flaggan */
 
 extern pm_ptr stintp;
 extern pm_ptr stflop;
@@ -258,24 +256,6 @@ static STLABEL actlabel;
    int      step;
    int      i;
 
-/*
-***Interrupt från tangentbord.
-*/
-   if ( intrup )
-     {
-     igwtma(169);
-     return(AVBRYT);
-     }
-/*
-***Med X11 sköter vi interrupt på ett annat sätt.
-*/
-#ifdef V3_X11
-   if ( WPintr() )
-     {
-     igwtma(169);
-     return(AVBRYT);
-     }
-#endif
 /*
 ***Tom sats.
 */
@@ -1244,5 +1224,24 @@ if ( ( status = inevsl( np->pstl_ ) ) != 0 )
    return ( 0 );
 
   }
+
+/********************************************************/
+/*!******************************************************/
+
+        short inmiss()
+
+/*      This function is used to replace old functions that
+ *      are removed from functab[] in evfuncs.h. Old modules
+ *      compiled with an old MBS compiler may include calls
+ *      to such procedures. The user will get an error message
+ *      with instructions to recompile the MBS code.
+ *
+ *      (C)2007-03-31 J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   return(erpush("IN5802",""));
+  }  
 
 /********************************************************/

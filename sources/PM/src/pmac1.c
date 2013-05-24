@@ -946,7 +946,7 @@ module->system.ser_crypt = np->sysdat.ser_crypt;
 /*      Create part statement.
  *
  *      In:    geid     =>  Geometric identity
- *            *mname    =>  Module name as strin or NULL 
+ *            *mname    =>  Module name as string or NULL 
  *             mnexpr   =>  Module name as expression or NULL 
  *             mpara    =>  Module parameters 
  *             ppara    =>  The part call parameters 

@@ -4,12 +4,12 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  textpm();   Generate text... statement                          */
-/*  igctxv();   Edit text angle                                     */
-/*  igctxs();   Edit text string                                    */
+/*  IGtext();   Generate text... statement                          */
+/*  IGctxv();   Edit text angle                                     */
+/*  IGctxs();   Edit text string                                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -28,19 +28,18 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../include/IG.h"
 #include "../../WP/include/WP.h"
+#include "../../EX/include/EX.h"
 
 extern short   v3mode;
 
 /*!******************************************************/
 
-       short textpm()
+       short IGtext()
 
 /*      Genererar text...sats.
  *
@@ -55,11 +54,11 @@ extern short   v3mode;
  *      (C)microform ab 15/4/85 J. Kjellander
  *
  *      3/7/85   Felhantering, B. Doverud
- *      4/9/85   Anrop till igcges(), B. Doverud
+ *      4/9/85   Anrop till IGcges(), B. Doverud
  *      16/11/85 t-sträng, J. Kjellander
  *      6/3/86   Defaultsträng, J. Kjellander
  *      20/3/86  Anrop pmtcon, B. Doverud
- *      23/3/86  genpos(pnr, B. Doverud
+ *      23/3/86  IGcpos(pnr, B. Doverud
  *      24/3/86  Felutgång, B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
@@ -79,16 +78,16 @@ extern short   v3mode;
 ***Skapa position.
 */
 start:
-    if ( (status=genpos(264,&exnpt1)) < 0 ) goto end;
+    if ( (status=IGcpos(264,&exnpt1)) < 0 ) goto end;
 /*
 ***Skapa vridning.
 */
-    if ( (status=genflt(17,vstr,istr,&exnpt2)) < 0 ) goto end;
+    if ( (status=IGcflt(17,vstr,istr,&exnpt2)) < 0 ) goto end;
     strcpy(vstr,istr);
 /*
 ***Skapa sträng.
 */
-    if ( (status=genstr(10,sdstr,istr,&exnpt3)) < 0 ) goto end;
+    if ( (status=IGcstr(10,sdstr,istr,&exnpt3)) < 0 ) goto end;
     strcpy(sdstr,istr);
 /*
 ***Skapa listan med obligatoriska parametrar.
@@ -99,7 +98,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("TEXT",valparam) < 0 ) goto error;
+    if ( IGcges("TEXT",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -120,7 +119,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-        short igctxv()
+        short IGctxv()
 
 /*      Ändra texts vinkel.
  *
@@ -156,10 +155,10 @@ error:
 ***Ta reda på textens ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    IGptma(268,IG_MESS);
     typ = TXTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
+    IGrsma();
 /*
 ***Kolla att storheten inte ingår i en part.
 */
@@ -178,13 +177,13 @@ loop:
 /*
 ***Fråga efter ny vinkel.
 */
-    sprintf(strbuf,"%s%g  %s",iggtts(43),tv,iggtts(248));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%g  %s",IGgtts(43),tv,IGgtts(248));
+    IGplma(strbuf,IG_INP);
 
-    if ( (status=genflv(0,istr,dstr,&tv)) < 0 ) goto exit;
+    if ( (status=IGcflv(0,istr,dstr,&tv)) < 0 ) goto exit;
 
     strcpy(dstr,istr);
-    igrsma();
+    IGrsma();
 /*
 ***Ändra vinkel i GM och GP.
 */
@@ -201,14 +200,14 @@ loop:
 */
 exit:
     WPerhg();
-    igrsma();
+    IGrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igctxs()
+        short IGctxs()
 
 /*      Ändra texts text.
  *
@@ -244,10 +243,10 @@ exit:
 ***Ta reda på textens ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    IGptma(268,IG_MESS);
     typ = TXTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
+    IGrsma();
 /*
 ***Kolla att storheten inte ingår i en part.
 */
@@ -265,11 +264,11 @@ loop:
 /*
 ***Fråga efter ny text.
 */
-    sprintf(strbuf,"%s%s  %s",iggtts(43),str,iggtts(248));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%s  %s",IGgtts(43),str,IGgtts(248));
+    IGplma(strbuf,IG_INP);
     strcpy(dstr,str);
-    if ( (status=genstv(0,istr,dstr,str)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGcstv(0,istr,dstr,str)) < 0 ) goto exit;
+    IGrsma();
 /*
 ***Ändra text i GM och GP.
 */
@@ -285,7 +284,7 @@ loop:
 */
 exit:
     WPerhg();
-    igrsma();
+    IGrsma();
     return(status);
   }
 

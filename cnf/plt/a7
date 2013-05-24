@@ -1,5 +1,0 @@
-! a7 = GERBER fotoplottrar. Spooler = gerb
- nice -19 /usr/v3/bin/gerber <
- | lp -dgerb -s &
- /usr/v3/job/test.PLT
-

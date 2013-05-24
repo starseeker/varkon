@@ -32,7 +32,7 @@
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 
-extern short    actpen;
+extern int actpen;
 
 static short drawbp(WPGWIN *gwinpt, DBBplane *bplpek, DBptr la, bool draw);
 
@@ -83,7 +83,7 @@ static short drawbp(WPGWIN *gwinpt, DBBplane *bplpek, DBptr la, bool draw);
 /*
 ***Ja, ligger B-planet på en nivå som är tänd i detta fönster ?
 */
-         if ( WPnivt(gwinpt,bplpek->hed_bp.level) )
+         if ( WPnivt(gwinpt->nivtab,bplpek->hed_bp.level) )
            {
 /*
 ***Ja. Kolla att rätt färg är inställd.
@@ -159,7 +159,7 @@ static short drawbp(WPGWIN *gwinpt, DBBplane *bplpek, DBptr la, bool draw);
 */
          else
            {
-           if ( !WPnivt(gwinpt,bplpek->hed_bp.level)  ||
+           if ( !WPnivt(gwinpt->nivtab,bplpek->hed_bp.level)  ||
                                bplpek->hed_bp.blank) return(0);
            if ( bplpek->wdt_bp != 0.0 ) WPswdt(gwinpt->id.w_id,bplpek->wdt_bp);
            drawbp(gwinpt,bplpek,la,FALSE);
@@ -215,7 +215,7 @@ static short drawbp(WPGWIN *gwinpt, DBBplane *bplpek, DBptr la, bool draw);
 ***Klipp polylinjen. Om den är synlig (helt eller delvis ),
 ***rita den.
 */
-   if ( WPcply(gwinpt,-1,&k,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,-1,&k,x,y,a) )
      {
      if ( draw  &&  bplpek->hed_bp.hit )
        {

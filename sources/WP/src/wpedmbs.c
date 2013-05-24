@@ -32,27 +32,34 @@
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 #include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
-extern char   jobdir[],jobnam[],mbsdir[],mbodir[];
+extern char jobdir[],jobnam[],mbsdir[],mbodir[];
 
+/*
+***For some reason popen and pclose dont seem to be defined
+***in stdio.h as they should according to the C documentation.
+***To avoid compilation warnings we define them here.
+*/
+extern FILE *popen(const char *command, const char *type);
+extern int   pclose(FILE *stream);
+
+/*
+***Prototypes for internal functions.
+*/
 static bool  edit(char *dir, char *namn);
 static bool  comp(char *dir, char *namn, char *utdir);
 
-/*!******************************************************/
+/********************************************************/
 
         short WPamod()
 
-/*      Varkonfunktion för editering av aktiv modul.
+/*      Edit the currently active module.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      Felkoder: WP1452 Kan ej skapa filen: %s
+ *      Error: WP1452 Can't create file: %s
  *
  *      (C)microform ab 1996-02-05 J. Kjellander
+ *
+ *      2007-05-27 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -62,9 +69,9 @@ static bool  comp(char *dir, char *namn, char *utdir);
    FILE *fp;
 
 /*
-***Öppna temporär fil.
+***Open temporary file.
 */
-   strcpy(tmpnam,v3genv(VARKON_TMP));
+   strcpy(tmpnam,IGgenv(VARKON_TMP));
    strcat(tmpnam,jobnam);
    strcat(tmpnam,MBSEXT);
 
@@ -75,74 +82,70 @@ static bool  comp(char *dir, char *namn, char *utdir);
      return(0);
      }
 /*
-***Dekompilera.
+***Decompile actuve module.
 */
    pprmo(PPFILE,fp);
 /*
-***Stäng filen igen.
+***Close the file.
 */
    fclose(fp);
 /*
-***Editera.
+***Edit.
 */
 loop:
-   edit(v3genv(VARKON_TMP),jobnam);
+   edit(IGgenv(VARKON_TMP),jobnam);
 /*
-***Kompilera.
+***Compile and optionally execute.
 */
    if ( ( WPgrst("varkon.mbsedit.autocompile",buf)  &&
                                           strcmp(buf,"True") == 0 )  ||
-          igialt(106,67,68,FALSE) )
+          IGialt(106,67,68,FALSE) )
      {
-     if ( comp(v3genv(VARKON_TMP),jobnam,NULL) )
+     if ( comp(IGgenv(VARKON_TMP),jobnam,NULL) )
        {
        WPexla(FALSE);
        strcpy(olddir,jobdir);
-       strcpy(jobdir,v3genv(VARKON_TMP));
-       igldmo();
-       igwtma(465);
+       strcpy(jobdir,IGgenv(VARKON_TMP));
+       IGldmo();
+       WPaddmess_mcwin(IGgtts(465),WP_MESSAGE);
        strcpy(jobdir,olddir);
-       sprintf(tmpnam,"%s%s%s",v3genv(VARKON_TMP),jobnam,MODEXT);
-       v3fdel(tmpnam);
+       sprintf(tmpnam,"%s%s%s",IGgenv(VARKON_TMP),jobnam,MODEXT);
+       IGfdel(tmpnam);
        if ( WPgrst("varkon.mbsedit.autoexec",buf)  &&
             strcmp(buf,"True") == 0  &&
-            igramo() < 0 ) errmes();
+            IGramo() < 0 ) errmes();
        }
 /*
-***Fel vid kompilering.
+***Compile errors.
 */
      else
        {
-       /*XBell(xdisp,100); */
        WPexla(TRUE);
-       if ( igialt(1600,67,68,TRUE) ) goto loop;
+       if ( IGialt(1600,67,68,TRUE) ) goto loop;
        }
      }
 /*
-***Städa bort MBS-filen.
+***Delete the temporary file.
 */
-   sprintf(tmpnam,"%s%s%s",v3genv(VARKON_TMP),jobnam,MBSEXT);
-   v3fdel(tmpnam);
+   sprintf(tmpnam,"%s%s%s",IGgenv(VARKON_TMP),jobnam,MBSEXT);
+   IGfdel(tmpnam);
 /*
-***Slut.
+***The end.
 */
    return(0);
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short WPomod()
 
-/*      Varkonfunktion för editering av partanropad modul.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Edit a MBS part program.
  *
  *      (C)microform ab 1996-02-06 J. Kjellander
  *
  *      1998-04-01 Ny WPilse(), J.Kjellander
+ *      2007-05-27 1.19 J.Kjellander
  *
  ******************************************************!*/
 
@@ -154,33 +157,31 @@ loop:
 
    static char namn[JNLGTH+5] = "";
 /*
-***Skapa filförteckning. mbsdir/XXX.MBS
+***Create file list. mbsdir/XXX.MBS
 */
-   igdir(mbsdir,MBSEXT,1000,20000,pekarr,strarr,&nstr);
+   IGdir(mbsdir,MBSEXT,1000,20000,pekarr,strarr,&nstr);
 /*
-***Låt användaren välja.
-*
-   sprintf(mesbuf,"%s %s %s",iggtts(463),mbsdir,iggtts(464));
+***Let user select.
 */
-   status = WPilse(50,50,iggtts(464),namn,pekarr,-1,nstr,namn);
+   status = WPilse(IGgtts(464),namn,pekarr,-1,nstr,namn);
    if ( status < 0 ) return(status);
 /*
-***Editera.
+***Edit.
 */
    edit(mbsdir,namn);
 /*
-***Kompilera.
+***Compile.
 */
-   sprintf(mesbuf,"%s %s",iggtts(462),namn);
+   sprintf(mesbuf,"%s %s",IGgtts(462),namn);
 
-   if ( WPialt(mesbuf,iggtts(67),iggtts(68),FALSE) )
+   if ( WPialt(mesbuf,IGgtts(67),IGgtts(68),FALSE) )
      {
      if ( comp(mbsdir,namn,mbodir) )
        {
        WPexla(FALSE);
        clheap();
-       sprintf(mesbuf,"%s%s %s",namn,MBSEXT,iggtts(466));
-       igwlma(mesbuf,IG_MESS);
+       sprintf(mesbuf,"%s%s %s",namn,MBSEXT,IGgtts(466));
+       WPaddmess_mcwin(mesbuf,WP_MESSAGE);
        }
      else
        {
@@ -189,23 +190,21 @@ loop:
        }
      }
 /*
-***Slut.
+***The end.
 */
    return(0);
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
         short WPcoal()
 
-/*      Varkonfunktion för kompilering av alla.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Compile all MBS programs in the current MBS directory.
  *
  *      (C)microform ab 1996-02-06 J. Kjellander
+ *
+ *      2007-05-27 1.19 J.Kjellander
  *
  ******************************************************!*/
 
@@ -215,12 +214,11 @@ loop:
    int   i,nstr,errant;
 
 /*
-***Skapa filförteckning. mbsdir/XXX.MBS Resultatet blir
-***filer utan extension !!
+***Create file list. mbsdir/XXX.MBS
 */
-   igdir(mbsdir,MBSEXT,1000,20000,pekarr,strarr,&nstr);
+   IGdir(mbsdir,MBSEXT,1000,20000,pekarr,strarr,&nstr);
 /*
-***Kompilera.
+***Compile all.
 */
    errant = 0;
 
@@ -229,8 +227,8 @@ loop:
      if ( comp(mbsdir,pekarr[i],mbodir) )
        {
        WPexla(FALSE);
-       sprintf(mesbuf,"%s%s %s",pekarr[i],MBSEXT,iggtts(466));
-       igwlma(mesbuf,IG_MESS);
+       sprintf(mesbuf,"%s%s %s",pekarr[i],MBSEXT,IGgtts(466));
+       WPaddmess_mcwin(mesbuf,WP_MESSAGE);
        }
      else
        {
@@ -240,36 +238,39 @@ loop:
        }
      }
 /*
-***Töm PM på anropade moduler.
+***Clear PM.
 */
    clheap();
 /*
-***Skriv ut hur många och antal fel.
+***Report success or error.
 */
-   if ( errant == 0 ) sprintf(mesbuf,"%d %s",nstr,iggtts(467));
-   else               sprintf(mesbuf,"%d %s %d",nstr,iggtts(468),errant);
-   igwlma(mesbuf,IG_MESS);
+   if ( errant == 0 )
+     {
+     sprintf(mesbuf,"%d %s",nstr,IGgtts(467));
+     WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+     }
+   else
+     {
+     sprintf(mesbuf,"%d %s %d",nstr,IGgtts(468),errant);
+     WPaddmess_mcwin(mesbuf,WP_ERROR);
+     }
 /*
-***Slut.
+***The end.
 */
    return(0);
  }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
  static bool  edit(
         char *dir,
         char *namn)
 
-/*      Editerar MBS-program.
+/*      Edit MBS program.
  *
- *      In: dir    = Filkatalog där mbsfilen finns avslutat med en "/".
- *          namn   = Namn utan extension.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
+ *      In: dir  = File directory with trailing "/".
+ *          namn = File name without extension.
  *
  *      (C)microform ab 1996-02-05 J. Kjellander
  *
@@ -279,11 +280,11 @@ loop:
    char cmd[256],buf[256];
 
 /*
-***Bygg ihop sh-kommando. Först ett xterm-fönster eller liknande.
+***Make sh command. Use xterm.
 */
    if ( !WPgrst("varkon.mbsedit.emulator",cmd) ) strcpy(cmd,"xterm -e");
 /*
-***Sen en editor och en vägbeskrivning till filen som skall editeras.
+***The actual compile command.
 */
    strcat(cmd," ");
    if ( !WPgrst("varkon.mbsedit.editor",buf) ) strcpy(buf,"vi");
@@ -293,36 +294,36 @@ loop:
    strcat(cmd,namn);
    strcat(cmd,MBSEXT);
 /*
-***Utför.
+***Execute.
 */
    system(cmd);
 /*
-***Slut.
+***The end.
 */
    return(0);
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
  static bool  comp(
         char *dir,
         char *namn,
         char *utdir)
 
-/*      Kompilerar MBS-program.
+/*      Compile MBS program.
  *
- *      In: dir    = Filkatalog där MBS-filen finns avslutat med en "/".
- *          namn   = Namn med extension. Om filen skall flyttas skall
- *                   namn ges utan extension !!!!!!!!
- *          utdir  = Filkatalog där man vill ha MBO-filen eller NULL
- *                   om samma som MBS. "/" sist.
+ *      In: dir    = File directory with trailing "/".
+ *          namn   = Name with extension. No extension if file
+ *                   is moved.
+ *          utdir  = File directory for output MBO file or NULL
+ *                   if same as MBS. Trailing "/".
  *
- *      Ut: Inget.
- *
- *      Felkoder: WP1462 = Kan ej skapa pipe, cmd = %s
+ *      Felkoder: WP1462 = Can't create pipe, cmd = %s
  *
  *      (C)microform ab 1996-02-05 J. Kjellander
+ *
+ *      2007-05-27 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -333,18 +334,24 @@ loop:
    FILE *fp;
 
 /*
-***Bygg ihop sh-kommando.
+***Make shell command.
 */
    strcpy(cmd,"cd ");
    strcat(cmd,dir);
    cmd[strlen(cmd)-1] = ';';
+
+   strcat(cmd,"$VARKON_BIN/");
 
    if ( !WPgrst("varkon.mbsedit.compiler",buf) ) strcpy(buf,"mbsc");
    strcat(cmd,buf);
    strcat(cmd," ");
    strcat(cmd,namn);
 /*
-***Utför som pipe.
+***Message to window.
+*/
+   WPaddmess_mcwin(cmd,WP_MESSAGE);
+/*
+***Execute pipe.
 */
    if ( (fp=popen(cmd,"r")) == NULL )
      {
@@ -353,14 +360,14 @@ loop:
      return(0);
      }
 /*
-***Förbered för listning.
+***Init listing output.
 */
-   strcpy(buf,iggtts(469));
+   strcpy(buf,IGgtts(469));
    strcat(buf,namn);
    strcat(buf,MBSEXT);
    WPinla(buf);
 /*
-***Läs från pipen och kolla om det gick bra.
+***Read pipe and check for errors.
 */
    compok = FALSE;
 
@@ -372,11 +379,11 @@ loop:
      WPalla(buf,(short)1);
      }
 /*
-***Stäng pipen.
+***Close pipen.
 */
    pclose(fp);
 /*
-***Ev. flyttning av MBO-fil.
+***Optional MBO file move.
 */
    if ( compok  &&  (utdir != NULL)  &&  (strcmp(dir,utdir) != 0 ) )
      {
@@ -386,14 +393,14 @@ loop:
      strcpy(to,utdir);
      strcat(to,namn);
      strcat(to,MODEXT);
-     if ( v3fmov(from,to) < 0 )
+     if ( IGfmov(from,to) < 0 )
        {
        WPexla(FALSE);
        errmes();
        }
      }
 /*
-***Slut.
+***The end.
 */
    return(compok);
   }

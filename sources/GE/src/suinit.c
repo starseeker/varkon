@@ -77,8 +77,8 @@
 /*!-------------- Function calls (external) ------------------------*/
 /*                                                                  */
 extern short varkon_erpush();  /* Error message                     */
-extern char *v3genv();         /* Get directory name for tolerances */
-extern bool  v3ftst();         /* Determine if file exists          */
+extern char *IGgenv();         /* Get directory name for tolerances */
+extern bool  IGftst();         /* Determine if file exists          */
 /*                                                                  */
 /*-----------------------------------------------------------------!*/
 
@@ -144,14 +144,14 @@ static DBfloat def_tol_tab[] =
 /* Create file name $VARKON_TOL SURPAC.TOL. Call of v3genv.         */
 /*                                                                 !*/
 
-   sprintf(path,"%sSURPAC.TOL",v3genv(VARKON_TOL));
+   sprintf(path,"%sSURPAC.TOL",IGgenv(VARKON_TOL));
 
 /*!                                                                 */
 /* Goto nofile (use default values) if there is no file.            */
 /* Call of v3fst.                                                   */
 /*                                                                 !*/
 
-   if ( v3ftst(path) )
+   if ( IGftst(path) )
      {
      ;
      }

@@ -164,6 +164,7 @@ else
    {
    sprintf(errbuf,"(ocase) %%varkon_cur_order_2");
    return(varkon_erpush("SU2993",errbuf));
+   }
 #endif
 
 /*!                                                                 */

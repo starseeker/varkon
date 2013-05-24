@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Database Library.
-*    URL:  http://www.varkon.com
+*    URL: http://www.tech.oru.se/cad/varkon
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -20,13 +20,11 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 /*
 ***This program demonstrates the basic functionality of the
-***VARKON Database (GM). It creates a DB file and inserts
+***VARKON Database. It creates a DB file and inserts
 ***two points in the DB. Then it closes the DB, opens
 ***the file again and retrieves the points from the DB
 ***using two different accessing methods.
@@ -52,9 +50,9 @@
 /*
 ***The code begins here.
 */
-int main(argc,argv)
-    int argc;
-    char *argv[];
+   int   main(argc,argv)
+   int   argc;
+   char *argv[];
 
 {
    DBstatus  errstat;     /* Local variable for error checking */

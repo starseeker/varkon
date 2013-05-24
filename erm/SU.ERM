@@ -202,4 +202,19 @@ Revision history: 1996-08-20  Gunnar Liden
 841  3  SECTION_AREA Section curve is not closed %s
 842  1  SECTION_AREA WARNING Section curve not planar. Deviaton %s
 
+850  2  SUR_TRIM_USRDEF curve no %s contain a non uv-segment
+851  2  SUR_TRIM_USRDEF curve no %s do not belong to given surface
+852  2  SUR_TRIM_USRDEF curve no %s is not a closed loop
+853  2  SUR_TRIM_USRDEF curve(loop) %s and %s intersect or touch each other
+854  2  SUR_TRIM_USRDEF curve(loop) no %s is outside the first loop
+855  2  SUR_TRIM_USRDEF curve(loop) no %s has wrong direction
+856  3  SUR_TRIM_USRDEF, error in called function: GEtrim_loop_direction()
+857  3  Can't malloc GLfloats for GEmk_grsurftrim
+858  3  Progarm error: GEis_inside_trim() reached end of function
+859  3  GEis_inside_trim(), max iterations
+861  3  GEtrim_loop_direction(), max iterations
+862  3  GEtrim_loop_direction(), error in called function: GEis_inside_trim()
+
+
+
 890  3  CUR_GL: Function for %s is not implemented (%s)

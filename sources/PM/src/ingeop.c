@@ -6,7 +6,7 @@
 *    This file is part of the VARKON Program Module Library.
 *    URL: http://www.varkon.com
 *
-*    inevgp();    Interpreterar geometri-procedur
+*    inevgp();   Interpret geometric procedure
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -31,12 +31,11 @@
 #include "../include/evfuncs.h"
 #include <math.h>
 
-V2REFVA *geop_id;	/* Entity ID */
-PMPARVA *geop_pv;  	/* Access structure for MBS routines */
+V2REFVA *geop_id;   /* Entity ID */
+PMPARVA *geop_pv;   /* Access structure for MBS routines */
 short    geop_pc;   /* Number of actual parameters */
-V2NAPA	*geop_np;	/* Ptr to named parameter block.*/
+V2NAPA	*geop_np;   /* Ptr to named parameter block.*/
 
-/********************************************************/
 /*!******************************************************/
 
         short inevgp(
@@ -59,6 +58,7 @@ V2NAPA	*geop_np;	/* Ptr to named parameter block.*/
  *      (C)microform ab 23/3/86 J. Kjellander
  *
  *      2001-02-02 Param utbytta till Globla variabler, R Svedin
+ *      2007-03-31 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -69,25 +69,24 @@ V2NAPA	*geop_np;	/* Ptr to named parameter block.*/
  /*
  ***´Set global variables.
  */
-    geop_id = identp;
-	geop_np = npblockp;
+   geop_id = identp;
+   geop_np = npblockp;
 /*
 ***Get routine info from symboltable.
 */
-   if ( ( status = strrou( routla, &rout ) ) < -1 )
-       return(status);
+   if ( (status=strrou(routla,&rout)) < -1 ) return(status);
 /*
-***Interpret routine parameter list.
+***Interprete routine parameter list.
 */
-   if ( ( status = inapar( arglist, routla, &rout, &geop_pv, &geop_pc ) ) != 0 )
-      {
-      inrpar();
-      return(status);
-      }
+   if ( (status=inapar(arglist,routla,&rout,&geop_pv,&geop_pc) ) != 0 )
+     {
+     inrpar();
+     return(status);
+     }
 /*
 ***Execute.
 */
-    status = (*functab[rout.kind_pr])();
+   status = (*functab[rout.kind_pr])();
 /*
 ***Free parameter-pool memory.
 */
@@ -95,9 +94,9 @@ V2NAPA	*geop_np;	/* Ptr to named parameter block.*/
 /*
 ***Error check.
 */
-   if ( status == 0 ) return(0);
+   if      ( status == 0 )  return(0);
    else if ( status == -1 ) return(0);
-   else return(status);
+   else                     return(status);
 }
 
 /************************************************************************/

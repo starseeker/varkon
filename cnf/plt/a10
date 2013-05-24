@@ -1,4 +1,0 @@
-! a10 = LN03 laserskrivare. Spooler = ln03
- nice -19 /usr/v3/bin/ln03 <
- | lp -n1 -dln03 -s &
- /usr/v3/job/test.PLT

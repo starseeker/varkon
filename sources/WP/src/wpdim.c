@@ -46,7 +46,7 @@
 #define CDVERTIC   1         /* Diameter vertical */ 
 #define CDPARALL   2         /* Diameter parallell */ 
 
-extern short actpen;
+extern int actpen;
 
 static short drawdm(WPGWIN *gwinpt, DBAny *dimpek, DBptr la, bool draw);
 
@@ -97,7 +97,7 @@ static short drawdm(WPGWIN *gwinpt, DBAny *dimpek, DBptr la, bool draw);
 /*
 ***Ja, ligger det på en nivå som är tänd i detta fönster ?
 */
-         if ( WPnivt(gwinpt,dimpek->hed_un.level) )
+         if ( WPnivt(gwinpt->nivtab,dimpek->hed_un.level) )
            {
 /*
 ***Ja. Kolla att rätt färg är inställd.
@@ -171,7 +171,7 @@ static short drawdm(WPGWIN *gwinpt, DBAny *dimpek, DBptr la, bool draw);
 */
          else
            {
-           if ( !WPnivt(gwinpt,dimpek->hed_un.level)  ||
+           if ( !WPnivt(gwinpt->nivtab,dimpek->hed_un.level)  ||
                                dimpek->hed_un.blank) return(0);
            drawdm(gwinpt,dimpek,la,FALSE);
            }
@@ -242,7 +242,7 @@ static short drawdm(WPGWIN *gwinpt, DBAny *dimpek, DBptr la, bool draw);
 ***Klipp polylinjen. Om den är synlig (helt eller delvis ),
 ***rita den.
 */
-   if ( WPcply(gwinpt,-1,&k,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,-1,&k,x,y,a) )
      {
      if ( draw  &&  dimpek->hed_un.hit )
        {

@@ -211,6 +211,7 @@ static DBstatus gmdloc(DBptr, DBint);
  *      1997-12-27 GMCUR3, J.Kjellander
  *      2002-05-23 NURBS, Johan Kjellander, Örebro University
  *      2006-10-20 English, J.Kjellander, Örebro university
+ *      2007-01-22 Bug reading cpts_c, Sören L
  *
  ******************************************************!*/
 
@@ -323,7 +324,7 @@ static DBstatus gmdloc(DBptr, DBint);
                  erpush("GM1083",errbuf);
                  }
                last_cpts_c = segptr->cpts_c;
-
+               last_cpts_db = segptr->cpts_db;  /* line added 2007-01-22 */
                if ( (segptr->knots_c=v3mall(segptr->nknots*sizeof(DBfloat),"DBread_segments")) == NULL )
                  {
                  sprintf(errbuf,"%d",(int)segptr->nknots);
@@ -338,6 +339,7 @@ static DBstatus gmdloc(DBptr, DBint);
          ++segptr;
           }
         }
+
 /*
 ***Read curve plane data if existent.
 */

@@ -1,8 +1,4 @@
-
 ! Terminal file for X-windows
-
-t350 = "X11"
-t351 = "X11"
 
 ! Special keys
 

@@ -5,7 +5,6 @@
 *
 *    EXetxt();    Create text
 *    EXtext();    Create TEXT
-*    EXgrp();     Create GROUP
 *
 *    This file is part of the VARKON Execute  Library.
 *    URL:  http://www.varkon.com

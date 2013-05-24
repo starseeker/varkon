@@ -36,45 +36,46 @@
 #define XK_MISCELLANY
 #define XK_LATIN1
 
-#ifdef V3_X11
+#ifdef UNIX
 #include <X11/keysymdef.h>
 #endif
 
-#define INBSIZ  256        /* Storlek på teckenbuffert */
+#define INBSIZ  256        /* Size of character buffer */
 
 extern MNUALT   smbind[];
 
 /*!*******************************************************/
 
-     char WPgtch(
+     char     WPgtch(
      MNUALT **altptr,
      short   *alttyp,
      bool     flag)
 
-/*   Läser ett tecken från tangentbordet och pollar
- *   samtidigt event-kön. Om event finns servas de.
- *   Denna event-rutin används bara av V3 själv och
- *   då bara när en meny är aktiv och V3 väntar på
+/*   Lï¿½ser ett tecken frï¿½n tangentbordet och pollar
+ *   samtidigt event-kï¿½n. Om event finns servas de.
+ *   Denna event-rutin anvï¿½nds bara av V3 sjï¿½lv och
+ *   dï¿½ bara nï¿½r en meny ï¿½r aktiv och V3 vï¿½ntar pï¿½
  *   svar. 
  *
  *   In: altptr = Pekare till menyalternativ-pekare.
  *       alttyp = Pekare till typ av alternativ/symbol.
- *       flag   = TRUE  => Alla typer av symboler tillåtna.
- *                FALSE => Bara tecken tillåtna.
+ *       flag   = TRUE  => Alla typer av symboler tillï¿½tna.
+ *                FALSE => Bara tecken tillï¿½tna.
  *
  *   Ut: **altptr = Pekare till alternativ.
  *        *alttyp = Typ av alternativ.
  *
- *   FV: Det lästa tecknet och/eller symbol.
+ *   FV: Det lï¿½sta tecknet och/eller symbol.
  *
  *   (C)microform ab 11/7/92 J. Kjellander
  *
  *    23/9/93    ClientMessageEvent, J. Kjellander
  *    25/1/94    Omarbetad, J. Kjellander
- *    31/1/95    Multifönster, J. Kjellander
+ *    31/1/95    Multifï¿½nster, J. Kjellander
  *    20/1/96    tknbuf->static, J. Kjellander
  *    1996-02-12 Focus, J. Kjellander
  *    2006-12-11 ButtonPress->Release, J.Kjellander
+ *    2007-07-25 1.19 J.Kjellander
  *
  *******************************************************!*/
 
@@ -91,7 +92,7 @@ extern MNUALT   smbind[];
 
 /*
 ***Om tecken redan finns i tknbuf, returnera direkt utan att
-***vänta på nytt event.
+***vï¿½nta pï¿½ nytt event.
 */
     if ( ntkn > 0 )
       {
@@ -104,8 +105,9 @@ extern MNUALT   smbind[];
       }
 /*
 ***Om events finns, serva dom. Om inga events finns och ej
-***heller några tecken buffrade i tknbuf lägger vi oss och väntar.
+***heller nï¿½gra tecken buffrade i tknbuf lï¿½gger vi oss och vï¿½ntar.
 */
+start:
    *alttyp = SMBNONE;
 
     while ( XEventsQueued(xdisp,QueuedAfterReading) > 0  ||
@@ -140,15 +142,22 @@ extern MNUALT   smbind[];
         WPwcro((XCrossingEvent *)&event);
         break;
 /*
-***Musknapp. Vänster knapp kan vara menyval. Höger knapp
-***medför REJECT. Ev. mittknapp = GOMAIN.
+***Left button could be a menu selection, a pos-button,
+***A scroll_down in a WPLWIN or a button in a WPGWIN/WPRWIN.
+***Optional mid button is always = GOMAIN.
+***Right button is normally = REJECT but could be scroll_up in WPLWIN.
 ***Normally a ButtonRelease is the event that triggers
-***an action but in a WPRWIN we also need to handle ButtonPress.
+***an action but in  WPGWIN/WPRWIN we also need to handle ButtonPress.
+***A button press is usually preceeded by a crosing event in that window.
+***A tooltip may thus have been ordered but not yet displayed. To avoid
+***that a ButtonPress always turns off any pending displays of tooltips.
 */
         case ButtonPress:
-        if ( (serv_id=WPwfpx(butev->window)) > 0 )
+        WPclear_tooltip();
+        if ( (serv_id=WPwfpx(butev->window)) >= 0 )
           {
-          if ( wpwtab[serv_id].typ == TYP_RWIN ) { WPwbut(butev,&serv_id); }
+          if ( wpwtab[serv_id].typ == TYP_RWIN ||
+               wpwtab[serv_id].typ == TYP_GWIN ) WPwbut(butev,&serv_id);
           }
         break;
 
@@ -156,39 +165,59 @@ extern MNUALT   smbind[];
         switch ( butev->button )
           {
           case 1:
-          if ( WPifae(&event,altptr) == TRUE ) *alttyp = SMBALT;
+          if ( WPmenu_button(&event,altptr) == TRUE )
+            {
+            if ( altptr == NULL ) goto start;                /* Pos-button */
+            else                 *alttyp = SMBALT;           /* Alternative */
+            }
           else if ( WPwbut(butev,&serv_id) == FALSE ) *alttyp = SMBRETURN;
           break;
 
           case 2:
-          if ( WPwbut(butev,&serv_id) == FALSE ) *alttyp = SMBMAIN;
+         *alttyp = SMBMAIN;
           break;
 
           case 3:
-          if ( WPwbut(butev,&serv_id) == FALSE ) *alttyp = SMBUP;
+          if ( WPwbut(butev,&serv_id) == FALSE )  *alttyp = SMBUP;
           break;
           }
         break;
+
 /*
-***En tangenttryckning kan generera noll, ett eller flera tecken.
-***Oavsett antal lagras de först i en intern fifo-stack och
-***returneras till anroparen ett i taget.
+***A key press can either be a menu selection (if no command window has focus)
+***or a command (if a command window has focus).
 */
         case KeyPress:
+        if ( WPkey_mcwin(keyev) ) break;
 /*
-***Mappa till motsvarande textsträng.
+***En tangenttryckning kan generera noll, ett eller flera tecken.
+***Oavsett antal lagras de fï¿½rst i en intern fifo-stack och
+***returneras till anroparen ett i taget.
+***Mappa till motsvarande textstrï¿½ng.
 */
         n = WPlups(keyev,&tknbuf[ntkn],INBSIZ-ntkn);
 /*
-***Blev det något resultat ?
+***Did the key map to the string defined for Return, Main or Help ?
+***In that case set n=0 (no characters) and return the symbol instead.
+*/
+        if ( n == 1 )
+          {
+          if ( tknbuf[ntkn] == 13 ) tknbuf[ntkn] = '\n';
+          if      ( tknbuf[ntkn] ==  *smbind[1].str ) { *alttyp = SMBRETURN; n = 0; }
+          else if ( tknbuf[ntkn] ==  *smbind[7].str ) { *alttyp = SMBMAIN;   n = 0; }
+          else if ( tknbuf[ntkn] ==  *smbind[8].str ) { *alttyp = SMBHELP;   n = 0; }
+          }
+/*
+***If not, it may have mapped to a string of one or more chars.
 */
         if ( n > 0 )
           {
-          ntkn += n;
          *alttyp = SMBCHAR;
+          ntkn += n;
           }
 /*
-***Nej, då kan det ha varit en funktionstangent.
+***If not mapped at all it may have been one of the PF-keys. If it
+***is mapped to a function this function may return SMBMAIN.
 */
         else if ( WPkepf(keyev) == SMBMAIN )
           {
@@ -210,15 +239,16 @@ extern MNUALT   smbind[];
         WPwclm((XClientMessageEvent *)&event);
         break;
 /*
-***Okänt event.
+***Unknown event.
 */
         default:
         break;
         }
       }
 /*
-***Nu är alla events servade och vi har antingen ett tecken
-***att returnera eller en mustryckning i meny-fönstret.
+***Now all events are served.
+***If the result maps to character(s), return
+***the last character from tknbuf[] and return it.
 */
     if ( *alttyp == SMBCHAR )
       {
@@ -228,7 +258,7 @@ extern MNUALT   smbind[];
       for ( i=0; i<ntkn; ++i ) tknbuf[i] = tknbuf[i+1];
       }
 /*
-***Slut.
+***The end.
 */
    return(c);
  }
@@ -241,14 +271,14 @@ extern MNUALT   smbind[];
         char      *s,
         int        tknmax)
 
-/*      Översätter keycode och state i ett key-event
- *      till en sträng.
+/*      ï¿½versï¿½tter keycode och state i ett key-event
+ *      till en strï¿½ng.
  *
  *      In: keyev  = Pekare till key-event.
  *          s      = Pekare till utdata.
- *          tknmax = Max antal önskde tecken.
+ *          tknmax = Max antal ï¿½nskde tecken.
  *
- *      Ut: *s = Motsvarande sträng.
+ *      Ut: *s = Motsvarande strï¿½ng.
  * 
  *      Fv:  Antal tecken.
  *
@@ -268,7 +298,7 @@ extern MNUALT   smbind[];
 
 /*
 ***Numlock = Mod2Mask har det visat
-***sig under ODT, detta är inte nödvändigtvis standard.
+***sig under ODT, detta ï¿½r inte nï¿½dvï¿½ndigtvis standard.
 */
     if ( ((keyev->state & Mod2Mask)  > 0) ) numlock = TRUE;
 /*
@@ -276,26 +306,26 @@ extern MNUALT   smbind[];
 */
     if ( ((keyev->state & ShiftMask)  > 0) ) shift = TRUE;
 /*
-***Vi börjar med att använda LookupString för att ta reda på
-***vilken keysym det var. Vi kunde använda LookupKeysym() men
-***LookupString() tar hänsyn till shift, numlock etc. åt oss
-***på ett bättre sätt (hårdvaruoberoende).
+***Vi bï¿½rjar med att anvï¿½nda LookupString fï¿½r att ta reda pï¿½
+***vilken keysym det var. Vi kunde anvï¿½nda LookupKeysym() men
+***LookupString() tar hï¿½nsyn till shift, numlock etc. ï¿½t oss
+***pï¿½ ett bï¿½ttre sï¿½tt (hï¿½rdvaruoberoende).
 */
     ntkn = XLookupString(keyev,s,tknmax,&keysym,&costat);
 /*
-***Vissa symboler skall mappas på ett för V3 speciellt sätt.
+***Vissa symboler skall mappas pï¿½ ett fï¿½r V3 speciellt sï¿½tt.
 */
     switch ( keysym )
       {
 /*
-***å, ä och ö.
+***Ã…, Ã„ ochï¿½Ã–.
 */
-      case XK_aring:      *s = 'å'; ntkn = 1; break;
-      case XK_Aring:      *s = 'Å'; ntkn = 1; break;
-      case XK_adiaeresis: *s = 'ä'; ntkn = 1; break;
-      case XK_Adiaeresis: *s = 'Ä'; ntkn = 1; break;
-      case XK_odiaeresis: *s = 'ö'; ntkn = 1; break;
-      case XK_Odiaeresis: *s = 'Ö';ntkn = 1; break;
+      case XK_aring:      *s = 'ï¿½'; ntkn = 1; break;
+      case XK_Aring:      *s = 'ï¿½'; ntkn = 1; break;
+      case XK_adiaeresis: *s = 'ï¿½'; ntkn = 1; break;
+      case XK_Adiaeresis: *s = 'ï¿½'; ntkn = 1; break;
+      case XK_odiaeresis: *s = 'ï¿½'; ntkn = 1; break;
+      case XK_Odiaeresis: *s = 'ï¿½';ntkn = 1; break;
 /*
 ***Funktionstangenter.
 */
@@ -311,7 +341,7 @@ extern MNUALT   smbind[];
 ***till '.' Med normal shift mappas den till KP_Separator
 ***och med numlock inte alls.
 */
-      case XK_Delete: if ( numlock == TRUE ) *s = '.'; ntkn = 1; break;
+      case XK_KP_Delete: if ( numlock == TRUE ) *s = '.'; ntkn = 1; break;
 /*
 ***Keypad-separator skall mappas till '.'
 */
@@ -325,7 +355,7 @@ extern MNUALT   smbind[];
       case XK_Right: strcpy(s,"\033[C"); ntkn = 3; break;
 /*
 ***Diverse kombinations-tangenter typ Shift, CapsLock, Ctrl och Alt.
-***Dessa åstadkommer inga egna tecken.
+***Dessa ï¿½stadkommer inga egna tecken.
 */
       case XK_Shift_L: 
       case XK_Shift_R: 
@@ -339,7 +369,7 @@ extern MNUALT   smbind[];
       ntkn = 0;
       break;
 /*
-***Övriga tangenter använder vi LookupString():s mappning.
+***ï¿½vriga tangenter anvï¿½nder vi LookupString():s mappning.
 */
       }
 /*
@@ -356,7 +386,7 @@ extern MNUALT   smbind[];
         short WPkepf(
         XKeyEvent *keyev)
 
-/*      Servar keyevent som kommer från funktionstangent
+/*      Servar keyevent som kommer frï¿½n funktionstangent
  *      dvs. snabbval.
  *
  *      In: keyev   => Pekare till Key Event.
@@ -364,7 +394,7 @@ extern MNUALT   smbind[];
  *      Ut: Inget.
  *
  *      FV: SMBESCAPE => Det var ett snabbval och det har servats.
- *          SMBMAIN   => Det var ett snabbval som avbröts med TAB.
+ *          SMBMAIN   => Det var ett snabbval som avbrï¿½ts med TAB.
  *          SMBNONE   => Det var inget snabbval.
  *
  *      (C)microform ab 13/12/94 J. Kjellander
@@ -381,12 +411,12 @@ extern MNUALT   smbind[];
     KeySym          keysym;
 
 /*
-***Till att börja med översätter vi Key Eventet till motsvarande
-***keysym med hjälp av XLookupKeysym. Tidigare användes XLookupString
-***men denna gav olika resultat i SCO/UNIX och tex. AIX beträffande
-***tolkningen av shift så för att vara på säkra sidan kollar vi detta
-***själva genom att först be om den oshiftade betydelsen och sedan
-***kolla om shift var nedtryckt. Detta bör ge samma resultat i alla
+***Till att bï¿½rja med ï¿½versï¿½tter vi Key Eventet till motsvarande
+***keysym med hjï¿½lp av XLookupKeysym. Tidigare anvï¿½ndes XLookupString
+***men denna gav olika resultat i SCO/UNIX och tex. AIX betrï¿½ffande
+***tolkningen av shift sï¿½ fï¿½r att vara pï¿½ sï¿½kra sidan kollar vi detta
+***sjï¿½lva genom att fï¿½rst be om den oshiftade betydelsen och sedan
+***kolla om shift var nedtryckt. Detta bï¿½r ge samma resultat i alla
 ***implementationer av X11.
 */
     keysym = XLookupKeysym(keyev,0);
@@ -396,8 +426,8 @@ extern MNUALT   smbind[];
     if ( keyev->state & ShiftMask ) shift = TRUE;
     else                            shift = FALSE;
 /*
-***Sen kollar vi om det var en funktionstangent. Om så,
-***mappar vi till motsvarande VARKON-sträng.
+***Sen kollar vi om det var en funktionstangent. Om sï¿½,
+***mappar vi till motsvarande VARKON-strï¿½ng.
 */
     switch ( keysym )
       {
@@ -447,10 +477,9 @@ extern MNUALT   smbind[];
        {
        if ( strncmp(smbind[i].str,tknbuf,ntkn) == 0 )
          {
-         strcpy(tknbuf,igqema());
-         if ( *tknbuf != '\0' ) igrsma();
-         status = igdofu(smbind[i].acttyp,smbind[i].actnum);
-         if ( *tknbuf != '\0' ) igplma(tknbuf,IG_MESS);
+         strcpy(tknbuf,IGqema());
+         status = IGdofu(smbind[i].acttyp,smbind[i].actnum);
+         if ( *tknbuf != '\0' ) WPaddmess_mcwin(tknbuf,WP_MESSAGE);
          if ( status == GOMAIN ) return(SMBMAIN);
          else                    return(SMBESCAPE);
          break;

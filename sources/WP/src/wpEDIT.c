@@ -8,18 +8,18 @@
 *
 *    This file includes:
 *
-*    WPmced();   Create WPEDIT, MBS-version
-*    WPwced();   Create WPEDIT, wpw-version
-*    WPxped();   Expose routine for WPEDIT
-*    WPbted();   Button routine for WPEDIT
-*    WPcred();   Crossing routine for WPEDIT
-*    WPkeed();   Key routine for WPEDIT
-*    WPgted();   Get routine for WPEDIT, GET_EDIT in MBS
-*    WPuped();   Replace text in WPEDIT
-*    WPdled();   Kill WPEDIT
-*
-*   *WPffoc();   Which WPEDIT has focus ?
-*    WPfoed();   Focus On/Off for WPEDIT
+*    WPmced();    Create WPEDIT, MBS-version
+*    WPwced();    Create WPEDIT, wpw-version
+*    WPxped();    Expose routine for WPEDIT
+*    WPbted();    Button routine for WPEDIT
+*    WPcred();    Crossing routine for WPEDIT
+*    WPkeed();    Key routine for WPEDIT
+*    WPgted();    Get routine for WPEDIT, GET_EDIT in MBS
+*    WPuped();    Replace text in WPEDIT
+*    WPdled();    Kill WPEDIT
+*   *WPffoc();    Which WPEDIT has focus ?
+*    WPfoed();    Focus On/Off for WPEDIT
+*    WPmap_key(); Maps X11 keycode/state to Varkon symbol
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -47,9 +47,7 @@
 #include <X11/keysymdef.h>
 #endif
 
-extern MNUALT       smbind[];
-
-static short edmapk(XKeyEvent *keyev, short *sym, char *t);
+extern MNUALT smbind[];
 
 /*!******************************************************/
 
@@ -66,9 +64,9 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 
 /*      Create WPEDIT window.
  *
- *      In: pid   = Förälder.
- *          x     = Läge i X-led.
- *          y     = Läge i Y-led.   
+ *      In: pid   = Fï¿½rï¿½lder.
+ *          x     = Lï¿½ge i X-led.
+ *          y     = Lï¿½ge i Y-led.   
  *          dx    = Storlek i X-led.
  *          dy    = Storlek i Y-led.
  *          bw    = Border-width.
@@ -76,11 +74,11 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
  *          ntkn  = Max antal tecken.
  *          eid   = Pekare till utdata.
  *
- *      Ut: *eid = Giltigt entry i förälderns wintab.
+ *      Ut: *eid = Giltigt entry i fï¿½rï¿½lderns wintab.
  *
- *      Felkod: WP1302 = Föräldern %s finns ej.
- *              WP1312 = Föräldern %s är ej ett WPIWIN.
- *              WP1322 = För många subfönster i %s.
+ *      Felkod: WP1302 = Fï¿½rï¿½ldern %s finns ej.
+ *              WP1312 = Fï¿½rï¿½ldern %s ï¿½r ej ett WPIWIN.
+ *              WP1322 = Fï¿½r mï¿½nga subfï¿½nster i %s.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -94,7 +92,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     WPEDIT              *edtptr;
 
 /*
-***Fixa C-pekare till förälderns entry i wpwtab.
+***Fixa C-pekare till fï¿½rï¿½lderns entry i wpwtab.
 */
     if ( (winptr=WPwgwp(pid)) == NULL )
       {
@@ -102,8 +100,8 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
       return(erpush("WP1302",errbuf));
       }
 /*
-***Kolla att det är ett WPIWIN och fixa en pekare till
-***förälder-fönstret självt.
+***Kolla att det ï¿½r ett WPIWIN och fixa en pekare till
+***fï¿½rï¿½lder-fï¿½nstret sjï¿½lvt.
 */
     if ( winptr->typ != TYP_IWIN )
       {
@@ -112,8 +110,8 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
       }
     else iwinptr = (WPIWIN *)winptr->ptr;
 /*
-***Skapa ID för  ny edit, dvs fixa
-***en ledig plats i förälderns fönstertabell.
+***Skapa ID fï¿½r  ny edit, dvs fixa
+***en ledig plats i fï¿½rï¿½lderns fï¿½nstertabell.
 */
     i = 0;
     while ( i < WP_IWSMAX  &&  iwinptr->wintab[i].ptr != NULL ) ++i;
@@ -130,7 +128,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 */
     WPwced(iwinptr->id.x_id,x,y,dx,dy,bw,str,ntkn,&edtptr);
 /*
-***Länka in den i WPIWIN-fönstret.
+***Lï¿½nka in den i WPIWIN-fï¿½nstret.
 */
     iwinptr->wintab[*eid].typ = TYP_EDIT;
     iwinptr->wintab[*eid].ptr = (char *)edtptr;
@@ -138,7 +136,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     edtptr->id.w_id = *eid;
     edtptr->id.p_id =  pid;
 /*
-***Om WPIWIN-fönstret redan är mappat skall editen mappas nu.
+***Om WPIWIN-fï¿½nstret redan ï¿½r mappat skall editen mappas nu.
 */
     if ( iwinptr->mapped ) XMapWindow(xdisp,edtptr->id.x_id);
 
@@ -159,11 +157,11 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         short    ntkn,
         WPEDIT **outptr)
 
-/*      Skapar WPEDIT-fönster.
+/*      Skapar WPEDIT-fï¿½nster.
  *
- *      In: px_id  = Föräldra fönstrets X-id.
- *          x      = Läge i X-led.
- *          y      = Läge i Y-led.   
+ *      In: px_id  = Fï¿½rï¿½ldra fï¿½nstrets X-id.
+ *          x      = Lï¿½ge i X-led.
+ *          y      = Lï¿½ge i Y-led.   
  *          dx     = Storlek i X-led.
  *          dy     = Storlek i Y-led.
  *          bw     = Border-width.
@@ -188,10 +186,10 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     WPEDIT              *edtptr;
 
 /*
-***Skapa fönstret i X. Ramen samma färg som bakgrunden.
+***Skapa fï¿½nstret i X. Ramen samma fï¿½rg som bakgrunden.
 */
-    xwina.border_pixel      = WPgcol(WP_BGND);
-    xwina.background_pixel  = WPgcol(WP_BGND);
+    xwina.border_pixel      = WPgcol(WP_BGND1);
+    xwina.background_pixel  = WPgcol(WP_TOPS);
     xwina.override_redirect = True;
     xwina.save_under        = False;
 
@@ -202,9 +200,10 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
                             DefaultDepth(xdisp,xscr),
                             InputOutput,CopyFromParent,xwinm,&xwina);
 /*
-***Edit-fönster skall det kunna clickas i. 
+***Edit-fï¿½nster skall det kunna klickas i. Enter/Leave for tooltips.
 */
-    XSelectInput(xdisp,xwin_id,ButtonPressMask);
+    XSelectInput(xdisp,xwin_id,ButtonPressMask | ButtonReleaseMask |
+                               EnterWindowMask | LeaveWindowMask);
 /*
 ***Skapa en WPEDIT.
 */
@@ -232,6 +231,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     edtptr->curpos = 0;
     edtptr->fuse   = TRUE;
     edtptr->focus  = FALSE;
+    edtptr->tt_str[0] = '\0';
 
    *outptr = edtptr;
 
@@ -244,15 +244,15 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         bool WPxped(
         WPEDIT *edtptr)
 
-/*      Expose-rutin för WPEDIT.
+/*      Expose handler for WPEDIT.
  *
- *      In: edtptr = C-pekare till WPEDIT.
+ *      In: edtptr = C ptr to WPEDIT.
  *
- *      Ut: Inget.   
- *
- *      Fv: Alltid TRUE.
+ *      Return: Always TRUE.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
+ *
+ *      2007-06-03 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -261,44 +261,42 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     char str[V3STRLEN+1];
 
 /*
-***Beräkna textens läge.
+***Text position.
 */
     x =  WPstrl(" ");
     y =  WPftpy(edtptr->geo.dy);
 /*
-***Skriv ut den del av texten som syns i fönstret, dvs.
-***inte det som är utscrollat. Antal tillgängliga tecken-
-***positioner är i princip så många som får plats men vi
-***börjar alltid med en tom för sysn skull och reserverar
-***dessutom en tom på slutet för cursorn.
+***Skriv ut den del av texten som syns i fï¿½nstret, dvs.
+***inte det som ï¿½r utscrollat. Antal tillgï¿½ngliga tecken-
+***positioner ï¿½r i princip sï¿½ mï¿½nga som fï¿½r plats men vi
+***bï¿½rjar alltid med en tom fï¿½r sysn skull och reserverar
+***dessutom en tom pï¿½ slutet fï¿½r cursorn.
 */
     strcpy(str,&edtptr->str[edtptr->scroll]);
 
     tknf = (edtptr->geo.dx/WPstrl(" ")) - 2;
     if ( tknf > 0 ) str[tknf] = '\0';
 
+    XSetForeground(xdisp,xgc,WPgcol(WP_FGND));
+    XSetBackground(xdisp,xgc,WPgcol(0));
     WPwstr(edtptr->id.x_id,x,y,str);
 /*
-***Om fönstret har focus, även en cursor. Tecken 152 i font 1.
-***X-koordinat beräknas med font 0 aktiv men Y-koordinat med
-***font 1.
+***If the WPEDIT has focus, display a cursor by drawing
+***a vertical line 1 pixel wide.
 */
     if ( edtptr->focus  &&  edtptr->curpos >= 0 )
       {
-      x = x + (edtptr->curpos - edtptr->scroll)*WPstrl(" ") -1;
-      WPsfnt(1);
-      y = WPftpy(edtptr->geo.dy);
-      str[0] = 152; str[1] = '\0';
-      XDrawString(xdisp,edtptr->id.x_id,xgc,x,y,str,1);
-      WPsfnt(0);
+      x = x + (edtptr->curpos - edtptr->scroll)*WPstrl(" ") - 1;
+      y = 3;
+      XDrawLine(xdisp,edtptr->id.x_id,xgc,x,y,x,y+edtptr->geo.dy-3);
       }
 /*
-***Test av 3D-look.
+***Optional 3D frame.
 */
     if ( edtptr->geo.bw > 0 )
       WPd3db((char *)edtptr,TYP_EDIT);
 /*
-***Slut.
+***The end.
 */
     return(0);
   }
@@ -306,11 +304,11 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 /********************************************************/
 /*!******************************************************/
 
-        bool WPbted(
+        bool          WPbted(
         WPEDIT       *edtptr,
         XButtonEvent *butev)
 
-/*      Button-rutin för WPEDIT.
+/*      Button-rutin fï¿½r WPEDIT.
  *
  *      In: edtptr = C-pekare till WPEDIT.
  *          butev  = X-event.
@@ -318,7 +316,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
  *      Ut: Inget.   
  *
  *      FV: TRUE  = Eventet servat.
- *          FALSE = Eventet gäller ej detta fönster.
+ *          FALSE = Eventet gï¿½ller ej detta fï¿½nster.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -331,30 +329,35 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     WPEDIT  *actptr;
 
 /*
-***Om detta fönster inte har input-focus skall det 
-***ha det nu ! Det fönster som ev. hade det tidigare
-***skal då inte ha focus längre. För att säkert bli av
-***med cursorn suddar vi då hela fönstret och ritar om det.
-***Eftersom fokus-byte kan returnera TRUE sätts gamla
-***fönstrets symbol till SMBNONE så att ingen skall tro
-***att det är en tangenttryckning som genererat fokus-bytet.
+***Om detta fï¿½nster inte har input-focus skall det 
+***ha det nu ! Det fï¿½nster som ev. hade det tidigare
+***skall dï¿½ inte ha focus lï¿½ngre. Fï¿½r att sï¿½kert bli av
+***med cursorn suddar vi dï¿½ hela fï¿½nstret och ritar om det.
+***Eftersom fokus-byte kan returnera TRUE sï¿½tts gamla
+***fï¿½nstrets symbol till SMBNONE sï¿½ att ingen skall tro
+***att det ï¿½r en tangenttryckning som genererat fokus-bytet.
+***
+***The edit used in the WPMCWIN has no parent ID.
 */
     if ( edtptr->focus == FALSE )
       {
-      winptr = WPwgwp(edtptr->id.p_id);
-      iwinpt = (WPIWIN *)winptr->ptr;
-      actptr = WPffoc(iwinpt,FOCUS_EDIT);
-      if ( actptr != NULL )
+      if ( edtptr->id.p_id != (wpw_id)NULL )
         {
-        XClearWindow(xdisp,actptr->id.x_id);
-        WPfoed(actptr,FALSE);
-        actptr->symbol = SMBNONE;
+        winptr = WPwgwp(edtptr->id.p_id);
+        iwinpt = (WPIWIN *)winptr->ptr;
+        actptr = WPffoc(iwinpt,FOCUS_EDIT);
+        if ( actptr != NULL )
+          {
+          XClearWindow(xdisp,actptr->id.x_id);
+          WPfoed(actptr,FALSE);
+          actptr->symbol = SMBNONE;
+          }
         }
       WPfoed(edtptr,TRUE);
       return(TRUE);
       }
 /*
-***Om fönstret redan har input-focus handlar det om att
+***Om fï¿½nstret redan har input-focus handlar det om att
 ***placera cursorn.
 */
     else
@@ -375,14 +378,14 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 /********************************************************/
 /*!******************************************************/
 
-        bool WPcred(
-        WPEDIT         *edtptr,
-        XCrossingEvent *croev)
+        bool    WPcred(
+        WPEDIT *edtptr,
+        bool    enter)
 
-/*      Crossing-rutin för WPEDIT. Anropande rutin har
- *      konstaterat att eventet gäller detta fönster men 
- *      skickar med croev för att vi skall kunna avgöra
- *      om det är enter eller leave.
+/*      Crossing-rutin fï¿½r WPEDIT. Anropande rutin har
+ *      konstaterat att eventet gï¿½ller detta fï¿½nster men 
+ *      skickar med croev fï¿½r att vi skall kunna avgï¿½ra
+ *      om det ï¿½r enter eller leave.
  *
  *      In: edtptr = C-pekare till WPEDIT.
  *          croev  = X-crossing event.
@@ -390,47 +393,67 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
  *      Ut: Inget.   
  *
  *      FV: TRUE  = Eventet servat.
- *          FALSE = Eventet gäller ej detta fönster.
  *
- *      (C)microform ab 6/12/93 J. Kjellander
+ *      (C)2007-03-24, J. Kjellander
  *
  ******************************************************!*/
 
   {
+   int x,y;
+
 /*
-***För tillfället utnyttjas inte CrossingEvents i WPEDIT:s.
+***Enter => Order a tooltip in a few seconds if
+***there is one to display.
 */
-    return(FALSE);
+   if ( enter == TRUE )
+     {
+     if ( edtptr->tt_str[0] != '\0' )
+       {
+       WPgtmp(&x,&y);
+       WPorder_tooltip(x+5,y+10,edtptr->tt_str);
+       }
+     }
+/*
+***Leave => Remove ordered or active tooltip.
+*/
+   else
+     {
+     WPclear_tooltip();
+     }
+/*
+***The end.
+*/
+   return(TRUE);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        bool WPkeed(
+        bool       WPkeed(
         WPEDIT    *edtptr,
         XKeyEvent *keyev,
         int        slevel)
 
-/*      Key-rutin för WPEDIT. Servar eventet och returnerar
- *      status TRUE/FALSE beroende på vilken tangent som 
- *      tryckts ned och vilken service-nivå som angetts.
+/*      Keypress function for WPEDIT. Serves the event and
+ *      returns status TRUE/FALSE depending on which key was
+ *      pressed and what service level that was asked for.
  *
- *      In: edtptr = C-pekare till WPEDIT.
+ *      In: edtptr = C cptr to WPEDIT.
  *          keyev  = X-key event.
- *          slevel = Service-nivå.
+ *          slevel = Service level.
  *
- *          SLEVEL_ALL    => Inga servas lokalt.
+ *          SLEVEL_ALL    => Nothing served locally.
  *          SLEVEL_V3_INP => SMBCHAR + SMBBACKSP +
- *                           SMBLEFT + SMBRIGHT  servas lokalt.
- *          SLEVEL_MBS    => Dessutom SMBMAIN, SMBPOSM och SMBHELP
- *          SLEVEL_NONE   => Alla event servas lokalt.
+ *                           SMBLEFT + SMBRIGHT  served locally.
+ *          SLEVEL_MBS    => Also SMBMAIN, SMBPOSM and SMBHELP
+ *          SLEVEL_NONE   => All events served locally.
  *
- *      Ut: Inget.   
- *
- *      FV: TRUE  = Eventet servat.
- *          FALSE = Eventet gäller ej detta fönster.
+ *      FV: TRUE  = Event served.
+ *          FALSE = Event not in this window.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
+ *
+ *       2007-01-19 SMBENDL/SMBBEGL, J.Kjellander
  *
  ******************************************************!*/
 
@@ -444,33 +467,32 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     WPEDIT  *nxtptr;
 
 /*
-***Initiering.
+***Init.
 */
     tknant = strlen(edtptr->str);
     tknwin = edtptr->geo.dx/WPstrl(" ") - 2;
     servat = FALSE;
 /*
-***Mappa tangenttryckningen till V3-symbol.
-***Logga symbolen i editen.
+***Map keypress to Varkon internal symbol.
+***Save the symbol in the edit.
 */
-    edmapk(keyev,&symbol,&tkn);
+    WPmap_key(keyev,&symbol,&tkn);
     edtptr->symbol = symbol;
 /*
-***Vidtag åtgärd..
+***Process...
 */
     switch ( symbol )
       {
       case SMBCHAR:
 /*
-***Insert, finns det plats för fler tecken ?
-***Det finns det alltid om fuse = TRUE !
+***Insert, is there room for more characters ?
+***Yes, always if fuse = TRUE !
 */
       if ( !edtptr->fuse && (tknant >= edtptr->tknmax) ) XBell(xdisp,100);
 /*
-***Ja, kolla om det är första gången ett tecken kommer till detta
-***fönster, dvs om fuse = TRUE. Isåfall blir det inte vanlig insert
-***utan först suddning av gammal text och sedan insert. Om cursorn
-***inte står i pos 0 gäller dock detta inte.
+***Yes, check if this is the first time a character is recieved by this
+***WPEDIT, ie. if fuse = TRUE. In that case we first erase the old text
+***and then insert the new. This requires that the cursor is in pos 0.
 */
       else
         {          
@@ -487,7 +509,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         }
       break;
 /*
-***Backspace = sudda.
+***Backspace = erase character to the left of the cursor.
 */
       case SMBBACKSP:
       if ( edtptr->fuse ) edtptr->fuse = FALSE;
@@ -515,7 +537,21 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         edtptr->scroll = edtptr->curpos;
       break;
 /*
-***Pil till vänster.
+***Delete = erase character to the right of the cursor.
+*/
+      case SMBDELETE:
+      if ( edtptr->fuse ) edtptr->fuse = FALSE;
+
+      if ( tknant > 0  &&  edtptr->curpos < tknant )
+        {
+        for ( i=edtptr->curpos; i<tknant; i++)
+          edtptr->str[i] = edtptr->str[i+1];
+        tknant--;
+        }
+      else XBell(xdisp,100);
+      break;
+/*
+***Move cursor one step to the left.
 */
       case SMBLEFT:
       if ( edtptr->curpos > 0 )
@@ -526,7 +562,18 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
       else XBell(xdisp,100);
       break;
 /*
-***Pil till höger.
+***Move cursor to the beginning of the line.
+*/
+      case SMBBEGL:
+      if ( edtptr->curpos > 0 )
+        {
+        edtptr->curpos = 0;
+        edtptr->scroll = 0;
+        }
+      else XBell(xdisp,100);
+      break;
+/*
+***Move cursor one step to the right.
 */
       case SMBRIGHT:
       if ( edtptr->curpos < tknant )
@@ -537,7 +584,19 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
       else XBell(xdisp,100);
       break;
 /*
-***Pil upp.
+***Move cursor to the end of the line.
+*/
+      case SMBENDL:
+      if ( edtptr->curpos < tknant )
+        {
+        edtptr->curpos = tknant;
+        if ( tknant - tknwin > 0 ) edtptr->scroll = tknant - tknwin;
+        else                       edtptr->scroll = 0;
+        }
+      else XBell(xdisp,100);
+      break;
+/*
+***Move focus to previous edit. UpArrow.
 */
       case SMBUP:
       winptr = WPwgwp(edtptr->id.p_id);
@@ -549,10 +608,10 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
            slevel == SLEVEL_V3_INP ) servat = TRUE;
       break;
 /*
-***Pil ner.
+***Move focus to next edit. TAB and DownArrow.
 */
       case SMBDOWN:
-      case SMBRETURN:
+      case SMBMAIN:
       winptr = WPwgwp(edtptr->id.p_id);
       iwinpt = (WPIWIN *)winptr->ptr;
       nxtptr = WPffoc(iwinpt,NEXT_EDIT);
@@ -562,28 +621,33 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
            slevel == SLEVEL_V3_INP ) servat = TRUE;
       break;
 /*
-***Huvudmenyn <TAB>, Help <CTRL>a och Pos-menyn <CTRL>b.
+***Return.
 */
-      case SMBMAIN:
+      case SMBRETURN:
+      if ( slevel == SLEVEL_MBS  ||
+           slevel == SLEVEL_V3_INP ) servat = TRUE;
+      break;
+/*
+***Help <CTRL>a and Pos menu <CTRL>b.
+*/
       case SMBPOSM:
       case SMBHELP:
       if ( slevel == SLEVEL_V3_INP ) servat = TRUE;
       break;
       }
 /*
-***Edit-fönstrets text-sträng är nu editerad.
-***Sudda fönstret och gör expose.
+***The WPEDIT window string is now edited.
+***Erase window and expose.
 */
     XClearWindow(xdisp,edtptr->id.x_id);
     WPxped(edtptr);
 /*
-***Om begärd service-nivå är att alla key-events skall returneras
-***servade (inga servas lokalt) sätter vi servat = TRUE oavsett
-***vilken tangent det handlade om.
+***If the service level asked for is SLEVEL_ALL set
+***the result = TRUE irrespective of what happened.
 */
     if ( slevel == SLEVEL_ALL ) servat = TRUE;
 /*
-***Slut.
+***The end.
 */
     return(servat);
   }
@@ -596,17 +660,17 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         DBint  edit_id,
         char  *str)
 
-/*      Get-rutin för WPEDIT.
+/*      Get-rutin fï¿½r WPEDIT.
  *
- *      In: iwin_id = Huvudfönstrets id.
- *          edit_id = Edit-fönstrets id.
+ *      In: iwin_id = Huvudfï¿½nstrets id.
+ *          edit_id = Edit-fï¿½nstrets id.
  *
  *      Ut: str = Aktuell text.
  *
- *      Felkod: WP1162 = Föräldern %s finns ej.
- *              WP1172 = Föräldern %s ej WPIWIN.
+ *      Felkod: WP1162 = Fï¿½rï¿½ldern %s finns ej.
+ *              WP1172 = Fï¿½rï¿½ldern %s ej WPIWIN.
  *              WP1182 = Knappen %s finns ej.
- *              WP1192 = %s är ej en knapp.
+ *              WP1192 = %s ï¿½r ej en knapp.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -619,7 +683,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     WPEDIT *editptr;
 
 /*
-***Fixa C-pekare till förälderns entry i wpwtab.
+***Fixa C-pekare till fï¿½rï¿½lderns entry i wpwtab.
 */
     if ( (winptr=WPwgwp((wpw_id)iwin_id)) == NULL )
       {
@@ -627,7 +691,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
       return(erpush("WP1162",errbuf));
       }
 /*
-***Kolla att det är ett WPIWIN.
+***Kolla att det ï¿½r ett WPIWIN.
 */
     if ( winptr->typ != TYP_IWIN )
       {
@@ -639,8 +703,8 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 */
     iwinptr = (WPIWIN *)winptr->ptr;
 /*
-***Kolla om subfönstret med angivet id finns och är
-***av rätt typ.
+***Kolla om subfï¿½nstret med angivet id finns och ï¿½r
+***av rï¿½tt typ.
 */
     if ( iwinptr->wintab[(wpw_id)edit_id].ptr == NULL )
       {
@@ -658,7 +722,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 */
     editptr = (WPEDIT *)iwinptr->wintab[(wpw_id)edit_id].ptr;
 /*
-***Returnera sträng.
+***Returnera strï¿½ng.
 */
     strcpy(str,editptr->str);
 
@@ -668,28 +732,73 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 /********************************************************/
 /*!******************************************************/
 
-        short WPuped(
-        WPEDIT *edtptr,
-        char   *newstr)
+        short  WPuped(
+        DBint  iwin_id,
+        DBint  edit_id,
+        char  *newstr)
 
-/*      Byter ut texten i ett WPEDIT-fönster.
+/*      Replaces the text in a WPEDIT, UPD_EDIT() in MBS.
  *
- *      In: edtptr = Pekare till WPEDIT
- *          newstr = Ny text
+ *      In: iwin_id = Parent (WPIWIN) window
+ *          edit_id = Child (WPEDIT) window
+ *          newstr  = New string
  *
- *      Ut: Inget.
+ *      Return: WP1162 = Parent %s does not exist.
+ *              WP1172 = Parent %s is not a WPIWIN.
+ *              WP1182 = Edit %s does not exist.
+ *              WP1192 = %s is not an edit.
  *
- *      Felkod: .
- *
- *      (C)microform ab 1996-12-12 J. Kjellander
+ *      (C)2007-02-02- J.Kjellander
  *
  ******************************************************!*/
 
   {
-   int ntkn;
+   int     ntkn;
+   char    errbuf[80];
+   WPWIN  *winptr;
+   WPIWIN *iwinptr;
+   WPEDIT *edtptr;
 
 /*
-***Kolla stränglängden.
+***Get a C-ptr to the parent entry in wpwtab[].
+*/
+   if ( (winptr=WPwgwp((wpw_id)iwin_id)) == NULL )
+     {
+     sprintf(errbuf,"%d",(int)iwin_id);
+     return(erpush("WP1162",errbuf));
+     }
+/*
+***Is it a WPIWIN.
+*/
+   if ( winptr->typ != TYP_IWIN )
+     {
+     sprintf(errbuf,"%d",(int)iwin_id);
+     return(erpush("WP1172",errbuf));
+     }
+/*
+***Get a C-ptr to the WPIWIN.
+*/
+   iwinptr = (WPIWIN *)winptr->ptr;
+/*
+***Check for the existense of the WPEDIT.
+*/
+   if ( iwinptr->wintab[(wpw_id)edit_id].ptr == NULL )
+     {
+     sprintf(errbuf,"%d",(int)edit_id);
+     return(erpush("WP1182",errbuf));
+     }
+
+   if ( iwinptr->wintab[(wpw_id)edit_id].typ != TYP_EDIT )
+     {
+     sprintf(errbuf,"%d",(int)edit_id);
+     return(erpush("WP1192",errbuf));
+     }
+/*
+***Get a C-ptr to the WPEDIT.
+*/
+   edtptr = (WPEDIT *)iwinptr->wintab[(wpw_id)edit_id].ptr;
+/*
+***Check strin length.
 */
     ntkn = strlen(newstr);
     if ( ntkn < 0 ) ntkn = 0;
@@ -697,18 +806,17 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     if ( ntkn > edtptr->tknmax ) ntkn = edtptr->tknmax;
     newstr[ntkn] = '\0';
 /*
-***Lagra den nya texten i editen.
+***Update the WPEIT.
 */
     strcpy(edtptr->str,newstr);
 
     edtptr->scroll = 0;
     edtptr->curpos = 0;
     edtptr->fuse   = TRUE;
-/*
-***Uppdatera skärmen.
-*/
     WPxped(edtptr);
-
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -718,7 +826,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         short WPdled(
         WPEDIT *edtptr)
 
-/*      Dödar en WPEDIT.
+/*      Dï¿½dar en WPEDIT.
  *
  *      In: edttptr = C-pekare till WPEDIT.
  *
@@ -732,7 +840,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 
   {
 /*
-***Lämna tillbaks dynamiskt allokerat minne.
+***Lï¿½mna tillbaks dynamiskt allokerat minne.
 */
     v3free((char *)edtptr,"WPdled");
     return(0);
@@ -746,13 +854,13 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         int     code)
 
 /*      Letar efter WPEDIT:s i ett WPIWIN och returnerar
- *      en pekare till det som efterfrågats eller NULL om
+ *      en pekare till det som efterfrï¿½gats eller NULL om
  *      det inte finns.
  *
  *      In: iwinptr = C-pekare till WPIWIN.
- *          code    = FIRST_EDIT  => Första i wintab oavsett fokus.
+ *          code    = FIRST_EDIT  => Fï¿½rsta i wintab oavsett fokus.
  *                  = NEXT_EDIT   => 1:a efter den som har fokus
- *                  = PREV_EDIT   => 1:a före den som har fokus
+ *                  = PREV_EDIT   => 1:a fï¿½re den som har fokus
  *                  = FOCUS_EDIT  => Den som har fokus.
  *
  *      Ut: Inget.   
@@ -770,12 +878,12 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     WPEDIT *edtptr;
 
 /*
-***Leta igenom alla sub-fönster efter WPEDIT.
+***Leta igenom alla sub-fï¿½nster efter WPEDIT.
 */
     switch ( code )
       {
 /*
-***Första.
+***Fï¿½rsta.
 */
       case FIRST_EDIT:
       for ( i=0; i<WP_IWSMAX; ++i )
@@ -797,7 +905,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         }
       return(NULL);
 /*
-***Nästa.
+***Nï¿½sta.
 */
       case NEXT_EDIT:
       edtptr = WPffoc(iwinptr,FOCUS_EDIT);
@@ -816,7 +924,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
       edtptr = WPffoc(iwinptr,FIRST_EDIT);
       return(edtptr);
 /*
-***Föregående.
+***Fï¿½regï¿½ende.
 */
       case PREV_EDIT:
       edtptr = WPffoc(iwinptr,FOCUS_EDIT);
@@ -859,10 +967,10 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
         WPEDIT *edtptr,
         bool    mode)
 
-/*      Fokus-rutin för WPEDIT.
+/*      Fokus-rutin fï¿½r WPEDIT.
  *
  *      In: edtptr = C-pekare till WPEDIT.
- *          mode   = TRUE  => Fokus på.
+ *          mode   = TRUE  => Fokus pï¿½.
  *                   FALSE => Fokus av.
  *
  *      Ut: Inget.   
@@ -876,7 +984,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
   {
 
 /*
-***Fokus PÅ !
+***Fokus Pï¿½ !
 */
     if ( mode == TRUE )
       {
@@ -888,11 +996,11 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 */
     else                            
       {
-      XSetWindowBorder(xdisp,edtptr->id.x_id,WPgcol(WP_BGND));
+      XSetWindowBorder(xdisp,edtptr->id.x_id,WPgcol(WP_BGND1));
       edtptr->focus = FALSE;
       }
 /*
-***För att resultatet skall synas (cursorn) krävs nu ett expose.
+***Fï¿½r att resultatet skall synas (cursorn) krï¿½vs nu ett expose.
 */
     WPxped(edtptr);
 
@@ -902,12 +1010,12 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 /********************************************************/
 /*!******************************************************/
 
- static short edmapk(
+        void       WPmap_key(
         XKeyEvent *keyev, 
         short     *sym,
         char      *t)
 
-/*      Översätter keycode och state i ett key-event
+/*      ï¿½versï¿½tter keycode och state i ett key-event
  *      till en V3-symbol samt eventuellt ASCII-tecken.
  *
  *      In: keyev  = Pekare till key-event.
@@ -916,13 +1024,11 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
  *
  *      Ut: *sym    = Motsvarande V3-symbol, tex. SMBUP.
  *          *t      = ASCII-kod om symbol = SMBCHAR.
- * 
- *      Fv:  0.
  *
  *      (C)microform ab 10/12/93 J. Kjellander
  *
  *      1998-04-21 8-Bitars ASCII, J.Kjellander
- *      1998-04-21 8-Bitars ASCII, R.Svedin
+ *      2007-02-03 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -937,7 +1043,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 
 /*
 ***Numlock = Mod2Mask har det visat
-***sig under ODT, detta är inte nödvändigtvis standard.
+***sig under ODT, detta ï¿½r inte nï¿½dvï¿½ndigtvis standard.
 */
     if ( ((keyev->state & Mod2Mask)  > 0) ) numlock = TRUE;
 /*
@@ -945,46 +1051,34 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
 */
     if ( ((keyev->state & ShiftMask)  > 0) ) shift = TRUE;
 /*
-***Vi börjar med att använda LookupString för att ta reda på
-***vilken keysym det var. Vi kunde använda LookupKeysym() men
-***LookupString() tar hänsyn till shift, numlock etc. åt oss
-***på ett bättre sätt (hårdvaruoberoende).
+***Vi bï¿½rjar med att anvï¿½nda LookupString fï¿½r att ta reda pï¿½
+***vilken keysym det var. Vi kunde anvï¿½nda LookupKeysym() men
+***LookupString() tar hï¿½nsyn till shift, numlock etc. ï¿½t oss
+***pï¿½ ett bï¿½ttre sï¿½tt (hï¿½rdvaruoberoende).
 */
     ntkn = XLookupString(keyev,tknbuf,10,&keysym,&costat);
 /*
-***Vissa symboler skall mappas på ett för V3 speciellt sätt.
+***Vissa symboler skall mappas pï¿½ ett fï¿½r V3 speciellt sï¿½tt.
 */
     symbol = SMBNONE;
 
     switch ( keysym )
       {
 /*
-***å, ä och ö.
+***ï¿½, ï¿½ och ï¿½.
 */
-      case XK_aring:      symbol = SMBCHAR; tkn = 'å' ; break;
-      case XK_Aring:      symbol = SMBCHAR; tkn = 'Å' ; break;
-      case XK_adiaeresis: symbol = SMBCHAR; tkn = 'ä' ; break;
-      case XK_Adiaeresis: symbol = SMBCHAR; tkn = 'Ä' ; break;
-      case XK_odiaeresis: symbol = SMBCHAR; tkn = 'ö' ; break;
-      case XK_Odiaeresis: symbol = SMBCHAR; tkn = 'Ö' ; break;
+      case XK_aring:      symbol = SMBCHAR; tkn = 'ï¿½' ; break;
+      case XK_Aring:      symbol = SMBCHAR; tkn = 'ï¿½' ; break;
+      case XK_adiaeresis: symbol = SMBCHAR; tkn = 'ï¿½' ; break;
+      case XK_Adiaeresis: symbol = SMBCHAR; tkn = 'ï¿½' ; break;
+      case XK_odiaeresis: symbol = SMBCHAR; tkn = 'ï¿½' ; break;
+      case XK_Odiaeresis: symbol = SMBCHAR; tkn = 'ï¿½' ; break;
 /*
-***Backspace och return (samt enter).
+***Backspace, delete och return (samt enter).
 */
       case XK_BackSpace:  symbol = SMBBACKSP; break;
       case XK_Return:     symbol = SMBRETURN; break;
-/*
-***Delete-tangenten skall i shiftad version mappas
-***till '.' Med normal shift mappas den till KP_Separator
-***och med numlock inte alls.
-*/
-      case XK_Delete:
-      if ( numlock == TRUE )
-        {
-        symbol = SMBCHAR;
-        tkn = '.';
-        }
-      else symbol = SMBBACKSP; 
-      break;
+      case XK_Delete:     symbol = SMBDELETE; break;
 /*
 ***Keypad-separator skall mappas till '.'
 */
@@ -997,8 +1091,14 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
       case XK_Left:   symbol = SMBLEFT;  break;
       case XK_Right:  symbol = SMBRIGHT; break;
 /*
-***Övriga tangenter använder vi LookupString():s mappning.
-***Vissa ASCII-koder under 32 är tillåtna.
+***End of line and beginning of line.
+*/
+      case XK_End:    symbol = SMBENDL;  break;
+      case XK_Begin:  symbol = SMBBEGL;  break;
+      case XK_Home:   symbol = SMBBEGL;  break;
+/*
+***ï¿½vriga tangenter anvï¿½nder vi LookupString():s mappning.
+***Vissa ASCII-koder under 32 ï¿½r tillï¿½tna.
 */
       default:
       if ( ntkn == 1 )
@@ -1029,7 +1129,7 @@ static short edmapk(XKeyEvent *keyev, short *sym, char *t);
     *sym = symbol;
     *t   = tkn;
 
-    return(0);
+    return;
   }
 
 /********************************************************/

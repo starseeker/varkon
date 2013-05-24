@@ -57,7 +57,7 @@
 #include "../../GE/include/GE.h"
 /*#include "../../GP/include/GP.h"*/
 
-#ifdef V3_X11
+#ifdef UNIX
 #include <X11/Xlib.h>
 #include "../../WP/include/WP.h"
 #endif
@@ -85,7 +85,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren LST_INI.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -108,7 +108,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren LST_EXI.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -131,7 +131,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren LST_LIN.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -154,7 +154,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren PSH_PMT.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -177,7 +177,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren POP_PMT.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -200,7 +200,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren CRE_TSTR.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -224,7 +224,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren CRE_MEN.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *          extern proc_pc => Antal parametrar.
  *
  *      Ut: Inget.
@@ -248,7 +248,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren PSH_MEN.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -271,7 +271,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren POP_MEN.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -294,7 +294,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar proceduren GET_MEN.
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
@@ -331,7 +331,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar funktionen GET_TSTR.
  *
- *      In: Global func_pv  => Pekare till array med parametervärden.
+ *      In: Global func_pv  => Pekare till array med parametervï¿½rden.
  *          Global func_vp  => Pekare till resultat.
  *
  *      Ut: Global*func_vp  = Referens.
@@ -357,7 +357,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar funktionen GET_ALT.
  *
- *      In: Global func_pv  => Pekare till array med parametervärden.
+ *      In: Global func_pv  => Pekare till array med parametervï¿½rden.
  *          Global func_vp  => Pekare till resultat.
  *
  *      Ut: Global*func_vp  = Referens.
@@ -382,7 +382,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar funktionen INPMT.
  *
- *      In: Global func_pv  => Pekare till array med parametervärden.
+ *      In: Global func_pv  => Pekare till array med parametervï¿½rden.
  *          Global func_vp  => Pekare till resultat.
  *
  *      Ut: Global*func_vp  = Referens.
@@ -410,7 +410,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar funktionen INFNAME.
  *
- *      In: Global func_pv  => Pekare till array med parametervärden.
+ *      In: Global func_pv  => Pekare till array med parametervï¿½rden.
  *          Global func_vp  => Pekare till resultat.
  *
  *      Ut: Global*func_vp  = Referens.
@@ -456,8 +456,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /*
 ***Get current mouse position in screen coordinates.
 */
-#ifdef V3_X11
-
+#ifdef UNIX
    WPgtmp(&intx,&inty);
 #endif
 #ifdef WIN32
@@ -482,7 +481,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 ***Relative to application main window ?
 */
      case 1:
-#ifdef V3_X11
+#ifdef UNIX
      gwinpt = (WPGWIN *)wpwtab[GWIN_MAIN].ptr;
      WPgtwp(gwinpt->id.x_id,&main_x,&main_y);
 #endif
@@ -498,7 +497,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 */
      case 2:
      gwinpt = (WPGWIN *)wpwtab[GWIN_MAIN].ptr;
-#ifdef V3_X11
+#ifdef UNIX
      WPgtwp(gwinpt->id.x_id,&gra_x,&gra_y);
      func_vp->lit.vec_va.x_val = (DBfloat)(intx - gra_x);
      func_vp->lit.vec_va.y_val = (DBfloat)(inty - gra_y);
@@ -520,7 +519,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 */
      case 3:
      gwinpt = (WPGWIN *)wpwtab[GWIN_MAIN].ptr;
-#ifdef V3_X11
+#ifdef UNIX
      WPgtwp(gwinpt->id.x_id,&gra_x,&gra_y);
      intx = intx - gra_x;
      inty = gwinpt->geo.dy - (inty - gra_y);
@@ -601,38 +600,33 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evscr2()
 
-/*      Evaluerar funktionen SCREEN_2.
+/*      Evaluates function SCREEN_2().
  *
- *      In:   extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
+ *      In:   extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      FV: Returnerar anropade rutiners status.
  *
  *      (C)microform ab 1998-03-23 J. Kjellander
  *
  *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      2007-08-01 1.19, J.Kjellander
  *
  ******************************************************!*/
 
  {
    short   status;
    int     ix1,iy1,ix2,iy2,rubmod;
-   WPGWIN *gwinpt;
+   wpw_id  grw_id;
    PMLITVA litval;
 
 /*
-***Hämta in 2 koordinater.
+***Hï¿½mta in 2 koordinater.
 */
    rubmod = proc_pv[4].par_va.lit.int_va;
    if ( rubmod < 0 ) rubmod = 0;
    if ( rubmod > 3 ) rubmod = 3;
-#ifdef V3_X11
-   status = WPgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
-#endif
-#ifdef WIN32
-   status = (short)msgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
-#endif
+
+   status = WPgtsw(&grw_id,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
 /*
 ***REJECT eller GOMAIN skall returnera p1 = p2.
 */
@@ -643,22 +637,24 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /*
 ***Skriv resultatet till MBS-variabler.
 */
-   litval.lit.int_va = gwinpt->id.w_id;
+   litval.lit.int_va = grw_id;
    inwvar(proc_pv[1].par_ty,
-	      proc_pv[1].par_va.lit.adr_va,0,NULL,&litval);
+              proc_pv[1].par_va.lit.adr_va,0,NULL,&litval);
 
    litval.lit.vec_va.x_val = (v2float)ix1;
    litval.lit.vec_va.y_val = (v2float)iy1;
    litval.lit.vec_va.z_val = 0.0;
    inwvar(proc_pv[2].par_ty,
-	      proc_pv[2].par_va.lit.adr_va,0,NULL,&litval);
+              proc_pv[2].par_va.lit.adr_va,0,NULL,&litval);
 
    litval.lit.vec_va.x_val = (v2float)ix2;
    litval.lit.vec_va.y_val = (v2float)iy2;
    litval.lit.vec_va.z_val = 0.0;
    inwvar(proc_pv[3].par_ty,
-	      proc_pv[3].par_va.lit.adr_va,0,NULL,&litval);
-
+              proc_pv[3].par_va.lit.adr_va,0,NULL,&litval);
+/*
+***The end.
+*/
    return(0);
  }
 
@@ -690,7 +686,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
      PMLITVA litva;
 
 /*
-***Läs position och pektecken.
+***Lï¿½s position och pektecken.
 */
     if ( (status=EXpos(&fx,&fy,&pektkn) ) != 0 ) return(status);
 /*
@@ -699,12 +695,12 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
     litva.lit.str_va[0] = pektkn;
     litva.lit.str_va[1] = '\0';
 /*
-***Skriv parametervärdet till motsvarande MBS-variabel.
+***Skriv parametervï¿½rdet till motsvarande MBS-variabel.
 */
     if ( func_pc == 1 )
       inwvar(func_pv[1].par_ty,func_pv[1].par_va.lit.adr_va,0,NULL,&litva);
 /*
-***Returnera positionen som funktionsvärde.
+***Returnera positionen som funktionsvï¿½rde.
 */
     func_vp->lit.vec_va.x_val = (v2float)fx;
     func_vp->lit.vec_va.y_val = (v2float)fy;
@@ -720,11 +716,9 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evpos2()
 
-/*      Evaluerar funktionen POS_2.
+/*      Evaluates function POS_2().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
+ *      In: extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      FV: Returnerar anropade rutiners status.
  *
@@ -736,33 +730,46 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
  {
+   char    errbuf[V3STRLEN];
    short   status;
    int     ix1,iy1,ix2,iy2,rubmod;
    v2float mx1,my1,mx2,my2;
+   wpw_id  grw_id;
+   WPWIN  *winptr;
    WPGWIN *gwinpt;
    PMLITVA litval;
 
 /*
-***Hämta in 2 koordinater.
+***Get 2 coordinates.
 */
    rubmod = proc_pv[3].par_va.lit.int_va;
    if ( rubmod < 0 ) rubmod = 0;
    if ( rubmod > 3 ) rubmod = 3;
-#ifdef V3_X11
-   status = WPgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
-#endif
-#ifdef WIN32
-   status = (short)msgtsw(&gwinpt,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
-#endif
+
+   status = WPgtsw(&grw_id,&ix1,&iy1,&ix2,&iy2,rubmod,FALSE);
 /*
-***REJECT eller GOMAIN skall returnera p1 = p2.
+***Translate window ID to C pointer. This function only
+***supports WPGWIN's.
+*/
+   if ( (winptr=WPwgwp((wpw_id)grw_id)) != NULL  &&
+         winptr->typ == TYP_GWIN )
+     {
+     gwinpt = (WPGWIN *)winptr->ptr;
+     }
+   else
+     {
+     sprintf(errbuf,"%d",grw_id);
+     return(erpush("WP1382",errbuf));
+     }
+/*
+***REJECT or GOMAIN returnes p1 = p2.
 */
    if ( status < 0 )
      {
      mx1 = mx2 = my1 = my2 = 0.0;
      }
 /*
-***Transformera till modellkoordinater.
+***Transform to model coordinates.
 */
    else
      {
@@ -781,20 +788,22 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
                       (gwinpt->vy.scrwin.ymax - gwinpt->vy.scrwin.ymin);
      }
 /*
-***Skriv resultatet till MBS-variabler.
+***Write result to MBS-variables.
 */
    litval.lit.vec_va.x_val = mx1;
    litval.lit.vec_va.y_val = my1;
    litval.lit.vec_va.z_val = 0.0;
    inwvar(proc_pv[1].par_ty,
-	      proc_pv[1].par_va.lit.adr_va,0,NULL,&litval);
+              proc_pv[1].par_va.lit.adr_va,0,NULL,&litval);
 
    litval.lit.vec_va.x_val = mx2;
    litval.lit.vec_va.y_val = my2;
    litval.lit.vec_va.z_val = 0.0;
    inwvar(proc_pv[2].par_ty,
-	      proc_pv[2].par_va.lit.adr_va,0,NULL,&litval);
-
+              proc_pv[2].par_va.lit.adr_va,0,NULL,&litval);
+/*
+***The end.
+*/
    return(0);
  }
 
@@ -835,7 +844,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
     if ( (status=EXidnt(&typmask,func_vp->lit.ref_va,&end,&right) ) != 0 )
       return( status );
 /*
-***Ände och sida till PMLITVA.
+***ï¿½nde och sida till PMLITVA.
 */
     if ( end == TRUE ) val1.lit.int_va = 1;
     else               val1.lit.int_va = 0;
@@ -859,15 +868,15 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evidn2()
 
-/*      Evaluerar funktionen IDENT.
+/*      Evaluates function IDENT_2().
  *
- *      In:   extern proc_pv => Pekare till array med parametervärden
+ *      In:   extern proc_pv => Pekare till array med parametervï¿½rden
  *
  *      Ut: Inget.
  *
  *      FV: Returnerar anropade rutiners status.
  *
- *      Felkoder: IN5422 = För många ID:n
+ *      Felkoder: IN5422 = Fï¿½r mï¿½nga ID:n
  *
  *      (C)microform ab 18/5/92 J. Kjellander
  *
@@ -878,7 +887,8 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
   {
     DBetype typ,typmask,typvek[IGMAXID];
-    short   i,nok,status,hitmod,maxref,idant;
+    short   nok,status,hitmod,maxref;
+    int     i,idant;
     DBptr   la,lavek[IGMAXID];
     PMLITVA litval;
     PMREFVA idvek[MXINIV];
@@ -890,12 +900,12 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
     hitmod  = (short)proc_pv[2].par_va.lit.int_va;
     maxref  = (short)proc_pv[3].par_va.lit.int_va;
 /*
-***Se till att maxref ligger inom rimliga gränser.
+***Se till att maxref ligger inom rimliga grï¿½nser.
 */
     if      ( maxref < 0 )       maxref = 0;
     else if ( maxref > IGMAXID ) maxref = IGMAXID;
 /*
-***Hämta ID:n med fönster.
+***Hï¿½mta ID:n med fï¿½nster.
 */
     idant = maxref;
     if ( (typvek[0]=typmask) == PRTTYP ) typvek[0] = ALLTYP;
@@ -903,7 +913,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
     if ( status == REJECT  ||  status == GOMAIN ) idant = -1;
     else if ( status < 0 ) return(status);
 /*
-***Returnera parameter 4, idmat. Om parter begärts returnerar
+***Returnera parameter 4, idmat. Om parter begï¿½rts returnerar
 ***vi bara partid:n.
 */
     nok = 0;
@@ -927,13 +937,13 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
          }
        }
 /*
-***Returnera parameter 5 antal godkända ID:n.
+***Returnera parameter 5 antal godkï¿½nda ID:n.
 */
     litval.lit.int_va = nok;
     inwvar(proc_pv[5].par_ty,
-		   proc_pv[5].par_va.lit.adr_va,0,NULL,&litval);
+                   proc_pv[5].par_va.lit.adr_va,0,NULL,&litval);
 /*
-***Slut.
+***The end.
 */
     return(0);
   }
@@ -945,7 +955,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
 /*      Evaluerar funktionen HIGHLIGHT.
  *
- *      In: extern pv   => Pekare till array med parametervärden
+ *      In: extern pv   => Pekare till array med parametervï¿½rden
  *          extern pc   => Antal parametrar.
  *
  *      Ut: Inget.

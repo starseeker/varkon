@@ -19,7 +19,7 @@
 *    DBfree_patches();       Free's allocated patch memory
 *
 *    DBread_getrimcurves();  Read geometrical trimcurves
-*    DBread_getrimcurves();  Free's allocated trimcurve memory
+*    DBfree_getrimcurves();  Free's allocated trimcurve memory
 *    DBcreate_segarrs();     Allocates memory for trimcurves
 *
 *    DBadd_sur_grwire();     Writes wireframe representation
@@ -53,15 +53,19 @@
 #include "../include/DB.h"
 #include "../include/DBintern.h"
 
+#ifdef UNIX
+#include <GL/gl.h>
+#include <GL/glu.h> /*SLTEST*/
+#endif
 /*
 ***Prototypes for internal functions.
 */
-static DBptr    wrgseg (short nseg, DBSeg *segdat);
-static DBSeg   *rdgseg(short nseg, DBptr la);
-static DBstatus dlgseg(short nseg,DBptr la);
-static DBstatus gmwrnp(DBPatchNU *np, DBptr *pla);
-static DBstatus gmrdnp(DBPatchNU *np);
-static DBstatus gmrlnp(DBptr la);
+static DBptr    write_segments (int nseg, DBSeg *segdat);
+static DBSeg   *read_segments(int nseg, DBptr la);
+static DBstatus delete_segments(int nseg,DBptr la);
+static DBstatus write_NURBS(DBPatchNU *np, DBptr *pla);
+static DBstatus read_NURBS(DBPatchNU *np);
+static DBstatus delete_NURBS(DBptr la);
 
 /*!******************************************************/
 
@@ -96,13 +100,15 @@ static DBstatus gmrlnp(DBptr la);
  *      1997-03-05 GMPOSTV1, J.Kjellander
  *      1997-11-05 DBPatchNU, J.Kjellander
  *      2007-01-01 GMPOSTV2, J.Kjellander
+ *      2007-01-11 Trimcurves, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    DBptr   *tabpek,*ptab,tabla,la;
-    DBint    nu,nv,i,j,tabsiz;
-    DBPatch *patpek,*spek;
+    DBptr    *tabpek,*ptab,tabla,la;
+    DBint     nu,nv,i,j,size,tabsiz;
+    DBPatch  *patpek,*spek;
+    DBSegarr *saptr;
 
 /*
 ***Allocate C-memory for the DB patch table.
@@ -196,7 +202,7 @@ static DBstatus gmrlnp(DBptr la);
           break;
 
           case NURB_PAT:
-          gmwrnp((DBPatchNU *)patpek->spek_c,&la);
+          write_NURBS((DBPatchNU *)patpek->spek_c,&la);
           patpek->spek_gm = la;
           wrdat1((char *)patpek,ptab,sizeof(DBPatch));
           break;
@@ -232,18 +238,24 @@ static DBstatus gmrlnp(DBptr la);
     surpek->ptab_su = tabla;
     v3free(tabpek,"DBinsert_surface");
 /*
-***Ännu finns det ingen grafisk representation. Varken grafiska
-***segment eller B-Splineyta.
+***If trimcurves exist, store them now.
 */
-    for ( i=0; i< 6; ++i )
+    if ( surpek->ntrim_su > 0 )
       {
-      surpek->ngseg_su[i] = 0;
-      surpek->pgseg_su[i] = DBNULL;
-      }
+      saptr = ptrim;
 
-    surpek->uorder_su = surpek->vorder_su = 0;
-    surpek->nku_su = surpek->nkv_su = 0;
-    surpek->pkvu_su = surpek->pkvv_su = surpek->pcpts_su = DBNULL;
+      for ( i=0; i<surpek->ntrim_su; ++i )
+        {
+        saptr->segptr_db = write_segments(saptr->nseg,saptr->segptr_c);
+      ++saptr;
+        }
+
+      size = surpek->ntrim_su*sizeof(DBSegarr);
+      if ( size <= PAGSIZ ) wrdat1((char *)ptrim,&la,size);
+      else                  wrdat2((char *)ptrim,&la,size);
+      surpek->getrim_su = la;
+      }
+    else surpek->getrim_su = DBNULL;
 /*
 ***Type and DBSurf version.
 */
@@ -299,7 +311,7 @@ static DBstatus gmrlnp(DBptr la);
       V3MOME(hedpek,surpek,sizeof(DBSurf));
       break;
 /*
-***GMSUR1 has no trimcurves.
+***GMSUR1 has no trimcurves or linewidth.
 */
       case GMPOSTV1:
       V3MOME(hedpek,surpek,sizeof(GMSUR1));
@@ -309,10 +321,11 @@ static DBstatus gmrlnp(DBptr la);
       surpek->grwborder_su     = DBNULL;
       surpek->ngrwiso_su       = 0;
       surpek->grwiso_su        = DBNULL;
-      surpek->vertextype_su    = -1;
+      surpek->vertextype_su    = GL_MAP2_VERTEX_3;
       surpek->grstrim_su       = DBNULL;
       surpek->nustep_su        = -1.0;
       surpek->nvstep_su        = -1.0;
+      surpek->wdt_su           = 0.0;
       break;
 /*
 ***GMSUR0 has no NURBS approximation.
@@ -336,6 +349,7 @@ static DBstatus gmrlnp(DBptr la);
       surpek->grstrim_su       = DBNULL;
       surpek->nustep_su        = -1.0;
       surpek->nvstep_su        = -1.0;
+      surpek->wdt_su           = 0.0;
       break;
       }
 /*
@@ -351,14 +365,10 @@ static DBstatus gmrlnp(DBptr la);
         DBSurf  *surpek,
         DBptr    la)
 
-/*      Uppdaterar (skriver över) en yt-post.
+/*      Uppdates (owerwrites) a DBSurf.
  *
- *      In: surpek => Pekare till en DBSurf-structure.
- *          la     => Ytans adress i GM.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
+ *      In: surpek => C-ptr to DBSurf-structure.
+ *          la     => Address in DB.
  *
  *      (C)microform ab 21/11/92 J. Kjellander
  *
@@ -395,14 +405,13 @@ static DBstatus gmrlnp(DBptr la);
 
         DBstatus DBdelete_surface(DBptr la)
 
-/*      Stryker en yt-post med patch-data och deallokerar
- *      allokerat minne.
+/*      Deletes a surface from DB. Patches, trimcurves and
+ *      graphical representation is also deleted.
  *
- *      In: la => Ytan:s GM-adress.
+ *      In: la         => Surface DB address
  *
- *      Ut: Inget.
- *
- *      FV:  0  => Ok.
+ *      Error:  0      => Ok.
+ *              GM1123 => Can't malloc for trimcurves
  *
  *      (C)microform ab 26/11/92 J. Kjellander
  *
@@ -414,47 +423,50 @@ static DBstatus gmrlnp(DBptr la);
  *      1997-05-28 DBread_one_patch(NULL), J.Kjellander
  *      1997-05-28 DBdelete_srep_NURBS(), J.Kjellander
  *      1997-11-05 DBPatchNU, J.Kjellander
- *      2007-01-01 GMPOSTV2, J.Kjellander
+ *      2007-01-12 Trimcurves, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    DBptr  *tabpek,*ptab,tabla;
-    DBint   nu,nv,i,j,tabsiz;
-    DBSurf   sur;
+    DBptr    *tabpek,*ptab,tabla;
+    DBint     nu,nv,i,j,size,tabsiz;
+    DBSurf    sur;
     DBPatch   toppat;
+    DBSegarr *saptr;
 
 /*
-***Läs själva yt-posten.
+***Read DBSurf.
 */
     DBread_surface(&sur,la);
 /*
-***Stryk eventuella grafiska segment.
+***Delete graphical wireframe representation from DB.
 */
     DBdelete_sur_grwire(&sur);
 /*
-***Stryk ev. nurbs-representation.
+***Delete graphical surface representation from DB.
 */
     DBdelete_sur_grsur(&sur);
 /*
-***Stryk själva yt-posten.
+***If trimcurves exist, delete them from DB.
 */
-    switch ( sur.hed_su.vers )
+    if ( sur.ntrim_su > 0 )
       {
-      case GMPOSTV2:
-      rldat1(la,sizeof(DBSurf));
-      break;
+      size = sur.ntrim_su*sizeof(DBSegarr);
+      if ( (saptr=v3mall(size,"DBdelete_surface")) == NULL ) return(erpush("GM1123",""));
+      if ( size <= PAGSIZ ) rddat1((char *)saptr,sur.getrim_su,size);
+      else                  rddat2((char *)saptr,sur.getrim_su,size);
 
-      case GMPOSTV1:
-      rldat1(la,sizeof(GMSUR1));
-      break;
- 
-      default:
-      rldat1(la,sizeof(GMSUR0));
-      break;
+      for ( i=0; i<sur.ntrim_su; ++i )
+        {
+        delete_segments((saptr+i)->nseg,(saptr+i)->segptr_db);
+        }
+      if ( size <= PAGSIZ ) rldat1(sur.getrim_su,size);
+      else                  rldat2(sur.getrim_su,size);
+
+      v3free((char *)saptr,"DBdelete_surface");
       }
 /*
-***Allokera minne för patch-tabellen.
+***Allocate C-memory for patch table.
 */
     nu     = sur.nu_su;
     nv     = sur.nv_su;
@@ -464,7 +476,7 @@ static DBstatus gmrlnp(DBptr la);
       return(erpush("GM1043",""));
     ptab = tabpek;
 /*
-***Läs tabellen och stryk den ur GM.
+***Read the patch table and then delete it from DB.
 */
     tabla = sur.ptab_su;
 
@@ -479,27 +491,24 @@ static DBstatus gmrlnp(DBptr la);
       rldat2(tabla,tabsiz);
       }
 /*
-***Stryk patcharna ?
+***Delete the patches from DB.
 */
     for ( i=0; i<nu; ++i )
       {
       for ( j=0; j<nv; ++j )
         {
 /*
-***Först den primära patchen. NUL_PAT behöver inte strykas.
+***First the topological patch. NUL_PAT does not need to be deleted.
 */
         if ( *ptab != DBNULL )
           {
           rddat1((char *)&toppat,*ptab,sizeof(DBPatch));
           rldat1(*ptab,sizeof(DBPatch));
 /*
-***Sen den sekundära patchen.
+***Then the geometrical patch.
 */
           switch ( toppat.styp_pat )
             {
-/*
-***Om den sekundära patchen är geometrisk stryker vi den.
-*/
             case CUB_PAT:
             rldat1(toppat.spek_gm,sizeof(DBPatchC));
             break;
@@ -545,172 +554,50 @@ static DBstatus gmrlnp(DBptr la);
             break;
 
             case NURB_PAT:
-            gmrlnp(toppat.spek_gm);
+            delete_NURBS(toppat.spek_gm);
             rldat1(toppat.spek_gm,sizeof(DBPatchNU));
             break;
             }
           }
 /*
-***Nästa (primära) patch.
+***Next topological patch.
 */
         ++ptab;
         }
       }
 /*
-***För säkerhets skull nollställer vi också DBread_one_patch():s
-***cache så att en ny yta vars patchtabell råkar hamna
-***på samma plats som den nu borttagna ytans säkert läses
-***från disk vid nästa anrop till DBread_one_patch().
+***There is a theoretical chance that a new surface could
+***end up on the same DBptr as the deleted surface. DB
+***always tries to reuse memory if possible. If that
+***happens DBread_one_patch() might have an old patch
+***in it's cahce. To avoid that we init DBread_one_patch()
+***here.
 */
     DBread_one_patch(NULL,NULL,0,0);
 /*
-***Lämna tillbaks C-minne för patchtabellen.
+***Return C-memory allocated for the patch table.
 */
     v3free(tabpek,"DBdelete_surface");
 /*
-***Slut.
+***Finally, delete the DBSurf itself from DB.
 */
-    return(0);
-  }
+    switch ( sur.hed_su.vers )
+      {
+      case GMPOSTV2:
+      rldat1(la,sizeof(DBSurf));
+      break;
 
-/********************************************************/
-/*!******************************************************/
-
- static DBstatus   gmwrnp(
-        DBPatchNU *np,
-        DBptr     *pla)
-
-/*      Lagrar nurbspatch.
- *
- *      In: np  => Pekare till en DBPatchNU-structure.
- *          pla => Pekare till utdata.
- *
- *      Ut: *pla = GM-pekare.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 1997-11-05 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    DBint size;
-
+      case GMPOSTV1:
+      rldat1(la,sizeof(GMSUR1));
+      break;
+ 
+      default:
+      rldat1(la,sizeof(GMSUR0));
+      break;
+      }
 /*
-***Lagra först knutvektorerna.
+***The end.
 */
-    size = np->nk_u*sizeof(DBfloat);
-    if ( size <= PAGSIZ ) wrdat1((char *)np->kvec_u,&(np->pku),size);
-    else                  wrdat2((char *)np->kvec_u,&(np->pku),size);
-
-    size = np->nk_v*sizeof(DBfloat);
-    if ( size <= PAGSIZ ) wrdat1((char *)np->kvec_v,&(np->pkv),size);
-    else                  wrdat2((char *)np->kvec_v,&(np->pkv),size);
-/*
-***Och sen styrpolygonen.
-*/
-    size = (np->nk_u - np->order_u) *
-           (np->nk_v - np->order_v) * sizeof(DBHvector);
-    if ( size <= PAGSIZ ) wrdat1((char *)np->cpts,&(np->pcpts),size);
-    else                  wrdat2((char *)np->cpts,&(np->pcpts),size);
-/*
-***Och slutligen själva patch-posten.
-*/
-    wrdat1((char *)np,pla,sizeof(DBPatchNU));
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static DBstatus gmrdnp(DBPatchNU *np)
-
-/*      Läser nurbspatch.
- *
- *      In: np  => Pekare till en delvis ifylld 
- *                 DBPatchNU-structure.
- *
- *      Ut: *np = DBPatchNU med C-pekare till NURBS-data.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 1997-11-05 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    DBstatus status;
-    DBint    size;
-
-/*
-***Allokera minne för NURBS-data.
-*/
-    if ( (status=DBcreate_NURBS(np)) < 0 ) return(status);
-/*
-***Läs knutvektorerna.
-*/
-    size = np->nk_u*sizeof(DBfloat);
-    if ( size <= PAGSIZ ) rddat1((char *)np->kvec_u,np->pku,size);
-    else                  rddat2((char *)np->kvec_u,np->pku,size);
-
-    size = np->nk_v*sizeof(DBfloat);
-    if ( size <= PAGSIZ ) rddat1((char *)np->kvec_v,np->pkv,size);
-    else                  rddat2((char *)np->kvec_v,np->pkv,size);
-/*
-***Och sen styrpolygonen.
-*/
-    size = (np->nk_u - np->order_u) *
-           (np->nk_v - np->order_v) * sizeof(DBHvector);
-    if ( size <= PAGSIZ ) rddat1((char *)np->cpts,np->pcpts,size);
-    else                  rddat2((char *)np->cpts,np->pcpts,size);
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
- static DBstatus gmrlnp(DBptr la)
-
-/*      Stryker nurbsdata.
- *
- *      In: la => Pekare till DBPatchNU-post.
- *
- *      Ut: Inget.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 1997-11-05 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    DBint   size;
-    DBPatchNU np;
-
-/*
-***Läs posten.
-*/
-    rddat1((char *)&np,la,sizeof(DBPatchNU));
-/*
-***Stryk knutvektorerna.
-*/
-    size = np.nk_u*sizeof(DBfloat);
-    if ( size <= PAGSIZ ) rldat1(np.pku,size);
-    else                  rldat2(np.pku,size);
-
-    size = np.nk_v*sizeof(DBfloat);
-    if ( size <= PAGSIZ ) rldat1(np.pkv,size);
-    else                  rldat2(np.pkv,size);
-/*
-***Och sen styrpolygonen.
-*/
-    size = (np.nk_u - np.order_u) *
-           (np.nk_v - np.order_v) * sizeof(DBHvector);
-    if ( size <= PAGSIZ ) rldat1(np.pcpts,size);
-    else                  rldat2(np.pcpts,size);
-
     return(0);
   }
 
@@ -721,19 +608,17 @@ static DBstatus gmrlnp(DBptr la);
         DBSurf   *surpek,
         DBPatch **pptpat)
 
-/*      Läser patch-data för alla patchar i ytan.
- *      Allokerar minne för patcharna.
+/*      Reads all patches of a surface, topological and
+ *      geometrical. C-memory for patches is allocated.
  *
- *      In: surpek => Pekare till yt-post.
- *          pptpat => Pekare till en patch-pekare.
+ *      In:   surpek = C-ptr to DBSurf.
  *
- *      Ut: *pptpat = Pekare till patchdata.
+ *      Out: *pptpat = C-pointer to memory allocated and
+ *                    filled with patch data.
  *
- *      FV: Inget.
- *
- *      Felkoder: GM1043 = malloc-fel patchtabell
- *                GM1033 = malloc-fel primära patchar
- *                GM1063 = malloc-fel sekundär patch
+ *      Error: GM1043 = Can't malloc for patch table
+ *             GM1033 = Can't malloc for topological patches
+ *             GM1063 = Can't malloc for geometrical patches
  *
  *      (C)microform ab 20/11/92 J. Kjellander
  *
@@ -752,7 +637,7 @@ static DBstatus gmrlnp(DBptr la);
     DBPatch *patpek;
 
 /*
-***Allokera minne för patch-tabellen.
+***Allocate C memory for the patch table.
 */
     nu = surpek->nu_su;
     nv = surpek->nv_su;
@@ -761,27 +646,27 @@ static DBstatus gmrlnp(DBptr la);
       return(erpush("GM1043",""));
     ptab = tabpek;
 /*
-***Läs patch-tabellen.
+***Read the patch table from DB.
 */
     tabla = surpek->ptab_su;
     if ( tabsiz <= PAGSIZ ) rddat1((char *)tabpek,tabla,tabsiz);
     else                    rddat2((char *)tabpek,tabla,tabsiz);
 /*
-***Allokera minne för primära patchar.
+***Allocate memory for topological patches.
 */
     if ( (*pptpat=(DBPatch *)DBcreate_patches(TOP_PAT,nu*nv)) == NULL )
       return(erpush("GM1033",""));
     patpek = *pptpat;
 /*
-***Läs patcharna.
+***Read the patches from DB.
 */
     for ( i=0; i<nu; ++i )
       {
       for ( j=0; j<nv; ++j )
         {
 /*
-***Först den primära patchen. NUL_PAT behöver inte ens läsas
-***utan skapas här.
+***First the topological patch. If it is a NUL_PAT
+***we just create one here without reading anything.
 */
         if ( *ptab == DBNULL )
           {
@@ -792,14 +677,10 @@ static DBstatus gmrlnp(DBptr la);
           }
         else rddat1((char *)patpek,*ptab,sizeof(DBPatch));
 /*
-***Sen den sekundära patchen.
+***Then the geometrical patch.
 */
         switch ( patpek->styp_pat )
           {
-/*
-***Om den sekundära patchen är geometrisk allokerar vi minne
-***för den nu och läser in den.
-*/
           case CUB_PAT:
           if ( (patpek->spek_c=DBcreate_patches(CUB_PAT,1)) == NULL )
             return(erpush("GM1063",""));
@@ -870,12 +751,11 @@ static DBstatus gmrlnp(DBptr la);
           if ( (patpek->spek_c=DBcreate_patches(NURB_PAT,1)) == NULL )
             return(erpush("GM1053",""));
           rddat1(patpek->spek_c,patpek->spek_gm,sizeof(DBPatchNU));
-          if ( gmrdnp((DBPatchNU *)patpek->spek_c) < 0 )
+          if ( read_NURBS((DBPatchNU *)patpek->spek_c) < 0 )
             return(erpush("GM1063",""));
           break;
 /*
-***Om den sekundära patchen är en topologisk patch beräknar
-***vi dess C-adress utan att allokera eller läsa något.
+***If the geometric patch is topological no memory is allocated.
 */
           case TOP_PAT:
           patpek->spek_c = (char *) (*pptpat +
@@ -883,14 +763,14 @@ static DBstatus gmrlnp(DBptr la);
           break;
           }
 /*
-***Nästa (primära) patch.
+***Next topological patch.
 */
         ++ptab;
         ++patpek;
         }
       }
 /*
-***Slut.
+***The end.
 */
     v3free(tabpek,"DBread_patches");
 
@@ -906,11 +786,14 @@ static DBstatus gmrlnp(DBptr la);
         short    iu,
         short    iv)
 
-/*      Läser patch-data för en enstaka patch. Lagrar
- *      sist lästa patchtabell i cache för snabb åtkomst
- *      vid upprepade acesser.
+/*      Reads one patch. Includes a cache mechanism that
+ *      speeds repeated calls within the same surface.
+ *      This function is typically used if you only need
+ *      a limited number of patches within the same surface.
+ *      Otherwise, use DBread_patches() which will read all
+ *      patches.
  *
- *      Vill man tömma cachen anropar man med surpek = NULL.
+ *      To empty the cache, call with surpek = NULL.
  *
  *      In: surpek => Pekare till yt-post eller NULL.
  *          patpek => Pekare till en patch-pekare.
@@ -1062,12 +945,10 @@ static DBptr  tab[500];
         DBint typ,
         DBint antal)
 
-/*      Allokerar plats i primärminne för patch-data.
+/*      Allocates C memory for patch-data.
  *
- *      In: typ   = Typ av patch.
- *          antal = Antal patchar totalt nu*nv.
- *
- *      Ut: Inget.
+ *      In: typ   = Patch type.
+ *          antal = Number of patches, nu*nv.
  *
  *      FV:   NULL = Kan ej allokera minne.
  *          > NULL = C-adress till ledig minnesarea.
@@ -1120,7 +1001,7 @@ static DBptr  tab[500];
 
         DBstatus DBcreate_NURBS(DBPatchNU *patpek)
 
-/*      Allokerar minne för NURBS-data i en DBPatchNU.
+/*      Allocates C memory for NURBS data in a DBPatchNU.
  *
  *      In: patpek => Pekare till delvis ifylld DBPatchNU.
  *
@@ -1165,7 +1046,7 @@ static DBptr  tab[500];
         DBSurf  *surpek,
         DBPatch *patpek)
 
-/*      Återlämnar C-minne allokerat för patchar.
+/*      Free's C memory allocated for patches.
  *
  *      In: surpek => Pekare till yta.
  *          patpek => Pekare till patchar.
@@ -1240,13 +1121,13 @@ static DBptr  tab[500];
 /*!******************************************************/
 
         DBstatus   DBread_getrimcurves(
-        DBSurf    *surpek,
+        DBSurf    *surptr,
         DBSegarr **ppgetrimcurves)
 
 /*      Allocates memory for, and reads, the geometric
  *      trimcurves of a surface.
  *
- *      In: surpek = Ptr to surface
+ *      In: surptr = C ptr to surface
  *
  *      Out: *ppgetrimcurves = A pointer to an array of
  *                             pointers to trimcurves.
@@ -1256,27 +1137,69 @@ static DBptr  tab[500];
  ******************************************************!*/
 
   {
+    int       i,size;
+    DBSegarr *saptr;
+
+    if ( surptr->ntrim_su > 0 )
+      {
+      size = surptr->ntrim_su*sizeof(DBSegarr);
+      if ( (saptr=v3mall(size,"DBread_getrimcurves")) == NULL ) return(erpush("GM1123",""));
+      if ( size <= PAGSIZ ) rddat1((char *)saptr,surptr->getrim_su,size);
+      else                  rddat2((char *)saptr,surptr->getrim_su,size);
+
+      *ppgetrimcurves = saptr;
+
+      for ( i=0; i<surptr->ntrim_su; ++i )
+        {
+        saptr->segptr_c = read_segments(saptr->nseg,saptr->segptr_db);
+      ++saptr;
+        }
+      }
+    else *ppgetrimcurves = NULL;
+/*
+***The end.
+*/
+    return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
-/* ?????? Skall inte denna heta DBfree_segarrs ???????? */
 
         DBstatus  DBfree_getrimcurves(
-        DBSurf   *surpek,
+        DBSurf   *surptr,
         DBSegarr *pgetrimcurves)
 
 /*      Free's all memory allocated for geometrical
- *      trimcurves.
+ *      trimcurves, both seggarr's and segments.
  *
- *      In: surpek        = Ptr to surface
- *          pgetrimcurves = Ptr to array of trimcurves
+ *      In: surptr        = C ptr to surface
+ *          pgetrimcurves = C ptr to array of trimcurves
  *
- *      (C)2007-01-01 J. Kjellander
+ *      (C)2007-01-17 J. Kjellander
  *
  ******************************************************!*/
 
   {
+    int i;
+
+/*
+***Free the trimcurve segments.
+*/
+    if ( surptr->ntrim_su > 0  &&  pgetrimcurves != NULL ) 
+      {
+      for ( i=0; i<surptr->ntrim_su; ++i )
+        {
+        v3free((char *)(pgetrimcurves+i)->segptr_c,"DBfree_getrimcurves");
+        }
+/*
+***Free memory for the DBSegarr's.
+*/
+      v3free((char *)pgetrimcurves,"DBfree_getrimcurves");
+      } 
+/*
+***The end.
+*/
+    return(0);
   }
 
 /********************************************************/
@@ -1284,162 +1207,98 @@ static DBptr  tab[500];
 
         DBSegarr *DBcreate_segarrs(DBint nsegarr)
 
-/*      Allocates C memory for DBSegarrs.
+/*      Allocates C memory for DBSegarr's. Memory
+ *      for segments is not allocated.
  *
- *      In: nsegarr = Number of segarrs
+ *      In: nsegarr = Number of DBsegarr's
  *
- *      (C)2007-01-01 J. Kjellander
+ *      Return *saptr = Pointer to allocated memory or NULL.
+ *
+ *      (C)2007-01-05 J. Kjellander
  *
  ******************************************************!*/
 
   {
-   return(NULL);
+    int       size;
+    DBSegarr *saptr;
+
+/*
+***Allocate C-memory for nsegarr DBsegarr's.
+*/
+    if ( nsegarr > 0 )
+      {
+      size = nsegarr*sizeof(DBSegarr);
+      if ( (saptr=v3mall(size,"DBcreate_segarrs")) == NULL ) return(NULL);
+      return(saptr);
+      }
+    else return(NULL);
   }
 
 /********************************************************/
 /*!******************************************************/
 
         DBstatus DBadd_sur_grwire(
-        DBSurf  *surpek,
-        DBSeg   *sptarr[])
+        DBSurf   *psurf,
+        DBSegarr *pborder,
+        DBSegarr *piso)
 
-/*      Lagrar en ytas grafiska segment.
+/*      Adds a graphical wireframe representation to
+ *      a surface.
  *
- *      In: surpek => Pekare till en DBSurf-structure.
- *          sptarr => Pekare till segment.
+ *      In: psurf   = C-pointer to surface
+ *          pborder = C-Pointer to array of DBSegarr's
+ *                    for outer loop.
+ *          piso    = C-Pointer to array of DBSegarr's
+ *                    for midcurves.
  *
- *      Ut: Inget.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 21/11/92 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-
-    if ( surpek->ngseg_su[0] > 0 )
-      surpek->pgseg_su[0] = wrgseg(surpek->ngseg_su[0],sptarr[0]);
-    else surpek->pgseg_su[0] = DBNULL;
-
-    if ( surpek->ngseg_su[1] > 0 )
-      surpek->pgseg_su[1] = wrgseg(surpek->ngseg_su[1],sptarr[1]);
-    else surpek->pgseg_su[1] = DBNULL;
-
-    if ( surpek->ngseg_su[2] > 0 )
-      surpek->pgseg_su[2] = wrgseg(surpek->ngseg_su[2],sptarr[2]);
-    else surpek->pgseg_su[2] = DBNULL;
-
-    if ( surpek->ngseg_su[3] > 0 )
-      surpek->pgseg_su[3] = wrgseg(surpek->ngseg_su[3],sptarr[3]);
-    else surpek->pgseg_su[3] = DBNULL;
-
-    if ( surpek->ngseg_su[4] > 0 )
-      surpek->pgseg_su[4] = wrgseg(surpek->ngseg_su[4],sptarr[4]);
-    else surpek->pgseg_su[4] = DBNULL;
-
-    if ( surpek->ngseg_su[5] > 0 )
-      surpek->pgseg_su[5] = wrgseg(surpek->ngseg_su[5],sptarr[5]);
-    else surpek->pgseg_su[5] = DBNULL;
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        DBstatus DBread_sur_grwire(
-        DBSurf  *surpek,
-        DBSeg   *sptarr[])
-
-/*      Läser en ytas grafiska segment.
- *
- *      In: surpek => Pekare till en DBSurf-structure.
- *          sptarr => Pekare till utdata.
- *
- *      Ut: *sptarrÄÅ => Pekare till segment.
- *
- *      FV: Inget.
- *
- *      (C)microform ab 21/11/92 J. Kjellander
+ *      (C)2007-01-05 J. Kjellander
  *
  ******************************************************!*/
 
   {
+    int       i,size;
+    DBptr     la;
+    DBSegarr *saptr;
+
 /*
-***Läs segmentdata för de 6 "kurvorna" och returnera C-pekare.
+***Loop through the border curves and store associated segments.
+***Then store the segarr-array and put its address in the surface.
 */
-    if ( surpek->pgseg_su[0] > 0 )
-      sptarr[0] = rdgseg(surpek->ngseg_su[0],surpek->pgseg_su[0]);
-    else
-      sptarr[0] = NULL;
+    saptr = pborder;
 
-    if ( surpek->pgseg_su[1] > 0 )
-      sptarr[1] = rdgseg(surpek->ngseg_su[1],surpek->pgseg_su[1]);
-    else
-      sptarr[1] = NULL;
+    for ( i=0; i<psurf->ngrwborder_su; ++i )
+      {
+      saptr->segptr_db = write_segments(saptr->nseg,saptr->segptr_c);
+    ++saptr;
+      }
 
-    if ( surpek->pgseg_su[2] > 0 )
-      sptarr[2] = rdgseg(surpek->ngseg_su[2],surpek->pgseg_su[2]);
-    else
-      sptarr[2] = NULL;
-
-    if ( surpek->pgseg_su[3] > 0 )
-      sptarr[3] = rdgseg(surpek->ngseg_su[3],surpek->pgseg_su[3]);
-    else
-      sptarr[3] = NULL;
-
-    if ( surpek->pgseg_su[4] > 0 )
-      sptarr[4] = rdgseg(surpek->ngseg_su[4],surpek->pgseg_su[4]);
-    else
-      sptarr[4] = NULL;
-
-    if ( surpek->pgseg_su[5] > 0 )
-      sptarr[5] = rdgseg(surpek->ngseg_su[5],surpek->pgseg_su[5]);
-    else
-      sptarr[5] = NULL;
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        DBstatus DBdelete_sur_grwire(DBSurf *surpek)
-
-/*      Suddar en ytas grafiska segment.
- *
- *      In: surpek => Pekare till en DBSurf-structure.
- *
- *      Ut: Inget.
- *
- *      FV: 0
- *
- *      (C)microform ab 14/3/94 J. Kjellander
- *
- ******************************************************!*/
-
-  {
+    if ( psurf->ngrwborder_su > 0 )
+      {
+      size = psurf->ngrwborder_su*sizeof(DBSegarr);
+      if ( size <= PAGSIZ ) wrdat1((char *)pborder,&la,size);
+      else                  wrdat2((char *)pborder,&la,size);
+      psurf->grwborder_su = la;
+      }
+    else psurf->grwborder_su = DBNULL;
 /*
-***Läs segmentdata för de 6 "kurvorna" och returnera C-pekare.
+***Same for mid curves.
 */
-    if ( surpek->pgseg_su[0] > 0 )
-      dlgseg(surpek->ngseg_su[0],surpek->pgseg_su[0]);
+    saptr = piso;
 
-    if ( surpek->pgseg_su[1] > 0 )
-      dlgseg(surpek->ngseg_su[1],surpek->pgseg_su[1]);
+    for ( i=0; i<psurf->ngrwiso_su; ++i )
+      {
+      saptr->segptr_db = write_segments(saptr->nseg,saptr->segptr_c);
+    ++saptr;
+      }
 
-    if ( surpek->pgseg_su[2] > 0 )
-      dlgseg(surpek->ngseg_su[2],surpek->pgseg_su[2]);
-
-    if ( surpek->pgseg_su[3] > 0 )
-      dlgseg(surpek->ngseg_su[3],surpek->pgseg_su[3]);
-
-    if ( surpek->pgseg_su[4] > 0 )
-      dlgseg(surpek->ngseg_su[4],surpek->pgseg_su[4]);
-
-    if ( surpek->pgseg_su[5] > 0 )
-      dlgseg(surpek->ngseg_su[5],surpek->pgseg_su[5]);
+    if ( psurf->ngrwiso_su > 0 )
+      {
+      size = psurf->ngrwiso_su*sizeof(DBSegarr);
+      if ( size <= PAGSIZ ) wrdat1((char *)piso,&la,size);
+      else                  wrdat2((char *)piso,&la,size);
+      psurf->grwiso_su = la; 
+      }
+    else psurf->grwiso_su = DBNULL;
 
     return(0);
   }
@@ -1447,27 +1306,74 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBfree_sur_grwire(DBSeg *sptarr[])
+        DBstatus   DBread_sur_grwire(
+        DBSurf    *psurf,
+        DBSegarr **pborder,
+        DBSegarr **piso)
 
-/*      Återlämnar minne för grafiska segment.
+/*      Reads a surface graphical wireframe representation.
+ *      C-memory for segarr's and segments is allocated.
  *
- *      In: sptarr = 6 DBSeg-pekare.
+ *      In:  psurf    = C-pointer to surface
  *
- *      Ut: Inget.
+ *      Out: *pborder = C-Pointer to array of DBSegarr's
+ *                      for outer loop.
+ *           *piso    = C-Pointer to array of DBSegarr's
+ *                      for midcurves.
  *
- *      FV: 0 = Ok.
+ *      Return: GM1113 = Can't malloc
  *
- *      (C)microform ab 31/1/94 J. Kjellander
+ *      (C)2007-01-05 J. Kjellander
  *
  ******************************************************!*/
 
   {
-    if ( sptarr[0] != NULL ) v3free((char *)sptarr[0],"DBfree_sur_grwire");
-    if ( sptarr[1] != NULL ) v3free((char *)sptarr[1],"DBfree_sur_grwire");
-    if ( sptarr[2] != NULL ) v3free((char *)sptarr[2],"DBfree_sur_grwire");
-    if ( sptarr[3] != NULL ) v3free((char *)sptarr[3],"DBfree_sur_grwire");
-    if ( sptarr[4] != NULL ) v3free((char *)sptarr[4],"DBfree_sur_grwire");
-    if ( sptarr[5] != NULL ) v3free((char *)sptarr[5],"DBfree_sur_grwire");
+    int       i,size;
+    DBSegarr *saptr;
+
+/*
+***Allocate C-memory for the bordercurve DBsegarr's and
+***read them from DB.
+*/
+    if ( psurf->ngrwborder_su > 0 )
+      {
+      size = psurf->ngrwborder_su*sizeof(DBSegarr);
+      if ( (saptr=v3mall(size,"DBread_sur_grwire")) == NULL ) return(erpush("GM1113",""));
+      if ( size <= PAGSIZ ) rddat1((char *)saptr,psurf->grwborder_su,size);
+      else                  rddat2((char *)saptr,psurf->grwborder_su,size);
+/*
+***Return pointer to DBsegarr's.
+*/
+     *pborder = saptr;
+/*
+***Read the border segments from the DB.
+*/
+      for ( i=0; i<psurf->ngrwborder_su; ++i )
+        {
+        saptr->segptr_c = read_segments(saptr->nseg,saptr->segptr_db);
+      ++saptr;
+        }
+      }
+    else *pborder = NULL;
+/*
+***Same for iso curves.
+*/
+    if ( psurf->ngrwiso_su > 0 )
+      {
+      size = psurf->ngrwiso_su*sizeof(DBSegarr);
+      if ( (saptr=v3mall(size,"DBread_sur_grwire")) == NULL ) return(erpush("GM1113",""));
+      if ( size <= PAGSIZ ) rddat1((char *)saptr,psurf->grwiso_su,size);
+      else                  rddat2((char *)saptr,psurf->grwiso_su,size);
+
+      *piso = saptr;
+
+      for ( i=0; i<psurf->ngrwiso_su; ++i )
+        {
+        saptr->segptr_c = read_segments(saptr->nseg,saptr->segptr_db);
+      ++saptr;
+        }
+      }
+    else *piso = NULL;
 
     return(0);
   }
@@ -1475,126 +1381,340 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBadd_sur_grsur(
-        DBSurf   *surpek,
-        GLfloat *kvu,
-        GLfloat *kvv,
-        GLfloat *cpts)
+        DBstatus   DBdelete_sur_grwire(
+        DBSurf    *psurf)
 
-/*      Lagrar en ytas B-splineapproximation.
+/*      Deletes a surface graphical wireframe representation
+ *      from the DB. C-memory for segarr's and segments is
+ *      not free'd.
  *
- *      In: kvu,kvv => Nodvektorerna
- *          cpts    => Kontrollpunkterna.
+ *      In:  psurf    = C-pointer to surface
  *
- *      Ut: Inget.
+ *      (C)2007-01-05 J. Kjellander
  *
- *      FV: Inget.
+ ******************************************************!*/
+
+  {
+    int       i,size;
+    DBSegarr *saptr;
+
+/*
+***Read the bordercurve DBsegarr's from DB.
+*/
+    if ( psurf->ngrwborder_su > 0 )
+      {
+      size = psurf->ngrwborder_su*sizeof(DBSegarr);
+      if ( (saptr=v3mall(size,"DBdelete_sur_grwire")) == NULL ) return(erpush("GM1113",""));
+      if ( size <= PAGSIZ ) rddat1((char *)saptr,psurf->grwborder_su,size);
+      else                  rddat2((char *)saptr,psurf->grwborder_su,size);
+/*
+***Delete the bordercurve segments from the DB.
+*/
+      for ( i=0; i<psurf->ngrwborder_su; ++i )
+        {
+        delete_segments((saptr+i)->nseg,(saptr+i)->segptr_db);
+        }
+/*
+***Delete the bordercurve DBsegarr's from the DB.
+*/
+      if ( size <= PAGSIZ ) rldat1(psurf->grwborder_su,size);
+      else                  rldat2(psurf->grwborder_su,size);
+/*
+***Free C-memory allocated for temporary DBSegarr's.
+*/
+      v3free((char *)saptr,"DBdelete_sur_grwire");
+      }
+/*
+***Same for iso curves.
+*/
+    if ( psurf->ngrwiso_su > 0 )
+      {
+      size = psurf->ngrwiso_su*sizeof(DBSegarr);
+      if ( (saptr=v3mall(size,"DBdelete_sur_grwire")) == NULL ) return(erpush("GM1113",""));
+      if ( size <= PAGSIZ ) rddat1((char *)saptr,psurf->grwiso_su,size);
+      else                  rddat2((char *)saptr,psurf->grwiso_su,size);
+
+      for ( i=0; i<psurf->ngrwiso_su; ++i )
+        {
+        delete_segments((saptr+i)->nseg,(saptr+i)->segptr_db);
+        }
+
+      if ( size <= PAGSIZ ) rldat1(psurf->grwiso_su,size);
+      else                  rldat2(psurf->grwiso_su,size);
+
+      v3free((char *)saptr,"DBdelete_sur_grwire");
+      }
+
+    return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        DBstatus  DBfree_sur_grwire(
+        DBSurf   *psurf,
+        DBSegarr *pborder,
+        DBSegarr *piso)
+
+/*      Free's C memory allocated for surface graphical
+ *      wireframe representation.
+ *
+ *      In: psurf   = C-pointer to surface
+ *          pborder = C-Pointer to array of DBSegarr's
+ *                    for outer loop.
+ *          piso    = C-Pointer to array of DBSegarr's
+ *                    for midcurves.
+ *
+ *      (C)2007-01-21 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    int   i;
+    char *sptr;
+
+/*
+***Free the bordercurve segments.
+*/
+    for ( i=0; i<psurf->ngrwborder_su; ++i )
+      {
+      sptr = (char *)(pborder+i)->segptr_c;
+      if ( sptr != NULL  &&  (pborder+i)->nseg > 0 ) v3free(sptr,"DBfree_sur_grwire");
+      }
+/*
+***Free memory for the DBSegarr's.
+*/
+    if ( pborder != NULL ) v3free((char *)pborder,"DBfree_sur_grwire");
+/*
+***Same for iso curves.
+*/
+    for ( i=0; i<psurf->ngrwiso_su; ++i )
+      {
+      sptr = (char *)(piso+i)->segptr_c;
+      if ( sptr != NULL  &&  (piso+i)->nseg > 0 ) v3free(sptr,"DBfree_sur_grwire");
+      }
+
+    if ( piso != NULL ) v3free((char *)piso,"DBfree_sur_grwire");
+
+    return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        DBstatus        DBadd_sur_grsur(
+        DBSurf         *surpek,
+        GLfloat        *kvu,
+        GLfloat        *kvv,
+        GLfloat        *cpts,
+        DBGrstrimcurve *ptrim)
+
+/*      Stores the graphical surface (NURBS) representation
+ *      of a (trimmed) surface in the DB.
+ *
+ *      In: surpek  => C ptr to surface
+ *          kvu,kvv => C ptr to arrays of knot values
+ *          cpts    => C ptr to control points
+ *          ptrim   => C ptr to trimcurves
  *
  *      (C)microform ab 1997-03-05 J. Kjellander
  *
+ *      2007-01-18 Trim curves, J.Kjellander
+ *
  ******************************************************!*/
 
   {
-   DBint size;
-
+   DBint           i,nbytes;
+   DBint           gl_cpts_size;
+   DBGrstrimcurve *tcptr;
 /*
-***Kolla att data finns att lagra.
+***Store surface knot values in DB.
 */
-   if ( surpek->nku_su     == 0  ||
-        surpek->nkv_su     == 0  ||
-        surpek->uorder_su  == 0  ||
-        surpek->vorder_su  == 0 )
+   nbytes = surpek->nku_su*sizeof(GLfloat);
+   if ( nbytes < PAGSIZ ) wrdat1((char *)kvu,&surpek->pkvu_su,nbytes);
+   else                   wrdat2((char *)kvu,&surpek->pkvu_su,nbytes);
+
+   nbytes = surpek->nkv_su*sizeof(GLfloat);
+   if ( nbytes < PAGSIZ ) wrdat1((char *)kvv,&surpek->pkvv_su,nbytes);
+   else                   wrdat2((char *)kvv,&surpek->pkvv_su,nbytes);
+/*
+***Calculate the size of a control point and store them in DB.
+*/
+   if ( surpek->vertextype_su == GL_MAP2_VERTEX_4 ) gl_cpts_size=4;
+   else                                             gl_cpts_size=3;
+
+   nbytes = (surpek->nku_su - surpek->uorder_su) *
+            (surpek->nkv_su - surpek->vorder_su) *
+             gl_cpts_size * sizeof(GLfloat);
+
+   if ( nbytes < PAGSIZ ) wrdat1((char *)cpts,&surpek->pcpts_su,nbytes);
+   else                   wrdat2((char *)cpts,&surpek->pcpts_su,nbytes);
+/*
+***If we have trimcurves, store them too.
+*/
+   if ( surpek->ntrim_su > 0 )
      {
-     surpek->pkvu_su  = DBNULL;
-     surpek->pkvv_su  = DBNULL;
-     surpek->pcpts_su = DBNULL;
-     return(-2);
+     tcptr = ptrim;
+
+     for ( i=0; i<surpek->ntrim_su; ++i )
+       {
+/*
+***Store trimcurve knot values in DB.
+*/
+       nbytes = tcptr->nknots * sizeof(GLfloat);
+       if ( nbytes <= PAGSIZ ) wrdat1((char *)tcptr->knots_c,&tcptr->knots_db,nbytes);
+       else                    wrdat2((char *)tcptr->knots_c,&tcptr->knots_db,nbytes);
+/*
+***Calculate the size of a trimcurve controlpoint and store cpts in the DB.
+*/
+       if ( tcptr->vertextype == GLU_MAP1_TRIM_3 ) gl_cpts_size=3;   /* SLTEST GL_MAP1_VERTEX_3 was wrong */
+       else                                         gl_cpts_size=2;
+
+       nbytes = (tcptr->nknots - tcptr->order) * gl_cpts_size * sizeof(GLfloat);
+       if ( nbytes <= PAGSIZ ) wrdat1((char *)tcptr->cpts_c,&tcptr->cpts_db,nbytes);
+       else                    wrdat2((char *)tcptr->cpts_c,&tcptr->cpts_db,nbytes);
+/*
+***Next trimcurve.
+*/
+     ++tcptr;
+       }
+/*
+***Store DBGrstrimcurve array in DB
+*/
+     nbytes = surpek->ntrim_su * sizeof(DBGrstrimcurve);
+     if ( nbytes <= PAGSIZ ) wrdat1((char *)ptrim,&surpek->grstrim_su,nbytes);
+     else                    wrdat2((char *)ptrim,&surpek->grstrim_su,nbytes);
      }
 /*
-***Lagra nodvektorerna.
+***The end.
 */
-   size = surpek->nku_su*sizeof(GLfloat);
-   if ( size < PAGSIZ ) wrdat1((char *)kvu,&surpek->pkvu_su,size);
-   else                 wrdat2((char *)kvu,&surpek->pkvu_su,size);
-
-   size = surpek->nkv_su*sizeof(GLfloat);
-   if ( size < PAGSIZ ) wrdat1((char *)kvv,&surpek->pkvv_su,size);
-   else                 wrdat2((char *)kvv,&surpek->pkvv_su,size);
-/*
-***Lagra kontrollpunkterna.
-*/
-   size = (surpek->nku_su - surpek->uorder_su) *
-          (surpek->nkv_su - surpek->vorder_su) * 3 * sizeof(GLfloat);
-
-   if ( size < PAGSIZ ) wrdat1((char *)cpts,&surpek->pcpts_su,size);
-   else                 wrdat2((char *)cpts,&surpek->pcpts_su,size);
-
    return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus  DBread_sur_grsur(
-        DBSurf   *surpek,
-        GLfloat **kvu,
-        GLfloat **kvv,
-        GLfloat **cpts)
+        DBstatus         DBread_sur_grsur(
+        DBSurf          *surpek,
+        GLfloat        **kvu,
+        GLfloat        **kvv,
+        GLfloat        **cpts,
+        DBGrstrimcurve **trim)
 
-/*      Läser en ytas B-splineapproximation. C-minne
- *      allokeras och pekare returneras.
+/*      Reads the graphical surface (NURBS) representation
+ *      of a surface from the DB. C-memory for NURBS data
+ *      with optional trimcurves is allocated.
  *
- *      In: surpek => Pekare till en DBSurf-structure.
- *          kvu    => Nodvektor U
- *          kvv    => Nodvektor V
- *          cpts   => Kontrollpunkter
+ *      In:  surpek => C ptr to surface
  *
- *      Ut: *kvu  => Pekare till U-noder
- *          *kvv  => Pekare till V-noder
- *          *cpts => Pekare till Kontrollpunkter
+ *      Out: *kvu   => C ptr to surface u knots
+ *           *kvv   => C ptr to surface v knots
+ *           *cpts  => C ptr to surface control points
+ *           *trim  => C ptr to trim curves
  *
- *      FV: Inget.
+ *      Return:      0 => Ok
+ *              GM1083 => Can't malloc for %s cpts
+ *              GM1093 => Can't malloc for %s knots
+ *              GM1123 => Can't malloc for trimcurves
  *
  *      (C)microform ab 1997-03-05 J. Kjellander
+ *
+ *      2007-01-18 Trimcurves, J.Kjellander
  *
  ******************************************************!*/
 
   {
-   unsigned size;
+   int             i,nbytes,ncpts,gl_cpts_size;
+   char            errbuf[20];
+   DBGrstrimcurve *tcptr;
 
 /*
-***Kolla att data finns att läsa.
+***Allocate C memory for knots and read values from DB.
+***Return error messages if memory can't be allocated.
 */
-   if ( surpek->nku_su     == 0  ||
-        surpek->nkv_su     == 0  ||
-        surpek->uorder_su  == 0  ||
-        surpek->vorder_su  == 0  ||
-        surpek->pkvu_su    == DBNULL  ||
-        surpek->pkvv_su    == DBNULL  ||
-        surpek->pcpts_su   == DBNULL ) return(-2);
-/*
-***Allokera minne för noder och läs.
-*/
-   size = surpek->nku_su*sizeof(GLfloat);
-   if ( (*kvu=(GLfloat *)v3mall(size,"DBread_sur_grsur")) == NULL ) return(-2);
-   if ( size < PAGSIZ ) rddat1((char *)*kvu,surpek->pkvu_su,size);
-   else                 rddat2((char *)*kvu,surpek->pkvu_su,size);
+   nbytes = surpek->nku_su*sizeof(GLfloat);
+   if ( (*kvu=(GLfloat *)v3mall(nbytes,"DBread_sur_grsur")) == NULL )
+     {
+     sprintf(errbuf,"%d",surpek->nku_su);
+     return(erpush("GM1093",errbuf));
+     }
+
+   if ( nbytes < PAGSIZ ) rddat1((char *)*kvu,surpek->pkvu_su,nbytes);
+   else                   rddat2((char *)*kvu,surpek->pkvu_su,nbytes);
   
-   size = surpek->nkv_su*sizeof(GLfloat);
-   if ( (*kvv=(GLfloat *)v3mall(size,"DBread_sur_grsur")) == NULL ) return(-2);
-   if ( size < PAGSIZ ) rddat1((char *)*kvv,surpek->pkvv_su,size);
-   else                 rddat2((char *)*kvv,surpek->pkvv_su,size);
+   nbytes = surpek->nkv_su*sizeof(GLfloat);
+   if ( (*kvv=(GLfloat *)v3mall(nbytes,"DBread_sur_grsur")) == NULL )
+     {
+     sprintf(errbuf,"%d",surpek->nkv_su);
+     return(erpush("GM1093",errbuf));
+     }
+
+   if ( nbytes < PAGSIZ ) rddat1((char *)*kvv,surpek->pkvv_su,nbytes);
+   else                   rddat2((char *)*kvv,surpek->pkvv_su,nbytes);
 /*
-***Samma för kontrollpunkter.
+***Same for control points.
 */
-   size = (surpek->nku_su - surpek->uorder_su) *
-          (surpek->nkv_su - surpek->vorder_su) * 3 * sizeof(GLfloat);
+   if ( surpek->vertextype_su == GL_MAP2_VERTEX_4 ) gl_cpts_size=4;
+   else                                             gl_cpts_size=3;
 
-   if ( (*cpts=(GLfloat *)v3mall(size,"DBread_sur_grsur")) == NULL ) return(-2);
+   ncpts = (surpek->nku_su - surpek->uorder_su) *
+           (surpek->nkv_su - surpek->vorder_su);
 
-   if ( size < PAGSIZ ) rddat1((char *)*cpts,surpek->pcpts_su,size);
-   else                 rddat2((char *)*cpts,surpek->pcpts_su,size);
+   nbytes  = ncpts * gl_cpts_size * sizeof(GLfloat);
 
+   if ( (*cpts=(GLfloat *)v3mall(nbytes,"DBread_sur_grsur")) == NULL )
+     {
+     sprintf(errbuf,"%d",ncpts);
+     return(erpush("GM1083",errbuf));
+     }
+
+   if ( nbytes < PAGSIZ ) rddat1((char *)*cpts,surpek->pcpts_su,nbytes);
+   else                   rddat2((char *)*cpts,surpek->pcpts_su,nbytes);
+/*
+***Optional trimcurves. Read array of DBGrstrimcurve.
+*/
+    if ( surpek->ntrim_su > 0 )
+      {
+      nbytes = surpek->ntrim_su*sizeof(DBGrstrimcurve);
+      if ( (tcptr=v3mall(nbytes,"DBread_sur_grsur")) == NULL ) return(erpush("GM1123",""));
+      if ( nbytes <= PAGSIZ ) rddat1((char *)tcptr,surpek->grstrim_su,nbytes);
+      else                    rddat2((char *)tcptr,surpek->grstrim_su,nbytes);
+
+     *trim = tcptr;
+/*
+***Read the individual trimcurces, knots first.
+*/
+      for ( i=0; i<surpek->ntrim_su; ++i )
+        {
+        nbytes = tcptr->nknots * sizeof(GLfloat);
+        if ( (tcptr->knots_c=v3mall(nbytes,"DBread_sur_grsur")) == NULL )
+          return(erpush("GM1123",""));
+        if ( nbytes <= PAGSIZ ) rddat1((char *)tcptr->knots_c,tcptr->knots_db,nbytes);
+        else                    rddat2((char *)tcptr->knots_c,tcptr->knots_db,nbytes);
+/*
+***Then the controlpoints. Size depends on vertextype.
+*/
+        if ( tcptr->vertextype == GLU_MAP1_TRIM_3 ) gl_cpts_size=3;    /*SLTEST GL_MAP1_VERTEX_3 was wrong */
+        else                                         gl_cpts_size=2;
+
+        nbytes = (tcptr->nknots - tcptr->order) * gl_cpts_size * sizeof(GLfloat);
+        if ( (tcptr->cpts_c=v3mall(nbytes,"DBread_sur_grsur")) == NULL )
+          return(erpush("GM1123",""));
+        if ( nbytes <= PAGSIZ ) rddat1((char *)tcptr->cpts_c,tcptr->cpts_db,nbytes);
+        else                    rddat2((char *)tcptr->cpts_c,tcptr->cpts_db,nbytes);
+/*
+***Next curve.
+*/
+      ++tcptr;
+        }
+      }
+/*
+***No trim curves.
+*/
+    else *trim = NULL;
+/*
+***The end.
+*/
    return(0);
   }
 
@@ -1603,98 +1723,160 @@ static DBptr  tab[500];
 
         DBstatus DBdelete_sur_grsur(DBSurf *surpek)
 
-/*      Suddar en ytas B-splineapproximation.
+/*      Deletes the graphical surface (NURBS) representation
+ *      of a surface in the DB.
  *
- *      In: surpek => Pekare till en DBSurf-structure.
+ *      In:     surpek => C pointer to DBSurf.
  *
- *      Ut: Inget.
- *
- *      FV: 0
+ *      Return:      0 => Ok
+ *              GM1123 => Can't malloc for trimcurves
  *
  *      (C)microform ab 1997-03-05 J. Kjellander
+ *
+ *      2007-01-18 Trimcurves, J.Kjellander
  *
  ******************************************************!*/
 
   {
-   DBint size;
+   int             i,nbytes,ncpts,gl_cpts_size;
+   DBGrstrimcurve *tcptr,*trim;
 
 /*
-***Kolla att data finns att sudda.
+***Delete surface nodes from DB.
 */
-   if ( surpek->nku_su     == 0  ||
-        surpek->nkv_su     == 0  ||
-        surpek->uorder_su  == 0  ||
-        surpek->vorder_su  == 0  ||
-        surpek->pkvu_su    == DBNULL  ||
-        surpek->pkvv_su    == DBNULL  ||
-        surpek->pcpts_su   == DBNULL ) return(-2);
+   nbytes = surpek->nku_su*sizeof(GLfloat);
+   if ( nbytes < PAGSIZ ) rldat1(surpek->pkvu_su,nbytes);
+   else                   rldat2(surpek->pkvu_su,nbytes);
+
+   nbytes = surpek->nkv_su*sizeof(GLfloat);
+   if ( nbytes < PAGSIZ ) rldat1(surpek->pkvv_su,nbytes);
+   else                   rldat2(surpek->pkvv_su,nbytes);
 /*
-***Sudda nodvektorerna.
+***And surface contolpoints.
 */
-   size = surpek->nku_su*sizeof(GLfloat);
-   if ( size < PAGSIZ ) rldat1(surpek->pkvu_su,size);
-   else                 rldat2(surpek->pkvu_su,size);
+   if ( surpek->vertextype_su == GL_MAP2_VERTEX_4 ) gl_cpts_size=4;
+   else                                             gl_cpts_size=3;
 
-   size = surpek->nkv_su*sizeof(GLfloat);
-   if ( size < PAGSIZ ) rldat1(surpek->pkvv_su,size);
-   else                 rldat2(surpek->pkvv_su,size);
+   ncpts = (surpek->nku_su - surpek->uorder_su) *
+           (surpek->nkv_su - surpek->vorder_su);
+
+   nbytes  = ncpts * gl_cpts_size * sizeof(GLfloat);
+
+   if ( nbytes < PAGSIZ ) rldat1(surpek->pcpts_su,nbytes);
+   else                   rldat2(surpek->pcpts_su,nbytes);
 /*
-***Och kontrollpunkterna.
+***And optional trimcurves. Read array of DBGrstrimcurve first.
 */
-   size = (surpek->nku_su - surpek->uorder_su) *
-          (surpek->nkv_su - surpek->vorder_su) * 3 * sizeof(GLfloat);
+   if ( surpek->ntrim_su > 0 )
+     {
+     nbytes = surpek->ntrim_su * sizeof(DBGrstrimcurve);
+     if ( (tcptr=v3mall(nbytes,"DBdelete_sur_grsur")) == NULL ) return(erpush("GM1123",""));
+     if ( nbytes <= PAGSIZ ) rddat1((char *)tcptr,surpek->grstrim_su,nbytes);
+     else                    rddat2((char *)tcptr,surpek->grstrim_su,nbytes);
 
-   if ( size < PAGSIZ ) rldat1(surpek->pcpts_su,size);
-   else                 rldat2(surpek->pcpts_su,size);
+     trim = tcptr;
+/*
+***Delete the individual curves, knots first.
+*/
+     for ( i=0; i<surpek->ntrim_su; ++i )
+       {
+       nbytes = tcptr->nknots * sizeof(GLfloat);
+       if ( nbytes <= PAGSIZ ) rldat1(tcptr->knots_db,nbytes);
+       else                    rldat2(tcptr->knots_db,nbytes);
+/*
+***Then the controlpoints. Size depends on vertextype.
+*/
+       if ( tcptr->vertextype == GLU_MAP1_TRIM_3 ) gl_cpts_size=3;    /* SLTEST GL_MAP1_VERTEX_3 was wrong */
+       else                                         gl_cpts_size=2;
 
+       nbytes = (tcptr->nknots - tcptr->order) * gl_cpts_size * sizeof(GLfloat);
+       if ( nbytes <= PAGSIZ ) rldat1(tcptr->cpts_db,nbytes);
+       else                    rldat2(tcptr->cpts_db,nbytes);
+
+     ++tcptr;
+       } 
+/*
+***Finally, delete the DBGrstrimcurve array.
+*/
+     nbytes = surpek->ntrim_su*sizeof(DBGrstrimcurve);
+     if ( nbytes <= PAGSIZ ) rldat1(surpek->grstrim_su,nbytes);
+     else                    rldat2(surpek->grstrim_su,nbytes);
+     v3free((char *)trim,"DBdelete_sur_grsur");
+     }
+/*
+***The end.
+*/
     return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        DBstatus DBfree_sur_grsur(
-        GLfloat *kvu,
-        GLfloat *kvv,
-        GLfloat *cpts)
+        DBstatus        DBfree_sur_grsur(
+        DBSurf         *surpek,
+        GLfloat        *kvu,
+        GLfloat        *kvv,
+        GLfloat        *cpts,
+        DBGrstrimcurve *trim)
 
-/*      Återlämnar minne för B-splineapproximation.
+/*      Free's C memory for the graphical surface (NURBS)
+ *      representation of a surface.
  *
- *      In: kvu,kvv = Minne för nodvektorer.
- *          cpts    = Minne för kontrollpunkter.
- *
- *      Ut: Inget.
- *
- *      FV: 0 = Ok.
+ *      In: surpek  = C ptr to surface
+ *          kvu,kvv = Ptr to C-memory allocated for knots
+ *          cpts    = Ptr C-memory allocated for cpts
+ *          trim    = C ptr to optional trimcurves
  *
  *      (C)microform ab 1997-03-05 J. Kjellander
+ *
+ *      2007-01-18 Trimcurves, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    if ( kvu != NULL ) v3free((char *)kvu,"DBfree_sur_grsur");
-    if ( kvv != NULL ) v3free((char *)kvv,"DBfree_sur_grsur");
-    if ( cpts != NULL ) v3free((char *)cpts,"DBfree_sur_grsur");
+   int i;
 
+/*
+***Free memory for knots and control points.
+*/
+    if ( kvu  != NULL )  v3free((char *)kvu,"DBfree_sur_grsur");
+    if ( kvv  != NULL )  v3free((char *)kvv,"DBfree_sur_grsur");
+    if ( cpts != NULL )  v3free((char *)cpts,"DBfree_sur_grsur");
+/*
+***Free optional trimcurves.
+*/
+    if ( surpek->ntrim_su > 0  &&  trim != NULL)
+      {
+      for ( i=0; i<surpek->ntrim_su; ++i )
+        {
+        v3free((char *)(trim+i)->knots_c,"DBfree_sur_grsur");
+        v3free((char *)(trim+i)->cpts_c,"DBfree_sur_grsur");
+        }
+/*
+***Free memory for the DBSegarr's.
+*/
+      v3free((char *)trim,"DBfree_sur_grsur");
+      }
+/*
+***The end.
+*/
     return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
 
- static DBptr wrgseg(
-        short nseg,
+ static DBptr write_segments(
+        int   nseg,
         DBSeg segdat[])
 
-/*      Lagrar nseg stycken DBSeg och returnerar GM-adress.
+/*      Stores curve segments in DB.
  *
- *      In: segdat => Pekare till segment.
- *          nseg   => Antal segment.
+ *      In: segdat => C ptr to list of segments
+ *          nseg   => Number of segments
  *
- *      Ut: Inget.
- *
- *      FV:  > 0 => GM-adress.
- *           = 0 => Kan ej lagra.
+ *      Return:  > 0 => DB pointer to segment list
+ *               = 0 => Can't store segments in DB
  *
  *      (C)microform ab 31/1/94 J. Kjellander
  *
@@ -1707,9 +1889,9 @@ static DBptr  tab[500];
     DBptr  la;
 
 /*
-***Lagra segmenten och länka ihop dom.
+***Store segment list. Last segment first.
 */
-    la = 0;
+    la = DBNULL;
 
     for ( i=nseg; i > 0; --i)
       {
@@ -1723,19 +1905,18 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
- static DBSeg *rdgseg(
-        short  nseg,
+ static DBSeg *read_segments(
+        int    nseg,
         DBptr  la)
 
-/*      Läser nseg stycken DBSeg och returnerar C-adress.
+/*      Reads curve segment list from DB. C memory for
+ *      curve segment list is allocated.
  *
- *      In: nseg   => Antal segment.
- *          la     => Segmentens GM-adress.
+ *      In: nseg   => Number of segments.
+ *          la     => Segment list DB address.
  *
- *      Ut: Inget.
- *
- *      FV:  > 0 => Giltig C-adress.
- *           = 0 => Fel från DBcreate_segments(), dvs. malloc().
+ *      Return:  > 0 => C ptr to segment list.
+ *               = 0 => Can'tmalloc 
  *
  *      (C)microform ab 31/1/94 J. Kjellander
  *
@@ -1747,11 +1928,15 @@ static DBptr  tab[500];
     DBSeg *segpek,*ptr_seg;
 
 /*
-***Allokera minne.
+***nseg = 0 ?
+*/
+   if ( nseg == 0 ) return(NULL);
+/*
+***Allocate C memory.
 */
     if ( (segpek=DBcreate_segments((DBint)nseg)) == NULL ) return(NULL);
 /*
-***Läs segment.
+***Read segment list from DB.
 */
     la_seg  = la;
     ptr_seg = segpek;
@@ -1769,18 +1954,16 @@ static DBptr  tab[500];
 /********************************************************/
 /*!******************************************************/
 
- static DBstatus dlgseg(
-        short    nseg,
+ static DBstatus delete_segments(
+        int      nseg,
         DBptr    la)
 
-/*      Dödar nseg stycken DBSeg vid la.
+/*      Deletes segment list from DB.
  *
- *      In: nseg   => Antal segment.
- *          la     => Segmentens GM-adress.
+ *      In: nseg   => Number of segments.
+ *          la     => Address of segment list in DB
  *
- *      Ut: Inget.
- *
- *      FV:  0
+ *      Return: Always = 0
  *
  *      (C)microform ab 14/3/94 J. Kjellander
  *
@@ -1791,15 +1974,167 @@ static DBptr  tab[500];
     DBptr la_seg;
     DBSeg seg;
 
+/*
+***DB address of first segment in the list.
+*/
     la_seg = la;
-
+/*
+***Read segments and delete from DB.
+*/
     for ( i=0; i<nseg; ++i)
       {
       rddat1((char *)&seg,la_seg,sizeof(DBSeg));
       rldat1(la_seg,sizeof(DBSeg));
       la_seg = seg.nxt_seg;
       }
+/*
+***The end.
+*/
+    return(0);
+  }
 
+/********************************************************/
+/*!******************************************************/
+
+ static DBstatus   write_NURBS(
+        DBPatchNU *np,
+        DBptr     *pla)
+
+/*      Stores NURBS patch in DB.
+ *
+ *      In:   np  = C ptr to DBPatchNU.
+ *
+ *      Out: *pla = DB pointer
+ *
+ *      Return: Always 0
+ *
+ *      (C)microform ab 1997-11-05 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    DBint size;
+
+/*
+***Store knots.
+*/
+    size = np->nk_u*sizeof(DBfloat);
+    if ( size <= PAGSIZ ) wrdat1((char *)np->kvec_u,&(np->pku),size);
+    else                  wrdat2((char *)np->kvec_u,&(np->pku),size);
+
+    size = np->nk_v*sizeof(DBfloat);
+    if ( size <= PAGSIZ ) wrdat1((char *)np->kvec_v,&(np->pkv),size);
+    else                  wrdat2((char *)np->kvec_v,&(np->pkv),size);
+/*
+***Store control points.
+*/
+    size = (np->nk_u - np->order_u) *
+           (np->nk_v - np->order_v) * sizeof(DBHvector);
+    if ( size <= PAGSIZ ) wrdat1((char *)np->cpts,&(np->pcpts),size);
+    else                  wrdat2((char *)np->cpts,&(np->pcpts),size);
+/*
+***Store patch data.
+*/
+    wrdat1((char *)np,pla,sizeof(DBPatchNU));
+/*
+***The end.
+*/
+    return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+ static DBstatus read_NURBS(DBPatchNU *np)
+
+/*      Reads nurbspatch from DB. Allocates C memory.
+ *
+ *      In:   np = C ptr to partly initialized DBPatchNU.
+ *
+ *      Out: *np = DBPatchNU with C ptrs to NURBS data.
+ *
+ *      Return:    0 = Ok.
+ *               < 0 = Can't malloc.
+ *
+ *      (C)microform ab 1997-11-05 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    DBstatus status;
+    DBint    size;
+
+/*
+***Allocate C memory for NURBS data.
+*/
+    if ( (status=DBcreate_NURBS(np)) < 0 ) return(status);
+/*
+***Read knots.
+*/
+    size = np->nk_u*sizeof(DBfloat);
+    if ( size <= PAGSIZ ) rddat1((char *)np->kvec_u,np->pku,size);
+    else                  rddat2((char *)np->kvec_u,np->pku,size);
+
+    size = np->nk_v*sizeof(DBfloat);
+    if ( size <= PAGSIZ ) rddat1((char *)np->kvec_v,np->pkv,size);
+    else                  rddat2((char *)np->kvec_v,np->pkv,size);
+/*
+***Read control points.
+*/
+    size = (np->nk_u - np->order_u) *
+           (np->nk_v - np->order_v) * sizeof(DBHvector);
+    if ( size <= PAGSIZ ) rddat1((char *)np->cpts,np->pcpts,size);
+    else                  rddat2((char *)np->cpts,np->pcpts,size);
+/*
+***The end.
+*/
+    return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+ static DBstatus delete_NURBS(DBptr la)
+
+/*      Deletes NURBS data from DB. The NURBS
+ *      patch itself is not deleted.
+ *
+ *      In: la => DB ptr to DBPatchNU.
+ *
+ *      Return: Always 0.
+ *
+ *      (C)microform ab 1997-11-05 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    DBint   size;
+    DBPatchNU np;
+
+/*
+***Read patch.
+*/
+    rddat1((char *)&np,la,sizeof(DBPatchNU));
+/*
+***Delete knots.
+*/
+    size = np.nk_u*sizeof(DBfloat);
+    if ( size <= PAGSIZ ) rldat1(np.pku,size);
+    else                  rldat2(np.pku,size);
+
+    size = np.nk_v*sizeof(DBfloat);
+    if ( size <= PAGSIZ ) rldat1(np.pkv,size);
+    else                  rldat2(np.pkv,size);
+/*
+***Delete control points.
+*/
+    size = (np.nk_u - np.order_u) *
+           (np.nk_v - np.order_v) * sizeof(DBHvector);
+    if ( size <= PAGSIZ ) rldat1(np.pcpts,size);
+    else                  rldat2(np.pcpts,size);
+/*
+***The end.
+*/
     return(0);
   }
 

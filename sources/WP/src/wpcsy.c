@@ -34,7 +34,7 @@
 #include "../../GE/include/GE.h"
 #include "../include/WP.h"
 
-extern short    actpen;
+extern int actpen;
 
 static short drawcs(WPGWIN *gwinpt, DBCsys *csypek, DBptr la, bool draw);
 
@@ -93,13 +93,13 @@ static int csmode = V3_CS_NORMAL;
 /*
 ***Ja, ligger koordinatsystemet på en nivå som är tänd i detta fönster ?
 */
-         if ( WPnivt(gwinpt,csypek->hed_pl.level) )
+         if ( WPnivt(gwinpt->nivtab,csypek->hed_pl.level) )
            {
 /*
 ***Ja. Kolla att rätt färg är inställd.
 */
            if ( csypek->hed_pl.pen != actpen ) WPspen(csypek->hed_pl.pen);
-#ifdef V3_X11
+#ifdef UNIX
            if ( csmode == V3_CS_ACTIVE )
              {
              if ( WPgrst("varkon.act_csys_pen",buf)  &&
@@ -186,7 +186,7 @@ static int csmode = V3_CS_NORMAL;
 */
          else
            {
-           if ( !WPnivt(gwinpt,csypek->hed_pl.level)  ||
+           if ( !WPnivt(gwinpt->nivtab,csypek->hed_pl.level)  ||
                                csypek->hed_pl.blank) return(0);
            drawcs(gwinpt,csypek,la,FALSE);         
            }
@@ -236,6 +236,8 @@ static int csmode = V3_CS_NORMAL;
 ***Rita igen.
 */
    WPdrcs(csypek,la,win_id);
+
+   WPrepaint_RWIN(RWIN_ALL,FALSE);
 /*
 ***Återställ mode.
 */
@@ -299,7 +301,7 @@ static int csmode = V3_CS_NORMAL;
 ***Klipp polylinjen. Om den är synlig (helt eller delvis ),
 ***rita den.
 */
-   if ( WPcply(gwinpt,(short)-1,&k,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,(short)-1,&k,x,y,a) )
      {
      if ( draw  &&  csypek->hed_pl.hit )
        {

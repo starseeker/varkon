@@ -64,7 +64,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
         short     WPdxf_out(
         WPGWIN   *gwinpt,
         FILE     *filpek,
-        VY       *plotvy,
+        WPVIEW   *plotvy,
         DBVector *origo)
 
 /*      Creates "plotfile" on DXF-format.
@@ -102,15 +102,15 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Projection and Clipping is performed to all
 ***entitys so we need a temp WPGWIN with the
-***right clip bounadries. Make a copy of the
+***right clip boundaries. Make a copy of the
 ***current WPGWIN and adjust its model window
 ***to fit the requested plotvy.
 */
    V3MOME(gwinpt,&actwin,sizeof(WPGWIN));
-   actwin.vy.modwin.xmin = plotvy->vywin[0];
-   actwin.vy.modwin.xmax = plotvy->vywin[2];
-   actwin.vy.modwin.ymin = plotvy->vywin[1];
-   actwin.vy.modwin.ymax = plotvy->vywin[3];
+   actwin.vy.modwin.xmin = plotvy->modwin.xmin;
+   actwin.vy.modwin.xmax = plotvy->modwin.xmax;
+   actwin.vy.modwin.ymin = plotvy->modwin.ymin;
+   actwin.vy.modwin.ymax = plotvy->modwin.ymax;
 /*
 ***Lets start with a comment.
 */
@@ -215,7 +215,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,poipek->hed_p.level) ||
+   if ( !WPnivt(actwin.nivtab,poipek->hed_p.level) ||
         poipek->hed_p.blank ) return(0);
 /*
 ***Project the point on the viewplane of the window.
@@ -265,7 +265,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,linpek->hed_l.level) ||
+   if ( !WPnivt(actwin.nivtab,linpek->hed_l.level) ||
         linpek->hed_l.blank ) return(0);
 /*
 ***Create the polyline of a solid line.
@@ -282,7 +282,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
 /*
 ***Write visible part to file.
@@ -330,7 +330,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,arcpek->hed_a.level) ||
+   if ( !WPnivt(actwin.nivtab,arcpek->hed_a.level) ||
         arcpek->hed_a.blank ) return(0);
 
 /*
@@ -353,7 +353,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 ***Clip.
 */
    korg = k;
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
 /*
 ***Some part is visible. k = korg means that probably all was visible.
@@ -423,7 +423,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,curpek->hed_cu.level) ||
+   if ( !WPnivt(actwin.nivtab,curpek->hed_cu.level) ||
         curpek->hed_cu.blank ) return(0);
 /*
 ***Current scale factor in this window =
@@ -444,7 +444,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
      dxfopl(filpek,&(curpek->hed_cu),k,x,y,a,origo);
      }
@@ -481,7 +481,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,csypek->hed_pl.level) ||
+   if ( !WPnivt(actwin.nivtab,csypek->hed_pl.level) ||
         csypek->hed_pl.blank ) return(0);
 /*
 ***Axis length 20% of "plot window" size.
@@ -503,7 +503,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
      dxfopl(filpek,&(csypek->hed_pl),k,x,y,a,origo);
      }
@@ -537,7 +537,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,bplpek->hed_bp.level) ||
+   if ( !WPnivt(actwin.nivtab,bplpek->hed_bp.level) ||
         bplpek->hed_bp.blank ) return(0);
 /*
 ***Make polyline.
@@ -551,7 +551,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
      dxfopl(filpek,&(bplpek->hed_bp),k,x,y,a,origo);
      }
@@ -588,7 +588,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,mshpek->hed_m.level) ||
+   if ( !WPnivt(actwin.nivtab,mshpek->hed_m.level) ||
         mshpek->hed_m.blank ) return(0);
 /*
 ***Current scale factor in this window =
@@ -610,7 +610,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
      dxfopl(filpek,&(mshpek->hed_m),k,x,y,a,origo);
      }
@@ -650,7 +650,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,txtpek->hed_tx.level) ||
+   if ( !WPnivt(actwin.nivtab,txtpek->hed_tx.level) ||
         txtpek->hed_tx.blank ) return(0);
 /*
 ***Make polyline.
@@ -666,7 +666,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 ***Clip.
 */
    korg = k;
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
 /*
 ***Some part is visible. k = korg means that probably all was visible.
@@ -731,7 +731,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,ldmpek->hed_ld.level) ||
+   if ( !WPnivt(actwin.nivtab,ldmpek->hed_ld.level) ||
         ldmpek->hed_ld.blank ) return(0);
 /*
 ***Make polyline.
@@ -745,7 +745,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
      dxfopl(filpek,&(ldmpek->hed_ld),k,x,y,a,origo);
      }
@@ -779,7 +779,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,cdmpek->hed_cd.level) ||
+   if ( !WPnivt(actwin.nivtab,cdmpek->hed_cd.level) ||
         cdmpek->hed_cd.blank ) return(0);
 /*
 ***Make polyline.
@@ -793,7 +793,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
      dxfopl(filpek,&(cdmpek->hed_cd),k,x,y,a,origo);
      }
@@ -826,7 +826,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,rdmpek->hed_rd.level) ||
+   if ( !WPnivt(actwin.nivtab,rdmpek->hed_rd.level) ||
         rdmpek->hed_rd.blank ) return(0);
 /*
 ***Make polyline.
@@ -840,7 +840,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
      dxfopl(filpek,&(rdmpek->hed_rd),k,x,y,a,origo);
      }
@@ -875,7 +875,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,admpek->hed_ad.level) ||
+   if ( !WPnivt(actwin.nivtab,admpek->hed_ad.level) ||
         admpek->hed_ad.blank ) return(0);
 /*
 ***Current scale factor in this window =
@@ -896,7 +896,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Clip.
 */
-   if ( WPcply(&actwin,(short)-1,&k,x,y,a) )
+   if ( WPcply(&actwin.vy.modwin,(short)-1,&k,x,y,a) )
      {
      dxfopl(filpek,&(admpek->hed_ad),k,x,y,a,origo);
      }
@@ -933,7 +933,7 @@ static short dxffnt(FILE *filpek, short typ, DBfloat lgt);
 /*
 ***Visible ?
 */
-   if ( !WPnivt(&actwin,xhtpek->hed_xh.level) ||
+   if ( !WPnivt(actwin.nivtab,xhtpek->hed_xh.level) ||
         xhtpek->hed_xh.blank ) return(0);
 /*
 ***Write each hatch line as a DXF LINE entity.

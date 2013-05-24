@@ -4,14 +4,14 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*   igstid();   String to ID                                       */
-/*   igidst();   ID to string                                       */
-/*   igcsid();   Compare 2 ID's                                     */
-/*   igcmid();   Compare one ID with many                           */
-/*   igcpre();   Copy ID                                            */
+/*   IGstid();   String to ID                                       */
+/*   IGidst();   ID to string                                       */
+/*   IGcsid();   Compare 2 ID's                                     */
+/*   IGcmid();   Compare one ID with many                           */
+/*   IGcpre();   Copy ID                                            */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -30,8 +30,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -41,7 +39,7 @@
 
 /*!******************************************************/
 
-        short igstid(
+        short IGstid(
         char *idstr,
         DBId *idvek)
 
@@ -142,7 +140,7 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-        short igidst(
+        short IGidst(
         DBId *idvek,
         char *idstr)
 
@@ -186,7 +184,7 @@ end:
 /********************************************************/
 /*******************************************************!*/
 
-        bool igcsid(
+        bool IGcsid(
         DBId *pid1,
         DBId *pid2)
 
@@ -220,7 +218,7 @@ end:
        {
        id1pek = pid1->p_nextre;
        id2pek = pid2->p_nextre;
-       return( igcsid(id1pek, id2pek));
+       return( IGcsid(id1pek, id2pek));
        }
 /*
 ***En eller båda har pekare = NULL. Kolla om båda har det.
@@ -237,7 +235,7 @@ end:
 /********************************************************/
 /******************************************************!*/
 
-        bool igcmid(
+        bool IGcmid(
         DBId *idpek,
         DBId  idvek[][MXINIV],
         short vn)
@@ -255,7 +253,7 @@ end:
  *
  *      (C)microform ab 23/8/85 R. Svedin.
  * 
- *      16/3/88  Omgjord för getmid(), J. Kjellander
+ *      16/3/88  Omgjord för IGgmid(), J. Kjellander
  *
  ******************************************************!*/
 
@@ -267,7 +265,7 @@ end:
 */
      for ( i = 0; i < vn; ++i )
        {
-       if ( igcsid(idpek,&idvek[i][0]))
+       if ( IGcsid(idpek,&idvek[i][0]))
          {
          return(TRUE);       /* Storheten finns i vektorn */
          }
@@ -278,7 +276,7 @@ end:
 /*********************************************************/
 /*!******************************************************/
 
-        short igcpre(
+        short IGcpre(
         DBId *frompk,
         DBId *topk)
 

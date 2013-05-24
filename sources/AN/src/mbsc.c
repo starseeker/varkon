@@ -38,6 +38,11 @@
 #include "../include/AN.h"
 #include <string.h>
 
+#ifdef UNIX
+#include "/usr/include/sys/utsname.h"
+#endif
+
+
 #define DEFLIN 70                  /* default number of lines/page */
 #define DEFCOL 80                  /* default number of columns/line */
 #define MAXSRC 800                 /* max number of source files */
@@ -51,7 +56,7 @@ V3MSIZ sysize;                     /* Div. storlekar. */
 V3MDAT sydata = {                  /* System constants */
                 1000,              /* Serienummer      */
                 1,                 /* Version          */
-                18,                /* Revision         */
+                19,                /* Revision         */
                 'B',               /* "upplaga"        */
                 0, 0, 0, 0, 0,     /* tider            */
                 0, 0, 0, 0, 0,
@@ -71,7 +76,8 @@ short modtyp;                      /* module type 2 = _2D, 3 = _3D */
 short modatt;                      /* module attribute LOCAL, GLOBAL etc. */
 bool  andbg();
 
-/********************************************************/
+static void init_sydata();
+
 /*!******************************************************/
 
         int main(
@@ -109,7 +115,7 @@ bool  andbg();
 ***Börja det hela med en hårdvarucheck.
 ***Därmed fylls sydata i.
 */
-   igckhw();
+   init_sydata();
 /*
 ***Default storlek för PM.
 */
@@ -447,4 +453,64 @@ bool  andbg();
 #endif
 
 /*********************************************************************/
+/*!******************************************************/
 
+ static void init_sydata()
+
+/*      Initierar sydata och kollar att rätt hårdvara
+ *      används. Krypterar serienumret.
+ *
+ *      (C)microform ab 3/3/88 J. Kjellander
+ *
+ *      1996-01-25 Tagit bort sysserial, J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+
+/*
+***Unix.
+*/
+
+#ifdef UNIX
+    struct utsname name;
+
+    uname(&name);
+    strncpy(sydata.sysname,name.sysname,8);
+    sydata.sysname[8] = '\0';
+    strncpy(sydata.release,name.release,8);
+    sydata.release[8] = '\0';
+    strncpy(sydata.version,name.version,8);
+    sydata.version[8] = '\0';
+#endif
+
+/*
+***Microsoft Windows.
+*/
+
+#ifdef WIN32
+    char  buf[9];
+    int   major,minor;
+    DWORD version;
+
+    strcpy(sydata.sysname,"Win32");
+    version = GetVersion();
+    major = (int)(version&0x00FF);
+    minor = (int)((version&0xFF00)>>8);
+    sprintf(buf,"%d",major);
+    buf[8] = '\0';
+    strcpy(sydata.release,buf);
+    sprintf(buf,"%d",minor);
+    buf[8] = '\0';
+    strcpy(sydata.version,buf);
+#endif
+
+/*
+***Encrypted serial number not used.
+*/
+   sydata.ser_crypt = 0;
+
+   return;
+  }
+
+/********************************************************/

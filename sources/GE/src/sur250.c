@@ -649,7 +649,7 @@ if ( dbglev(SURPAC) == 1 )
    DBSeg  *p_u0;         /* Pointer to boundary segment U= 0.0      */
    DBSeg  *p_u1;         /* Pointer to boundary segment U= 1.0      */
    DBSeg  *p_v0;         /* Pointer to boundary segment V= 0.0      */
-   DBSeg  *p_u1;         /* Pointer to boundary segment V= 1.0      */
+   DBSeg  *p_v1;         /* Pointer to boundary segment V= 1.0      */
    DBSeg  *p_um;         /* Pointer to middle   segment U= 0.5      */
    GMPATR *p_patr;       /* Pointer to the rational cubic patch     */
 

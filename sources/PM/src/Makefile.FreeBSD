@@ -15,10 +15,7 @@ CFLAGS +=   -ansi                       \
             -Wall                       \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
-            -O                          \
-            -DWRK_STAT                  \
-            -DV3_X11 -I/usr/X11R6/include \
+            -O -I/usr/X11R6/include \
             -DUNIX
 
 debug :      CFLAGS += -g -DDEBUG

@@ -4,17 +4,18 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  v3fmov();     Move/Rename file                                  */
-/*  v3fcpy();     Copy files                                        */
-/*  v3fapp();     Add two files                                     */
-/*  v3fdel();     Delete file                                       */
-/*  v3facc();     Test file accessability                           */
-/*  v3ftst();     Test file existance                               */
-/*  v3mkdr();     Create directory                                  */
-/*  v3cmpw();     Compare strings with wildcard                     */
+/*  IGfmov();     Move/Rename file                                  */
+/*  IGfcpy();     Copy files                                        */
+/*  IGfapp();     Add two files                                     */
+/*  IGfdel();     Delete file                                       */
+/*  IGfacc();     Test file accessability                           */
+/*  IGftst();     Test file existance                               */
+/*  IGmkdr();     Create directory                                  */
+/*  IGcmpw();     Compare strings with wildcard                     */
+/*  IGcmos();     Interactive OS-command                            */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -33,12 +34,11 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-2001, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../include/IG.h"
+#include "../../EX/include/EX.h"
 
 #ifdef UNIX
 #include <sys/stat.h>
@@ -52,7 +52,7 @@
 
 /*!******************************************************/
 
-        short v3fmov(
+        short IGfmov(
         char *from,
         char *to)
 
@@ -82,7 +82,7 @@
 ***I WIN32 får inte en fil med samma namn finnas sedan tidigare.
 */
 #ifdef WIN32
-    if ( v3facc(to,'X') ) v3fdel(to);
+    if ( IGfacc(to,'X') ) IGfdel(to);
 #endif
 /*
 ***Byt namn.
@@ -102,7 +102,7 @@
 /********************************************************/
 /*!******************************************************/
 
-        short v3fcpy(
+        short IGfcpy(
         char *from,
         char *to)
 
@@ -174,7 +174,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        short v3fapp(
+        short IGfapp(
         char *from,
         char *to)
 
@@ -243,7 +243,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        short v3fdel(char *fil)
+        short IGfdel(char *fil)
 
 /*      Tar bort en fil.
  *
@@ -281,7 +281,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        bool v3facc(
+        bool IGfacc(
         char *fil,
         char  mode)
 
@@ -332,7 +332,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        bool v3ftst(char *fil)
+        bool IGftst(char *fil)
 
 /*      Kollar om fil går att öppna för läsning. OBS,
  *      i Win95 får denna rutin inte användas på en
@@ -366,7 +366,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        short v3mkdr(char *dirnam)
+        short IGmkdr(char *dirnam)
 
 /*      Skapar directory.
  *
@@ -407,7 +407,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        bool  v3cmpw(
+        bool  IGcmpw(
         char *wc_str,
         char *tststr)
 
@@ -419,7 +419,7 @@ loop:
  *      Om någon av strängarna = "" returneras FALSE.
  *
  *      OBS ! Kopia av denna rutin finns i DBtraverse.c
- *      v3cmpw() används fn. inte !
+ *      IGcmpw() används fn. inte !
  *
  *      In: wc_str => Sträng med 0, 1 eller flera stjärnor.
  *          tststr => Sträng utan stjärnor.
@@ -538,3 +538,42 @@ loop2:
   }
 
 /********************************************************/
+/*!******************************************************/
+
+       short IGcmos(char oscmd[])
+
+/*      Interaktivt kommando till OS.
+ *
+ *      In: oscmd -> Kommandosträng
+ *
+ *      Ut: Inget.
+ *
+ *      FV: Inget.
+ *
+ *      (C)microform ab 5/3/88 J. Kjellander
+ *
+ *      4/11/88 CGI, N220G, J. Kjellander
+ *
+ ******************************************************!*/
+
+ {
+   char  s[2];
+   short status;
+
+/*
+***Starta upp ny process och vänta tills den är klar.
+***Oavsett terminaltyp har igintt() gjorts i v3.c, alltså
+***måste igextt göras nu.
+*/
+   EXos(oscmd,(short)0);
+/*
+***Vänta på användarens <CR>.
+*/
+   status = IGssip(IGgtts(3),s,"",1);
+/*
+***Slut.
+*/
+   return(status);
+ }
+
+/*********************************************************************/

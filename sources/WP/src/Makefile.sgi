@@ -14,10 +14,7 @@ CFLAGS =                    \
          -mips1             \
          -signed            \
          -O                 \
-         -DUNIX             \
-         -DV3_X11           \
-         -DV3_OPENGL        \
-         -DWRK_STAT
+         -DUNIX
 
 COMPILE = $(CC) -c $(CFLAGS)
 

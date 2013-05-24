@@ -39,7 +39,7 @@
 #include "../../IG/include/IG.h"
 #include "../../GE/include/GE.h"
 /*#include "../../GP/include/GP.h"*/
-#ifdef V3_X11
+#ifdef UNIX
 #include "../../WP/include/WP.h"
 #endif
 #include "../include/EX.h"
@@ -68,7 +68,7 @@ int      ngeoseg;    /* no of new segments for this entity                */
 DBSeg   *pgeoseg;    /* pointer to first segment for this entity          */
 }ENTTAB;
 
-/*  
+/*
 ***Internal functions used by EXcomp()
 */
 static short check(DBint ncur, DBCurve *comp_cur, ENTTAB et[]);
@@ -78,10 +78,10 @@ static short reverseNURB(DBCurve *cur,DBSeg *seg);
 static short getseginfo(DBptr curla, DBshort *segtype, DBptr *surla,
                          DBfloat *ofs, bool *mixedofs);
 static short mergeNURB(DBint ncur,DBCurve *comp_cur,ENTTAB et[]); 
-     
-#define MIXED_SEG  5
-      
-       
+
+#define MIXED_SEG  -99
+
+
 /*!******************************************************/
 
        short EXecur(
@@ -909,13 +909,14 @@ end:
  *      1997-04-14 Pass 0. J.Kjellander
  *      1997-05-25 Bug långa kurvor, J.Kjellander
  *      2006-11-03 Added NURBS S. Larsson
- *      2006-11-03 Added possibility to create uv curves S.L.
+ *      2006-11-03 Added possibility to create uv curves, Sören L.
+ *      2007-01-22 Bugfix graph rep, comp of nurbs and lines, Sören L.
  *
  ******************************************************!*/
 
   {
     short     status;
-    int       i,allant,nseg;
+    int       i,j,allant,nseg;
     DBptr     ent_la;
     DBetype   ent_typ;
     bool      pass2;
@@ -926,31 +927,34 @@ end:
     DBSeg     arcseg[4];
     DBVector  pos;
     ENTTAB    et[GMMXCO];
-    bool      contain_segtype[5];
+    bool      contain_UV_NURB_SEG;
+    bool      contain_UV_CUB_SEG;
+    bool      contain_NURB_SEG;
+    bool      contain_CUB_SEG;
+    bool      contain_MIXED_SEG;
     bool      contain_UV;
     bool      contain_R3;
-    char      errbuf[V3STRLEN+1];   
-    DBptr     cpts_la,knots_la,sur_la;  
+    char      errbuf[V3STRLEN+1];
+    DBptr     cpts_la,knots_la,sur_la;
     DBfloat   comptol,idknot;
     BBOX      p_cbox;
     DBSurf    sur; 
     BBOX      uvminmax;
     DBPatch   toppat_s,toppat_e;
-           
     idknot    = varkon_idknot();
     comptol   = varkon_comptol();
-   
+
 /*
 ***Pass 0. Traverse entities and create entity_table et.
 */
-    contain_segtype[CUB_SEG]     = FALSE;
-    contain_segtype[UV_CUB_SEG]  = FALSE;
-    contain_segtype[NURB_SEG]    = FALSE;
-    contain_segtype[UV_NURB_SEG] = FALSE;
-    contain_segtype[MIXED_SEG]   = FALSE;
-    contain_UV                   = FALSE;
-    contain_R3                   = FALSE;
-          
+    contain_UV_NURB_SEG  = FALSE;
+    contain_UV_CUB_SEG   = FALSE;
+    contain_NURB_SEG     = FALSE;
+    contain_CUB_SEG      = FALSE;
+    contain_MIXED_SEG    = FALSE;
+    contain_UV           = FALSE;
+    contain_R3           = FALSE;
+
     for ( i=0; i<nref ; ++i )
       {
       if ( DBget_pointer('I',&ridvek[i],&ent_la,&ent_typ) < 0 ) 
@@ -970,13 +974,17 @@ end:
       else if (ent_typ == CURTYP)
         {
         getseginfo(ent_la,&et[i].segtyp,&et[i].surla,&et[i].ofs,&et[i].mixedofs);
-        contain_segtype[et[i].segtyp] = TRUE;   
+        if      (et[i].segtyp == CUB_SEG)    contain_CUB_SEG     = TRUE;
+        else if (et[i].segtyp == UV_CUB_SEG) contain_UV_CUB_SEG  = TRUE;
+        else if (et[i].segtyp == NURB_SEG)   contain_NURB_SEG    = TRUE;
+        else if (et[i].segtyp == UV_NURB_SEG)contain_UV_NURB_SEG = TRUE;
+        else if (et[i].segtyp == MIXED_SEG)  contain_MIXED_SEG   = TRUE;
         }
       et[i].reversed = FALSE;
       et[i].ngeoseg  = 0;
       et[i].pgeoseg  = NULL;
       }
-      
+
     if (sur_id != NULL) 
       {
       contain_UV=TRUE;
@@ -988,7 +996,7 @@ end:
       if(DBread_surface(&sur, sur_la) < 0 )
         {
         return(erpush("EX4292","")); /* cant read surface from  DB*/
-        }  
+        }
 
       if (  sur.typ_su == NURB_SUR)
         {
@@ -1001,27 +1009,27 @@ end:
         toppat_e.spek_c = NULL;
         DBread_one_patch(&sur,&toppat_s,1,1);
         DBread_one_patch(&sur,&toppat_e,sur.nu_su,sur.nv_su);
-        uvminmax.xmin= toppat_s.us_pat - idknot; 
-        uvminmax.ymin= toppat_s.vs_pat - idknot; 
-        uvminmax.xmax= toppat_e.ue_pat + idknot; 
-        uvminmax.ymax= toppat_e.ve_pat + idknot;      
+        uvminmax.xmin= toppat_s.us_pat - idknot;
+        uvminmax.ymin= toppat_s.vs_pat - idknot;
+        uvminmax.xmax= toppat_e.ue_pat + idknot;
+        uvminmax.ymax= toppat_e.ve_pat + idknot;
         }
       else
-        {    
-        uvminmax.xmin= -idknot; 
-        uvminmax.ymin= -idknot; 
-        uvminmax.xmax= sur.nu_su +  idknot; 
-        uvminmax.ymax= sur.nv_su +  idknot; 
+        {
+        uvminmax.xmin= -idknot;
+        uvminmax.ymin= -idknot;
+        uvminmax.xmax= sur.nu_su +  idknot;
+        uvminmax.ymax= sur.nv_su +  idknot;
         }
       }  
     else
       {
-      if (contain_segtype[UV_CUB_SEG]||contain_segtype[UV_NURB_SEG]||contain_segtype[MIXED_SEG]) 
+      if (contain_UV_CUB_SEG||contain_UV_NURB_SEG||contain_MIXED_SEG) 
         {
         contain_UV=TRUE;
         }
       else contain_UV=FALSE;
-      if (contain_segtype[CUB_SEG] || contain_segtype[NURB_SEG] ||  contain_segtype[MIXED_SEG]) 
+      if (contain_CUB_SEG || contain_NURB_SEG ||  contain_MIXED_SEG) 
         {
         contain_R3=TRUE;
         }
@@ -1034,11 +1042,11 @@ end:
 ***If (sur_id != NULL) also set surface pointer in entity table (et) for all
 ***entities that not already have surface pointer.
 */
-if (sur_id != NULL)  
-  {   
-  if (contain_segtype[MIXED_SEG]==TRUE)
+if (sur_id != NULL)
+  {
+  if (contain_MIXED_SEG==TRUE)
     {
-    return(erpush("EX4252","")); 
+    return(erpush("EX4252",""));
     }
   if ( DBget_pointer('I',sur_id,&ent_la,&ent_typ) < 0 ) 
     {
@@ -1046,27 +1054,27 @@ if (sur_id != NULL)
     }
   if (ent_typ != SURTYP)
     {
-    igidst(sur_id,errbuf);
+    IGidst(sur_id,errbuf);
     return(erpush("EX1412",errbuf));
     }
   for ( i=0; i<nref ; ++i )
-    {  
+    {
     if (et[i].surla == DBNULL) 
       {
       et[i].surla=ent_la;
       et[i].newuv=TRUE;
       if (fabs(et[i].ofs) > comptol) return(erpush("EX4262","")); 
       }
-    }  
-  }       
-  
+    }
+  }
+
 /*
 ***Additional checks for NURBS:
 ***We do not allow mixed offsets
 ***We do not allow mixed UV / R3 entites.
 ***All UV entities must point to same surface.
 */
-if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG]) 
+if (contain_NURB_SEG||contain_UV_NURB_SEG) 
   {
   if (et[0].mixedofs==TRUE) return(erpush("EX4262","")); /*mixed offsets*/
   for ( i=1; i<nref ; ++i )
@@ -1079,10 +1087,10 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
     if (contain_R3 )   
       return(erpush("EX4232","")); /*mixed UV/R3*/
     for ( i=1; i<nref ; ++i )
-      {  
+      {
       if (et[i].surla != et[0].surla)
       return(erpush("EX4242","")); /*mixed surface pointers*/
-      }  
+      }
     }
   }
 /*
@@ -1128,16 +1136,16 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
                lin.crd2_l.x_gm < uvminmax.xmin || lin.crd2_l.x_gm > uvminmax.xmax ||
                lin.crd2_l.y_gm < uvminmax.ymin || lin.crd2_l.y_gm > uvminmax.ymax)
                {
-               igidst(&ridvek[i],errbuf);
+               IGidst(&ridvek[i],errbuf);
                return(erpush("EX4302",errbuf));
                }
            if (lin.crd1_l.z_gm + comptol < 0 || lin.crd1_l.z_gm - comptol > 0 ||
                lin.crd2_l.z_gm + comptol < 0 || lin.crd2_l.z_gm - comptol > 0)
                {
-               igidst(&ridvek[i],errbuf);
+               IGidst(&ridvek[i],errbuf);
                return(erpush("EX4312",errbuf));
                } 
-           }         
+           }
          (newgeo+nseg)->c0x = lin.crd1_l.x_gm;
          (newgeo+nseg)->c0y = lin.crd1_l.y_gm;
          (newgeo+nseg)->c0z = lin.crd1_l.z_gm;
@@ -1176,15 +1184,15 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
            if (p_cbox.xmin < uvminmax.xmin || p_cbox.xmax > uvminmax.xmax ||
                p_cbox.ymin < uvminmax.ymin || p_cbox.ymax > uvminmax.ymax)
              {
-             igidst(&ridvek[i],errbuf);
+             IGidst(&ridvek[i],errbuf);
              return(erpush("EX4302",errbuf));
              }
            if (p_cbox.zmin + comptol < 0 || p_cbox.zmax - comptol > 0)
              {
-             igidst(&ridvek[i],errbuf);
+             IGidst(&ridvek[i],errbuf);
              return(erpush("EX4312",errbuf));
-             }     
-           }   
+             }
+           }
          if ( allant < nseg+arc.ns_a )
            {
            newgeo = DBadd_segments(newgeo,allant+DSGANT);
@@ -1210,15 +1218,15 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
            if (p_cbox.xmin < uvminmax.xmin || p_cbox.xmax > uvminmax.xmax ||
                p_cbox.ymin < uvminmax.ymin || p_cbox.ymax > uvminmax.ymax)
              {
-             igidst(&ridvek[i],errbuf);
+             IGidst(&ridvek[i],errbuf);
              return(erpush("EX4302",errbuf));
              }
            if (p_cbox.zmin + comptol < 0 || p_cbox.zmax - comptol > 0)
              {
-             igidst(&ridvek[i],errbuf);
+             IGidst(&ridvek[i],errbuf);
              return(erpush("EX4312",errbuf));
-             }     
-           }  
+             }
+           }
          if ( allant < nseg+oldcur.ns_cu )
            {
            newgeo  = DBadd_segments(newgeo,nseg+oldcur.ns_cu+DSGANT);
@@ -1276,11 +1284,11 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
     status = check((DBint)nref,&newcur,et);
     if ( status < 0 ) goto end;
 /*
-***If contain_segtype[NURB_SEG] || contain_segtype[UV_NURB_SEG]
+***If contain_NURB_SEG || contain_UV_NURB_SEG
 ***call mergeNURBS()
 */
-    if (contain_segtype[NURB_SEG] || contain_segtype[UV_NURB_SEG])
-      {    
+    if (contain_NURB_SEG || contain_UV_NURB_SEG)
+      {
       status=mergeNURB((DBint)nref,&newcur,et);
       if ( status < 0 ) goto end;  
       }
@@ -1291,8 +1299,8 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
 
 /*
 ***Start pass 2, creation of graphical representation.
-*/      
-      if (pass2 )   
+*/
+      if (pass2 )
         {
         newgra = DBcreate_segments(DSGANT);
         allant = DSGANT;
@@ -1305,7 +1313,7 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
 /*
 ***If this is an entity converted to uv (cubic or nurb),
 ***call varkon_sur_scur_gra() to create graphical representation.
-*/        
+*/
           if (et[i].newuv)
             {
             tmpcur.ns_cu=et[i].ngeoseg;
@@ -1315,24 +1323,26 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
 /*
 *** memory for graphical segments is allocated by GEcur_cre_gra()
 *** and need to be returned at the end of this operation
-*/          
+*/
             tmpgra=NULL;
             status = GEcur_cre_gra(&tmpcur,et[i].pgeoseg,&tmpgra);
-            
-            if (status<0) goto end;
-          
-            if ( allant < tmpcur.nsgr_cu + nseg)
+
+            if (status==0 && tmpcur.nsgr_cu>0)
               {
-              newgra = DBadd_segments(newgra,tmpcur.nsgr_cu + nseg +DSGANT);
-              allant = tmpcur.nsgr_cu + nseg + DSGANT;
+              if ( allant < tmpcur.nsgr_cu + nseg)
+                {
+                newgra = DBadd_segments(newgra,tmpcur.nsgr_cu + nseg +DSGANT);
+                allant = tmpcur.nsgr_cu + nseg + DSGANT;
+                }
+              V3MOME( tmpgra, newgra+nseg , tmpcur.nsgr_cu * sizeof(DBSeg) ); 
+              nseg += tmpcur.nsgr_cu;         
+              DBfree_segments(tmpgra);
               }
-            V3MOME( tmpgra, newgra+nseg , tmpcur.nsgr_cu * sizeof(DBSeg) ); 
-            nseg += tmpcur.nsgr_cu;         
-            DBfree_segments(tmpgra);
+
             }
 /*
 ***Else treat the entities dependent on type
-*/           
+*/
           else
             {  
             switch ( et[i].typ )
@@ -1340,15 +1350,34 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
 /*
 ***For lines and arcs, we use the geometrical segments also as 
 ***graphical representation.
+***But ... they may have been converted to NURBS_SEG.
+***In the case of UV segs we are creating new garph rep
+***and will not reach here
 */
               case (LINTYP):
               case (ARCTYP):
+
+              if(contain_NURB_SEG)
+                {
+                for(j=0; j< et[i].ngeoseg; j++)
+                  {
+                  et[i].pgeoseg[j].typ=CUB_SEG;
+                  }
+                }
+
               if ( allant < nseg+et[i].ngeoseg )
                 {
                 newgra = DBadd_segments(newgra,allant+DSGANT);
                 allant += DSGANT;
                 }
               V3MOME(et[i].pgeoseg,newgra+nseg,et[i].ngeoseg*sizeof(DBSeg));
+              if(contain_NURB_SEG)
+                {
+                for(j=0; j< et[i].ngeoseg; j++)
+                  {
+                  et[i].pgeoseg[j].typ=NURB_SEG;
+                  }
+                }
               nseg += et[i].ngeoseg;
               break;
 /*
@@ -1397,13 +1426,13 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
       newgra = NULL;
       newcur.nsgr_cu =0;
       }*/
-    
+
 /*
 ***If we now have a NURBS curve, store cpts and knots in DB 
 ***and update the segments DB pointers to them.
 ***The other data are filled in before.
-*/    
-    if (contain_segtype[NURB_SEG] || contain_segtype[UV_NURB_SEG]) 
+*/
+    if (contain_NURB_SEG || contain_UV_NURB_SEG) 
       {
       status = DBwrite_nurbs(newgeo->cpts_c, newgeo->ncpts, newgeo->knots_c, 
                           newgeo->nknots, &cpts_la, &knots_la);
@@ -1412,8 +1441,8 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
         {
         (newgeo+i)->cpts_db      = cpts_la;
         (newgeo+i)->knots_db     = knots_la;
-        }    
-      } 
+        }
+      }
 /*
 ***Store in DB and draw.
 */
@@ -1423,7 +1452,7 @@ if (contain_segtype[NURB_SEG]||contain_segtype[UV_NURB_SEG])
 */
     if ( newgra != NULL && newgra !=newgeo) DBfree_segments(newgra);
 end:
-    if (contain_segtype[NURB_SEG] || contain_segtype[UV_NURB_SEG]) 
+    if (contain_NURB_SEG || contain_UV_NURB_SEG) 
       {
       DBfree_nurbs(newgeo[0].knots_c, newgeo[0].cpts_c);
       }
@@ -1431,7 +1460,7 @@ end:
 
     return(status);
   }
- 
+
 /********************************************************/
 /*!******************************************************/
 
@@ -1514,7 +1543,7 @@ end:
      diff.z_gm = slut[0].z_gm - start[1].z_gm;
      if ( modtyp == 2 ) dist = GEvector_length2D(&diff);
      else               dist = GEvector_length3D(&diff);
-     
+
 /*
 ***Om dom inte sitter ihop kollar vi start mot start.
 */
@@ -2039,7 +2068,8 @@ error2:
          segpek->subtyp   = 1; /* one surface */
          segpek->spek_gm  = et[i].surla;
          segpek->spek2_gm = DBNULL;
-           
+         segpek->sl =0.0;
+
          }
        else if (segpek->typ==NURB_SEG)
          {
@@ -2062,8 +2092,9 @@ error2:
          segpek->typ      = UV_NURB_SEG;
          segpek->subtyp   = 1; /* one surface */
          segpek->spek_gm  = et[i].surla;
-         segpek->spek2_gm = DBNULL;  
-         } 
+         segpek->spek2_gm = DBNULL;
+         segpek->sl =0.0;
+         }
        }
      }
   return(0);
@@ -2175,7 +2206,7 @@ error2:
    DBfloat   comptol;
 
    comptol   = varkon_comptol();
-      
+
 /*
 ***convert all curves to nurbs.
 ***input entities are nurbs or cubic uv or R3 curves
@@ -2184,7 +2215,7 @@ maxNURBdeg=0;
 nnew_cpts=1;
 for ( i=0; i<ncur; i++ )
   {
-  
+
   if (et[i].pgeoseg->typ==CUB_SEG || et[i].pgeoseg->typ==UV_CUB_SEG)
     {
     if (et[i].pgeoseg->typ==CUB_SEG)    segtype=NURB_SEG;
@@ -2199,74 +2230,72 @@ for ( i=0; i<ncur; i++ )
     if ( (et[i].pgeoseg[0].cpts_c = v3mall(ncpts*sizeof(DBHvector),"mergeNURB"))==NULL)
       {
       erpush("EX4222","");
-      } 
+      }
     if ( (et[i].pgeoseg[0].knots_c = v3mall(nknots*sizeof(DBfloat),"mergeNURB")) == NULL )
       {
       erpush("EX4222","");
-      }      
+      }
     cpts_c=et[i].pgeoseg[0].cpts_c;
     knots_c=et[i].pgeoseg[0].knots_c;
 /*
 ***build knot vector
-*/ 
+*/
     j=0;
     knots_c[0]=0;
     for ( s=0; s <= et[i].ngeoseg; s++ )
       {
         knots_c[j+1] = (DBfloat)s;
         knots_c[j+2] = (DBfloat)s;
-        knots_c[j+3] = (DBfloat)s;         
+        knots_c[j+3] = (DBfloat)s;
         j=j+3;
       }
-    knots_c[nknots-1] = knots_c[nknots-2];      
+    knots_c[nknots-1] = knots_c[nknots-2];
+    if (3>maxNURBdeg) maxNURBdeg=3;
+
 /*
 ***loop through segments to build cpts array and asign segment data
-*/  
-    for ( s=0; s<et[i].ngeoseg; s++ )      
+*/
+    for ( s=0; s < et[i].ngeoseg; s++ )
       {
 /*
-***calculate cpts for this segment. 
-***Last cpt from previous seg will be overwritten.
-***This is OK since segments should be connected 
-***(this is tested before).
-*/    
+*** Calculate cpts for this segment.
+*** Segments must be connected
+*/
       cpts_offs=s*3;
-      GEsegcpts(&et[i].pgeoseg[s],cpts_c+cpts_offs,NULL);
+      GEsegcpts(FALSE,&et[i].pgeoseg[s],cpts_c+cpts_offs);
       et[i].pgeoseg[s].cpts_c        = cpts_c;
-      et[i].pgeoseg[s].knots_c       = knots_c; 
+      et[i].pgeoseg[s].knots_c       = knots_c;
       et[i].pgeoseg[s].ncpts         = ncpts;
-      et[i].pgeoseg[s].nknots        = nknots;  
-      et[i].pgeoseg[s].offset_cpts   = cpts_offs;      
-      et[i].pgeoseg[s].offset_knots  = cpts_offs + 3;     
+      et[i].pgeoseg[s].nknots        = nknots; 
+      et[i].pgeoseg[s].offset_cpts   = cpts_offs; 
+      et[i].pgeoseg[s].offset_knots  = cpts_offs + 3; 
       et[i].pgeoseg[s].nurbs_degree  = 3;
       et[i].pgeoseg[s].typ           = segtype;
-      if (3>maxNURBdeg) maxNURBdeg=3;  
       }
     }
 /*
 ***else this entiity was already a NURBS curve
-*/    
+*/
   else 
     {
     nnew_cpts = nnew_cpts + et[i].pgeoseg[0].ncpts - 1;
     if (et[i].pgeoseg[0].nurbs_degree > maxNURBdeg) maxNURBdeg=et[i].pgeoseg[0].nurbs_degree; 
-    
+
     maxknotind = et[i].pgeoseg[0].nknots-1;
     startknot  = et[i].pgeoseg[0].knots_c[0];
     endknot    = et[i].pgeoseg[0].knots_c[maxknotind];
-    
+
     for ( j=1; j <= et[i].pgeoseg[0].nurbs_degree; j++ )
       {
       if(fabs( et[i].pgeoseg[0].knots_c[j] -  startknot) > comptol ||
          fabs( et[i].pgeoseg[0].knots_c[maxknotind-j] -  endknot) > comptol)
         {
-        return(erpush("EX4282","")); /*unclamped*/        
+        return(erpush("EX4282","")); /*unclamped*/
         }
-      }  
+      }
     }
-  } 
+  }
 
-  
 /*
 ***Now all input entities are NURBS curves and we can
 ***proceed by checking that input curves have same degree/order
@@ -2275,6 +2304,12 @@ for ( i=0; i<ncur; i++ )
 
 /*   TODO  Check / convert to same degree   */
 /*   If conversion, also update nnew_cpts  */
+
+for ( i=0; i<ncur; i++ )
+  {
+  if (et[i].pgeoseg[0].nurbs_degree != maxNURBdeg)
+  return(erpush("EX4322","")); /*Degree elevation not impl*/
+  }
 
 
 /*
@@ -2301,7 +2336,7 @@ for ( i=0; i<ncur; i++ )
 ***Iterate through the input curves to
 ***build new cpts and knots, free the old ones
 ***and update c-pointers etc in the segments.
-*/    
+*/
   global_offs=0;
   for ( i=0; i<ncur; i++ )
     {
@@ -2313,25 +2348,25 @@ for ( i=0; i<ncur; i++ )
           j < maxNURBdeg + 1 + et[i].pgeoseg[0].ncpts; j++ )
       {
       new_knots_c[global_offs+j] = new_knots_c[global_offs+j-1] + 
-         et[i].pgeoseg[0].knots_c[j] - et[i].pgeoseg[0].knots_c[j-1];                       
+         et[i].pgeoseg[0].knots_c[j] - et[i].pgeoseg[0].knots_c[j-1];
       }
 /*
 ***free old cpts and knots (once per input curve)
-*/      
+*/
     DBfree_nurbs(et[i].pgeoseg[0].knots_c, et[i].pgeoseg[0].cpts_c);
 /*
 ***update segments
-*/      
+*/
     ncpts = et[i].pgeoseg[0].ncpts;
-    for ( s=0; s<et[i].ngeoseg; s++ )      
+    for ( s=0; s<et[i].ngeoseg; s++ )
       {
       et[i].pgeoseg[s].cpts_c        = new_cpts_c;
       et[i].pgeoseg[s].knots_c       = new_knots_c; 
       et[i].pgeoseg[s].ncpts         = nnew_cpts;
       et[i].pgeoseg[s].nknots        = nnew_knots;  
-      et[i].pgeoseg[s].offset_cpts   = et[i].pgeoseg[s].offset_cpts + global_offs;      
-      et[i].pgeoseg[s].offset_knots  = et[i].pgeoseg[s].offset_knots + global_offs;     
-      }      
+      et[i].pgeoseg[s].offset_cpts   = et[i].pgeoseg[s].offset_cpts + global_offs;
+      et[i].pgeoseg[s].offset_knots  = et[i].pgeoseg[s].offset_knots + global_offs;
+      }
       global_offs = global_offs + ncpts -1;
     }
   return(0);

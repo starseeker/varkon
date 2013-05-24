@@ -1,23 +1,33 @@
 !***************************************************************
 !*
 !*    Resources to be used with the english version of
-!*    VARKON 1.17 for Linux.
+!*    VARKON 1.19 for Linux.
 !*
-!*    (C)Microform AB 1998
+!*    (C)2007 J.Kjellander
 !*
 !***************************************************************
 
 !*
 !***Text font for menus etc.
 !*
-varkon.font:                    fixed
+!varkon.font:                    fixed
+!varkon.font:                   6x13
+!varkon.font:                   7x13
+varkon.font:                   9x15
+!varkon.font: -adobe-times-medium-r-normal--18-180-75-75-p-94-iso8859-1
+!varkon.font:                   10x20
+!varkon.font:                   12x24
 !*
 !***Resources for f216, "Edit active module in MBS format".
+!***Default editor is vi in a xterm window which should work
+!***on all Unix platforms. If you have kwrite or a similar
+!***editor that you want to use, set emulator = nothing as below
+!***and editor = kwrite.
 !*
 varkon.mbsedit.emulator:        xterm -title MBS-Edit -e
 varkon.mbsedit.editor:          vi
-!varkon.mbsedit.emulator:        kwrite
-!varkon.mbsedit.editor: 
+!varkon.mbsedit.emulator:
+!varkon.mbsedit.editor:          kwrite
 varkon.mbsedit.compiler:        mbsc
 varkon.mbsedit.autocompile:     True
 varkon.mbsedit.autoexec:        True
@@ -28,14 +38,14 @@ varkon.mbsedit.autoexec:        True
 !***VARKON will display text files in VARKON list windows
 !***but HTML files will not be supported.
 !*
-varkon.html_viewer:              netscape
+varkon.html_viewer:              firefox
 !*
 !***Default graphic window. You may use more if you want.
 !*
-varkon.grawin_1.geometry:       495x435+125
+varkon.grawin_1.geometry:       700x500+200
 !varkon.grawin_2.geometry:       495x435+135+10
 !varkon.grawin_3.geometry:       495x435+145+20
-varkon.margin_left:             50
+varkon.margin_up  :             32
 !*
 !***Contents of the graphical window titlebar.
 !*
@@ -45,94 +55,175 @@ varkon.title.viewname:          True
 !*
 !***Default toolbar for graphics windows.
 !*
-varkon.button_1.geometry:       48x20+1+0
-varkon.button_1.text:           ZOOM
-varkon.button_1.action:         f193
+varkon.icon_1.geometry:         +0+0
+varkon.icon_1.name:             Varkon_zoom.xpm
+varkon.icon_1.action:           f193
+varkon.icon_1.tooltip:          Fit a rectangle to the window
 
-varkon.button_2.geometry:       48x20+1+22
-varkon.button_2.text:           Auto
-varkon.button_2.action:         f194
+varkon.icon_2.geometry:         +38+0
+varkon.icon_2.name:             Varkon_autozoom.xpm
+varkon.icon_2.action:           f194
+varkon.icon_2.tooltip:          Fit the model to the window
 
-varkon.button_3.geometry:       48x20+1+44
-varkon.button_3.text:           Scale
-varkon.button_3.action:         f188
+varkon.icon_3.geometry:         +76+0
+varkon.icon_3.name:             Varkon_scale.xpm
+varkon.icon_3.action:           f188
+varkon.icon_3.tooltip:          Set the scale to any value
 
-varkon.button_4.geometry:       48x20+1+66
-varkon.button_4.text:           Pan
-varkon.button_4.action:         f189
+varkon.icon_4.geometry:         +114+0
+varkon.icon_4.name:             Varkon_pan.xpm
+varkon.icon_4.action:           f189
+varkon.icon_4.tooltip:          Move the model with the mouse
 
-varkon.button_5.geometry:       48x20+1+88
-varkon.button_5.text:           Prev
-varkon.button_5.action:         f191
+varkon.icon_5.geometry:         +152+0
+varkon.icon_5.name:             Varkon_previous.xpm
+varkon.icon_5.action:           f191
+varkon.icon_5.tooltip:          Return to the previous view
 
-varkon.button_6.geometry:       48x20+1+110
-varkon.button_6.text:           View
-varkon.button_6.action:         f195
+varkon.icon_6.geometry:         +190+0
+varkon.icon_6.name:             Varkon_views.xpm
+varkon.icon_6.action:           f102
+varkon.icon_6.tooltip:          Create, edit or activate views
 
-varkon.button_7.geometry:       48x20+1+132
-varkon.button_7.text:           Levels
-varkon.button_7.action:         f197
+varkon.icon_7.geometry:         +228+0
+varkon.icon_7.name:             Varkon_grid.xpm
+varkon.icon_7.action:           f103
+varkon.icon_7.tooltip:          Grid settings
 
-varkon.button_8.geometry:       48x20+1+154
-varkon.button_8.text:           Persp
-varkon.button_8.action:         f190
+varkon.icon_8.geometry:         +266+0
+varkon.icon_8.name:             Varkon_levels.xpm
+varkon.icon_8.action:           f197
+varkon.icon_8.tooltip:          Blank, unblank or list levels
 
-varkon.button_9.geometry:       48x20+1+176
-varkon.button_9.text:           Delete
-varkon.button_9.action:         f10
+varkon.icon_9.geometry:         +304+0
+varkon.icon_9.name:             Varkon_printer.xpm
+varkon.icon_9.action:           f150
+varkon.icon_9.tooltip:          Print this window (or set printer parameters)
 
-varkon.button_10.geometry:      48x20+1+198
-varkon.button_10.text:          Run
-varkon.button_10.action:        f5
-
-varkon.button_11.geometry:      48x20+1+220
-varkon.button_11.text:          Edit-P
-varkon.button_11.action:        f170
-
-varkon.button_12.geometry:      48x20+1+242
-varkon.button_12.text:          MBS
-varkon.button_12.action:        f216
-
-varkon.button_13.geometry:      48x20+1+264
-varkon.button_13.text:          Hide
-varkon.button_13.action:        f133
-
-varkon.button_14.geometry:      48x20+1+286
-varkon.button_14.text:          Dyn-R
-varkon.button_14.action:        f200
 !*
-!***Size, position and title of the rendering window.
+!***Resources OpenGL rendering windows
 !*
-varkon.renwin.geometry:         500x400+100+50
-varkon.renwin.title:            VARKON Dynamic Rendering
+varkon.rwin.title:              Varkon dynamic view
+varkon.rwin.geometry:           900x650+250+50
+varkon.rwin.margin_up:          32
+
+varkon.rwin.icon_1.geometry:    +0+0
+varkon.rwin.icon_1.name:        Varkon_zoom.xpm
+varkon.rwin.icon_1.action:      f193
+varkon.rwin.icon_1.tooltip:     Fit a rectangle to the window
+
+varkon.rwin.icon_2.geometry:    +38+0
+varkon.rwin.icon_2.name:        Varkon_autozoom.xpm
+varkon.rwin.icon_2.action:      f194
+varkon.rwin.icon_2.tooltip:     Fit the model to the window
+
+varkon.rwin.icon_3.geometry:    +76+0
+varkon.rwin.icon_3.name:        Varkon_wireframe.xpm
+varkon.rwin.icon_3.action:      f100
+varkon.rwin.icon_3.tooltip:     Show model as wireframe
+
+varkon.rwin.icon_4.geometry:    +114+0
+varkon.rwin.icon_4.name:        Varkon_shade.xpm
+varkon.rwin.icon_4.action:      f101
+varkon.rwin.icon_4.tooltip:     Show model with shaded surfaces
+
+varkon.rwin.icon_5.geometry:    +152+0
+varkon.rwin.icon_5.name:        Varkon_views.xpm
+varkon.rwin.icon_5.action:      f102
+varkon.rwin.icon_5.tooltip:     Create, edit or activate views
+
+varkon.rwin.icon_6.geometry:    +190+0
+varkon.rwin.icon_6.name:        Varkon_levels.xpm
+varkon.rwin.icon_6.action:      f197
+varkon.rwin.icon_6.tooltip:     Blank, unblank or list levels
 !*
-!***Dynamic rendering window button texts.
+!***Resources for the partname dialogue.
 !*
-varkon.renwin.scale:            Scale
-varkon.renwin.pan:              Pan
-varkon.renwin.rotate:           Rot
-varkon.renwin.perspective:      Persp
-varkon.renwin.light:            Light
-varkon.renwin.poly:             Poly
-varkon.renwin.fill:             Shade
-varkon.renwin.clip:             Clip
-varkon.renwin.close:            Close
+varkon.partname.title:           Select part
+varkon.partname.geometry:       +50+50
+varkon.partname.jobdir:          Job directory
+varkon.partname.jobdir.tooltip:  Select from the parts in the current job directory
+varkon.partname.libdir:          Part library
+varkon.partname.libdir.tooltip:  Select from the parts in the current part library
+varkon.partname.empty:           No modules found !
 !*
-!***Default position for the menu window.
+!***Resources for the menu window.
 !*
+!varkon.menu.title:              MENU
 varkon.menu.geometry:           +5+5
-varkon.menu.title:              MENU
+varkon.menu.button_1.text:       abs
+varkon.menu.button_1.tooltip:    Use absolute coordinates for position input
+varkon.menu.button_2.text:       rel
+varkon.menu.button_2.tooltip:    Use relative coordinates for position input
+varkon.menu.button_3.text:       curs
+varkon.menu.button_3.tooltip:    Use mouse cursor for position input
+varkon.menu.button_4.text:       MBS
+varkon.menu.button_4.tooltip:    Use MBS expressions for position input
+varkon.menu.button_5.text:       end
+varkon.menu.button_5.tooltip:    Use the end of a line, arc or curve for position input
+varkon.menu.button_6.text:       on
+varkon.menu.button_6.tooltip:    Use entities for position input
+varkon.menu.button_7.text:       cent
+varkon.menu.button_7.tooltip:    Use arc or curve center for position input
+varkon.menu.button_8.text:       int
+varkon.menu.button_8.tooltip:    Use intersects for position input
+varkon.menu.button_9.text:       grid
+varkon.menu.button_9.tooltip:    Use grid for position input
+varkon.menu.level.tooltip:       Set the currently active level number
+varkon.menu.pen.tooltip:         Set the currently active pen or color number
+varkon.menu.width.tooltip:       Set the currently active linewidth (for all entities)
+varkon.menu.csy.tooltip:         Set the currently active coordinate system
+varkon.menu.csy.title:           Activate csys
+varkon.menu.local.tooltip:       Pick a coordinate system to activate, MODE_LOCAL(#n); in MBS
+varkon.menu.global.tooltip:      Activate the global coordinate system, MODE_GLOBAL(); in MBS
+varkon.menu.basic.tooltip:       Activate the basic coordinate system, MODE_BASIC(); in MBS
+varkon.menu.mbs.tooltip:         Edit active module in MBS text mode
+varkon.menu.run.text:            Run
+varkon.menu.run.tooltip:         Execute active module (new result is created)
+varkon.menu.editp.text:          EditP
+varkon.menu.editp.tooltip:       Edit the parameters of a part
+varkon.menu.delete.text:         Delete
+varkon.menu.delete.tooltip:      Delete an entity (or part)
+!*
+!***Resources for the print dialogue
+!*
+varkon.print.title:              Print window
+varkon.print.geometry:           +150+150
+varkon.print.portrait:           Portrait
+varkon.print.portrait.tooltip:   Print window upright
+varkon.print.landscape:          Landscape
+varkon.print.landscape.tooltip:  Print window 90 degrees rotated CCW
+varkon.print.configure:          Configure
+varkon.print.configure.tooltip:  Edit printer configuration
+varkon.print.configure.title:    Printer settings
+varkon.print.driver:             Varkon printer driver
+varkon.print.driver.tooltip:     postscript, hp7475, hpgl2 etc.
+varkon.print.command:            Unix print command
+varkon.print.command.tooltip:    Command that will direct driver output to the printer
+varkon.print.mediasize:          Media size
+varkon.print.media_x.tooltip:    Media size in horizontal direction (A4 = 210 mm)
+varkon.print.media_y.tooltip:    Media size in vertical direction (A4 = 297 mm)
+varkon.print.auto_manual:        Print scale and orientation
+varkon.print.auto:               Auto
+varkon.print.auto.tooltip:       Automatically scale print to fit media
+varkon.print.manual:             Manual
+varkon.print.manual.tooltip:     Manually configure print scale and orientation
+varkon.print.manual.title:       Print scale and orientation
+varkon.print.manual.rotation:    Print rotation (degrees CCW around low left)
+varkon.print.manual.xmin:        Move print in X-direction (mm, default=0)
+varkon.print.manual.ymin:        Move print in Y-direction (mm, default=0)
+varkon.print.manual.scale:       Print scale
 !*
 !***Resources for list windows.
 !*
-varkon.list.geometry:           +100+100
-varkon.list.title:              Listing - 
-varkon.list.title.jobnam:       True
-varkon.list.row:                Row
-varkon.list.page:               Page
-varkon.list.save:               Save
-varkon.list.kill:               Close
-varkon.list.printer:            lpr
+varkon.list.title:               Listing - 
+varkon.list.geometry:            +200+100
+varkon.list.title.jobnam:        True
+varkon.list.row:                 Row
+varkon.list.page:                Page
+varkon.list.save:                Save
+varkon.list.kill:                Close
+varkon.list.printer:             lpr
 !*
 !***Resources for the error message listwindow.
 !*
@@ -141,105 +232,200 @@ varkon.error.title:             -----------------ERROR-MESSAGE--------------
 !***Resources for input dialogs.
 !*
 varkon.input.title:             Input
+varkon.input.geometry:          +250+200
 varkon.input.page:              Page
 varkon.input.okey:              Ok
+varkon.input.okey.tooltip:      Accept this input and save changes
 varkon.input.reject:            Cancel
+varkon.input.reject.tooltip:    Exit this function, don't save changes
 varkon.input.on:                On
 varkon.input.off:               Off
 varkon.input.next:              Next
 varkon.input.help:              Help
+varkon.input.help.tooltip:      Display man pages for this function
+varkon.input.close:             Close
+varkon.input.close.tooltip:     Close this window
+varkon.input.save:              Save
+varkon.input.delete:            Delete
+varkon.input.apply:             Apply
 !*
 !***Resources for the alternative popup.
 !*
-varkon.alternative.geometry:    +50+150
-varkon.alternative.title:       Alternative  
+varkon.alternative.title:       Alternative
+varkon.alternative.geometry:    +50+50
 !*
-!***Resources for the view selection list.
+!***Resources for the view dialogue
 !*
-varkon.view.title:              View
+varkon.view.title:               View settings
+varkon.view.geometry:            +150+150
+varkon.view.csys.text:           Coordinate system
+varkon.view.csys.tooltip:        Align this view with a coordinate system XY-plane
+varkon.view.campos.text:         Camera position
+varkon.view.campos.tooltip:      View the model from a given position
+varkon.view.save.text:           Save as
+varkon.view.save.tooltip:        Save the current view with the name below
+varkon.view.delete.text:         Delete view
+varkon.view.delete.tooltip:      Delete the view with the name below
+!*
+!***Resources for the grid dialogue
+!*
+varkon.grid.title:               Grid settings
+varkon.grid.geometry:            +150+150
+varkon.grid.position.text:       Base position
+varkon.grid.resolution.text:     Grid resolution
+varkon.grid.move.text:           Move
+varkon.grid.move.tooltip:        Move the grid to a specified position in the XY-plane
+varkon.grid.edit.text:           Edit
+varkon.grid.edit.tooltip:        Set the distance between grid points to a specified value
+varkon.grid.show.text:           Show grid
+varkon.grid.show.tooltip:        Make the grid visible
+varkon.grid.hide.text:           Hide grid
+varkon.grid.hide.tooltip:        Make the grid invisible
+!*
+!***Resources for the attributes dialogue
+!*
+varkon.attribute.title:          Active attributes
+varkon.attribute.geometry:       +150+150
+varkon.attribute.point.text:     Point
+varkon.attribute.point.tooltip:  Set the active point attributes (PFONT and PSIZE)
+varkon.attribute.point.font0:    Activate point font 0. Points display as (x)
+varkon.attribute.point.font1:    Activate point font 1. Points displayed as (+)
+varkon.attribute.point.font2:    Activate point font 2. Points displayed as (.)
+varkon.attribute.point.size:     Set point size, default = 2.
+varkon.attribute.line.text:      Line
+varkon.attribute.line.tooltip:   Set the active line attributes (LFONT and LDASHL)
+varkon.attribute.line.font0:     Activate line font 0, solid
+varkon.attribute.line.font1:     Activate line font 1, dashed
+varkon.attribute.line.font2:     Activate line font 2, centerline
+varkon.attribute.line.dashl:     Set the active line dash length in mm
+varkon.attribute.arc.text:       Arc
+varkon.attribute.arc.tooltip:    Set the active arc attributes (AFONT and ADASHL)
+varkon.attribute.arc.font0:      Activate arc font 0, solid
+varkon.attribute.arc.font1:      Activate arc font 1, dashed
+varkon.attribute.arc.font2:      Activate arc font 2, centerline
+varkon.attribute.arc.dashl:      Set the active arc dash length in mm
+varkon.attribute.curve.text:     Curve
+varkon.attribute.curve.tooltip:  Set the active curve attributes (CFONT and CDASHL)
+varkon.attribute.curve.font0:    Activate curve font 0, solid
+varkon.attribute.curve.font1:    Activate curve font 1, dashed
+varkon.attribute.curve.font2:    Activate curve font 2, centerline
+varkon.attribute.curve.dashl:    Set the active curve dash length in mm
+varkon.attribute.surf.text:      Surf
+varkon.attribute.surf.tooltip:   Set the active surface attributes (SDASHL, NULINES and NVLINES)
+varkon.attribute.surf.dashl:     Set the active surface mid curve dash length in mm
+varkon.attribute.surf.nulines:   Set the number of surface mid curves in U-direction
+varkon.attribute.surf.nvlines:   Set the number of surface mid curves in V-direction
+varkon.attribute.text.text:      Text
+varkon.attribute.text.tooltip:   Set the active text attributes (TSIZE, TWIDTH etc.)
+varkon.attribute.text.size:      Set graphical text size (height in mm), default = 5.
+varkon.attribute.text.width:     Set graphical text width (% of height), default = 60%.
+varkon.attribute.text.slant:     Set graphical text slant (% of 45 degrees), default = 15.
+varkon.attribute.text.font0:     Activate text font 0 (default font)
+varkon.attribute.text.font1:     Activate text font 1 (bold font)
+varkon.attribute.text.tpmode0:   Activate posmode 0 (3D text follows view plane)
+varkon.attribute.text.tpmode1:   Activate posmode 1 (3D text follows coordinate system XY plane)
+varkon.attribute.hatch.text:     Hatch
+varkon.attribute.hatch.tooltip:  Set the active hatch attributes (XFONT and XDASHL)
+varkon.attribute.hatch.font0:    Activate hatch font 0, solid
+varkon.attribute.hatch.font1:    Activate hatch font 1, dashed
+varkon.attribute.hatch.font2:    Activate hatch font 2, centerline
+varkon.attribute.hatch.dashl:    Set the active hatch dash length in mm
+varkon.attribute.dim.text:       Dim
+varkon.attribute.dim.tooltip:    Set the active dimension attributes (DTSIZ, DASIZ etc.)
+varkon.attribute.dim.tsize:      Set the dimension text size
+varkon.attribute.dim.asize:      Set the dimension arrow size
+varkon.attribute.dim.ndig:       Set the number of dimension decimals
+varkon.attribute.dim.auto:       Turn automatic dimension text off (0) or on (1)
 !*
 !***Resources for the scale dialog.
 !*
-varkon.scale.title:             Scale
-varkon.scale.double:            Double
-varkon.scale.half:              Half
+varkon.scale.title:              Scale
+varkon.scale.double:             Double
+varkon.scale.half:               Half
 !*
 !***Resources for the perspective dialog.
 !*
-varkon.persp.title:             Perspective for view : 
-varkon.persp.persp:             True perspective
-varkon.persp.dist:              Distance is
+varkon.persp.title:              Perspective for view : 
+varkon.persp.persp:              True perspective
+varkon.persp.dist:               Distance is
 !*
 !***Resources for the levels dialog.
 !*
-varkon.level.title:             Levels
-varkon.level.blank:             Blank
-varkon.level.unblank:           Unblank
-varkon.level.list:              List
-varkon.level.first:             First level
-varkon.level.add:               Additional
-varkon.level.forward:           Forward
-varkon.level.backward:          Backward
-varkon.level.last:              Last level
+varkon.level.title:              Level settings
+varkon.level.geometry:           +150+50
+varkon.level.blank:              -
+varkon.level.unblank:            +
+varkon.level.name:               Level name
+varkon.level.name.tooltip:       List levels by name with wildcard ie. Side* or *B*
+varkon.level.range:              Range
+varkon.level.range.tooltip:      List one or more levels ie. 0 or 0-10
+varkon.level.used:               All used
+varkon.level.used.tooltip:       List all levels that are used by entities
+varkon.level.plus.tooltip:       List more levels in forward direction
+varkon.level.minus.tooltip:      List more levels in reverse direction
 !*
 !***Color for active coordinate system.
 !*
-varkon.act_csys_pen:            2
+varkon.act_csys_pen:             2
 !*
-!***Varkon system colors.
+!***Varkon GUI system colors.
 !*
-varkon.background:              Gray
-varkon.foreground:              Black
-varkon.topShadowColor:          White
-varkon.bottomShadowColor:       Black
-varkon.highlightColor:          Blue
+varkon.background:               gray84
+varkon.buttonColor:              gray90
+varkon.selectedButtonColor:      gray75
+varkon.highlightedButtonColor:   SteelBlue
+varkon.foreground:               Black
+varkon.topShadowColor:           White
+varkon.bottomShadowColor:        Black
+varkon.tooltipColor:             LightYellow
+varkon.highlightedEntityColor:   Cyan
 !*
 !***Varkon pen colors.
 !*
-varkon.color_0:                White
-varkon.color_1:                Black
-varkon.color_2:                Red
-varkon.color_3:                LightGreen
-varkon.color_4:                LightBlue
-varkon.color_5:                DarkRed
-varkon.color_6:                DarkGreen
-varkon.color_7:                DarkBlue
-varkon.color_8:                Brown
-varkon.color_9:                Yellow
-varkon.color_10:               Orange
-varkon.color_11:               Gray
+varkon.color_0:                  White
+varkon.color_1:                  Black
+varkon.color_2:                  Red
+varkon.color_3:                  LightGreen
+varkon.color_4:                  LightBlue
+varkon.color_5:                  DarkRed
+varkon.color_6:                  DarkGreen
+varkon.color_7:                  DarkBlue
+varkon.color_8:                  Brown
+varkon.color_9:                  Yellow
+varkon.color_10:                 Orange
+varkon.color_11:                 Gray
 !*
 !***OpenGL-configuration. Currently only
 !***rgba-mode is supported on color displays.
 !***Doublebuffer makes dynamic shading faster.
 !*
-varkon.shade.rgba:             True
-varkon.shade.doublebuffer:     True
+varkon.shade.rgba:               True
+varkon.shade.doublebuffer:       True
 !*
 !***OpenGL color- and z-depth. Linux with Mesa
 !***sets this automatically. IBM, HP
 !***and other workstations may require
 !***proper settings here.
 !*
-!varkon.shade.redbits:         8
-!varkon.shade.greenbits:       8
-!varkon.shade.bluebits:        8
-!varkon.shade.zbits:           16
+!varkon.shade.redbits:           8
+!varkon.shade.greenbits:         8
+!varkon.shade.bluebits:          8
+!varkon.shade.zbits:             16
 !*
 !***Light sources ambient component.
 !*
-varkon.shade.ambient.red:      40
-varkon.shade.ambient.blue:     40
-varkon.shade.ambient.green:    40
+varkon.shade.ambient.red:        40
+varkon.shade.ambient.blue:       40
+varkon.shade.ambient.green:      40
 !*
 !***Light sources diffuse component.
 !*
-varkon.shade.diffuse.red:      100
-varkon.shade.diffuse.blue:     100
-varkon.shade.diffuse.green:    100
+varkon.shade.diffuse.red:        100
+varkon.shade.diffuse.blue:       100
+varkon.shade.diffuse.green:      100
 !*
 !***Light sources specular component.
 !*
-varkon.shade.specular.red:     100
-varkon.shade.specular.blue:    100
-varkon.shade.specular.green:   100
+varkon.shade.specular.red:       100
+varkon.shade.specular.blue:      100
+varkon.shade.specular.green:     100

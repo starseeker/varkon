@@ -1020,7 +1020,7 @@ static short ppindl = DEFINDL;
  *
  *      1999-11-19 Rewritten, R. Svedin
  *
- ******************************************************!*/
+ *****************************************************!*/
 
   {
    PMNPNO *npp;
@@ -1052,7 +1052,9 @@ static short ppindl = DEFINDL;
                              "NVLINES", /* PMNVLIN */
                              "WIDTH",   /* PMWIDTH */
                              "TPMODE",  /* PMTPMODE */
-                             "MFONT"};  /* PMMFONT */
+                             "MFONT",   /* PMMFONT */
+                             "PFONT",   /* PMPFONT */
+                             "PSIZE"};  /* PMPSIZE */
 
    short status;
 
@@ -1066,7 +1068,7 @@ static short ppindl = DEFINDL;
       return( erpush( "PMXXX1", "" ) );   /*Error  Not a named parameter node */
       }
 
-   if ((npp->par_np < PMPEN) || (npp->par_np > PMMFONT))
+   if ((npp->par_np < PMPEN) || (npp->par_np > PMPSIZE))
       erpush( "PP1014" ,"" );
    else
       pprint( namtab[(int)npp->par_np] );

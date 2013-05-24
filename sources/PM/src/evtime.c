@@ -51,7 +51,7 @@ extern PMPARVA *proc_pv;    /* Access structure for MBS routines */
 
   {
     short   status,i;
-    short   y,mo,d,h,mi,s;
+    int     y,mo,d,h,mi,s;
     PMLITVA litval[6];
 
 /*

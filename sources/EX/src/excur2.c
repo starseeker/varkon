@@ -92,6 +92,7 @@ extern DBTmat  lklsyi;     /* Active coord. system, inverted        */
  *      03/6/94  [ndrade argument f|r sur100 G. Liden
  *     22/10/96  la added as sur100 argument G. Liden
  *     1999-12-18 sur100->varkon_sur_silhouette G Liden
+ *     2007-01-17 varkon_sur_scur_gra => GEcur_cre_gra, sören L
  *
  ******************************************************!*/
 
@@ -143,7 +144,7 @@ extern DBTmat  lklsyi;     /* Active coord. system, inverted        */
       break;
 
       default:
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
 /*
@@ -202,8 +203,9 @@ extern DBTmat  lklsyi;     /* Active coord. system, inverted        */
       } 
     else                                    /*For R*3       curve */
       { 
-      status = varkon_sur_scur_gra(&cur,geoseg,&graseg);
-      }     
+      /*status = varkon_sur_scur_gra(&cur,geoseg,&graseg);*/
+      status = GEcur_cre_gra(&cur,geoseg,&graseg);
+      }
     if ( status < 0 ) goto err2;
 /*
 ***Lagra cur-posten i DB och rita.
@@ -275,6 +277,7 @@ err3:
  *      1998-03-31 subtyp 2 -> 1 Temporarely       G Liden
  *      1998-04-06 Debug la_pln                    G Liden
  *      1999-12-18 surxxx->varkon_sur_yyyyy        G Liden
+ *      2007-01-17 varkon_sur_scur_gra => GEcur_cre_gra, Sören L
  *
  ******************************************************!*/
 
@@ -342,7 +345,7 @@ err3:
       break;
 
       default:
-      igidst(yta,errbuf);
+      IGidst(yta,errbuf);
       return(erpush("EX1412",errbuf));
       }
 /*
@@ -357,7 +360,7 @@ err3:
       p_csy = &csy.mat_pl;
       if ( int_case == 3 )
          {
-         igidst(plan,errbuf);  /* Inf|r s{rskilt fel f|r detta !!! */
+         IGidst(plan,errbuf);  /* Inf|r s{rskilt fel f|r detta !!! */
          status = erpush("EX1412",errbuf);
          goto c_lin;
          }
@@ -379,7 +382,7 @@ err3:
       case SURTYP:
       if ( int_case == 3 )
          {
-         igidst(plan,errbuf);  /* Inf|r s{rskilt fel f|r detta !!! */
+         IGidst(plan,errbuf);  /* Inf|r s{rskilt fel f|r detta !!! */
          status = erpush("EX1412",errbuf);
          goto c_lin;
          }
@@ -389,7 +392,7 @@ err3:
       break;
 
       default:
-      igidst(plan,errbuf);
+      IGidst(plan,errbuf);
       status = erpush("EX1412",errbuf);
       if      ( int_case == 1 || int_case == 2 ) goto err3;
       else if ( int_case == 3 ) goto c_lin;
@@ -564,7 +567,8 @@ if ( dbglev(EXEPAC) == 1 )
       }
     else                                    /* For R*3       curve */
       {
-      status = varkon_sur_scur_gra(&cur,geoseg,&graseg);
+      /*status = varkon_sur_scur_gra(&cur,geoseg,&graseg);*/
+      status = GEcur_cre_gra(&cur,geoseg,&graseg);
       } 
     if ( status < 0 ) goto err2;
 /*
@@ -628,6 +632,7 @@ c_lin:
  *      1994-10-29 la indata till sur150  Gunnar Liden
  *      1995-03-02 deallokering, Gunnar Liden
  *      1999-12-18 sur150->varkon_sur_isoparam G Liden
+ *      2007-01-17 varkon_sur_scur_gra => GEcur_cre_gra, sören L
  *
  ******************************************************!*/
 
@@ -666,7 +671,7 @@ c_lin:
       break;
 
       default:
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
 
@@ -718,7 +723,8 @@ c_lin:
 /*
 ***Bilda grafisk representation.
 */
-    status = varkon_sur_scur_gra(&cur,geoseg,&graseg);
+    /*status = varkon_sur_scur_gra(&cur,geoseg,&graseg);*/
+    status = GEcur_cre_gra(&cur,geoseg,&graseg);
     if      ( status < 0  &&  graseg == NULL ) goto err2;
     else if ( status < 0                     ) goto err1;
 
@@ -851,7 +857,7 @@ if ( dbglev(EXEPAC) == 1 )
       break;
 
       default:
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
 /*
@@ -862,7 +868,7 @@ if ( dbglev(EXEPAC) == 1 )
 /*
 ***Et meddelande.
 */
-  igptma(454,IG_MESS);
+  IGptma(454,IG_MESS);
 
 
 /* 1995-06-17 Johan! Vore bra om Du skickar -1 n{r inget matats in */
@@ -994,9 +1000,9 @@ if ( dbglev(EXEPAC) == 1 )
 /* Deallocation of memory for all FANGA curves.                     */
 /* Call of function DBfree_srep_curves.                             */
 /*                                                                 !*/
-    DBfree_sur_grwire(segarr);
+/*    DBfree_sur_grwire(segarr); Temporär fix ! 2007-01-09 JK */
 
-    igrsma();
+    IGrsma();
 
 
 err3:
@@ -1035,6 +1041,7 @@ err3:
  *      (C)microform ab 5/3/95 J. Kjellander
  *      1996-01-01 gtype tillagt Gunnar Liden
  *      1999-12-18 sur106->varkon_sur_geodesic G Liden
+ *      2007-01-17 varkon_sur_scur_gra => GEcur_cre_gra, Sören L
  *
  ******************************************************!*/
 
@@ -1065,7 +1072,7 @@ err3:
       break;
 
       default:
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
 /*
@@ -1117,7 +1124,8 @@ if ( dbglev(EXEPAC) == 1 )
 /*
 ***Bilda grafisk representation.
 */
-    status = varkon_sur_scur_gra(&cur,geoseg,&graseg);
+    /*status = varkon_sur_scur_gra(&cur,geoseg,&graseg);*/
+    status = GEcur_cre_gra(&cur,geoseg,&graseg);
     if ( status < 0 ) goto err2;
 /*
 ***Lagra cur-posten i DB och rita.
@@ -1225,7 +1233,7 @@ err3:
       break;
 
       default:
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
 /*

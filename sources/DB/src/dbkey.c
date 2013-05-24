@@ -69,10 +69,13 @@ static KEYDATA *new_entry();
  *          count  = Number of array elements
  *          datptr = Pointer to data block
  *
- *      FV:  0 => Ok.
- *          -1 => Key is already in use.
+ *      Return:  0 => Ok.
+ *              -1 => Key is already in use.
+ *          GM2022 => Count <= 0
  *
  *      (C)microform ab 1999-01-21 J. Kjellander
+ *
+ *      2007-01-30 count <= 0, J.Kjellander
  *
  ******************************************************!*/
 
@@ -81,6 +84,10 @@ static KEYDATA *new_entry();
    DBint    nbytes;
    KEYDATA *keyptr;
 
+/*
+***Check that count is positive.
+*/
+   if ( count <= 0 ) return(erpush("GM2022",key));
 /*
 ***Check that the key is unique.
 */
@@ -269,6 +276,8 @@ static KEYDATA *new_entry();
  *
  *      (C)microform ab 1999-01-21 J. Kjellander
  *
+ *      2007-02-20 bugfix, clear new entries, Sören L
+ *
  ******************************************************!*/
 
   {
@@ -304,6 +313,7 @@ static KEYDATA *new_entry();
      if ( keytab == NULL ) return(NULL);
      else
        {
+       for ( i=nkeys; i<nkeys+DEFKTSIZE; ++i ) (keytab+i)->key[0] = '\0'; /*2007-02-20*/
        nkeys += DEFKTSIZE;
        return(keytab+nkeys-DEFKTSIZE);
        }

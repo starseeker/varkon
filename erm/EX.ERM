@@ -32,18 +32,18 @@ VARKON Error messages for EXEPAC
 160  3  Error from gmgtla()
 161  2  Requested parameter does not exist
 162  2  Requested parameter is not of type %s
-163  2  Illegal level number, can't blank/unblank
+163  2  %s is an illegal level number
 164  2  Can't load resultfile %s
 165  2  Can't save resultfile %s
 166  2  Error from MBS-routine OS,  command = %s
-167  2  Max number of views already created
+167  2  Can't create view : %s. View table full
 168  2  View "%s" does not exist
 169  2  Requested scale is too small
 170  2  Can't create window
 171  2  Illegal curve accuracy
 172  2  Fillet radius <= 0.0
 173  2  Attempt to self intersect %s
-174  2  Can't create plotfile, error from OS
+174  2  Can't create plotfile %s, error from OS
 175  2  "%s" is not a csys, PART()
 176  2  Csys "%s" does not exist, PART()
 177  2  Illegal number of reference levels, GLOBAL_REF()
@@ -84,6 +84,8 @@ VARKON Error messages for EXEPAC
 213  2  %s is an invalid half edge number for this mesh (GETHEDGE)
 214  2  %s is an invalid face number for this mesh (GETFACE)
 215  2  %s is an invalid extra float index number for this mesh (GETXFLOAT)
+216  2  Window with ID=%s is not a WPGWIN or WPRWIN
+217  2  Window with ID=%s does not exist
 
 
 300  2  DB_BEGIN, "%s" is an illegal mode
@@ -138,6 +140,7 @@ VARKON Error messages for EXEPAC
 429  2  CUR_COMPARR, cant read surface from DB
 430  2  CUR_COMPARR, %s is outside the UV-bounds of the surface
 431  2  CUR_COMPARR, %s is not a 2D curve (z < > 0)
+432  2  CUR_COMP/CUR_COMPARR, NURBS degree not equal (degree elevaton is to be implemented)
 
 600  2  TCP/IP - %s
 601  2  Robot Application Protocol (RAP) is not included in this build of Varkon

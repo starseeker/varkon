@@ -12,7 +12,7 @@
 
 1. cd to the $VARKON_ROOT/sources/Vlib/iges directory
 
-2. Type "make -f Makefile.linux" to compile the MBS programs
+2. Type "make" to compile the MBS programs
    and to install the MBO-modules in the Varkon library.
 
 3. Note that the Varkon MBS-compiler mbsc is used to

@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON PM module.
-*    URL:  http://www.varkon.com
+*    URL: http://www.tech.oru.se/cad/varkon
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -20,7 +20,7 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)2006-11-18 Johan Kjellander, Örebro uniersity
+*    (C)2007-01-18 Johan Kjellander, Örebro uniersity
 *
 ***********************************************************************/
 
@@ -33,14 +33,6 @@
 ***First of all include some standard C header files.
 */
 #include <stdio.h>
-
-/*
-***If we are compiling for UNIX then define WRK_STAT so
-***that Varkon code works correctly.
-*/
-#ifdef UNIX
-#define WRK_STAT
-#endif
 
 /*
 ***Any application calling PM or using the PM datastructures
@@ -57,10 +49,10 @@
 V3MSIZ  sysize = {PMSIZE,0,0,RTSSIZE};
 
 /*
-***Current jobname and directories. Use "Leica" for test.
+***Current jobname and directories.
 */
 
-char    jobnam[JNLGTH+1] = "Leica"; 
+char    jobnam[JNLGTH+1] = "Test"; 
 char    jobdir[V3PTHLEN+1] = "";       /* Current user job directory */
 char    amodir[10*V3PTHLEN+10] = "";   /* Alternate user module libs */
 
@@ -71,8 +63,8 @@ V3MDAT  sydata =
 
            { 1000,       /* Serial number, microform = 1000 */
              1,          /* Version number*/
-             17,         /* Revision */
-            'C',         /* 2000-05-07 */
+             19,         /* Revision */
+            'A',         /* Development level */
              0,0,0,0,0,  /* Dummy times */
              0,0,0,0,0,
              " ",        /* Sysname */
@@ -108,7 +100,7 @@ pm_ptr  actmod;
 /*
 ***Replacements for Varkon functions not needed.
 */
-short igwtma(short tsnum) {return(0);}
+short IGwtma(short tsnum) {return(0);}
 
 /*
 ***The code begins here.

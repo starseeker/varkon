@@ -4,19 +4,19 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  suropm();     Create sur_rot.. statement                        */
-/*  suofpm();     Create sur_offs.. statement                       */
-/*  sucypm();     Create sur_cyl...statement                        */
-/*  suswpm();     Create sur_sweep..statement                       */
-/*  surupm();     Create sur_ruled...statement                      */
-/*  surtpm();     Create sur_trim...   statement                    */
-/*  surapm();     Create sur_approx... statement                    */
-/*  sucopm();     Create sur_comp...   statement                    */
-/*  suexpm();     Create sur_exdef...  statement                    */
-/*  sulopm();     Create sur_conic...  statement                    */
+/*  IGsuro();     Create sur_rot.. statement                        */
+/*  IGsuof();     Create sur_offs.. statement                       */
+/*  IGsucy();     Create sur_cyl...statement                        */
+/*  IGsusw();     Create sur_sweep..statement                       */
+/*  IGsuru();     Create sur_ruled...statement                      */
+/*  IGsurt();     Create sur_trim...   statement                    */
+/*  IGsura();     Create sur_approx... statement                    */
+/*  IGsuco();     Create sur_comp...   statement                    */
+/*  IGsuex();     Create sur_exdef...  statement                    */
+/*  IGsulo();     Create sur_conic...  statement                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -35,8 +35,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -45,7 +43,7 @@
 
 /*!******************************************************/
 
-        short suropm()
+        short IGsuro()
 
 /*      Skapar sur_rot-sats.
  *
@@ -77,19 +75,19 @@ static char v2_str[V3STRLEN+1] ="360.0";
 */
 start:
     typ = LINTYP+ARCTYP+CURTYP;
-    if ( (status=genref(459,&typ,&exnpt1,&end,&right)) < 0 ) goto end;
+    if ( (status=IGcref(459,&typ,&exnpt1,&end,&right)) < 0 ) goto end;
 /*
 ***Två positioner.
 */
-    if ( (status=genpos(460,&exnpt2)) < 0 ) goto end;
-    if ( (status=genpos(461,&exnpt3)) < 0 ) goto end;
+    if ( (status=IGcpos(460,&exnpt2)) < 0 ) goto end;
+    if ( (status=IGcpos(461,&exnpt3)) < 0 ) goto end;
 /*
 ***Start och slutvinkel.
 */
-    if ( (status=genflt(206,v1_str,istr,&exnpt4)) < 0 ) goto end;
+    if ( (status=IGcflt(206,v1_str,istr,&exnpt4)) < 0 ) goto end;
     strcpy(v1_str,istr);
 
-    if ( (status=genflt(207,v2_str,istr,&exnpt5)) < 0 ) goto end;
+    if ( (status=IGcflt(207,v2_str,istr,&exnpt5)) < 0 ) goto end;
     strcpy(v2_str,istr);
 /*
 ***Rotation och reverse. Optionella parametrar men
@@ -112,7 +110,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_ROT",valparam) < 0 ) goto error;
+    if ( IGcges("SUR_ROT",valparam) < 0 ) goto error;
 /*
 ***Slut.
 */
@@ -132,7 +130,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short suofpm()
+       short IGsuof()
 
 /*      Skapar sur_offs-sats.
  *
@@ -159,11 +157,11 @@ static char ofstr[V3STRLEN+1] ="";
 */
 start:
     typ = SURTYP;
-    if ( (status=genref(1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Offset.
 */
-    if ( (status=genflt(278,ofstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcflt(278,ofstr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(ofstr,istr);
 /*
 ***Skapa listan med obligatoriska parametrar.
@@ -173,7 +171,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_OFFS",valparam) < 0 ) goto error;
+    if ( IGcges("SUR_OFFS",valparam) < 0 ) goto error;
 
 exit:
     WPerhg();
@@ -191,7 +189,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short sucypm()
+       short IGsucy()
 
 /*      Skapar sur_cyl-sats.
  *
@@ -219,11 +217,11 @@ static char dstr[V3STRLEN+1] ="1.0";
 */
 start:
     typ = LINTYP+ARCTYP+CURTYP;
-    if ( (status=genref(1611,&typ,&exnpt1,&end,&right)) < 0 ) goto end;
+    if ( (status=IGcref(1611,&typ,&exnpt1,&end,&right)) < 0 ) goto end;
 /*
 ***Avstånd.
 */
-    if ( (status=genflt(1612,dstr,istr,&exnpt2)) < 0 ) goto end;
+    if ( (status=IGcflt(1612,dstr,istr,&exnpt2)) < 0 ) goto end;
     strcpy(dstr,istr);
 /*
 ***Reversering. Optionell parameter men
@@ -241,7 +239,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_CYL",valparam) < 0 ) goto error;
+    if ( IGcges("SUR_CYL",valparam) < 0 ) goto error;
 /*
 ***Slut.
 */
@@ -261,7 +259,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short suswpm()
+       short IGsusw()
 
 /*      Skapar sur_sweep-sats.
  *
@@ -286,12 +284,12 @@ error:
 */
 start:
     typ = LINTYP+ARCTYP+CURTYP;
-    if ( (status=genref(1611,&typ,&exnpt1,&end,&right)) < 0 ) goto end;
+    if ( (status=IGcref(1611,&typ,&exnpt1,&end,&right)) < 0 ) goto end;
 /*
 ***Referens till styrkurva.
 */
     typ = LINTYP+ARCTYP+CURTYP;
-    if ( (status=genref(1613,&typ,&exnpt2,&end,&right)) < 0 ) goto end;
+    if ( (status=IGcref(1613,&typ,&exnpt2,&end,&right)) < 0 ) goto end;
 /*
 ***Reversering. Optionell parameter men
 ***alltid med här så att man kan ändra interaktivt.
@@ -308,7 +306,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_SWEEP",valparam) < 0 ) goto error;
+    if ( IGcges("SUR_SWEEP",valparam) < 0 ) goto error;
 /*
 ***Slut.
 */
@@ -328,7 +326,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short surupm()
+       short IGsuru()
 
 /*      Skapar sur_ruled-sats.
  *
@@ -353,12 +351,12 @@ error:
 */
 start:
     typ = LINTYP+ARCTYP+CURTYP;
-    if ( (status=genref(1614,&typ,&exnpt1,&end,&right)) < 0 ) goto end;
+    if ( (status=IGcref(1614,&typ,&exnpt1,&end,&right)) < 0 ) goto end;
 /*
 ***Referens till 2:a linje/cirkel/kurva.
 */
     typ = LINTYP+ARCTYP+CURTYP;
-    if ( (status=genref(1615,&typ,&exnpt2,&end,&right)) < 0 ) goto end;
+    if ( (status=IGcref(1615,&typ,&exnpt2,&end,&right)) < 0 ) goto end;
 /*
 ***Reversering och parametrisering. Optionella parametrar men
 ***alltid med här så att man kan ändra interaktivt.
@@ -377,7 +375,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_RULED",valparam) < 0 ) goto error;
+    if ( IGcges("SUR_RULED",valparam) < 0 ) goto error;
 /*
 ***Slut.
 */
@@ -397,7 +395,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short surtpm()
+       short IGsurt()
 
 /*      Huvudrutin för sur_trim...  
  *
@@ -430,26 +428,26 @@ error:
 ***Skapa referens till yta.
 */
     typ = SURTYP;
-    if ( (status=genref (1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref (1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa start U parametervärde.
 */
-    if ( (status=genflt( 539,ustastr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcflt( 539,ustastr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(ustastr,istr);
 /*
 ***Skapa slut  U parametervärde.
 */
-    if ( (status=genflt( 540,uendstr,istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcflt( 540,uendstr,istr,&exnpt3)) < 0 ) goto exit;
     strcpy(uendstr,istr);
 /*
 ***Skapa start V parametervärde.
 */
-    if ( (status=genflt( 541,vstastr,istr,&exnpt4)) < 0 ) goto exit;
+    if ( (status=IGcflt( 541,vstastr,istr,&exnpt4)) < 0 ) goto exit;
     strcpy(vstastr,istr);
 /*
 ***Skapa slut  V parametervärde.
 */
-    if ( (status=genflt( 542,vendstr,istr,&exnpt5)) < 0 ) goto exit;
+    if ( (status=IGcflt( 542,vendstr,istr,&exnpt5)) < 0 ) goto exit;
     strcpy(vendstr,istr);
 /*
 ***Skapa listan med obligatoriska parametrar.
@@ -462,7 +460,7 @@ error:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_TRIM",valparam) < 0 )
+    if ( IGcges("SUR_TRIM",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -475,7 +473,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short surapm()
+       short IGsura()
 
 /*      Huvudrutin för sur_approx...
  *
@@ -509,28 +507,28 @@ exit:
 ***Skapa referens till yta.
 */
     typ = SURTYP;
-    if ( (status=genref(1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(1608,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa typ av utyta.
 */
-    if ( (status=genstr(521,typstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcstr(521,typstr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(typstr,istr);
 /*
 ***Skapa metod för approximation.
 */
-    if ( (status=genint(546,metstr,istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcint(546,metstr,istr,&exnpt3)) < 0 ) goto exit;
     strcpy(metstr,istr);
 /*
 ***Skapa antal ytlappar eller koordinat tolerans.
 */
     if ( strcmp(metstr,"1") == 0 )
       {
-      if ( (status=genint(538,nosstr,istr,&exnpt4)) < 0 ) goto exit;
+      if ( (status=IGcint(538,nosstr,istr,&exnpt4)) < 0 ) goto exit;
       strcpy(nosstr,istr);
       }
     else
       {
-      if ( (status=genflt(544,tolstr,istr,&exnpt4)) < 0 ) goto exit;
+      if ( (status=IGcflt(544,tolstr,istr,&exnpt4)) < 0 ) goto exit;
       strcpy(tolstr,istr);
       }
 /*
@@ -543,7 +541,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_APPROX",valparam) < 0 )
+    if ( IGcges("SUR_APPROX",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -555,7 +553,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short sucopm()
+       short IGsuco()
 
 /*      Huvudrutin för sur_comp(#id,ref1,ref2,,,,)
  *
@@ -588,7 +586,7 @@ exit:
     while ( nref < V2PARMAX )
       {
       typ = SURTYP;
-      if ( (status=genref(1608,&typ,&exnpt,&end,&right)) == REJECT ) break;
+      if ( (status=IGcref(1608,&typ,&exnpt,&end,&right)) == REJECT ) break;
       if ( status == GOMAIN ) goto exit;
       pmtcon(exnpt,retla,&retla,&dummy);
       ++nref;
@@ -598,7 +596,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_COMP",retla) < 0 )
+    if ( IGcges("SUR_COMP",retla) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -612,7 +610,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short suexpm()
+       short IGsuex()
 
 /*      Huvudrutin för sur_exdef...
  *
@@ -643,17 +641,17 @@ exit:
 /*
 ***Skapa filnamn.
 */
-    if ( (status=genstr(537,filstr,istr,&exnpt1)) < 0 ) goto exit;
+    if ( (status=IGcstr(537,filstr,istr,&exnpt1)) < 0 ) goto exit;
     strcpy(filstr,istr);
 /*
 ***Skapa ytdataformat.
 */
-    if ( (status=genstr(536,forstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcstr(536,forstr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(forstr,istr);
 /*
 ***Skapa typ av utyta.
 */
-    if ( (status=genstr(557,typstr,istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcstr(557,typstr,istr,&exnpt3)) < 0 ) goto exit;
     strcpy(typstr,istr);
 /*
 ***Skapa listan med obligatoriska parametrar.
@@ -664,7 +662,7 @@ exit:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_EXDEF",valparam) < 0 )
+    if ( IGcges("SUR_EXDEF",valparam) < 0 )
       {
       erpush("IG5023","");
       errmes();
@@ -677,7 +675,7 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-       short sulopm()
+       short IGsulo()
 
 /*      Huvudrutin för sur_conic...
  *
@@ -705,7 +703,7 @@ exit:
 ***Skapa referens till spine kurva.
 */
     typ = CURTYP;
-    if ( (status=genref ( 534,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref ( 534,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
     pmtcon(exnpt,(pm_ptr)NULL, &retla,  &dummy);
 /*
 ***Referenser till direktriser och mittkurvor.
@@ -715,15 +713,15 @@ exit:
     litval.lit_type = C_STR_VA;
     while ( 4*nstrip < V2PARMAX-1 )
       {
-      if ( (status=genref( 533,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
+      if ( (status=IGcref( 533,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
       pmtcon(exnpt,retla,&retla,&dummy);
-      if ( (status=genref( 532,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
+      if ( (status=IGcref( 532,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
       pmtcon(exnpt,retla,&retla,&dummy);
       if ( nstrip > 0 )
         {
-        if ( igialt( 526,68,67,FALSE) ) goto no_more;
+        if ( IGialt( 526,68,67,FALSE) ) goto no_more;
         }
-      if ( igialt( 531, 529, 530,FALSE) )
+      if ( IGialt( 531, 529, 530,FALSE) )
         {
         strcpy(litval.lit.str_va,"P");
         tnr =  527;
@@ -735,7 +733,7 @@ exit:
         }
       pmclie( &litval, &exnpt);
       pmtcon(exnpt,retla,&retla,&dummy);
-      if ( (status=genref(tnr,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
+      if ( (status=IGcref(tnr,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
       pmtcon(exnpt,retla,&retla,&dummy);
       ++nstrip;
       }
@@ -746,7 +744,7 @@ no_more:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("SUR_CONIC",retla) < 0 )
+    if ( IGcges("SUR_CONIC",retla) < 0 )
       {
       erpush("IG5023","");
       errmes();

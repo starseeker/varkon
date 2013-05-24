@@ -9,7 +9,7 @@
 /*  igcenv();  Check/register WIN32 environment                     */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -28,13 +28,12 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-2000, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../include/IG.h"
 #include "../include/debug.h"
+#include "../../EX/include/EX.h"
 #include "../../WP/include/WP.h"
 #include "../../GE/include/GE.h"
 #include <string.h>
@@ -55,8 +54,8 @@ V3MDAT  sydata =
 
            { 1000,       /* Serial number, microform = 1000 */
              1,          /* Version number*/
-             18,         /* Revision */
-            'B',         /* 2005-08-09 */
+             19,         /* Revision */
+            'B',         /* 2007-02-11 */
              0,0,0,0,0,  /* Dummy times */
              0,0,0,0,0,
              " ",        /* Sysname */
@@ -66,14 +65,6 @@ V3MDAT  sydata =
              " ",        /* Release */
              " ",        /* Version */
              0      } ;  /* Encrypted serial number */
-
-/*
-***Def's for time limited demo version. Set V3_YEAR_LIMIT = 0
-***for infinite use (no timelimit).
-*/
-#define V3_YEAR_LIMIT   0
-#define V3_MONTH_LIMIT 10
-#define V3_DAY_LIMIT   19
 
 /*
 ***Current system sizes is initialized during startup.
@@ -116,11 +107,20 @@ DBseqnum snrmax;
 pm_ptr  actmod,pmstkp;
 
 /*
-***Flag for temporary references and current mode
-***of generating positions. posmod=0 =>Menu.
+***Flag for temporary references.
 */
 bool    tmpref;
-short   posmod;
+
+/*
+***0 <= posmode <= 8 controls the current
+***method to use for positional input.
+*** 0 = Absolute, 1 = Relative,  2 = Cursor
+*** 3 = MBS,      4 = End,       5 = On
+*** 6 = Center,   7 = Intersect, 8 = Grid
+***posmode defaults to 2 = Cursor and is managed
+***through the buttons in the menu window.
+*/
+short posmode = 2;
 
 /*
 ***Name of active coordinate system.
@@ -137,30 +137,6 @@ char    actcnm[JNLGTH+1];
 short   actfun;
 char    actpnm[JNLGTH+1];
 bool    intrup = FALSE;
-
-/*
-***The global viewtable. This table holds views
-***that are not bound to any particular graphic
-***window but can be loaded into a window.
-*/
-VY      vytab[GPMAXV];
-VY      actvy;
-DBTmat  actvym;
-
-/*
-***This is the current pen (color).
-*/
-short   actpen = -1;
-
-
-/*
-***Current raster (grid).
-*/
-DBfloat   rstrox;     /* Origin X */
-DBfloat   rstroy;     /* Origin Y */
-DBfloat   rstrdx;     /* Spacing in X */
-DBfloat   rstrdy;     /* Spacing in Y */
-bool      rstron;     /* TRUE = Visible and active */
 
 /*
 ***C:s iobuffer for stdout.
@@ -188,10 +164,9 @@ bool    igxflg,iggflg,igbflg;
 short   igmtyp,igmatt;
 
 /*
-***Internal routines.
+***Prototypes for internal routines.
 */
 static short igppar(int argc, char *argv[]);
-
 
 /*
 ***Some defs for WIN32 version of Varkon.
@@ -202,12 +177,10 @@ int           ms_wmod;      /* Initial mode */
 HINSTANCE     ms_inst;      /* Process instancenumber */
 
 extern int   msinit(),msmbox(),msargv();
-extern short v3free(),v3mkdr();
+extern short v3free(),IGmkdr();
 extern void *v3mall();
-extern bool  v3facc();
+extern bool  IGfacc();
 #endif
-
-extern short igtrty;   /* Defined in ig1.c */
 
 /*!******************************************************/
 
@@ -225,18 +198,20 @@ extern short igtrty;   /* Defined in ig1.c */
         int       wmode)
 #endif
 
-/*      Main program for xvarkon/VARKON95. Inits the 
+/*      Main program for xvarkon/VARKON.EXE. Inits the 
  *      graphical environment, processes command line
  *      parameters and inits various sub packages like
  *      memory allocation, geometry, debug etc. then
- *      calls igmain().
+ *      calls IGgene().
  *
  *      (C)microform ab 31/10/95 J. Kjellander
+ *
+ *      2007-01-05 Major rewrite, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short  status,trmtyp;
+    short  status;
 
 #ifdef WIN32
     int    ercode;
@@ -248,60 +223,72 @@ extern short igtrty;   /* Defined in ig1.c */
 #endif
 
 /*
-***I det här läget är inget fönstersystem ännu igång.
-*/
-   igtrty = VT100;
-/*
-***Kör vi Microsoft Windows skall vi spara på
-***två av de argument som kom via WinMain().
+***On the WIN32 platform, WinMain() supplies two parameters
+***that must be saved.
 */
 #ifdef WIN32
    ms_inst = inst;
    ms_wmod = wmode;
 #endif
 /*
-***Först av allt initierar vi minnesallokeringssystemet
-***så att andra rutiner kan allokera C-minne.
+***First thing to do now is to init the C memory allocation
+***system so that called functions can allocate memory.
 */
     v3mini();
 /*
-***Innan ev. meddelanden skrivs ut, sätt upp
-***storleken på outputbuffer till stdout.
+***Set up the size of the outputbuffer to stdout.
 */
+#ifdef UNIX
+    setbuf(stdout,sobuf);
+#endif
+
 #ifdef WIN32
-     setvbuf(stdout,sobuf,_IOFBF,BUFSIZ);
-#else
-     setbuf(stdout,sobuf);
+    setvbuf(stdout,sobuf,_IOFBF,BUFSIZ);
 #endif
 /*
-***Initiera sydata och gör hårdvarucheck.
+***Init system data.
 */
-    igckhw();
+    IGckhw();
 /*
-***Innan kommandorads-parametrar processas initierar
-***vi all debug, dvs. stänger av den.
+***Init debug before processing command line parameters.
 */
     dbgini();
 /*
-***Processa parametrar på kommandoraden.
+***Process command line parameters.
 */
+#ifdef UNIX
+    igppar(ac,av);
+#endif
+
 #ifdef WIN32
     argbuf = v3mall(argc*V3STRLEN,"WinMain");
     for ( i=0; i<argc; ++i ) argv[i] = argbuf + i*V3STRLEN;
     msargv(args,&argc,argv);
     igppar(argc,argv);
     v3free(argbuf,"WinMain");
-#else
-    igppar(ac,av);
 #endif
 /*
-***Initiera signaler och felhanteringssystem.
+***Init signals and error handling.
 */
-    igsini();
+    IGsini();
     erinit();
 /*
-***Redan nu kan vi initiera Microsoft Windows eftersom
-***vi i denna miljö inte supportar några andra terminaltyper.
+***Init level names.
+*/
+    EXinit_levels();
+/*
+***Init WP.
+*/
+#ifdef UNIX
+   if ( WPinit(inifil_1,inifil_2) < 0 )
+     {
+     status = EREXIT;
+     goto end;
+     }
+#endif
+/*
+***On the WIN32 platform init ms and check that environment
+***variables are registred.
 */
 #ifdef WIN32
    if ( (ercode=msinit(inifil_1)) < 0 )
@@ -310,80 +297,58 @@ extern short igtrty;   /* Defined in ig1.c */
      msmbox("VARKON Startup error",errbuf,0);
      exit(V3EXOK);
      }
-   else igtrty = MSWIN;
-/*
-***Kolla nu att ENV-parametrar registrerats.
-*/
    igcenv();
 #endif
 /*
-***Ladda default menyfil.
+***Load default menufile.
 */
-   strcpy(mdffil,v3genv(VARKON_MDF));
-#ifdef WIN32
-   strcat(mdffil,"mswin.MDF");
-#else
+   strcpy(mdffil,IGgenv(VARKON_MDF));
+
+#ifdef UNIX
    strcat(mdffil,"x11.MDF");
 #endif
 
-    if ( iginit(mdffil) < 0 )
-      {
 #ifdef WIN32
-      sprintf(errbuf,"Can't load menufile : %s",mdffil);
-      msmbox("VARKON Startup error",errbuf,0);
-      v3exit();
-#else
-      dbgexi();
-      printf("v3:Can't load menufile %s\n",mdffil);
-      exit(V3EXOK);
+   strcat(mdffil,"mswin.MDF");
 #endif
-      }
-/*
-***Nu vet vi vilken terminaltyp som gäller och kan
-***initiera X-Windows om så är fallet.
-*/
-#ifdef V3_X11
-   if ( igtrty == X11  &&  WPinit(inifil_1,inifil_2) < 0 )
+
+   if ( IGinit(mdffil) < 0 )
      {
-     igtrty = VT100;
+#ifdef UNIX
+     status = EREXIT;
+     goto end;
+#endif
+
+#ifdef WIN32
+     sprintf(errbuf,"Can't load menufile : %s",mdffil);
+     msmbox("Varkon Startup error",errbuf,0);
+     IGexit();
+#endif
+     }
+/*
+***Init surpac.
+*/
+   if ( suinit() < 0 )
+     {
      status = EREXIT;
      goto end;
      }
-#endif
 /*
-***Kolla att inte datumet är begränsat.
-*/
-    if ( igckdl(V3_YEAR_LIMIT,V3_MONTH_LIMIT,V3_DAY_LIMIT) < 0 )
-      {
-      erpush("IG0553","");
-      status = EREXIT;
-      goto end;
-      }
-/*
-***Initiera surpac.
-*/
-    if ( suinit() < 0 )
-      {
-      status = EREXIT;
-      goto end;
-      }
-/*
-***Om inget projekt getts på kommandoraden frågar vi
-***efter ett här.
+***If no project name is supplied on the command line
+***ask for a project.
 */
 pid:
-    if ( pidnam[0] == '\0' )
-      {
-      if ( igselp(pidnam) < 0 )
-        {
-        status = 0;
-        goto end;
-        }
-      else goto pid;
-      }
+   if ( pidnam[0] == '\0' )
+     {
+     if ( IGselp(pidnam) < 0 )
+       {
+       status = 0;
+       goto end;
+       }
+     else goto pid;
+     }
 /*
-***Om '.' getts som projektnamn skapar vi ett tillfälligt
-***projekt.
+***If '.' is given as project name, create a temporary project.
 */
     else if ( strcmp(pidnam,".") == 0 )
       {
@@ -404,18 +369,17 @@ pid:
 #endif
       }
 /*
-***Om riktigt pidnam getts, prova att ladda pidfil och menyfil.
-***Om inte det går kan det visserligen bero på att rättigheter
-***saknas men tillsvidare antar vi att det beror på att PID-
-***filen inte finns och provar att skapa en om användaren vill.
+***If a project name is supplied, load the PID-file. If this
+***doesn't work, we assume that the PID-file does not exist
+***so we create one and then load it.
 */
     else
       {
-      if ( igldpf(pidnam) < 0 )
+      if ( IGldpf(pidnam) < 0 )
         {
-        if ( igialt(195,67,68,TRUE) )
+        if ( IGialt(195,67,68,TRUE) )
           {
-          status = igcnpr(pidnam);
+          status = IGcnpr(pidnam);
           if ( status == REJECT )
             {
             pidnam[0] = '\0';
@@ -434,26 +398,21 @@ pid:
           }
         }
 /*
-***Pidfil fanns och har laddats. Kolla att den verkar
-***vettig och ladda motsvarande menyfil.
+***PID file is loaded. Check that it seems OK and load
+***the MDF-file it points to.
 */
-      else if ( igckpr() < 0  ||  iginit(mdffil) < 0 )
+      else if ( IGckpr() < 0  ||  IGinit(mdffil) < 0 )
         {
         status = EREXIT;
         goto end;
         }
       }
 /*
-***Om inget job-namn getts kör vi med ett temporärt jobnamn.
-***För att det skall funka på ASCII-terminaler måste vi vara i
-***VT100-mode i det här läget.
+***If no jobname is supplied on the command line, ask for one.
 */
    if ( jobnam[0] == '\0' )
      {
-     trmtyp = igtrty;
-     if ( igtrty != X11  &&  igtrty != MSWIN ) igtrty = VT100;
-     status = igselj(jobnam);
-     igtrty = trmtyp;
+     status = IGselj(jobnam);
 
      if ( status < 0 )
        {
@@ -467,31 +426,29 @@ pid:
      jnflag = TRUE;
      }
 /*
-***Starta rätt modul.
+***Start Varkon in right mode.
 */
-   if ( sydata.opmode == BAS_MOD ) status = igmain();
-   else                            status = irmain();
+   if ( sydata.opmode == BAS_MOD ) status = IGgene();
+   else                            status = IGexpl();
 /*
-***Här är de slut. Om det inte gick bra gör vi lite
-***helhantering. Först felrapport och sen nått sätt
-***att fördröja avslutningen så man hinner läsa fel-
-***meddelandet.
+***Varkon is now running. When we reach this point
+***we are about to make a normal system close down
+***or a close down because of some problem (EREXIT)
+***that we must report to the user before ending.
 */
 end:
 
    if ( status == EREXIT )
      {
      errmes();
-     if ( igtrty == X11  ||  igtrty == MSWIN )
-       igialt(457,458,458,TRUE);
+     IGials("Varkon will now terminate !","Ok","Ok",TRUE);
      }
 /*
-***Sen slutar vi.
+***Now we can exit.
 */
-   v3exit();
+   IGexit();
 /*
-***För att slippa kompileringsvarningar låter vi ett return(0)
-***vara med.
+***The following line is there to avoid compiler warnings.
 */
    return(0);
   }
@@ -544,7 +501,7 @@ end:
 ***parametrar och bygga sin resursdatabas. Övriga parametrar
 ***tas om hand här på vanligt sätt.
 */
-#ifdef V3_X11
+#ifdef UNIX
    WPmrdb(&argc,argv);
 #endif
 
@@ -969,7 +926,7 @@ tmp = getenv( "VARKON_ROOT" );
          strcat(buf2,buf);
          _putenv(buf2);
 
-         if ( !v3facc(buf,'X') ) v3mkdr(buf);
+         if ( !IGfacc(buf,'X') ) IGmkdr(buf);
 /*
 ***Stäng registret.
 */

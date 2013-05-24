@@ -39,7 +39,7 @@ extern char *typstr[];             /* type strings */
 extern pm_ptr stintp;              /* PM-pointer to integer type descr. */
 extern short modtyp;               /* geometry type, for annaml() */
 
-#define TABLEN 28                  /* parameter table entry points */
+#define TABLEN 30                  /* parameter table entry points */
 
 /*!******************************************************/
 
@@ -61,6 +61,7 @@ extern short modtyp;               /* geometry type, for annaml() */
  * 
  *      1999-04-20 Rewritten, R. Svedin
  *      2004-07-18 Mesh, J.Kjellander, Örebro university
+ *      2007-01-17 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -111,7 +112,9 @@ extern short modtyp;               /* geometry type, for annaml() */
                        {"NVLINES",PMNVLIN  ,ST_INT},
                        {"WIDTH",  PMWIDTH  ,ST_FLOAT},
                        {"TPMODE", PMTPMODE ,ST_INT},
-                       {"MFONT",  PMMFONT  ,ST_INT}
+                       {"MFONT",  PMMFONT  ,ST_INT},
+                       {"PFONT",  PMPFONT  ,ST_FLOAT},
+                       {"PSIZE",  PMPSIZE  ,ST_INT}
                     };
 /*
 ***Create local follow set
@@ -192,12 +195,14 @@ extern short modtyp;               /* geometry type, for annaml() */
            case PMBLANK:
            case PMHIT:
            case PMSAVE:
+           case PMPFONT:
            case PMLFONT:
            case PMAFONT:
            case PMCFONT:
            case PMSFONT:
            case PMNULIN:
            case PMNVLIN:
+           case PMPSIZE:
            case PMLDASHL:
            case PMADASHL:
            case PMCDASHL:
@@ -225,46 +230,39 @@ extern short modtyp;               /* geometry type, for annaml() */
          switch(proc)
            {
 #ifdef VARKON
-           case VSET:
-           case VPART:
-           break;
-
+/*
+***Points.
+*/
            case VPOI:
            case VPOIP:
-             if ( nampar != PMWIDTH ) okflg = FALSE;
-             break;
-
-           case VCSYS1P:
-           case VCSYS3P:
-           case VGROUP:
-           case VSYMB:
-             okflg = FALSE;
-             break;
-
-           case VBPLAN:
-             if ( nampar != PMWIDTH ) okflg = FALSE;
-             break;
-
+             if ( (nampar != PMWIDTH) && (nampar != PMPFONT) &&
+                  (nampar != PMPSIZE) ) okflg = FALSE;
+           break;
+/*
+***Lines.
+*/
            case VLINF:
            case VLINA:
            case VLINO:
            case VLINT1:
            case VLINT2:
              if ( (nampar != PMLFONT) && (nampar != PMLDASHL) &&
-                  (nampar != PMWIDTH) )
-               okflg = FALSE;
-             break;
-
+                  (nampar != PMWIDTH) ) okflg = FALSE;
+           break;
+/*
+***Arc's
+*/
            case VARCF:
            case VARC2P:
            case VARC3P:
            case VARCO:
            case VARCFI:
              if ( (nampar != PMAFONT) && (nampar != PMADASHL) &&
-                  (nampar != PMWIDTH) )
-               okflg = FALSE;
-             break;
-
+                  (nampar != PMWIDTH) ) okflg = FALSE;
+           break;
+/*
+***Curves.
+*/
            case VCURF:
            case VCURP:
            case VCURC:
@@ -274,45 +272,74 @@ extern short modtyp;               /* geometry type, for annaml() */
            case VCURT:
            case VCURU:
              if ( (nampar != PMCFONT) && (nampar != PMCDASHL) &&
-                  (nampar != PMWIDTH))
-               okflg = FALSE;
-             break;
-
-           case VSUREX:
+                  (nampar != PMWIDTH)) okflg = FALSE;
+           break;
+/*
+***Surfaces.
+*/
+           case VSUREX:  case VSURCON: case VSUROF:   case VSURSA:
+           case VSURCA:  case VSURAP:  case VSURCO:   case VSURT:
+           case VSURROT: case VSURUSD: case VSURCYL:  case VSURSWP:
+           case VSURRUL: case VSURNA:  case VSURCURV: case VSURTUSRD:
              if ( (nampar != PMSFONT) && (nampar != PMSDASHL) &&
-                  (nampar != PMNULIN) && (nampar != PMNVLIN) )
-               okflg = FALSE;
-             break;
-
+                  (nampar != PMNULIN) && (nampar != PMNVLIN)  &&
+                  (nampar != PMWIDTH) ) okflg = FALSE;
+           break;
+/*
+***Hatch.
+*/
            case VXHT:
              if ( (nampar != PMXFONT) && (nampar != PMXDASHL) )
                okflg = FALSE;
-             break;
-
+           break;
+/*
+***Coordinate systems.
+*/
+           case VCSYS1P:
+           case VCSYS3P:
+           case VGROUP:
+           case VSYMB:
+             okflg = FALSE;
+           break;
+/*
+***B_planes.
+*/
+           case VBPLAN:
+             if ( nampar != PMWIDTH ) okflg = FALSE;
+           break;
+/*
+***Text.
+*/
            case VTEXT:
              if ( (nampar != PMTSIZE)  && (nampar != PMTWIDTH) &&
                   (nampar != PMTSLANT) && (nampar != PMTFONT)  &&
                   (nampar != PMWIDTH)  && (nampar != PMTPMODE) )
                okflg = FALSE;
-             break;
-
-             case VLDIM:
-             case VCDIM:
-             case VRDIM:
-             case VADIM:
-               if ( (nampar != PMDTSIZE) && (nampar != PMDASIZE) &&
-                    (nampar != PMDNDIG) && (nampar != PMDAUTO) )
-                 okflg = FALSE;
-               break;
-
+           break;
+/*
+***Dimensions.
+*/
+           case VLDIM:
+           case VCDIM:
+           case VRDIM:
+           case VADIM:
+             if ( (nampar != PMDTSIZE) && (nampar != PMDASIZE) &&
+                  (nampar != PMDNDIG) && (nampar != PMDAUTO) )
+               okflg = FALSE;
+           break;
+/*
+***Mesh.
+*/
            case VMSHARR:
              if ( (nampar != PMMFONT) )
                okflg = FALSE;
-             break;
+           break;
 #endif
            }
-         if ( okflg == FALSE )
-            anperr("AN9412",name,NULL,slin,scol);
+/*
+***Error message.
+*/
+         if ( okflg == FALSE ) anperr("AN9412",name,NULL,slin,scol);
          }
        }
 /*
@@ -326,13 +353,9 @@ extern short modtyp;               /* geometry type, for annaml() */
 /*
 ***Continue if ','
 */
-     if ( sy.sytype == ANSYCOM )
-       anascan(&sy);
-     else
-       conflg = FALSE;
-
+     if ( sy.sytype == ANSYCOM ) anascan(&sy);
+     else                        conflg = FALSE;
      }  
-   
    while( conflg );
 /*
 ***Ready, no ',' , return

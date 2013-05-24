@@ -25,10 +25,12 @@
 *    evamtp();     Evaluates ACT_MTYPE
 *    evamat();     Evaluates ACT_MATTR
 *    evajbd();     Evaluates ACT_JOBDIR
+*    evapft();     Evaluates ACT_PFONT
 *    evalft();     Evaluates ACT_LFONT
 *    evaaft();     Evaluates ACT_AFONT
 *    evacft();     Evaluates ACT_CFONT
 *    evaxft();     Evaluates ACT_XFONT
+*    evapsi();     Evaluates ACT_PDASHL
 *    evaldl();     Evaluates ACT_LDASHL
 *    evaadl();     Evaluates ACT_ADASHL
 *    evacdl();     Evaluates ACT_CDASHL
@@ -75,8 +77,6 @@
 
 extern V2NAPA defnap;
 extern V3MDAT sydata;
-extern DBfloat  rstrox,rstroy,rstrdx,rstrdy;
-extern bool   rstron;
 extern char   pidnam[],jobnam[],jobdir[];
 extern pm_ptr actmod;
 extern DBptr  lsysla;
@@ -163,7 +163,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
    winptr = WPwgwp((wpw_id)GWIN_MAIN);
    gwinpt = (WPGWIN *)winptr->ptr;
 
-   strcpy(func_vp->lit.str_va , gwinpt->vy.vynamn);
+   strcpy(func_vp->lit.str_va , gwinpt->vy.name);
 
    return(0);
   }
@@ -317,9 +317,10 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
     WPget_cacc(&c);
 
     func_vp->lit.float_va = c;
-
+/*
+***The end.
+*/
     return(0);
-
   }
 
 /********************************************************/
@@ -338,15 +339,26 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 31/10/86 R. Svedin
  *
  *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      2007-03-04 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Return value.
+*/
     func_vp->lit.float_va = rstrox;
-
+/*
+***The end.
+*/
     return(0);
-
   }
 
 /********************************************************/
@@ -365,15 +377,26 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 31/10/86 R. Svedin
  *
  *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      2007-03-04 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Return value.
+*/
     func_vp->lit.float_va = rstroy;
-
+/*
+***The end.
+*/
     return(0);
-
   }
 
 /********************************************************/
@@ -392,15 +415,26 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 31/10/86 R. Svedin
  *
  *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      2007-03-04 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Return value.
+*/
     func_vp->lit.float_va = rstrdx;
-
+/*
+***The end.
+*/
     return(0);
-
   }
 
 /********************************************************/
@@ -419,15 +453,26 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 31/10/86 R. Svedin
  *
  *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      2007-03-04 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Return value.
+*/
     func_vp->lit.float_va = rstrdy;
-
+/*
+***The end.
+*/
     return(0);
-
   }
 
 /********************************************************/
@@ -446,19 +491,27 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 31/10/86 R. Svedin
  *
  *      2001-03-06 In-Param changed to Global variables, R Svedin
+ *      2007-03-04 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short i;
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
-    if ( rstron ) i = 1;
-    else i = 0;
-
-    func_vp->lit.int_va = i;
-
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Return value.
+*/
+    if ( rstron ) func_vp->lit.int_va = 1;
+    else          func_vp->lit.int_va = 0;
+/*
+***The end.
+*/
     return(0);
-
   }
 
 /********************************************************/
@@ -604,6 +657,22 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 /********************************************************/
 /*!******************************************************/
 
+        short evapft()
+ 
+/*      Evaluates function ACT_PFONT().
+ *
+ *      (C)2007-03-24, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    func_vp->lit.int_va = defnap.pfont;
+    return(0);
+  }
+
+/********************************************************/
+/*!******************************************************/
+
         short evalft()
  
 /*      Evaluerar funktionen ACT_LFONT.
@@ -701,6 +770,22 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
     return(0);
 
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        short evapsi()
+
+/*      Evaluates function ACT_PSIZE().
+ *
+ *      (C)2007-03-24, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    func_vp->lit.float_va = defnap.psize;
+    return(0);
   }
 
 /********************************************************/

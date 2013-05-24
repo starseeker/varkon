@@ -8,19 +8,17 @@
 *
 *    This file includes:
 *
-*    WPinit();   Init WP
-*    WPexit();   Close WP
-*    WPclrg();   Close graphical windows
-*    WPsvjb();   Write graphical window data to JOB-file
-*    WPldjb();   Read graphical window data from jobfile
-*    WPngws();   Return current number of graphical windows
-*    WPcgws();   Create graphical windows
-*    WPmrdb();   Merge X resource databases
-*    WPgtwi();   Return window data
-*    WPgtwp();   Return window position 
-*    WPgwsz();   Return window size
-*    WPsdpr();   Set window PROTOCOL
-*    WPgrst();   Returns X resource value
+*    WPinit();         Init WP
+*    WPexit();         Close WP
+*    WPclrg();         Close graphical windows
+*    WPngws();         Return current number of graphical windows
+*    WPcgws();         Create graphical windows
+*    WPmrdb();         Merge X resource databases
+*    WPgtwi();         Return window data
+*    WPgtwp();         Return window position 
+*    WPgwsz();         Return window size
+*    WPsdpr();         Set window PROTOCOL
+*    WPgrst();         Returns X resource value
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -45,33 +43,23 @@
 #include <string.h>
 
 
-Window       xgwin;     /* För grapac */
-Pixmap       xgmap;     /* För grapac */
-GC           gpxgc;     /* För grapac */
+/*
+***WP uses the following global variables:
+*/
+Display     *xdisp;  /* The display */
+int          xscr;   /* The screen */
+GC           xgc;    /* The normal Graphic Context */
 
-Display     *xdisp;
-GC           xgc;
-XPoint       xbuf[PLYMXV];
-int          xscr;
-MNUDAT      *actmeny;
-Cursor       xgcur1,xgcur2,xwcur,xtcur;
+Cursor       xgcur1,xgcur2,xgcur3,xwcur;
 XrmDatabase  xresDB;
 
-/* xgwin är window ID för det grafiska huvud-fönstret.
-   xdisp är display ID.
-   xgc är Graphic Context ID.
-   xbuf är grapac:s polyline-buffert
-   xscr är Screen,
-   actmeny är en pekare till aktiv meny. Om meny saknas är actmeny = NULL.
+/*
    xgcur är den cursor som aktiveras vid hårkors-pekning.
-   xtcur är I-balk cursorn vid textinmatning
    xwcur är vänta-klockan
    xresDB är den resursdatabas som skapas vid uppstart.
 */
 
-extern short  gpsnpx,gpsnpy,gpgorx,gpgory,gpgnpx,gpgnpy;
-extern double gpgszx,gpgszy;
-extern VY     actvy;
+extern WPVIEW wpviewtab[];
 
 /*!******************************************************/
 
@@ -79,7 +67,7 @@ extern VY     actvy;
         char *inifil_1,
         char *inifil_2)
 
-/*      Öppnar winpac. Förutsätter att resursdatabasen
+/*      Opens winpac. Förutsätter att resursdatabasen
  *      är skapad av andra rutiner tidigare.
  *
  *      In: inifil_1 = Ev. ytterligare resursfil.
@@ -104,6 +92,7 @@ extern VY     actvy;
 
   {
     short       status;
+    int         i;
     XGCValues   values;
     XrmDatabase xdfDB;
 
@@ -113,7 +102,7 @@ extern VY     actvy;
 */
     if ( strlen(inifil_1) > 0  )
       {
-      if ( v3ftst(inifil_1) )
+      if ( IGftst(inifil_1) )
         {
         xdfDB = XrmGetFileDatabase(inifil_1);
         XrmMergeDatabases(xdfDB,&xresDB);
@@ -123,7 +112,7 @@ extern VY     actvy;
 
     if ( strlen(inifil_2) > 0  )
       {
-      if ( v3ftst(inifil_2) )
+      if ( IGftst(inifil_2) )
         {
         xdfDB = XrmGetFileDatabase(inifil_2);
         XrmMergeDatabases(xdfDB,&xresDB);
@@ -142,7 +131,7 @@ extern VY     actvy;
 /*
 ***Ta reda på skärm och antal bitplan.
 */
-    xscr   = DefaultScreen(xdisp);
+    xscr = DefaultScreen(xdisp);
 /*
 ***Initiera färger.
 */
@@ -153,10 +142,10 @@ extern VY     actvy;
 ***onödiga event typ GraphicsExpose eller NoExpose
 ***genereras i onödan.
 */
-    xgc =  DefaultGC(xdisp,xscr);
+    xgc = DefaultGC(xdisp,xscr);
     values.graphics_exposures = False;
     XChangeGC(xdisp,xgc,GCGraphicsExposures,&values);
-    XSetBackground(xdisp,xgc,WPgcol(WP_BGND));
+    XSetBackground(xdisp,xgc,WPgcol(WP_BGND1));
     XSetForeground(xdisp,xgc,WPgcol(WP_FGND));
 /*
 ***Initiera text-fonter.
@@ -164,21 +153,27 @@ extern VY     actvy;
     status = WPfini();
     if ( status < 0 ) return(erpush("WP1032",XDisplayName(NULL)));
 /*
-***Skapa grafik-cursor.
+***Create mouse cursors.
 */
-    xgcur1 = XCreateFontCursor(xdisp,34);
-    xgcur2 = XCreateFontCursor(xdisp,52);
-    xwcur  = XCreateFontCursor(xdisp,150);
+    xgcur1 = XCreateFontCursor(xdisp,34);   /* Normal cross four positional input */
+    xgcur2 = XCreateFontCursor(xdisp,52);   /* Zoom and Pan */
+    xgcur3 = XCreateFontCursor(xdisp,116);  /* Resize of WPMCWIN */
+    xwcur  = XCreateFontCursor(xdisp,150);  /* Wait */
 /*
-***Initiera menyhanteraren.
+***Init menu handler.
 */
-    if ( (status=WPmini()) < 0 ) return(status);
+    if ( (status=WPinit_menu()) < 0 ) return(status);
 /*
 ***Init fonts for graphical TEXT.
 */
    WPinfn();
 /*
-***Slut.
+***Clear wpviewtab[]. Valid views will be loaded if a JOB-
+***file exists.
+*/
+   for ( i=0; i<WPMAXVIEWS; ++i ) wpviewtab[i].status = VIEW_NOT_USED;
+/*
+***The end.
 */
     return(0);
   }
@@ -188,41 +183,31 @@ extern VY     actvy;
 
         short WPexit()
 
-/*      Avslutar winpac.
+/*      Ends WinPAc.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 23/6/92 U.Andersson
+ *      (C)2007 J.Kjellander
  *
  ******************************************************!*/
 
   {
 /*
-***Nollställ allt som har med grafiska fönster att göra.
+***Delete graphical windows.
 */
    WPclrg();
 /*
-***Nollställ grafiska fonter.
+***Clear graphical fonts.
 */
     WPexfn();
 /*
-***Nollställ resten också.
+***Clear everything else as well.
 */
    WPwexi();
 /*
-***Inga menyer nu aktiva.
-*/
-   actmeny = NULL;
-/*
-***Stäng display.
+***Close X11 display.
 */
    XCloseDisplay(xdisp);
 /*
-***Slut.
+***The end for WP.
 */
    return(0);
   }
@@ -232,16 +217,10 @@ extern VY     actvy;
 
         short WPclrg()
 
-/*      Dödar alla grafiska fönster och nollställer
- *      det som har med dem att göra.
+/*      Deletes all graphical windows and releases all
+ *      resources they have allocated.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: 0.
- *
- *      (C)microform ab 27/9/95 J. Kjellander
+ *      (C)2007 J. Kjellander
  *
  ******************************************************!*/
 
@@ -250,207 +229,21 @@ extern VY     actvy;
    WPWIN  *winptr;
 
 /*
-***Sudda meddelandefönstret så att dess button-pekare
-***nollställs. Annars funkar inte lagra/nytt jobb.
-*/
-   WPwlma("");
-/*
-***Döda alla grafiska fönster.
+***Delete all WPGWIN's
 */
    for ( i=0; i<WTABSIZ; ++i )
      if ( (winptr=WPwgwp((wpw_id)i)) != NULL  &&
            winptr->typ == TYP_GWIN ) WPwdel((DBint)i);
 /*
-***Slut.
-*/
-   return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short WPsvjb(
-        FILE *f)
-
-/*      Lagrar grafiska fönster i jobfilen.
- *
- *      In: f => Pekare till öppen jobbfil.
- *
- *      Ut: Inget.
- *
- *      Felkod: WP1422 = Fel vid skrivning till jobfil.
- *
- *      (C)microform ab 28/1/95 J. Kjellander
- *
- ******************************************************!*/
-
- {
-   short   corrx,corry;
-   int     i,winant;
-   WPWIN  *winptr;
-   WPGWIN *gwinpt;
-
-/*
-***Hur många WPGWIN har vi ?
-*/
-   winant = WPngws();
-
-/*
-***Skriv ut antal fönster.
-*/
-   if ( fwrite((char *)&winant,sizeof(int),1,f) == 0 ) goto error;
-/*
-***För varje fönster, skriv ut placering, storlek, vynamn, modell-
-***fönster och nivåer.
+***Delete all WPRWIN's
 */
    for ( i=0; i<WTABSIZ; ++i )
-     {
      if ( (winptr=WPwgwp((wpw_id)i)) != NULL  &&
-           winptr->typ == TYP_GWIN )
-       {
-       gwinpt = (WPGWIN *)winptr->ptr;
-
-       corrx = gwinpt->geo.x - gwinpt->wmandx;
-       corry = gwinpt->geo.y - gwinpt->wmandy;
-       if ( fwrite((char *)&corrx,sizeof(short),1,f) == 0 )
-         goto error;
-       if ( fwrite((char *)&corry,sizeof(short),1,f) == 0 )
-         goto error;
-
-       if ( fwrite((char *)&gwinpt->geo.dx,sizeof(short),1,f) == 0 )
-         goto error;
-       if ( fwrite((char *)&gwinpt->geo.dy,sizeof(short),1,f) == 0 )
-         goto error;
-       if ( fwrite((char *)&gwinpt->vy.vynamn,sizeof(char),GPVNLN+1,f) == 0 )
-         goto error;
-       if ( fwrite((char *)&gwinpt->vy.modwin,sizeof(VYWIN),1,f) == 0 )
-         goto error;
-       if ( fwrite((char *)gwinpt->nivtab,sizeof(char),WP_NTSIZ,f) == 0 )
-         goto error;
-       }
-     }
+           winptr->typ == TYP_RWIN ) WPwdel((DBint)i);
 /*
-***Slut.
+***The end.
 */
    return(0);
-/*
-***Felutgång.
-*/
-error:
-   return(erpush("WP1422",""));
- }
-
-/********************************************************/
-/*!******************************************************/
-
-        short WPldjb(
-        FILE *f)
-
-/*      Laddar grafiska fönster från jobfilen.
- *
- *      In: f => Pekare till öppen jobbfil.
- *
- *      Ut: Inget.
- *
- *      Felkoder: WP1432 = Kan ej läsa jobfil.
- *                WP1242 = Kan ej skapa fönster
- *
- *      (C)microform ab 28/1/95 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-   int       i,winant,ix,iy,idx,idy; 
-   short     status,x,y,dx,dy;
-   DBint     w_id;
-   WPGWIN   *gwinpt,tmpgwi;
-
-/*
-***Hur många fönster skall skapas ?
-*/
-   if ( fread(&winant,sizeof(int),1,f) == 0 ) goto error;
-/*
-***Om winant > 0 börjar vi med huvudfönstret.
-*/
-   if ( winant > 0 )
-     {
-     if ( fread(&x,sizeof(short),1,f) == 0 ) goto error;
-     if ( fread(&y,sizeof(short),1,f) == 0 ) goto error;
-     if ( fread(&dx,sizeof(short),1,f) == 0 ) goto error;
-     if ( fread(&dy,sizeof(short),1,f) == 0 ) goto error;
-     if ( fread(&tmpgwi.vy.vynamn,sizeof(char),GPVNLN+1,f) == 0 ) goto error;
-     if ( fread(&tmpgwi.vy.modwin,sizeof(VYWIN),1,f) == 0 ) goto error;
-     if ( fread( tmpgwi.nivtab,sizeof(char),WP_NTSIZ,f) == 0 ) goto error;
-/*
-***Kolla att resultatet hamnar på skärmen.
-*/
-     ix = x; iy = y; idx = dx; idy = dy;
-     WPposw(ix,iy,idx+10,idy+25,&ix,&iy);
-/*
-***Skapa själva huvudfönstret.
-*/
-     status = WPwcgw((short)ix,(short)iy,(short)idx,(short)idy,"",TRUE,&w_id);
-     if ( status < 0 ) return(erpush("WP1242",XDisplayName(NULL)));
-/*
-***Vilket X-id fick fönstret och dess 'save_under' pixmap ?
-*/
-     gwinpt  = (WPGWIN *)wpwtab[(wpw_id)w_id].ptr;
-     xgwin   = gwinpt->id.x_id;
-     xgmap   = gwinpt->savmap;
-     gpxgc   = gwinpt->win_gc;
-/*
-***Aktivera fönstrets vy. Detta gör vi genom att först aktivera
-***den version av vyn som finns i vytab och sedan ändra modell-
-***fönstret så att det stämmer med jobfilen. Normalisering behövs
-***för att beräkna nya 2D-konstanter och för att kompensera för
-***olika storlek på pixels i X- och Y-led på olika skärmar. Slutligen
-***aktiverar vi vyn igen varvid såväl vytab som actvy får rätt
-***utseende.
-*/
-     WPacvi(tmpgwi.vy.vynamn,GWIN_MAIN);
-     V3MOME(&tmpgwi.vy.modwin,&gwinpt->vy.modwin,sizeof(VYWIN));
-     WPnrgw(gwinpt);
-     WPacvi(tmpgwi.vy.vynamn,GWIN_MAIN);
-/*
-***Kopiera den lästa nivåtabellen till det skapade fönstret.
-*/
-     V3MOME(tmpgwi.nivtab,gwinpt->nivtab,WP_NTSIZ);
-     }
-/*
-***Eventuella ytterligare fönster.
-*/
-   for ( i=1; i<winant; ++i )
-     {
-     if ( fread(&x,               sizeof(short),      1,f) == 0 ) goto error;
-     if ( fread(&y,               sizeof(short),      1,f) == 0 ) goto error;
-     if ( fread(&dx,              sizeof(short),      1,f) == 0 ) goto error;
-     if ( fread(&dy,              sizeof(short),      1,f) == 0 ) goto error;
-     if ( fread(&tmpgwi.vy.vynamn,sizeof(char),GPVNLN+1,f) == 0 ) goto error;
-     if ( fread(&tmpgwi.vy.modwin,sizeof(VYWIN),      1,f) == 0 ) goto error;
-     if ( fread( tmpgwi.nivtab,   sizeof(char),WP_NTSIZ,f) == 0 ) goto error;
-
-     ix = x; iy = y; idx = dx; idy = dy;
-     WPposw(ix,iy,idx+10,idy+25,&ix,&iy);
-
-     status = WPwcgw((short)ix,(short)iy,(short)idx,(short)idy,"",FALSE,&w_id);
-     if ( status < 0 ) return(erpush("WP1242",XDisplayName(NULL)));
-
-     gwinpt  = (WPGWIN *)wpwtab[(wpw_id)w_id].ptr;
-     WPacvi(tmpgwi.vy.vynamn,w_id);
-     V3MOME(&tmpgwi.vy.modwin,&gwinpt->vy.modwin,sizeof(VYWIN));
-     WPnrgw(gwinpt);
-
-     V3MOME(tmpgwi.nivtab,gwinpt->nivtab,WP_NTSIZ);
-     }
-/*
-***Slut.
-*/
-    return(0);
-/*
-***Felutgång.
-*/
-error:
-   return(erpush("WP1432",""));
   }
 
 /********************************************************/
@@ -492,22 +285,16 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-        short WPcgws(
-        bool create)
+        short WPcgws()
 
-/*      Skapar grafiska fönster enligt resursdatabsen.
- *      Om create = TRUE skapas och aktiveras även default
- *      vy.
- *      Sätter div. grapac-variabler.
- *
- *      In: create => TRUE  = Skapa även default vy.
- *                    FALSE = Skapa bara fönstren.
- *
- *      Ut: Inget.   
+/*      Creates default WPGWIN's according to current
+ *      resource database.
  *
  *      Felkod: WP1242 = Kan ej skapa grafiskt fönster på %s
  *
  *      (C)microform ab 18/1-95 J. Kjellander
+ *
+ *      2007-04-10 1.19 J.Kjellander
  *
  ******************************************************!*/
 
@@ -519,17 +306,9 @@ error:
    char      xrmstr1[81],xrmstr2[81],numstr[81];
    short     status;
    DBint     w_id;
-   char      avynam[GPVNLN+1];
    XrmValue  value;
    WPGWIN   *gwinpt;
-   VYVEC     bpos;
 
-/*
-***Eftersom WPwcgw() anropar WPupgp() kommer actvy att skrivas över.
-***Spara namnet på aktiv vy så att denna kan aktiveras om jobb har
-***laddats från jobfil utan fönster.
-*/
-   strcpy(avynam,actvy.vynamn);
 /*
 ***V3:s grafiska huvud-fönster, GWIN_MAIN.
 ***Hårdprogrammerade defaultvärden.
@@ -569,28 +348,6 @@ error:
 ***Vilket X-id fick fönstret och dess 'save_under' pixmap ?
 */
    gwinpt  = (WPGWIN *)wpwtab[(wpw_id)w_id].ptr;
-   xgwin   = gwinpt->id.x_id;
-   xgmap   = gwinpt->savmap;
-   gpxgc   = gwinpt->win_gc;
-/*
-***Kanske skall vi också skapa default vy. Genom att först sätta
-***aktiv vy:s modellfönster = Huvudfönstrets ser vi till att vyn
-***"xy" får samma modellfönster som GWIN_MAIN. EXcrvp() kopierar
-***nämligen sitt modellfönster från aktiv vy.
-*/
-   if ( create )
-     {
-     actvy.vywin[0] = gwinpt->vy.modwin.xmin;
-     actvy.vywin[1] = gwinpt->vy.modwin.ymin;
-     actvy.vywin[2] = gwinpt->vy.modwin.xmax;
-     actvy.vywin[3] = gwinpt->vy.modwin.ymax;
-     bpos.x_vy = 0.0;
-     bpos.y_vy = 0.0;
-     bpos.z_vy = 1.0;
-     EXcrvp("xy",&bpos);
-     WPacvi("xy",GWIN_MAIN);
-     }
-   else WPacvi(avynam,GWIN_MAIN);
 /*
 ***Eventuella ytterligare grafiska fönster.
 ***Antal ytterligare är till att börja med = 0.
@@ -623,11 +380,6 @@ error:
 */
        status = WPwcgw((short)x,(short)y,(short)dx,(short)dy,"",FALSE,&w_id);
        if ( status < 0 ) return(erpush("WP1242",XDisplayName(NULL)));
-/*
-***Om create = TRUE skall vyn "xy" aktiveras i alla fönster.
-*/
-       if ( create ) WPacvi("xy",w_id);
-       else          WPacvi(avynam,w_id);
 /*
 ***Slutligen räknar vi upp nadd.
 */
@@ -723,11 +475,11 @@ static XrmOptionDescRec opttab[] = {
 ***directoryt och i andra hand "HOME"-directoryt.
 */
 #ifdef UNIX
-    if ( gtenv3("XENVIRONMENT") != NULL )
-      strcpy(path,gtenv3("XENVIRONMENT"));
+    if ( IGenv3("XENVIRONMENT") != NULL )
+      strcpy(path,IGenv3("XENVIRONMENT"));
     else
       {
-      strcpy(path,gtenv3("HOME"));
+      strcpy(path,IGenv3("HOME"));
       strcat(path,"/.Xdefaults");
       }
 
@@ -982,7 +734,7 @@ static XrmOptionDescRec opttab[] = {
  ******************************************************!*/
 
   {
-    Atom proto,delete,type,focus;
+    Atom proto,delete,type; /*,focus;*/
 
 /*
 ***Hämta Atoms.
@@ -996,15 +748,15 @@ static XrmOptionDescRec opttab[] = {
     XChangeProperty(xdisp,win,proto,type,32,
                     PropModeReplace,(unsigned char *)&delete,1);
 /*
-***Samma med FOCUS.
-*/
+***Samma med FOCUS. OBS Funkar ej !!!!!!!!!
+*
     focus = XInternAtom(xdisp,"WM_TAKE_FOCUS",False);
-/*
-***Aktivera WM_PROTOCOLS-property med data = WM_DELETE_WINDOW.
-*/
+*
+***Aktivera WM_PROTOCOLS-property med data = WM_TAKE_FOCUS.
+*
     XChangeProperty(xdisp,win,proto,type,32,
                     PropModeReplace,(unsigned char *)&focus,1);
-
+*/
     return(0);
   }
 

@@ -1,30 +1,29 @@
-***************************************************************************
+*************************************************************
 *
 *    README_IGES
 *    ===========
 *
-*    This README_IGES-file includes information about IGES import modules.
+*    This README_IGES-file includes information about the
+*    current development status of the Varkon IGES import.
 *
-*    (C)Örebro University   http://www.oru.se/tech/cad
-*       Mohamed Rahayem     2006-10-25
-***************************************************************************
+*************************************************************
 
 1- The Authors :
 
  - Johan Kjellander  1997-12-22  johan.kjellander@tech.oru.se
- - Roy Kastelein     2000-04-12  r.e.f.kastelein@kastalyse.nl 
+ - Roy Kastelein     2000-04-12  r.e.f.kastelein@kastalyse.nl
  - Sören Larsson     2006-09-06  soren.larsson@tech.oru.se
- - Mohamed Rahayem   2006-09-06  mohamed.rahayem@tech.oru.se  
+ - Mohamed Rahayem   2006-09-06  mohamed.rahayem@tech.oru.se
  - Gunnar Liden      2000-06-02  Gunnar.Liden@phonak.com
 
 2- Supported IGES entities:
   ___________________________________________________________
- |Entity No.| Entity Descrition                  |MBS Code   |
+ |Entity No.| Entity Description                 |MBS Code   |
  |__________|____________________________________|___________|
  |  0       | Null Entity                        |  igs_0    |
  | 100      | Circular Arc Entity                |  igs_100  |
- | 104      | Conic Arc Entity                   |  igs_104  |             
- | 106      | Copious Data Entity                |  igs_106  |     
+ | 104      | Conic Arc Entity                   |  igs_104  |
+ | 106      | Copious Data Entity                |  igs_106  |
  | 102      | Composite Curve Entity             |  igs_102  |
  | 110      | Line Entity                        |  igs_110  |
  | 112      | Parametric Spline Curve Entity     |  igs_112  |
@@ -32,7 +31,9 @@
  | 120      | Surface of Revolution Entity       |  igs_120  |
  | 122      | Tabulated Cylinder Entity          |  igs_122  |
  | 124      | Transformation Matrix Entity       |  igs_124  |
+ | 126      | Rational B_spline Curve Entity     |  igs_126  |
  | 128      | Rational B_spline Surface Entity   |  igs_128  |
+ | 142      | Curve On parametric Surface Entity |  1gs_142  |
  |__________|____________________________________|___________|
 
 3- IGES entities under development:
@@ -41,22 +42,20 @@
  |__________|____________________________________|___________|____________________________________|
  | 108      | Plane Entity                       |  igs_108  | need to support trimmed surface.   |
  | 118      | Ruled Surface Entity               |  igs_118  | not support yet.                   |
- | 126      | Rational B_spline Curve Entity     |  igs_126  | need to remove curve approximatiom.| 
- | 142      | Curve On parametric Surface Entity |  1gs_142  | under development.                 |
  | 144      | Trimmed(Parametric) Surface Entity |  igs_144  | under development.                 |
  |__________|____________________________________|___________|____________________________________|
 
 3- To use level,color and blank attributes from the IGES-file you
-   have to set the three parameters for igs_in to "Y",otherwise the 
-   current attributes will be used. 
+   have to set the three parameters for igs_in to "Y",otherwise the
+   current attributes will be used.
    Color numbers in IGES will map to pen numbers in Varkon.
    Blanked entities will be listed in the log-file.
-   
-4- Color definition entity (type 314) is not implemented. 
-   That means: if an entity point to a color definition instead 
-   of to a colour number, varkon will ignore this and use 
-   the current pen number. 
 
-5- Iges import files had been tested by using some existing iges 
+4- Color definition entity (type 314) is not implemented.
+   That means: if an entity points to a color definition instead
+   of to a colour number, varkon will ignore this and use
+   the current pen number.
+
+5- Iges import files had been tested by using some existing iges
    files downloaded from:
-   http://iges5x.org/cals/.             
+   http://iges5x.org/cals/.

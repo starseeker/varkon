@@ -162,7 +162,7 @@ fflush(dbgfil(EXEPAC));
       break;
 
       default:
-      igidst(spine_id,errbuf);
+      IGidst(spine_id,errbuf);
       return(erpush("EX1412",errbuf));
       }
 
@@ -191,16 +191,12 @@ fflush(dbgfil(EXEPAC));
       break;
 
       default:
-      igidst(cur_id,errbuf);
+      IGidst(cur_id,errbuf);
       return(erpush("EX1412",errbuf));
       }
-
-
 /*
 *** Create the surface
 */
-
-
     s_case = I_UNDEF;
 
     status = varkon_sur_sweep( &spine, p_spineseg, &cur,p_seg, 
@@ -236,7 +232,7 @@ fflush(dbgfil(EXEPAC));
 /*
 ***Lagra i DB och rita.
 */
-    status = EXesur(sur_id,&sur,p_pat,pnp);
+    status = EXesur(sur_id,&sur,p_pat,NULL,NULL,pnp);
 /*
 ***Lämna tillbaks dynamiskt allokerat minne.
 */
@@ -379,21 +375,16 @@ if ( dbglev(EXEPAC) == 1 )
       break;
 
       default:
-      igidst(cur_id,errbuf);
+      IGidst(cur_id,errbuf);
       return(erpush("EX1412",errbuf));
       }
-
 /*
 *** Transformation of dir to the basic system
 */
-
    if ( (p_dir->x_gm != 0.0  ||
          p_dir->y_gm != 0.0  ||
          p_dir->z_gm != 0.0) &&
         lsyspk != NULL ) GEtfvec_to_local(p_dir,&lklsyi,p_dir);
-
-
-
 /*
 *** Create the surface
 */
@@ -422,7 +413,7 @@ if ( dbglev(EXEPAC) == 1 )
 /*
 ***Lagra i DB och rita.
 */
-    status = EXesur(sur_id,&sur,p_pat,pnp);
+    status = EXesur(sur_id,&sur,p_pat,NULL,NULL,pnp);
 /*
 ***Lämna tillbaks dynamiskt allokerat minne.
 */
@@ -542,7 +533,7 @@ if ( dbglev(EXEPAC) == 1 )
 
     else
       {
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
 
@@ -582,7 +573,7 @@ if ( dbglev(EXEPAC) == 1 )
 /*
 ***Lagra i DB och rita.
 */
-   status = EXesur(id,&rotsur,rotpat,pnp);
+   status = EXesur(id,&rotsur,rotpat,NULL,NULL,pnp);
 /*
 ***Lämna tillbaks dynamiskt allokerat minne.
 */
@@ -690,7 +681,7 @@ err2:
       break;
 
       default:
-      igidst(ref1,errbuf);
+      IGidst(ref1,errbuf);
       return(erpush("EX1412",errbuf));
       }
 /*
@@ -718,7 +709,7 @@ err2:
       break;
 
       default:
-      igidst(ref2,errbuf);
+      IGidst(ref2,errbuf);
       return(erpush("EX1412",errbuf));
       }
 /*
@@ -771,7 +762,7 @@ if ( dbglev(EXEPAC) == 1 )
 /*
 ***Lagra i DB och rita.
 */
-    status = EXesur(id,&sur,p_pat,pnp);
+    status = EXesur(id,&sur,p_pat,NULL,NULL,pnp);
 /*
 ***Lämna tillbaks dynamiskt allokerat minne.
 */

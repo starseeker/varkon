@@ -12,7 +12,7 @@
 /*  v3time();    Handles time measuring                             */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -31,18 +31,21 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)2006-12-05, Johan Kjellander, johan@toan.se                  */
-/*                                                                  */
 /********************************************************************/
 
+#include "../../DB/include/DB.h"
+#include "../include/IG.h"
+#include "../include/debug.h"
 #include <stdio.h>
 #include <string.h>
-#include "../include/debug.h"
+
 
 #ifdef UNIX
 #include <sys/times.h>
 #include <unistd.h>
 #endif
+
+extern char jobdir[];
 
 /* dbgtab is the debug module- and level table */
 
@@ -95,7 +98,7 @@ static struct
 /*
 ***Init timers.
 */
-   for ( i=0; i<10; ++i ) v3time(V3_TIMER_RESET,i);
+   for ( i=0; i<10; ++i ) v3time(V3_TIMER_RESET,i,"");
  }
 
 /*!******************************************************/
@@ -252,18 +255,21 @@ static struct
 /*!******************************************************/
 
         void v3time(
-        int  op,
-        int  num)
+        int   op,
+        int   num,
+        char *s)
 
 /*      Handles time measurements.
  *
  *      In: op  = See debug.h
  *          num = Timer number, 0->9
+ *          s   = Text description
  *
  *      (C)microform ab 1998-04-28 J. Kjellander
  *
  *      1998-05-25 #ifdef UNIX, J.Kjellander
  *      2006-12-05 Moved to file igdebug.c, J.Kjellander
+ *      2007-01-15 Text, J.Kjellander
  *
  ******************************************************!*/
 
@@ -273,17 +279,19 @@ static struct
    struct  tms timbuf;
    clock_t ticks;
    double  secs;
-   char    path[] = "Varkon_timer.log";
+   char    path[V3PTHLEN];
 
    if ( num < 0  ||  num > 9 ) return;
 
    switch (op)
      {
      case V3_TIMER_WRITE:
+     strcpy(path,jobdir);
+     strcat(path,"timelog.txt");
      f = fopen(path,"a");
      secs = (double)timtab[num].total/sysconf(_SC_CLK_TCK);
-     fprintf(f,"Timer number %d = %g seconds. Active %d times.\n",
-                                              num,secs,timtab[num].count);
+     fprintf(f,"Timer %d: %s = %g seconds. Active %d times.\n",
+                                              num,s,secs,timtab[num].count);
      fclose(f);
      break;
 

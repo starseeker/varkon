@@ -638,14 +638,6 @@ no_error:; /* There is no error in the PBOUND table                  */
 nosol:  /*!Label nosol:  There is no solution in the patch         !*/
 #endif
 
-#ifdef DEBUG
-if ( dbglev(SURPAC) == 2 && sflag == -1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur923 u_s_m %6.3f u_e_m %6.3f v_s_m %6.3f v_e_m %6.3f s_flag= %d\n",
-   u_s_m,u_e_m,v_s_m,v_e_m , (int)sflag );
-}
-#endif
 
 
 /*!                                                                 */
@@ -755,24 +747,6 @@ nxtregm:; /* Label: Not the requested master surface */
 /* End  all records in PBOUND for master surface i_rm=0,1,....,pbn  */
 /*                                                                 !*/
 
-#ifdef DEBUG
-if ( dbglev(SURPAC) == 1 )
-  {
-  fprintf(dbgfil(SURPAC),
-  " GLOBAL GEOMETRY MODULE ( REF s2_id); \n");    
-  fprintf(dbgfil(SURPAC), " BEGINMODULE  \n");    
-  if (n_uvsur > 0 )
-    {
-    for (ix1 = 1; ix1 <= n_uvsur ; ix1 = ix1+1)
-      {
-      fprintf(dbgfil(SURPAC),
-      " POI_FREE(#%d, ON(s2_id,VEC(%6.4f,%6.4f,0)):PEN=4); \n", (int)ix1,
-        u_sur[ ix1-1 ] - 1.0 ,   v_sur[ ix1-1 ] - 1.0 ); 
-      }
-    }
-  fprintf(dbgfil(SURPAC), " ENDMODULE  \n");    
-  }
-#endif
 
 /*!                                                                 */
 /* 3. Exit                                                          */
@@ -790,23 +764,7 @@ if ( dbglev(SURPAC) == 1 )
       return(varkon_erpush("SU2783",errbuf));
       }
 
-#ifdef DEBUG
-if ( dbglev(SURPAC) == 2 )
-  {
-  if (numpts > 0 )
-    {
-    for (ix1 = 1; ix1 <= numpts ; ix1 = ix1+1)
-      {
-      fprintf(dbgfil(SURPAC),
-      "sur923 %d p1 %f %f p2 %f %f\n", (int)ix1,
-       (p_etable1+ix1-1)->u1,
-       (p_etable1+ix1-1)->v1,
-       (p_etable1+ix1-1)->u2,
-       (p_etable1+ix1-1)->v2   );
-      }
-    }
-  }
-#endif
+
 
 #ifdef DEBUG
 if ( dbglev(SURPAC) == 1 )

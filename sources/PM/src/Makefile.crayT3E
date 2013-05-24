@@ -10,7 +10,7 @@ RM = rm -f
 
 CC = cc
 
-CFLAGS = -O2 -DUNIX -DV3_X11 -DWRK_STAT
+CFLAGS = -O2 -DUNIX
 
 COMPILE = $(CC) -c $(CFLAGS)
 

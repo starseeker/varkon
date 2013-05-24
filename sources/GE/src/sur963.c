@@ -31,11 +31,8 @@
 #include  <windows.h>
 #endif
 
-#ifdef  V3_OPENGL
 #include  <GL/gl.h>
-#else
-#define  GLfloat  float
-#endif
+
 
 /********************************************************************/
 /*!                                                                 */
@@ -53,16 +50,6 @@
 /*  for the created NURBS surface (if the pointers not are          */
 /*  equal to NULL).                                                 */
 /*                                                                  */
-/* Rational NURBS is implemented with the "approximation"           */
-/* method, i.e. a non-rational NURBS surface is the graphical       */
-/* representation of a rational NURBS surface.                      */
-/* The graphic library OpenGl can also take a rational NURBS        */
-/* surface as input, and the BEST solution is probably to           */
-/* add a parameter (a flag if the surface is rational or not)       */
-/* in this function and in the exepac graphic functions, make       */
-/* it possible to save rational NURBS as graphics in DB, etc.       */
-/* The SECOND BEST solution is selected, due to Johan's current     */
-/* workload ....                                                    */
 /*                                                                  */
 /*  Author: Gunnar Liden                                            */
 /*                                                                  */
@@ -79,7 +66,8 @@
 /*  1998-04-25   Missing (last) argument to v3mall                  */
 /*  1999-12-18   Free source code modifications                     */
 /*  2001-04-08   U and V order for NURBS input surfaces not OK      */
-/*                                                                 !*/
+/*  2006-12-21   Added knotscale , Sören L (to retrieve geo param.) */
+/*  2007-01-17   No approximation for rational NURBS, Sören L       */
 /********************************************************************/
 
 /* ------------- Short description of function -----------------*/
@@ -146,6 +134,8 @@
    GLfloat *p_glf;       /* Current GLfloat value             (ptr) */
    DBfloat *p_uval;      /* U knot value                      (ptr) */
    DBfloat *p_vval;      /* V knot value                      (ptr) */
+   DBfloat  knotscale;   /* scale factor for knots, this is used to */
+                         /* get same patremeterization as geo. rep. */
    gmint    c_nuv;       /* Number of control points                */
    gmint    c_iuv;       /* Loop index control point                */
 
@@ -184,8 +174,10 @@
   GMPATNU *p_patnu;      /* NURBS patch                       (ptr) */
   DBHvector  *p_pp;      /* Polygon point                     (ptr) */
 
-   short  status;        /* Error code from called function         */
-   char   errbuf[80];    /* String for error message fctn erpush    */
+  short  status;         /* Error code from called function         */
+  char    errbuf[80];    /* String for error message fctn erpush    */
+  int    gl_cpts_size;   /* Size of one controlpoint in             */
+  bool   ratflag;        /* True if any weight != 1.0               */
 
 /*!-------------- Flow diagram -------------------------------------*/
 /*                                                                  */
@@ -333,7 +325,6 @@ fprintf(dbgfil(SURPAC),
 
 /*!                                                                 */
 /* No approximation if the input surface is of type NURB_SUR        */
-/* and if the surface not is rational.                              */
 /* Goto no_approx in this case.                                     */
 /* Approximate also if multiplicity = order. OpenGl seems to have   */
 /* problems (that Varkon not have)                                  */ 
@@ -350,53 +341,24 @@ if ( surtype  == NURB_SUR )
 /* Determine if the NURBS surface is rational                       */
    c_nuv =  (p_patnu->nk_u-p_patnu->order_u)* 
             (p_patnu->nk_v-p_patnu->order_v);
+   ratflag=FALSE; /* initiate */
    for ( c_iuv = 0; c_iuv <  c_nuv; ++c_iuv )
       {
 /*    Pointer to current polygon point                              */
       p_pp  = p_patnu->cpts + c_iuv;
-#ifdef DEBUG                             /* Debug printout          */
-if ( dbglev(SURPAC) == 1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur963 NURBS surface weight %f \n", p_pp->w_gm );
-fflush(dbgfil(SURPAC));
-}
-#endif
       if ( fabs(p_pp->w_gm-1.0) > 0.0001 )
         {
-#ifdef DEBUG                             /* Debug printout          */
-if ( dbglev(SURPAC) == 1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur963 Approximation since it is rational NURB_SUR\n");
-fflush(dbgfil(SURPAC));
-}
-#endif
-        goto rat_nurbs; 
+        ratflag=TRUE;
+        break;  /* no more test needed */ 
         }
       } /* End loop polygon points */
 
-#ifdef DEBUG                             /* Debug printout          */
-if ( dbglev(SURPAC) == 1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur963 No approximation since input surface is NURB_SUR\n");
-fflush(dbgfil(SURPAC));
-}
-if ( dbglev(SURPAC) == 1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur963 NURB_SUR: p_sur %d p_pat %d\n",(int)p_sur, (int)p_pat);
-fflush(dbgfil(SURPAC));
-}
-#endif
 /*  Move data to from input surface to NURBS surface                */
     V3MOME((char *)(p_sur),(char *)(&sur_nurb),sizeof(DBSurf));
     p_pat_nurb = p_pat;
     goto  no_approx;
 }
 
-rat_nurbs:; /* Label: Input NURBS surface is rational               */
 
 /*!                                                                 */
 /* Approximate to a NURBS surface.                                  */
@@ -428,7 +390,7 @@ rat_nurbs:; /* Label: Input NURBS surface is rational               */
     sprintf(errbuf,"sur174%%sur963");
     return(varkon_erpush("SU2943",errbuf));
     }
-
+   ratflag=FALSE; /* approximated surface is not rational */
 
 /*!                                                                 */
 /* 3. NURBS surface data to Open GL arrays                          */
@@ -440,7 +402,6 @@ no_approx:; /*! Label: Input surface is NURB_SUR                   !*/
 /*!                                                                 */
 /*  NURBS: Number of nodes in U and V direction                     */
 /*                                                                 !*/
-
 
 
 /*  Check that there is only one geometry patch. To be added !!!    */
@@ -457,6 +418,7 @@ no_approx:; /*! Label: Input surface is NURB_SUR                   !*/
       return(varkon_erpush("SU2993",errbuf));
       }
 #endif /*   TODO_ADD_CHECK    */
+
 
     p_patnu = (GMPATNU *)(p_pat_nurb->spek_c);
     k_nu    = p_patnu->nk_u;
@@ -503,7 +465,6 @@ fflush(dbgfil(SURPAC));
 }
 #endif
 
-
 /*!                                                                 */
 /*  Allocate memory for U and V knot vectors                        */
 /*                                                                 !*/
@@ -513,13 +474,15 @@ fflush(dbgfil(SURPAC));
 
 /*!                                                                 */
 /*  Knot vector values to output Open GL arrays                     */
+/*  Including scaling to retrieve original geom parameterisation    */
 /*                                                                 !*/
-
+    knotscale = (DBfloat)nu / (DBfloat)sur_nurb.nu_su;
     for ( k_iu = 1; k_iu <= k_nu; ++k_iu )
       {
       p_glf  = *pp_kvu + k_iu - 1;
       p_uval = p_patnu->kvec_u + k_iu - 1;
-      *p_glf = (GLfloat)*p_uval;
+      *p_glf = (GLfloat)((*p_uval-1) * knotscale + 1);
+
 #ifdef DEBUG                             /* Debug printout          */
 if ( dbglev(SURPAC) == 1 )
 {
@@ -530,12 +493,12 @@ fflush(dbgfil(SURPAC));
 }
 #endif
       }
-
+    knotscale= (DBfloat) nv / (DBfloat)sur_nurb.nv_su; 
     for ( k_iv = 1; k_iv <= k_nv; ++k_iv )
       {
       p_glf  = *pp_kvv + k_iv - 1;
       p_vval = p_patnu->kvec_v + k_iv - 1;
-      *p_glf = (GLfloat)*p_vval;
+      *p_glf = (GLfloat)((*p_vval-1) * knotscale + 1);
 #ifdef DEBUG                             /* Debug printout          */
 if ( dbglev(SURPAC) == 1 )
 {
@@ -548,9 +511,26 @@ fflush(dbgfil(SURPAC));
       }
 
 
-/*!                                                                 */
+/*
+*** Is the surafce rational or not
+*** We will threat a surface with any w != 1.0 as rational
+*/
+
+if (ratflag) 
+  {
+  gl_cpts_size=4;
+  p_sur->vertextype_su= GL_MAP2_VERTEX_4;
+  }
+else 
+  {
+  gl_cpts_size=3;
+  p_sur->vertextype_su= GL_MAP2_VERTEX_3;
+  }
+
+
+/*                                                                  */
 /*  NURBS: Number of control points for the B-spline surface        */
-/*                                                                 !*/
+/*                                                                  */
 
     c_nuv =  (p_patnu->nk_u-p_patnu->order_u)* 
              (p_patnu->nk_v-p_patnu->order_v);
@@ -569,28 +549,40 @@ fflush(dbgfil(SURPAC));
 /*  Allocate memory for the control points                          */
 /*                                                                 !*/
 
-    *pp_cpts = (GLfloat *)v3mall(c_nuv*3*sizeof(GLfloat),"sur963");
+    *pp_cpts = (GLfloat *)v3mall(c_nuv*gl_cpts_size*sizeof(GLfloat),"sur963");
 
-    for ( c_iuv = 0; c_iuv <  c_nuv; ++c_iuv )
+    if (ratflag) 
       {
-      p_pp  = p_patnu->cpts + c_iuv;
-      p_glf  = *pp_cpts + 3*c_iuv;
-      *p_glf = (GLfloat)p_pp->x_gm;
-      p_glf  = *pp_cpts + 3*c_iuv + 1;
-      *p_glf = (GLfloat)p_pp->y_gm;
-      p_glf  = *pp_cpts + 3*c_iuv + 2;
-      *p_glf = (GLfloat)p_pp->z_gm;
-#ifdef DEBUG                             /* Debug printout          */
-if ( dbglev(SURPAC) == 1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur963 Node(%3d)= %f %f %f\n",
-   (int)c_iuv, p_pp->x_gm,  p_pp->y_gm,  p_pp->z_gm );
-fflush(dbgfil(SURPAC));
-}
-#endif
-      }
+      for ( c_iuv = 0; c_iuv <  c_nuv; ++c_iuv )
+        {
+        p_pp  = p_patnu->cpts + c_iuv;
 
+        p_glf  = *pp_cpts + 4*c_iuv;
+        *p_glf = (GLfloat)p_pp->x_gm;
+
+        p_glf  = *pp_cpts + 4*c_iuv + 1;
+        *p_glf = (GLfloat)p_pp->y_gm;
+
+        p_glf  = *pp_cpts + 4*c_iuv + 2;
+        *p_glf = (GLfloat)p_pp->z_gm;
+
+        p_glf  = *pp_cpts + 4*c_iuv + 3;
+        *p_glf = (GLfloat)p_pp->w_gm;
+        }
+      }
+    else
+      {
+      for ( c_iuv = 0; c_iuv <  c_nuv; ++c_iuv )
+        {
+        p_pp  = p_patnu->cpts + c_iuv;
+        p_glf  = *pp_cpts + 3*c_iuv;
+        *p_glf = (GLfloat)p_pp->x_gm;
+        p_glf  = *pp_cpts + 3*c_iuv + 1;
+        *p_glf = (GLfloat)p_pp->y_gm;
+        p_glf  = *pp_cpts + 3*c_iuv + 2;
+        *p_glf = (GLfloat)p_pp->z_gm;
+        }
+      }
 /*!                                                                 */
 /* n. Exit                                                          */
 /* _______                                                          */
@@ -628,7 +620,6 @@ fprintf(dbgfil(SURPAC),
 fflush(dbgfil(SURPAC));
 }
 #endif
-
 
     return(SUCCED);
 

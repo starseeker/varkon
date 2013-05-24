@@ -97,6 +97,7 @@ extern DBTmat *lsyspk;
  *    1999-05-15 Rewritten, J.Kjellander
  *    1999-05-28 rcode 4, J.Kjellander
  *    1999-12-18 sur776->varkon_ini_evalc G. Liden
+ *    2007-01-12 sp->typ != CUB_SEG, J.Kjellander
  *
  ******************************************************!*/
 
@@ -108,7 +109,7 @@ extern DBTmat *lsyspk;
 ***Om det är ett UV-segment använder vi GE110 som anropar
 ***varkon_sur_uvsegeval, annars gör vi allt här.
 */
-    if ( sp->typ == UV_CUB_SEG )
+    if ( sp->typ != CUB_SEG )
       {
 /*
 ***Kontrollera att ytans GM-adress har ett vettigt värde för Debug On

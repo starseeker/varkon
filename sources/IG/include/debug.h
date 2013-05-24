@@ -3,7 +3,7 @@
 /*  =============                                                   */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -53,6 +53,6 @@ void  dbgexi();
 int   dbgon(char *str);
 int   dbglev(int srcpac);
 FILE *dbgfil(int srcpac);
-void  v3time(int op, int num);
+void  v3time(int op, int num, char *s);
 
 /********************************************************************/

@@ -4,29 +4,21 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  genint();     Genererate integer expression                     */
-/*  geninv();     Genererate integer literal value                  */
-/*  genflt();     Genererate float expression                       */
-/*  genflv();     Genererate float literal value                    */
-/*  genstr();     Genererate string expression                      */
-/*  genstv();     Genererate string literal value                   */
-/*  genstm();     Genererate string litval by menu selection        */
-/*  genref();     Genererate reference expression                   */
-/*  genpos();     Genererate vector expression                      */
-/*  genpov();     Genererate vector literal value                   */
-/*  igpmon();     Set pos-mode on                                   */
-/*  igpmof();     Set pos-mode off                                  */
-/*  getidt();     Returns  ID + type by crosshairs & mask           */
-/*  getmid();     Returns many ID                                   */
-/*  gtpcrh();     Position with crosshairs or grid                  */
-/*  gtpend();     Position in end of entity                         */
-/*  gtpon();      Position on entity                                */
-/*  gtpint();     Position by intersect                             */
-/*  gtpcen();     Position in centre                                */
-/*  gtpdig();     Position by digitizer                             */
+/*  IGcint();     Genererate integer expression                     */
+/*  IGcinv();     Genererate integer literal value                  */
+/*  IGcflt();     Genererate float expression                       */
+/*  IGcflv();     Genererate float literal value                    */
+/*  IGcstr();     Genererate string expression                      */
+/*  IGcstv();     Genererate string literal value                   */
+/*  IGcstm();     Genererate string litval by menu selection        */
+/*  IGcref();     Genererate reference expression                   */
+/*  IGcpos();     Genererate vector expression                      */
+/*  IGcpov();     Genererate vector literal value                   */
+/*  IGgsid();     Returns  ID + type by crosshairs & mask           */
+/*  IGgmid();     Returns many ID                                   */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -45,8 +37,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -58,9 +48,8 @@
 #include <math.h>
 
 extern bool    tmpref;
-extern short   v3mode,modtyp,posmod;
+extern short   v3mode,modtyp,posmode;
 extern MNUALT  smbind[];
-extern DBfloat rstrox,rstroy,rstrdx,rstrdy;
 extern DBTmat *lsyspk;
 
 static short genuv(short pnr, pm_ptr *pexnpt);
@@ -76,24 +65,30 @@ static short gnpon(pm_ptr *pexnpt);
 static short gnpint(pm_ptr *pexnpt);
 static short gnpcen(pm_ptr *pexnpt);
 static short getwid(DBId idmat1[][MXINIV], DBId idmat2[][MXINIV],
-                    short *idant1, short idant2, DBetype typvek[]);
-static short gtpcrh_3D(DBVector *vecptr);
-static short gtpcrh_2D(DBVector *vecptr);
+                    int *idant1, int idant2, DBetype typvek[]);
+
+static short igpcrh(DBVector *vecptr);
+static short igpcrh_3D(DBVector *vecptr);
+static short igpcrh_2D(DBVector *vecptr);
+static short igpend(DBVector *vecptr);
+static short igpon(DBVector *vecptr);
+static short igpint(DBVector *vecptr);
+static short igpcen(DBVector *vecptr);
 
 /*!******************************************************/
 
-        short genint(
-        short  pnr,
+        short   IGcint(
+        short   pnr,
         char   *dstr,
         char   *istr,
         pm_ptr *pexnpt)
 
-/*      Huvudrutin för att skapa en uttrycksnod för
- *      ett heltals-värde.
+/*      Huvudrutin fï¿½r att skapa en uttrycksnod fï¿½r
+ *      ett heltals-vï¿½rde.
  *
- *      In: pnr    => Promptsträng nr, om 0 ingen utskrift.
- *          dstr   => Pekare till defaultsträng.
- *          istr   => Pekare till inputsträng.
+ *      In: pnr    => Promptstrï¿½ng nr, om 0 ingen utskrift.
+ *          dstr   => Pekare till defaultstrï¿½ng.
+ *          istr   => Pekare till inputstrï¿½ng.
  *          pexnpt => Pekare till pm_ptr.
  *
  *      Ut: *pexnpt => PM-pekare till expression-nod.
@@ -105,7 +100,7 @@ static short gtpcrh_2D(DBVector *vecptr);
  *
  *      (C)microform ab 17/1/85 M Nelson
  *
- *      30/10/85 Defaultsträng, J. Kjellander
+ *      30/10/85 Defaultstrï¿½ng, J. Kjellander
  *      6/3/86   Ny defaulthantering, B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *
@@ -116,14 +111,14 @@ static short gtpcrh_2D(DBVector *vecptr);
     sttycl type;
 
 /*
-***Skriv ut ev. promtsträng.
+***Skriv ut ev. promtstrï¿½ng.
 */
-    if (pnr > 0) igptma(pnr,IG_INP);
+    if (pnr > 0) IGptma(pnr,IG_INP);
 /*
-***Läs in värde.
+***Lï¿½s in vï¿½rde.
 */
 loop:
-    if ( (status=igssip(iggtts(46),istr,dstr,V3STRLEN)) < 0) goto exit;
+    if ( (status=IGssip(IGgtts(46),istr,dstr,V3STRLEN)) < 0) goto exit;
 
     if (anaexp(istr,FALSE,pexnpt,&type) != 0)
       {
@@ -133,29 +128,28 @@ loop:
 
     if (type != ST_INT)
         {
-        erpush("IG2232",iggtts(4));
+        erpush("IG2232",IGgtts(4));
         errmes();
         goto loop;
         }
 exit:
-    if ( pnr > 0 ) igrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short geninv(
-        short  pnr,
+        short   IGcinv(
+        short   pnr,
         char   *istr,
         char   *dstr,
         DBint  *ival)
 
-/*      Läser in ett heltalsuttryck och beräknar värdet.
+/*      Lï¿½ser in ett heltalsuttryck och berï¿½knar vï¿½rdet.
  *
- *      In: pnr    => Promptsträng nr, om 0 ingen utskrift.
- *          dstr   => Pekare till defaultsträng.
- *          istr   => Pekare till inputsträng.
+ *      In: pnr    => Promptstrï¿½ng nr, om 0 ingen utskrift.
+ *          dstr   => Pekare till defaultstrï¿½ng.
+ *          istr   => Pekare till inputstrï¿½ng.
  *          ival   => Pekare till resultat.
  *
  *      Ut: *ival  => Heltal.
@@ -169,8 +163,8 @@ exit:
  ******************************************************!*/
 
   {
-    short  status;
-    pm_ptr exnpt,valtyp;
+    short   status;
+    pm_ptr  exnpt,valtyp;
     PMLITVA val;
 
 /*
@@ -180,7 +174,7 @@ exit:
 /*
 ***Generera uttryck.
 */
-    if ( (status=genint(pnr,dstr,istr,&exnpt)) < 0 ) goto end;
+    if ( (status=IGcint(pnr,dstr,istr,&exnpt)) < 0 ) goto end;
 /*
 ***Interpretera uttrycket.
 */
@@ -198,18 +192,18 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-        short genflt(
-        short  pnr,
+        short   IGcflt(
+        short   pnr,
         char   *dstr,
         char   *istr,
         pm_ptr *pexnpt)
 
-/*      Huvudrutin för att skapa en uttrycksnod för
- *      ett double-värde.
+/*      Huvudrutin fï¿½r att skapa en uttrycksnod fï¿½r
+ *      ett double-vï¿½rde.
  *
- *      In: pnr    => Promptsträng nr, om 0 ingen utskrift.
- *          dstr   => Pekare till defaultsträng.
- *          istr   => Pekare till inputsträng.
+ *      In: pnr    => Promptstrï¿½ng nr, om 0 ingen utskrift.
+ *          dstr   => Pekare till defaultstrï¿½ng.
+ *          istr   => Pekare till inputstrï¿½ng.
  *          pexnpt => Pekare till pm_ptr.
  *
  *      Ut: *pexnpt => PM-pekare till expression-nod.
@@ -221,7 +215,7 @@ end:
  *
  *      (C)microform ab 17/1/85 J. Kjellander
  *
- *      28/10/85 Defaultsträng, J. Kjellander
+ *      28/10/85 Defaultstrï¿½ng, J. Kjellander
  *      6/3/86   Ny defaulthantering, B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *
@@ -232,14 +226,14 @@ end:
     sttycl type;
 
 /*
-***Skriv ut ev. promtsträng.
+***Skriv ut ev. promtstrï¿½ng.
 */
-    if (pnr > 0) igptma(pnr,IG_INP);
+    if (pnr > 0) IGptma(pnr,IG_INP);
 /*
-***Läs in värde.
+***Lï¿½s in vï¿½rde.
 */
 loop:
-    if ( (status=igssip(iggtts(204),istr,dstr,V3STRLEN)) < 0 ) goto exit;
+    if ( (status=IGssip(IGgtts(204),istr,dstr,V3STRLEN)) < 0 ) goto exit;
 
     if (anaexp(istr,FALSE,pexnpt,&type) != 0)
        {
@@ -249,30 +243,29 @@ loop:
 
     if ((type != ST_FLOAT) && (type != ST_INT))
         {
-        erpush("IG2232",iggtts(5));
+        erpush("IG2232",IGgtts(5));
         errmes();
         goto loop;
         }
 
 exit:
-    if ( pnr > 0 ) igrsma();
     return(status);
 
   }
 /********************************************************/
 /*!******************************************************/
 
-        short genflv(
-        short  pnr,
+        short   IGcflv(
+        short   pnr,
         char   *istr,
         char   *dstr,
         double *fval)
 
-/*      Läser in ett flyttalsuttryck och beräknar värdet.
+/*      Lï¿½ser in ett flyttalsuttryck och berï¿½knar vï¿½rdet.
  *
- *      In: pnr    => Promptsträng nr, om 0 ingen utskrift.
- *          dstr   => Pekare till defaultsträng.
- *          istr   => Pekare till inputsträng.
+ *      In: pnr    => Promptstrï¿½ng nr, om 0 ingen utskrift.
+ *          dstr   => Pekare till defaultstrï¿½ng.
+ *          istr   => Pekare till inputstrï¿½ng.
  *          fval   => Pekare till resultat.
  *
  *      Ut: *fval  => Flyttal.
@@ -286,8 +279,8 @@ exit:
  ******************************************************!*/
 
   {
-    short  status;
-    pm_ptr exnpt,valtyp;
+    short   status;
+    pm_ptr  exnpt,valtyp;
     PMLITVA val;
 
 /*
@@ -297,7 +290,7 @@ exit:
 /*
 ***Generera uttryck.
 */
-    if ( (status=genflt(pnr,dstr,istr,&exnpt)) < 0 ) goto end;
+    if ( (status=IGcflt(pnr,dstr,istr,&exnpt)) < 0 ) goto end;
 /*
 ***Interpretera uttrycket.
 */
@@ -316,11 +309,11 @@ end:
 /********************************************************/
 /*!******************************************************/
 
- static short genuv(
+ static short   genuv(
         short   pnr,
         pm_ptr *pexnpt)
 
-/*      Ett UV-värde. Skapar en uttrycksnod
+/*      Ett UV-vï¿½rde. Skapar en uttrycksnod
  *      av typen vector.
  *
  *      In:
@@ -331,7 +324,7 @@ end:
  *
  *      FV:      0 => Ok.
  *          REJECT => Operationen avbruten.
- *             < 0 => Fel från PM.
+ *             < 0 => Fel frï¿½n PM.
  *
  *      (C)microform ab 6/9/95 J. Kjellander
  *
@@ -353,8 +346,8 @@ end:
 /*
 ***Initiering.
 */
-    strcpy(ps[0],iggtts(182));
-    strcpy(ps[1],iggtts(183));
+    strcpy(ps[0],IGgtts(182));
+    strcpy(ps[1],IGgtts(183));
 
     ml[0]=80;
     ml[1]=80;
@@ -368,21 +361,21 @@ end:
     dsarr[0] = ds[0];
     dsarr[1] = ds[1];
 /*
-***Skriv ut ev. promtsträng.
+***Skriv ut ev. promtstrï¿½ng.
 */
-    if ( pnr > 0 ) igptma(pnr,IG_INP);
+    if ( pnr > 0 ) IGptma(pnr,IG_INP);
 /*
-***Läs in värden.
+***Lï¿½s in vï¿½rden.
 */    
 loop:
-    if ( (status=igmsip(psarr,isarr,dsarr,ml,(short)2)) < 0 ) goto exit;
+    if ( (status=IGmsip(psarr,isarr,dsarr,ml,(short)2)) < 0 ) goto exit;
 /*
-*** Kopiera svaret till defaultsträngarna 
+*** Kopiera svaret till defaultstrï¿½ngarna 
 */
     strcpy(ds[0],is[0]); 
     strcpy(ds[1],is[1]);
 /*
-***Skapa funktionssträngen
+***Skapa funktionsstrï¿½ngen
 */
     sprintf(expr,"vec(%s,%s)",is[0],is[1]);
 
@@ -397,29 +390,28 @@ loop:
 ***Slut.
 */
 exit:
-    if ( pnr > 0 ) igrsma();
     return(status);
     }
 
 /********************************************************/
 /*!******************************************************/
 
-        short genstr(
-        short  pnr,
+        short   IGcstr(
+        short   pnr,
         char   *dstr,
         char   *istr,
         pm_ptr *pexnpt)
 
-/*      Huvudrutin för att skapa en uttrycksnod för
- *      ett sträng-värde. Provar först att tolka
- *      den inlästa strängen som en strängvariabel. Om
- *      ingen variabel av klassen parameter och typen sträng
- *      finns antas strängen representera ett explicit
- *      värde.
+/*      Huvudrutin fï¿½r att skapa en uttrycksnod fï¿½r
+ *      ett strï¿½ng-vï¿½rde. Provar fï¿½rst att tolka
+ *      den inlï¿½sta strï¿½ngen som en strï¿½ngvariabel. Om
+ *      ingen variabel av klassen parameter och typen strï¿½ng
+ *      finns antas strï¿½ngen representera ett explicit
+ *      vï¿½rde.
  *
- *      In: pnr    => Promt-sträng nr, om 0 ingen utskrift.
- *          dstr   => Pekare till defaultsträng.
- *          istr   => Pekare till inputsträng.
+ *      In: pnr    => Promt-strï¿½ng nr, om 0 ingen utskrift.
+ *          dstr   => Pekare till defaultstrï¿½ng.
+ *          istr   => Pekare till inputstrï¿½ng.
  *          pexnpt => Pekare till pm_ptr.
  *
  *      Ut: *pexnpt => PM-pekare till expression-nod.
@@ -434,7 +426,7 @@ exit:
  *      15/11/85 anaexp, J. Kjellander
  *      3/12/85  erinit, J. Kjellander
  *      6/3/86   Ny defaulthantering, B. Doverud
- *      23/3/86  Prompt-sträng B. Doverud
+ *      23/3/86  Prompt-strï¿½ng B. Doverud
  *      14/4/86  Bug, J. Kjellander
  *      6/10/86  GOMAIN, J. Kjellander
  *
@@ -446,23 +438,23 @@ exit:
     PMLITVA litval;
 
 /*
-***Skriv ut ev. promtsträng.
+***Skriv ut ev. promtstrï¿½ng.
 */
-    if (pnr > 0) igptma(pnr,IG_INP);
+    if (pnr > 0) IGptma(pnr,IG_INP);
 /*
-***Läs in värde.
+***Lï¿½s in vï¿½rde.
 */
-    if ( (status=igssip(iggtts(266),istr,dstr,V3STRLEN)) < 0 )
+    if ( (status=IGssip(IGgtts(266),istr,dstr,V3STRLEN)) < 0 )
        goto exit;
 /*
-***Analysera. Om det var ett MBS-stränguttryck är allt ok.
+***Analysera. Om det var ett MBS-strï¿½nguttryck ï¿½r allt ok.
 */
     if (anaexp(istr,FALSE,pexnpt,&type) == 0 && type == ST_STR)
       {
       status = 0;
       }
 /*
-***Inget MBS-stränguttryck, töm felstacken och skapa en literal.
+***Inget MBS-strï¿½nguttryck, tï¿½m felstacken och skapa en literal.
 */
     else
       {
@@ -473,7 +465,6 @@ exit:
       }
 
 exit:
-    if ( pnr > 0 ) igrsma();
     return(status);
 
   }
@@ -481,20 +472,20 @@ exit:
 /********************************************************/
 /*!******************************************************/
 
-        short genstv(
-        short  pnr,
+        short   IGcstv(
+        short   pnr,
         char   *istr,
         char   *dstr,
         char   *strval)
 
-/*      Läser in ett stränguttryck och beräknar värdet.
+/*      Lï¿½ser in ett strï¿½nguttryck och berï¿½knar vï¿½rdet.
  *
- *      In: pnr    => Promptsträng nr, om 0 ingen utskrift.
- *          dstr   => Pekare till defaultsträng.
- *          istr   => Pekare till inputsträng.
+ *      In: pnr    => Promptstrï¿½ng nr, om 0 ingen utskrift.
+ *          dstr   => Pekare till defaultstrï¿½ng.
+ *          istr   => Pekare till inputstrï¿½ng.
  *          strval => Pekare till resultat.
  *
- *      Ut: *strval => Sträng.
+ *      Ut: *strval => Strï¿½ng.
  *
  *      FV:       0 => Ok.
  *           REJECT => Operationen avbruten.
@@ -516,7 +507,7 @@ exit:
 /*
 ***Generera uttryck.
 */
-    if ( (status=genstr(pnr,dstr,istr,&exnpt)) < 0 ) goto end;
+    if ( (status=IGcstr(pnr,dstr,istr,&exnpt)) < 0 ) goto end;
 /*
 ***Interpretera uttrycket.
 */
@@ -534,17 +525,17 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-        short genstm(
+        short   IGcstm(
         short   mnum,
         pm_ptr *pexnpt)
 
-/*      Genererar ett uttryck bestående av aktionskod
- *      för valt alternativ i en meny.
+/*      Genererar ett uttryck bestï¿½ende av aktionskod
+ *      fï¿½r valt alternativ i en meny.
  *
  *      In: mnum   = Menynummer.
  *          pexnpt = Pekare till resultat.
  *
- *      Ut: *pexnpt = Stränguttryck.
+ *      Ut: *pexnpt = Strï¿½nguttryck.
  *
  *      FV:       0 => Ok.
  *           REJECT => Operationen avbruten.
@@ -567,10 +558,10 @@ end:
 #ifdef WIN32
    msshmu(mnum);
 #else
-   igaamu(mnum);
+   IGaamu(mnum);
 #endif
 
-   iggalt(&pmualt,&alttyp);
+   IGgalt(&pmualt,&alttyp);
 
 #ifdef WIN32
    mshdmu();
@@ -581,7 +572,7 @@ end:
       switch ( alttyp )
         {
         case SMBRETURN:
-        igsamu();
+        IGsamu();
         return(REJECT);
 
         case SMBMAIN:
@@ -594,7 +585,7 @@ end:
       litval.lit.str_va[0] = pmualt->acttyp;
       sprintf(&litval.lit.str_va[1],"%d",pmualt->actnum);
       pmclie( &litval, pexnpt);
-      igsamu();
+      IGsamu();
       return(0);
       }
 
@@ -603,25 +594,25 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-        short genref(
+        short    IGcref(
         short    pnr,
         DBetype *ptyp,
         pm_ptr  *pexnpt,
         bool    *pend,
         bool    *pright)
 
-/*      Huvudrutin för att skapa en uttrycksnod för
+/*      Huvudrutin fï¿½r att skapa en uttrycksnod fï¿½r
  *      en referens.
  *
- *      In: pnr    => Promt-sträng nr, om 0 ingen utskrift.
+ *      In: pnr    => Promt-strï¿½ng nr, om 0 ingen utskrift.
  *          ptyp   => Pekare till DBetype, typmask.
  *          pexnpt => Pekare till pm_ptr.
  *          pend   => Pekare till bool.
  *          pright => Pekare till bool.
  *
  *      Ut: *pexnpt => PM-pekare till expression-nod.
- *          *pend   => TRUE om pekning i änden.
- *          *pright => TRUE om pekning till höger.
+ *          *pend   => TRUE om pekning i ï¿½nden.
+ *          *pright => TRUE om pekning till hï¿½ger.
  *          *typ    => Typ av storhet.
  *
  *      FV:       0 => Ok.
@@ -631,8 +622,8 @@ end:
  *      (C)microform ab 17/1/85 J. Kjellander
  *
  *      28/10/85 Ny def. av PMLITVA, J. Kjellander
- *      31/10/85 Ände och sida, J. Kjellander
- *      23/3/86  Prompt-sträng B. Doverud
+ *      31/10/85 ï¿½nde och sida, J. Kjellander
+ *      23/3/86  Prompt-strï¿½ng B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *
  ******************************************************!*/
@@ -643,13 +634,13 @@ end:
     PMLITVA litval;
 
 /*
-***Skriv ut ev. promtsträng.
+***Skriv ut ev. promtstrï¿½ng.
 */
-    if (pnr > 0) igptma(pnr,IG_MESS);
+    if (pnr > 0) WPaddmess_mcwin(IGgtts(pnr),WP_PROMPT);
 /*
-***Läs in ID för refererad storhet.
+***Lï¿½s in ID fï¿½r refererad storhet.
 */
-    if ((status=getidt(idvek,ptyp,pend,pright,(short)0)) < 0 ) goto exit;
+    if ((status=IGgsid(idvek,ptyp,pend,pright,(short)0)) != 0 ) goto exit;
 /*
 ***Skapa en literal value node av typen referens.
 */
@@ -660,14 +651,14 @@ end:
     pmclie( &litval, pexnpt);
 
 exit:
-    if ( pnr > 0 ) igrsma();
+    WPclear_mcwin();
     return(status);
    }
 
 /********************************************************/
 /*!******************************************************/
 
-static  short genrfs(
+static  short    genrfs(
         short    pnr,
         DBetype *ptyp,
         pm_ptr  *pexnpt,
@@ -675,20 +666,20 @@ static  short genrfs(
         bool    *pright,
         short    utstat)
 
-/*      Huvudrutin för att skapa en uttrycksnod för
- *      en referens med möjlighet att tillåta extra
+/*      Huvudrutin fï¿½r att skapa en uttrycksnod fï¿½r
+ *      en referens med mï¿½jlighet att tillï¿½ta extra
  *      utstatus.
  *
- *      In: pnr    => Promt-sträng nr, om 0 ingen utskrift.
+ *      In: pnr    => Promt-strï¿½ng nr, om 0 ingen utskrift.
  *          ptyp   => Pekare till DBetype, typmask.
  *          pexnpt => Pekare till pm_ptr.
  *          pend   => Pekare till bool.
  *          pright => Pekare till bool.
- *          utstat => Utstatus till getidt().
+ *          utstat => Utstatus till IGgsid().
  *
  *      Ut: *pexnpt => PM-pekare till expression-nod.
- *          *pend   => TRUE om pekning i änden.
- *          *pright => TRUE om pekning till höger.
+ *          *pend   => TRUE om pekning i ï¿½nden.
+ *          *pright => TRUE om pekning till hï¿½ger.
  *          *typ    => Typ av storhet.
  *
  *      FV:       0 => Ok.
@@ -705,13 +696,13 @@ static  short genrfs(
     PMLITVA litval;
 
 /*
-***Skriv ut ev. promtsträng.
+***Skriv ut ev. promtstrï¿½ng.
 */
-    if (pnr > 0) igptma(pnr,IG_MESS);
+    if ( pnr > 0 ) WPaddmess_mcwin(IGgtts(pnr),WP_PROMPT);
 /*
-***Läs in ID för refererad storhet.
+***Lï¿½s in ID fï¿½r refererad storhet.
 */
-    if ((status=getidt(idvek,ptyp,pend,pright,utstat)) < 0 ) goto exit;
+    if ( (status=IGgsid(idvek,ptyp,pend,pright,utstat)) != 0 ) goto exit;
 /*
 ***Skapa en literal value node av typen referens.
 */
@@ -722,33 +713,34 @@ static  short genrfs(
     pmclie( &litval, pexnpt);
 
 exit:
-    if ( pnr > 0 ) igrsma();
+    if ( pnr > 0 ) WPclear_mcwin();
     return(status);
    }
 
 /********************************************************/
 /*!******************************************************/
 
-       short genpos(
-       short  pnr,
+       short   IGcpos(
+       short   pnr,
        pm_ptr *pexnpt)
 
-/*      Huvudrutin för att skapa en uttrycks-nod för
+/*      Huvudrutin fï¿½r att skapa en uttrycks-nod fï¿½r
  *      en position.
  *
- *      In: pnr    => Promt-sträng nr, om 0 ingen utskrift.
- *          pexnpt => Pekare till pm_ptr variabel.
+ *      In:   pnr    => Promt-strï¿½ng nr, om 0 ingen utskrift.
+ *            pexnpt => Pekare till pm_ptr variabel.
  *
- *      Ut: *pexnpt => PM-pekare till expression-node.
+ *      Out: *pexnpt => PM-pekare till expression-node.
  *
- *      FV:      0 => Ok.
+ *      Return:  0 => Ok.
  *          REJECT => Operationen avbruten.
  *          GOMAIN => Tillbaks till huvudmenyn
- *             < 0 => Fel från PM.
+ *             < 0 => Fel frï¿½n PM.
  *
  *      (C)microform ab 15/11/88 J. Kjellander
  *
  *      1998-03-31 default, J.Kjellander
+ *      2007-07-28 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -756,51 +748,52 @@ exit:
     short status;
 
 /*
-***Skriv ut ev. promtsträng.
+***Output prompt.
 */
-    if ( pnr > 0 ) igptma(pnr,IG_MESS);
+start:
+    if ( pnr > 0 ) WPaddmess_mcwin(IGgtts(pnr),WP_PROMPT);
 /*
-***Generera position.
+***Select method.
 */
-   if ( posmod == 0 ) status = gnpmen(pexnpt);
-   else
-     {
-     switch ( posmod )
-       {
-       case 1:  status = gnpabs(pexnpt); break;
-       case 2:  status = gnprel(pexnpt); break;
-       case 3:  status = gnpcrh(pexnpt); break;
-       case 4:  status = gnpexp(pexnpt); break;
-       case 5:  status = gnpend(pexnpt); break;
-       case 6:  status = gnpon(pexnpt); break;
-       case 7:  status = gnpcen(pexnpt); break;
-       case 8:  status = gnpint(pexnpt); break;
-       default: status = REJECT; break;
-       }
-     if ( status == POSMEN ) status = gnpmen(pexnpt);
-     }
+    switch ( posmode )
+      {
+      case 0:  status = gnpabs(pexnpt); break;
+      case 1:  status = gnprel(pexnpt); break;
+      case 2:  status = gnpcrh(pexnpt); break;
+      case 3:  status = gnpexp(pexnpt); break;
+      case 4:  status = gnpend(pexnpt); break;
+      case 5:  status = gnpon(pexnpt);  break;
+      case 6:  status = gnpcen(pexnpt); break;
+      case 7:  status = gnpint(pexnpt); break;
+      case 8:  status = gnpcrh(pexnpt); break;
+      default: status = REJECT; break;
+      }
 /*
-***Sudda promt.
+***Clear the promt.
 */
-   if ( pnr > 0 ) igrsma();
+    WPclear_mcwin();
 /*
-***Slut.
+***Change pos method maybe ?
 */
-   return(status);
+    if ( status == SMBPOSM ) goto start;
+/*
+***The end.
+*/
+    return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-       short genpov(DBVector *pos)
+       short IGcpov(DBVector *pos)
 
-/*      Skapar ett positions-värde. Ersätter getpos().
+/*      Skapar ett positions-vï¿½rde. Ersï¿½tter getpos().
  *
  *      In: pos    => Pekare till position.
  *
  *      Ut: *pos   => Position.
  *
- *      FV: Returnerar status från genpos().
+ *      FV: Returnerar status frï¿½n IGcpos().
  *
  *      (C)microform ab 15/11/88 J. Kjellander
  *
@@ -818,7 +811,7 @@ exit:
 /*
 ***Skapa positions-uttryck.
 */
-   if ( (status=genpos((short)0,&exnpt)) < 0 ) goto end;
+   if ( (status=IGcpos((short)0,&exnpt)) < 0 ) goto end;
 /*
 ***Interpretera.
 */
@@ -840,7 +833,7 @@ end:
 
 static short gnpmen(pm_ptr *pexnpt)
 
-/*      Skapar en uttrycks-nod för en position via val
+/*      Skapar en uttrycks-nod fï¿½r en position via val
  *      i positionsmenyn.
  *
  *      In: pexnpt => Pekare till pm_ptr variabel.
@@ -850,13 +843,13 @@ static short gnpmen(pm_ptr *pexnpt)
  *      FV:      0 => Ok.
  *          REJECT => Operationen avbruten.
  *          GOMAIN => Tillbaks till huvudmenyn
- *             < 0 => Fel från PM.
+ *             < 0 => Fel frï¿½n PM.
  *
  *      (C)microform ab 15/11/88 J. Kjellander
  *
  *       1/3/94  Snabbval, J. Kjellander
- *       1998-03-31 Hårkors i 3D, J.Kjellander
- *       1998-10-20 Även för WIN32, J.Kjellander
+ *       1998-03-31 Hï¿½rkors i 3D, J.Kjellander
+ *       1998-10-20 ï¿½ven fï¿½r WIN32, J.Kjellander
  *
  ******************************************************!*/
 
@@ -865,17 +858,17 @@ static short gnpmen(pm_ptr *pexnpt)
     MNUALT *pmualt;
 
 /*
-***Skriv ut meny och läs in svar, snabbval ej tillåtet.
+***Skriv ut meny och lï¿½s in svar, snabbval ej tillï¿½tet.
 */
 #ifdef WIN32
 l1:
     msshmu(141);
 #else
-    igaamu(141);
+    IGaamu(141);
 l1:
 #endif
 
-    iggalt(&pmualt,&alttyp);
+    IGgalt(&pmualt,&alttyp);
 
 #ifdef WIN32
     mshdmu();
@@ -886,14 +879,14 @@ l1:
       switch ( alttyp )
         {
         case SMBRETURN:
-        igsamu();
+        IGsamu();
         return(REJECT);
 
         case SMBMAIN:
         return(GOMAIN);
 
         case SMBPOSM:
-        igbell();
+        WPbell();
         goto l1;
         }
       }
@@ -902,16 +895,16 @@ l1:
     switch(alt)
       {
       case 1:                            /* Absolut */
-      igptma(326,IG_INP);
+      IGptma(326,IG_INP);
       status=gnpabs(pexnpt);
-      igrsma();
+      IGrsma();
       break;
 
       case 2:                            /* Relativt */
       status=gnprel(pexnpt);
       break;
 
-      case 3:                            /* Hårkors */
+      case 3:                            /* Hï¿½rkors */
       status=gnpcrh(pexnpt);
       break;
 
@@ -919,11 +912,11 @@ l1:
       status=gnpexp(pexnpt);
       break;
 
-      case 5:                            /* Ände av storhet */
+      case 5:                            /* ï¿½nde av storhet */
       status=gnpend(pexnpt);
       break;
 
-      case 6:                            /* På en storhet */
+      case 6:                            /* Pï¿½ en storhet */
       status=gnpon(pexnpt);
       break;
 
@@ -931,7 +924,7 @@ l1:
       status=gnpcen(pexnpt);
       break;
 
-      case 8:                            /* Skärning */
+      case 8:                            /* Skï¿½rning */
       status=gnpint(pexnpt);
       break;
 
@@ -940,7 +933,7 @@ l1:
       else tmpref = TRUE;
       goto l1;
 
-      default:                           /* Okänt alt. */
+      default:                           /* Okï¿½nt alt. */
       erpush("IG0103","");
       errmes();
       goto l1;
@@ -951,9 +944,9 @@ l1:
       goto l1;
       }
 /*
-***Sudda positionsmenyn och återvänd.
+***Sudda positionsmenyn och ï¿½tervï¿½nd.
 */
-    if ( status != GOMAIN ) igsamu();
+    if ( status != GOMAIN ) IGsamu();
 
     return(status);
   }
@@ -972,23 +965,23 @@ static short gnpabs(pm_ptr *pexnpt)
  *
  *      FV:      0 => Ok.
  *          REJECT => Operationen avbruten.
- *             < 0 => Fel från PM.
+ *             < 0 => Fel frï¿½n PM.
  *
  *      (C)microform ab 16/1/85 J. Kjellander
  *
- *      22/10/85 Längre inputsträngar, J. Kjellander
+ *      22/10/85 Lï¿½ngre inputstrï¿½ngar, J. Kjellander
  *      6/10/86  GOMAIN, J. Kjellander
  *      8/10/86  Promt, J. Kjellander
  *
  ******************************************************!*/
 
   {
-    char   ps[3][40];     /* promptsträng */
-    char   is[3][80];     /* inputsträng */
+    char   ps[3][40];     /* promptstrï¿½ng */
+    char   is[3][80];     /* inputstrï¿½ng */
     char  *psarr[3];
     char  *isarr[3];
     char  *dsarr[3];
-    short  ml[3];         /* maxlängder */
+    short  ml[3];         /* maxlï¿½ngder */
     sttycl type;
     char   expr[132];
     short  status;
@@ -998,9 +991,9 @@ static short gnpabs(pm_ptr *pexnpt)
 /*
 ***Initiering.
 */
-    strcpy(ps[0],iggtts(201));       /* kopiera promptar */
-    strcpy(ps[1],iggtts(202));
-    strcpy(ps[2],iggtts(203));
+    strcpy(ps[0],IGgtts(201));       /* kopiera promptar */
+    strcpy(ps[1],IGgtts(202));
+    strcpy(ps[2],IGgtts(203));
 
     ml[0]=80;
     ml[1]=80;
@@ -1018,19 +1011,19 @@ static short gnpabs(pm_ptr *pexnpt)
     dsarr[1] = ds[1];
     dsarr[2] = ds[2];
 /*
-***Läs in värden.
+***Lï¿½s in vï¿½rden.
 */    
 loop:
-    if ( (status=igmsip(psarr,isarr,dsarr,ml,modtyp)) < 0 ) return(status);
+    if ( (status=IGmsip(psarr,isarr,dsarr,ml,modtyp)) != 0 ) return(status);
     if ( modtyp == 2 ) strcpy(is[2],"0");
 /*
-*** Kopiera svaret till defaultsträngarna 
+*** Kopiera svaret till defaultstrï¿½ngarna 
 */
     strcpy(ds[0],is[0]); 
     strcpy(ds[1],is[1]);
     strcpy(ds[2],is[2]);
 /*
-***Skapa funktionssträngen
+***Skapa funktionsstrï¿½ngen
 */
     if ( modtyp == 2 )
       {
@@ -1046,8 +1039,6 @@ loop:
       errmes();
       goto loop;
       }
-
-    if ( posmod > 0 ) posmod = 1;
 
     return(0);
     }
@@ -1066,11 +1057,11 @@ static short gnprel(pm_ptr *pexnpt)
  *
  *      FV:      0 => Ok.
  *          REJECT => Operationen avbruten.
- *          GOMAIN => Åter till huvudmenyn
+ *          GOMAIN => ï¿½ter till huvudmenyn
  *
  *      (C)microform ab 9/8/85 J. Kjellander
  *
- *      23/3/86  Anrop genpos(pnr,... B. Doverud
+ *      23/3/86  Anrop IGcpos(pnr,... B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *
  ******************************************************!*/
@@ -1082,22 +1073,20 @@ static short gnprel(pm_ptr *pexnpt)
 /*
 ***Skapa basposition.
 */
-     igptma(51,IG_MESS);
+     WPaddmess_mcwin(IGgtts(51),WP_PROMPT);
      if ( (status=gnpmen(&exnpt1)) < 0 ) goto end;
-     igrsma();
+     WPclear_mcwin();
 /*
 ***Skapa "vec(dx,dy,dz)".
 */
-     igptma(287,IG_INP);
+     IGptma(287,IG_INP);
      if ( (status=gnpabs(&exnpt2)) < 0 ) goto end;
 /*
-***Länka ihop till "pos + vec(dx,dy,dz)".
+***Lï¿½nka ihop till "pos + vec(dx,dy,dz)".
 */
     pmcbie(PM_PLUS,exnpt1,exnpt2,pexnpt);
 
 end:
-    if ( posmod > 0 ) posmod = 2;
-    igrsma();
     return(status);
     }
 
@@ -1106,7 +1095,7 @@ end:
 
 static short gnpcrh(pm_ptr *pexnpt)
 
-/*      Position med hårkors. Skapar en literal
+/*      Position med hï¿½rkors. Skapar en literal
  *      av typen vector.
  *
  *      In: pexnpt => Pekare till pm_ptr variabel.
@@ -1129,9 +1118,9 @@ static short gnpcrh(pm_ptr *pexnpt)
     short   status;
 
 /*
-***Läs in hårkorsposition.
+***Lï¿½s in hï¿½rkorsposition.
 */
-    if ( (status=gtpcrh(&pos)) < 0 ) return(status);
+    if ( (status=igpcrh(&pos)) != 0 ) return(status);
 /*
 ***Skapa literal.
 */
@@ -1140,8 +1129,6 @@ static short gnpcrh(pm_ptr *pexnpt)
     litstr.lit.vec_va.y_val = pos.y_gm;
     litstr.lit.vec_va.z_val = pos.z_gm;
     pmclie(&litstr,pexnpt);
-
-    if ( posmod > 0 ) posmod = 3;
 
     return(0);
   }
@@ -1177,11 +1164,11 @@ static short gnpexp(pm_ptr *pexnpt)
     short   status;
 
 /*
-***Läs in uttryck.
+***Lï¿½s in uttryck.
 */
-    igptma(209,IG_INP);
+    IGptma(209,IG_INP);
 loop:
-    if ( (status=igssip(iggtts(267),istr,"",V3STRLEN)) < 0 ) goto end;
+    if ( (status=IGssip(IGgtts(267),istr,"",V3STRLEN)) != 0 ) goto end;
 /*
 ***Prova att analysera.
 */
@@ -1191,11 +1178,11 @@ loop:
       goto loop;
       }
 /*
-***Kolla att det var rätt typ.
+***Kolla att det var rï¿½tt typ.
 */
     if (type != ST_VEC)
       {
-      erpush("IG2232",iggtts(7));
+      erpush("IG2232",IGgtts(7));
       errmes();
       goto loop;
       }
@@ -1203,8 +1190,6 @@ loop:
 ***Slut.
 */
 end:
-    if ( posmod > 0 ) posmod = 4;
-    igrsma();
     return(status);
     }
 
@@ -1213,8 +1198,8 @@ end:
 
 static short gnpend(pm_ptr *pexnpt)
 
-/*      Huvudrutin för position i änden av storhet med fast
- *      eller temporär referens.
+/*      Huvudrutin fï¿½r position i ï¿½nden av storhet med fast
+ *      eller temporï¿½r referens.
  *
  *      In: pexnpt => Pekare till pm_ptr variabel.
  *
@@ -1233,22 +1218,21 @@ static short gnpend(pm_ptr *pexnpt)
  ******************************************************!*/
 
   {
-    DBetype   typ;
-    pm_ptr  arglst,ref,dummy;
-    pm_ptr  exnpt;
-    stidcl  kind;
-    bool    end,right;
-    short   status;
-    PMLITVA litstr;
-    DBVector   posvec;
-    PMREFVA idvek[MXINIV];
+    DBetype  typ;
+    pm_ptr   arglst,ref,dummy;
+    pm_ptr   exnpt;
+    stidcl   kind;
+    bool     end,right;
+    short    status;
+    PMLITVA  litstr;
+    DBVector posvec;
 
 /*
-***Temporär referens.
+***Temporï¿½r referens.
 */
     if ( tmpref)
       {
-      if ( (status=gtpend(&posvec)) < 0 ) goto exit;
+      if ( (status=igpend(&posvec)) != 0 ) goto exit;
 
       litstr.lit_type = C_VEC_VA;
       litstr.lit.vec_va.x_val = posvec.x_gm;
@@ -1262,19 +1246,10 @@ static short gnpend(pm_ptr *pexnpt)
     else
       {
 /*
-***Hämta id för den refererade storheten.
+***Create REF expression.
 */
       typ = LINTYP+ARCTYP+CURTYP;
-      igptma(331,IG_MESS);
-      if ( (status=getidt(idvek,&typ,&end,&right,POSMEN)) < 0 ) goto exit;
-/*
-***Skapa PM-referens.
-*/
-      litstr.lit_type = C_REF_VA;
-      litstr.lit.ref_va[0].seq_val = idvek[0].seq_val;
-      litstr.lit.ref_va[0].ord_val = idvek[0].ord_val;
-      litstr.lit.ref_va[0].p_nextre = idvek[0].p_nextre;
-      pmclie( &litstr, &exnpt);
+      if ( (status=genrfs(331,&typ,&exnpt,&end,&right,(short)0)) != 0 ) goto exit;
 /*
 ***Skapa argumentlistan.
 */
@@ -1291,8 +1266,6 @@ static short gnpend(pm_ptr *pexnpt)
 ***Avslutning.
 */
 exit:
-    if ( posmod > 0 ) posmod = 5;
-    igrsma();
     return(status);
   }
 
@@ -1301,8 +1274,8 @@ exit:
 
 static short gnpon(pm_ptr *pexnpt)
 
-/*      Huvudrutin för position på en storhet med fast
- *      eller temporär referens.
+/*      Huvudrutin fï¿½r position pï¿½ en storhet med fast
+ *      eller temporï¿½r referens.
  *
  *      In: pexnpt => Pekare till pm_ptr variabel.
  *
@@ -1315,33 +1288,33 @@ static short gnpon(pm_ptr *pexnpt)
  *      (C)microform ab 16/1/85 J. Kjellander
  *
  *      28/10/85 Ny def. av PMLITVA, J. Kjellander
- *      28/10/85 Ände och sida, J. Kjellander
+ *      28/10/85 ï¿½nde och sida, J. Kjellander
  *      20/3/86  Anrop pmtcon, pmclie B. Doverud
- *      24/3/86  Felutgång B. Doverud
+ *      24/3/86  Felutgï¿½ng B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *      1998-09-24 b_plan, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    DBetype   typ;
-    pm_ptr  retla,arglst,ref,dummy;
-    pm_ptr  exnpt1,exnpt2;
-    stidcl  kind;
-    bool    end,right;
-    char    istr[V3STRLEN+1];
-    short   status;
-    PMLITVA litstr;
-    DBVector   posvec;
+    DBetype  typ;
+    pm_ptr   retla,arglst,ref,dummy;
+    pm_ptr   exnpt1,exnpt2;
+    stidcl   kind;
+    bool     end,right;
+    char     istr[V3STRLEN+1];
+    short    status;
+    PMLITVA  litstr;
+    DBVector posvec;
 
     static char dstr[V3STRLEN+1] = "0.5";
 
 /*
-***Temporär referens.
+***Temporï¿½r referens.
 */
     if ( tmpref)
       {
-      if ( (status=gtpon(&posvec)) < 0 ) goto exit;
+      if ( (status=igpon(&posvec)) != 0 ) goto exit;
 
       litstr.lit_type = C_VEC_VA;
       litstr.lit.vec_va.x_val = posvec.x_gm;
@@ -1359,17 +1332,17 @@ static short gnpon(pm_ptr *pexnpt)
 */
       typ = POITYP+LINTYP+ARCTYP+CURTYP+CSYTYP+BPLTYP+
             TXTTYP+LDMTYP+CDMTYP+RDMTYP+ADMTYP+SURTYP;
-      if ( (status=genrfs(52,&typ,&exnpt1,&end,&right,POSMEN)) < 0 ) goto exit;
+      if ( (status=genrfs(52,&typ,&exnpt1,&end,&right,(short)0)) != 0 ) goto exit;
 /*
-***Alla typer av storheter kräver en referens som argument.
+***Alla typer av storheter krï¿½ver en referens som argument.
 */
       pmtcon(exnpt1,(pm_ptr)NULL,&retla,&dummy);
 /*
-***Trådstorheter har en FLOAT som ytterligare parameter.
+***Trï¿½dstorheter har en FLOAT som ytterligare parameter.
 */
       if ( typ == LINTYP  ||  typ == ARCTYP  ||  typ == CURTYP )
         {
-        if ( (status=genflt((short)208,dstr,istr,&exnpt2)) < 0 ) goto exit;
+        if ( (status=IGcflt((short)208,dstr,istr,&exnpt2)) < 0 ) goto exit;
         pmtcon(exnpt2,retla,&arglst,&dummy);
         strcpy(dstr,istr);
         }
@@ -1382,7 +1355,7 @@ static short gnpon(pm_ptr *pexnpt)
         pmtcon(exnpt2,retla,&arglst,&dummy);
         }
 /*
-***Övriga storheter har ingen ytterligare parameter.
+***ï¿½vriga storheter har ingen ytterligare parameter.
 */
       else arglst = retla;
 /*
@@ -1395,7 +1368,6 @@ static short gnpon(pm_ptr *pexnpt)
 ***Avslutning.
 */
 exit:
-    if ( posmod > 0 ) posmod = 6;
     return(status);
   }
 
@@ -1404,8 +1376,8 @@ exit:
 
 static short gnpint(pm_ptr *pexnpt)
 
-/*      Huvudrutin för position skärning mellan storheter
- *      med fast eller temporär referens.
+/*      Huvudrutin fï¿½r position skï¿½rning mellan storheter
+ *      med fast eller temporï¿½r referens.
  *
  *      In: pexnpt => Pekare till pm_ptr variabel.
  *
@@ -1418,10 +1390,10 @@ static short gnpint(pm_ptr *pexnpt)
  *      (C)microform ab 10/1/85 J. Kjellander
  *
  *      28/10/85 Ny def. av PMLITVA, J. Kjellander
- *      28/10/85 Ände och sida, J. Kjellander
+ *      28/10/85 ï¿½nde och sida, J. Kjellander
  *      6/3/86   Ny defaulthantering, B. Doverud
  *      20/3/86  Anrop pmtcon, pmclie B. Doverud
- *      24/3/86  Felutgång B. Doverud
+ *      24/3/86  Felutgï¿½ng B. Doverud
  *      7/10/86  GOMAIN, J. Kjellander
  *      20/11/89 Neg. intnr, J. Kjellander
  *      23/12/91 Bplan och koord.sys, J. Kjellander
@@ -1430,22 +1402,22 @@ static short gnpint(pm_ptr *pexnpt)
  ******************************************************!*/
 
   {
-    DBetype   typ1,typ2;
-    pm_ptr  retla,arglst,ref,dummy;
-    stidcl  kind;
-    pm_ptr  exnpt1,exnpt2,exnpt3;
-    short   status;
-    bool    end,right;
-    char    istr[V3STRLEN+1];
-    DBVector   posvec;
-    PMLITVA litstr;
+    DBetype  typ1,typ2;
+    pm_ptr   retla,arglst,ref,dummy;
+    stidcl   kind;
+    pm_ptr   exnpt1,exnpt2,exnpt3;
+    short    status;
+    bool     end,right;
+    char     istr[V3STRLEN+1];
+    DBVector posvec;
+    PMLITVA  litstr;
 
 /*
-***Temporär referens.
+***Temporï¿½r referens.
 */
     if ( tmpref || (v3mode == RIT_MOD) )
       {
-      if ( (status=gtpint(&posvec)) < 0 ) goto exit;
+      if ( (status=igpint(&posvec)) != 0 ) goto exit;
 
       litstr.lit_type = C_VEC_VA;
       litstr.lit.vec_va.x_val = posvec.x_gm;
@@ -1459,12 +1431,12 @@ static short gnpint(pm_ptr *pexnpt)
     else
       {
 /*
-***Läs in 2 referenser.
+***Lï¿½s in 2 referenser.
 */
       typ1 = LINTYP+ARCTYP+CURTYP;
       if ( modtyp == 3 ) typ1 += BPLTYP+CSYTYP+SURTYP;
       if ( (status=genrfs(324,&typ1,&exnpt1,&end,
-                          &right,POSMEN)) < 0 ) goto exit;
+                          &right,(short)0)) != 0 ) goto exit;
 
       typ2 = LINTYP+ARCTYP+CURTYP;
       if ( modtyp == 3  &&  typ1 != BPLTYP  &&
@@ -1472,9 +1444,9 @@ static short gnpint(pm_ptr *pexnpt)
                             typ1 != SURTYP )
         typ2 += BPLTYP+CSYTYP+SURTYP;
       if ( (status=genrfs(325,&typ2,&exnpt2,&end,
-                          &right,POSMEN)) < 0 ) goto exit;
+                          &right,(short)0)) != 0 ) goto exit;
 /*
-***Om skärning linje/linje, alt = -1.
+***Om skï¿½rning linje/linje, alt = -1.
 */
       if ( typ1 == LINTYP && typ2 == LINTYP )
          {
@@ -1483,11 +1455,11 @@ static short gnpint(pm_ptr *pexnpt)
          pmclie( &litstr, &exnpt3);
          }
 /*
-***Annars läs in alternativ.
+***Annars lï¿½s in alternativ.
 */
       else
          {
-         if ( (status=genint(327,"1",istr,&exnpt3)) < 0 ) goto exit;
+         if ( (status=IGcint(327,"1",istr,&exnpt3)) < 0 ) goto exit;
          }
 /*
 ***Skapa argumentlistan.
@@ -1505,7 +1477,6 @@ static short gnpint(pm_ptr *pexnpt)
 ***Avslutning.
 */
 exit:
-    if ( posmod > 0 ) posmod = 8;
     return(status);
 
   }
@@ -1515,8 +1486,8 @@ exit:
 
 static short gnpcen(pm_ptr *pexnpt)
 
-/*      Huvudrutin för position i krökningscentrum med fast
- *      eller temporär referens.
+/*      Huvudrutin fï¿½r position i krï¿½kningscentrum med fast
+ *      eller temporï¿½r referens.
  *
  *      In: pexnpt => Pekare till pm_ptr variabel.
  *
@@ -1544,11 +1515,11 @@ static short gnpcen(pm_ptr *pexnpt)
     static char dstr[V3STRLEN+1] = "0.0";
 
 /*
-***Temporär referens.
+***Temporï¿½r referens.
 */
     if ( tmpref)
       {
-      if ( (status=gtpcen(&posvec)) < 0 ) goto exit;
+      if ( (status=igpcen(&posvec)) != 0 ) goto exit;
 
       litstr.lit_type = C_VEC_VA;
       litstr.lit.vec_va.x_val = posvec.x_gm;
@@ -1565,9 +1536,9 @@ static short gnpcen(pm_ptr *pexnpt)
 ***Skapa referens.
 */
       typ = ARCTYP+CURTYP;
-      if ( (status=genrfs(53,&typ,&exnpt1,&end,&right,POSMEN)) < 0 ) goto exit;
+      if ( (status=genrfs(53,&typ,&exnpt1,&end,&right,(short)0)) != 0 ) goto exit;
 /*
-***Om arc, sätt parametervärdet till 0.
+***Om arc, sï¿½tt parametervï¿½rdet till 0.
 */
       if ( typ == ARCTYP )
         {
@@ -1576,11 +1547,11 @@ static short gnpcen(pm_ptr *pexnpt)
         pmclie( &litstr, &exnpt2);
         }
 /*
-***Om kurva läs i parametervärde.
+***Om kurva lï¿½s i parametervï¿½rde.
 */
       else
         {
-        if ( (status=genflt(208,dstr,istr,&exnpt2)) < 0 ) goto exit;
+        if ( (status=IGcflt(208,dstr,istr,&exnpt2)) < 0 ) goto exit;
         strcpy(dstr,istr);
         }
 /*
@@ -1598,89 +1569,47 @@ static short gnpcen(pm_ptr *pexnpt)
 ***Avslutning.
 */
 exit:
-    if ( posmod > 0 ) posmod = 7;
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igpmon()
-
-/*      Sätter posmod = 0, dvs. gör att genpos alltid
- *      kör med hela pos-menyn.
- *
- *      FV:      0 => Ok.
- *
- *      (C)microform ab 15/11/88 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    posmod = 0;
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short igpmof()
-
-/*      Sätter posmod = 1, dvs. gör att genpos till
- *      att börja med väljer gnpabs() och sedan det
- *      sist valda.
- *
- *      FV:      0 => Ok.
- *
- *      (C)microform ab 15/11/88 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    posmod = 1;
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short getidt(
+        short    IGgsid(
         DBId    *idvek,
         DBetype *typ,
         bool    *end,
         bool    *right,
-        short   utstat)
+        short    utstat)
 
-/*      Tänder hårkors. Läser in koordinat + pektecken.
- *      Gör sökning i displayfil via gpgtla() med mask
- *      som beror av pek-tecknet. Med utstat <> 0 tillåts
- *      rutinen avsluta med status = utstat förutom de
+/*      Tï¿½nder hï¿½rkors. Lï¿½ser in koordinat + pektecken.
+ *      Gï¿½r sï¿½kning i displayfil via gpgtla() med mask
+ *      som beror av pek-tecknet. Med utstat <> 0 tillï¿½ts
+ *      rutinen avsluta med status = utstat fï¿½rutom de
  *      vanliga REJECT och GOMAIN.
  *
  *      In: idvek  => Pekare till array av DBId   .
- *                    Arrayen behöver ej vara länkad.
- *                    Måste finnas minst MXINIV element.
- *          typ    => Önskad typ.
- *          end    => Slutände, TRUE/FALSE.
+ *                    Arrayen behï¿½ver ej vara lï¿½nkad.
+ *                    Mï¿½ste finnas minst MXINIV element.
+ *          typ    => ï¿½nskad typ.
+ *          end    => Slutï¿½nde, TRUE/FALSE.
  *          right  => Sida, TRUE/FALSE.
- *          utstat => Tillåten extra exit-status.
+ *          utstat => 0 or WINDOW
  *
- *      Ut: *idvek => Länkad lista med identitet.
+ *      Ut: *idvek => Lï¿½nkad lista med identitet.
  *          *typ   => GM-typ.
  *
  *      FV:       0 => Ok.
  *           REJECT => Operationen avbruten.
  *           GOMAIN => Huvudmenyn
- *           IG3532 => Storheten ingår ej i en part
- *           IG2242 => Syntaxfel i id-sträng = %s
+ *           IG3532 => Storheten ingï¿½r ej i en part
+ *           IG2242 => Syntaxfel i id-strï¿½ng = %s
  *           IG2272 => Storheten %s finns ej
  *
  *      (C)microform ab 4/2/85 J. Kjellander
  *
- *      28/10/85 Ände och sida, J. Kjellander
- *      30/12/85 Pekmärke, J. Kjellander
+ *      28/10/85 ï¿½nde och sida, J. Kjellander
+ *      30/12/85 Pekmï¿½rke, J. Kjellander
  *      30/12/85 Symbol, J. Kjellander
  *      10/3/86  Part, J. Kjellander
  *      13/3/86  Pektecken "i", J. Kjellander
@@ -1689,8 +1618,8 @@ exit:
  *      23/12/86 Global ref, J. Kjellander
  *      27/8/87  B_plan, J. Kjellander
  *      17/11/88 utstat, J. Kjellander
- *      10/1-95  Multifönster, J. Kjellander
- *      1996-04-30 Pekning på part, J. Kjellander
+ *      10/1-95  Multifï¿½nster, J. Kjellander
+ *      1996-04-30 Pekning pï¿½ part, J. Kjellander
  *      1997-04-10 WIN32, J.Kjellander
  *      2006-12-08 Tagit bort gpgtla(), J.Kjellander
  *
@@ -1705,117 +1634,114 @@ exit:
     DBint   win_id;
 
 /*
-***Läs hårkors.
+***Get a cursor position.
 */
 loop:
-#ifdef UNIX
-    WPgtsc(FALSE,&pektkn,&ix,&iy,&win_id);
-#endif
-#ifdef WIN32
-    msgtsc(FALSE,&pektkn,&ix,&iy,&win_id);
-#endif
+    if ( WPgtsc(FALSE,&pektkn,&ix,&iy,&win_id) == SMBPOSM ) return(SMBPOSM);
     if ( pektkn == *smbind[1].str ) return(REJECT);
     if ( pektkn == *smbind[7].str ) return(GOMAIN);
     if ( pektkn == *smbind[8].str )
       {
-      if ( ighelp() == GOMAIN ) return(GOMAIN);
+      if ( IGhelp() == GOMAIN ) return(GOMAIN);
       else goto loop;
       }
-    if ( utstat == POSMEN  &&  pektkn == *smbind[9].str ) return(POSMEN);
-    if ( utstat == WINDOW  &&  pektkn == *iggtts(98) ) return(WINDOW);
 /*
-***Avgör vilka storheter som får utpekas.
+***Window mode ?
+*/
+    if ( utstat == WINDOW  &&  pektkn == *IGgtts(98) ) return(WINDOW);
+/*
+***If the requested typemask is PART all entities are allowed.
 */
     if ( *typ == PRTTYP ) pektyp = ALLTYP;
-    else pektyp = *typ;
+    else                  pektyp = *typ;
 /*
-***Kolla pek-tecknet och gör iordning typmasken.
+***Check pointer character and make typemask.
 */
-    if ( pektkn == *iggtts(80) )
+    if ( pektkn == *IGgtts(80) )
       {
       if ( (pektyp & POITYP) == 0 ) goto typerr;
       typmsk = POITYP;
       }
 
-    else if ( pektkn == *iggtts(81) )
+    else if ( pektkn == *IGgtts(81) )
       {
       if ( (pektyp & LINTYP) == 0 ) goto typerr;
       typmsk = LINTYP;
       }
 
-    else if ( pektkn == *iggtts(82) )
+    else if ( pektkn == *IGgtts(82) )
       {
       if ( (pektyp & ARCTYP) == 0 ) goto typerr;
       typmsk = ARCTYP;
       }
 
-    else if ( pektkn == *iggtts(83) )
+    else if ( pektkn == *IGgtts(83) )
       {
       if ( (pektyp & CURTYP) == 0 ) goto typerr;
       typmsk = CURTYP;
       }
 
-    else if ( pektkn == *iggtts(84) )
+    else if ( pektkn == *IGgtts(84) )
       {
       if ( (pektyp & SURTYP) == 0 ) goto typerr;
       typmsk = SURTYP;
       }
 
-    else if ( pektkn == *iggtts(85) )
+    else if ( pektkn == *IGgtts(85) )
       {
       if ( (pektyp & CSYTYP) == 0 ) goto typerr;
       typmsk = CSYTYP;
       }
 
-    else if ( pektkn == *iggtts(86) )
+    else if ( pektkn == *IGgtts(86) )
       {
       if ( (pektyp & TXTTYP) == 0 ) goto typerr;
       typmsk = TXTTYP;
       }
 
-    else if ( pektkn == *iggtts(87) )
+    else if ( pektkn == *IGgtts(87) )
       {
       if ( (pektyp & LDMTYP) == 0 ) goto typerr;
       typmsk = LDMTYP;
       }
 
-    else if ( pektkn == *iggtts(88) )
+    else if ( pektkn == *IGgtts(88) )
       {
       if ( (pektyp & CDMTYP) == 0 ) goto typerr;
       typmsk = CDMTYP;
       }
 
-    else if ( pektkn == *iggtts(89) )
+    else if ( pektkn == *IGgtts(89) )
       {
       if ( (pektyp & RDMTYP) == 0 ) goto typerr;
       typmsk = RDMTYP;
       }
 
-    else if ( pektkn == *iggtts(90) )
+    else if ( pektkn == *IGgtts(90) )
       {
       if ( (pektyp & ADMTYP) == 0 ) goto typerr;
       typmsk = ADMTYP;
       }
 
-    else if ( pektkn == *iggtts(91) )
+    else if ( pektkn == *IGgtts(91) )
       {
       if ( (pektyp & XHTTYP) == 0 ) goto typerr;
       typmsk = XHTTYP;
       }
 
-    else if ( pektkn == *iggtts(95) )
+    else if ( pektkn == *IGgtts(95) )
       {
       if ( (pektyp & PRTTYP) == 0 ) goto typerr;
       typmsk = ALLTYP;
       }
 
-    else if ( pektkn == *iggtts(96) )
+    else if ( pektkn == *IGgtts(96) )
       {
       if ( (pektyp & BPLTYP) == 0 ) goto typerr;
       typmsk = BPLTYP;
       }
 
-    else if ( pektkn == *iggtts(79) )
+    else if ( pektkn == *IGgtts(79) )
       {
       if ( (pektyp & MSHTYP) == 0 ) goto typerr;
       typmsk = MSHTYP;
@@ -1823,17 +1749,17 @@ loop:
 
     else if ( pektkn == ' ' ) typmsk = pektyp;
 /*
-***Inmatning av ID från tangentbordet. Om global identitet
-***matas in (##id) returnerar vi ändå lokal eftersom många
-***rutiner tex. pmlges() kräver detta.
+***Inmatning av ID frï¿½n tangentbordet. Om global identitet
+***matas in (##id) returnerar vi ï¿½ndï¿½ lokal eftersom mï¿½nga
+***rutiner tex. pmlges() krï¿½ver detta.
 */
-    else if ( pektkn == *iggtts(97) )
+    else if ( pektkn == *IGgtts(97) )
       {
 inid:
-      status = igssip(iggtts(283),idstr,"",V3STRLEN);
+      status = IGssip(IGgtts(283),idstr,"",V3STRLEN);
       if ( status == REJECT ) return(REJECT);
       if ( status == GOMAIN ) return(GOMAIN);
-      if ( igstid(idstr,idvek) < 0 )
+      if ( IGstid(idstr,idvek) < 0 )
         {
         erpush("IG2242",idstr);
         errmes();
@@ -1849,11 +1775,11 @@ inid:
       goto finish;
       }
 /*
-***Otillåtet pektecken.
+***Otillï¿½tet pektecken.
 */
     else goto typerr;
 /*
-***Gör sökning i df och skapa lokal ID.
+***Gï¿½r sï¿½kning i df och skapa lokal ID.
 */
     if ( (la=WPgtla(win_id,typmsk,ix,iy,&pektyp,end,right)) < 0 ) goto typerr;
     DBget_id(la,idvek);
@@ -1864,15 +1790,15 @@ inid:
 finish:
     WPhgen(GWIN_ALL,la,TRUE);
 /*
-***Om beställd typ = part eller pektkn för part
-***använts ser vi till att returnera identiteten för en
-***part och inte storheten som ingår i parten.
+***Om bestï¿½lld typ = part eller pektkn fï¿½r part
+***anvï¿½nts ser vi till att returnera identiteten fï¿½r en
+***part och inte storheten som ingï¿½r i parten.
 */
-    if ( *typ == PRTTYP || pektkn == *iggtts(95) )
+    if ( *typ == PRTTYP || pektkn == *IGgtts(95) )
       {
 /*
-***Om id bara har en nivå kan det vara en enkel storhet i
-***aktiv modul. Detta är inte tillåtet. Vi kollar det med
+***Om id bara har en nivï¿½ kan det vara en enkel storhet i
+***aktiv modul. Detta ï¿½r inte tillï¿½tet. Vi kollar det med
 ***DBget_pointer().
 */
       if ( idvek->p_nextre == NULL )
@@ -1891,7 +1817,7 @@ finish:
       *typ = PRTTYP;
       }
 /*
-***Returnera rätt typ.
+***Returnera rï¿½tt typ.
 */
     else *typ = pektyp;
 
@@ -1900,245 +1826,215 @@ finish:
 ***Fel pektecken.
 */
 typerr:
-    igbell();
+    WPbell();
     goto loop;
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short getmid(
+        short    IGgmid(
         DBId     idmat[][MXINIV],
         DBetype  typv[],
-        short   *idant)
+        int     *idant)
 
-/*      Returnerar idant identiteter mha. getidt.
- *      Inparametern idmat är en pekare till en
- *      matris av structures och deklareras som:
+/*      Interactive selection of one or more entities.
+ *      Returns the Varkon ID for idant entities in
+ *      idmat declared as: DBId idmat[idant][MXINIV]
  *
- *         DBId    idmatÄidantÅÄMXINIVÅ;
+ *      In:  idant[0] = Max number of ID's to return.
  *
- *      In: idmat = Pekare till resultat.
- *          typv  = Pekare till önskad typ.
- *          idant = Pekare till max antal ID.
+ *      Out: *idmat = Id's.
+ *           *typv  = Types.
+ *           *idant = Number of ID's returned.
  *
- *      Ut: *idmat = Identiteter.
- *          *typv  = Typer.
- *          *idant = Antal ID.
- *
- *      FV:      0 => Ok.
- *          GOMAIN => Huvudmenyn.
+ *      Return:  0 => Ok.
+ *          GOMAIN => Main menu.
  *
  *      (C)microform ab 16/3/88 J. Kjellander
+ *
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short   status,nref,nmax,nleft,pekmod;
-    DBetype   orgtyp;
+    short   status,pekmod;
+    int     nref,nmax,nleft;
+    DBetype orgtyp;
     bool    end,right;
 
 /*
-***Initiering.
+***Init.
 */
-   nref = 0;
-   nmax = *idant;
+   nref   = 0;
+   nmax   = *idant;
    orgtyp = typv[0];
-   if ( nmax > 1 ) pekmod = WINDOW; else pekmod = 0;
+
+   if ( nmax > 1 ) pekmod = WINDOW;
+   else            pekmod = 0;
 /*
-***Loopa och läs identiteter.
+***Loop.
 */
    while ( nref <  nmax )
      {
      typv[nref] = orgtyp;
 /*
-***Prova först att få en storhet utpekad i taget.
+***Try first to get a single entity.
 */
-     status = getidt(&idmat[nref][0],&typv[nref],&end,&right,pekmod);
+     status = IGgsid(&idmat[nref][0],&typv[nref],&end,&right,pekmod);
+     if       ( status == REJECT ) break;
+     else if ( status == GOMAIN ) return(GOMAIN);
 /*
-***REJECT är normal avslutning och GOMAIN avbryter.
-*/
-     if ( status == REJECT ) break;
-     else if ( status == GOMAIN) return(GOMAIN);
-/*
-***WINDOW medför utpekning med fönstermetoden istället.
+***Status = WINDOW means window mode.
 */
      else if ( status == WINDOW )
        {
        nleft = nmax - nref;
- /*JK990331 status = getwid(&idmat[nref][0],idmat,&nleft,nref,&typv[nref]);*/
        status = getwid(&idmat[nref],idmat,&nleft,nref,&typv[nref]);
        if ( status == GOMAIN) return(GOMAIN);
        nref += nleft;
        }
 /*
-***Varken REJECT, GOMAIN eller WINDOW, alltså har en enstaka
-***storhet utpekats. Kolla att den inte är utpekad tidigare.
+***A single entity is selected. Check if it is alredy
+***selected.
 */
      else
        {
-       if ( igcmid(&idmat[nref][0],idmat,nref) )
-         { 
+       if ( IGcmid(&idmat[nref][0],idmat,nref) )
+         {
          erpush("IG5162","");
          errmes();
          }
+/*
+***Increase nref and try agaian.
+*/
        else ++nref;
        }
      }
 /*
-***Slut.
+***The end.
 */
    *idant = nref;
+
    if ( nref == 0 ) return(REJECT);
-   else return(0);
+   else             return(0);
 
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short getwid(
-        DBId     idmat1[][MXINIV],
-        DBId     idmat2[][MXINIV],
-        short   *idant1,
-        short    idant2,
-        DBetype  typvek[])
+ static short   getwid(
+        DBId    idmat1[][MXINIV],
+        DBId    idmat2[][MXINIV],
+        int    *idant1,
+        int     idant2,
+        DBetype typvek[])
 
-/*      Returnerar idant identiteter mha. gpgmla().
- *      Inparametern idmat är en pekare till en
- *      matris av structures och deklareras som:
+/*      Returns idant ID's using window mode and WPgmla().
+ *      Returns the Varkon ID for idant entities in
+ *      idmat declared as: DBId idmat[idant][MXINIV].
  *
- *         DBId    idmat[idant][MXINIV];
+ *      In: idmat2    = ID's to test against
+ *         *idant1    = Max number of ID's in idmat1
+ *          idant2    = Current number of ID's in idmat2
+ *          typvek[0] = Typemask
  *
- *      In: idmat1 = Pekare till resultat.
- *          idmat2 = ID:n att testa mot.
- *         *idant1 = Max antal ID:n i idmat1.
- *          idant2 = Antal ID:n i idmat2.
- *          typvek = Pekare till önskad typ.
- *
- *      Ut: *idmat1 = Identiteter.
- *          *typvek = Typer.
- *          *idant1 = Antal ID.
+ *      Out: *idmat1 = New ID's
+ *           *typvek = Their types
+ *           *idant1 = Number of new ID's
  *
  *      Felkoder: IG3082 = Punkt 2 = Punkt 1
  *
- *      FV:      0 => Ok.
- *          GOMAIN => Huvudmenyn.
+ *      Return:  0 => Ok.
+ *          GOMAIN => Main menu.
  *
  *      (C)microform ab 17/11/88 J. Kjellander
  *
  *      1997-04-10 WIN32, J.Kjellander
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    char    pektkn;
-    short   nref,nok,ix1,ix2,iy1,iy2,i,tmp,mode;
-    DBetype   orgtyp;
+    short   status,nref;
+    int     ix1,ix2,iy1,iy2,i,tmp,mode,nok;
+    DBetype orgtyp;
     DBptr   lavek[IGMAXID];
-    DBint   win_id;
+    wpw_id  grw_id;
 
 /*
-***Initiering.
+***Init.
 */
-   nref = *idant1;
-   nok = 0;
+start:
+   nref   = *idant1;
+   nok    = 0;
    orgtyp = typvek[0];
+   mode   = 1;  /* All totally or partially inside */
 /*
-***Tänd hårkorset 2 ggr och läs in fönsterkoordinater.
+***Get two pos with rubberband rectangle. Possible
+***status from WPgtsw() is 0, -1 (p1=p2) REJECT and GOMAIN.
 */
-loop1:
-    igptma(142,IG_MESS);
-#ifdef UNIX
-    WPgtsc(TRUE,&pektkn,&ix1,&iy1,&win_id);
-#endif
-#ifdef WIN32
-    msgtsc(TRUE,&pektkn,&ix1,&iy1,&win_id);
-#endif
-    igrsma();
-    if ( pektkn == *smbind[1].str ) goto end;
-    if ( pektkn == *smbind[7].str ) return(GOMAIN);
-    if ( pektkn == *smbind[8].str ) { ighelp(); goto loop1; }
-
-    if ( pektkn == *iggtts(99) ) mode = 0;
-    else if ( pektkn == *iggtts(102) ) mode = 2;
-    else { igbell(); goto loop1; }
-
-loop2:
-    if ( mode == 0 ) igptma(143,IG_MESS); else igptma(144,IG_MESS);
-#ifdef UNIX
-    WPgtsc(TRUE,&pektkn,&ix2,&iy2,&win_id);
-#endif
-#ifdef WIN32
-    msgtsc(TRUE,&pektkn,&ix2,&iy2,&win_id);
-#endif
-    igrsma();
-    if ( pektkn == *smbind[1].str ) goto loop1;
-    if ( pektkn == *smbind[7].str ) return(GOMAIN);
-    if ( pektkn == *smbind[8].str ) { ighelp(); goto loop2; }
-
-    if ( pektkn != *iggtts(103)  &&  pektkn != *iggtts(104) )
-      { igbell(); goto loop2; }
-
-    if ( pektkn == *iggtts(104) ) ++mode;
+   status = WPgtsw(&grw_id,&ix1,&iy1,&ix2,&iy2,WP_RUB_RECT,TRUE);
 /*
-***Sortera.
+***p1 = p2.
 */
-    if ( ix1 > ix2 ) { tmp=ix1; ix1=ix2; ix2=tmp; }
-    if ( iy1 > iy2 ) { tmp=iy1; iy1=iy2; iy2=tmp; }
+   if ( status == -1 )
+     {
+     erpush("IG3082","");
+     errmes();
+     goto start;
+     }
+
+   else if ( status < 0 ) return(status);
 /*
-***Felkontroll.
+***Sort.
 */
-    if ( (ix2-ix1 < 1)  || (iy2-iy1 < 1) )
+   if ( ix1 > ix2 ) { tmp=ix1; ix1=ix2; ix2=tmp; }
+   if ( iy1 > iy2 ) { tmp=iy1; iy1=iy2; iy2=tmp; }
+/*
+***Get the DBptr of all entities inside the rectangle.
+***Status < 0 => Illegal window.
+*/
+    status = WPgmla(grw_id,(short)ix1,(short)iy1,(short)ix2,(short)iy2,mode,TRUE,&nref,typvek,lavek);
+    if ( status < 0 )
       {
-      erpush("IG3082","");
-      errmes();
-      goto loop2;
+      WPbell();
+      goto start;
       }
 /*
-***Anropa gpgmla() och "highligta".
-*/
-#ifdef UNIX
-    WPgmla(win_id,ix1,iy1,ix2,iy2,mode,TRUE,&nref,typvek,lavek);
-#endif
-#ifdef WIN32
-    WPgmla(win_id,ix1,iy1,ix2,iy2,mode,TRUE,&nref,typvek,lavek);
-#endif
-/*
-***Översätt LA till lokalt ID och jämför samtidigt varje
-***storhet med alla storheter i idmat2. Om någon redan
-***finns i idmat2, lagra den ej i idmat1.
+***Translate DBptr to local ID and remove all entities
+***already selected.
 */
    for ( i=0; i<nref; ++i)
      {
      DBget_id(lavek[i],idmat1[nok]);
      idmat1[nok][0].seq_val = abs(idmat1[nok][0].seq_val);
-     if ( !igcmid(idmat1[nok],idmat2,idant2) ) ++nok;
+     if ( !IGcmid(idmat1[nok],idmat2,idant2) ) ++nok;
      }
 /*
-***Slut.
+***The end.
 */
-end:
    *idant1 = nok;
 
    return(0);
-
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short gtpcrh(DBVector *pos)
+ static short igpcrh(DBVector *pos)
 
-/*      Läs in position med hårkors.
+/*      Lï¿½s in position med hï¿½rkors.
  *
  *      In: pos = Pekare till utdata.
  *
  *      Ut: *pos = Koordinat.
  *
- *      FV:      0 => Ok.
- *          REJECT => Operationen avbruten.
- *          GOMAIN => Huvudmenyn.
+ *      FV:      0  = Ok.
+ *          REJECT  = Operationen avbruten.
+ *          GOMAIN  = Huvudmenyn.
+ *          SMBPOSM = Pos-button selected.
  *
  *      (C)microform ab 1998-03-31 J.Kjellander
  *
@@ -2149,8 +2045,8 @@ end:
 
    switch ( modtyp )
      {
-     case 2: status = gtpcrh_2D(pos); break;
-     case 3: status = gtpcrh_3D(pos); break;
+     case 2: status = igpcrh_2D(pos); break;
+     case 3: status = igpcrh_3D(pos); break;
      default: status = REJECT; break;
      }
 
@@ -2160,9 +2056,9 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-static short gtpcrh_3D(DBVector *vecptr)
+static short igpcrh_3D(DBVector *vecptr)
 
-/*      Läs in 3D position med hårkors.
+/*      Lï¿½s in 3D position med hï¿½rkors.
  *
  *      In: vecptr => Pekare till utdata.
  *
@@ -2175,46 +2071,79 @@ static short gtpcrh_3D(DBVector *vecptr)
  *      (C)microform ab 1998-03-31, J.Kjellander
  *
  *      1998-10-20 WIN32, J.Kjellander
+ *      2007-04-03 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short  status;
-    char   pektkn;
+    short   status;
+    char    pektkn;
+    double  x,y,xg,yg,ng;
+    wpw_id  grw_id;
+    WPGWIN *gwinpt;
 
 /*
-***Läs in 3D modellkoordinater via hårkors.
+***Get 3D model coordinates by mouse position. WPgmc3()
+***returns local coordinates. This is different from WPgmc2() !
 */
 loop:
 #ifdef UNIX
-    status = WPgmc3(&pektkn,vecptr,TRUE);
+    if ( (status=WPgmc3(TRUE,&pektkn,vecptr,&grw_id)) == SMBPOSM ) return(SMBPOSM);
 #endif
 #ifdef WIN32
     status = msgmc3(&pektkn,vecptr,TRUE);
 #endif
-/*
-***Börja med att kolla pektecknet.
-*/
+
     if ( pektkn == *smbind[1].str) return(REJECT);
     if ( pektkn == *smbind[7].str) return(GOMAIN);
     if ( pektkn == *smbind[8].str)
       {
-      if ( ighelp() == GOMAIN ) return(GOMAIN);
+      if ( IGhelp() == GOMAIN ) return(GOMAIN);
       goto loop;
       }
-    if ( pektkn == *smbind[9].str) return(POSMEN);
 /*
-***Sen status. Negativ status innebär att XY-planet
-***är vinkelrätt mot skärmplanet.
+***Negative status means that the active XY-plane
+***is perpendicular to the screen.
 */
     if ( status < 0 )
       {
-      igbell();
+      WPbell();
       WPepmk(GWIN_ALL);
       goto loop;
       }
 /*
-***Slut.
+***Grid processing.
+*/
+    if ( posmode == 8  ||  pektkn == *IGgtts(93) )     
+      {
+/*
+***Get a C ptr to the WPGWIN. WPRWIN's don't support grid yet.
+*/
+      if ( wpwtab[grw_id].typ != TYP_GWIN ) return(0);
+
+      gwinpt = (WPGWIN *)wpwtab[grw_id].ptr;
+
+      x = vecptr->x_gm;
+      y = vecptr->y_gm;
+
+      ng = ABS((x - gwinpt->grid_x)/gwinpt->grid_dx);
+      if ( DEC(ng) > 0.5 ) ++ng;
+
+      if ( x > gwinpt->grid_x ) xg = gwinpt->grid_x + HEL(ng) * gwinpt->grid_dx;
+      else                      xg = gwinpt->grid_x - HEL(ng) * gwinpt->grid_dx;
+
+      ng = ABS((y - gwinpt->grid_y)/gwinpt->grid_dy);
+      if ( DEC(ng) > 0.5 ) ++ng;
+
+      if ( y > gwinpt->grid_y ) yg = gwinpt->grid_y + HEL(ng) * gwinpt->grid_dy;
+      else                      yg = gwinpt->grid_y - HEL(ng) * gwinpt->grid_dy;
+
+      vecptr->x_gm = xg;
+      vecptr->y_gm = yg;
+      vecptr->z_gm = 0.0;
+      }
+/*
+***The end.
 */ 
     return(0);
   }
@@ -2222,97 +2151,114 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-static short gtpcrh_2D(DBVector *vecptr)
+static short igpcrh_2D(DBVector *vecptr)
 
-/*      Läs in 2D position med hårkors eller
- *      position på en rasterpunkt. Positionen 
+/*      Lï¿½s in 2D position med hï¿½rkors eller
+ *      position pï¿½ en rasterpunkt. Positionen 
  *      transformeras till aktivt koordinatsystem.
- *      <SP> och h ger hårkorsposition.
+ *      <SP> och h ger hï¿½rkorsposition.
  *      r ger rasterposition.
  *
  *      In: vecptr => Pekare till DBVector.
  *
  *      Ut: *vecptr => Vektor.
  *
- *      FV:      0 => Ok.
- *          REJECT => Operationen avbruten.
- *          GOMAIN => Huvudmenyn.
+ *      FV:      0  = Ok.
+ *          REJECT  = Operationen avbruten.
+ *          GOMAIN  = Huvudmenyn.
+ *          SMBPOSM = Pos-button selected
  *
  *      (C)microform ab
  *
- *      9/9/85   Hårkors/raster sammanslaget, R. Svedin
- *      30/12/85 Pekmärke, J. Kjellander
+ *      9/9/85   Hï¿½rkors/raster sammanslaget, R. Svedin
+ *      30/12/85 Pekmï¿½rke, J. Kjellander
  *      3/10/86  GOMAIN, J. Kjellander
  *      20/10/86 HELP, J. Kjellander
+ *      2007-03-12 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    char   pektkn;
-    double x,y,xg,yg,ng;
+    char    pektkn;
+    double  x,y,xg,yg,ng;
+    wpw_id  grw_id;
+    WPGWIN *gwinpt;
 
 /*
-***Läs in 2D modellkoordinater via hårkors.
+***Get 2D model coordinates by mouse position.
 */
 loop:
-    WPgtmc(&pektkn,&x,&y,TRUE);
+    if ( WPgmc2(TRUE,&pektkn,&x,&y,&grw_id) == SMBPOSM ) return(SMBPOSM);
     if ( pektkn == *smbind[1].str) return(REJECT);
     if ( pektkn == *smbind[7].str) return(GOMAIN);
     if ( pektkn == *smbind[8].str)
       {
-      if ( ighelp() == GOMAIN ) return(GOMAIN);
+      if ( IGhelp() == GOMAIN ) return(GOMAIN);
       goto loop;
       }
-    if ( pektkn == *smbind[9].str) return(POSMEN);
 /*
-***Raster eller hårkors
+***Transform to local coordinates.
 */
-    if ( pektkn == *iggtts(93) )     
+    vecptr->x_gm = x;
+    vecptr->y_gm = y;
+    vecptr->z_gm = 0.0;
+    if ( lsyspk != NULL ) GEtfpos_to_local(vecptr,lsyspk,vecptr);
+/*
+***Grid.
+*/
+    if ( posmode == 8  ||  pektkn == *IGgtts(93) )
       {
-      ng = ABS((x-rstrox)/rstrdx);            /* Rasterberäkning */
+/*
+***Get a C ptr to the WPGWIN. WPRWIN's don't support grid yet.
+*/
+      if ( wpwtab[grw_id].typ != TYP_GWIN ) return(0);
+
+      gwinpt = (WPGWIN *)wpwtab[grw_id].ptr;
+
+      x = vecptr->x_gm;
+      y = vecptr->y_gm;
+
+      ng = ABS((x - gwinpt->grid_x)/gwinpt->grid_dx);
       if ( DEC(ng) > 0.5 ) ++ng;
 
-      if ( x > rstrox ) xg = rstrox + HEL(ng) * rstrdx;
-      else xg = rstrox - HEL(ng) * rstrdx;
+      if ( x > gwinpt->grid_x ) xg = gwinpt->grid_x + HEL(ng) * gwinpt->grid_dx;
+      else                      xg = gwinpt->grid_x - HEL(ng) * gwinpt->grid_dx;
 
-      ng = ABS((y-rstroy)/rstrdy);
+      ng = ABS((y - gwinpt->grid_y)/gwinpt->grid_dy);
       if ( DEC(ng) > 0.5 ) ++ng;
 
-      if ( y > rstroy ) yg = rstroy + HEL(ng) * rstrdy;
-      else yg = rstroy - HEL(ng) * rstrdy;
-      }
+      if ( y > gwinpt->grid_y ) yg = gwinpt->grid_y + HEL(ng) * gwinpt->grid_dy;
+      else                      yg = gwinpt->grid_y - HEL(ng) * gwinpt->grid_dy;
 
-    else if ( pektkn == *iggtts(92) || pektkn == 32 )
+      vecptr->x_gm = xg;
+      vecptr->y_gm = yg;
+      vecptr->z_gm = 0.0;
+
+      return(0);
+      }
+/*
+***Cursor.
+*/
+    else if ( pektkn == *IGgtts(92) || pektkn == 32 )
       {
-      xg = x;                                 /* Hårkorsposition */
-      yg = y;
+      return(0);
       }
-
+/*
+***Unknown pointer character.
+*/
     else 
       {
-      igbell();                             /* Signalera */
+      WPbell();
       goto loop;
       }
-/*
-***Lagra.
-*/ 
-    vecptr->x_gm = xg;
-    vecptr->y_gm = yg;
-    vecptr->z_gm = 0.0;
-/*
-***Ev. transformation till lokalt koordinatsystem.
-*/
-    if ( lsyspk != NULL ) GEtfpos_to_local(vecptr,lsyspk,vecptr);
-
-    return(0);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short gtpend(DBVector *vecptr)
+ static short igpend(DBVector *vecptr)
 
-/*      Position i ena änden av en storhet.
+/*      Position i ena ï¿½nden av en storhet.
  *
  *      In: vecptr => Pekare till DBVector.
  *
@@ -2324,7 +2270,7 @@ loop:
  *
  *      (C)microform ab 28/10/85 J. Kjellander
  *
- *      26/3/86  Felutskrift från EXon, B. Doverud
+ *      26/3/86  Felutskrift frï¿½n EXon, B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *
  ******************************************************!*/
@@ -2339,14 +2285,14 @@ loop:
     DBAny  gmpost;
 
 /*
-***Hämta id för den refererade storheten.
+***Hï¿½mta id fï¿½r den refererade storheten.
 */
 loop:
     typ = LINTYP+ARCTYP+CURTYP;
-    igptma(331,IG_MESS);
-    if ( (status=getidt(idvek,&typ,&end,&right,POSMEN)) < 0 ) goto exit;
+    WPaddmess_mcwin(IGgtts(331),WP_PROMPT);
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla typ och ände och välj rätt parametervärde.
+***Kolla typ och ï¿½nde och vï¿½lj rï¿½tt parametervï¿½rde.
 */
     if ( end )
       {
@@ -2360,7 +2306,7 @@ loop:
       }
     else t = 0.0;
 /*
-***Beräkna positionen.
+***Berï¿½kna positionen.
 */
     if ( EXon(idvek,t,(DBfloat)0.0,vecptr) < 0 )
       {
@@ -2371,16 +2317,16 @@ loop:
 ***Avslutning.
 */
 exit:
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short gtpon(DBVector *vecptr)
+ static short igpon(DBVector *vecptr)
 
-/*      Position på en storhet.
+/*      Position pï¿½ en storhet.
  *
  *      In: vecptr => Pekare till DBVector.
  *
@@ -2392,9 +2338,9 @@ exit:
  *
  *      (C)microform ab 20/1/85 J. Kjellander
  *
- *      28/10/85 Ände och sida, J. Kjellander
+ *      28/10/85 ï¿½nde och sida, J. Kjellander
  *      29/12/85 Symbol, J. Kjellander
- *      26/3/86  Felutskrift från EXon, B. Doverud
+ *      26/3/86  Felutskrift frï¿½n EXon, B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *      22/2/93  Nytt anrop till EXon(), J. Kjellander
  *
@@ -2402,38 +2348,37 @@ exit:
 
   {
     double  t;
-    DBetype   typ;
-    bool    end,right;
-    short   status;
-    DBId    idvek[MXINIV];
+    DBetype typ;
+    bool     end,right;
+    short    status;
+    DBId     idvek[MXINIV];
 
 /*
-***Hämta id för den refererade storheten.
+***Hï¿½mta id fï¿½r den refererade storheten.
 */
 loop:
     typ = POITYP+LINTYP+ARCTYP+CURTYP+CSYTYP+
           TXTTYP+LDMTYP+CDMTYP+RDMTYP+ADMTYP;
-    igptma(52,IG_MESS);
-    if ( (status=getidt(idvek,&typ,&end,&right,POSMEN)) < 0 ) goto exit;
+    WPaddmess_mcwin(IGgtts(52),WP_PROMPT);
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla typ. Om punkt etc. sätt parametervärdet = 0.
+***Kolla typ. Om punkt etc. sï¿½tt parametervï¿½rdet = 0.
 */
     if ( typ == POITYP || typ == CSYTYP || typ == TXTTYP ||
          typ == LDMTYP || typ == CDMTYP || typ == RDMTYP ||
          typ == ADMTYP ) t = 0.0;
     else
        {
-       igptma(208,IG_INP);
-       status=igsfip(iggtts(320),&t);
-       igrsma();
+       IGptma(208,IG_INP);
+       status=IGsfip(IGgtts(320),&t);
        if ( status < 0 ) goto exit;
        }
 /*
-***Beräkna positionen.
+***Berï¿½kna positionen.
 */
     if ( EXon (idvek,t,(DBfloat)0.0,vecptr) < 0 )
       {
-      igrsma();
+      WPclear_mcwin();
       errmes();
       goto loop;
       }
@@ -2441,16 +2386,16 @@ loop:
 ***Avslutning.
 */
 exit:
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-       short gtpint(DBVector *vecptr)
+static short igpint(DBVector *vecptr)
 
-/*      Position i skärningspunkt.
+/*      Position i skï¿½rningspunkt.
  *
  *      In: vecptr => Pekare till DBVector.
  *
@@ -2462,8 +2407,8 @@ exit:
  *
  *      (C)microform ab 4/2/85 J. Kjellander 
  *
- *      28/10/85 Ände och sida, J. Kjellander
- *      26/3/86  Felutskrift från EXsect, B. Doverud
+ *      28/10/85 ï¿½nde och sida, J. Kjellander
+ *      26/3/86  Felutskrift frï¿½n EXsect, B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
  *      26/11/89 Neg intnr, J. Kjellander
  *
@@ -2483,26 +2428,26 @@ exit:
 ***1:a storheten.
 */
 loop:
-    igptma(324,IG_MESS);
+    WPaddmess_mcwin(IGgtts(324),WP_PROMPT);
     typ1 = LINTYP+ARCTYP+CURTYP;
     if ( modtyp == 3 ) typ1 += BPLTYP+CSYTYP;
-    if ( (status=getidt(idv1,&typ1,&end,&right,POSMEN)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idv1,&typ1,&end,&right,(short)0)) < 0 ) goto exit;
+    WPclear_mcwin();
 /*
 ***2:a storheten.
 */
     typ2 = LINTYP+ARCTYP+CURTYP;
     if ( modtyp == 3  &&  typ1 != BPLTYP  &&  typ1 != CSYTYP )
       typ2 += BPLTYP+CSYTYP;
-    igptma(325,IG_MESS);
-    if ( (status=getidt(idv2,&typ2,&end,&right,POSMEN)) < 0 ) goto exit;
-    igrsma();
+    WPaddmess_mcwin(IGgtts(325),WP_PROMPT);
+    if ( (status=IGgsid(idv2,&typ2,&end,&right,(short)0)) < 0 ) goto exit;
+    WPclear_mcwin();
 /*
-***Om skärning linje/linje, alt = -1.
+***Om skï¿½rning linje/linje, alt = -1.
 */
     if ( typ1 == LINTYP  &&  typ2 == LINTYP ) alt = -1;
 /*
-***Är det en enkel 2D-skärning ?
+***ï¿½r det en enkel 2D-skï¿½rning ?
 */
     else
       {
@@ -2531,26 +2476,26 @@ loop:
         }
       else enkel = FALSE;
 /*
-***Om det är en enkel 2D-skärning, fråga efter 1:a eller
-***2:a skärningen.
+***Om det ï¿½r en enkel 2D-skï¿½rning, frï¿½ga efter 1:a eller
+***2:a skï¿½rningen.
 */
       if ( enkel )
         {
-        if ( igialt(160,161,162,FALSE) ) alt = -1;
+        if ( IGialt(160,161,162,FALSE) ) alt = -1;
         else alt = -2;
         }
 /*
-***Nej det är inte en enkel 2D-skärning, läs in alternativ.
+***Nej det ï¿½r inte en enkel 2D-skï¿½rning, lï¿½s in alternativ.
 */
       else
         {
-        igptma(327,IG_INP);
-        if ( (status=igsiip(iggtts(46), &ival)) < 0 ) goto exit;
+        IGptma(327,IG_INP);
+        if ( (status=IGsiip(IGgtts(46), &ival)) < 0 ) goto exit;
         alt = (short)ival;
         }
       }
 /*
-***Beräkna skärningen.
+***Berï¿½kna skï¿½rningen.
 */
     if ( EXsect (idv1,idv2,alt,0,vecptr) < 0 )
       {
@@ -2558,19 +2503,18 @@ loop:
       goto loop;
       }
 /*
-***Utgång för avbruten operation.
+***Utgï¿½ng fï¿½r avbruten operation.
 */
 exit:
-    igrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short gtpcen(DBVector *vecptr)
+ static short igpcen(DBVector *vecptr)
 
-/*      Position i krökningscentrum.
+/*      Position i krï¿½kningscentrum.
  *
  *      In: vecptr => Pekare till DBVector.
  *
@@ -2592,29 +2536,28 @@ exit:
     DBId    idvek[MXINIV];
 
 /*
-***Hämta id för den refererade storheten.
+***Hï¿½mta id fï¿½r den refererade storheten.
 */
 loop:
     typ = ARCTYP+CURTYP;
-    igptma(53,IG_MESS);
-    if ( (status=getidt(idvek,&typ,&end,&right,POSMEN)) < 0 ) goto exit;
+    WPaddmess_mcwin(IGgtts(53),WP_PROMPT);
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla typ. Om arc sätt parametervärdet = 0.
+***Kolla typ. Om arc sï¿½tt parametervï¿½rdet = 0.
 */
     if ( typ == ARCTYP ) t = 0.0;
     else
        {
-       igptma(208,IG_INP);
-       status=igsfip(iggtts(320),&t);
-       igrsma();
+       IGptma(208,IG_INP);
+       status=IGsfip(IGgtts(320),&t);
        if ( status < 0 ) goto exit;
        }
 /*
-***Beräkna positionen.
+***Berï¿½kna positionen.
 */
     if ( EXcen(idvek,t,lsyspk,vecptr) < 0 )
       {
-      igrsma();
+      WPclear_mcwin();
       errmes();
       goto loop;
       }
@@ -2622,7 +2565,7 @@ loop:
 ***Avslutning.
 */
 exit:
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 

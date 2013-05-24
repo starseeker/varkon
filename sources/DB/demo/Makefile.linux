@@ -2,7 +2,7 @@
 #
 #   Makefile for the DB demo programs
 #
-#  (C)Microform AB 1999-02-15 J.Kjellander
+#  (C)2007-01-18 J.Kjellander
 #
 ##########################################################
 
@@ -12,8 +12,6 @@
 CFLAGS   = -ansi                          \
            -ffloat-store                  \
            -fsigned-char                  \
-           -fwritable-strings             \
-           -m486                          \
            -O                             \
            -DUNIX
 

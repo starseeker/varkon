@@ -1,6 +1,0 @@
-! a3 = HI-29 plotter. Spooler = hi29
- nice -19 /usr/v3/bin/hi29 <
- >/dev/tty1a &
- /usr/v3/utv/job/jkp.DXF
- -h0 -pf
- /usr/v3/utv/job/jkp.PEN

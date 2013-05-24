@@ -10,8 +10,8 @@ RM = rm -f
 
 CC ?= gcc
 
-CFLAGS +=   -ansi -ffloat-store -fsigned-char -fwritable-strings	\
-            -DUNIX -DV3_X11 -I/usr/X11R6/include -DWRK_STAT 
+CFLAGS +=   -ansi -ffloat-store -fsigned-char \
+            -DUNIX -I/usr/X11R6/include
 
 debug :     CFLAGS += -g -DDEBUG
 

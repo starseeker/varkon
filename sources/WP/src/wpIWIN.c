@@ -36,8 +36,6 @@
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 
-extern Window xgwin;
-
 /*!******************************************************/
 
         short WPwciw(
@@ -48,19 +46,19 @@ extern Window xgwin;
         char   *label,
         DBint  *id)
 
-/*      Skapar WPIWIN-fönster.
+/*      Create WPIWIN window.
  *
- *      In: x     = Läge i X-led.
- *          y     = Läge i Y-led.   
+ *      In: x     = Lï¿½ge i X-led.
+ *          y     = Lï¿½ge i Y-led.   
  *          dx    = Storlek i X-led.
  *          dy    = Storlek i Y-led.
- *          label = Fönstertitel.
+ *          label = Fï¿½nstertitel.
  *          id    = Pekare till utdata.
  *
  *      Ut: *id = Giltigt entry i wpwtab.
  *
  *      Felkod: WP1052 = wpwtab full.
- *              WP1062 = Fel från malloc().
+ *              WP1062 = Fel frï¿½n malloc().
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -77,13 +75,13 @@ extern Window xgwin;
     WPIWIN              *iwinptr;
 
 /*
-***Skapa ett ledigt fönster-ID.
+***Skapa ett ledigt fï¿½nster-ID.
 */
     if ( (*id=WPwffi()) < 0 ) return(erpush("WP1052",label));
 /*
-***Sätt färg mm.
+***Sï¿½tt fï¿½rg mm.
 */
-    xwina.background_pixel  = WPgcol(WP_BGND);
+    xwina.background_pixel  = WPgcol(WP_BGND1);
     xwina.border_pixel      = BlackPixel(xdisp,xscr);
     xwina.override_redirect = False;
     xwina.save_under        = False;
@@ -91,7 +89,7 @@ extern Window xgwin;
     xwinm = ( CWBackPixel        | CWBorderPixel |
               CWOverrideRedirect | CWSaveUnder );  
 /*
-***Skapa ett popup-fönster med 1 pixels ram.
+***Skapa ett popup-fï¿½nster med 1 pixels ram.
 */
     xwin_id = XCreateWindow(xdisp,DefaultRootWindow(xdisp),x,y,dx,dy,1,
                             CopyFromParent,InputOutput,
@@ -106,12 +104,11 @@ extern Window xgwin;
     XSetWMNormalHints(xdisp,xwin_id,xhints);
     XFree(xhints);
 
-    WPmaps(label); 
-    XStoreName(xdisp,xwin_id,label);   
-    XSetTransientForHint(xdisp,xwin_id,xgwin);
+    XStoreName(xdisp,xwin_id,label);
+    /* XSetTransientForHint(xdisp,xwin_id,xgwin); */
     XSelectInput(xdisp,xwin_id,ExposureMask | KeyPressMask);
 /*
-***WPIWIN får ej dödas av en WINDOW-Manager som tex. Motif.
+***WPIWIN fï¿½r ej dï¿½das av en WINDOW-Manager som tex. Motif.
 */
     WPsdpr(xwin_id);
 /*
@@ -133,7 +130,7 @@ extern Window xgwin;
 
     for ( i=0; i<WP_IWSMAX; ++i) iwinptr->wintab[i].ptr = NULL;
 /*
-***Lagra fönstret i fönstertabellen.
+***Lagra fï¿½nstret i fï¿½nstertabellen.
 */
     wpwtab[*id].typ = TYP_IWIN;
     wpwtab[*id].ptr = (char *)iwinptr;
@@ -147,10 +144,10 @@ extern Window xgwin;
         bool WPxpiw(
         WPIWIN *iwinptr)
 
-/*      Expose-rutin för WPIWIN med vidhängande sub-fönster.
+/*      Expose-rutin fï¿½r WPIWIN med vidhï¿½ngande sub-fï¿½nster.
  *      Denna event-rutin servar alltid eventet. Anropande
- *      rutin har redan avgjort att Expose skall göras just
- *      på detta fönster.
+ *      rutin har redan avgjort att Expose skall gï¿½ras just
+ *      pï¿½ detta fï¿½nster.
  *
  *      In: iwinptr = C-pekare till WPIWIN.
  *
@@ -167,7 +164,7 @@ extern Window xgwin;
     char   *subptr;
 
 /*
-***Först expose på alla sub-fönster.
+***Fï¿½rst expose pï¿½ alla sub-fï¿½nster.
 */
     for ( i=0; i<WP_IWSMAX; ++i )
       {
@@ -191,8 +188,8 @@ extern Window xgwin;
         }
       }
 /*
-***WPIWIN-fönstret självt har inga texter etc.
-***att göra expose på !
+***WPIWIN-fï¿½nstret sjï¿½lvt har inga texter etc.
+***att gï¿½ra expose pï¿½ !
 */
 
     return(TRUE);
@@ -206,20 +203,22 @@ extern Window xgwin;
         XButtonEvent *butev,
         wpw_id       *serv_id)
 
-/*      Button-rutin för WPIWIN med vidhängande sub-fönster.
- *      Kollar om muspekning skett i något av WPIWIN-fönstrets
- *      subfönster och servar isåfall eventet.
+/*      Button-rutin fï¿½r WPIWIN med vidhï¿½ngande sub-fï¿½nster.
+ *      Kollar om muspekning skett i nï¿½got av WPIWIN-fï¿½nstrets
+ *      subfï¿½nster och servar isï¿½fall eventet.
  *
  *      In: iwinptr = C-pekare till WPIWIN.
  *          butev   = X-but event.
  *          serv_id = Pekare till utdata.
  *
- *      Ut: *serv_id = ID för subfönster som servat eventet.
+ *      Ut: *serv_id = ID fï¿½r subfï¿½nster som servat eventet.
  *
  *      Fv: TRUE  = Eventet servat.
- *          FALSE = Detta fönster ej inblandat.
+ *          FALSE = Detta fï¿½nster ej inblandat.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
+ *
+ *      2007-03-07 Menu window, J.Kjellander
  *
  ******************************************************!*/
 
@@ -231,8 +230,17 @@ extern Window xgwin;
     WPICON *icoptr;
 
 /*
-***WPIWIN självt kan inte generera ButtonEvent:s,
-***bara sub-fönstren.
+***A WPIWIN is normally insensitive to button clicks.
+***The menu window however is a WPIWIN but has a special
+***SelectInputMask so that it can generate ButtonRelease.
+***This is to make it possible to use the right and middle
+***mouse button also in the menu window. So, if the button
+***event is not left button the event should not propagate
+***down into the children.
+*/
+   if ( butev->button != 1 ) return(FALSE);
+/*
+***The subwindows of a WPIWIN can create Button events.
 */
     for ( i=0; i<WP_IWSMAX; ++i )
       {
@@ -250,7 +258,11 @@ extern Window xgwin;
             return(TRUE);
             }
           break;
-
+/*
+***A button click in a WPEDIT means that it will get focus.
+***The edit that has focus now will loose focus and this
+***is treated as a serving event.
+*/
           case TYP_EDIT:
           edtptr = (WPEDIT *)subptr;
           if ( butev->window == edtptr->id.x_id )
@@ -280,19 +292,19 @@ extern Window xgwin;
 /********************************************************/
 /*!******************************************************/
 
-        bool WPcriw(
+        bool            WPcriw(
         WPIWIN         *iwinpt,
         XCrossingEvent *croev)
 
-/*      Crossing-rutin för WPIWIN med vidhängande sub-fönster.
- *      Kollar om Leave/Enter skett i något av WPIWIN-fönstrets
- *      subfönster och servar isåfall eventet.
+/*      Crossing-rutin fï¿½r WPIWIN med vidhï¿½ngande sub-fï¿½nster.
+ *      Kollar om Leave/Enter skett i nï¿½got av WPIWIN-fï¿½nstrets
+ *      subfï¿½nster och servar isï¿½fall eventet.
  *
  *      In: iwinpt = C-pekare till WPIWIN.
  *          croev  = X-cro event.
  *
  *      Ut: TRUE  = Eventet servat.
- *          FALSE = Detta fönster ej inblandat.
+ *          FALSE = Detta fï¿½nster ej inblandat.
  *
  *      Felkod: .
  *
@@ -308,7 +320,7 @@ extern Window xgwin;
     WPICON *icoptr;
 
 /*
-***Gå igenom alla sub-fönster.
+***Gï¿½ igenom alla sub-fï¿½nster.
 */
     for ( i=0; i<WP_IWSMAX; ++i )
       {
@@ -322,7 +334,7 @@ extern Window xgwin;
           if ( croev->window == butptr->id.x_id )
             {
             if ( croev->type == EnterNotify ) WPcrbu(butptr,TRUE);
-            else WPcrbu(butptr,FALSE);
+            else                              WPcrbu(butptr,FALSE);
             return(TRUE);
             }
           else if ( croev->type == EnterNotify  &&  butptr->hlight == TRUE )
@@ -333,7 +345,8 @@ extern Window xgwin;
           edtptr = (WPEDIT *) subptr;
           if ( croev->window == edtptr->id.x_id )
             {
-            WPcred(edtptr,croev);
+            if ( croev->type == EnterNotify ) WPcred(edtptr,TRUE);
+            else WPcred(edtptr,FALSE);
             return(TRUE);
             }
           break;
@@ -362,19 +375,19 @@ extern Window xgwin;
         int         slevel,
         wpw_id     *serv_id)
 
-/*      Key-rutin för WPIWIN med vidhängande sub-fönster.
- *      Om WPIWIN-fönstret har ett subfönster (WPEDIT) med
+/*      Key-rutin fï¿½r WPIWIN med vidhï¿½ngande sub-fï¿½nster.
+ *      Om WPIWIN-fï¿½nstret har ett subfï¿½nster (WPEDIT) med
  *      input-focus = TRUE servas eventet.
  *
  *      In: iwinpt  = C-pekare till WPIWIN.
  *          keyev   = X-Key event.
- *          slevel  = Service-nivå.
+ *          slevel  = Service-nivï¿½.
  *          serv_id = Pekare till utdata.
  *
- *      Ut: *serv_id = ID för WPEDIT som servat eventet.
+ *      Ut: *serv_id = ID fï¿½r WPEDIT som servat eventet.
  *
  *      FV: TRUE  = Eventet servat.
- *          FALSE = Detta fönster ej inblandat.
+ *          FALSE = Detta fï¿½nster ej inblandat.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -384,14 +397,14 @@ extern Window xgwin;
     WPEDIT *edtptr;
 
 /*
-***Finns sub-fönster med focus ?.
+***Finns sub-fï¿½nster med focus ?.
 */
     edtptr = WPffoc(iwinpt,FOCUS_EDIT);
 /*
 ***Om ja, prova att serva eventet. Vissa tangenttryckningar
 ***servas "lokal" utan att WPkeed returnerar TRUE. Exempel
-***på detta är när man flyttar cursorn med piltangenterna till
-***höger eller vänster. 
+***pï¿½ detta ï¿½r nï¿½r man flyttar cursorn med piltangenterna till
+***hï¿½ger eller vï¿½nster. 
 */
     if ( edtptr != NULL )
       {
@@ -402,10 +415,10 @@ extern Window xgwin;
         }
       }
 /*
-***Kommer vi hit beror det antingen på att inget WPEDIT-fönster
+***Kommer vi hit beror det antingen pï¿½ att inget WPEDIT-fï¿½nster
 ***har fokus just nu eller att det som har fokus inte anser att
-***key-eventet är av den typ som skall signaleras uppåt och få
-***WPwwtw() att göra return. Tex. piltangenter i sidled.
+***key-eventet ï¿½r av den typ som skall signaleras uppï¿½t och fï¿½
+***WPwwtw() att gï¿½ra return. Tex. piltangenter i sidled.
 */
    return(FALSE);
   }
@@ -417,13 +430,13 @@ extern Window xgwin;
         WPIWIN               *iwinpt,
         XClientMessageEvent  *clmev)
 
-/*      ClientMessage-rutinen för WPIWIN.
+/*      ClientMessage-rutinen fï¿½r WPIWIN.
  *
  *      In: iwinpt  = C-pekare till WPIWIN.
  *          clmev   = X-event.
  *
  *      FV: TRUE  = Eventet servat.
- *          FALSE = Detta fönster ej inblandat.
+ *          FALSE = Detta fï¿½nster ej inblandat.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -431,8 +444,8 @@ extern Window xgwin;
 
   {
 /*
-***IWIN-fönster kan normalt inte ta hand om ClientMessage.
-***Om det är WM_DELETE_WINDOW servar vi genom att pipa lite.
+***IWIN-fï¿½nster kan normalt inte ta hand om ClientMessage.
+***Om det ï¿½r WM_DELETE_WINDOW servar vi genom att pipa lite.
 */
    if ( clmev->message_type ==
         XInternAtom(xdisp,"WM_PROTOCOLS",False) &&
@@ -451,7 +464,7 @@ extern Window xgwin;
         short WPdliw(
         WPIWIN *iwinptr)
 
-/*      Dödar en WPIWIN med vidhängande sub-fönster.
+/*      Dï¿½dar en WPIWIN med vidhï¿½ngande sub-fï¿½nster.
  *
  *      In: iwinptr = C-pekare till WPIWIN.
  *
@@ -468,7 +481,7 @@ extern Window xgwin;
     char   *subptr;
 
 /*
-***Döda alla sub-fönster.
+***Dï¿½da alla sub-fï¿½nster.
 */
     for ( i=0; i<WP_IWSMAX; ++i )
       {
@@ -492,7 +505,7 @@ extern Window xgwin;
         }
       }
 /*
-***Lämna tillbaks dynamiskt allokerat minne.
+***Lï¿½mna tillbaks dynamiskt allokerat minne.
 */
     v3free((char *)iwinptr,"WPdliw");
  

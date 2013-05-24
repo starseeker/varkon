@@ -71,7 +71,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
  ******************************************************!*/
 
   {
-    igplma(pstr,IG_MESS);
+    IGplma(pstr,IG_MESS);
 
     return(0);
   }
@@ -97,7 +97,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
  ******************************************************!*/
 
   {
-    igrsma();
+    IGrsma();
 
     return(0);
   }
@@ -141,7 +141,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
 /*
 ***Kopiera och mappa "%num" till kontrolltecken.
 */
-    editcopy(txtbuf,tstr);
+    IGatoc(txtbuf,tstr);
 /*
 ***Om t-strängen med detta nummer har skapats redan tidigare
 ***och det nu är frågan om att erätta den med något annat 
@@ -264,7 +264,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
 /*
 ***Rubrik.
 */
-    editcopy(rubrik,pv[2].par_va.lit.str_va);
+    IGatoc(rubrik,pv[2].par_va.lit.str_va);
 /*
 ***Alternativ.
 */
@@ -272,7 +272,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
 
     for ( i=0; i<nalt; ++i )
       {
-      editcopy(altstr[i],pv[3+2*i].par_va.lit.str_va);
+      IGatoc(altstr[i],pv[3+2*i].par_va.lit.str_va);
       actstr = pv[4+2*i].par_va.lit.str_va;
       alttyp[i] = *actstr;
       sscanf(actstr+1,"%hd",&altnum[i]);
@@ -280,7 +280,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
 /*
 ***Lagra.
 */
-   if ( igstmu(mnum,rubrik,nalt,altstr,alttyp,altnum) < 0 )
+   if ( IGstmu(mnum,rubrik,nalt,altstr,alttyp,altnum) < 0 )
       {
       sprintf(errbuf,"%d",mnum);
       return(erpush("EX1822",errbuf));
@@ -314,7 +314,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
 #ifdef WIN32
     msshmu((int)mnr);
 #else
-    igaamu(mnr);
+    IGaamu(mnr);
 #endif
 
     return(0);
@@ -345,7 +345,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
 #ifdef WIN32
     mshdmu();
 #else
-    igsamu();
+    IGsamu();
 #endif
 
     return(0);
@@ -378,9 +378,9 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
     short  alttyp;
     MNUALT *pmualt;
 
-    igplma(prstr,IG_MESS);
+    IGplma(prstr,IG_MESS);
 
-    iggalt(&pmualt,&alttyp);
+    IGgalt(&pmualt,&alttyp);
 
     if ( pmualt == NULL ) strcpy(akod->lit.str_va,"");
     else
@@ -389,7 +389,7 @@ extern char   *fstmem;    /* Pekare till nästa lediga t-sträng */
       sprintf(&(akod->lit.str_va[1]),"%d",pmualt->actnum);
       }
 
-    igrsma();
+    IGrsma();
 
     return(0);
   }

@@ -5,7 +5,7 @@
 #
 #  Make rules for the WP module.
 #
-#  (C)2006 J.Kjellander
+#  (C)2007 J.Kjellander
 #
 ##########################################################
 
@@ -16,43 +16,51 @@ INCFILES = ../include/WP.h            \
 
 # The contents of WPlib.a
 
-OBJECTS = ../lib/WPlib.a(wpinit.o)     \
-          ../lib/WPlib.a(wpLWIN.o)     \
-          ../lib/WPlib.a(wpfontcol.o)  \
-          ../lib/WPlib.a(wpwait.o)     \
-          ../lib/WPlib.a(wpgetkey.o)   \
-          ../lib/WPlib.a(wpmenu.o)     \
-          ../lib/WPlib.a(wpgetalt.o)   \
-          ../lib/WPlib.a(wpgetstr.o)   \
-          ../lib/WPlib.a(wpRWIN.o)     \
-          ../lib/WPlib.a(wpw.o)        \
-          ../lib/WPlib.a(wpIWIN.o)     \
-          ../lib/WPlib.a(wpBUTT.o)     \
-          ../lib/WPlib.a(wpEDIT.o)     \
-          ../lib/WPlib.a(wpICON.o)     \
-          ../lib/WPlib.a(wpGWIN.o)     \
-          ../lib/WPlib.a(wpview1.o)    \
-          ../lib/WPlib.a(wpview2.o)    \
-          ../lib/WPlib.a(wpplylin.o)   \
-          ../lib/WPlib.a(wpDF.o)       \
-          ../lib/WPlib.a(wppoint.o)    \
-          ../lib/WPlib.a(wpline.o)     \
-          ../lib/WPlib.a(wparc.o)      \
-          ../lib/WPlib.a(wpcurve.o)    \
-          ../lib/WPlib.a(wpsurf.o)     \
-          ../lib/WPlib.a(wptext.o)     \
-          ../lib/WPlib.a(wpxhatch.o)   \
-          ../lib/WPlib.a(wpdim.o)      \
-          ../lib/WPlib.a(wpcsy.o)      \
-          ../lib/WPlib.a(wpbplane.o)   \
-          ../lib/WPlib.a(wpedmbs.o)    \
-          ../lib/WPlib.a(wpshade.o)    \
-          ../lib/WPlib.a(wpGLlist.o)   \
-          ../lib/WPlib.a(wpplot.o)     \
-          ../lib/WPlib.a(wphide.o)     \
-          ../lib/WPlib.a(wpDXF.o)      \
-          ../lib/WPlib.a(wpgrid.o)     \
-          ../lib/WPlib.a(wpmesh.o)
+OBJECTS = ../lib/WPlib.a(wpinit.o)       \
+          ../lib/WPlib.a(wpLWIN.o)       \
+          ../lib/WPlib.a(wpfont.o)       \
+          ../lib/WPlib.a(wpwait.o)       \
+          ../lib/WPlib.a(wpgetkey.o)     \
+          ../lib/WPlib.a(wpmenu.o)       \
+          ../lib/WPlib.a(wpgetalt.o)     \
+          ../lib/WPlib.a(wpgetstr.o)     \
+          ../lib/WPlib.a(wpRWIN.o)       \
+          ../lib/WPlib.a(wpw.o)          \
+          ../lib/WPlib.a(wpIWIN.o)       \
+          ../lib/WPlib.a(wpBUTT.o)       \
+          ../lib/WPlib.a(wpEDIT.o)       \
+          ../lib/WPlib.a(wpICON.o)       \
+          ../lib/WPlib.a(wpGWIN.o)       \
+          ../lib/WPlib.a(wpviews.o)      \
+          ../lib/WPlib.a(wpzoom.o)       \
+          ../lib/WPlib.a(wpplylin.o)     \
+          ../lib/WPlib.a(wpDF.o)         \
+          ../lib/WPlib.a(wppoint.o)      \
+          ../lib/WPlib.a(wpline.o)       \
+          ../lib/WPlib.a(wparc.o)        \
+          ../lib/WPlib.a(wpcurve.o)      \
+          ../lib/WPlib.a(wpsurf.o)       \
+          ../lib/WPlib.a(wptext.o)       \
+          ../lib/WPlib.a(wpxhatch.o)     \
+          ../lib/WPlib.a(wpdim.o)        \
+          ../lib/WPlib.a(wpcsy.o)        \
+          ../lib/WPlib.a(wpbplane.o)     \
+          ../lib/WPlib.a(wpedmbs.o)      \
+          ../lib/WPlib.a(wppen.o)        \
+          ../lib/WPlib.a(wpGLlist.o)     \
+          ../lib/WPlib.a(wpplot.o)       \
+          ../lib/WPlib.a(wpprint.o)      \
+          ../lib/WPlib.a(wphide.o)       \
+          ../lib/WPlib.a(wpDXF.o)        \
+          ../lib/WPlib.a(wpgrid.o)       \
+          ../lib/WPlib.a(wplight.o)      \
+          ../lib/WPlib.a(wpmesh.o)       \
+          ../lib/WPlib.a(wplevels.o)     \
+          ../lib/WPlib.a(wpgetpos.o)     \
+          ../lib/WPlib.a(wptooltip.o)    \
+          ../lib/WPlib.a(wpattributes.o) \
+          ../lib/WPlib.a(wpjob.o)        \
+          ../lib/WPlib.a(wpMCWIN.o)
 
 # WPlib.a depends on the objects. 
 

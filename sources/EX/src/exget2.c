@@ -484,7 +484,7 @@
     if ( blank != 0 ) header.blank  = 1; else header.blank = 0;
     if ( pen    < 0 ) header.pen    = 0; else header.pen = pen;
 
-    if ( level  < 0  ||  level > NT1SIZ-1 )
+    if ( level  < 0  ||  level > WP_NIVANT-1 )
       header.level  = 0;
     else
       header.level = level;

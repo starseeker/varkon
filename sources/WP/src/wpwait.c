@@ -47,12 +47,12 @@ static int     n_secs = 0;
 static bool    wt_on  = FALSE;
 static WPGWIN *wt_win = NULL;
 
-/* n_larm sätt till noll av WPwait(xxx,TRUE) och
-   räknas upp av WPlinc() samt ner av WPintr(). 
-   n_secs sätt också till noll men räknas inte ner.
-   wt_on är TRUE om vänta är påslaget av WPwait() annars FALSE.
-   wt_win är en pekare till det fönster där drwait()
-   skall visa väntameddelandet. */
+/* n_larm sï¿½tt till noll av WPwait(xxx,TRUE) och
+   rï¿½knas upp av WPlinc() samt ner av WPintr(). 
+   n_secs sï¿½tt ocksï¿½ till noll men rï¿½knas inte ner.
+   wt_on ï¿½r TRUE om vï¿½nta ï¿½r pï¿½slaget av WPwait() annars FALSE.
+   wt_win ï¿½r en pekare till det fï¿½nster dï¿½r drwait()
+   skall visa vï¿½ntameddelandet. */
 
 
 extern char        pidnam[],jobnam[];
@@ -63,17 +63,17 @@ extern V3MDAT      sydata;
 
        bool WPintr()
 
-/*     wp:s interrupt-rutin. Anropas med jämna mellanrum
- *     av alla rutiner som kan ta lång tid på sig. Sköter
- *     uppdatering av vänta-meddelandet om vänta är på samt
- *     pollar event-kön efter <CTRL>c.
+/*     wp:s interrupt-rutin. Anropas med jï¿½mna mellanrum
+ *     av alla rutiner som kan ta lï¿½ng tid pï¿½ sig. Skï¿½ter
+ *     uppdatering av vï¿½nta-meddelandet om vï¿½nta ï¿½r pï¿½ samt
+ *     pollar event-kï¿½n efter <CTRL>c.
  *
  *     In: Inget.
  *
  *     Ut: Inget.
  *
  *     FV: TRUE  = V3 skall avbrytas.
- *         FALSE = Fortsätt exekveringen.
+ *         FALSE = Fortsï¿½tt exekveringen.
  *
  *     (C)microform ab 17/1/95 J. Kjellander
  *
@@ -89,19 +89,19 @@ extern V3MDAT      sydata;
    XComposeStatus  costat;
 
 /*
-***Om n_larm > 0 är vänta-hanteringen påslagen och det har
-***gått tillräckligt med tid sen vi sist uppdaterade vänta-
-***meddelandet. Alltså uppdaterar vi igen. Om n_larm == 0
-***har det antingen inte gått tillräckligt lång tid eller
-***också är inte vänta-hanteringen påslagen överhuvudtaget.
+***Om n_larm > 0 ï¿½r vï¿½nta-hanteringen pï¿½slagen och det har
+***gï¿½tt tillrï¿½ckligt med tid sen vi sist uppdaterade vï¿½nta-
+***meddelandet. Alltsï¿½ uppdaterar vi igen. Om n_larm == 0
+***har det antingen inte gï¿½tt tillrï¿½ckligt lï¿½ng tid eller
+***ocksï¿½ ï¿½r inte vï¿½nta-hanteringen pï¿½slagen ï¿½verhuvudtaget.
 */
    if ( n_larm > 0 )
      {
      drwait(TRUE);
    --n_larm;
 /*
-***Samtidigt som vi uppdaterar vänta-meddelandet passar vi
-***på att polla eventkön efter <CTRL>c.
+***Samtidigt som vi uppdaterar vï¿½nta-meddelandet passar vi
+***pï¿½ att polla eventkï¿½n efter <CTRL>c.
 */
      while ( XCheckMaskEvent(xdisp,KeyPressMask,&event) )
        {
@@ -125,11 +125,11 @@ extern V3MDAT      sydata;
        short WPlset(
        bool set)
 
-/*     Beställer en alarmsignal om en liten stund eller
- *     dödar en redan beställd.
+/*     Bestï¿½ller en alarmsignal om en liten stund eller
+ *     dï¿½dar en redan bestï¿½lld.
  *
- *     In: set => TRUE  = Beställ signal.
- *                FALSE = Döda beställd.
+ *     In: set => TRUE  = Bestï¿½ll signal.
+ *                FALSE = Dï¿½da bestï¿½lld.
  *
  *     Ut: Inget.
  *
@@ -140,9 +140,15 @@ extern V3MDAT      sydata;
  *******************************************************!*/
 
  {
+
+
+#ifdef DEBUG
+return(0);
+#endif
+
 /*
-***Om det är första gången väntar vi lite längre sen
-***kör vi på som vanligt.
+***Om det ï¿½r fï¿½rsta gï¿½ngen vï¿½ntar vi lite lï¿½ngre sen
+***kï¿½r vi pï¿½ som vanligt.
 */
    if ( set )
      {
@@ -168,8 +174,8 @@ extern V3MDAT      sydata;
 
        void WPlinc()
 
-/*     Fångar en alarmsignal beställd av WPlset()
- *     samt beställer en ny.
+/*     Fï¿½ngar en alarmsignal bestï¿½lld av WPlset()
+ *     samt bestï¿½ller en ny.
  *
  *     In: Inget.
  *
@@ -186,12 +192,12 @@ extern V3MDAT      sydata;
  {
 
 /*
-***Räkna upp larm- och sekund-räknarna.
+***Rï¿½kna upp larm- och sekund-rï¿½knarna.
 */
    ++n_larm;
    n_secs += WP_INTTIME;
 /*
-***Beställ ett nytt larm om en stund igen.
+***Bestï¿½ll ett nytt larm om en stund igen.
 */
    WPlset(TRUE);
 
@@ -203,9 +209,9 @@ extern V3MDAT      sydata;
 
        bool WPwton()
 
-/*     Returnerar värdet av wt_on. Används av rutiner
- *     som tillfälligt vill stänga av interruptgenereringen.
- *     Tex. exos(). Om WPwton() == TRUE gör man då först
+/*     Returnerar vï¿½rdet av wt_on. Anvï¿½nds av rutiner
+ *     som tillfï¿½lligt vill stï¿½nga av interruptgenereringen.
+ *     Tex. exos(). Om WPwton() == TRUE gï¿½r man dï¿½ fï¿½rst
  *     WPlset(FALSE) och senare wplset(TRUE) igen.
  *
  *     FV: wt_on.
@@ -225,10 +231,10 @@ extern V3MDAT      sydata;
        DBint win_id,
        bool  wait)
 
-/*     Slår på eller av vänta-hanteringen.
+/*     Slï¿½r pï¿½ eller av vï¿½nta-hanteringen.
  *
- *     In: win_id => Fönster-ID eller GWIN_ALL.
- *         wait   => TRUE = slå på, FALSE = stäng av.
+ *     In: win_id => Fï¿½nster-ID eller GWIN_ALL.
+ *         wait   => TRUE = slï¿½ pï¿½, FALSE = stï¿½ng av.
  *
  *     Ut: Inget.
  *
@@ -244,10 +250,10 @@ extern V3MDAT      sydata;
    WPWIN  *winptr;
 
 /*
-***Om det är GWIN_ALL som gäller handlar det om att vänta
-***på något som inte händer i ett särskilt fönster utan
-***i alla fönster eller inte i något fönster alls. Isåfall
-***visar vi vänta... i huvudfönstret.
+***Om det ï¿½r GWIN_ALL som gï¿½ller handlar det om att vï¿½nta
+***pï¿½ nï¿½got som inte hï¿½nder i ett sï¿½rskilt fï¿½nster utan
+***i alla fï¿½nster eller inte i nï¿½got fï¿½nster alls. Isï¿½fall
+***visar vi vï¿½nta... i huvudfï¿½nstret.
 */
    if ( wait )
      {
@@ -257,8 +263,8 @@ extern V3MDAT      sydata;
        wt_win = (WPGWIN *)winptr->ptr;
        }
 /*
-***Om det handlar om att vänta i ett visst fönster fixar vi
-***en C-pekare till just det fönstret.
+***Om det handlar om att vï¿½nta i ett visst fï¿½nster fixar vi
+***en C-pekare till just det fï¿½nstret.
 */
      else
        {
@@ -266,17 +272,17 @@ extern V3MDAT      sydata;
        wt_win = (WPGWIN *)winptr->ptr;
        }
 /*
-***Eftersom vänta skall slås på nollställer vi lite
-***och startar beställning av alarmsignaler.
+***Eftersom vï¿½nta skall slï¿½s pï¿½ nollstï¿½ller vi lite
+***och startar bestï¿½llning av alarmsignaler.
 */
      n_larm = n_secs = 0;
      WPlset(TRUE);
      }
 /*
-***Om vänta skall slås av stänger vi av beställningen av
-***alarmsignaler och nollställer larmräknaren igen så att
-***WPintr() inte servar interrupt i onödan om alla inte
-***har hunnit servas medan vänta var på.
+***Om vï¿½nta skall slï¿½s av stï¿½nger vi av bestï¿½llningen av
+***alarmsignaler och nollstï¿½ller larmrï¿½knaren igen sï¿½ att
+***WPintr() inte servar interrupt i onï¿½dan om alla inte
+***har hunnit servas medan vï¿½nta var pï¿½.
 */
    else
      {
@@ -285,7 +291,7 @@ extern V3MDAT      sydata;
      WPlset(FALSE);
      }
 /*
-***Kom ihåg om vi är på eller av. Används av WPwton().
+***Kom ihï¿½g om vi ï¿½r pï¿½ eller av. Anvï¿½nds av WPwton().
 */
    wt_on = wait;
 /*
@@ -300,7 +306,7 @@ extern V3MDAT      sydata;
        short drwait(
        bool  draw)
 
-/*     Ritar vänta....
+/*     Ritar vï¿½nta....
  *
  *     In: draw => TRUE = Sudda+rita. FALSE = Bara sudda.
  *
@@ -322,12 +328,12 @@ extern V3MDAT      sydata;
 static  WPBUTT *buttpt = 0;
 
 /*
-***Om buttpt == NULL är det första gången och då måste vi skapa
-***själva vänta-fönstret.
+***Om buttpt == NULL ï¿½r det fï¿½rsta gï¿½ngen och dï¿½ mï¿½ste vi skapa
+***sjï¿½lva vï¿½nta-fï¿½nstret.
 */
    if ( draw  &&  buttpt == NULL )
      {
-     dx = WPstrl("Vänta...XXXXX") + 15;
+     dx = WPstrl("Vï¿½nta...XXXXX") + 15;
      dy = (int)(1.6*(double)WPstrh());
      x  = (int)(wt_win->vy.scrwin.xmax - dx - 10);
      y  = (int)(wt_win->geo.dy - wt_win->vy.scrwin.ymin - dy - 10);
@@ -335,7 +341,7 @@ static  WPBUTT *buttpt = 0;
      WPwcbu(wt_win->id.x_id,
            (short)x,(short)y,(short)dx,(short)dy,
            (short)1,"V{nta...","V{nta...","",
-           (short)WP_BGND,(short)WP_FGND,&buttpt);
+           (short)WP_BGND2,(short)WP_FGND,&buttpt);
 
      XMapRaised(xdisp,buttpt->id.x_id);
      }
@@ -344,18 +350,17 @@ static  WPBUTT *buttpt = 0;
 */
    if ( draw )
      {
-     strcpy(wt_str,iggtts(164));
+     strcpy(wt_str,IGgtts(164));
      sprintf(timbuf,"%d",n_secs);
      strcat(wt_str,timbuf);
 
-     WPmaps(wt_str);
      strcpy(buttpt->stron,wt_str);
      strcpy(buttpt->stroff,wt_str);
      WPxpbu(buttpt);
      XFlush(xdisp);
      }
 /*
-***Om sudda begärts dödar vi fönstret.
+***Om sudda begï¿½rts dï¿½dar vi fï¿½nstret.
 */
    else if ( buttpt != NULL )
      {
@@ -373,10 +378,10 @@ static  WPBUTT *buttpt = 0;
        short WPupwb(
        WPGWIN *gwinpt)
 
-/*     Uppdaterar texten i ett WPGWIN-fönsters ram.
+/*     Uppdaterar texten i ett WPGWIN-fï¿½nsters ram.
  *
- *     In: gwinpt => C-pekare till grafiskt fönster
- *                   eller NULL för huvudfönstret.
+ *     In: gwinpt => C-pekare till grafiskt fï¿½nster
+ *                   eller NULL fï¿½r huvudfï¿½nstret.
  *
  *     Ut: Inget.
  *
@@ -398,7 +403,7 @@ static  WPBUTT *buttpt = 0;
 */
    title[0] = '\0';
 /*
-***Fixa fram fönstrets C-pekare.
+***Fixa fram fï¿½nstrets C-pekare.
 */
    if ( gwinpt == NULL )
      {
@@ -408,7 +413,7 @@ static  WPBUTT *buttpt = 0;
      }
    else grawin = gwinpt;
 /*
-***Om det är huvudfönstret inleder vi med en särskild titel-resurs.
+***Om det ï¿½r huvudfï¿½nstret inleder vi med en sï¿½rskild titel-resurs.
 */
    if ( grawin->id.w_id == GWIN_MAIN )
      {
@@ -422,8 +427,8 @@ static  WPBUTT *buttpt = 0;
                                              sydata.level);
        }
 /*
-***Om varkon.title.project är satt skriver vi även ut projektnamn i 
-***huvudförnstret.
+***Om varkon.title.project ï¿½r satt skriver vi ï¿½ven ut projektnamn i 
+***huvudfï¿½rnstret.
 */
      if ( WPgrst("varkon.title.project",tmpbuf) &&
           strcmp(tmpbuf,"True") == 0 )
@@ -433,7 +438,7 @@ static  WPBUTT *buttpt = 0;
          }
      }
 /*
-***Alla fönster kan ha jobnamn och/eller vynamn.
+***Alla fï¿½nster kan ha jobnamn och/eller vynamn.
 */  
    if ( WPgrst("varkon.title.jobname",tmpbuf) &&
         strcmp(tmpbuf,"True") == 0 )
@@ -449,16 +454,18 @@ static  WPBUTT *buttpt = 0;
    if ( WPgrst("varkon.title.viewname",tmpbuf) &&
         strcmp(tmpbuf,"True") == 0 )
        {
-       if ( title[0] != '\0' )             strcat(title," - ");
-       if ( grawin->vy.vynamn[0] == '\0' ) strcat(title,"*****");
-       else                                strcat(title,grawin->vy.vynamn);
+       if ( grawin->vy.name[0] != '\0' )
+         {
+         if ( title[0] != '\0' )
+           {
+           strcat(title," - ");
+           strcat(title,grawin->vy.name);
+           }
+         else strcpy(title,grawin->vy.name);
+         }
        }
 /*
-***Mappa till svenska tecken.
-*/
-   WPmaps(title);
-/*
-***Uppdatera fönsterramen.
+***Uppdatera fï¿½nsterramen.
 */
    XStoreName(xdisp,grawin->id.x_id,title);
 
@@ -476,11 +483,11 @@ static  WPBUTT *buttpt = 0;
        int *px,
        int *py)
 
-/*     Placerar ett fönster så nära en önskad punkt som
- *     möjligt utan att det kommer ut utanför skärmen.
+/*     Placerar ett fï¿½nster sï¿½ nï¿½ra en ï¿½nskad punkt som
+ *     mï¿½jligt utan att det kommer ut utanfï¿½r skï¿½rmen.
  *
- *     In: rx,ry = Önskad position relativt root-fönstret.
- *         dx,dy = Fönstrets storlek.
+ *     In: rx,ry = ï¿½nskad position relativt root-fï¿½nstret.
+ *         dx,dy = Fï¿½nstrets storlek.
  *         px,py = Pekare till utdata.
  *
  *     Ut: *px,*py = Ny position.
@@ -503,7 +510,7 @@ static  WPBUTT *buttpt = 0;
    if ( x + dx > width ) x = width - dx;
    if ( x < 0 ) x = 0;
 /*
-***I höjdled.
+***I hï¿½jdled.
 */
    y = ry;
    if ( y + dy > height ) y = height - dy;
@@ -518,12 +525,11 @@ static  WPBUTT *buttpt = 0;
 /*********************************************************/
 /*!*******************************************************/
 
-     short WPwlma(
-     char *s)
+     short WPwlma(char *s)
 
-/*   Skriver ut meddelande i meddelandefönster.
+/*   Skriver ut meddelande i meddelandefï¿½nster.
  *
- *   In: s  = Sträng
+ *   In: s  = Strï¿½ng
  *
  *   Ut: Inget.
  *
@@ -534,50 +540,11 @@ static  WPBUTT *buttpt = 0;
  *******************************************************!*/
 
  {
-   int     x,y,dx,dy;
-   WPWIN  *winptr;
-   WPGWIN *mainpt;
 
 /*
-***Om det inte finns något grafiskt fönster gör vi intet.
-***Annars en C-pekare till V3:s huvudfönster.
+***Test av WPMCWIN.
 */
-   if ( (winptr=WPwgwp((wpw_id)GWIN_MAIN)) != NULL  &&
-         winptr->typ == TYP_GWIN ) mainpt = (WPGWIN *)winptr->ptr;
-   else return(0);
-/*
-***Mappa till ISO-8859.
-*/
-   WPmaps(s);
-/*
-***Om mesbpt != NULL finns gammalt meddelande att döda.
-*/
-   if ( mainpt->mesbpt != NULL )
-     {
-     XDestroyWindow(xdisp,(mainpt->mesbpt)->id.x_id);
-     WPdlbu(mainpt->mesbpt);
-     mainpt->mesbpt = NULL;
-     }
-/*
-***Om tom sträng går det fort. Detta är detsamma som sudda.
-*/
-   if ( strlen(s) == 0 ) return(0);
-/*
-***Skapa knapp för nya meddelandet.
-*/
-   dx = WPstrl(s) + 15;
-   dy = (int)(1.6*(double)WPstrh());
-   x  = (int)(mainpt->vy.scrwin.xmin + 10);
-   y  = (int)(mainpt->geo.dy - mainpt->vy.scrwin.ymin - dy - 10);
-
-   WPwcbu(mainpt->id.x_id,
-         (short)x,(short)y,(short)dx,(short)dy,
-         (short)1,s,s,"",
-         (short)WP_BGND,(short)WP_FGND,&mainpt->mesbpt);
-
-   XMapRaised(xdisp,(mainpt->mesbpt)->id.x_id);
-   WPxpbu(mainpt->mesbpt);
-   XFlush(xdisp);
+   WPaddmess_mcwin(s,WP_MESSAGE);
 /*
 ***Slut.
 */

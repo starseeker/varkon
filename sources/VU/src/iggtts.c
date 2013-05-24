@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Utility Library.
-*    URL:  http://www.varkon.com
+*    URL: http://www.tech.oru.se/cad/varkon
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -20,8 +20,6 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*    (C)Microform AB 1984-2000, Johan Kjellander, johan@microform.se
-*
 ***********************************************************************/
 
 /*
@@ -30,7 +28,7 @@
 ***and relies on a lot of VARKON specific code.
 */
 
-char *iggtts(short tsnumber) /* t-string */
+char *IGgtts(short tsnumber) /* t-string */
 {
    return("***");
 }

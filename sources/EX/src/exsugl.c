@@ -196,7 +196,7 @@ fprintf(dbgfil(EXEPAC),
       break;
 
       default:
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(varkon_erpush("EX1412",errbuf));
       }
 
@@ -402,7 +402,7 @@ if ( dbglev(EXEPAC) == 1 )
 /* Call of DBget_pointer and DBread_point                           */
 /*                                                                 !*/
 
-    status = igstid(refstr,pid);
+    status = IGstid(refstr,pid);
     if ( status < 0 )
       {
       sprintf(errbuf,"igstid%%EXsugl*sele99");
@@ -419,7 +419,7 @@ if ( dbglev(EXEPAC) == 1 )
       break;
 
       default:
-      igidst(pid,errbuf);
+      IGidst(pid,errbuf);
       return(varkon_erpush("EX1412",errbuf));
       }
 
@@ -570,7 +570,7 @@ if ( dbglev(EXEPAC) == 1 )
       break;
 
       default:
-      igidst(pid,errbuf);
+      IGidst(pid,errbuf);
       return(varkon_erpush("EX1412",errbuf));
       }
 
@@ -649,7 +649,7 @@ fprintf(dbgfil(EXEPAC),
 /*!                                                                 */
 /* Start limit curve s_lim_s    to lim_s  and p_limseg.             */
 
-    status = igstid(s_lim_s   ,pid);
+    status = IGstid(s_lim_s   ,pid);
     if ( status < 0 )
       {
       sprintf(errbuf,"igstid%%EXsugl*sele01");
@@ -667,7 +667,7 @@ fprintf(dbgfil(EXEPAC),
 
       default:
 
-      igidst(pid,errbuf);
+      IGidst(pid,errbuf);
       return(varkon_erpush("EX1412",errbuf));
       }
 
@@ -686,7 +686,7 @@ if ( dbglev(EXEPAC) == 1 )
 /* Generatrix 1 s_gener1 to gener1 and p_gener1seg.                 */
 /*Empty                                                            !*/
 
-    status = igstid(s_gener1 ,pid);
+    status = IGstid(s_gener1 ,pid);
     if ( status < 0 )
       {
       sprintf(errbuf,"igstid%%EXsugl*sele01");
@@ -704,7 +704,7 @@ if ( dbglev(EXEPAC) == 1 )
 
       default:
 
-      igidst(pid,errbuf);
+      IGidst(pid,errbuf);
       return(varkon_erpush("EX1412",errbuf));
       }
 
@@ -723,7 +723,7 @@ if ( dbglev(EXEPAC) == 1 )
 /* Generatrix 2 s_gener2 to gener1 and p_gener2seg.                 */
 /*Empty                                                            !*/
 
-    status = igstid(s_gener2 ,pid);
+    status = IGstid(s_gener2 ,pid);
     if ( status < 0 )
       {
       sprintf(errbuf,"igstid%%EXsugl*sele01");
@@ -741,7 +741,7 @@ if ( dbglev(EXEPAC) == 1 )
 
       default:
 
-      igidst(pid,errbuf);
+      IGidst(pid,errbuf);
       return(varkon_erpush("EX1412",errbuf));
       }
 

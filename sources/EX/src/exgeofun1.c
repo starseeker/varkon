@@ -55,7 +55,7 @@
 #include "../../GE/include/GE.h"
 /*#include "../../GP/include/GP.h"*/
 
-#ifdef V3_X11
+#ifdef UNIX
 #include "../../WP/include/WP.h"
 #endif
 
@@ -1542,7 +1542,7 @@ extern V2NAPA  defnap;
 */
     if ( la1 == la2 )
      {
-     igidst(idp1,idstr1);
+     IGidst(idp1,idstr1);
      return(erpush("EX1732",idstr1));
      }
 /*
@@ -1552,8 +1552,8 @@ extern V2NAPA  defnap;
     if ( (typ1 == CSYTYP  ||  typ1 == BPLTYP  ||  typ1 == SURTYP )  &&
          (typ2 == CSYTYP  ||  typ2 == BPLTYP  ||  typ2 == SURTYP ) )
       {
-      igidst(idp1,idstr1);
-      igidst(idp2,idstr2);
+      IGidst(idp1,idstr1);
+      IGidst(idp2,idstr2);
       strcat(idstr1,"%");
       strcat(idstr1,idstr2);
       return(erpush("EX1982",idstr1));
@@ -1592,7 +1592,7 @@ extern V2NAPA  defnap;
       break;
 
       default:
-      igidst(idp1,idstr1);
+      IGidst(idp1,idstr1);
       return(erpush("EX1412",idstr1));
       }
 /*
@@ -1629,7 +1629,7 @@ extern V2NAPA  defnap;
       break;
 
       default:
-      igidst(idp2,idstr2);
+      IGidst(idp2,idstr2);
       if ( typ1 == CURTYP ) DBfree_segments(segpk1);
       if ( typ1 == SURTYP ) DBfree_patches(&gmstr1.sur_un,patpek);
       return(erpush("EX1412",idstr2));
@@ -1646,8 +1646,8 @@ extern V2NAPA  defnap;
       else if ( typ2 == ARCTYP  &&  gmstr2.arc_un.ns_a == 0 ) ;
       else
         {
-        igidst(idp1,idstr1);
-        igidst(idp2,idstr2);
+        IGidst(idp1,idstr1);
+        IGidst(idp2,idstr2);
         strcat(idstr1,"%");
         strcat(idstr1,idstr2);
         erpush("EX1982",idstr1);
@@ -1661,8 +1661,8 @@ extern V2NAPA  defnap;
     if ( (status=GEintersect_pos(&gmstr1,pdat1,&gmstr2,pdat2,
                                                lsyspk,inr,vecptr)) < 0 )
       {
-      igidst(idp1,idstr1);
-      igidst(idp2,idstr2);
+      IGidst(idp1,idstr1);
+      IGidst(idp2,idstr2);
       strcat(idstr1,"%");
       strcat(idstr1,idstr2);
       status = erpush("EX1982",idstr1);
@@ -1744,7 +1744,7 @@ end:
 */
     if ( la1 == la2 )
      {
-     igidst(idp1,idstr1);
+     IGidst(idp1,idstr1);
      return(erpush("EX1732",idstr1));
      }
 /*
@@ -1754,8 +1754,8 @@ end:
     if ( (typ1 == CSYTYP  ||  typ1 == BPLTYP  ||  typ1 == SURTYP )  &&
          (typ2 == CSYTYP  ||  typ2 == BPLTYP  ||  typ2 == SURTYP ) )
       {
-      igidst(idp1,idstr1);
-      igidst(idp2,idstr2);
+      IGidst(idp1,idstr1);
+      IGidst(idp2,idstr2);
       strcat(idstr1,"%");
       strcat(idstr1,idstr2);
       return(erpush("EX1982",idstr1));
@@ -1794,7 +1794,7 @@ end:
       break;
 
       default:
-      igidst(idp1,idstr1);
+      IGidst(idp1,idstr1);
       return(erpush("EX1412",idstr1));
       }
 
@@ -1829,7 +1829,7 @@ end:
       break;
 
       default:
-      igidst(idp2,idstr2);
+      IGidst(idp2,idstr2);
       if ( typ1 == CURTYP ) DBfree_segments(segpk1);
       if ( typ1 == SURTYP ) DBfree_patches(&gmstr1.sur_un,patpek);
       return(erpush("EX1412",idstr2));
@@ -1846,8 +1846,8 @@ end:
       else if ( typ2 == ARCTYP  &&  gmstr2.arc_un.ns_a == 0 ) ;
       else
         {
-        igidst(idp1,idstr1);
-        igidst(idp2,idstr2);
+        IGidst(idp1,idstr1);
+        IGidst(idp2,idstr2);
         strcat(idstr1,"%");
         strcat(idstr1,idstr2);
         erpush("EX1982",idstr1);
@@ -1901,7 +1901,7 @@ end:
 
   {
 
-    if ( getidt(ident,typmsk,end,right,(short)0) < 0 )
+    if ( IGgsid(ident,typmsk,end,right,(short)0) < 0 )
       {
       ident->seq_val = 0;
       ident->ord_val = 1;
@@ -1917,7 +1917,7 @@ end:
 /********************************************************/
 /*!******************************************************/
 
-       short EXpos(
+       short   EXpos(
        double *px,
        double *py,
        char   *pc)
@@ -1942,8 +1942,10 @@ end:
 
   {
     DBVector pos;
+    wpw_id   grw_id;
 
-    WPgtmc(pc,px,py,TRUE);
+    WPgmc2(TRUE,pc,px,py,&grw_id);
+
     if ( lsyspk != NULL )
       {
       pos.x_gm = *px;
@@ -1955,7 +1957,6 @@ end:
       }
 
     return(0);
-
   }
   
 /********************************************************/
@@ -1966,7 +1967,7 @@ end:
        DBshort *piy,
        DBint   *win_id)
 
-/*      Funktionen SCREEN.
+/*      SCREEN() function in MBS.
  *
  *      In: pix    => Pekare till utdata.
  *          piy    => Pekare till utdata.
@@ -1986,11 +1987,11 @@ end:
  ******************************************************!*/
 
   {
-    char c;
+   char c;
 
    WPgtsc(FALSE,&c,pix,piy,win_id);
 
-    return(0);
+   return(0);
   }
   
 /********************************************************/
@@ -2206,7 +2207,7 @@ end:
 */
     if ( la1 == la2 )
      {
-     igidst(idp1,idstr1);
+     IGidst(idp1,idstr1);
      return(erpush("EX1732",idstr1));
      }
 /*
@@ -2216,8 +2217,8 @@ end:
     if ( (typ1 == CSYTYP  ||  typ1 == BPLTYP  ||  typ1 == SURTYP )  &&
          (typ2 == CSYTYP  ||  typ2 == BPLTYP  ||  typ2 == SURTYP ) )
       {
-      igidst(idp1,idstr1);
-      igidst(idp2,idstr2);
+      IGidst(idp1,idstr1);
+      IGidst(idp2,idstr2);
       strcat(idstr1,"%");
       strcat(idstr1,idstr2);
       return(erpush("EX1982",idstr1));
@@ -2256,7 +2257,7 @@ end:
       break;
 
       default:
-      igidst(idp1,idstr1);
+      IGidst(idp1,idstr1);
       return(erpush("EX1412",idstr1));
       }
 /*
@@ -2293,7 +2294,7 @@ end:
       break;
 
       default:
-      igidst(idp2,idstr2);
+      IGidst(idp2,idstr2);
       if ( typ1 == CURTYP ) DBfree_segments(segpk1);
       if ( typ1 == SURTYP ) DBfree_patches(&gmstr1.sur_un,patpek);
       return(erpush("EX1412",idstr2));
@@ -2310,8 +2311,8 @@ end:
       else if ( typ2 == ARCTYP  &&  gmstr2.arc_un.ns_a == 0 ) ;
       else
         {
-        igidst(idp1,idstr1);
-        igidst(idp2,idstr2);
+        IGidst(idp1,idstr1);
+        IGidst(idp2,idstr2);
         strcat(idstr1,"%");
         strcat(idstr1,idstr2);
         erpush("EX1982",idstr1);
@@ -2371,8 +2372,8 @@ end:
 */
   if ( status < 0 )
     {
-    igidst(idp1,idstr1);
-    igidst(idp2,idstr2);
+    IGidst(idp1,idstr1);
+    IGidst(idp2,idstr2);
     strcat(idstr1,"%");
     strcat(idstr1,idstr2);
     status = erpush("EX1982",idstr1);

@@ -173,15 +173,15 @@ if ( dbglev(EXEPAC) == 1 )
       goto error2;
       }
 
-    if ( v3ftst(str1) == FALSE ) return(erpush("EX4022",str1));
+    if ( IGftst(str1) == FALSE ) return(erpush("EX4022",str1));
     if ( strcmp(str2,"NMG_F07") != 0 ) return(erpush("EX4002",str2));
 /*
 ***En liten trevlig utskrift medan ytan l{ses in !
 */
-   strcpy(buf,iggtts(164));
-   strcat(buf,iggtts(181));
+   strcpy(buf,IGgtts(164));
+   strcat(buf,IGgtts(181));
    strcat(buf,str1);
-   igplma(buf,IG_MESS);
+   IGplma(buf,IG_MESS);
 /*
 ***Anropa inl{sningsrutin. Denna ber{knar antal patchar,
 ***reserverar minne, skriver in patch-data, fyller i sur-posten
@@ -263,8 +263,8 @@ if ( dbglev(EXEPAC) == 1 )
          s_lim[1][1]= trim[3]+1.0; /* Slut  V                       */
 
 /*       Trimma ytan.                                               */
-         igrsma();      /* Radera meddelande zon                    */
-         igplma("Ytan trimmas",IG_MESS);
+         IGrsma();      /* Radera meddelande zon                    */
+         IGplma("Ytan trimmas",IG_MESS);
          tcase  = 11;
 #ifdef DEBUG
 if ( dbglev(EXEPAC) == 1 )
@@ -401,8 +401,8 @@ if ( dbglev(EXEPAC) == 1 )
          s_lim[0][1]= trim[2]+1.0; /* Start V                       */
          s_lim[1][1]= trim[3]+1.0; /* End   V                       */
 /*       Trim the surface                                           */
-         igrsma();      /* Radera meddelande zon                    */
-         igplma("Surface is trimmed",IG_MESS);
+         IGrsma();      /* Radera meddelande zon                    */
+         IGplma("Surface is trimmed",IG_MESS);
          tcase  = 11;
          status = varkon_sur_trim
          (&surwho,p_patwho,s_lim,tcase, &sur,&ptpat); 
@@ -457,8 +457,8 @@ if ( dbglev(EXEPAC) == 1 )
   fflush(dbgfil(EXEPAC)); /* To file from buffer      */
   }
 #endif
-    igrsma();
-    status = EXesur(id,&sur,ptpat,pnp);
+    IGrsma();
+    status = EXesur(id,&sur,ptpat,NULL,NULL,pnp);
 /*
 ***Nu kan vi sl{ppa det dynamiskt allokerade minnet f|r
 ***patcharna.
@@ -733,8 +733,8 @@ fflush(dbgfil(EXEPAC));
        s_lim[0][1]= trim[2]+1.0; /* Start V                       */
        s_lim[1][1]= trim[3]+1.0; /* End   V                       */
 /*     Trim the surface                                           */
-       igrsma();      /* Erase message zone                       */
-       igplma("Surface is trimmed",IG_MESS);
+       IGrsma();      /* Erase message zone                       */
+       IGplma("Surface is trimmed",IG_MESS);
        tcase  = 11;
        status = varkon_sur_trim
        (&surwho,p_patwho,s_lim,tcase, &surtri,&p_pattri); 
@@ -810,7 +810,7 @@ fprintf(dbgfil(EXEPAC),"exe21 EXesur status %d\n",(short)status );
 /*                                                                 !*/
 
 
-    status = EXesur(sur_id,&surtra,p_pattra,pnp);
+    status = EXesur(sur_id,&surtra,p_pattra,NULL,NULL,pnp);
     if ( status < 0 )
       {
 #ifdef DEBUG

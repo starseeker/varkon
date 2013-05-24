@@ -2,10 +2,7 @@
 #
 #   Makefile for GElib on GNU/Linux
 #
-#  (C)Microform AB 1999-03-30 J.Kjellander
-#
-#   Removed -DDEBUG from debug:  2006-09-11 Soren L
-#            can be put back if some issues are solved
+#  (C)2007 J.Kjellander
 #
 ##########################################################
 
@@ -21,7 +18,7 @@ distr :     CFLAGS =                    \
             -fsigned-char               \
             -O                          \
             -DUNIX
-
+            
 debug :     CFLAGS =                    \
             -ansi                       \
             -Wall                       \

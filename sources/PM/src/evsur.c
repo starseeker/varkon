@@ -23,6 +23,7 @@
 *    evsswp();     Evaluerar SUR_SWEEP
 *    evsrul();     Evaluerar SUR_RULED
 *    evscur();     Evaluates SUR_CURVES
+*    evstusr();    Evaluates SUR_TRIM_USRDEF
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -1227,15 +1228,91 @@ exit:
  *
  *      FV: Returns status from called functions.
  *
- *      (c)Orebro University 2006-09-14  S. Larsson
+ *      (c) SÖren L. , Örebro University 2006-09-14  
  *
  *
  *
  ******************************************************!*/
 
 {
+  PMREFVA *spek;
+  DBint    ncur;
+  DBint    curadr;         /* Adress to input curves           */
+  STTYTBL  typtbl;         /* Type of variable                 */
+  STARRTY  curtyp;         /* Type of array for input curves   */
+  int      dekl_dim;       /* Declared dimension for the array */
+  int      refsiz;         /* Size of ????                     */
+  PMLITVA  val;            /* Value from ??                    */
+  PMREFVA *lpek;           /* Pointer to array with references */
+  int      i;              /* Loop index                       */
+  short    status;         /* Status from execution function   */
+  char     errbuf[81];     /* String variable for errors       */
 
-   return(0); /* Not implemented yet */
+  spek = geop_pv[1].par_va.lit.ref_va;
+/*
+***How many input V curves.
+*/
+  ncur = geop_pv[2].par_va.lit.int_va;
+
+/*
+***Check that number of input curves is > 0
+*/
+   if ( ncur < 1 ) return(erpush("IN5762",""));
+/*
+***Check that the declared dimension of the MBS-array is sufficient for ncur
+*/
+/* Address to the variable                                */
+   curadr = geop_pv[3].par_va.lit.adr_va;
+/* Get type of variable, which is defined in a structure  */
+   strtyp(geop_pv[3].par_ty,&typtbl);
+/* Get type of array                                      */
+   strarr(typtbl.arr_ty,&curtyp);
+/* Get the declared size of the array                     */
+   dekl_dim = curtyp.up_arr - curtyp.low_arr + 1;
+/* Return with error if array not has sufficient size     */
+   if ( dekl_dim < ncur ) return(erpush("IN5772",""));
+/*
+***Get size of ???
+*/
+   strtyp(curtyp.base_arr,&typtbl);
+   refsiz = typtbl.size_ty;
+/*
+***Allocate memory.
+*/
+   if ( (lpek=(PMREFVA *)v3mall(ncur*sizeof(PMREFVA),"evscur")) == NULL )
+     {
+     sprintf(errbuf,"%d",ncur);
+     return(erpush("IN5782",errbuf));
+     }
+/*
+***Copy from RTS to the allocated area.
+*/
+   for ( i=0; i<ncur; ++i )
+     {
+     ingref(curadr+i*refsiz,&val);
+     (lpek+i)->seq_val  = val.lit.ref_va[0].seq_val;
+     (lpek+i)->ord_val  = val.lit.ref_va[0].ord_val;
+     (lpek+i)->p_nextre = val.lit.ref_va[0].p_nextre;
+     }
+
+/*
+***Call the execution function.
+*/
+
+   status = EXstrimusrd(geop_id,  /* Entity ID                     */
+            spek,                 /* Pointer to untrimmed surface  */
+            ncur,                 /* Number of input trim curves   */
+            lpek,                 /* Trim curve references         */
+            geop_np);             /* Name parameter block pointer  */
+
+/*
+***Free memory
+*/
+   v3free(lpek,"evscur");
+
+
+   return(status);
+
 }
 /********************************************************/
 

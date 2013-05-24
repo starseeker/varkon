@@ -102,6 +102,7 @@ extern short modtyp;
  *      (C)microform ab 1985-10-23 Per-Ove Agne'
  *
  *      1999-11-11 Rewritten, R. Svedin
+ *      2007-04-04 Bugfix, J.Kjellander
  *
  ******************************************************!*/
 
@@ -673,10 +674,9 @@ evaluat LT ( NOT GE )
 #ifndef ANALYZER
 
 /*
-***evaluate component variable
+***Evaluate component variable. Status check, bugfix 2007-04-04 J.Kjellander
 */
-      inevex( comp->p_comvar, &val1, &tyla1 );
-
+      if ( (status=inevex(comp->p_comvar,&val1,&tyla1)) < 0 ) return(status);
 /*
 ***check if address
 */
@@ -687,7 +687,7 @@ evaluat LT ( NOT GE )
 */
 
           {
-          return( erpush( "IN0084", "inevex()" ) );
+          return(erpush("IN0084","inevex()"));
           }  
 
 /*

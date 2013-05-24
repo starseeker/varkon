@@ -5,9 +5,7 @@
 /*  This file includes:                                                      */
 /*                                                                           */ 
 /*  GEevalnc()   Evaluator for NURBS curve segment(span)                     */
-/*                                                                           */
 /*  GEevaluvnc() Evaluator in UV space for NURBS curve segment(span)         */
-/*                                                                           */
 /*                                                                           */
 /*  This file is part of the VARKON Geometry Library.                        */
 /*  URL:                                                                     */
@@ -28,8 +26,6 @@
 /*  Public License along with this library; if not, write to the             */
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,                 */
 /*  MA 02139, USA.                                                           */
-/*                                                                           */
-/*  (C) 2002-05-23 Sören Larsson, Örebro University                          */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -66,7 +62,7 @@
 /*                                                                           */
 /*  Revisions                                                                */
 /*  ---------                                                                */
-/*  2000-06-24   Originally written                                          */
+/*  2002-06-24   Originally written                                          */
 /*                                                                           */
 /*                                                                           */
 /*****************************************************************************/
@@ -174,7 +170,7 @@
       offset = p_seg->ofs;
       }
 
-/*                        
+/*
 *** Is the segment rational?     
 */
    ratseg = FALSE;
@@ -187,16 +183,16 @@
          }
       }
 
-/*                        
-*** How many derivatives do we need in "DeersBasisFuns"?    
+/*
+*** How many derivatives do we need in "DeersBasisFuns"?
 */
    no_der = -1;
    if (  p_evalc ->evltyp & EVC_R   ) no_der = 0;
    if (  p_evalc ->evltyp & EVC_DR  ) no_der = 1;
-   
+
    if (offseg == TRUE ||
        (p_evalc ->evltyp & (EVC_D2R + EVC_PN + EVC_BN + EVC_KAP))) no_der = 2;
-   
+
    if (offseg == TRUE &&
        (p_evalc ->evltyp & (EVC_D2R + EVC_PN + EVC_BN + EVC_KAP))) no_der = 3;
 
@@ -205,28 +201,28 @@
       sprintf(errbuf," - evltyp - %%GEevalnc");
       return(varkon_erpush("SU2993",errbuf));
       }
-      
-/*                        
-*** Calculate basis values    
+
+/*
+*** Calculate basis values
 */
    status = DersBasisFuns (offs_u,u,degree,no_der,p_seg->knots_c,ders);
 
-/*                        
+/*
 *** Calculate position 
 *** (always needed for a rational curve)    
 */
    if ((p_evalc ->evltyp & EVC_R) || (ratseg == TRUE)) 
       {
       w.x_gm = w.y_gm = w.z_gm = w.w_gm = 0.0;
-      
+
       for (i=0;i<=degree;i++)
-         {        
+         {
          w.x_gm = w.x_gm + (P + offs_p + i)->x_gm * ders[0][i];
          w.y_gm = w.y_gm + (P + offs_p + i)->y_gm * ders[0][i];
          w.z_gm = w.z_gm + (P + offs_p + i)->z_gm * ders[0][i];
          w.w_gm = w.w_gm + (P + offs_p + i)->w_gm * ders[0][i];     
          }
-      
+
       if (ratseg == TRUE)
          {
          invHom = 1.0 / w.w_gm;
@@ -244,21 +240,21 @@
       if ( no_der == 0 ) return(SUCCED);
       }
       /* end position */
-/*                        
-*** Calculate first derivative     
+/*
+*** Calculate first derivative
 */
    if ((p_evalc ->evltyp & (EVC_DR+EVC_PN+EVC_BN+EVC_KAP)) || (offseg==TRUE )) 
       {
       dwdu.x_gm = dwdu.y_gm = dwdu.z_gm = dwdu.w_gm = 0.0;
-   
+
       for (i=0 ;i <= degree ;i++ ) 
-         {        
+         {
          dwdu.x_gm = dwdu.x_gm + (P + offs_p + i)->x_gm * ders[1][i];
          dwdu.y_gm = dwdu.y_gm + (P + offs_p + i)->y_gm * ders[1][i];
          dwdu.z_gm = dwdu.z_gm + (P + offs_p + i)->z_gm * ders[1][i];
          dwdu.w_gm = dwdu.w_gm + (P + offs_p + i)->w_gm * ders[1][i];
          }
-            
+
       if (ratseg == TRUE)
          {
          invHomQuad = invHom * invHom; 
@@ -271,8 +267,8 @@
          drdu.x_gm = dwdu.x_gm;
          drdu.y_gm = dwdu.y_gm;
          drdu.z_gm = dwdu.z_gm;
-         } 
-         
+         }
+
       p_evalc ->drdt.x_gm = drdu.x_gm;
       p_evalc ->drdt.y_gm = drdu.y_gm;
       p_evalc ->drdt.z_gm = drdu.z_gm;
@@ -280,8 +276,8 @@
       if ( no_der == 1 ) return(SUCCED);
       }
       /* end 1:st derivative */
-/*                        
-*** Calculate second derivative     
+/*
+*** Calculate second derivative
 */
    if ( (p_evalc->evltyp & (EVC_D2R+EVC_PN+EVC_BN+EVC_KAP)) || (offseg==TRUE )) 
       {
@@ -291,9 +287,9 @@
          d2wdu2.y_gm=0.0;
          d2wdu2.z_gm=0.0;
          d2wdu2.w_gm=0.0;
-   
-         for (i=0 ;i <= degree ;i++ )  
-            {        
+
+         for (i=0 ;i <= degree ;i++ )
+            {
             d2wdu2.x_gm = d2wdu2.x_gm + (P + offs_p + i)->x_gm * ders[2][i];
             d2wdu2.y_gm = d2wdu2.y_gm + (P + offs_p + i)->y_gm * ders[2][i];
             d2wdu2.z_gm = d2wdu2.z_gm + (P + offs_p + i)->z_gm * ders[2][i];
@@ -335,14 +331,14 @@
       /* end 2:nd derivative */
 
 /*
-*** Do we need to calculate kappa ?    
+*** Do we need to calculate kappa ?
 */
    if (p_evalc ->evltyp & (EVC_KAP + EVC_BN + EVC_PN) || (offseg == TRUE ))
       {
       tmpx  = drdu.y_gm * d2rdu2.z_gm - drdu.z_gm * d2rdu2.y_gm;
       tmpy  = drdu.z_gm * d2rdu2.x_gm - drdu.x_gm * d2rdu2.z_gm;
       tmpz  = drdu.x_gm * d2rdu2.y_gm - drdu.y_gm * d2rdu2.x_gm;
- 
+
       tmp   = tmpx * tmpx + tmpy * tmpy + tmpz * tmpz;
 
       /*
@@ -355,7 +351,7 @@
       dsdu   =  SQRT( drdu.x_gm * drdu.x_gm  + 
                       drdu.y_gm * drdu.y_gm  + 
                       drdu.z_gm * drdu.z_gm) ;
-      
+
       dsdu3 = dsdu*dsdu*dsdu;
       if ( dsdu3 < 1e-14 ) dsdu3 = 1e-10;
 
@@ -385,7 +381,7 @@
       p_evalc->bn_x = bx;
       p_evalc->bn_y = by;
       p_evalc->bn_z = bz;
-      
+
       p_evalc->b_norm.x_gm = bx;
       p_evalc->b_norm.y_gm = by;
       p_evalc->b_norm.z_gm = bz;
@@ -408,7 +404,7 @@
       p_evalc->pn_x = nx;
       p_evalc->pn_y = ny;
       p_evalc->pn_z = nz;
-   
+
       p_evalc->p_norm.x_gm = nx;
       p_evalc->p_norm.y_gm = ny;
       p_evalc->p_norm.z_gm = nz;
@@ -419,10 +415,10 @@
 *** Calculate offset coordinates and derivatives if the curve
 *** segment is in offset.
 */
- 
+
    if (offseg == TRUE )
-      {         
-        
+      {
+
       /*
       *** Calculate the direction of the offset vector as the cross-product 
       *** between the tangent to the curve and the normal of the curve-plane.
@@ -435,14 +431,14 @@
       *** side of the curve in the curve plane.
       *** Length of offset vector = the offset value of the curve.
       */
-          
+
       if (p_evalc ->evltyp & EVC_R) 
          {   
          p_evalc->r.x_gm= xoff= r.x_gm + offset*(ty * n_p.z_gm- n_p.y_gm * tz);
          p_evalc->r.y_gm= yoff= r.y_gm + offset*(tz * n_p.x_gm- n_p.z_gm * tx);
          p_evalc->r.z_gm= zoff= r.z_gm + offset*(tx * n_p.y_gm- n_p.x_gm * ty);
          }
-      
+
       if ((p_evalc ->evltyp & (EVC_DR+EVC_KAP)))  
          {
 
@@ -630,7 +626,7 @@
 /*  Revisions                                                                */
 /*  ---------                                                                */
 /*  2006-11-07   Originally written                                          */
-/*                                                                           */
+/*  2007-02-01   bugfix, u and v was not always calculated, Sören L.         */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -656,8 +652,6 @@
 
 /*!------------------------ Internal variables ------------------------------*/
         
-       
-   bool     offseg;        /* Flag for offset segment                        */
    bool     ratseg;        /* Flag for rational segment                      */
    DBint    status;        /* Error code from called function                */
    DBint    i;             /* loop variable                                  */
@@ -722,130 +716,107 @@
          break;
          }
       }
-/*                        
-*** How many derivatives do we need in "DeersBasisFuns"?    
-*/
-   no_der = -1;
-   if (  p_evalc ->evltyp & EVC_R   ) no_der = 0;
-   if (  p_evalc ->evltyp & EVC_DR  ) no_der = 1;
-   if (  p_evalc ->evltyp & EVC_D2R  ) no_der = 2;
 
-   if (no_der < 0) 
-      {
-      sprintf(errbuf," - evltyp - %%GEevalnc");
-      return(varkon_erpush("SU2993",errbuf));
-      }
 /*                        
 *** Calculate basis values    
 */
+   no_der = 2;
    status = DersBasisFuns (offs_u,u,degree,no_der,p_seg->knots_c,ders);
 
 /*                        
-*** Calculate position 
-*** (always needed for a rational curve)    
+*** Calculate position
 */
-   if ((p_evalc ->evltyp & EVC_R) || (ratseg == TRUE)) 
+
+   w.x_gm = w.y_gm = w.z_gm = w.w_gm = 0.0;
+
+   for (i=0;i<=degree;i++)
       {
-      w.x_gm = w.y_gm = w.z_gm = w.w_gm = 0.0;
-      
-      for (i=0;i<=degree;i++)
-         {        
-         w.x_gm = w.x_gm + (P + offs_p + i)->x_gm * ders[0][i];
-         w.y_gm = w.y_gm + (P + offs_p + i)->y_gm * ders[0][i];
-         w.w_gm = w.w_gm + (P + offs_p + i)->w_gm * ders[0][i];     
-         }
-      
-      if (ratseg == TRUE)
-         {
-         invHom = 1.0 / w.w_gm;
-         p_evalc -> u = r.x_gm = w.x_gm * invHom;
-         p_evalc -> v = r.y_gm = w.y_gm * invHom;
-         }
-      else
-         {
-         w.w_gm = 1.0; 
-         p_evalc -> u = r.x_gm = w.x_gm;
-         p_evalc -> v = r.y_gm = w.y_gm;
-         }
-      if ( no_der == 0 ) return(SUCCED);
+      w.x_gm = w.x_gm + (P + offs_p + i)->x_gm * ders[0][i];
+      w.y_gm = w.y_gm + (P + offs_p + i)->y_gm * ders[0][i];
+      w.w_gm = w.w_gm + (P + offs_p + i)->w_gm * ders[0][i];
       }
-      /* end position */
+
+   if (ratseg == TRUE)
+      {
+      invHom = 1.0 / w.w_gm;
+      p_evalc -> u = r.x_gm = w.x_gm * invHom;
+      p_evalc -> v = r.y_gm = w.y_gm * invHom;
+      }
+   else
+      {
+      w.w_gm = 1.0;
+      p_evalc -> u = r.x_gm = w.x_gm;
+      p_evalc -> v = r.y_gm = w.y_gm;
+      }
+
 /*                        
 *** Calculate first derivative     
 */
-   if ((p_evalc ->evltyp & (EVC_DR+EVC_PN+EVC_BN+EVC_KAP))) 
+
+   dwdu.x_gm = dwdu.y_gm = dwdu.z_gm = dwdu.w_gm = 0.0;
+ 
+   for (i=0 ;i <= degree ;i++ )
       {
-      dwdu.x_gm = dwdu.y_gm = dwdu.z_gm = dwdu.w_gm = 0.0;
-   
-      for (i=0 ;i <= degree ;i++ ) 
-         {        
-         dwdu.x_gm = dwdu.x_gm + (P + offs_p + i)->x_gm * ders[1][i];
-         dwdu.y_gm = dwdu.y_gm + (P + offs_p + i)->y_gm * ders[1][i];
-         dwdu.w_gm = dwdu.w_gm + (P + offs_p + i)->w_gm * ders[1][i];
-         }
+      dwdu.x_gm = dwdu.x_gm + (P + offs_p + i)->x_gm * ders[1][i];
+      dwdu.y_gm = dwdu.y_gm + (P + offs_p + i)->y_gm * ders[1][i];
+      dwdu.w_gm = dwdu.w_gm + (P + offs_p + i)->w_gm * ders[1][i];
+      }
             
+   if (ratseg == TRUE)
+      {
+      invHomQuad = invHom * invHom;
+      drdu.x_gm = (w.w_gm * dwdu.x_gm - dwdu.w_gm * w.x_gm) * invHomQuad;
+      drdu.y_gm = (w.w_gm * dwdu.y_gm - dwdu.w_gm * w.y_gm) * invHomQuad;
+      }
+   else
+      {
+      drdu.x_gm = dwdu.x_gm;
+      drdu.y_gm = dwdu.y_gm;
+      }
+         
+   p_evalc ->u_t = drdu.x_gm;
+   p_evalc ->v_t = drdu.y_gm;
+
+/*
+*** Calculate second derivative
+*/
+   if (degree > 1)
+      {
+      d2wdu2.x_gm=0.0;
+      d2wdu2.y_gm=0.0;
+      d2wdu2.w_gm=0.0;
+  
+      for (i=0 ;i <= degree ;i++ )
+         {
+         d2wdu2.x_gm = d2wdu2.x_gm + (P + offs_p + i)->x_gm * ders[2][i];
+         d2wdu2.y_gm = d2wdu2.y_gm + (P + offs_p + i)->y_gm * ders[2][i];
+         d2wdu2.w_gm = d2wdu2.w_gm + (P + offs_p + i)->w_gm * ders[2][i];
+         }
+
       if (ratseg == TRUE)
          {
-         invHomQuad = invHom * invHom; 
-         drdu.x_gm = (w.w_gm * dwdu.x_gm - dwdu.w_gm * w.x_gm) * invHomQuad;
-         drdu.y_gm = (w.w_gm * dwdu.y_gm - dwdu.w_gm * w.y_gm) * invHomQuad;
+         invHomCub = invHomQuad * invHom;
+
+         d2rdu2.x_gm =
+          (w.w_gm  * (w.w_gm * d2wdu2.x_gm - w.x_gm * d2wdu2.w_gm) + 2 *
+          dwdu.w_gm * (w.x_gm * dwdu.w_gm   - w.w_gm * dwdu.x_gm))
+          * invHomCub;
+
+         d2rdu2.y_gm =
+          (w.w_gm  * (w.w_gm * d2wdu2.y_gm - w.y_gm * d2wdu2.w_gm) + 2 *
+          dwdu.w_gm * (w.y_gm * dwdu.w_gm   - w.w_gm * dwdu.y_gm))
+          * invHomCub;
          }
       else
          {
-         drdu.x_gm = dwdu.x_gm;
-         drdu.y_gm = dwdu.y_gm;
-         } 
-         
-      p_evalc ->u_t = drdu.x_gm;
-      p_evalc ->v_t = drdu.y_gm;
-
-      if ( no_der == 1 ) return(SUCCED);
-      }
-      /* end 1:st derivative */
-/*                        
-*** Calculate second derivative     
-*/
-   if ( (p_evalc->evltyp & (EVC_D2R+EVC_PN+EVC_BN+EVC_KAP)) || (offseg==TRUE )) 
-      {
-      if (degree > 1)
-         {
-         d2wdu2.x_gm=0.0;
-         d2wdu2.y_gm=0.0;
-         d2wdu2.w_gm=0.0;
-   
-         for (i=0 ;i <= degree ;i++ )  
-            {        
-            d2wdu2.x_gm = d2wdu2.x_gm + (P + offs_p + i)->x_gm * ders[2][i];
-            d2wdu2.y_gm = d2wdu2.y_gm + (P + offs_p + i)->y_gm * ders[2][i];
-            d2wdu2.w_gm = d2wdu2.w_gm + (P + offs_p + i)->w_gm * ders[2][i];
-            }
-
-         if (ratseg == TRUE)
-            {
-            invHomCub = invHomQuad * invHom;
-
-            d2rdu2.x_gm = 
-             (w.w_gm  * (w.w_gm * d2wdu2.x_gm - w.x_gm * d2wdu2.w_gm) + 2 * 
-            dwdu.w_gm * (w.x_gm * dwdu.w_gm   - w.w_gm * dwdu.x_gm)) 
-            * invHomCub;
-
-            d2rdu2.y_gm = 
-             (w.w_gm  * (w.w_gm * d2wdu2.y_gm - w.y_gm * d2wdu2.w_gm) + 2 * 
-            dwdu.w_gm * (w.y_gm * dwdu.w_gm   - w.w_gm * dwdu.y_gm)) 
-            * invHomCub;
-            }
-         else
-            {
-             d2rdu2.x_gm = d2wdu2.x_gm;
-             d2rdu2.y_gm = d2wdu2.y_gm;
-            }
+         d2rdu2.x_gm = d2wdu2.x_gm;
+         d2rdu2.y_gm = d2wdu2.y_gm;
          }
-      else d2rdu2.x_gm = d2rdu2.y_gm = d2rdu2.z_gm = d2wdu2.w_gm = 0.0;
-
-      p_evalc->u_t2 = d2rdu2.x_gm ;
-      p_evalc->v_t2 = d2rdu2.y_gm ;
       }
-      /* end 2:nd derivative */
+   else d2rdu2.x_gm = d2rdu2.y_gm = d2rdu2.z_gm = d2wdu2.w_gm = 0.0;
+
+   p_evalc->u_t2 = d2rdu2.x_gm ;
+   p_evalc->v_t2 = d2rdu2.y_gm ;
 
    return(SUCCED);
 

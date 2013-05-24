@@ -40,7 +40,7 @@
 #include "../include/font0.h"
 #include <math.h>
 
-extern short    actpen;
+extern int actpen;
 
 static short drawtx(WPGWIN *gwinpt, DBText *txtpek, char *strpek,
                     DBptr la, bool draw);
@@ -120,7 +120,7 @@ static unsigned short *pvektb;
 /*
 ***Ja, ligger texten på en nivå som är tänd i detta fönster ?
 */
-         if ( WPnivt(gwinpt,txtpek->hed_tx.level) )
+         if ( WPnivt(gwinpt->nivtab,txtpek->hed_tx.level) )
            {
 /*
 ***Ja. Kolla att rätt färg är inställd.
@@ -191,8 +191,10 @@ static unsigned short *pvektb;
 */
          if ( WPfobj(gwinpt,la,TXTTYP,&typ) )
            {
+           if ( txtpek->wdt_tx != 0.0 ) WPswdt(gwinpt->id.w_id,txtpek->wdt_tx);
            WPdobj(gwinpt,FALSE);
            WProbj(gwinpt);
+           if ( txtpek->wdt_tx != 0.0 ) WPswdt(gwinpt->id.w_id,0.0);
            }
 /*
 ***Om den nu ligger på en släckt nivå eller är blankad gör vi
@@ -200,7 +202,7 @@ static unsigned short *pvektb;
 */
          else
            {
-           if ( !WPnivt(gwinpt,txtpek->hed_tx.level)  ||
+           if ( !WPnivt(gwinpt->nivtab,txtpek->hed_tx.level)  ||
                                txtpek->hed_tx.blank) return(0);
            else
              {
@@ -262,7 +264,7 @@ static unsigned short *pvektb;
 ***Klipp polylinjen. Om den är synlig (helt eller delvis ),
 ***rita den.
 */
-   if ( WPcply(gwinpt,-1,&k,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,-1,&k,x,y,a) )
      {
      if ( draw  &&  txtpek->hed_tx.hit )
        {
@@ -470,12 +472,12 @@ unsigned char   *strpek,
       p.y_gm = txtpek->crd_tx.y_gm;
       p.z_gm = txtpek->crd_tx.z_gm;
 
-      x0 = gwinpt->vy.vymat.k11 * p.x_gm +
-           gwinpt->vy.vymat.k12 * p.y_gm +
-           gwinpt->vy.vymat.k13 * p.z_gm;
-      y0 = gwinpt->vy.vymat.k21 * p.x_gm +
-           gwinpt->vy.vymat.k22 * p.y_gm +
-           gwinpt->vy.vymat.k23 * p.z_gm;
+      x0 = gwinpt->vy.matrix.k11 * p.x_gm +
+           gwinpt->vy.matrix.k12 * p.y_gm +
+           gwinpt->vy.matrix.k13 * p.z_gm;
+      y0 = gwinpt->vy.matrix.k21 * p.x_gm +
+           gwinpt->vy.matrix.k22 * p.y_gm +
+           gwinpt->vy.matrix.k23 * p.z_gm;
 
       dx = x0 - p.x_gm;
       dy = y0 - p.y_gm;
@@ -497,17 +499,17 @@ unsigned char   *strpek,
         p.x_gm = x[i];
         p.y_gm = y[i];
         p.z_gm = z[i];
-        x[i] = gwinpt->vy.vymat.k11 * p.x_gm +
-               gwinpt->vy.vymat.k12 * p.y_gm +
-               gwinpt->vy.vymat.k13 * p.z_gm;
+        x[i] = gwinpt->vy.matrix.k11 * p.x_gm +
+               gwinpt->vy.matrix.k12 * p.y_gm +
+               gwinpt->vy.matrix.k13 * p.z_gm;
   
-        y[i] = gwinpt->vy.vymat.k21 * p.x_gm +
-               gwinpt->vy.vymat.k22 * p.y_gm +
-               gwinpt->vy.vymat.k23 * p.z_gm;
+        y[i] = gwinpt->vy.matrix.k21 * p.x_gm +
+               gwinpt->vy.matrix.k22 * p.y_gm +
+               gwinpt->vy.matrix.k23 * p.z_gm;
             
-        z[i] = gwinpt->vy.vymat.k31 * p.x_gm +
-               gwinpt->vy.vymat.k32 * p.y_gm +
-               gwinpt->vy.vymat.k33 * p.z_gm;
+        z[i] = gwinpt->vy.matrix.k31 * p.x_gm +
+               gwinpt->vy.matrix.k32 * p.y_gm +
+               gwinpt->vy.matrix.k33 * p.z_gm;
         }
       }
 
@@ -607,7 +609,7 @@ unsigned char   *strpek,
      {
      if ( fnttab[font].loaded != TRUE )
        {
-       sprintf(path,"%s%d.FNT",v3genv(VARKON_FNT),font);
+       sprintf(path,"%s%d.FNT",IGgenv(VARKON_FNT),font);
        WPldfn(font,path);
        }
      actfnt = font;

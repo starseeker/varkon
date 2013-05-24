@@ -304,7 +304,7 @@ extern V2NAPA  defnap;
     dat.mtyp_pd = 2;
     dat.matt_pd = BASIC;
     dat.npar_pd = 0;
-    cpid.seq_val = iggnid();
+    cpid.seq_val = IGgnid();
     cpid.ord_val = 0;
     cpid.p_nextre = NULL;
 
@@ -612,7 +612,7 @@ extern V2NAPA  defnap;
     dat.mtyp_pd = 2;
     dat.matt_pd = BASIC;
     dat.npar_pd = 0;
-    cpid.seq_val = iggnid();
+    cpid.seq_val = IGgnid();
     cpid.ord_val = 0;
     cpid.p_nextre = NULL;
 

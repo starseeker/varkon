@@ -2,7 +2,7 @@
  
  MACRO MODULE igs_gflt(
     VAR FILE   infile;
-    VAR STRING row*80;
+    VAR STRING row*82;
     VAR FLOAT  f;
     VAR INT    status);
 
@@ -18,6 +18,7 @@
 !*                  -1 => Error
 !*
 !*      (C)microform ab 1997-12-23 J. Kjellander
+!*
 !*       2006-09-27, Mohamed Rahayem, Örebro university. 
 !*         
 !*******************************************************
@@ -32,6 +33,7 @@
    IF pd > 0 THEN
      row:=substr(row,1,pd-1)+"E"+substr(row,pd+1);
    ENDIF;
+   
    f:=fval(row,status,n_chars);
 !*
 !**check status.
@@ -39,10 +41,12 @@
    IF status = -1 THEN
      exit("Invalid float conversion !  "+ row);
    ENDIF;   
+   
    IF substr(row,n_chars + 1,1) = "P"  THEN
      row := inlin(infile);
      goto loop;
    ENDIF;   
+   
    row:=substr(row,n_chars+2);
 !*
 !**END

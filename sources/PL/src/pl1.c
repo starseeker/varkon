@@ -275,7 +275,7 @@ error:
 /*
 ***Öppna pen-filen.
 */
-    strcpy(buf,v3genv(VARKON_PLT));
+    strcpy(buf,IGgenv(VARKON_PLT));
     strcat(buf,fnam);
 
     if ( (pf=fopen(buf,"r")) == NULL )

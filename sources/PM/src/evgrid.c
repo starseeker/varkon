@@ -32,7 +32,7 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#ifdef V3_X11
+#ifdef UNIX
 #include "../../WP/include/WP.h"
 #endif
 #include "../../EX/include/EX.h"
@@ -53,43 +53,31 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 1996-02-12
  *
  *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      2007-02-04 1.19 J.Kjellander
  *
  ******************************************************!*/
 
   {
-    extern bool  rstron;
-    extern DBfloat rstrox,rstroy,rstrdx,rstrdy;
-    extern short WPdrrs(),WPdlrs();
 
 /*
-***Rastret skall tändas. Om det redan var tänt gör vi ingenting.
-***För att ändra ett raster skall man alltså först släcka det,
-***sedan ändra det och sist tända det igen.
+***Rastret skall tändas.
 */
     if ( proc_pv[1].par_va.lit.int_va == 1 )
       {
-      if ( !rstron )
-        {
-        rstron = TRUE;
-        WPdrrs(rstrox,rstroy,rstrdx,rstrdy);
-        }
+      WPgrid_on(GWIN_MAIN);
+      WPdraw_grid(GWIN_MAIN);
       }
 /*
-***Rastret skall släckas. Om det redan var släckt gör vi heller
-***ingenting.
+***Rastret skall släckas.
 */
     else if ( proc_pv[1].par_va.lit.int_va == 0 )
       {
-      if ( rstron )
-        {
-        rstron = FALSE;
-        WPdlrs(rstrox,rstroy,rstrdx,rstrdy);
-        }
+      WPgrid_off(GWIN_MAIN);
+      WPdelete_grid(GWIN_MAIN);
       }
 /*
 ***Om parametern varken var 1 (Tänd) eller 0 (Släck) gör vi ingenting.
 */
-
     return(0);
   }
 
@@ -109,10 +97,22 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern DBfloat rstrox;
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Move the X origin.
+*/
     rstrox = proc_pv[1].par_va.lit.float_va;
 
+    WPset_grid(rstrox,rstroy,rstrdx,rstrdy);
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -132,10 +132,22 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern DBfloat rstroy;
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Move the Y origin.
+*/
     rstroy = proc_pv[1].par_va.lit.float_va;
 
+    WPset_grid(rstrox,rstroy,rstrdx,rstrdy);
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -155,10 +167,22 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern DBfloat rstrdx;
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Change the X spacing.
+*/
     rstrdx = proc_pv[1].par_va.lit.float_va;
 
+    WPset_grid(rstrox,rstroy,rstrdx,rstrdy);
+/*
+***The end.
+*/
     return(0);
   }
 
@@ -178,10 +202,22 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  ******************************************************!*/
 
   {
-    extern DBfloat rstrdy;
+    DBfloat rstrox,rstroy,rstrdx,rstrdy;
+    bool    rstron;
 
+/*
+***Get current grid.
+*/
+    WPget_grid(&rstrox,&rstroy,&rstrdx,&rstrdy,&rstron);
+/*
+***Change the Y spacing.
+*/
     rstrdy = proc_pv[1].par_va.lit.float_va;
 
+    WPset_grid(rstrox,rstroy,rstrdx,rstrdy);
+/*
+***The end.
+*/
     return(0);
   }
 

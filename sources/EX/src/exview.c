@@ -3,17 +3,6 @@
 *    exview.c
 *    ========
 *
-*    EXclgm();     Interface-routine for CLEAR_GM
-*    EXldgm();     Interface-routine for LOAD_GM
-*    EXsvgm();     Interface-routine for SAVE_GM
-*
-*    EXldjb();     Interface-routine for LOAD_JOB
-*    EXsvjb();     Interface-routine for SAVE_JOB
-*
-*    EXbllv();     Interface-routine for BLANK_LEV
-*    EXublv();     Interface-routine for UNBLANK_LEV
-*    EXgtlv();     Interface-routine for GET_LEV
-*
 *    EXcrvp();     Interface-routine for CRE_VIEW by position
 *    EXcrvc();     Interface-routine for CRE_VIEW by coord.sys.
 *    EXacvi();     Interface-routine for ACT_VIEW
@@ -23,12 +12,8 @@
 *    EXprvi();     Interface-routine for PERP_VIEW
 *    EXervi();     Interface-routine for ERASE_VIEW
 *    EXrpvi();     Interface-routine for REP_VIEW
-*    EXgvnl();     Returns viewname list
 *    EXcavi();     Interface-routine for CACC_VIEW
-*    EXplvi();     Interface-routine for PLOT_VIEW
 *    EXplwi();     Interface-routine for PLOT_WIN
-*
-*    vyindx();     Translate viewname -> address in vytab
 *
 *    This file is part of the VARKON Execute Library.
 *    URL:  http://www.varkon.com
@@ -47,876 +32,32 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*
-*
 *********************************************************/
 
 #include "../../DB/include/DB.h"
-#include "../../DB/include/DBintern.h"
 #include "../../IG/include/IG.h"
 #include "../../GE/include/GE.h"
 #include "../../WP/include/WP.h"
 #include "../include/EX.h"
-#include "../include/oldatts.h"
 #include <string.h>
 
-
-/*
-***Old level tables. To be removed.
-*/
-tbool   nivtb1[NT1SIZ];   /* TRUE = Not visible */
-NIVNAM  nivtb2[NT2SIZ];   /* Level name "" = Not defined */
-
-extern DBptr  lsysla;
-extern char   jobdir[],jobnam[],tmprit[];
-extern V2NAPA defnap;
-extern VY     vytab[],actvy;
-extern double gpgszx,gpgszy;
-extern bool   rstron,tmpref;
-extern DBfloat  rstrox,rstroy,rstrdx,rstrdy;
-extern V3MDAT sydata;
-extern V3MSIZ sysize;
-extern short  modtyp,modatt,menlev,stalev,posmod;
-extern char   actcnm[];
 extern DBTmat *lsyspk;
-extern DBTmat lklsys,lklsyi;
-
-#ifdef WIN32
-extern int    msacvi(),msupvi(),msmaut(),msrepa();
-extern short  mssvjb(),msldjb(),msuppr();
-#endif
+extern DBTmat  lklsys,lklsyi;
 
 /*!******************************************************/
 
-        short EXclgm()
+        short     EXcrvp(
+        char      name[],
+        DBVector *campos)
 
-/*      Interface-rutin för CLEAR_GM(). Nollställer och
- *      initierar GM.
+/*      Creates/updates a view using a camera position and
+ *      looking at Basic (0,0,0) with Y up. CRE_VIEW() in MBS.
+ *      Used in evview.c
  *
- *      In: Inget.
+ *      In: name   => View name.
+ *          campos => Camera position.
  *
- *      Ut: Inget.
- *
- *      FV:  0     => Ok.
- *
- *      (C)microform ab 18/2/86 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-/*
-***Sudda skärm och displayfil.
-*/
-    WPergw(GWIN_ALL);
-/*
-***Töm och initiera GM.
-*/
-    DBreset();
-
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short EXldgm(char *filnam)
-
-/*      Interface-rutin för LOAD_GM(fil). Laddar resultatfil
- *      till GM.
- *
- *      In: filnam = Pekare till filnamn.
- *
- *      Ut: Inget.
- *
- *      Felkoder: EX1642 = Kan ej ladda filen till GM.
- *
- *      (C)microform ab 1/6/86 J. Kjellander
- *
- *      22/4/88  gmexit(), J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    short status;
-
-/*
-***Sudda skärm och displayfil.
-*/
-    WPergw(GWIN_ALL);
-/*
-***Lagra GM.
-*/
-    if ( (status=DBexit()) < 0 ) return(status);
-/*
-***Ladda den nya resultatfilen.
-*/
-    if ( DBload(filnam,sysize.gm,
-                DB_LIBVERSION,DB_LIBREVISION,DB_LIBLEVEL) < 0 )
-                              return(erpush("EX1642",filnam));
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short EXsvgm(char *filnam)
-
-/*      Interface-rutin för SAVE_GM(fil). Lagrar GM i
- *      resultatfilen filnam.
- *
- *      In: filnam = Pekare till filnamn.
- *
- *      Ut: Inget.
- *
- *      Felkoder: EX1652 = Kan ej lagra resultatfil
- *
- *      (C)microform ab 1/6/86 J. Kjellander
- *
- *      19/9/95  Ritmodulen, J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    short status;
-    char  resfil[V3PTHLEN+1];
-
-/*
-***Lagra GM.
-*/
-    if ( (status=DBexit()) < 0 ) return(status);
-/*
-***Om vi kör bas-moulen heter pagefilen någonting.RES.
-*/
-    if ( sydata.opmode == BAS_MOD )
-      {
-      strcpy(resfil,jobdir);
-      strcat(resfil,jobnam);
-      strcat(resfil,RESEXT);
-      }
-/*
-***Om vi kör ritmodulen heter den något temporärt.
-*/
-    else strcpy(resfil,tmprit);
-/*
-***Kopiera den lagrade resultatfilen till en fil med det nya namnet.
-*/ 
-    if ( v3fcpy(resfil,filnam) < 0 ) return(erpush("EX1652",filnam));
-/*
-***Ladda den gamla resultatfilen igen.
-*/
-    return(DBload(resfil,sysize.gm,
-                  DB_LIBVERSION,DB_LIBREVISION,DB_LIBLEVEL));
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short EXsvjb(char *filnam)
-
-/*      Rutin för att lagra aktiva jobbdata i filen 
- *      filnam.JOB.
- *
- *      In: filnam = Pekare till filnamn.
- *
- *      Ut: Inget.
- *
- *      FELKODER: EX1863 => Kan ej öppna jobbfil "filnamn".
- *                EX1873 => Kan ej skriva till jobbfil "filnamn".
- *                EX1883 => Kan ej stänga jobbfil "filnamn".
- *
- *      (C)microform ab 17/10/88 R. Svedin
- *
- *      15/11/88 posmod, J. Kjellander
- *      28/1-95  Multifönster, J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    FILE  *jobfpk;
-    short  y,m,d,h,min,s;
-    int    winant;
-    double cnog,dscl;
-
-/*
-***Öppna filen.
-*/
-#ifdef WIN32
-    if ( (jobfpk=fopen(filnam, "w+b")) == 0 ) return(erpush("EX1863",filnam));
-#else
-    if ( (jobfpk=fopen(filnam, "w+")) == 0 ) return(erpush("EX1863",filnam));
-#endif
-/*
-***Uppdatera senaste tid för uppdatering.
-*/
-    EXtime(&y,&m,&d,&h,&min,&s);
-    sydata.year_c = y;
-    sydata.mon_c  = m;
-    sydata.day_c  = d;
-    sydata.hour_c = h;
-    sydata.min_c  = min;
-/*
-***Ta reda på aktuell kurvnoggrannhet och ritningsskala.
-*/
-    WPget_cacc(&cnog);
-    dscl = 1.0;
-/*
-***Skriv ut jobb-data.
-*/
-    if ( fwrite((char *)&sydata, sizeof(V3MDAT),     1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&modtyp, sizeof(short),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&modatt, sizeof(short),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&tmpref, sizeof(bool),       1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&lsyspk, sizeof(DBTmat *),   1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&lklsys, sizeof(DBTmat),     1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&defnap, sizeof(V2NAPA),     1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)nivtb1,  sizeof(tbool), NT1SIZ, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)nivtb2,  sizeof(NIVNAM),NT2SIZ, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&actvy,  sizeof(VY),         1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)vytab,   sizeof(VY),    GPMAXV, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)actcnm,  sizeof(char),JNLGTH+1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&rstrox, sizeof(DBfloat),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&rstroy, sizeof(DBfloat),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&rstrdx, sizeof(DBfloat),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&rstrdy, sizeof(DBfloat),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&rstron, sizeof(bool),       1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&cnog,   sizeof(double),     1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&dscl,   sizeof(double),     1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&menlev, sizeof(short),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&stalev, sizeof(short),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&posmod, sizeof(short),      1, jobfpk) == 0 ) 
-      goto error;
-    if ( fwrite((char *)&lsysla, sizeof(DBptr),      1, jobfpk) == 0 ) 
-      goto error;
-/*
-***Multifönster.
-*/
-    winant = 0;
-
-#ifdef UNIX
-    if ( WPsvjb(jobfpk) < 0 ) goto error;
-#else
-#ifdef WIN32
-    if ( mssvjb(jobfpk) < 0 ) goto error;
-#else
-    if ( fwrite((char *)&winant,sizeof(int),1, jobfpk) == 0 ) goto error;
-#endif
-#endif
-/*
-***Stäng jobfilen.
-*/
-    if ( fclose(jobfpk) == EOF) return(erpush("EX1883",filnam));
-
-    return(0);
-/*
-***Felutgång.
-*/
-error:
-    return(erpush("EX1873",filnam));
-
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short EXldjb(
-        char *filnam,
-        short  kod)
-
-/*      Rutin för läsa in jobdata ur filen filnam.JOB 
- *      enligt angiven kod.
- *      kod = 0 Alla jobbdata.     kod = 1 Endast nivåer. 
- *      kod = 2 Endast aktiv nivå. kod = 3 Endast attribut.
- *
- *      In: filnam = Pekare till filnamn.
- *          kod    = Typ av jobbdata att läsa in
- *
- *      Ut: Inget.
- *
- *      Felkod: EX1862 => Kan ej öppna jobbfil "filnamn".
- *              EX1893 => Fel vid läsning av jobbfil "filnamn".
- *              EX1902 => Jobbfilen ej kompatibel med
- *                        aktuell V3-version.
- *              EX1912 => Felaktig kod för LOAD_JOB()
- *
- *      (C)microform ab 21/10/88 R. Svedin
- *
- *      15/11/88 posmod, J. Kjellander
- *      1/2/89   Ny VY, J. Kjellander
- *      12/1/92  Kurvattribut, J. Kjellander
- *      25/3/92  lsysla, J. Kjellander
- *      25/9/92  Ny VY, J. Kjellander
- *      27/12/92 Nya attribut, J. Kjellander
- *      28/1-95  Multifönster, J. Kjellander
- *      1997-12-25 WIDTH, J.Kjellander
- *      1998-10-01 TPMODE, J.Kjellander
- *      2004-07-11 MFONT, J.Kjellander
- *
- ******************************************************!*/
-
-  {
-    short  i;
-    double cnog,dscl;
-    char   dumbuf[4*GMXMXL];         /* Skall klara största */
-    V3MDAT tmpsyd;
-    V2NAPA tmpdfn;
-    NIV    nivvek[NIVANT];
-    FILE  *jobfpk;
-    OVY17  avy17,vyt17[GPMAXV];
-    OVY111 avy111,vyt111[GPMAXV];
-
-    if ( kod < 0 || kod > 3 ) return(erpush("EX1912",""));
-
-/*
-***Prova att öppna filen.
-*/
-#ifdef WIN32
-    if ( (jobfpk=fopen(filnam, "rb")) == 0 ) return(erpush("EX1862",filnam));
-#else
-    if ( (jobfpk=fopen(filnam, "r")) == 0 ) return(erpush("EX1862",filnam));
-#endif
-/*
-***Läs sydata från job-filen och kolla att 
-***kompatibilitetsproblem ej föreligger.
-*/
-    if ( fread( &tmpsyd,sizeof(V3MDAT),1,jobfpk) == 0 ) goto error;
-
-    if ( tmpsyd.revnr < 1 ) return(erpush("EX1902",filnam));
-/*
-***Om hela jobbfilen skall läsas in kopiera datum.
-*/
-    if ( kod == 0 )
-      {
-      sydata.year_c = tmpsyd.year_c;
-      sydata.mon_c = tmpsyd.mon_c;
-      sydata.day_c = tmpsyd.day_c;
-      sydata.hour_c = tmpsyd.hour_c;
-      sydata.min_c = tmpsyd.min_c;
-
-      sydata.year_u = tmpsyd.year_u;
-      sydata.mon_u = tmpsyd.mon_u;
-      sydata.day_u = tmpsyd.day_u;
-      sydata.hour_u = tmpsyd.hour_u;
-      sydata.min_u = tmpsyd.min_u;
-      }
-/*
-***Läs från jobfilen  till global eller dummy variabel.
-*/
-    if ( kod == 0 ) 
-      {
-      if ( fread( &modtyp, sizeof(short),    1, jobfpk) == 0 ) goto error;
-      if ( fread( &modatt, sizeof(short),    1, jobfpk) == 0 ) goto error;
-      if ( fread( &tmpref, sizeof(bool),     1, jobfpk) == 0 ) goto error;
-      if ( fread( &lsyspk, sizeof(DBTmat *), 1, jobfpk) == 0 ) goto error;
-      if ( fread( &lklsys, sizeof(DBTmat),   1, jobfpk) == 0 ) goto error;
-      }
-    else 
-      {
-      if ( fread( dumbuf, sizeof(short),    1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(short),    1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(bool),     1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(DBTmat *), 1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(DBTmat),   1, jobfpk) == 0 ) goto error;
-      }
-/*
-***Defnap läses olika beroende på jobfilens ålder.
-*/
-    if ( tmpsyd.revnr > 17 || (tmpsyd.revnr == 17 && tmpsyd.level > 'D') )
-      {
-      if ( kod == 0 || (kod == 2) || (kod == 3 ))
-        {
-        if ( fread( &tmpdfn,sizeof(V2NAPA), 1, jobfpk) == 0 ) goto error;
-        }
-      else
-        {
-        if ( fread( dumbuf,sizeof(V2NAPA), 1, jobfpk) == 0 ) goto error;
-        }
-      }
-    else if ( tmpsyd.revnr > 16 || (tmpsyd.revnr == 16 && tmpsyd.level > 'B') )
-      {
-      if ( kod == 0 || (kod == 2) || (kod == 3 ))
-        {
-        if ( fread( &tmpdfn,sizeof(ONAP117D), 1, jobfpk) == 0 ) goto error;
-        }
-      else
-        {
-        if ( fread( dumbuf,sizeof(ONAP117D), 1, jobfpk) == 0 ) goto error;
-        }
-      }
-    else if ( tmpsyd.revnr > 15 || (tmpsyd.revnr == 15 && tmpsyd.level > 'B') )
-      {
-      if ( kod == 0 || (kod == 2) || (kod == 3 ))
-        {
-        if ( fread( &tmpdfn,sizeof(ONAP116B), 1, jobfpk) == 0 ) goto error;
-        defnap.tpmode = 0;
-        }
-      else
-        {
-        if ( fread( dumbuf,sizeof(ONAP116B), 1, jobfpk) == 0 ) goto error;
-        }
-      }
-    else if ( tmpsyd.revnr > 11 || (tmpsyd.revnr == 11 && tmpsyd.level > 'F') )
-      {
-      if ( kod == 0 || (kod == 2) || (kod == 3 ))
-        {
-        if ( fread( &tmpdfn,sizeof(ONAP115), 1, jobfpk) == 0 ) goto error;
-        defnap.tpmode = 0;
-        }
-      else
-        {
-        if ( fread( dumbuf,sizeof(ONAP115), 1, jobfpk) == 0 ) goto error;
-        }
-      }
-    else if ( tmpsyd.revnr > 10 || (tmpsyd.revnr == 10 && tmpsyd.level > 'L') )
-      {
-      if ( kod == 0 || (kod == 2) || (kod == 3 ))
-        {
-        if ( fread( &tmpdfn,sizeof(ONAP111), 1, jobfpk) == 0 ) goto error;
-        defnap.tfont = 0;
-        defnap.tpmode = 0;
-        }
-      else
-        {
-        if ( fread( dumbuf,sizeof(ONAP111), 1, jobfpk) == 0 ) goto error;
-        }
-      }
-    else if ( tmpsyd.revnr > 3 || (tmpsyd.revnr == 2 && tmpsyd.level > 'B') )
-      {
-      if ( kod == 0 || (kod == 2) || (kod == 3 ))
-        {
-        if ( fread( &tmpdfn,sizeof(ONAP110), 1, jobfpk) == 0 ) goto error;
-        defnap.cfont = 0;
-        defnap.cdashl = 3.0;
-        defnap.tfont = 0;
-        defnap.tpmode = 0;
-        }
-      else
-        {
-        if ( fread( dumbuf,sizeof(ONAP110), 1, jobfpk) == 0 ) goto error;
-        }
-      }
-    else
-      {
-      if ( kod == 0 || (kod == 2) || (kod == 3 ))
-        {
-        if ( fread( &tmpdfn,sizeof(ONAP13),1,jobfpk) == 0 ) goto error;
-        defnap.hit = TRUE;
-        defnap.save = TRUE;
-        defnap.cfont = 0;
-        defnap.cdashl = 3.0;
-        defnap.tfont = 0;
-        defnap.tpmode = 0;
-        }
-      else
-        {
-        if ( fread( dumbuf,sizeof(ONAP13),1,jobfpk) == 0 ) goto error;
-        }
-      }
-/*
-***Nivåer läses olika from. V1.2I.
-*/
-    if ( tmpsyd.revnr > 2 || (tmpsyd.revnr == 2 && tmpsyd.level > 'H') )
-      {
-      if ( kod == 0 || (kod == 1 ))
-        {
-        if ( fread( nivtb1, sizeof(tbool),  NT1SIZ, jobfpk) == 0 ) goto error;
-        if ( fread( nivtb2, sizeof(NIVNAM), NT2SIZ, jobfpk) == 0 ) goto error;
-        }
-      else
-        {
-        if ( fread( dumbuf, sizeof(tbool),  NT1SIZ, jobfpk) == 0 ) goto error;
-        if ( fread( dumbuf, sizeof(NIVNAM), NT2SIZ, jobfpk) == 0 ) goto error;
-        }
-      }
-    else
-      {
-      if ( kod == 0 || (kod == 1 ))
-        {
-        if (fread(  nivvek, sizeof(NIV),    NIVANT, jobfpk) == 0 ) goto error;
-        for ( i=0; i<NIVANT; ++i )
-           {
-           if ( !nivvek[i].vis ) nivtb1[i] = TRUE;
-           if (  nivvek[i].def )
-             {
-             nivtb2[i].num = i;
-             strcpy(nivtb2[i].nam,nivvek[i].nivnam);
-             }
-           }
-        }
-      else
-        {
-        if ( fread( dumbuf, sizeof(NIV),    NIVANT, jobfpk) == 0 ) goto error;
-        }
-      }
-/*
-***Vyer läses olika fr.o.m. V1.7E och V1.11C.
-*/  
-    if ( tmpsyd.revnr > 11 || (tmpsyd.revnr == 11 && tmpsyd.level > 'B') )
-      {
-      if ( kod == 0 )
-        {
-        if ( fread( &actvy,  sizeof(VY),     1, jobfpk) == 0 ) goto error;
-        if ( fread(  vytab,  sizeof(VY),GPMAXV, jobfpk) == 0 ) goto error;
-        }
-      else
-        {
-        if ( fread( dumbuf, sizeof(VY),     1, jobfpk) == 0 ) goto error;
-        if ( fread( dumbuf, sizeof(VY),GPMAXV, jobfpk) == 0 ) goto error;
-        }
-      }
-    else if ( tmpsyd.revnr > 7 || (tmpsyd.revnr == 7 && tmpsyd.level > 'D') )
-      {
-      if ( kod == 0 )
-        {
-        if ( fread( &avy111,  sizeof(OVY111),     1, jobfpk) == 0 ) goto error;
-        strcpy(actvy.vynamn,avy111.vynamn);
-        V3MOME(&avy111.vyrikt,&actvy.vyrikt,sizeof(VYVEC));
-        V3MOME(avy111.vywin,actvy.vywin,4*sizeof(double));
-        actvy.vydist = avy111.vydist;
-        actvy.vy3d = avy111.vy3d;
-        actvy.vytypp = TRUE;
-        if ( fread(  vyt111,  sizeof(OVY111),GPMAXV, jobfpk) == 0 ) goto error;
-        for ( i=0; i<GPMAXV; ++i )
-          {
-          if ( vyt111[i].vynamn[0] != '\0' )
-            {
-            strcpy(vytab[i].vynamn,vyt111[i].vynamn);
-            V3MOME(&vyt111[i].vyrikt,&vytab[i].vyrikt,sizeof(VYVEC));
-            V3MOME(vyt111[i].vywin,vytab[i].vywin,4*sizeof(double));
-            vytab[i].vydist = vyt111[i].vydist;
-            vytab[i].vy3d = vyt111[i].vy3d;
-            vytab[i].vytypp = TRUE;
-            }
-          }
-        }
-      else
-        {
-        if ( fread( dumbuf, sizeof(OVY111),     1, jobfpk) == 0 ) goto error;
-        if ( fread( dumbuf, sizeof(OVY111),GPMAXV, jobfpk) == 0 ) goto error;
-        }
-      }
-    else
-      {
-      if ( kod == 0 )
-        {
-        if ( fread( &avy17,  sizeof(OVY17),     1, jobfpk) == 0 ) goto error;
-        strcpy(actvy.vynamn,avy17.vynamn);
-        V3MOME(&avy17.vyrikt,&actvy.vyrikt,sizeof(VYVEC));
-        V3MOME(avy17.vywin,actvy.vywin,4*sizeof(double));
-        if ( actvy.vyrikt.x_vy != 0.0  ||  actvy.vyrikt.y_vy != 0.0 )
-          actvy.vy3d = TRUE; else actvy.vy3d = FALSE;
-        actvy.vydist = 0.0;
-        actvy.vytypp = TRUE;
-        if ( fread(  vyt17,  sizeof(OVY17),GPMAXV, jobfpk) == 0 ) goto error;
-        for ( i=0; i<GPMAXV; ++i )
-           {
-           if ( vyt17[i].vynamn[0] != '\0' )
-             {
-             strcpy(vytab[i].vynamn,vyt17[i].vynamn);
-             V3MOME(&vyt17[i].vyrikt,&vytab[i].vyrikt,sizeof(VYVEC));
-             V3MOME(vyt17[i].vywin,vytab[i].vywin,4*sizeof(double));
-             if ( vyt17[i].vyrikt.x_vy != 0.0  || 
-               vyt17[i].vyrikt.y_vy != 0.0 ) vytab[i].vy3d = TRUE;
-             else vytab[i].vy3d = FALSE;
-             vytab[i].vydist = 0.0;
-             actvy.vytypp = TRUE;
-             }
-           }
-        }
-      else
-        {
-        if ( fread( dumbuf, sizeof(OVY17),     1, jobfpk) == 0 ) goto error;
-        if ( fread( dumbuf, sizeof(OVY17),GPMAXV, jobfpk) == 0 ) goto error;
-        }
-      }
-/*
-***Om hela jobbfilen skall läsas in 
-***Läs resten av jobfilen direkt till aktuella globala varabler.
-*/  
-    if ( kod == 0 )
-      {
-      if ( fread(  actcnm, sizeof(char),JNLGTH+1, jobfpk) == 0 ) goto error;
-      if ( fread( &rstrox, sizeof(DBfloat),      1, jobfpk) == 0 ) goto error;
-      if ( fread( &rstroy, sizeof(DBfloat),      1, jobfpk) == 0 ) goto error;
-      if ( fread( &rstrdx, sizeof(DBfloat),      1, jobfpk) == 0 ) goto error;
-      if ( fread( &rstrdy, sizeof(DBfloat),      1, jobfpk) == 0 ) goto error;
-      if ( fread( &rstron, sizeof(bool),       1, jobfpk) == 0 ) goto error;
-      }
-    else
-      {
-      if ( fread( dumbuf, sizeof(char),JNLGTH+1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(DBfloat),      1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(DBfloat),      1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(DBfloat),      1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(DBfloat),      1, jobfpk) == 0 ) goto error;
-      if ( fread( dumbuf, sizeof(bool),       1, jobfpk) == 0 ) goto error;
-      }
-/*
-***From. V1.3 även följande.
-*/
-    if ( tmpsyd.revnr > 2 )
-      {
-      if ( kod == 0 )
-        {
-        if ( fread( &cnog, sizeof(double),  1, jobfpk) == 0 ) goto error;
-        WPset_cacc(cnog);
-        if ( fread( &dscl, sizeof(double),  1, jobfpk) == 0 ) goto error;
-        if ( fread( &menlev, sizeof(short), 1, jobfpk) == 0 ) goto error;
-        if ( fread( &stalev, sizeof(short), 1, jobfpk) == 0 ) goto error;
-        }
-      else
-        {
-        if ( fread( dumbuf, sizeof(double), 1, jobfpk) == 0 ) goto error;
-        if ( fread( dumbuf, sizeof(double), 1, jobfpk) == 0 ) goto error;
-        if ( fread( dumbuf, sizeof(short),  1, jobfpk) == 0 ) goto error;
-        if ( fread( dumbuf, sizeof(short),  1, jobfpk) == 0 ) goto error;
-        }
-      }
-/*
-***From. V1.7 även följande.
-*/
-    if ( tmpsyd.revnr > 6 )
-      {
-      if ( kod == 0 )
-        {
-        if ( fread( &posmod, sizeof(short),  1, jobfpk) == 0 ) goto error;
-        }
-      else
-        {
-        if ( fread( dumbuf, sizeof(short),  1, jobfpk) == 0 ) goto error;
-        }
-      }
-    else posmod = 0;
-/*
-***From. V1.10O även följande.
-*/
-    if ( tmpsyd.revnr > 10 || (tmpsyd.revnr == 10 && tmpsyd.level > 'N') )
-      {
-      if ( kod == 0 )
-        {
-        if ( fread( &lsysla, sizeof(DBptr),  1, jobfpk) == 0 ) goto error;
-        }
-      else
-        {
-        if ( fread( dumbuf, sizeof(DBptr),  1, jobfpk) == 0 ) goto error;
-        }
-      }
-    else lsysla = DBNULL;
-/*
-***From. V1.12G även multifönster.
-*/
-#ifdef UNIX
-    if ( tmpsyd.revnr > 12 || (tmpsyd.revnr == 12 && tmpsyd.level > 'F') )
-      {
-      if ( kod == 0 )
-        {
-        if ( WPldjb(jobfpk) < 0 ) goto error;
-        }
-      }
-#endif
-/*
-***WIN32 innebär alltid multifönster.
-*/
-#ifdef WIN32
-    if ( msldjb(jobfpk,&tmpsyd) < 0 ) goto error;
-#endif
-/*
-***Stäng jobbfilen.
-*/
-    if ( fclose(jobfpk) == EOF ) goto error;
-/*
-***Jobbfil inläst.
-***Om hela jobbfilen eller något attribut är inläst uppdatera defnap.
-*/
-    if ( kod == 0 || (kod == 2) || (kod == 3) ) incdnp(&tmpdfn,kod);
-
-    return(0);
-/*
-***Felutgång.
-*/
-error:
-    return(erpush("EX1893",filnam));
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short EXbllv(
-        DBint levnum,
-        DBint win_id)
-
-/*      Interface-rutin för BLANK_LEV(n). Släcker
- *      nivå.
- *
- *      In: levnum = Nivånummer.
- *          win_id = Fönster-ID.
- *
- *      Ut: Inget.
- *
- *      Felkoder: EX1632 = Otillåtet nivånummer.
- *
- *      (C)microform ab 1/6/86 J. Kjellander
- *
- *      1/9/86   R. Svedin. Ändrad feltest.
- *      29/9/86  R. Svedin. Ny nivåhant.
- *      17/1-95  Multifönster, J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    short status;
-/*
-***Initiering.
-*/
-    status = 0;
-/*
-***Kolla att levnum har rimligt värde.
-*/
-    if ( levnum < 0 || levnum > NT1SIZ-1) return(erpush("EX1632",""));
-/*
-***Släck nivån.
-*/
-#ifdef UNIX
-    WPmtsl(win_id,levnum,levnum,WP_BLANKL);
-#else
-    nivtb1[levnum] = TRUE;
-#endif
-
-    return(status);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short EXublv(
-        DBint levnum,
-        DBint win_id)
-
-/*      Interface-rutin för UNBLANK_LEV(n). Tänder
- *      nivå.
- *
- *      In: levnum = Nivånummer.
- *          win_id = Fönster-ID.
- *
- *      Ut: Inget.
- *
- *      Felkoder: EX1632 = Otillåtet nivånummer.
- *
- *      (C)microform ab 1/6/86 J. Kjellander
- *
- *      1/8/86   Ändrad feltest, R. Svedin.
- *      29/9/86  Ny nivåhantering, R. Svedin.
- *      17/1-95  Multifönster, J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    short status;
-/*
-***Initiering.
-*/
-    status = 0;
-/*
-***Kolla att levnum har rimligt värde.
-*/
-    if ( levnum < 0 || levnum > NT1SIZ-1 ) return(erpush("EX1632",""));
-/*
-***Tänd nivån.
-*/
-#ifdef V3_X11
-    status = WPmtsl(win_id,levnum,levnum,WP_UBLANKL);
-#else
-    nivtb1[levnum] = FALSE;
-#endif
-
-    return(status);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short EXgtlv(
-        DBshort levnum,
-        bool   *blank,
-        char   *name)
-
-/* !!!!!!!!! OBS namn bör ersättas med fönster-ID. !!!!!!!
-/*      Interface-rutin för GET_LEV(n,blank,name).
- *      Returnerar information om nivå.
- *
- *      In: levnum = Nivånummer.
- *
- *      Ut: blank = 0=>Tänd, 1=>Släckt
- *          name  = Pekare till namn.
- *
- *      Felkoder: EX1632 = Otillåtet nivånummer.
- *
- *      (C)microform ab 1/6/86 J. Kjellander
- *
- *      29/9/86 Ny nivåhantering, R. Svedin.
- *
- ******************************************************!*/
-
-  {
-/*
-    short i;
-
-*
-***Kolla att levnum har rimligt värde.
-*
-    if ( levnum < 0 || levnum > NT1SIZ-1 ) return(erpush("EX1632",""));
-*
-***Returnera värden.
-*
-    name[0] = '\0';
-    *blank = nivtb1[levnum];
-
-    for ( i = 0; i < NT2SIZ; ++i )
-       {
-       if ( nivtb2[i].nam[0] != '\0'  &&  nivtb2[i].num == levnum )
-          strcpy(name,nivtb2[i].nam);
-       }
-
-    return(0);
-*/
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short EXcrvp(
-        char   name[],
-        VYVEC *bpos)
-
-/*      Interface-rutin för CRE_VIEW. Skapar en ny vy
- *      med hjälp av en betraktelseposition.
- *
- *      In: name  => Vyns namn.
- *          bpos  => Betraktelseposition.
- *
- *      Ut: Inget.
- *
- *      Felkoder: EX1672 = Max antal vyer redan skapade, vy'n ej skapad.
+ *      Error: EX1672 = View_tab full.
  *
  *      (C)microform ab 22/7/86 R. Svedin
  *
@@ -930,55 +71,23 @@ error:
  ******************************************************!*/
 
   {
-   short   i;
-   WPWIN  *winptr;
-   WPGWIN *gwinpt;
+   WPVIEW  view;
 
 /*
-***Get a ptr to GWIN_MAIN. To be changed in the future so
-***that any window can be used.
+***View name.
 */
-   winptr = WPwgwp((wpw_id)GWIN_MAIN);
-   gwinpt = (WPGWIN *)winptr->ptr;
+   strcpy(view.name,name);
 /*
-***Om vyn inte finns redan, leta upp en ledig plats i vytab.
+***Calculate the view transformation matrix.
 */
-   if ( (i=vyindx(name)) == -1 )
-     {
-     for ( i=0; i<GPMAXV; ++i ) if ( vytab[i].vynamn[0] == '\0' ) break;
-     if ( i == GPMAXV ) return(erpush("EX1672",""));
-     }
+   WPcampos_to_matrix(campos,&view.matrix);
 /*
-***Lagra/uppdatera vy:n på plats "i".
+***Save the new view in WP.
 */
-   strncpy(vytab[i].vynamn,name,GPVNLN);
+   if ( WPcreate_view(&view,VIEW_3D_ONLY) < 0 ) return(erpush("EX1672",name));
 /*
-***Kopiera betraktelsepositionen.
+***The end.
 */
-   vytab[i].vyrikt.x_vy = bpos->x_vy;
-   vytab[i].vyrikt.y_vy = bpos->y_vy;
-   vytab[i].vyrikt.z_vy = bpos->z_vy;
-/*
-***Copy model window from GWIN_MAIN.
-*/
-   vytab[i].vywin[0] = gwinpt->vy.modwin.xmin;
-   vytab[i].vywin[1] = gwinpt->vy.modwin.ymin;
-   vytab[i].vywin[2] = gwinpt->vy.modwin.xmax;
-   vytab[i].vywin[3] = gwinpt->vy.modwin.ymax;
-/*
-***Betraktelseavstånd och 3D-flagga.
-*/
-   vytab[i].vydist = 0.0;
-
-   if ( bpos->x_vy == 0.0  &&  bpos->y_vy == 0.0  &&  bpos->z_vy > 0 )
-     vytab[i].vy3d = FALSE;
-   else
-     vytab[i].vy3d = TRUE;
-/*
-***Vy är skapad med hjälp av betraktelseposition.
-*/
-   vytab[i].vytypp = TRUE;
-
    return(0);
   }
 
@@ -989,15 +98,15 @@ error:
         char  name[],
         DBId *idvek)
 
-/*      Skapar en ny vy med hjälp av ett koordinatsystem.
+/*      Creates/updates a view using a coordinate system.
+ *      CRE_VIEW() in MBS.
+ *      Used in evview.c
  *
- *      In: name  => Vyns namn.
- *          idvek => Pekare till identitet.
+ *      In: name  => View name.
+ *          idvek => ID of csys.
  *
- *      Ut: Inget.
- *
- *      Felkoder: EX1672 = Max antal vyer redan skapade, vy'n ej skapad.
- *                EX1402 = Storheten finns ej.
+ *      Error: EX1672 = view_tab full.
+ *             EX1402 = Entity does not exist.
  *
  *      (C)microform ab 29/9/92 J. Kjellander
  *
@@ -1007,20 +116,12 @@ error:
  ******************************************************!*/
 
   {
-    int     i;
     DBptr   la;
     DBetype typ;
     DBCsys  csy;
     DBTmat  mat;
-    WPWIN  *winptr;
-    WPGWIN *gwinpt;
+    WPVIEW  view;
 
-/*
-***Get a ptr to GWIN_MAIN. To be changed in the future so
-***that any window can be used.
-*/
-   winptr = WPwgwp((wpw_id)GWIN_MAIN);
-   gwinpt = (WPGWIN *)winptr->ptr;
 /*
 ***Get csys from DB.
 */
@@ -1028,48 +129,30 @@ error:
         return(erpush("EX1402","EXcrvc"));
     DBread_csys(&csy,&mat,la);
 /*
-***Om vyn inte finns redan, leta upp en ledig plats i vytab.
+***View name.
 */
-   if ( (i=vyindx(name)) == -1 )
-     {
-     for ( i=0; i<GPMAXV; ++i ) if ( vytab[i].vynamn[0] == '\0' ) break;
-     if ( i == GPMAXV ) return(erpush("EX1672",""));
-     }
+   strcpy(view.name,name);
 /*
-*** Kopiera namnet till vytab.
+***Copy matrix from csys.
 */
-   strncpy(vytab[i].vynamn,name,GPVNLN);
-/*
-***Copy model window from GWIN_MAIN.
-*/
-   vytab[i].vywin[0] = gwinpt->vy.modwin.xmin;
-   vytab[i].vywin[1] = gwinpt->vy.modwin.ymin;
-   vytab[i].vywin[2] = gwinpt->vy.modwin.xmax;
-   vytab[i].vywin[3] = gwinpt->vy.modwin.ymax;
-/*
-***Betraktelseavstånd och 3D-flagga.
-*/
-   vytab[i].vydist = 0.0;
-   vytab[i].vy3d = TRUE;
-/*
-***Själva matrisen.
-*/
-   vytab[i].vymatr.v11 = mat.g11;
-   vytab[i].vymatr.v12 = mat.g12;
-   vytab[i].vymatr.v13 = mat.g13;
+   view.matrix.k11 = mat.g11;
+   view.matrix.k12 = mat.g12;
+   view.matrix.k13 = mat.g13;
 
-   vytab[i].vymatr.v21 = mat.g21;
-   vytab[i].vymatr.v22 = mat.g22;
-   vytab[i].vymatr.v23 = mat.g23;
+   view.matrix.k21 = mat.g21;
+   view.matrix.k22 = mat.g22;
+   view.matrix.k23 = mat.g23;
 
-   vytab[i].vymatr.v31 = mat.g31;
-   vytab[i].vymatr.v32 = mat.g32;
-   vytab[i].vymatr.v33 = mat.g33;
+   view.matrix.k31 = mat.g31;
+   view.matrix.k32 = mat.g32;
+   view.matrix.k33 = mat.g33;
 /*
-***Vyn är icke skapad med betraktelseposition.
+***Save the new view in WP.
 */
-   vytab[i].vytypp = FALSE;
-
+   if ( WPcreate_view(&view,VIEW_3D_ONLY) < 0 ) return(erpush("EX1672",name));
+/*
+***The end.
+*/
    return(0);
   }
 
@@ -1080,35 +163,55 @@ error:
         char  name[],
         DBint win_id)
 
-/*      Interface-rutin för ACT_VIEW. Aktiverar en vy.
+/*      Makes a view active in a window. ACT_VIEW() in MBS.
  *
- *      In: name   => Vyns namn.
- *          win_id => ID för grafiskt fönster.
+ *      In: name   => View name.
+ *          win_id => ID of WPGWIN.
  *
- *      Ut: Inget.
+ *      Error: EX1682 = View does not exist.
+ *             EX2162 = Window not WPGWIN/WPRWIN.
+ *             EX2172 = Window does not exist.
  *
- *      Felkoder: EX1682 = Vy med detta namn finns ej.
- *
- *      (C)microform ab 1/8/86 R. Svedin
- *
- *      7/10/86  Tagit bort repagm, R. Svedin.
- *      15/10/86 gpswin(), J. Kjellander
- *      18/10/86 gpgwin(), J. Kjellander
- *      29/10/86 uppdatering av vytab, J. Kjellander
- *      20/12/94 Multipla fönster, J. Kjellander
- *      2006-12-31 Removed GP, J.Kjellander
+ *      (C)2007-02-13 J.Kjellander
  *
  ******************************************************!*/
 
   {
+   char    errbuf[V3STRLEN];
+   WPGWIN *gwinpt;
+   WPRWIN *rwinpt;
 
-#ifdef UNIX
-   return(WPacvi(name,win_id));
-#endif
+/*
+***Get a C-ptr to the window and activate.
+*/
+   if ( wpwtab[win_id].ptr != NULL )
+     {
+     switch ( wpwtab[win_id].typ )
+       {
+       case TYP_GWIN:  
+       gwinpt = (WPGWIN *)wpwtab[win_id].ptr;
+       if ( WPactivate_view(name,gwinpt,NULL,TYP_GWIN) < 0 )
+          return(erpush("EX1682",name));
+       break;
 
-#ifdef WIN32
-   return(msacvi(name,win_id));
-#endif
+       case TYP_RWIN:  
+       rwinpt = (WPRWIN *)wpwtab[win_id].ptr;
+       if ( WPactivate_view(name,NULL,rwinpt,TYP_RWIN) < 0 )
+          return(erpush("EX1682",name));
+       break;
+
+       default:
+       sprintf(errbuf,"%d",win_id);
+       return(erpush("EX2162",errbuf));
+       break;
+       }
+     return(0);
+     }
+   else
+     {
+     sprintf(errbuf,"%d",win_id);
+     return(erpush("EX2172",errbuf));
+     }
   }
 
 /********************************************************/
@@ -1181,7 +284,7 @@ error:
 /*
 ***Save previous and activate new scale.
 */
-   V3MOME(&gwinpt->vy,&gwinpt->old_vy,sizeof(WPVY));
+   V3MOME(&gwinpt->vy,&gwinpt->old_vy,sizeof(WPVIEW));
 
    gwinpt->vy.modwin.xmin = xmin;
    gwinpt->vy.modwin.xmax = xmax;
@@ -1197,7 +300,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-        short EXcevi(
+        short   EXcevi(
         char    name[],
         DBfloat x,
         DBfloat y)
@@ -1248,7 +351,7 @@ error:
 /*
 ***Save previous and activate new limits.
 */
-   V3MOME(&gwinpt->vy,&gwinpt->old_vy,sizeof(WPVY));
+   V3MOME(&gwinpt->vy,&gwinpt->old_vy,sizeof(WPVIEW));
 
    gwinpt->vy.modwin.xmin = new_xmin;
    gwinpt->vy.modwin.xmax = new_xmax;
@@ -1338,7 +441,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-        short EXprvi(
+        short   EXprvi(
         char    name[],
         DBfloat dist)
 
@@ -1373,9 +476,9 @@ error:
 /*
 ***Save previous and activate new perspective distance.
 */
-   V3MOME(&gwinpt->vy,&gwinpt->old_vy,sizeof(WPVY));
+   V3MOME(&gwinpt->vy,&gwinpt->old_vy,sizeof(WPVIEW));
 
-   gwinpt->vy.vydist = dist;
+   gwinpt->vy.pdist = dist;
 /*
 ***The end.
 */
@@ -1451,7 +554,7 @@ error:
       }
     else
       {
-      WPrepa(win_id);
+      WPrepaint_GWIN(win_id);
       return(0);
       }
 #endif
@@ -1476,43 +579,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-        short EXgvnl(
-        char  *namptr[],
-        DBint *numptr)
-
-/*      Returnerar en lista med alla definierade vyers namn.
- *
- *      In: namptr => Pekare till utdata.
- *          numptr => Pekare till utdata.
- *
- *      Ut: *namptr = Pekare till vynamn.
- *          *numptr = Antal definierade vyer.
- *
- *      (C)microform ab 1998-11-25 J.Kjellander
- *
- ******************************************************!*/
-
-  {
-   int  i,n;
-
-   for ( i=n=0; i<GPMAXV; ++i )
-     {
-     if ( vytab[i].vynamn[0] != '\0' )
-       {
-       namptr[n++] = vytab[i].vynamn;
-       }
-     }
-
-   *numptr = n;
-
-   return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
         short EXcavi(DBfloat newcn)
-
 
 /*      Interface-rutin för CACC_VIEW(). Ändra kurvnogranhet.
  *
@@ -1540,132 +607,70 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-        short EXplvi(
-        char *vynam,
-        char *filnam)
-
-/*      Interface routine for PLOT_VIEW().
- *      Skapar plottfil av en namngiven vy.
- *
- *      In: vynam  = Pekare till vynamn.
- *          filnam = Pekare till filnamn.
- *
- *      Ut: Inget.
- *
- *      Felkoder:  EX1682 = Vyn %s finns ej.
- *                 EX1742 = Kan ej skapa plotfil, fel från OS.
- *
- *      (C)microform ab 4/11/86 R. Svedin
- *
- *      5/11/86 gpstvi(), R. Svedin
- *      7/5/87  plotorigo, J. Kjellander
- *      17/2/88 plotvy, J. Kjellander
- *      2006-12-27 WPmkpf(), J.Kjellander
- *
- ******************************************************!*/
-
-  {
-    short    vynum;
-    DBVector origo;
-    FILE    *filpek;
-    WPWIN   *winptr;
-    WPGWIN  *gwinpt;
-
-/*
-***Get a ptr to the main graphics window.
-*/
-    winptr = WPwgwp((wpw_id)GWIN_MAIN);
-    gwinpt = (WPGWIN *)winptr->ptr;
-/*
-***Vilken vy ?
-*/
-    if ( (vynum=vyindx(vynam)) == -1 )
-      {
-      erpush("EX1682",vynam);
-      goto error;
-      }
-/*
-***Skapa meta_fil.
-*/
-    if ( (filpek=fopen(filnam,"w+")) == NULL )
-      {
-      erpush("EX1742","");
-      goto error;
-      }
-
-    origo.x_gm = origo.y_gm = 0.0;
-
-    if ( strcmp(filnam+strlen(filnam)-4,DXFEXT) == 0 )
-      WPdxf_out(gwinpt,filpek,&vytab[vynum],&origo);
-    else
-      WPmkpf(gwinpt,filpek,&vytab[vynum],&origo);
-
-    fclose(filpek);
-    goto exit;
-/*
-***Fel.
-*/
-error:
-    errmes();
-/*
-***The end.
-*/
-exit:
-    return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
         short     EXplwi(
+        DBint     grw_id,
         DBVector *p1,
         DBVector *p2,
         char     *filnam,
         DBVector *p0)
 
 /*      Interface routine for PLOT_WIN().
- *      Creates A plotfile of restricted area.
+ *      Creates a GKS plotfile of the contents ow grw_id
+ *      clipped to the borders of p1,p2 and translated
+ *      with -p0.
  *
- *      In: p1,p2  = Bounding rectangle.
+ *      In: gtw_id = ID of graphical window.
+ *          p1,p2  = Bounding rectangle.
  *          filnam = Ptr to output filename.
  *          p0     = Plot origin.
  *
- *      Felkoder:  EX1852 = Felaktigt plotfönster.
- *                 EX1742 = Kan ej skapa plotfil, fel från OS.
+ *      Error:  EX2172 = Window %s does not exist.
+ *              EX2162 = Window %s is of illegal type.
+ *              EX1742 = Can't create plotfile %s, OS error.
  *
- *      (C)microform ab 17/2/88 J. Kjellander
- *
- *      11/10/88 Bug, plotorigo. J. Kjellander
- *      2/10/91  Bug, DXF-origo. J. Kjellander
- *      2006-12-27 WPmkpf(), J.Kjellander
+ *      (C)2007-04-08 J. Kjellander
  *
  ******************************************************!*/
 
   {
+    char     errbuf[V3STRLEN];
     DBVector origo;
-    VY       plotvy;
+    VYWIN    plotwin;
     FILE    *filpek;
     WPWIN   *winptr;
     WPGWIN  *gwinpt;
 
 /*
-***Get a ptr to the main graphics window.
+***Get a ptr to the graphics window. Currently, only
+***WPGWIN's are allowed.
 */
-    winptr = WPwgwp((wpw_id)GWIN_MAIN);
+    winptr = WPwgwp((wpw_id)grw_id);
+    if ( winptr == NULL )
+      {
+      sprintf(errbuf,"%d",grw_id);
+      return(erpush("EX2172",errbuf));
+      }
+
+    if ( winptr->typ != TYP_GWIN )
+      {
+      sprintf(errbuf,"%d",grw_id);
+      return(erpush("EX2162",errbuf));
+      }
+
     gwinpt = (WPGWIN *)winptr->ptr;
 /*
 ***Set up the plot area.
 */
-    plotvy.vywin[0] = p1->x_gm;
-    plotvy.vywin[1] = p1->y_gm;
-    plotvy.vywin[2] = p2->x_gm;
-    plotvy.vywin[3] = p2->y_gm;
+    plotwin.xmin = p1->x_gm;
+    plotwin.ymin = p1->y_gm;
+    plotwin.xmax = p2->x_gm;
+    plotwin.ymax = p2->y_gm;
 /*
 ***Cretate GKS_meta_file or DXF_file.
 */
     if ( (filpek=fopen(filnam,"w+")) == NULL )
       {
-      erpush("EX1742","");
+      erpush("EX1742",filnam);
       goto error;
       }
 
@@ -1673,13 +678,13 @@ exit:
       {
       origo.x_gm = p0->x_gm;
       origo.y_gm = p0->y_gm;
-      WPdxf_out(gwinpt,filpek,&plotvy,&origo);
+      WPdxf_out(gwinpt,filpek,&plotwin,&origo);
       }
     else
       {
       origo.x_gm = p0->x_gm - p1->x_gm;
       origo.y_gm = p0->y_gm - p1->y_gm;
-      WPmkpf(gwinpt,filpek,&plotvy,&origo);
+      WPmkpf(gwinpt,filpek,&plotwin,&origo);
       }
 
     fclose(filpek);
@@ -1694,33 +699,6 @@ error:
 */
 exit:
     return(0);
-  }
-
-/********************************************************/
-/*!******************************************************/
-
-        short vyindx(char vynamn[])
-
-/*
- *      In: Vynamn.
- *
- *      Ut: Inget.
- *
- *      FV:  Noll eller större => Vyns plats i vytab.
- *           -1 => Vyn finns ej.
- *
- *      (C)microform ab 22/7/86 R. Svedin
- *
- ******************************************************!*/
-
-  {
-    short i;
-
-    for ( i = 0; i<GPMAXV; ++i)
-      if ( strcmp(vynamn,vytab[i].vynamn) == 0 ) return(i);
-  
-    return(-1);
-
   }
 
 /********************************************************/

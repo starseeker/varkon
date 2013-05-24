@@ -6,13 +6,13 @@
 #
 ##########################################################
 
-INCFILES = ../include/IG.h
+INCFILES = ../include/IG.h             \
+           ../include/futab.h
 
 # The contents of IGlib.a
 
 OBJECTS = ../lib/IGlib.a(varkon.o)     \
           ../lib/IGlib.a(iginit.o)     \
-          ../lib/IGlib.a(ig2.o)        \
           ../lib/IGlib.a(igsurf.o)     \
           ../lib/IGlib.a(igview.o)     \
           ../lib/IGlib.a(igcurve.o)    \
@@ -30,16 +30,16 @@ OBJECTS = ../lib/IGlib.a(varkon.o)     \
           ../lib/IGlib.a(igplot.o)     \
           ../lib/IGlib.a(igID.o)       \
           ../lib/IGlib.a(igdim.o)      \
-          ../lib/IGlib.a(ig16.o)       \
+          ../lib/IGlib.a(iggroup.o)    \
+          ../lib/IGlib.a(igsymb.o)     \
           ../lib/IGlib.a(ighelp.o)     \
           ../lib/IGlib.a(igmodule.o)   \
-          ../lib/IGlib.a(ig20.o)       \
-          ../lib/IGlib.a(ig21.o)       \
+          ../lib/IGlib.a(igprompt.o)   \
+          ../lib/IGlib.a(igmenu.o)     \
+          ../lib/IGlib.a(iginput.o)    \
           ../lib/IGlib.a(igjob.o)      \
           ../lib/IGlib.a(igset.o)      \
-          ../lib/IGlib.a(ig25.o)       \
-          ../lib/IGlib.a(ig27.o)       \
-          ../lib/IGlib.a(ig29.o)       \
+          ../lib/IGlib.a(igenvpath.o)  \
           ../lib/IGlib.a(igattedit.o)  \
           ../lib/IGlib.a(igerror.o)    \
           ../lib/IGlib.a(igmalloc.o)   \

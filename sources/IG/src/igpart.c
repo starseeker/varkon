@@ -1,44 +1,39 @@
-/*!******************************************************************/
-/*  igpart.c                                                        */
-/*  ========                                                        */
-/*                                                                  */
-/*  This file includes:                                             */
-/*                                                                  */
-/*  partpm();    Generate part... statement                         */
-/*  igcpts();    Create part statement                              */
-/*  igoptp();    Check for optional parameter                       */
-/*  igmenp();    Check for menu parameter                           */
-/*  igposp();    Check for pos parameter                            */
-/*  igtypp();    Check for type parameter                           */
-/*  igdefp();    Check for default parameter                        */
-/*  igtstp();    Maps t-string to prompt                            */
-/*  iguppt();    Uppdate Part                                       */
-/*  igcptw();    Edit part, window verion                           */
-/*  iggnps();    Build part call                                    */
-/*                                                                  */
-/*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
-/*                                                                  */
-/*  This library is free software; you can redistribute it and/or   */
-/*  modify it under the terms of the GNU Library General Public     */
-/*  License as published by the Free Software Foundation; either    */
-/*  version 2 of the License, or (at your option) any later         */
-/*  version.                                                        */
-/*                                                                  */
-/*  This library is distributed in the hope that it will be         */
-/*  useful, but WITHOUT ANY WARRANTY; without even the implied      */
-/*  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR         */
-/*  PURPOSE.  See the GNU Library General Public License for more   */
-/*  details.                                                        */
-/*                                                                  */
-/*  You should have received a copy of the GNU Library General      */
-/*  Public License along with this library; if not, write to the    */
-/*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
-/*  MA 02139, USA.                                                  */
-/*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
-/********************************************************************/
+/********************************************************************
+ *  igpart.c
+ *  ========
+ *
+ *  This file includes:
+ *
+ *  IGpart();        Create and run PART statement (generic mode)
+ *  IGrnmo();        Create a part (explicit mode, no statement)
+ *  IGmfun();        Run a macro
+ *  IGcall_part();   Call a part
+ *  IGcall_macro();  Call a macro
+ *  IGuppt();        Uppdate Part
+ *  IGcptw();        Edit part parameters
+ *  IGgnps();        Build part call
+ *
+ *  This file is part of the VARKON IG Library.
+ *  URL:  http://www.tech.oru.se/cad/varkon
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  This library is distributed in the hope that it will be
+ *  useful, but WITHOUT ANY WARRANTY; without even the implied
+ *  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the GNU Library General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU Library
+ *  Public License along with this library; if not, write to the
+ *  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,
+ *  MA 02139, USA.
+ *
+ ********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../DB/include/DBintern.h"
@@ -48,31 +43,113 @@
 #include "../../WP/include/WP.h"
 
 extern pm_ptr  actmod;
-extern short   actfun,v3mode,modtyp,posmod,igtrty;
-extern char    jobdir[],jobnam[],actpnm[];
+extern short   actfun,v3mode,modtyp,posmode;
+extern char    jobdir[],jobnam[],actpnm[],mbodir[];
 extern bool    tmpref,iggflg;
 extern V2NAPA  defnap;
 extern struct  ANSYREC sy;
 
-/*!******************************************************/
+/*
+***The current directory for part selection.
+*/
+static int part_dir = 1;
 
-       short partpm()
+/*
+***Prototypes for internal functions.
+*/
+static bool  optional_parameter(char *prompt);
+static bool  menu_parameter(char *prompt, short *mnum);
+static bool  posalt_parameter(char *prompt, int *posalt);
+static bool  typemask_parameter(char *prompt, DBetype *typmsk);
+static void  file_parameter(char *prompt, PMLITVA *defval);
+static void  t_string_prompt(char *prompt);
+static short get_partname(char *name);
 
-/*      Huvudrutin för part...
+/********************************************************/
+
+       short IGpart()
+
+/*      Interactive create (and run) PART statement.
  *
- *      In: Inget.
+ *      Return:    0 = OK
+ *            REJECT = Operation rejected
+ *            GOMAIN = Back to main menu
  *
- *      Ut: Inget.
+ *      (C)2007-04-27 J.Kjellander
  *
- *      FV: 0 = OK, REJECT = avsluta, GOMAIN = huvudmenyn
+ ******************************************************!*/
+
+  {
+    char    filnam[JNLGTH+1];
+    short   status;
+
+/*
+***Get the name of the module to call.
+*/
+    if ( (status=get_partname(filnam)) < 0 ) return(status);
+/*
+***Create the part statement.
+*/
+    if ( (status=IGcall_part(filnam,PART)) == REJECT || status == GOMAIN ) goto end;
+    else if ( status < 0 ) errmes();
+/*
+***The end.
+*/
+end:
+    WPerhg();    
+    return(status);
+  }
+
+/********************************************************/
+/********************************************************/
+
+       short IGrnmo()
+
+/*      Interactive function for executing a module.
+ *      No statement is added to the active module
+ *      but any result created, is saved in DB.
  *
- *      (C)microform ab 27/2/85 Mats Neslon
+ *      Return:    0 = OK
+ *            REJECT = Operation rejected
+ *            GOMAIN = Back to main menu
  *
- *      3/7/85   Släck message area, B. Doverud
- *      4/9/85   Släck highlight märke, B. Doverud
- *      23/2/86  Nytt anrop till igcpts(), J. Kjellander
- *      6/3/86   Defaultsträng, J. Kjellander
- *      5/10/86  GOMAIN, B. Doverud
+ *      (C)2007-04-27 J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    char    filnam[JNLGTH+1];
+    short   status;
+
+/*
+***Get the name of the module to call.
+*/
+    if ( (status=get_partname(filnam)) < 0 ) return(status);
+/*
+***Execute the module in RUN mode.
+*/
+    if ( (status=IGcall_part(filnam,RUN)) == REJECT || status == GOMAIN ) goto end;
+    else if ( status < 0 ) errmes();
+/*
+***The end.
+*/
+end:
+    WPerhg();    
+    return(status);
+  }
+
+/********************************************************/
+/********************************************************/
+
+       short IGmfun()
+
+/*      Interactive function for calling a macro.
+ *
+ *      Return: 0      = OK
+ *              REJECT = Operation rejected
+ *              GOMAIN = Back to main menu
+ *
+ *      (C)2007-04-27 J. Kjellander
  *
  ******************************************************!*/
 
@@ -82,145 +159,581 @@ extern struct  ANSYREC sy;
     static  char dstr[JNLGTH+1] = "";
 
 /*
-***Läs in part-namn.
+***Get name of macro module.
 */
-    igptma(244,IG_INP);
-    if ( (status=igssip(iggtts(267),filnam,dstr,JNLGTH)) < 0 )
-      {
-      igrsma();
-      goto end;
-      }
+    IGptma(167,IG_INP);
+    if ( (status=IGssip(IGgtts(267),filnam,dstr,JNLGTH)) < 0 ) goto end;
     strcpy(dstr,filnam);
-    igrsma();
 /*
-***Generera part-satsen.
+***Create a PART statement an execute in MACRO mode.
 */
-    if ((status=igcpts(filnam,PART)) == REJECT || status == GOMAIN ) goto end;
+    if ((status=IGcall_macro(filnam)) == REJECT || status == GOMAIN) goto end;
     else if ( status < 0 ) errmes();
 /*
-***Slut.
+***The end.
 */
 end:
+    WPclear_mcwin();
     WPerhg();    
     return(status);
-
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-       short igcpts(
-       char *filnam,
+       short IGcall_part(
+       char *part_name,
        short atyp)
 
-/*      Skapar part-sats.
+/*      Prompts the user for the module parameters, 
+ *      creates a PART statement and executes the module.
+ *      In RUN mode the statement is deleted after the
+ *      module is executed.
  *
- *      In: filnam => Pekare till modulfilnamn.
- *          atyp   => PART/RUN/MFUNC
+ *      In: filnam => Name of MBO-file.
+ *          atyp   => Execution mode, PART or RUN
  *
- *      Ut: Inget.
+ *      Return: 0 = OK.
+ *              REJECT = Operation rejected.
+ *              GOMAIN = Back to main menu.
  *
- *      FV:      0 = OK.
- *          REJECT = Operationen avbruten.
- *          GOMAIN = Huvudmenyn.
+ *      Error:  IG5272   => Can't load module %s
+ *              IG3982   => Syntax error parameter value
+ *              IG5023   => Can't create PART statement
+ *              IG5222   => Error executing PART statement
+ *              IG5043   => Error linking statement to module
+ *              IG5352   => Module is a MACRO
  *
- *
- *      Felkod: IG5272   => Kan ej ladda modulen %s
- *              IG5283   => Kan ej läsa modulens parametrar
- *              IG5023   => Kan ej skapa PART sats
- *              IG5222   => Fel vid interpretering av PART-sats
- *              IG5043   => Fel vid länkning
- *              IG5352   => MACRO anropas som PART
- *
- *      (C)microform ab 9/9/85 J. Kjellander efter Mats "partpm"
- *
- *      30/10/85 Ände och sida, J. Kjellander
- *      23/2/86  Link, J. Kjellander
- *      6/3/86   Defaultvärden, J. Kjellander
- *      23/3/86  genpos(pnr,  B. Doverud
- *      24/3/86  Felutgång B. Doverud
- *      14/4/86  pmmark(), J. Kjellander
- *      26/6/86  Nytt anrop till pmrpap(), J. Kjellander
- *      26/6/86  Stöd för ref, J. Kjellander
- *      6/10/86  GOMAIN, J. Kjellander
- *      13/10/86 Help, J. Kjellander
- *      20/10/86 tmpref, J. Kjellander
- *      25/4/87  MFUNC, J. Kjellander
- *      15/3/88  Ritpaketet, J. Kjellander
- *      10/11/88 Optionella parametrar, J. Kjellander
- *      11/11/88 Meny-parametrar, J. Kjellander
- *       1/12/91 Default-parametrar, J. Kjellander
- *      13/2/92  Macro, J. Kjellander
- *      15/8/93  Nytt anrop till pmcpas(), J. Kjellander
- *      16/8/93  MACRO får inte anropas som PART, J. Kjellander
- *      9/11/94  GLOBAL_REF, J. Kjellander
- *      1996-05-30 t-sträng i promt, J.Kjellander
- *      1998-09-08 Vänta.. även för MACRO:n, J.Kjellander
+ *      (C)2007-04-27 J. Kjellander
  *
  ******************************************************!*/
 
   {
-    pm_ptr  oblparam;            /* obligatoriska parametrar */
-    pm_ptr  parlst;              /* soft parameter list */
-    pm_ptr  exnpt;               /* pekare till expr. node */
-    pm_ptr  retla;     
-    pm_ptr  oldmod;              /* base adress of caller */
-    pm_ptr  newmod;              /* base adress of called module */
-    pm_ptr  dummy;
-    short   status,mnum,posalt,oldpmd;
-    DBetype   typmsk;
-    bool    end,right;
-    pm_ptr  panola;              /* PM-pointer to param. node */
-    char    name[80];            /* parameter name string buffer */
-    char    prompt[80];          /* parameter prompt string buffer */
-    PMLITVA defval;              /* literal value structure */
-    PMMONO *mnpnt;               /* pointer to module node */
-    char    dstr[V3STRLEN+1];    /* Defaultsträng för param.värde */
-    char    istr[V3STRLEN+1];    /* Inputsträng för param.värde */
-    short   tmpafu;              /* Aktiv funktion */
-    bool    oldtrf;              /* Aktiv tmpref */
-    short   tmphit;              /* Temporär hit */
-    short   oldpen,oldlev;       /* Aktiv penna och nivå */
-    short   prtid;               /* Partens sekvensnummer */
-    bool    optflg,optpar;       /* Optionella parametrar */
-    bool    menpar=FALSE;        /* Meny-parameter */
-    bool    pospar=FALSE;        /* Pos-parameter */
-    PMREFVA prtref;              /* Partens identitet */
-    pm_ptr  ref,arglst;          /* För GLOABL_REF */
-    stidcl  kind;                /* För GLOABL_REF */
+    pm_ptr   csys_ptr;            /* PM ptr to csys for LOCAL module */
+    pm_ptr   param_list;          /* The parameter list */
+    pm_ptr   retla;               /* The PART statement */
+    pm_ptr   oldmod;              /* Base adress of caller */
+    pm_ptr   newmod;              /* Base adress of called module */
+    pm_ptr   expr;                /* For IGcpos() and IGcref() */
+    pm_ptr   dummy;               /* For data not used */
+    short    status;              /* Return status */
+    DBetype csymask;             /* For IGcref() */
+    bool     end,right;           /* For IGcref() */
+    pm_ptr   panola;              /* PM-pointer to param. node */
+    char     prompt[V3STRLEN];    /* Parameter prompt string */
+    PMLITVA  defval;              /* Parameter default value */
+    PMLITVA  actval;              /* Parameter actual value */
+    PMMONO  *mnpnt;               /* C pointer to module node */
+    PMPANO  *np;                  /* C pointer to parameter node */
+    short    oldafu;              /* Currently active function */
+    bool     oldtrf;              /* Currently active tmpref */
+    int      oldhit;              /* Current HIT */
+    int      old_posmode;         /* Global posmode */
+    short    prtid;               /* Part ID sequence number */
+    PMREFVA  prtref;              /* Part ID */
+    pm_ptr   ref,arglst;          /* For GLOABL_REF */
+    stidcl   kind;                /* For GLOABL_REF */
+    int      i;                   /* Loop variable */
+    STVAR    var;                 /* Interface struct for a parameter */
+    char     errbuf[V3STRLEN];    /* Error message data */
+    ANFSET   set;                 /* For the analyser */
+    ANATTR   attr;                /* For the analyzer */
+    char     title[81];           /* WPmsip() window title */
+    char     mesbuf[V3STRLEN];    /* Message buffer for WPaddmess.. */
 
 /*
-***Om "Kör namngiven modul" eller MFUNC aktivera temporär 
-***referens och hit = FALSE.
+***Each npars parameter has a name, type, default value and prompt.
+***VECTOR parameters have pos_modes and REF parameters have type_masks.
+***Each parameter can be hidden (no prompt string) or visible.
+***Each parameter after processing gets a PM pointer (expnode_ptrs).
 */
-     optflg = FALSE;
-     oldtrf = tmpref;
-     tmphit = (short)defnap.hit;
-     oldpen = (short)defnap.pen;
-     oldlev = (short)defnap.level;
+    int      npars;
+    char     parameter_names[V2MPMX][V3STRLEN];
+    int      parameter_types[V2MPMX];
+    char     parameter_defvals[V2MPMX][V3STRLEN];
+    char     parameter_prompts[V2MPMX][V3STRLEN];
+    int      pos_modes[V2MPMX];
+    DBetype type_masks[V2MPMX];
+    bool     hidden[V2MPMX];
+    pm_ptr   expnode_ptrs[V2MPMX];
+/*
+***Each nvisible parameter has a name, type, default value and prompt.
+***WPmsip() also wants a max length for each parameter.
+***pos_modes and type_masks are updated before input to reflect
+***only visible parameters.
+*/
+    int      nvisible;
+    char     input_names[V2MPMX][V3STRLEN];
+    int      input_types[V2MPMX];
+    char    *input_defvals[V2MPMX];
+    char    *input_prompts[V2MPMX];
+    short    input_maxlengths[V2MPMX];
+/*
+***WPmsip() returns input strings and want's ptrs. to them as input.
+*/
+    char     input_strings[V2MPMX][V3STRLEN];
+    char    *input_ptrs[V2MPMX];
 
-     if ( atyp != PART )
-       {
-       tmpref = TRUE;
-       defnap.hit = 0;
-       }
 /*
-***Om MFUNC, stäng av save.
+***Texts from the ini-file.
 */
-     if ( atyp == MFUNC ) defnap.save = 0;
+    if ( !WPgrst("varkon.part.title",title) ) strcpy(title,"Parameters for");
+
+    strcat(title," ");
+    strcat(title,part_name);
 /*
-***Lagra undan aktiv funktion, sätt den = -2 och lagra
-***filnamnet i actpnm för hjälpsystemet.
+***Initializations.
+*/
+    oldtrf = tmpref;
+    oldhit = defnap.hit;
+/*
+***If this is a PART call in RUN mode, set tmpref = TRUE
+***and HIT = 0. 
+*/
+    if ( atyp == RUN )
+      {
+      tmpref = TRUE;
+      defnap.hit = 0;
+      }
+/*
+***Save the number of the currently active function
+***and repalce it with -2 (part call). Set the active
+***part name to filnam so the help system can list the
+***right help file.
+*/
+    oldafu = actfun;
+    actfun = -2;
+    strcpy(actpnm,part_name);
+/*
+***Remember current position on the PM stack.
+*/
+    pmmark();
+/*
+***Load module to PM.
+*/
+    oldmod = pmgbla();
+    if ( pmgeba(part_name,&newmod) != 0 ) 
+      {
+      status = erpush("IG5272",part_name);
+      goto exit;
+      }
+/*
+***Read module header.
+*/
+    pmsbla(newmod);                 /* Set base adress to new module */
+    pmgmod((pm_ptr)0,&mnpnt);       /* Get c-pointer to module node */
+    pmsbla(oldmod);                 /* Set base adress back to old module */
+/*
+***A MACRO module may not be used as a part.
+*/
+    if ( (mnpnt->moat_ == MACRO) )
+      {
+      status = erpush("IG5352",part_name);
+      goto exit;
+      }
+/*
+***A module with the LOCAL attribute needs a ref to a csys.
+*/
+    csys_ptr = (pm_ptr)NULL;
+
+    if ( mnpnt->moat_ == LOCAL )
+        {
+        csymask = CSYTYP;
+        if ( (status=IGcref(271,&csymask,&expr,&end,&right)) < 0 ) goto reject;
+        pmtcon(expr,(pm_ptr)NULL,&csys_ptr,&dummy);
+        }
+/*
+***Loop through the parameter list and fix prompt strings and default values.
+*/
+    pmsbla(newmod);   
+    pmrpap((pm_ptr)0);
+    pmgpad(&panola);
+    npars = 0;
+
+    while ( panola != (pm_ptr)NULL )
+      {
+/*
+***Get parameter name, prompt and default value literal.
+*/
+      pmrpar(panola,parameter_names[npars],prompt,&defval);
+/*
+***First check is to see if this is a hidden parameter
+***with default value from file ie. "@fpath" or "@fpath(n)"
+***and then nothing more.
+*/
+      file_parameter(prompt,&defval);
+/*
+***If there still is a prompt, check for the following and in that order:
+***Position alternative:   "@an"
+***Typemask;               "@tn"
+***File parameter again:  "@fpath" or "@fpath(n)"
+***t-string prompt:        "tn"
+*/
+      if ( strlen(prompt) > 0 )
+        {
+        if ( defval.lit_type == C_VEC_VA  &&  !posalt_parameter(prompt,&pos_modes[npars]) )
+          pos_modes[npars] = -1;
+        if ( defval.lit_type == C_REF_VA  &&  !typemask_parameter(prompt,&type_masks[npars]) )
+          type_masks[npars] = ALLTYP;
+        file_parameter(prompt,&defval);
+        t_string_prompt(prompt);
+        }
+      strcpy(parameter_prompts[npars],prompt);
+/*
+***Does the parameter still have a prompt or is it a hidden parameter
+***that should not be displayed to the user ?
+*/
+      if ( strlen(prompt) == 0 ) hidden[npars] = TRUE;
+      else                        hidden[npars] = FALSE;
+/*
+***Parameter type.
+*/
+      parameter_types[npars] = defval.lit_type;
+/*
+***Default value.
+*/
+      pmgpar(panola,&np);
+      strvar(np->fopa_,&var);
+      pprexs(var.def_va,modtyp,parameter_defvals[npars],V3STRLEN);
+/*
+***Next parameter.
+*/
+      pmgpad(&panola);
+    ++npars;
+      }
+
+    pmsbla(oldmod);
+/*
+***Copy parameter data to input data.
+***Don't display hidden parameters.
+*/
+    for ( i=0,nvisible=0; i<npars; ++i )
+      {
+      if ( !hidden[i] )
+        {
+        input_defvals[nvisible]    = parameter_defvals[i];
+        input_prompts[nvisible]    = parameter_prompts[i];
+        input_ptrs[nvisible]       = input_strings[i];
+        input_types[nvisible]      = parameter_types[i];
+        input_maxlengths[nvisible] = V3STRLEN;
+        pos_modes[nvisible]        = pos_modes[i];
+        type_masks[nvisible]       = type_masks[i];
+        strcpy(input_names[nvisible],parameter_names[i]);
+      ++nvisible;
+        }
+      else
+        {
+        strcpy(input_strings[i],parameter_defvals[i]);
+        }
+      }
+/*
+***Add type and parameter name to prompt strings.
+*/
+    for ( i=0; i<nvisible; ++i )
+      {
+      switch ( input_types[i] )
+        {
+        case C_INT_VA: strcat(input_prompts[i],"  (INT "); break;
+        case C_FLO_VA: strcat(input_prompts[i],"  (FLOAT "); break;
+        case C_STR_VA: strcat(input_prompts[i],"  (STRING "); break;
+        case C_VEC_VA: strcat(input_prompts[i],"  (VECTOR "); break;
+        case C_REF_VA: strcat(input_prompts[i],"  (REF "); break;
+        }
+      strcat(input_prompts[i],input_names[i]);
+      strcat(input_prompts[i],")");
+      }
+/*
+***Prompt for actual (visible) parameter values.
+***With only one parameter which is VECTOR or REF use IGcpos() and IGcref().
+***This method requires less interaction from the user.
+***Otherwise, use WPmsip() which gives a better overview.
+*/
+retry:
+    if ( nvisible == 1  &&  input_types[0] == C_VEC_VA )
+      {
+      IGplma(input_prompts[0],IG_MESS);
+      if ( pos_modes[0] >= 0 )
+        {
+        old_posmode = posmode; posmode = pos_modes[0];
+        status = IGcpos(0,&expr);
+        posmode = old_posmode;
+        }
+      else { status = IGcpos(0,&expr); }
+      IGrsma();
+      if ( status < 0 ) goto reject;
+      pprexs(expr,modtyp,input_ptrs[0],V3STRLEN);
+      }
+    else if ( nvisible == 1  &&  input_types[0] == C_REF_VA )
+      {
+      IGplma(input_prompts[0],IG_MESS);
+      status = IGcref(0,&type_masks[0],&expr,&end,&right);
+      IGrsma();
+      if ( status < 0 ) goto reject;
+      pprexs(expr,modtyp,input_ptrs[0],V3STRLEN);
+      }
+    else if ( nvisible > 0 )
+      {
+      status = WPmsip(title,input_prompts,input_defvals,input_ptrs,
+                      input_maxlengths,input_types,nvisible);
+      if ( status < 0 ) goto reject;
+      }
+/*
+***Analyze parameter values.
+*/
+    for ( i=0; i<npars; ++i )
+      {
+       anlogi();
+       if ( (status=asinit(input_strings[i],ANRDSTR)) < 0 ) goto exit;
+       ancset(&set,NULL,0,0,0,0,0,0,0,0,0);
+       anascan(&sy);
+       anarex(&expnode_ptrs[i],&attr,&set);
+       asexit();
+
+       if ( anyerr() )
+         {
+         sprintf(errbuf,"%d%%%s",i+1,input_strings[i]);
+         erpush("IG3982",errbuf);
+         errmes();
+         goto retry;
+         }
+      }
+/*
+***Check that the input actual parameter types match the formal
+***types. This is not done by WPmsip() etc.  FLOAT can use INT
+***but all other types need to match exactly.
+*/
+    for ( i=0; i<npars; ++i )
+      {
+      inevev(expnode_ptrs[i],&actval,&dummy);
+      switch ( parameter_types[i] )
+        {
+        case C_FLO_VA:
+        if ( actval.lit_type != C_INT_VA  && actval.lit_type != C_FLO_VA )
+          {
+          sprintf(errbuf,"%d%%%s",i+1,input_strings[i]);
+          erpush("IG3982",errbuf);
+          errmes();
+          goto retry;
+          }
+        break;
+
+        default:
+        if ( actval.lit_type != parameter_types[i] )
+          {
+          sprintf(errbuf,"%d%%%s",i+1,input_strings[i]);
+          erpush("IG3982",errbuf);
+          errmes();
+          goto retry;
+          }
+        }
+      }
+/*
+***If requested, add GLOBAL_REF() to REF-parameters.
+*/
+    if ( iggflg )
+      {
+      for ( i=0; i<npars; ++i )
+        {
+        if ( parameter_types[i] == C_REF_VA )
+          {
+          pmtcon(expnode_ptrs[i],(pm_ptr)NULL,&arglst,&dummy);
+          stlook("GLOBAL_REF",&kind,&ref);
+          pmcfue(ref,arglst,&expnode_ptrs[i]);
+          }
+        }
+      }
+/*
+***Link parameters into a list.
+*/
+    param_list = (pm_ptr)NULL;
+
+    for ( i=0; i<npars; ++i )
+      {
+      pmtcon(expnode_ptrs[i],param_list,&param_list,&dummy);
+      }
+/*
+***Allocate a new ID and create the PART statement.
+*/
+    prtid = IGgnid();
+
+    if ( pmcpas(prtid,part_name,(pm_ptr)NULL,param_list,csys_ptr,
+                (pm_ptr)NULL,&retla) != 0 )
+      {
+      status = erpush("IG5023","PART");
+      goto exit;
+      }
+/*
+***Anything but a PART statement with the system in
+***generic mode should be released.
+*/
+    if ( atyp == RUN ||  v3mode == RIT_MOD ) pmrele();
+/*
+***Now finally, execute the PART statement.
+*/
+#ifdef UNIX
+    WPwait(GWIN_ALL,TRUE);
+#endif
+    status = inssta(retla);
+#ifdef UNIX
+    WPwait(GWIN_ALL,FALSE);
+#endif
+/*
+***If execution failed there might be garbage in DB that
+***needs cleaning. To be sure we call EXdel() on the part.
+***If the execution error was detected before any data was
+***stored in the DB this will yeild an extra error message
+***stating that the referenced entity does not exist. Not
+***very clear to the user but too much job to fix right now.
+*/
+    if ( status < 0 )
+      {
+      if ( defnap.save == 1 )
+        {
+        prtref.seq_val = prtid; prtref.ord_val = 1;
+        prtref.p_nextre = NULL; EXdel(&prtref);
+        }
+      if ( atyp == PART ) pmrele();
+      status = erpush("IG5222","PART");
+      goto exit;
+      }
+/*
+***The called module executed an EXIT("message") with error message.
+*/
+    else if ( status == 3 )
+      {
+      if ( defnap.save == 1 )
+        {
+        prtref.seq_val = prtid; prtref.ord_val = 1;
+        prtref.p_nextre = NULL; EXdel(&prtref);
+        }
+      status = 0;
+      goto exit;
+      }
+/*
+***The called module executed an EXIT() without error mesage.
+*/
+    else if ( status == 4 ) status = 0;
+/*
+***Everything went fine. Link the PART statement to the
+***end of the active module.
+*/
+    if ( atyp == PART )
+      {
+      if ( v3mode & BAS_MOD  &&  pmlmst(actmod, retla) < 0 )
+        {
+        status = erpush("IG5043","");
+        goto exit;
+        }
+      else
+        {
+        sprintf(mesbuf,"%s%s",IGgtts(58),part_name);
+        WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+        }
+/*
+***Update WPRWIN's.
+*/
+      WPrepaint_RWIN(RWIN_ALL,FALSE);
+      }
+/*
+***Finish. Reset global state variables.
+*/
+    status = 0;
+exit:
+    tmpref     = oldtrf;
+    defnap.hit = oldhit;
+    actfun     = oldafu;
+    WPerhg();    
+/*
+***The end.
+*/
+    return(status);
+/*
+***Error exits.
+*/
+reject:
+    pmrele();
+    goto exit;
+  }
+
+/********************************************************/
+/********************************************************/
+
+       short IGcall_macro(char *filnam)
+
+/*      Interactive input of parameters for, and execution
+ *      of, a MACRO module.
+ *
+ *      In: filnam => Name of MBO-file.
+ *
+ *      Return: 0 = OK.
+ *              REJECT = Operation rejected.
+ *              GOMAIN = Back to main menu.
+ *
+ *      Error:  IG5272   => Can't load module %s
+ *              IG5283   => Can't read module parameters
+ *              IG5023   => Can't create PART statement
+ *              IG5222   => Error executing PART statement
+ *              IG5362   => Not a MACRO module
+ *
+ *      (C)2007-04-27 Johan Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    pm_ptr   parlst;              /* soft parameter list */
+    pm_ptr   exnpt;               /* pekare till expr. node */
+    pm_ptr   retla;     
+    pm_ptr   oldmod;              /* base adress of caller */
+    pm_ptr   newmod;              /* base adress of called module */
+    pm_ptr   dummy;
+    short    status,mnum,oldpmd;
+    int      posalt;
+    DBetype typmsk;
+    bool     end,right;
+    pm_ptr   panola;              /* PM-pointer to param. node */
+    char     name[80];            /* parameter name string buffer */
+    char     prompt[80];          /* parameter prompt string buffer */
+    PMLITVA  defval;              /* literal value structure */
+    PMMONO  *mnpnt;               /* pointer to module node */
+    char     dstr[V3STRLEN+1];    /* Defaultsträng för param.värde */
+    char     istr[V3STRLEN+1];    /* Inputsträng för param.värde */
+    short    tmpafu;              /* Aktiv funktion */
+    bool     oldtrf;              /* Aktiv tmpref */
+    int      oldhit,oldsav;       /* Temporary HIT and SAVE */
+    short    prtid;               /* Partens sekvensnummer */
+    bool     optflg,optpar;       /* Optionella parametrar */
+    bool     menpar=FALSE;        /* Meny-parameter */
+    bool     pospar=FALSE;        /* Pos-parameter */
+    pm_ptr   ref,arglst;          /* För GLOABL_REF */
+    stidcl   kind;                /* För GLOABL_REF */
+
+/*
+***Save current state etc. 
+*/
+    optflg = FALSE;
+
+    oldtrf = tmpref;
+    tmpref = TRUE;
+
+    oldhit = defnap.hit;
+    oldsav = defnap.save;
+    defnap.hit  = 0;
+    defnap.save = 0;
+/*
+***Save the number of the currently active function
+***and repalce it with -2 (part call). Set the active
+***part name to filnam so the help system can list the
+***right help file.
 */
     tmpafu = actfun;
     actfun = -2;
     strcpy(actpnm,filnam);
 /*
-***Sätt aktuell pm-pekare.
+***Remember current position on the PM stack.
 */
     pmmark();
 /*
-***Ladda in modulen.
+***Load module to PM.
 */
     oldmod = pmgbla();
     if ( pmgeba(filnam,&newmod) != 0 ) 
@@ -229,33 +742,21 @@ end:
       goto exit;
       }
 /*
-***Läs modulens huvud.
+***Read module header.
 */
-    pmsbla(newmod);                 /* set new base adress */
-    pmgmod((pm_ptr)0,&mnpnt);       /* get c-pointer to module node */
-    pmsbla(oldmod);                 /* reset base adress */
+    pmsbla(newmod);                 /* Set base adress to new module */
+    pmgmod((pm_ptr)0,&mnpnt);       /* Get c-pointer to module node */
+    pmsbla(oldmod);                 /* Set base adress back to old module */
 /*
-***MACRO får inte anropas som en part.
+***The module must have the MACRO attribute !
 */
-    if ( (mnpnt->moat_ == MACRO)  && (atyp != MFUNC) )
+    if ( (mnpnt->moat_ != MACRO) )
       {
-      status = erpush("IG5352",filnam);
+      status = erpush("IG5362",filnam);
       goto exit;
       }
 /*
-***Ta reda på modulens attribut LOCAL/GLOBAL.
-***Skapa listan med obligatoriska parametrar, ref.
-*/
-    oblparam = (pm_ptr)NULL;
-
-    if ( mnpnt->moat_ == LOCAL )
-        {
-        typmsk = CSYTYP;
-        if ( (status=genref(271,&typmsk,&exnpt,&end,&right)) < 0 ) goto rject1;
-        pmtcon(exnpt,(pm_ptr)NULL,&oblparam,&dummy);
-        }
-/*
-***Skapa listan med modulens parametrar.
+***Create the parameter list.
 */
     parlst = (pm_ptr)NULL;
     pmsbla(newmod);                          /* set base adress */
@@ -270,25 +771,26 @@ end:
             break;
             }
         if ( pmrpar(panola,name,prompt,&defval) != 0 ) goto error1;
+
         pmsbla(oldmod);            /* reset base adress */
 /*
-***Är det en gömd parameter vars värde skall hämtas från fil ?
+***Does this parameter get it's defult value from a file ?
 */
-        igdefp(prompt,&defval);
+        file_parameter(prompt,&defval);
 /*
-***Parameter med promptsträng.
+***Parameter with prompt string.
 */
         if ( strlen(prompt) > 0 )
           {
-          optpar = igoptp(prompt);
+          optpar = optional_parameter(prompt);
           if ( defval.lit_type == C_STR_VA )
-            menpar = igmenp(prompt,&mnum);
+            menpar = menu_parameter(prompt,&mnum);
           if ( defval.lit_type == C_VEC_VA )
-            pospar = igposp(prompt,&posalt);
+            pospar = posalt_parameter(prompt,&posalt);
           if ( defval.lit_type == C_REF_VA &&
-            !igtypp(prompt,&typmsk) ) typmsk = ALLTYP;
+            !typemask_parameter(prompt,&typmsk) ) typmsk = ALLTYP;
 
-          igdefp(prompt,&defval);
+          file_parameter(prompt,&defval);
 
           if ( optflg && optpar )
             {
@@ -298,76 +800,88 @@ end:
             {
             optflg = FALSE;
 /*
-***Mappa ev. t-sträng i prompten till klartext.
+***Substitute optional t-string with text.
 */    
-            igtstp(prompt);
+            t_string_prompt(prompt);
 /*
-***Läs in parametervärde.
+***What kind of parameter ?
 */ 
             switch(defval.lit_type)
               {
+/*
+***INT parameter.
+*/
               case C_INT_VA:
-              igplma(prompt,IG_INP);
-              if ( optpar ) status = genint(0,"",istr,&exnpt);
+              IGplma(prompt,IG_INP);
+              if ( optpar ) status = IGcint(0,"",istr,&exnpt);
               else
                 {
                 sprintf(dstr,"%d",defval.lit.int_va);
-                status = genint(0,dstr,istr,&exnpt);
+                status = IGcint(0,dstr,istr,&exnpt);
                 }
               break;
-
+/*
+***FLOAT parameter.
+*/
               case C_FLO_VA: 
-              igplma(prompt,IG_INP);
-              if ( optpar ) status = genflt(0,"",istr,&exnpt);
+              IGplma(prompt,IG_INP);
+              if ( optpar ) status = IGcflt(0,"",istr,&exnpt);
               else
                 {
                 sprintf(dstr,"%g",defval.lit.float_va);
-                status = genflt(0,dstr,istr,&exnpt);
+                status = IGcflt(0,dstr,istr,&exnpt);
                 }
               break;
-
+/*
+***STRING parameter.
+*/
               case C_STR_VA:
               if ( optpar )
                 {
                 if ( menpar )
                   {
-                  igplma(prompt,IG_MESS);
-                  status = genstm(mnum,&exnpt);
+                  IGplma(prompt,IG_MESS);
+                  status = IGcstm(mnum,&exnpt);
                   }
                 else
                   {
-                  igplma(prompt,IG_INP);
-                  status = genstr(0,"",istr,&exnpt);
+                  IGplma(prompt,IG_INP);
+                  status = IGcstr(0,"",istr,&exnpt);
                   }
                 }
               else
                 {
                 if ( menpar )
                   {
-                  igplma(prompt,IG_MESS);
-                  status = genstm(mnum,&exnpt);
+                  IGplma(prompt,IG_MESS);
+                  status = IGcstm(mnum,&exnpt);
                   }
                 else
                   {
-                  igplma(prompt,IG_INP);
-                  status = genstr(0,defval.lit.str_va,istr,&exnpt);
+                  IGplma(prompt,IG_INP);
+                  status = IGcstr(0,defval.lit.str_va,istr,&exnpt);
                   }
                 }
               break;
-
+/*
+***VECTOR parameter.
+*/
               case C_VEC_VA:
-              igplma(prompt,IG_MESS);
+              IGplma(prompt,IG_MESS);
               if ( pospar )
                 {
-                oldpmd = posmod; posmod = posalt;
-                status = genpos(0,&exnpt); posmod = oldpmd;
+                oldpmd = posmode; posmode = posalt;
+                status = IGcpos(0,&exnpt);
+                posmode = oldpmd;
                 }
-              else { status = genpos(0,&exnpt); }
+              else { status = IGcpos(0,&exnpt); }
               break;
-
+/*
+***REF parameter.
+*/
               case C_REF_VA:
-              igplma(prompt,IG_MESS);
-              status = genref(0,&typmsk,&exnpt,&end,&right);
+              IGplma(prompt,IG_MESS);
+              status = IGcref(0,&typmsk,&exnpt,&end,&right);
               if ( iggflg )
                 {
                 pmtcon(exnpt,(pm_ptr)NULL,&arglst,&dummy);
@@ -375,138 +889,109 @@ end:
                 pmcfue(ref,arglst,&exnpt);
                 }
               break;
-
+/*
+***Error, unknown parameter type.
+*/
               default:
               WPerhg();    
               status = erpush("IG5302",name);
               goto exit;
               }
-
+/*
+***If the user rejected and there are more parameters and these
+***are optional, just go on with the next parameter.
+*/
             if ( optpar && (status == REJECT) )
               {
               optflg = TRUE;
               pmclie(&defval,&exnpt);
               }
-            else if ( status < 0 ) goto rject2;
+            else if ( status < 0 ) goto reject;
 
-            igrsma();
+            IGrsma();
             }
           }
 /*
-***Parameter utan promptsträng.
+***Parameter without prompt string.
 */
         else pmclie(&defval,&exnpt);
 /*
-***Länka in parametern i i parameterlistan.
+***Link parameter to parameter list.
 */
         pmtcon(exnpt,parlst,&parlst,&dummy);
-        pmsbla(newmod);                  /* set new base adress */
+        pmsbla(newmod);
         }
 /*
-***Skapa satsen, spara sekvensnummer i prtid.
-***Nytt anrop till pmcpas 15/8/93 JK.
+***Allocate a new ID and create the PART statement.
 */
-    prtid = iggnid();
+    prtid = IGgnid();
 
-    if ( pmcpas(prtid,filnam,(pm_ptr)NULL,parlst,oblparam,
+    if ( pmcpas(prtid,filnam,(pm_ptr)NULL,parlst,(pm_ptr)NULL,
                 (pm_ptr)NULL,&retla) != 0 )
       {
       status = erpush("IG5023","PART");
       goto exit;
       }
 /*
-***Om det är en MACRO-modul kan den komma att skapa nya satser i PM.
-***Därför städar vi bort det nyss genererade part-anropet innan vi
-***interpreterar. Under alla omständigheter skall anropet städas
-***bort om det är något annat än en part eller om ritsystemet är
-***aktivt.
+***Since the part is a MACRO it may create new entities in the
+***currently active module. In that case it's time to release
+***the statement from PM now before execution so that the
+***space can be reused.
 */
-    if ( atyp != PART ||  v3mode == RIT_MOD ) pmrele();
+    pmrele();
 /*
-***Prova att interpretera.
-***Om exekveringen inte gick bra kan skräp i GM behöva
-***städas bort. Dessutom skall anropet i PM strykas.
-***Med X kör vi med vänt-hanteringen påslagen.
+***Execute.
 */
-#ifdef V3_X11
+#ifdef UNIX
     WPwait(GWIN_ALL,TRUE);
 #endif
 
     status = inssta(retla);
 
-#ifdef V3_X11
+#ifdef UNIX
     WPwait(GWIN_ALL,FALSE);
 #endif
 
     if ( status < 0 )
       {
-      if ( defnap.save == 1 )
-        {
-        prtref.seq_val = prtid; prtref.ord_val = 1;
-        prtref.p_nextre = NULL; EXdel(&prtref);
-        }
-      if ( atyp == PART ) pmrele();
-      if ( atyp == MFUNC ) status = erpush("IG5222","MACRO");
-      else                 status = erpush("IG5222","PART");
+      status = erpush("IG5222","MACRO");
       goto exit;
       }
 /*
-***EXIT med felmeddelande.
+***The called module executed an EXIT("message") with error message.
 */
     else if ( status == 3 )
       {
-      if ( defnap.save == 1 )
-        {
-        prtref.seq_val = prtid; prtref.ord_val = 1;
-        prtref.p_nextre = NULL; EXdel(&prtref);
-        }
       status = 0;
       goto exit;
       }
 /*
-***EXIT utan felmeddelande.
+***The called module executed an EXIT() without error mesage.
 */
     else if ( status == 4 ) status = 0;
 /*
-***Interpreteringen gick bra. Om basmodulen aktiv, och det
-***är ett PART-anrop, länka in satsen i satslistan. 
-*/
-    if ( atyp == PART )
-      {
-      if ( v3mode & BAS_MOD  &&  pmlmst(actmod, retla) < 0 )
-        {
-        status = erpush("IG5043","");
-        goto exit;
-        }
-      }
-/*
-***Avslutning.
+***Finish.
 */
     status = 0;
 exit:
-    tmpref = oldtrf;
 /*
-***Om ej part, stryk satsen ur PM och återställ statusarea,
-***hit och save. Om det är en part kan ändå statusarean behöva
-***uppdateras.
+***Reset active values for HIT and SAVE etc..
 */
-    if ( atyp != PART )
-      {
-      defnap.hit = tmphit;
-      }
-     
-    if ( atyp == MFUNC ) defnap.save = 1;
-
+    tmpref = oldtrf;
     actfun = tmpafu;
-    WPerhg();    
+    defnap.hit  = oldhit;
+    defnap.save = oldsav;
 
+    WPerhg();    
+/*
+***The end.
+*/
     return(status);
 /*
-***Felutgångar.
+***Error exits.
 */
-rject2:
-    igrsma();
-rject1:
+reject:
+    IGrsma();
     pmrele();
     goto exit;
 
@@ -514,357 +999,18 @@ error1:
     pmsbla(oldmod);
     status = erpush("IG5283","");
     goto exit;
-
   }
 
 /********************************************************/
-/*!******************************************************/
-
-       bool igoptp(
-       char *prompt)
-
-/*      Kollar om parameter är optionell, dvs. om dess
- *      promptsträng börjar på $+mellanslag eller $$.
- *
- *      In: Parameterns promptsträng.
- *
- *      Ut: Promtsträngen strippad på inledande $.
- *
- *      FV: TRUE  = Optionell parameter.
- *          FALSE = Ej optionell.
- *
- *      (C)microform ab 19/2/88 J. Kjellander
- *
- *      11/11/88 Meny-parametrar, J. Kjellander
- *
- ******************************************************!*/
-
-  {
-  char tmp[V3STRLEN+1];
-
-    if ( *prompt == '@'  &&  *(prompt+1) == ' ' )
-      {
-      strcpy(tmp,prompt);
-      strcpy(prompt,tmp+2);
-      return(TRUE);
-      }
-    else if ( *prompt == '@'  &&  *(prompt+1) == '@' )
-      {
-      strcpy(tmp,prompt);
-      strcpy(prompt,tmp+1);
-      return(TRUE);
-      }
-    else return(FALSE);
-
-  }
-  
 /********************************************************/
-/*!******************************************************/
 
-       bool igmenp(
-       char  *prompt,
-       short *mnum)
+        short IGuppt()
 
-/*      Kollar om parameter skall tilldelas värde genom
- *      val i meny, dvs. om dess promptsträng börjar på
- *      $+m+heltal.
+/*      Interative Update Part function.
  *
- *      In: prompt = Parameterns promptsträng.
- *          mnum   = Pekare till ev. resultat.
- *
- *      Ut: Promtsträngen strippad på inledande kod.
- *          *mnum = Ev. meny-nummer.
- *
- *      FV: TRUE  = Meny-parameter.
- *          FALSE = Ej meny-parameter.
- *
- *      (C)microform ab 11/11/88 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    short n,i,pl;
-    char tmp[V3STRLEN+1];
-
-/*
-***Står det @m....
-*/
-    if ( *prompt == '@'  &&  *(prompt+1) == 'm' )
-      {
-      pl = strlen(prompt);
-      for ( i=2; i<pl; ++i) if ( prompt[i] == ' '  ) break;
-      if ( i < pl )
-        {
-        n = sscanf(prompt+2,"%hd",mnum);
-        if ( n == 1 )
-          {
-          strcpy(tmp,prompt+i+1);
-          strcpy(prompt,tmp);
-          return(TRUE);
-          }
-        }
-      }
-/*
-***Ingen träff.
-*/
-    return(FALSE);
-  }
-  
-/********************************************************/
-/*!******************************************************/
-
-       bool igposp(
-       char  *prompt,
-       short *posalt)
-
-/*      Kollar om VECTOR-parameter skall tilldelas värde utan
- *      val i pos-meny, dvs. om dess promptsträng börjar på
- *      $+a+heltal.
- *
- *      In: prompt = Parameterns promptsträng.
- *          posalt = Pekare till ev. resultat.
- *
- *      Ut: Promtsträngen strippad på inledande kod.
- *          *posalt = Ev. pos-metod.
- *
- *      FV: TRUE  = Pos-parameter.
- *          FALSE = Ej pos-parameter.
- *
- *      (C)microform ab 15/11/88 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    short n,i,pl;
-    char tmp[V3STRLEN+1];
-
-    if ( *prompt == '@'  &&  *(prompt+1) == 'a' )
-      {
-      pl = strlen(prompt);
-      for ( i=2; i<pl; ++i) if ( prompt[i] == ' '  ) break;
-      if ( i < pl )
-        {
-        n = sscanf(prompt+2,"%hd",posalt);
-        if ( n == 1 )
-          {
-          strcpy(tmp,prompt+i+1);
-          strcpy(prompt,tmp);
-          return(TRUE);
-          }
-        }
-      }
-    return(FALSE);
-  }
-  
-/********************************************************/
-/*!******************************************************/
-
-       bool igtypp(
-       char  *prompt,
-       DBetype *typmsk)
-
-/*      Kollar om REF-parameter skall tillåtas referera till
- *      vad som helst, dvs. om dess promptsträng börjar på
- *      $+t+heltal.
- *
- *      In: prompt = Parameterns promptsträng.
- *          typmsk = Pekare till ev. resultat.
- *
- *      Ut: Promtsträngen strippad på inledande kod.
- *          *typmsk = Ev. typmask.
- *
- *      FV: TRUE  = Typ-parameter.
- *          FALSE = Ej typ-parameter.
- *
- *      (C)microform ab 25/11/88 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    short n,i,pl;
-    int   tmpint;
-    char tmp[V3STRLEN+1];
-
-    if ( *prompt == '@'  &&  *(prompt+1) == 't' )
-      {
-      pl = strlen(prompt);
-      for ( i=2; i<pl; ++i) if ( prompt[i] == ' '  ) break;
-      if ( i < pl )
-        {
-        n = sscanf(prompt+2,"%d",&tmpint);
-       *typmsk = tmpint;
-        if ( n == 1 )
-          {
-          strcpy(tmp,prompt+i+1);
-          strcpy(prompt,tmp);
-          return(TRUE);
-          }
-        }
-      }
-    return(FALSE);
-  }
-  
-/********************************************************/
-/*!******************************************************/
-
-       short igdefp(
-       char    *prompt,
-       PMLITVA *defval)
-
-/*      Kollar om parameter skall använda default
- *      default-värde eller om det skall hämtas från fil.
- *      @f+vägbeskrivning.
- *
- *      In: prompt = Parameterns promptsträng.
- *          defval = Pekare till defaultvärde.
- *
- *      Ut: Promtsträngen strippad på inledande kod.
- *          *defval = Ev. nytt defaultvärde.
- *
- *      FV: 0.
- *
- *      (C)microform ab 11/8/90 J. Kjellander
- *
- *      1/10/91  Strippat Ön, J. Kjellander.
- *      10/11/91 Gömd parameter, J. Kjellander
- *      12/2/92  Bug "iggtts(119)", J. Kjellander
- *
- ******************************************************!*/
-
-  {
-    short  n,i,pl,rn;
-    int    ival;
-    double fval;
-    char   tmp[V3STRLEN+1];
-    char   defstr[V3STRLEN+1];
-    char   path[80];
-    FILE   *f;
-
-/*
-***Är det 'Krullalfa + f' ?
-*/
-    if ( *prompt == '@'  &&  *(prompt+1) == 'f' )
-      {
-/*
-***Packa upp filnamnet.
-*/
-      pl = strlen(prompt);
-      for ( n=2; n<pl; ++n)
-        if ( prompt[n] == ' '  ||  prompt[n] == '(' ) break;
-
-      strncpy(path,&prompt[2],n-2);
-      path[n-2] = '\0';
-/*
-***Om det är "act_job", ersätt med act_jobdir()+actjobnam().
-*/
-      if ( strncmp(iggtts(119),path,7) == 0 )
-        {
-        strcpy(tmp,jobdir);
-        strcat(tmp,jobnam);
-        strcat(tmp,&path[7]);
-        strcpy(path,tmp);
-        }
-/*
-***Packa upp ev. radnr.
-*/
-      if ( prompt[n] == '(' )
-        {
-        for ( i=n; i<pl; ++i) if ( prompt[i] == ')' ) break;
-        strncpy(tmp,&prompt[n+1],i-n-1);
-        tmp[i-n-1] = '\0';
-        sscanf(tmp,"%hd",&rn);
-        }
-      else
-        {
-        rn = 1;
-        i = n - 1;
-        }
-/*
-***Läs värde från filen.
-*/
-      if ( (f=fopen(path,"r")) != 0 )
-        {
-        for ( n=0; n<rn; ++n )
-          fgets(defstr,V3STRLEN,f);
-        n = strlen(defstr);
-        if ( defstr[n-1] == '\n' ) defstr[n-1] = '\0';
-        fclose(f);
-/*
-***Lagra defaultvärdet i PMLITVA:n.
-*/
-        switch ( defval->lit_type )
-          {
-          case C_STR_VA:
-          strcpy(defval->lit.str_va,defstr);
-          break;
-
-          case C_INT_VA:
-          if ( sscanf(defstr,"%d",&ival) == 1 )
-            defval->lit.int_va = ival;
-          break;
-
-          case C_FLO_VA:
-          if ( sscanf(defstr,"%lf",&fval) == 1 )
-            defval->lit.float_va = fval;
-          break;
-          }
-        }
-/*
-***Strippa promten från vägbeskrivn etc.
-*/
-      if ( (int)strlen(prompt) > i+1 )
-        {
-        strcpy(tmp,prompt+i+2);
-        strcpy(prompt,tmp);
-        }
-      else prompt[0] = '\0';
-      }
-
-    return(0);
-
-  }
-  
-/********************************************************/
-/*!******************************************************/
-
-       short igtstp(char *prompt)
-
-/*      Kollar om promten börjar med t samt ett nummer
- *      och översätter isåfall till motsvarande t-sträng.
- *
- *      In: Parameterns promptsträng.
- *
- *      Ut: Ursprunglig eller ny promtsträng.
- *
- *      FV: 0
- *
- *      (C)microform ab 1996-05-30 J. Kjellander
- *
- ******************************************************!*/
-
-  {
-   int  tnum;
-
-   if ( *prompt == 't'  &&  (sscanf(prompt+1,"%d",&tnum) == 1) )
-     strcpy(prompt,iggtts((short)tnum));
-
-   return(0);
-  }
-  
-/********************************************************/
-/*!******************************************************/
-
-        short iguppt()
-
-/*      Varkonfunktion för att uppdatera en part.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
+ *      Return: 0      = OK
+ *              REJECT = Operation cancelled
+ *              GOMAIN = Back to main menu
  *
  *      Felkod:  IG5222  => Fel vid interpr. av PART-sats
  *               IG5332  => Kan ej hitta PART-sats i PM
@@ -879,38 +1025,39 @@ error1:
  ******************************************************!*/
 
   {
-    DBetype    typ;
+    char     mesbuf[V3STRLEN];
+    DBetype  typ;
     bool     end,right,dstflg;
     short    status;
     pm_ptr   retla,stlla,dummy;
     PMREFVA  idvek[MXINIV];
-    DBPart    part;
+    DBPart   part;
     DBPdat   pdat;
     PMMONO  *np;
     V2NAPA   oldnap;
 
 /*
-***Initiering.
+***Init.
 */
     dstflg = FALSE;
 /*
-***Ta reda på parten:s ID.
+***Get part ID.
 */
-    igptma(269,IG_MESS);
+    IGptma(269,IG_MESS);
     typ = PRTTYP;
-    status=getidt(idvek,&typ,&end,&right,(short)0);
-    igrsma();
+    status=IGgsid(idvek,&typ,&end,&right,(short)0);
+    IGrsma();
     if ( status < 0 ) goto exit;
 /*
-***Om ritpaket, skapa partanrop.
+***If mode is explicit, create part statement.
 */
     if ( v3mode == RIT_MOD )
       {
-      if ( (status=iggnps(idvek)) < 0 ) goto error;
+      if ( (status=IGgnps(idvek)) < 0 ) goto error;
       else dstflg = TRUE;
       }
 /*
-*** Hämta PM-pekare till partsatsen.
+***Get PM ptr to part statement.
 */
     np = (PMMONO *)pmgadr((pm_ptr)0 );
     stlla = np->pstl_;
@@ -923,7 +1070,7 @@ error1:
 
     pmglin(retla, &dummy, &retla);
 /*
-***Kör om anropet.
+***Re-execute.
 */
     V3MOME(&defnap,&oldnap,sizeof(V2NAPA));
     EXgtpt(idvek,&part);
@@ -948,15 +1095,20 @@ error1:
       gmumtm();
       EXdraw(idvek,TRUE);
       }
+    else
+      {
+      sprintf(mesbuf,"Part %s %s",part.name_pt,IGgtts(61));
+      WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+      }
 /*
-***Avslutning.
+***The end.
 */
 exit:
     if ( dstflg ) pmdlst();
     WPerhg();
     return(status);
 /*
-***Felutgång.
+***Error exit.
 */
 error:
     errmes();
@@ -964,20 +1116,15 @@ error:
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-        short igcptw()
+        short IGcptw()
 
-/*      Fönstervariant av 'Ändra part' gemensam för X11
- *      och Windows.
+/*      The interactive Edit Part function.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
+ *      Return: 0      = OK
+ *              REJECT = Operation cancelled
+ *              GOMAIN = Back to main menu
  *
  *      Felkod:  IG5272  => Kan ej ladda modulen %s
  *               IG5222  => Fel vid interpr. av PART-sats
@@ -994,6 +1141,7 @@ error:
  *      1998-09-17 t/@ i promtsträngar, J.Kjellander
  *      1998-09-25 actfun, J.Kjellander
  *      2004-02-21 pmmark()+pmrele(), J.Kjellander
+ *      2007-01-05 Removed GP, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1009,25 +1157,20 @@ error:
     short   pant;                           /* Antal parametrar */
     short   i,status;
     char    parnam[V3STRLEN+1];
-    char    rubrik[V3STRLEN],errbuf[V3STRLEN];
+    char    rubrik[V3STRLEN],errbuf[V3STRLEN],mesbuf[V3STRLEN];
     pm_ptr  pla[V2MPMX];                    /* Parametrars PM-adress */
     pm_ptr  oldmod,newmod,panola,exnpt,retla;
-    DBetype   typ;
+    DBetype typ;
     bool    end,right,edit,ref,dstflg;
     short   oldafn;
     ANFSET  set;
     ANATTR  attr;
-    DBPart   part;
+    DBPart  part;
     PMREFVA idvek[MXINIV];
     DBPdat  pdat;
     PMLITVA defval;
     V2NAPA  oldnap;
 
-/*
-***Denna funktion får bara anropas med X11 eller Windows
-***som terminaltyp.
-*/
-    if ( igtrty != X11  &&  igtrty != MSWIN ) return(0);
 /*
 ***Initiering.
 */
@@ -1036,10 +1179,10 @@ error:
 /*
 ***Ta reda på parten:s ID.
 */
-    igptma(269,IG_MESS);
+    WPaddmess_mcwin(IGgtts(269),WP_PROMPT);
     typ = PRTTYP;
-    status=getidt(idvek,&typ,&end,&right,(short)0);
-    igrsma();
+    status=IGgsid(idvek,&typ,&end,&right,(short)0);
+    WPclear_mcwin();
 
     if ( status < 0 )
       goto exit;
@@ -1057,7 +1200,7 @@ error:
 */
     if ( v3mode == RIT_MOD )
       {
-      if ( (status=iggnps(idvek)) < 0 ) goto error1;
+      if ( (status=IGgnps(idvek)) < 0 ) goto error1;
       else dstflg = TRUE;
       }
 /*
@@ -1122,13 +1265,13 @@ error:
 */
       if ( strlen(pmtarr[i]) > 0 )
         {
-        igtstp(pmtarr[i]);
-        igoptp(pmtarr[i]);
+        t_string_prompt(pmtarr[i]);
+        optional_parameter(pmtarr[i]);
         }
 /*
 ***Parameter utan promt är gömd.
 */
-     else strcpy(pmtarr[i],iggtts(1627));
+     else strcpy(pmtarr[i],IGgtts(1627));
 /*
 ***Vilken typ har den ?
 */
@@ -1158,9 +1301,9 @@ error:
 /*
 ***Anropa WPmsip. t1599 = "Parametrar för parten : "
 */
-    strcpy(rubrik,iggtts(1599));
+    strcpy(rubrik,IGgtts(1599));
     strcat(rubrik,part.name_pt);
-#ifdef V3_X11
+#ifdef UNIX
     status = WPmsip(rubrik,pmparr,osparr,nsparr,maxtkn,typarr,pant);
 #endif
 #ifdef WIN32
@@ -1221,7 +1364,7 @@ error:
 */
     if ( edit )
       {
-      if ( ref && igialt(373,67,68,FALSE) ) igramo();
+      if ( ref && IGialt(373,67,68,FALSE) ) IGramo();
 /*
 ***Reinterpretera inkrementellt.
 */
@@ -1233,11 +1376,11 @@ error:
           DBread_part_attributes((char *)&defnap,(int)pdat.asiz_pd,pdat.attp_pd);
         EXdraw(idvek,FALSE);
         gmmtm((DBseqnum)idvek->seq_val);
-#ifdef V3_X11
+#ifdef UNIX
         WPwait(GWIN_MAIN,TRUE);
 #endif
         status = inssta(retla); 
-#ifdef V3_X11
+#ifdef UNIX
         WPwait(GWIN_MAIN,FALSE);
 #endif
         V3MOME(&oldnap,&defnap,sizeof(V2NAPA));
@@ -1255,6 +1398,15 @@ error:
           if ( v3mode & BAS_MOD ) for ( i=0; i<pant; ++i )
             pmchpa(idvek,(short)(i+1),pla[i],&retla);
           }
+        else
+          {
+          sprintf(mesbuf,"Part %s %s",part.name_pt,IGgtts(61));
+          WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+          }
+/*
+***Update WPRWIN's.
+*/
+        WPrepaint_RWIN(RWIN_ALL,FALSE);
         }
       }
 /*
@@ -1274,19 +1426,17 @@ error1:
   }
 
 /********************************************************/
-/*!******************************************************/
+/********************************************************/
 
-       short iggnps(PMREFVA *id)
+       short IGgnps(PMREFVA *id)
 
-/*    Genererar en part-anropssats med utseende enl.
- *    part-post i GM.
+/*     Creates (reengineers) a PART statement from an
+ *     existing part in the DB.
  *
- *      In: id  => Partens ID.
+ *      In: id  => Part ID.
  *
- *      Ut: Inget.
- *
- *      Felkod: IG5023 = Kan ej skapa PART sats 
- *              IG5342 = Någon parameter är call by reference
+ *      Error: IG5023 = Can't create PART statement
+ *             IG5342 = A parameter is call by reference
  *
  *      (C)microform ab 29/11/88 J. Kjellander
  *
@@ -1307,13 +1457,12 @@ error1:
     PMPATLOG typarr[V2MPMX];      /* Parametertyper */
 
 /*
-***Läs part-posten.
+***Get part dtata from DB.
 */
     if ( (status=EXgtpt(id,&part)) < 0 ) return(status);
     DBread_part_parameters(&data,typarr,NULL,part.dtp_pt,part.dts_pt);
 /*
-***Ta reda på modulens attribut LOCAL/GLOBAL, om LOCAL,
-***skapa referens till lokalt koordinatsystem.
+***If part attribute is LOCAL, create reference to csys.
 */
     if ( data.matt_pd  == LOCAL )
         {
@@ -1324,7 +1473,7 @@ error1:
         }
      else oblpar = (pm_ptr)NULL;
 /*
-***Skapa parameterlistan.
+***Create the parameter list.
 */
     parlst = (pm_ptr)NULL;
 
@@ -1365,7 +1514,7 @@ error1:
       pmtcon(exnpt,parlst,&parlst,&dummy);
       }
 /*
-***Skapa partsats.
+***Create the statement.
 */
     prtid = id[0].seq_val;
 
@@ -1374,9 +1523,433 @@ error1:
       return(erpush("IG5023","PART"));
     else
       pmlmst(actmod,retla);
-
+/*
+***The end.
+*/
     return(0);
+  }
 
+/********************************************************/
+/********************************************************/
+
+static bool optional_parameter(char *prompt)
+
+/*      Check if a parameter is optional, ie. if
+ *      it's prompt string starts with @+space or @@.
+ *
+ *      In: Parameter prompt string.
+ *
+ *      Out: Prompt string stripped from leading @.
+ *
+ *      Return: TRUE  = Parameter is optional.
+ *              FALSE = Parameter is not optional.
+ *
+ *      (C)microform ab 19/2/88 J. Kjellander
+ *
+ *      11/11/88 Meny-parametrar, J. Kjellander
+ *      2007-04-23 1.19, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+  char tmp[V3STRLEN+1];
+
+    if ( *prompt == '@'  &&  *(prompt+1) == ' ' )
+      {
+      strcpy(tmp,prompt);
+      strcpy(prompt,tmp+2);
+      return(TRUE);
+      }
+    else if ( *prompt == '@'  &&  *(prompt+1) == '@' )
+      {
+      strcpy(tmp,prompt);
+      strcpy(prompt,tmp+1);
+      return(TRUE);
+      }
+    else return(FALSE);
+  }
+  
+/********************************************************/
+/********************************************************/
+
+static bool   menu_parameter(
+       char  *prompt,
+       short *mnum)
+
+/*      Check if parameter should get it's value from a menu,
+ *      ie. the prompt string starts with @+m+int.
+ *
+ *      In: prompt = Parameter prompt string.
+ *
+ *      Out: Prompt string stripped from leading @mn
+ *           *mnum = Menu number
+ *
+ *      Return: TRUE  = Menu parameter.
+ *              FALSE = Not menu parameter.
+ *
+ *      (C)microform ab 11/11/88 J. Kjellander
+ *
+ *      2007-04-23 1.19, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    short n,i,pl;
+    char tmp[V3STRLEN+1];
+
+/*
+***Do we have @m....
+*/
+    if ( *prompt == '@'  &&  *(prompt+1) == 'm' )
+      {
+      pl = strlen(prompt);
+      for ( i=2; i<pl; ++i) if ( prompt[i] == ' '  ) break;
+      if ( i < pl )
+        {
+        n = sscanf(prompt+2,"%hd",mnum);
+        if ( n == 1 )
+          {
+          strcpy(tmp,prompt+i+1);
+          strcpy(prompt,tmp);
+          return(TRUE);
+          }
+        }
+      }
+/*
+***No hit.
+*/
+    return(FALSE);
+  }
+  
+/********************************************************/
+/********************************************************/
+
+static bool   posalt_parameter(
+       char  *prompt,
+       int   *posalt)
+
+/*      Check if VECTOR parameter wants input with a specific
+ *      method, ie. if it's prompt string starts with @+a+int.
+ *
+ *      In: prompt = Parameter prompt string.
+ *
+ *      Out: Prompt string stripped from leading @an
+ *          *posalt = Position method alternative
+ *
+ *      Return: TRUE  = This is a posalt parameter.
+ *              FALSE = Not a posalt parameter.
+ *
+ *      (C)microform ab 15/11/88 J. Kjellander
+ *
+ *      2007-04-23 1.19, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    int  n,i,pl;
+    char tmp[V3STRLEN+1];
+
+    if ( *prompt == '@'  &&  *(prompt+1) == 'a' )
+      {
+      pl = strlen(prompt);
+      for ( i=2; i<pl; ++i) if ( prompt[i] == ' '  ) break;
+      if ( i < pl )
+        {
+        n = sscanf(prompt+2,"%d",posalt);
+        if ( n == 1 )
+          {
+          strcpy(tmp,prompt+i+1);
+          strcpy(prompt,tmp);
+          return(TRUE);
+          }
+        }
+      }
+    return(FALSE);
+  }
+  
+/********************************************************/
+/********************************************************/
+
+static bool     typemask_parameter(
+       char    *prompt,
+       DBetype *typemask)
+
+/*      Check if REF-parameter is restricted by a typemask,
+ *      ie. if it's prompt string starts with @+t+int.
+ *
+ *      In: prompt = Parameter prompt string.
+ *
+ *      Ut: Prompt string stripped on leading @tn.
+ *          *typemask = The typemask.
+ *
+ *      Return: TRUE  = This is a typemask parameter.
+ *              FALSE = Not a typemask parameter.
+ *
+ *      (C)microform ab 25/11/88 J. Kjellander
+ *
+ *      2007-04-23 1.19, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    int  n,i,pl,tmpint;
+    char tmp[V3STRLEN+1];
+
+    if ( *prompt == '@'  &&  *(prompt+1) == 't' )
+      {
+      pl = strlen(prompt);
+      for ( i=2; i<pl; ++i) if ( prompt[i] == ' '  ) break;
+      if ( i < pl )
+        {
+        n = sscanf(prompt+2,"%d",&tmpint);
+       *typemask = tmpint;
+        if ( n == 1 )
+          {
+          strcpy(tmp,prompt+i+1);
+          strcpy(prompt,tmp);
+          return(TRUE);
+          }
+        }
+      }
+    return(FALSE);
+  }
+  
+/********************************************************/
+/********************************************************/
+
+static void     file_parameter(
+       char    *prompt,
+       PMLITVA *defval)
+
+/*      Check if parameter uses its own default value or
+ *      a default value from a file, ie. if its prompt
+ *      string starts with  @f+path or @fpath(line_number)
+ *      If path = t119 = "act_job", jobdir+jobnam is used.
+ *
+ *      In: prompt = Parameter prompt string.
+ *
+ *      Out: Prompt string stripped on leading @fpath.
+ *          *defval = Default value from file.
+ *
+ *      Return: 0.
+ *
+ *      (C)microform ab 11/8/90 J. Kjellander
+ *
+ *      1/10/91  Strippat Ön, J. Kjellander.
+ *      10/11/91 Gömd parameter, J. Kjellander
+ *      12/2/92  Bug "IGgtts(119)", J. Kjellander
+ *      2007-04-23 1.19, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    int    n,i,pl,rn,ival;
+    double fval;
+    char   tmp[V3STRLEN+1];
+    char   defstr[V3STRLEN+1];
+    char   path[V3PTHLEN+1];
+    FILE  *f;
+
+/*
+***Do we have '@ + f' ?
+*/
+    if ( *prompt == '@'  &&  *(prompt+1) == 'f' )
+      {
+/*
+***Get the path.
+*/
+      pl = strlen(prompt);
+      for ( n=2; n<pl; ++n)
+        if ( prompt[n] == ' '  ||  prompt[n] == '(' ) break;
+
+      strncpy(path,&prompt[2],n-2);
+      path[n-2] = '\0';
+/*
+***Replace optional "act_job" with jobdir + jobnam.
+*/
+      if ( strncmp(IGgtts(119),path,7) == 0 )
+        {
+        strcpy(tmp,jobdir);
+        strcat(tmp,jobnam);
+        strcat(tmp,&path[7]);
+        strcpy(path,tmp);
+        }
+/*
+***Get optional line number.
+*/
+      if ( prompt[n] == '(' )
+        {
+        for ( i=n; i<pl; ++i) if ( prompt[i] == ')' ) break;
+        strncpy(tmp,&prompt[n+1],i-n-1);
+        tmp[i-n-1] = '\0';
+        sscanf(tmp,"%d",&rn);
+        }
+      else
+        {
+        rn = 1;
+        i = n - 1;
+        }
+/*
+***Read value from file.
+*/
+      if ( (f=fopen(path,"r")) != 0 )
+        {
+        for ( n=0; n<rn; ++n )
+          fgets(defstr,V3STRLEN,f);
+        n = strlen(defstr);
+        if ( defstr[n-1] == '\n' ) defstr[n-1] = '\0';
+        fclose(f);
+/*
+***Save the value in the PMLITVA.
+*/
+        switch ( defval->lit_type )
+          {
+          case C_STR_VA:
+          strcpy(defval->lit.str_va,defstr);
+          break;
+
+          case C_INT_VA:
+          if ( sscanf(defstr,"%d",&ival) == 1 )
+            defval->lit.int_va = ival;
+          break;
+
+          case C_FLO_VA:
+          if ( sscanf(defstr,"%lf",&fval) == 1 )
+            defval->lit.float_va = fval;
+          break;
+          }
+        }
+/*
+***Strip prompt fom @f....
+*/
+      if ( (int)strlen(prompt) > i+1 )
+        {
+        strcpy(tmp,prompt+i+2);
+        strcpy(prompt,tmp);
+        }
+      else prompt[0] = '\0';
+      }
+/*
+***The end.
+*/
+    return;
+  }
+  
+/********************************************************/
+/********************************************************/
+
+static void t_string_prompt(char *prompt)
+
+/*      Check if prompt string should be replaced
+ *      with the value of a t-string, ie. if it starts
+ *      with t+int.
+ *
+ *      In: Prompt string.
+ *
+ *      Out: Prompt string replaced.
+ *
+ *      (C)microform ab 1996-05-30 J. Kjellander
+ *
+ *      2007-04-23 1.19, J.Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   int  tnum;
+
+   if ( *prompt == 't'  &&  (sscanf(prompt+1,"%d",&tnum) == 1) )
+     strcpy(prompt,IGgtts(tnum));
+/*
+***The end.
+*/
+   return;
+  }
+  
+/********************************************************/
+/********************************************************/
+
+static short get_partname(char *name)
+
+/*      Returns the name of a module that can be called
+ *      using the PART statement.
+ *
+ *      Out: name = C ptr to module name
+ *
+ *      (C)2007-05-28 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+   short status;
+   char *nparr1[1000],*nparr2[1000],strarr1[20000],strarr2[20000];
+   int   i,j,n_names1,n_names2;
+
+/*
+***Get the two file lists.
+*/
+   if ( (status=IGdir(jobdir,MODEXT,1000,20000,nparr1,strarr1,&n_names1)) < 0 ) return(status);
+   if ( (status=IGdir(mbodir,MODEXT,1000,20000,nparr2,strarr2,&n_names2)) < 0 ) return(status);
+/*
+***Remove the active job from the first list.
+*/
+   for ( i=0; i<n_names1; ++i )
+     {
+     if ( strcmp(nparr1[i],jobnam) == 0 )
+       {
+     --n_names1;
+       for ( ; i<n_names1; ++i ) nparr1[i] = nparr1[i+1];
+       break;
+       }
+     }
+/*
+***Remove entries from the second list which are equal to the first list.
+*/
+   for ( i=0; i<n_names1; ++i )
+     {
+     for ( j=0; j<n_names2; ++j )
+       {
+       if ( strcmp(nparr1[i],nparr2[j]) == 0 )
+         {
+       --n_names2;
+         for ( ; j<n_names2; ++j ) nparr2[j] = nparr2[j+1];
+         break;
+         }
+       }
+     }
+/*
+***Let the user make a selection from the directory that
+***is currently active.
+*/
+start:
+
+   switch ( part_dir )
+     {
+     case 1: status = WPselect_partname(1,nparr1,n_names1,name); break;
+     case 2: status = WPselect_partname(2,nparr2,n_names2,name); break;
+     default: return(REJECT);
+     }
+/*
+***Did the user select another directory ?
+*/
+   if ( status == 1  ||  status == 2 )
+     {
+     part_dir = status;
+     goto start;
+     }
+/*
+***Maybe WPselect_partname() failed because of too many files.
+***In that case, use simple input. WPselect_partname() should
+***be changed so it supports multi page mode.
+*/
+   else if ( status == 3 )
+     {
+     IGptma(244,IG_INP);
+     if ( (status=IGssip(IGgtts(267),name,"",JNLGTH)) < 0 ) errmes();
+     }
+/*
+***No, then this is the end.
+*/
+   return(status);
   }
 
 /********************************************************/

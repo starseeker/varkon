@@ -173,28 +173,7 @@ static DBfloat  comptol;     /* Computer tolerance                  */
 /*!                                                                 */
 /* 1. Check of input data and initializations                       */
 /*                                                                 !*/
-
-#ifdef DEBUG
-if ( dbglev(SURPAC) == 1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur868 Enter***varkon_sur_sweep er reverse %d\n", (int)reverse );
-fflush(dbgfil(SURPAC));
-}
-if ( dbglev(SURPAC) == 1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur868 p_spine %d p_spineseg %d\n", (int)p_spine,  (int)p_spineseg );
-fflush(dbgfil(SURPAC));
-}
-if ( dbglev(SURPAC) == 1 )
-{
-fprintf(dbgfil(SURPAC),
-"sur868 p_cur %d p_seg %d\n", (int)p_cur,  (int)p_seg );
-fflush(dbgfil(SURPAC));
-}
-#endif
- 
+    varkon_ini_gmsur ( p_surout ); 
 /*!                                                                 */
 /* Let pp_patout= NULL                                              */
 /*                                                                 !*/
@@ -203,13 +182,8 @@ fflush(dbgfil(SURPAC));
     status= initial( p_surout );
     if (status<0) 
       {
-#ifdef  DEBUG
-      sprintf(errbuf,"initial%%sur868");
-      varkon_erpush("SU2973",errbuf);
-#endif
       return(status);
       }
-
 /*!                                                                 */
 /* 2. Determine the fixed direction (yaxis) for the sweeping        */
 /*                                                                 !*/
@@ -217,14 +191,8 @@ fflush(dbgfil(SURPAC));
     status= fixdir ( p_spine, p_spineseg, p_dir );
     if (status<0) 
       {
-#ifdef DEBUG
-      sprintf(errbuf,"fixdir%%sur868");
-      varkon_erpush("SU2973",errbuf);
-#endif
       return(status);
       }
-
-
 /*!                                                                 */
 /* 3. Modify curve directions and yaxis                             */
 /*                                                                 !*/

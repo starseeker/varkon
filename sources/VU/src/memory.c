@@ -4,7 +4,7 @@
 *    ========
 *
 *    This file is part of the VARKON Utility Library.
-*    URL:  http://www.varkon.com
+*    URL: http://www.tech.oru.se/cad/varkon
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -26,13 +26,12 @@
 
 /*
 ***This file includes default versions of memory
-***allocation routines used by the DB and GE modules.
+***allocation routines used by the Varkon system.
 ***You can use these or write your own if you want to
 ***(see below).
 ***This file is provided as a default replacement of the
 ***original VARKON routines which are more complex
-***and rely on a lot of VARKON specific code which
-***has nothing with DB or GE to do.
+***and rely on a lot of VARKON specific code.
 */
 
 /*

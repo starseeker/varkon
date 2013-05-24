@@ -1,73 +1,68 @@
 
 ! Varkon standard menues
-! Latest update for version 1.18B
-! Mohamed Rahayem, Örebro university
+! Latest update for version 1.19A
+! Johan Kjellander
 !
 m2  = "MAIN MENU 2D"
+      "file",m5
       "create",m13
       "edit",m15
-      "delete",m22
-      "variation",m34
+      "view",m67
       "analysis",m75
-      "graphics",m66
-      "levels",m65
-      "attributes",m14
-      "mbs",m58
-      "file",m5;
+      "settings",m9
+      "help",m22;
 
 m3  = "MAIN MENU 3D"
+      "file",m5
       "create",m11
       "edit",m15
-      "delete",m22
-      "variation",m34
-      "analysis",m75  
-      "graphics",m66 
-      "levels",m65
-      "attributes",m14
-      "mbs",m58
-      "file",m5;
+      "view",m67
+      "analysis",m75
+      "settings",m9
+      "help",m22;
 
 m4  = "DRAFTING"
+      "file",m6
       "create",m13
       "edit",m49
+      "view",m67
       "delete",m80
-      "analysis",m75  
-      "graphics",m66 
-      "levels",m65
-      "attributes",m14
-      "file",m6;
+      "analysis",m75
+      "settings",m9
+      "help",m22;
 
 m5  = "FILE"
-      "open",m47
+      "new/open",m47
       "save",f175
       "save as",m45
-      "delete",f184
-      "project",m7
-      "print",m71
-      "settings",m8
+      "export",m24
+      "delete job",f184
       "macro",f152
       "shell",f125
-      "exit",m46;
+      "exit",f123
+      "save/exit",f122;
 
 m6  = "FILE"
-      "open",m47
+      "new/open",m47
       "save",f175
       "save as",m48
-      "delete",f184
-      "project",m7
-      "print",m71
+      "export",m24
+      "delete job",f184
       "macro",f152
       "shell",f125
-      "exit",m46;
+      "exit",f123
+      "save/exit",f122;
 
 m7  = "PROJECT"
       "new project",f176
       "project settings",f178
       "delete project",f179;
 
-m8  = "SETTINGS"
-      "attribute",f127
-      "protection",f128;
+m9  = "SETTINGS"
+      "curve accuracy",f98
+      "attributes",f16
+      "module",f127
+      "project",m7;
 
 m10 = "TCOPY"
       "translation",f239
@@ -85,7 +80,8 @@ m11 = "CREATE"
       "text",f50
       "tcopy",m10
       "group",f55
-      "part",m43;
+      "part",f25
+      "import",m43;
 
 m12 = "SURFACE"
       "bplane",f26
@@ -109,7 +105,8 @@ m13 = "CREATE"
       "dimension",m50
       "coordsys",m25
       "group",f55
-      "part",m39;
+      "part",f25
+      "import",m39;
 
 m14 = "ATTRIBUTE"
       "pen",f96
@@ -128,6 +125,10 @@ m15 = "EDIT"
       "linewidth",f185
       "attribute",m16
       "entity ",M117
+      "MBS-statement",f168
+      "MBS edit part",f217
+      "compile all",f220
+      "update part",f109
       "trim",f6;
 
 m16 = "ATTRIBUTE"
@@ -168,10 +169,9 @@ m21 = "CURVES"
       "centre",f166
       "dash length",f167;
 
-m22 = "DELETE"
-      "one entity",f10
-      "group",f13
-      "last statement",f15;
+m22 = "HELP"
+      "about Varkon",M184
+      "help",f153;
 
 m23 = "TEXT"
       "left",f50
@@ -180,20 +180,19 @@ m23 = "TEXT"
       "2 positions",M115;
 !      "font-editor",m93;
 
+m24 = "EXPORT"
+      "DXF-2D",f92
+      "DXF-3D",M398
+      "STL",M1625
+      "PLT",f151;
+
 m25 = "COORDSYS"
       "3 pos",f105
-      "pos/angles",f9
-      "activate",m27;
+      "pos/angles",f9;
 
 m26 = "COORD. SYSTEM"
       "3 pos",f104
-      "pos/angles",f14
-      "activate",m27;
-
-m27 = "ACTIVATE"
-      "local",f106
-      "global",f107
-      "basic",f177;
+      "pos/angles",f14;
 
 m30 = "LINEAR DIMENSION"
       "horizontal",f30
@@ -218,35 +217,10 @@ m33 = "DIAMETER DIMENSION"
       "vertical ",f34
       "parallell",f35;
 
-m34 = "VARIATION"
-      "part",m35
-      "active module",m36;
-
-m35 = "PART"
-      "edit",f170
-      "update",f109;
-
-m36 = "ACTIVE MODULE"
-      "parameters",m37
-      "list",m38
-      "edit",f168
-      "run",f5;
-
-m37 = "PARAMETERS"
-      "create",f2
-      "edit",f3
-      "list",f4;
-
-m38 = "LIST MODULE"
-      "window",f146
-      "file",f144;
-
-m39 = "PARTS"
-      "add",f25
-      "temporary",f8
+m39 = "IMPORT-2D"
       "iges",p1624
-      "dxf",m44
-      "plotfile",m52;
+      "dxf",p388
+      "plotfile",f145;
 
 m40 = "LINE"
       "2f two pos",f22
@@ -271,16 +245,10 @@ m42 = "LINES"
       "centre",f48
       "dash length",f49;
 
-m43 = "PARTS"
-      "add",f25
-      "temporary",f8
+m43 = "IMPORT-3D"
       "iges",p1624
-      "dxf",m53
-      "stl",m87;
-
-m44 = "DXF-2D"
-      "import",p388
-      "export",f92;
+      "dxf",p389
+      "stl",p1623;
 
 m45 = "SAVE AS"
       "all files",f201
@@ -289,11 +257,7 @@ m45 = "SAVE AS"
       "MBS-file",f144
       "RES-file",f121;
 
-m46 = "EXIT"
-      "save first",f122
-      "don't save",f123;
-
-m47 = "OPEN"
+m47 = "NEW/OPEN"
       "save first",f124
       "don't save",f120;
 
@@ -325,15 +289,6 @@ m51 = "TEXT"
       "font",f172
       "tpmode",f227;
 
-m52 = "PLOT FILE"
-      "read",f145
-      "write",f151;
-
-m53 = "DXF-3D"
-      "import",p389
-      "export 2D",f92
-      "export 3D",M398;
-
 m55 = "ARC"
       "1 pos/angles",f56
       "2 pos/radius",f57
@@ -353,15 +308,6 @@ m57 = "ARCS"
       "dashed"  ,f67
       "centre",f68
       "dash length",f69;
-
-m58 = "MBS"
-      "active module",f216
-      "part",m59;
-
-m59 = "PART"
-      "edit",f217
-      "update",f109
-      "compile all",f220;
 
 m60 = "CURVES"
       "spline",m89
@@ -395,48 +341,12 @@ m64 = "CHORD LENGTH"
       "with tangents",f71
       "no tangents",f156;
 
-m65 = "LEVELS"
-      "activate",f90
-      "name",m88;
-
-m66 = "GRAPHICS"
-      "view",m67 
-      "grid",m69 
-      "plot",m71
-      "misc",m72;
-
 m67 = "VIEW"
-      "create",m70
-      "delete",f112
-      "list",f113
-      "new window",f196
-      "shading",m85
-      "hide",m62;
-
-m68 = "SCREEN LAYOUT"
-      "pos menu on/off",m73;
-
-m69 = "GRID"
-      "position",f16
-      "x-delta  ",f17
-      "y-delta  ",f18
-      "unblank",f114
-      "blank",f115;
-
-m70 = "CREATE VIEW"
-      "direction",f111
-      "coordsys",f99
-      "8 views",M112;
-
-m71 = "PLOTTING"
-      "create plotfile",f151
-      "plot",f150;
-
-m72 = "MISCELLANEOUS"
-      "curve accuracy",f98
-      "screen layout",m68 
+      "colors",M1658
       "all hitable",f215
-      "drawing scale",f108;
+      "X11 window",f196
+      "OpenGL window",f200
+      "hide",m62;
 
 m73 = "POSITION MENU"
       "on",f118
@@ -446,7 +356,7 @@ m75 = "ANALYSIS"
       "formula",M393
       "geometry",m76 
       "part/group",m79
-      "status",m78 
+      "job status",M368
       "system",m77;
 
 m76 = "GEOMETRY"
@@ -462,13 +372,7 @@ m76 = "GEOMETRY"
 m77 = "SYSTEM"
       "gm-data",f140
       "pm-data",f139
-      "sys-data",M184
       "misc",m95;
-
-m78 = "STATUS"
-      "job",M368
-      "graphics",M369
-      "attributes",M370;
 
 m79 = "PART/GROUP"
       "one part",M379
@@ -510,25 +414,10 @@ m84 = "CONIC"
       "free",f161
       "projected",f162;
 
-m85 = "SHADING"
-      "flat",f198
-      "smooth",f199
-      "dynamic",f200
-      "accuracy",f98;
-
 m86 = "AREA"
       "2D-area",M416
       "section",M1591
       "surface",M1589;
-
-m87 = "STL"
-      "import",p1623
-      "export",M1625;
-
-m88 = "LEVELNAME"
-      "create",f93
-      "delete",f95
-      "list",f94;
 
 m89 = "SPLINE"
       "ferguson",m63

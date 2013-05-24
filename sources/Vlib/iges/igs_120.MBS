@@ -25,16 +25,17 @@
 !*          status = 0 => Ok
 !*                  -1 => Error
 !*        
-!*
 !*      (c)2006-09-20, Mohamed Rahayem, Örebro university
+!*
+!*      2007-02-18 NURBS, J.Kjellander
 !*
 !*****************************************************************
 
-   INT    i,rownumber ; 
+   INT    i,rownumber,enttyp,segtyp,dummy; 
    STRING row*132,row1*132,row2*132;
-   FLOAT  S_angle,E_angle;
+   FLOAT  S_angle,E_angle,offset,segdata(4,4);
    INT    DE_axis,DE_gener;          !  pointers to DE section. !
-   REF    Cur_ref,Lin_ref,csysid; 
+   REF    Cur_ref,Lin_ref,csysid,groups(3); 
    
  BEGINMODULE
  
@@ -59,8 +60,8 @@
 !*
 !**Create local coordinate system for transformation matrix.
 !*    
-     csys_1p(#11,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
-     csysid:=#11;     
+   csys_1p(#11,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
+   csysid:=#11;     
 !*
 !***Create the axis line
 !*   
@@ -74,30 +75,43 @@
    seek(infil,ds_ptr+(DE_gener-1)*rowlgt);     
    row1:=inlin(infil);
    row2:=inlin(infil);  
-   part(#7,igs_curve(infil,logfil,row1,row2,ds_ptr,ps_ptr,rowlgt,Cur_ref,status),csysid:SAVE=1,BLANK=1);    
+   part(#7,igs_curve(infil,logfil,row1,row2,ds_ptr,ps_ptr,rowlgt,Cur_ref,status),csysid:SAVE=1,BLANK=1);
+!*
+!***If the curve is NURBS, approximate with cubic.
+!*
+   gethdr(Cur_ref, enttyp, dummy, dummy, dummy, dummy, groups);
+   
+   IF enttyp = 8 then
+     getseg(Cur_ref,1,0,segdata,offset,segtyp);
+     IF segtyp = 3 then
+       cur_approx(#13,Cur_ref, "CUBIC", 1, 4:SAVE=1);
+       Cur_ref:=#13;
+     ENDIF;   
+   ENDIF;
 !*
 !**To be sure generattix and axis of revolution in the same plane.
 !*    
-    csys_3p(#9,"test", startp(Lin_ref), endp(Lin_ref)*100, startp(Cur_ref):Blank=1);
-    mode_local(#9);
+   csys_3p(#9,"test", startp(Lin_ref), endp(Lin_ref)*100, startp(Cur_ref):Blank=1);
+   mode_local(#9);
 !*
 !**Check Start and End angles
 !*
-    IF S_angle*180/PI > 2*PI   THEN
+   IF S_angle*180/PI > 2*PI   THEN
      S_angle:=s_angle - 2*PI;   
-    ELIF S_angle*180/PI < -2*PI THEN
-       S_angle:=s_angle + 2*PI;           
-    ENDIF;        
-    IF E_angle*180/PI > 2*PI THEN
+   ELIF S_angle*180/PI < -2*PI THEN
+     S_angle:=s_angle + 2*PI;           
+   ENDIF;        
+   
+   IF E_angle*180/PI > 2*PI THEN
      E_angle:=(E_angle) - 2*PI;     
-    ELIF E_angle*180/PI < -2*PI THEN
-       E_angle:=(E_angle) + 2*PI;                            
-    ENDIF;    
+   ELIF E_angle*180/PI < -2*PI THEN
+     E_angle:=(E_angle) + 2*PI;                            
+   ENDIF;    
 !*
 !***Create a surface.
 !* 
-     sur_rot(#10,Cur_ref, startp(Lin_ref), endp(Lin_ref)*100,(S_angle*180/PI), (E_angle*180/PI));
-     id_ent:=global_ref(#10);     
+   sur_rot(#10,Cur_ref, startp(Lin_ref), endp(Lin_ref)*100,(S_angle*180/PI), (E_angle*180/PI));
+   id_ent:=global_ref(#10);     
 !*
 !**END.
 !*   

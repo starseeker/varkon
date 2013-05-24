@@ -79,7 +79,8 @@
 /*  1997-02-09   Elimination of compilation warning                 */
 /*  1997-03-08   Check mflag,  fflush                               */
 /*  1999-12-18   Free source code modifications                     */
-/*                                                                 !*/
+/*  2007-01-11   acc=1 => acc=0  calculation also of cones, Sören L.*/
+/*                                                                  */
 /********************************************************************/
 
 /* ------------- Short description of function -----------------*/
@@ -656,7 +657,7 @@ fflush(dbgfil(SURPAC));
 /* Call of varkon_sur_bound (sur911).                               */
 /*                                                                 !*/
 
-   acc = 1;         /* Calculation of BBOX only and not BCONE       */
+   acc = 1;         /* Calculation of BBOX and BCONE                */
 
    status=varkon_sur_bound (p_sur,p_frst,acc);
     if (status<0) 

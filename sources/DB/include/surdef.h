@@ -135,8 +135,8 @@ short    fnt_su;               /* Font, always = 0                  */
 gmflt    lgt_su;               /* Dash length for midcurves         */
 short    nu_su;                /* Number of patches in U direction  */
 short    nv_su;                /* Number of patches in V direction  */
-short    ngu_su;               /* Not used                          */
-short    ngv_su;               /* Not used                          */
+short    ngu_su;               /* Number of U-lines in wire rep     */
+short    ngv_su;               /* Number of V-lines in wire rep     */
 DBptr    ptab_su;              /* DBptr to patch table              */
 DBptr    pcsy_su;              /* DBptr to active csys              */
 short    ngseg_su[6];          /* Not used                          */
@@ -159,6 +159,7 @@ DBint    vertextype_su;        /* GL_MAP2_VERTEX_3 / GLMAP2_VERTEX_4*/
 DBptr    grstrim_su;           /* DBptr to graphical trim curves    */
 DBfloat  nustep_su;            /* Tesselation steps in U dir        */
 DBfloat  nvstep_su;            /* Tesselation steps in V dir        */
+DBfloat  wdt_su;               /* Linewidth for wireframe rep       */
 } DBSurf;
 /*!*********************** DBSurf *********************************!*/
 
@@ -201,7 +202,7 @@ DBfloat  nvstep_su;            /* Tesselation steps in V dir        */
 /*!  !          !  !           !  !           !  !          !      !*/
 /*!  !  NULL-   !  ! Geometric !  ! Geometric !  ! Topolog. !      !*/
 /*!  !  patch   !  !  patch    !  !  patch    !  !  patch   !      !*/
-/*!  !          !  !  DBPatch_C!  !  DBPatchL !  !  GMPAT   !      !*/
+/*!  !          !  !  DBPatch_C   !  !  DBPatchL   !  !  GMPAT   !      !*/
 /*!  !__________!  !___________!  !___________!  !__________!      !*/
 /*!                                                                !*/
 /*!                                                                !*/
@@ -227,7 +228,7 @@ DBfloat  nvstep_su;            /* Tesselation steps in V dir        */
 typedef struct
 {
 short  styp_pat;           /* Type of secondary patch               */
-DBptr  spek_gm;            /* GM-pointer to secondary patch         */
+DBptr  spek_gm;            /* DB-pointer to secondary patch         */
 char  *spek_c;             /* C-pointer to secondary patch          */
 short  su_pat,sv_pat;      /* Topological adress  secondary patch   */
 short  iu_pat,iv_pat;      /* Topological address this patch        */

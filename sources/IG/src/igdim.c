@@ -4,22 +4,22 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  ld0pm();    Create horisontal LDIM                              */
-/*  ld1pm();    Create vertical   LDIM                              */
-/*  ld2pm();    Create parallell  LDIM                              */
+/*  IGld0();    Create horisontal LDIM                              */
+/*  IGld1();    Create vertical   LDIM                              */
+/*  IGld2();    Create parallell  LDIM                              */
 /*                                                                  */
-/*  cd0pm();    Create horisontal CDIM                              */
-/*  cd1pm();    Create vertical   CDIM                              */
-/*  cd2pm();    Create parallell  CDIM                              */
+/*  IGcd0();    Create horisontal CDIM                              */
+/*  IGcd1();    Create vertical   CDIM                              */
+/*  IGcd2();    Create parallell  CDIM                              */
 /*                                                                  */
-/*  rdimpm();   Create RDIM                                         */
+/*  IGrdim();   Create RDIM                                         */
 /*                                                                  */
-/*  adimpm();   Create ADIM                                         */
+/*  IGadim();   Create ADIM                                         */
 /*                                                                  */
-/*  xhtpm();    Create XHATCH                                       */
+/*  IGxht();    Create XHATCH                                       */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -38,8 +38,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -51,7 +49,7 @@ static short cdimpm(short alt);
 
 /*!******************************************************/
 
-       short ld0pm()
+       short IGld0()
 
 /*      Skapa "ldim(#id,p1,p2,p3,0)" sats.
  *
@@ -75,7 +73,7 @@ static short cdimpm(short alt);
 /********************************************************/
 /*!******************************************************/
 
-       short ld1pm()
+       short IGld1()
 
 /*      Skapa "ldim(#id,p1,p2,p3,1)" sats.
  *
@@ -99,7 +97,7 @@ static short cdimpm(short alt);
 /********************************************************/
 /*!******************************************************/
 
-       short ld2pm()
+       short IGld2()
 
 /*      Skapa "ldim(#id,p1,p2,p3,2)" sats.
  *
@@ -125,9 +123,9 @@ static short cdimpm(short alt);
 
 static short ldimpm(short alt)
 
-/*      Huvudrutin för ldim.....satsen. 
+/*      Huvudrutin fï¿½r ldim.....satsen. 
  *
- *      In: alt => Typ av mått.
+ *      In: alt => Typ av mï¿½tt.
  *
  *      Ut: Inget.
  *
@@ -139,8 +137,8 @@ static short ldimpm(short alt)
  *
  *      4/9/85  Anrop till skapa satsen. B. Doverud   
  *      20/3/86 Anrop till pmtcon, pmclie B. Doverud
- *      23/3/86 genpos(pnr,  B. Doverud
- *      24/3/86 Felutgång B. Doverud
+ *      23/3/86 IGcpos(pnr,  B. Doverud
+ *      24/3/86 Felutgï¿½ng B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
  ******************************************************!*/
@@ -155,9 +153,9 @@ static short ldimpm(short alt)
 ***Skapa 3 positioner.
 */
 start:
-    if ( (status=genpos (258,&exnpt1)) < 0 ) goto end;
-    if ( (status=genpos (259,&exnpt2)) < 0 ) goto end;
-    if ( (status=genpos (301,&exnpt3)) < 0 ) goto end;
+    if ( (status=IGcpos (258,&exnpt1)) < 0 ) goto end;
+    if ( (status=IGcpos (259,&exnpt2)) < 0 ) goto end;
+    if ( (status=IGcpos (301,&exnpt3)) < 0 ) goto end;
 /*
 ***Skapa alternativ.
 */
@@ -172,9 +170,9 @@ start:
     pmtcon(exnpt3,retla,&retla,&dummy);
     pmtcon(exnpt4,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("LDIM",valparam) < 0 ) goto error;
+    if ( IGcges("LDIM",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -183,7 +181,7 @@ end:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */
 error:
     erpush("IG5023","");
@@ -195,7 +193,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short cd0pm()
+       short IGcd0()
 
 /*      Skapa "cdim(#id,p1,p2,p3,0)" sats.
  *
@@ -219,7 +217,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short cd1pm()
+       short IGcd1()
 
 /*      Skapa "cdim(#id,p1,p2,p3,1)" sats.
  *
@@ -243,7 +241,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short cd2pm()
+       short IGcd2()
 
 /*      Skapa "cdim(#id,p1,p2,p3,2)" sats.
  *
@@ -269,9 +267,9 @@ error:
 
 static short cdimpm(short alt)
 
-/*      Huvudrutin för cdim.....satsen. 
+/*      Huvudrutin fï¿½r cdim.....satsen. 
  *
- *      In: alt => Typ av mått.
+ *      In: alt => Typ av mï¿½tt.
  *
  *      Ut: Inget.
  *
@@ -281,11 +279,11 @@ static short cdimpm(short alt)
  *
  *      (C)microform ab 25/8/85 J. Kjellander
  *
- *      4/9/85   Anrop till igcges(), B. Doverud
- *      31/10/85 Ände och sida, J. Kjellander
+ *      4/9/85   Anrop till IGcges(), B. Doverud
+ *      31/10/85 ï¿½nde och sida, J. Kjellander
  *      20/3/86  Anrop till pmtcon, pmclie B. Doverud
- *      23/3/86  genpos(pnr,  B. Doverud
- *      24/3/86  Felutgång B. Doverud
+ *      23/3/86  IGcpos(pnr,  B. Doverud
+ *      24/3/86  Felutgï¿½ng B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
  ******************************************************!*/
@@ -303,11 +301,11 @@ static short cdimpm(short alt)
 */
 start:
     typ = ARCTYP;
-    if ( (status=genref(277,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(277,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa position.
 */
-    if ( (status=genpos (301,&exnpt2)) < 0  ) goto exit;
+    if ( (status=IGcpos (301,&exnpt2)) < 0  ) goto exit;
 /*
 ***Skapa alternativ.
 */
@@ -321,9 +319,9 @@ start:
     pmtcon(exnpt2,retla,&retla,&dummy);
     pmtcon(exnpt3,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("CDIM",valparam) < 0 ) goto error;
+    if ( IGcges("CDIM",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -332,7 +330,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */
 error:
     erpush("IG5023","");
@@ -344,9 +342,9 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short rdimpm()
+       short IGrdim()
 
-/*      Huvudrutin för rdim.....satsen. 
+/*      Huvudrutin fï¿½r rdim.....satsen. 
  *
  *      In: Inget.
  *
@@ -358,11 +356,11 @@ error:
  *
  *      (C)microform ab 25/8/85 J. Kjellander
  *
- *      14/10/85 Bytt t-sträng, J. Kjellander
- *      31/10/85 Ände och sida, J. Kjellander
+ *      14/10/85 Bytt t-strï¿½ng, J. Kjellander
+ *      31/10/85 ï¿½nde och sida, J. Kjellander
  *      20/3/86  Anrop till pmtcon B. Doverud
- *      23/3/86  genpos(pnr,  B. Doverud
- *      24/3/86  Felutgång B. Doverud
+ *      23/3/86  IGcpos(pnr,  B. Doverud
+ *      24/3/86  Felutgï¿½ng B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
  ******************************************************!*/
@@ -379,12 +377,12 @@ error:
 */
 start:
     typ = ARCTYP;
-    if ( (status=genref(277,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(277,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa 2 positioner.
 */
-    if ( (status=genpos (303,&exnpt2)) < 0 ) goto exit;
-    if ( (status=genpos (259,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcpos (303,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcpos (259,&exnpt3)) < 0 ) goto exit;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
@@ -392,9 +390,9 @@ start:
     pmtcon(exnpt2,retla,&retla,&dummy);
     pmtcon(exnpt3,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("RDIM",valparam) < 0 ) goto error;
+    if ( IGcges("RDIM",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -403,7 +401,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */
 error:
     erpush("IG5023","");
@@ -415,9 +413,9 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short adimpm()
+       short IGadim()
 
-/*      Huvudrutin för adim.....satsen. 
+/*      Huvudrutin fï¿½r adim.....satsen. 
  *
  *      In: Inget.
  *
@@ -429,12 +427,12 @@ error:
  *
  *      (C)microform ab 25/8/85 J. Kjellander
  *
- *      4/9/85   Anrop till igcges(), B. Doverud
- *      31/10/85 Ände och sida, J. Kjellander
- *      6/3/86   Defaultvärde, J. Kjellander
+ *      4/9/85   Anrop till IGcges(), B. Doverud
+ *      31/10/85 ï¿½nde och sida, J. Kjellander
+ *      6/3/86   Defaultvï¿½rde, J. Kjellander
  *      20/3/86  Anrop till pmtcon B. Doverud
- *      23/3/86  genpos(pnr,  B. Doverud
- *      24/3/86  Felutgång B. Doverud
+ *      23/3/86  IGcpos(pnr,  B. Doverud
+ *      24/3/86  Felutgï¿½ng B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *      23/10/86 alt, J. Kjellander
  *
@@ -453,19 +451,19 @@ error:
 */
 start:
     typ = LINTYP;
-    if ( (status=genref(304,&typ,&exnpt1,&end,&right1)) < 0 ) goto exit;
+    if ( (status=IGcref(304,&typ,&exnpt1,&end,&right1)) < 0 ) goto exit;
 
     typ = LINTYP;
-    if ( (status=genref(305,&typ,&exnpt2,&end,&right2)) < 0 ) goto exit;
+    if ( (status=IGcref(305,&typ,&exnpt2,&end,&right2)) < 0 ) goto exit;
 /*
-***Textens läge.
+***Textens lï¿½ge.
 */
-    if ( (status=genpos(301,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcpos(301,&exnpt3)) < 0 ) goto exit;
 /*
 ***Skapa alternativ.
 */
     alt = 1;
-    if ( igialt(367,67,68,FALSE) ) alt = 2;
+    if ( IGialt(367,67,68,FALSE) ) alt = 2;
     if ( !right1 ) alt = -alt;
 
     litval.lit_type = C_INT_VA;
@@ -479,9 +477,9 @@ start:
     pmtcon(exnpt3,retla,&retla,&dummy);
     pmtcon(exnpt4,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("ADIM",valparam) < 0 ) goto error;
+    if ( IGcges("ADIM",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -490,7 +488,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */
 error:
     erpush("IG5023","");
@@ -502,9 +500,9 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short xhtpm()
+       short IGxht()
 
-/*      Huvudrutin för xhatch(#id,dist,ang,ref1,ref2,,,,)
+/*      Huvudrutin fï¿½r xhatch(#id,dist,ang,ref1,ref2,,,,)
  *
  *      In: Inget.
  *
@@ -517,25 +515,26 @@ error:
  *
  *      (C)microform ab  5/8/85 J. Kjellander
  *
- *      4/9/85   Anrop till igcges()
+ *      4/9/85   Anrop till IGcges()
  *      28/10/85 Ny def. av PMLITVA, J. Kjellander
- *      28/10/85 Ände och sida, J. Kjellander
- *      16/3/86  Defaultsträngar B. Doverud
+ *      28/10/85 ï¿½nde och sida, J. Kjellander
+ *      16/3/86  Defaultstrï¿½ngar B. Doverud
  *      20/3/86  Anrop till pmtcon, pmclie B. Doverud
- *      24/3/86  Felutgång B. Doverud
+ *      24/3/86  Felutgï¿½ng B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
- *      16/3/88  getmid(), J. Kjellander
+ *      16/3/88  IGgmid(), J. Kjellander
  *      25/7/90  Kurvor, J. Kjellander
  *
  ******************************************************!*/
 
   {
     PMREFVA ridmat[GMMXXH][MXINIV];
-    short   i,nref,status;
+    short   status;
+    int     i,nref;
     pm_ptr  exnpt1,exnpt2,exnpt,retla,dummy;
     PMLITVA litval;
     char    istr[V3STRLEN+1];
-    DBetype   typv[GMMXXH];
+    DBetype typv[GMMXXH];
 
     static char astr[V3STRLEN+1] ="";
     static char vstr[V3STRLEN+1] ="";
@@ -544,27 +543,27 @@ error:
 ***Ange linjer och cirklar i konturen.
 */
 start:
-    igptma(268,IG_MESS);
+    IGptma(268,IG_MESS);
     nref = GMMXXH;
     typv[0] = LINTYP + ARCTYP + CURTYP;
-    status = getmid(ridmat,typv,&nref);
-    igrsma();
+    status = IGgmid(ridmat,typv,&nref);
+    IGrsma();
 
     if ( status < 0  ||  nref == 0 ) goto exit;
 /*
-***Avstånd.
+***Avstï¿½nd.
 */
-    if ( (status=genflt(288,astr,istr,&exnpt1)) < 0 ) goto exit;
+    if ( (status=IGcflt(288,astr,istr,&exnpt1)) < 0 ) goto exit;
     pmtcon( exnpt1, (pm_ptr)NULL, &retla, &dummy);
     strcpy(astr,istr);
 /*
 ***Vinkel.
 */
-    if ( (status=genflt(274,vstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcflt(274,vstr,istr,&exnpt2)) < 0 ) goto exit;
     pmtcon( exnpt2, retla, &retla, &dummy);
     strcpy(vstr,istr);
 /*
-***Skapa pm-referenser av ridvek och länka ihop med parameterlistan.
+***Skapa pm-referenser av ridvek och lï¿½nka ihop med parameterlistan.
 */
     for ( i=0; i<nref; ++i)
       {
@@ -576,9 +575,9 @@ start:
       pmtcon( exnpt, retla, &retla, &dummy);
       }
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("XHATCH",retla) < 0 ) goto error;
+    if ( IGcges("XHATCH",retla) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -587,7 +586,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */ 
 error:
     erpush("IG5023","");

@@ -1,11 +1,6 @@
 
 ! Terminalfil för X-windows.
 !
-! T-str{ngar
-!
-t350 = "X11"
-t351 = "X11"
-!
 ! Specialtangenter
 !
 s1 = "%10",a1       ! vagnretur
@@ -15,7 +10,7 @@ s4 = "%27[C",a5     ! mark|r-h|ger
 s5 = "%27[A",a6     ! mark|r-upp}t
 s6 = "%27[B",a7     ! mark|r-ned}t
 s7 = "%9",a9        ! huvudmenyn
-s8 = "%1",a10       ! hj{lp
+s8 = "%1",a10       ! hjälp
 s9 = "%2",a11       ! pos-menyn
 s10 = "%127",a12    ! Quit = <DEL>
 s11 = "%3",a13      ! Interrupt = <CTL>c

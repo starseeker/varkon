@@ -1391,7 +1391,6 @@ end:
    int      refsiz;         /* Size of ????                     */
    PMLITVA  val;            /* Value from ??                    */
    PMREFVA *lpek;           /* Pointer to array with references */
-   /*V2REFVA  refarr[ GMMXCO + 1 ];*/   /* referens array */
    int      i;              /* Loop index                       */
    short    status;         /* Status from execution function   */
    char     errbuf[81];     /* String variable for errors       */
@@ -1409,9 +1408,8 @@ end:
      surid = NULL;
      }   
 
-
 /*
-***How many input entities for loop?.
+***How many input entities for cur_comparr?.
 */
    ncur = geop_pv[1].par_va.lit.int_va;
 
@@ -1455,18 +1453,17 @@ end:
      (lpek+i)->seq_val  = val.lit.ref_va[0].seq_val;
      (lpek+i)->ord_val  = val.lit.ref_va[0].ord_val;
      (lpek+i)->p_nextre = val.lit.ref_va[0].p_nextre;
-     }     
-     
+     }
+
 /*
 ***Call the execution function.
 */
 status= EXcomp( geop_id, lpek, ncur, surid, geop_np);
 
-
 /*
 ***Free memory
 */
-    v3free(lpek,"evccmparr");      
+    v3free(lpek,"evccmparr");
  
    return(status);
 }

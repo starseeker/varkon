@@ -39,6 +39,7 @@
 #include "../../IG/include/IG.h"
 #include "../../AN/include/AN.h"
 #include "../../EX/include/EX.h"
+#include "../../WP/include/WP.h"
 #include <string.h>
 
 extern char     jobnam[];
@@ -97,7 +98,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 ***1:a parametern är namnet på rutinen.
 ***Därefter lägger vi till nästa lediga sekvensnummer.
 */
-    snr = (int)iggnid();
+    snr = (int)IGgnid();
     sprintf(mbsstr,"%s(#%d",func_pv[1].par_va.lit.str_va,snr);
 /*
 ***Funktionsvärdet = den nya storhetens id.
@@ -214,7 +215,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
       status = pmlmst(actmod,retla);
       if ( status < 0 ) goto exit;
       }
-	else pmrele();    /* 040221 JK Don't let PM grow in RIT-mode */
+        else pmrele();    /* 040221 JK Don't let PM grow in RIT-mode */
 /*
 ***Slut.
 */
@@ -271,7 +272,7 @@ exit:
 
     if ( status < 0  ||  retla == (pm_ptr)NULL )
       {
-      igidst(&proc_pv[1].par_va.lit.ref_va[0],errbuf);
+      IGidst(&proc_pv[1].par_va.lit.ref_va[0],errbuf);
       status = erpush("IG4052",errbuf);
       goto exit;
       }
@@ -346,7 +347,7 @@ exit:
 /*
 ***Kör om.
 */
-   status = igream();
+   status = IGream();
 
    if ( status < 0 ) erpush("IG4062","");
 /*
@@ -704,11 +705,11 @@ exit:
 
 
 */
-        if ( remode == 0  &&  pmamir(id) && igialt(175,67,68,FALSE) )
+        if ( remode == 0  &&  pmamir(id) && IGialt(175,67,68,FALSE) )
           {
           insrtb(oldrsp);
           oldmty = modtyp; pmrmod(&modhed); modtyp = modhed.mtype;
-          status = igream();
+          status = IGream();
           modtyp = oldmty;
           insrtb(oldrtb);
           insrsp(oldrsp);
@@ -809,7 +810,7 @@ exit:
     id = &proc_pv[1].par_va.lit.ref_va[0];
     if ( id->p_nextre != NULL )
       {
-      igidst(id,errbuf);
+      IGidst(id,errbuf);
       status = erpush("IG3992",errbuf);
       goto exit;
       }
@@ -818,7 +819,7 @@ exit:
 */
     if ( v3mode == RIT_MOD )
       {
-      if ( (status=iggnps(id)) < 0 ) goto exit;
+      if ( (status=IGgnps(id)) < 0 ) goto exit;
       else dstflg = TRUE;
       }
 /*
@@ -1009,11 +1010,11 @@ exit:
 ***Isåfall kan den globala variabeln modtyp behöva sättas.
 */
         if ( remode == 0  &&  v3mode & BAS_MOD  &&  pmamir(id)  &&
-                                               igialt(175,67,68,FALSE) )
+                                               IGialt(175,67,68,FALSE) )
           {
           insrtb(oldrsp);
           oldmty = modtyp; pmrmod(&modhed); modtyp = modhed.mtype;
-          status = igream();
+          status = IGream();
           modtyp = oldmty;
           insrtb(oldrtb);
           insrsp(oldrsp);
@@ -1024,7 +1025,7 @@ exit:
 ***Ej part-sats.
 */
       default:
-      igidst(id,errbuf);
+      IGidst(id,errbuf);
       status = erpush("IG4002",errbuf);
       goto exit;
       }
@@ -1124,9 +1125,9 @@ exit:
 /*
 ***Generera positionsuttryck.
 */
-    igplma(func_pv[1].par_va.lit.str_va,IG_MESS);
-    status = genpos(0,&exprla);
-    igrsma();
+    WPaddmess_mcwin(func_pv[1].par_va.lit.str_va,WP_PROMPT);
+    status = IGcpos(0,&exprla);
+    WPclear_mcwin();
     if ( status < 0 )
       {
       func_vp->lit.str_va[0] = '\0';

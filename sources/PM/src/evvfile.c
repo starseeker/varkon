@@ -35,14 +35,14 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#ifdef V3_X11
+#ifdef UNIX
 #include "../../WP/include/WP.h"
 #endif
 #include "../../EX/include/EX.h"
 #include <string.h>
 
 extern char     jobnam[];
-extern short    v3mode,modtyp,tmpref;
+extern short    v3mode,modtyp;
 extern pm_ptr   actmod;
 extern struct   ANSYREC sy;
 extern V2NAPA   defnap;
@@ -145,14 +145,7 @@ extern PMLITVA *func_vp;  /* Pointer to results. */
  ******************************************************!*/
 
   {
-    short  status,i;
-
-    for ( i=1; i<proc_pc; ++i )
-      {
-      if ( (status=EXldjb(proc_pv[1].par_va.lit.str_va,
-                   (short)proc_pv[i+1].par_va.lit.int_va)) < 0 ) return(status);
-      }
-    return(0);
+    return(EXload_job(&proc_pv[1].par_va.lit.str_va[0]));
   }
 
 /********************************************************/
@@ -175,7 +168,7 @@ extern PMLITVA *func_vp;  /* Pointer to results. */
  ******************************************************!*/
 
   {
-    return(EXsvjb(&proc_pv[1].par_va.lit.str_va[0]));
+    return(EXsave_job(&proc_pv[1].par_va.lit.str_va[0]));
   }
 
 /********************************************************/
@@ -198,7 +191,7 @@ extern PMLITVA *func_vp;  /* Pointer to results. */
  ******************************************************!*/
 
   {
-    if ( iglmdf(proc_pv[1].par_va.lit.str_va) < 0 )
+    if ( IGlmdf(proc_pv[1].par_va.lit.str_va) < 0 )
       return(erpush("IN5252",proc_pv[1].par_va.lit.str_va));
     else
       return(0);
@@ -312,7 +305,7 @@ extern PMLITVA *func_vp;  /* Pointer to results. */
 /*
 ***Prova att hämta.
 */
-   strpek = gtenv3(func_pv[1].par_va.lit.str_va);
+   strpek = IGenv3(func_pv[1].par_va.lit.str_va);
 /*
 ***Om den inte finns returnerar vi tom sträng "".
 */ 

@@ -25,6 +25,8 @@
 !*
 !*      (C)2006-09-13, Sören Larsson, Örebro university
 !*
+!*       2007-02-16 Trimcurves, J.Kjellander
+!*
 !*******************************************************
 
    INT    i,radnummer,antal_rader,pd;
@@ -32,12 +34,12 @@
    FLOAT  f;
    FLOAT  x(6);
    INT    PTS,N1,N2,PT(0:10); ! ref to IGES spec
-   REF    PTS_ref, csysid;
+   REF    PTS_ref,csysid,id_sur,id_cur,curid_arr(100);
    INT    surtyp;
+
+string s*1;
  BEGINMODULE
 
- 
- 
 !*
 !***Get entity line number in Parameter
 !***Data Section and position filepointer.
@@ -52,13 +54,18 @@
 !*
 !***Read parameter data
 !*
-   part(#2,igs_gint(infile,rad,PTS,status):SAVE=0);
-   part(#3,igs_gint(infile,rad,N1,status):SAVE=0);
-   part(#4,igs_gint(infile,rad,N2,status):SAVE=0);
-   part(#5,igs_gint(infile,rad,PT(0),status):SAVE=0);
+   part(#2,igs_gint(infile,rad,PTS,status):SAVE=0);      ! Surface DE
+   part(#3,igs_gint(infile,rad,N1,status):SAVE=0);       ! 0=Outer boundary=boundary, 1=otherwise
+   part(#4,igs_gint(infile,rad,N2,status):SAVE=0);       ! Number of inner boundaries
+   part(#5,igs_gint(infile,rad,PT(0),status):SAVE=0);    ! 1:st inner boundary curve DE
    FOR i:=1 TO N2 DO
-      part(#6,igs_gint(infile,rad,PT(i),status):SAVE=0);
+      part(#6,igs_gint(infile,rad,PT(i),status):SAVE=0); ! Additional inner boundary curve DE's
    ENDFOR;
+!*
+!**Create local coordinate system for transformation matrix.
+!*    
+   csys_1p(#11,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
+   csysid:=#11;     
 !*
 !***Create the untrimmed surface
 !*   
@@ -66,47 +73,65 @@
    rad1:=inlin(infile);
    rad2:=inlin(infile);   
    surtyp:=ival(rad1); 
- !*
-!**Create local coordinate system for transformation matrix.
-!*    
-     csys_1p(#11,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
-     csysid:=#11;     
       
    IF surtyp=122 THEN
-     part(#7,igs_122(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1); !add blank=1 later
-     IF status<>0 THEN 
-       GOTO END; 
-     ENDIF;
-     ELIF surtyp=128 THEN
-       part(#8,igs_128(infile,logfile,rad1,rad2,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1); !add blank=1 later
-       IF status<>0 THEN 
-         GOTO END; 
-       ENDIF;
-     ELIF surtyp=120 THEN
-     part(#9,igs_120(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_ent,status),csysid:SAVE=1);  
-     IF status<>0 THEN 
-       GOTO END; 
-     ENDIF;
+     part(#7,igs_122(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_sur,status),csysid:SAVE=1);
+   ELIF surtyp=128 THEN
+     part(#8,igs_128(infile,logfile,rad1,rad2,ps_ptr,rowlgt,id_sur,status),csysid:SAVE=1,BLANK=1);
+   ELIF surtyp=120 THEN
+     part(#9,igs_120(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_sur,status),csysid:SAVE=1);  
    ELSE
+     outstr(logfile,"igs_144,Error - Trimmed surface type "+str(surtyp,-1,0)+" is not implemented");
+     outlin(logfile);
+     outstr(logfile,dl1);
+     outlin(logfile);
+     outstr(logfile,dl2);
+     outlin(logfile);
      status:=-1;
-     outstr(logfile,"igs_144,Error - Not implemented surface type in trimmed parametric surface");
-     outlin(logfile);
-     outlin(logfile);
-     GOTO END;
+     exit();
    ENDIF;
 !*
-!***Create the loops
+!***Did we get a surface ?
 !*
-   seek(infile,ds_ptr+(PT(0)-1)*rowlgt);   
- 
+   IF status <> 0 THEN 
+     exit(); 
+   ENDIF;
+!*
+!***Trimcurves only supported for NURBS surfaces so far.
+!***Start with outer boundary.
+!*
+   if N1 = 1  and  surtyp = 128 then
+     seek(infile,ds_ptr+(PT(0)-1)*rowlgt);  ! UV_BND DE, first trimcurve
+     rad1:=inlin(infile);                   ! Curve DE1
+     rad2:=inlin(infile);                   ! Curve DE2
+     part(#20,igs_142(infile,logfile,rad1,rad2,ds_ptr,ps_ptr,rowlgt,id_cur,status),csysid:SAVE=1,BLANK=0);
+!*
+!***Did we get a curve ?
+!*
+     if status < 0 then
+       outstr(logfile,"igs_144, Error - Couldn't create trimcurve !");
+       outlin(logfile);
+       outstr(logfile,dl1);
+       outlin(logfile);
+       outstr(logfile,dl2);
+       outlin(logfile);
+       status:=-1;
+       exit();
+     endif;
+!*
+!***Inner loops.
+!*
+   if N2 > 0 then
+s:=inpmt("N2=2",str(N2,-1,0));
+   endif;
 !*
 !***Create the trimmed surface
-!*
- 
-
-
-
-
+!* 
+     curid_arr(1):=id_cur;
+     cur_comparr(#21,1,curid_arr,id_sur:BLANK=0, PEN=2);
+     curid_arr(1):=#21;
+     sur_trim_usrdef(#30,id_sur, 1, curid_arr:PEN=4,BLANK=0,NULINES=5,NVLINES=5);
+   endif;
 !*
 !***End.
 !*

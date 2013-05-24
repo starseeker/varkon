@@ -29,6 +29,7 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
+#include "../../WP/include/WP.h"
 
 extern V2NAPA  defnap;     /* Gloabal area for named parameter values */
 
@@ -52,6 +53,7 @@ extern pm_ptr  strefp;
  *
  *      1999-11-12 Rewritten, R. Svedin
  *      2004-07-11 Mesh, J.Kjellander, Örebro university
+ *      2007-01-17 NULINES=NVLINES=1, J.Kjellander
  *
  ******************************************************!*/
 
@@ -82,11 +84,13 @@ extern pm_ptr  strefp;
    defnap.tfont   = 0;         /* tfont */
    defnap.sfont   = 0;         /* sfont */
    defnap.sdashl  = 3.0;       /* sdashl */
-   defnap.nulines = 0;         /* nvlines */
-   defnap.nvlines = 0;         /* nulines */
+   defnap.nulines = 1;         /* nvlines */
+   defnap.nvlines = 1;         /* nulines */
    defnap.width   = 0.0;       /* width */
    defnap.tpmode  = 0;         /* tpmode */
    defnap.mfont   = 0;         /* mfont */
+   defnap.pfont   = 0;         /* PFONT */
+   defnap.psize   = 2;         /* PSIZE */
 
    return(0);
 
@@ -110,14 +114,17 @@ extern pm_ptr  strefp;
  *
  *      1999-11-12 Rewritten, R. Svedin
  *      2004-07-11 Mesh, J.Kjellander
+ *      2007-03-24 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-   PMNPNO *np;         /* c-pointer to NP node */
-   PMLITVA val;        /* named param value */
-   pm_ptr tyla;        /* type pointer for value */
-   short status;
+   PMNPNO *np;         /* C-pointer to NP node */
+   PMLITVA val;        /* Named param value */
+   pm_ptr  tyla;       /* Type pointer for value */
+   double  fltval;     /* Float value */
+   int     intval;     /* Int value */
+   short   status;     /* Return status */
 
 /*
 ***Get c-pointer to NP node
@@ -138,7 +145,11 @@ extern pm_ptr  strefp;
      {
      case PMPEN:                                   /* integer */
         if ( ineqty( tyla, stintp ) )
-           npblockp->pen = val.lit.int_va;
+           {
+           if ( val.lit.int_va < 0 || val.lit.int_va > WP_NPENS-1 )
+              return(erpush("IN2102","PEN"));
+           else npblockp->pen = val.lit.int_va;
+           }
         else   
            return( erpush( "IN3193", "PEN" ) );    /* Ilegal type for named parameter */
         break;
@@ -155,7 +166,7 @@ extern pm_ptr  strefp;
      case PMLEVEL:                                 /* integer */
         if ( ineqty( tyla, stintp ) )
            {
-           if ( val.lit.int_va < 0 || val.lit.int_va > NT1SIZ-1 )
+           if ( val.lit.int_va < 0 || val.lit.int_va > WP_NIVANT-1 )
               return(erpush("IN2102","LEVEL"));
            else npblockp->level = val.lit.int_va;
            }
@@ -182,6 +193,13 @@ extern pm_ptr  strefp;
            npblockp->save = val.lit.int_va;
         else   
            return( erpush( "IN3193", "SAVE" ) );    
+        break;
+
+     case PMPFONT:                                 /* integer */
+        if ( ineqty( tyla, stintp ) )
+           npblockp->pfont = val.lit.int_va;
+        else   
+           return( erpush( "IN3193", "PFONT" ) );   
         break;
 
      case PMLFONT:                                 /* integer */
@@ -232,8 +250,20 @@ extern pm_ptr  strefp;
         else   
            return( erpush( "IN3193", "NVLINES" ) ); 
         break;
-
-     case PMLDASHL:                                /* float */
+/*
+***Point size. Should not be 0 or less.
+*/
+     case PMPSIZE:
+     if      ( ineqty(tyla,stflop) ) fltval = val.lit.float_va;
+     else if ( ineqty(tyla,stintp) ) fltval = val.lit.int_va;
+     else                            return(erpush("IN3193","PSIZE"));
+     if      ( fltval <= 0.0 )       return(erpush("IN2102","PSIZE"));
+     else                            npblockp->psize = fltval;
+     break;
+/*
+***Line dash length.
+*/
+     case PMLDASHL:
         if ( ineqty( tyla, stflop ) )
            npblockp->ldashl = val.lit.float_va;
         else if ( ineqty( tyla, stintp ) )

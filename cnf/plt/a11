@@ -1,6 +1,0 @@
-! a13 = IBM-PROPRINTER skrivare. Spooler = ibmpr
- nice -19 /usr/v3/bin/epson <
- | lp -doki8 -s &
- act_job
- -s0 -x-15 -h0 -p24 -w203.200 -l82 -pf
- /usr/v3/adm/artikel/pennfil.PEN

@@ -4,15 +4,15 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  cs3ppm();    Generate csys_3p... statement                      */
-/*  cs1ppm();    Generate csys_1p... statement                      */
-/*  modbpm();    Genererate mode_basic.... statement                */
-/*  modgpm();    Genererate mode_global.... statement               */
-/*  modlpm();    Genererate mode_local.... statement                */
-/*  igupcs();    Redisplay currently active coordinate system       */
+/*  IGcs3p();    Generate csys_3p... statement                      */
+/*  IGcs1p();    Generate csys_1p... statement                      */
+/*  IGmodb();    Genererate mode_basic.... statement                */
+/*  IGmodg();    Genererate mode_global.... statement               */
+/*  IGmodl();    Genererate mode_local.... statement                */
+/*  IGupcs();    Redisplay currently active coordinate system       */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -31,8 +31,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -40,12 +38,13 @@
 #include "../../WP/include/WP.h"
 
 extern short   modtyp;
+extern char    actcnm[];
 extern DBptr   lsysla;
 extern DBTmat *lsyspk;
 
 /*!******************************************************/
 
-       short cs3ppm()
+       short IGcs3p()
 
 /*      Genererar csys_3p.... sats.
  *
@@ -60,11 +59,11 @@ extern DBTmat *lsyspk;
  *      (C)microform ab 17/2/85 J. Kjellander
  *
  *      3/7/85   Felhantering, B. Doverud
- *      4/9/85   Anrop till igcges(), B. Doverud
+ *      4/9/85   Anrop till IGcges(), B. Doverud
  *      16/11/85 t-sträng, J. Kjellander
  *      6/3/86   Defaultsträng, J. Kjellander
  *      20/3/86  Anrop pmtcon, B. Doverud
- *      23/3/86  genpos(pnr, B. Doverud
+ *      23/3/86  IGcpos(pnr, B. Doverud
  *      24/3/86  Felutgång, B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *      1997-03-12 2D, J.Kjellander
@@ -82,17 +81,17 @@ extern DBTmat *lsyspk;
 ***Skapa 3 positioner.
 */
 start:
-    if ( (status=genpos(262,&exnpt2)) < 0 ) goto end;
-    if ( (status=genpos(272,&exnpt3)) < 0 ) goto end;
+    if ( (status=IGcpos(262,&exnpt2)) < 0 ) goto end;
+    if ( (status=IGcpos(272,&exnpt3)) < 0 ) goto end;
 
     if ( modtyp == 3 )
       {
-      if ( (status=genpos(273,&exnpt4)) < 0 ) goto end;
+      if ( (status=IGcpos(273,&exnpt4)) < 0 ) goto end;
       }
 /*
 ***Skapa sträng.
 */
-    if ( (status=genstr(306,"",istr,&exnpt1)) < 0 ) goto end;
+    if ( (status=IGcstr(306,"",istr,&exnpt1)) < 0 ) goto end;
 /*
 ***Länka ihop parameterlistan.
 */
@@ -111,7 +110,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CSYS_3P",valparam) < 0 ) goto error;
+    if ( IGcges("CSYS_3P",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -133,7 +132,7 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short cs1ppm()
+       short IGcs1p()
 
 /*      Genererar csys_1p.... sats.
  *
@@ -162,22 +161,22 @@ error:
 ***Skapa position.
 */
 start:
-    if ( (status=genpos(262,&exnpt2)) < 0 ) goto end;
+    if ( (status=IGcpos(262,&exnpt2)) < 0 ) goto end;
 /*
 ***Skapa vinklar.
 */
     if ( modtyp == 3 )
       {
-      if ( (status=genflt(390,dstr,istr,&exnpt3)) < 0 ) goto end;
+      if ( (status=IGcflt(390,dstr,istr,&exnpt3)) < 0 ) goto end;
       strcpy(dstr,istr);
-      if ( (status=genflt(391,dstr,istr,&exnpt4)) < 0 ) goto end;
+      if ( (status=IGcflt(391,dstr,istr,&exnpt4)) < 0 ) goto end;
       strcpy(dstr,istr);
-      if ( (status=genflt(392,dstr,istr,&exnpt5)) < 0 ) goto end;
+      if ( (status=IGcflt(392,dstr,istr,&exnpt5)) < 0 ) goto end;
       strcpy(dstr,istr);
       }
     else
       {
-      if ( (status=genflt(392,dstr,istr,&exnpt5)) < 0 ) goto end;
+      if ( (status=IGcflt(392,dstr,istr,&exnpt5)) < 0 ) goto end;
       strcpy(dstr,istr);
       val.lit_type = C_FLO_VA;
       val.lit.float_va = 0.0;
@@ -187,7 +186,7 @@ start:
 /*
 ***Skapa sträng.
 */
-    if ( (status=genstr(306,"",istr,&exnpt1)) < 0 ) goto end;
+    if ( (status=IGcstr(306,"",istr,&exnpt1)) < 0 ) goto end;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
@@ -199,7 +198,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges("CSYS_1P",valparam) < 0 ) goto error;
+    if ( IGcges("CSYS_1P",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -221,43 +220,60 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short modbpm()
+       short IGmodb()
 
-/*      Genererar mode_basic sats.
+/*      Create MODE_BASIC(); statement.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      Felkod: IG5023 = Kan ej skapa mode_global sats
+ *      Error: IG5023 = Can't crete MODE_BASIC() statement
  *
  *      (C)microform ab 1997-03-12 J. Kjellander
+ *
+ *      2007-03-17 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    DBptr old_la;
+    DBptr   old_la;
 
 /*
-***Vilken LA har nuvarande koordinatsystem ?
+***If lsyspk = NULL the BASIC system might already be active.
+*/
+    if ( lsyspk == NULL && (strcmp(actcnm,"BASIC") == 0 ) )
+      {
+      erpush("IG2312","");
+      goto errend;
+      }
+/*
+***DBptr of current csys.
 */
     old_la = lsysla;
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Delete a possible grid now before the new csys
+***becomes active.
 */
-    if ( igcprs("MODE_BASIC",(pm_ptr)NULL) < 0 )
+    WPdelete_grid(GWIN_ALL);
+/*
+***Create, execute and add the statement to the active module.
+*/
+    if ( IGcprs("MODE_BASIC",(pm_ptr)NULL) < 0 )
       {
       erpush("IG5023","MODE_BASIC");
       goto errend;
       }
 /*
-***Uppdatera skärmen.
+***Update graphical windows.
 */
-    igupcs(old_la,V3_CS_NORMAL);
-
+    IGupcs(old_la,V3_CS_NORMAL);
+/*
+***Display the new grid (if on).
+*/
+    WPdraw_grid(GWIN_ALL);
+/*
+***The end.
+*/
     return(0);
 /*
-***Felutgångar.
+***Error exit.
 */
 errend:
     errmes();
@@ -267,21 +283,18 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-       short modgpm()
+       short IGmodg()
 
-/*      Genererar mode_global sats.
+/*      Create MODE_GLOBAL(); statement.
  *
- *      In: Inget.
- *
- *      Ut: Inget.
- *
- *      Felkod: IG5023 = Kan ej skapa mode_global sats
- *              IG2262 = Globala systemet är redan aktivt
+ *      Error: IG5023 = Can't create MODEL_GLOBAL(); statement
+ *             IG2262 = Global system already active
  *
  *      (C)microform ab 9/2/85 J. Kjellander
  *
  *      12/11/85 Koll av lsyspk, J. Kjellander
- *      1997-03-11 igupcs(), J.Kjellander
+ *      1997-03-11 IGupcs(), J.Kjellander
+ *      2007-03-18 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -289,33 +302,44 @@ errend:
     DBptr old_la;
 
 /*
-***Om lsyspk = NULL är det globala redan aktivt.
+***If lsyspk = NULL the global system might already be active.
 */
-    if ( lsyspk == NULL )
+    if ( lsyspk == NULL && (strcmp(actcnm,"GLOBAL") == 0 ) )
       {
       erpush("IG2262","");
       goto errend;
       }
 /*
-***Vilken LA har nuvarande koordinatsystem ?
+***DBptr of current csys.
 */
     old_la = lsysla;
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Delete a possible grid now before the new csys
+***becomes active.
 */
-    if ( igcprs("MODE_GLOBAL",(pm_ptr)NULL) < 0 )
+    WPdelete_grid(GWIN_ALL);
+/*
+***Create, execute and add the statement to the active module.
+*/
+    if ( IGcprs("MODE_GLOBAL",(pm_ptr)NULL) < 0 )
       {
       erpush("IG5023","MODE_GLOBAL");
       goto errend;
       }
 /*
-***Uppdatera skärmen.
+***Update graphical windows.
 */
-    igupcs(old_la,V3_CS_NORMAL);
-
+    IGupcs(old_la,V3_CS_NORMAL);
+/*
+***Display the new grid (if on).
+*/
+    WPdraw_grid(GWIN_ALL);
+/*
+***The end.
+*/
     return(0);
 /*
-***Felutgångar.
+***Error exit.
 */
 errend:
     errmes();
@@ -325,20 +349,15 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-       short modlpm()
+       short IGmodl()
 
-/*      Genererar mode_local sats.
-
+/*      Create a MODEL_LOCAL(#n); statement.
  *
- *      In: Inget.
+ *      Return:      0 = OK.
+ *              REJECT = Cancel operation.
+ *              GOMAIN = Back to main menu.
  *
- *      Ut: Inget.
- *
- *      FV:      0 = OK.
- *          REJECT = Operationen avbruten.
- *          GOMAIN = Huvudmenyn.
- *
- *      Felkod: IG5023 = Kan ej skapa MODE_LOCAL sats
+ *      Error: IG5023 = Can't create MODE_LOCAL(#n); statement
  *
  *      (C)microform ab 9/2/85 J. Kjellander
  *
@@ -348,82 +367,133 @@ errend:
  *      20/3/86  Anrop pmtcon, pmclie B. Doverud
  *      24/3/86  Felutgång B. Doverud
  *      6/10/86  GOMAIN, J. Kjellander
- *      1997-03-11 igupcs(), J.Kjellander
+ *      1997-03-11 IGupcs(), J.Kjellander
+ *      2007-03-18 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    DBetype  typ;
-    DBptr  old_la;
-    bool   right,end;
-    pm_ptr valparam,exnpt,dummy;
-    short  status;
+    DBetype typ;
+    DBptr   old_la,new_la;
+    bool    right,end;
+    pm_ptr  valparam,exnpt,dummy;
+    short   status;
+    PMREFVA idvek[MXINIV];
+    PMLITVA litval;
 
 /*
-***Vilken LA har nuvarande koordinatsystem ?
+***DBptr of current csys.
 */
     old_la = lsysla;
 /*
-***Skapa referens till planet.
+***We don't use IGcref() here because we want to have
+***direct access to the ID of the csys so that we can check
+***if it's already active. 
+***Put out the promt.
+*/
+    WPaddmess_mcwin(IGgtts(271),WP_MESSAGE);
+/*
+***Get csys ID.
 */
     typ = CSYTYP;
-    if ( (status=genref(271,&typ,&exnpt,&end,&right)) < 0 ) goto exit;
+    status = IGgsid(idvek,&typ,&end,&right,(short)0);
+    WPclear_mcwin();
+    WPerhg();
+    if ( status != 0 ) return(status);
 /*
-***Skapa listan med obligatoriska parametrar.
+**Get the DBptr of the new csys and check if it's already active.
+*/
+    if ( DBget_pointer('I',idvek,&new_la,&typ) < 0  ||  typ != CSYTYP )
+      {
+      erpush("EX1402",""); /* This error is unlikely ! */
+      goto error;
+      }
+
+    if ( new_la == lsysla )
+      {
+      erpush("IG2322","");
+      goto error;
+      }
+/*
+***Create litval.
+*/
+    litval.lit_type = C_REF_VA;
+    litval.lit.ref_va[0].seq_val  = idvek[0].seq_val;
+    litval.lit.ref_va[0].ord_val  = idvek[0].ord_val;
+    litval.lit.ref_va[0].p_nextre = idvek[0].p_nextre;
+    pmclie(&litval,&exnpt);
+/*
+***Create parameter list.
 */
     pmtcon(exnpt,(pm_ptr)NULL,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Delete a grid now before the new csys
+***becomes active.
 */
-    if ( igcprs("MODE_LOCAL",valparam) < 0 ) goto error;
+    WPdelete_grid(GWIN_ALL);
 /*
-***Uppdatera skärmen.
+***Create, execute and add the statement to the active module.
 */
-    igupcs(old_la,V3_CS_NORMAL);
-    igupcs(lsysla,V3_CS_ACTIVE);
-
-exit:
-    WPerhg();
-    return(status);
+    if ( IGcprs("MODE_LOCAL",valparam) < 0 )
+      {
+      erpush("IG5023","MODE_LOCAL");
+      goto error;
+      }
 /*
-***Felutgångar.
+***Update graphical windows.
+*/
+    IGupcs(old_la,V3_CS_NORMAL);
+    IGupcs(lsysla,V3_CS_ACTIVE);
+/*
+***Display the new grid (if on).
+*/
+    WPdraw_grid(GWIN_ALL);
+/*
+***The end.
+*/
+    return(0);
+/*
+***Error exit.
 */
 error:
-    erpush("IG5023","MODE_LOCAL");
     errmes();
-    WPerhg();
     return(0);
   }
   
 /********************************************************/
 /*!******************************************************/
 
-        short igupcs(
+        short IGupcs(
         DBptr la,
         int   mode)
 
-/*      Uppdaterar grafiska fönster m.a.p.  ev.
- *      aktivt koordinatsystem.
+/*      Updates the graphical appearence of a csys after
+ *      activation/deactivation.
  *
- *      In: la   = GM-pekare till koordinatsystem eller DBNULL.
- *                 Vanligen detsamma som lsysla.
+ *      In: la   = DBptr to csys or DBNULL.
+ *                 Usually = lsysla.
  *          mode = V3_CS_NORMAL eller V3_CS_ACTIVE
  *
- *      Ut: Inget.
- *
  *      (C)microform ab 1997-03-11 J. Kjellander
+ *
+ *      2007-03-18 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
    DBCsys  csy;
 
+/*
+***Read the csys from DB and call WPupcs().
+*/
    if ( la != DBNULL )
      {
      DBread_csys(&csy,NULL,la);
      WPupcs(&csy,la,mode,GWIN_ALL);
      }
-
+/*
+***The end.
+*/
    return(0);
    }
 

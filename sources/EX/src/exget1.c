@@ -26,7 +26,6 @@
 *    EXgtcs();      Interface routine for GETCSY 
 *    EXgttf();      Interface routine for GETTRF
 *    EXgtbp();      Interface routine for GETBPL
-*    EXgtsy();      Interface routine for GETSYM 
 *
 *
 *    This file is part of the VARKON Execute  Library.
@@ -452,9 +451,9 @@
 /********************************************************/
 /*!******************************************************/
 
-        short EXgtcu(
+        short    EXgtcu(
         DBId    *id,
-        DBCurve   *kurva,
+        DBCurve *kurva,
         DBSeg  **graseg,
         DBSeg  **geoseg)
 

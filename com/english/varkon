@@ -1,25 +1,23 @@
- #!/bin/sh
+#!/bin/sh
 #######################################################
 #
-# Startscript for english version of VARKON.
+# Startscript for Varkon 1.19
 #
 # See the comments below for instructions on
 # how to configure your installation.
 #
-# (C)Örebro university 2004
-#
-# 2006-09-22 Sören Larsson, Örebo university
-#            Added relative path to VARKON_ROOT  
+# (C)ï¿½rebro university 2007
 #
 #######################################################
 
 # Root directory for VARKON installation. You may change 
 # this line to point to the right location.
 
-# alternative 1, find relative path from here
-# alternative 2, specify path explicit
+# alternative 1, relative path
 VARKON_ROOT=`(cd $(dirname $0); cd ..; cd ..; pwd)`
-# VARKON_ROOT=/home/username/varkon/varkon_1.99X
+
+# alternative 2, explicit path
+# VARKON_ROOT=/home/username/varkon/varkon_1.Xx
 export VARKON_ROOT
 
 # Standard menufiles  (*.MDF, *.INC)
@@ -75,7 +73,7 @@ export VARKON_FNT
 VARKON_PLT=$VARKON_ROOT/cnf/plt
 export VARKON_PLT
 
-# Icon bitmaps for buttons
+# Icon bitmaps
 
 VARKON_ICO=$VARKON_ROOT/cnf/icons
 export VARKON_ICO
@@ -100,10 +98,10 @@ export VARKON_INI
 VARKON_PRD=$VARKON_ROOT/app
 export VARKON_PRD
 
-# PATH for executables (xvarkon, mbsc, plotterdrivers)
+# PATH for executables (xvarkon, mbsc and plotterdrivers)
 
-PATH=$VARKON_ROOT/bin:$PATH
-export PATH
+VARKON_BIN=$VARKON_ROOT/bin
+export VARKON_BIN
 
 # Path to shared ODBC Library. Uncomment these 2 lines
 # and set the path to your ODBC libraries if you have
@@ -112,21 +110,20 @@ export PATH
 #LD_LIBRARY_PATH=/usr/lib/unixODBC
 #export LD_LIBRARY_PATH
 
-# Start the VARKON executable
+# Start the VARKON executable with GLOBAL as default for new jobs.
 # Add an extra ini-file with your own configuration
-# if you want to. Don't edit the standard file included
+# if you want to. Don't edit the standard ini-file included
 # in the distribution or you will have to do it all
 # over again when updating the system.
 
-xvarkon $1 $2    \
--i$VARKON_INI/linux
+$VARKON_BIN/xvarkon -GLOBAL -i$VARKON_INI/linux
 
 # With an inifile of your own it would look something
 # like the following:
 
-# xvarkon $1 $2    \
+# $VARKON_BIN/xvarkon -GLOBAL  \
 # -i$VARKON_INI/linux -i$HOME/cnf/ini/english/my_own_inifile
 
 # If you want to run the system in pure drafting mode, add
 # "-r" to the command line.
-# xvarkon -r $1 $2 -i$VARKON_INI/linux
+# $VARKON_BIN/xvarkon -r -i$VARKON_INI/linux

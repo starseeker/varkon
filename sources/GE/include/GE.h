@@ -30,6 +30,10 @@
 #include "geotol.h"
 #include <math.h>
 
+#ifdef DEBUG
+#include "../../IG/include/debug.h"
+#endif
+
 /*
 ***Temporary decl. of erpush(). To be moved somwhere else later.
 */
@@ -170,7 +174,7 @@ DBstatus GEevalnc(DBCurve *curptr,DBSeg *segptr,EVALC *evlptr);
 DBstatus GEevaluvnc(DBCurve *curptr,DBSeg *segptr,EVALC *evlptr);
 
 /* genurbs.c */
-DBstatus GEsegcpts(DBSeg *p_seg, DBHvector *p_cpts, DBfloat *knots);
+DBstatus GEsegcpts(bool skiplast,DBSeg *p_seg, DBHvector *p_cpts);
 
 
 

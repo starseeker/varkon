@@ -922,7 +922,7 @@ static pm_ptr loadmo(char *moname);
 *     Läsning i 32K block för VAX och IBM, 30/9/86 JK 
 *     Anrop till pmstpr() 9/12/86            
 *     VARKON_LIB 15/2/95 JK               
-*     v3genv(),  1997-01-15 JK      
+*     IGgenv(),  1997-01-15 JK      
 *     1999-11-18 Rewritten, R. Svedin
 *     2004-07-14 1.18A, J.Kjellander, Örebro university
 *
@@ -957,12 +957,12 @@ static pm_ptr loadmo(char *moname);
 /*
 ***file not found, try to open on amodir
 */
-      if ( (fd=v3fopr(amodir,moname,MODEXT)) < 0 )
+      if ( (fd=IGfopr(amodir,moname,MODEXT)) < 0 )
          { 
 /*
 ***file not found, try to open on libdir
 */
-         sprintf(fname,"%s%s%s",v3genv(VARKON_LIB),moname,MODEXT);
+         sprintf(fname,"%s%s%s",IGgenv(VARKON_LIB),moname,MODEXT);
 
 #ifdef WIN32
          fd = open(fname,O_BINARY | O_RDONLY);

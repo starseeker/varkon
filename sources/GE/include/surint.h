@@ -756,5 +756,8 @@ gmflt i_v;                        /* Patch address in V direction   */
 #define  NUMAX       500       /* U patches in a surface            */
 #define  NVMAX       500       /* V patches in a surface            */
 #define  SWMAX       100       /* Maximum number of SURWARN         */
+#define  NTRIMMAX    100       /* Maximum number of trim loops      */
+#define  MAXISOCVS   2000      /* Maximum no of graph rep iso cvs   */
+#define  MAXISOSPLIT 200       /* Max no of splis for 1 iso curve   */
 /******************************************************************!*/
 

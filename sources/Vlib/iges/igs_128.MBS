@@ -2,7 +2,7 @@
 
  LOCAL GEOMETRY MODULE igs_128(
    VAR FILE infile,logfile;
-   STRING   dl1*80,dl2*80;
+   STRING   dl1*82,dl2*82;
    INT      ps_ptr;
    int      rowlgt;
    VAR REF  id_ent;
@@ -28,9 +28,9 @@
 !*
 !*******************************************************
 
-   CONSTANT INT MAXPTS=500;
+   CONSTANT INT MAXPTS=1000;
    INT    iu,iv,rownumber,p,pd;
-   STRING rad*80,fs*80;
+   STRING rad*82,fs*82;
    FLOAT  f;
    INT    k1,k2,m1,m2,prop1,prop2,prop3,prop4,prop5,
           uflag,vflag;
@@ -68,6 +68,15 @@
 !***M2, degree in V-direction (order_v-1).
 !*
    part(#4,igs_gint(infile,rad,m2,status):SAVE=0);
+   
+!   lst_ini("128");
+!   lst_lin("k1="+str(k1));
+!   lst_lin("k2="+str(k2));
+!   lst_lin("m1="+str(m1));
+!   lst_lin("m2="+str(m2));
+!   lst_lin("dl1="+dl1);
+!   lst_lin("dl2="+dl2);
+!   lst_exi(); exit("128");
 !*
 !***PROP1 - PROP5.
 !*

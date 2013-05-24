@@ -10,7 +10,7 @@
 /*  errmes();    Display error stack                                */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -28,8 +28,6 @@
 /*  Public License along with this library; if not, write to the    */
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
-/*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
 /*                                                                  */
 /********************************************************************/
 
@@ -94,20 +92,18 @@ extern char  jobdir[],jobnam[];
 /*      Felhanteringsrutin.
  *
  *      In: code => Pekare till sträng innehållande
- *                    felkod. 6 tecken avslutat med Ön.
+ *                    felkod. 6 tecken avslutat med \n.
  *          str  => Pekare till "insert"-sträng.
- *
- *      Ut: Inget.
  *
  *      FV: Severity-kod med minustecken.
  *
  *      (C)microform ab 7/1/85 J. Kjellander
  *
  *      21/10/85 Rapport om sev=4, J. Kjellander
- *      18/2/86  igexsa() om sev=4, J. Kjellander
+ *      18/2/86  IGexsa() om sev=4, J. Kjellander
  *      7/3/95   max 80 tecken i str, J. Kjellander
  *      1998-03-11 INSLEN, J.Kjellander
- *      2004-02-21 igialt(), J.Kjellander
+ *      2004-02-21 IGialt(), J.Kjellander
  *
  ******************************************************!*/
 
@@ -171,8 +167,8 @@ extern char  jobdir[],jobnam[];
     if ( sevval == 4 )
       {
       errmes();
-      igialt(457,458,458,TRUE);
-      igexsa();
+      IGialt(457,458,458,TRUE);
+      IGexsa();
       }
 /*
 ***Returnera severity.
@@ -209,70 +205,30 @@ extern char  jobdir[],jobnam[];
  *      1996-04-25 Bug filnamÄ20Å, J.Kjellander
  *      1998-03-11 INSLEN, J.Kjellander
  *      1998-10-22 Kan ej öppna ermfil, J.Kjellander
+ *      2007-05-09 1.19 J.Kjellander
  *
  ******************************************************!*/
 
   {
-    char filnam[V3PTHLEN+1],codbuf[20],linbuf[512],ferrst[512];
-    char ins1[512],ins2[512],ins3[512];
+    char  filnam[V3PTHLEN+1],codbuf[20],linbuf[512],ferrst[512];
+    char  ins1[512],ins2[512],ins3[512];
     short ferrnm,fsevnm,estkpt,i1,i2,slen;
     FILE *errfil;
 
-#ifdef X11
-    char title[V3STRLEN];
-#endif
-
-/*
-***Ev. debug.
-*/
-#ifdef DEBUG
-    if ( dbglev(IGEPAC) == 33 )
-      {
-      fprintf(dbgfil(IGEPAC),"***Start-errmes***\n");
-      fflush(dbgfil(IGEPAC));
-      }
-#endif
 /*
 ***Initiering.
 */
     estkpt = 0;
 /*
-***Med X11/WIN32 använder vi list-arean för felrapportering.
-***Om listarean redan är öppen kommer den nu att öppnas en
-***gång till och man förlorar den 1:a listan. Ett sätt är
-***att här alltid stänga först även om det inte behövs.
-***WPexla() tål detta.
-*/
-    WPexla(TRUE);
-
-#ifdef V3_X11
-    if ( !WPgrst("varkon.error.title",title) )
-      strcpy(title,"      FELRAPPORT-FELRAPPORT-FELRAPPORT");
-    WPinla(title);
-#endif
-
-#ifdef WIN32
-    if ( !msgrst("ERROR.TITLE",title) )
-      strcpy(title,"      FELRAPPORT-FELRAPPORT-FELRAPPORT");
-    msinla(title);
-#endif
-/*
 ***Skriv ut rapporter ur felstacken.
 */
 loop:
-#ifdef DEBUG
-    if ( dbglev(IGEPAC) == 33 )
-      {
-      fprintf(dbgfil(IGEPAC),"\nestkpt=%hd\n",estkpt);
-      fflush(dbgfil(IGEPAC));
-      }
-#endif
     if ( estkpt == ESTKSZ ) goto end;
     if ( errstk[estkpt].module[0] == '\0' ) goto end;
 /*
 ***Skapa fel-filnamn och prova att öppna filen.
 */
-    strcpy(filnam,v3genv(VARKON_ERM));
+    strcpy(filnam,IGgenv(VARKON_ERM));
     strcat(filnam,errstk[estkpt].module);
     strcat(filnam,ERMEXT);
 
@@ -282,14 +238,8 @@ loop:
 */
     if ( errfil == NULL )
         {
-#ifdef V3_X11
-        WPalla("Can't open error message file !",(short)1);
-        WPalla(filnam,(short)1);
-#endif
-#ifdef WIN32
-        msalla("Can't open error message file !",(short)1);
-        msalla(filnam,(short)1);
-#endif
+        WPaddmess_mcwin("Can't open error message file !",WP_ERROR);
+        WPaddmess_mcwin(filnam,WP_ERROR);
         goto end;
         }
 /*
@@ -340,19 +290,12 @@ loop:
                ins1[i1] = errstk[estkpt].insert[i1];
                ins1[i1+1] = '\0';
                }
-#ifdef DEBUG
-    if ( dbglev(IGEPAC) == 33 )
-      {
-      fprintf(dbgfil(IGEPAC),"i1=%s,i2=%s,i3=%s\n",ins1,ins2,ins3);
-      fprintf(dbgfil(IGEPAC),ferrst,ins1,ins2,ins3);
-      fflush(dbgfil(IGEPAC));
-      }
-#endif
 /*
 ***Skriv felmeddelandet till linbuf. Klipp vid 115 tecken så att
 ***själva felkoden (13 tecken) säkert kommer med.
 */
 cont:
+/* Strippa inledande blanka i ferrst här */
             sprintf(linbuf,ferrst,ins1,ins2,ins3);
 
             if ( strlen(linbuf) > 115 ) linbuf[115] = '\0';
@@ -368,17 +311,10 @@ cont:
 ***Pip och skriv ut.
 */
             fclose(errfil);
-            igbell();
-#ifdef V3_X11
-            WPalla(linbuf,(short)1);
-            ++estkpt;
+            WPbell();
+            WPaddmess_mcwin(linbuf,WP_ERROR);
+          ++estkpt;
             goto loop;
-#endif
-#ifdef WIN32
-            msalla(linbuf,(short)1);
-            ++estkpt;
-            goto loop;
-#endif
             }
          }
       }
@@ -392,40 +328,16 @@ cont:
             errstk[estkpt].errnum,
             errstk[estkpt].sev,
             errstk[estkpt].insert);
-    igbell();
-
-#ifdef V3_X11
-    WPalla(linbuf,(short)1);
-#endif
-#ifdef WIN32
-    msalla(linbuf,(short)1);
-#endif
-/*
-***Här slutar vi.
-*/
-end:
-
-#ifdef V3_X11
-    WPexla(TRUE);
-#endif
-#ifdef WIN32
-    msexla(TRUE);
-#endif
+    WPbell();
+    WPaddmess_mcwin(linbuf,WP_ERROR);
 /*
 ***Alla meddelanden är nu utskrivna, reinitiera felsystemet igen.
 */
+end:
     erinit();
 /*
-***Ev. debug.
+***The end.
 */
-#ifdef DEBUG
-    if ( dbglev(IGEPAC) == 33 )
-      {
-      fprintf(dbgfil(IGEPAC),"***Slut-errmes***\n\n");
-      fflush(dbgfil(IGEPAC));
-      }
-#endif
-
     return(0);
   }
 /********************************************************/

@@ -4,19 +4,21 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  iginit();      Inits IG                                         */
-/*  iglmdf();      Loads MDF-file                                   */
-/*  igexit();      Exits IG                                         */
-/*  igexfu();      Executes function                                */
-/*  igdofu();      Executes function                                */        
-/*  notimpl();     Dummy-routine                                    */
+/*  IGinit();      Inits IG                                         */
+/*  IGlmdf();      Loads MDF-file                                   */
+/*  IGexfu();      Executes function                                */
+/*  IGdofu();      Executes function                                */        
+/*  IGatoc();      Interpret %ASCII-code                            */
+/*  IGstmu();      Stores menu im allocated memory                  */
+/*  IGsini();      Inits signals                                    */
+/*  IGgtts();      Get C-ptr to t-string                            */
+/*  IGckhw();      Check HW                                         */
+/*                                                                  */
 /*  wpunik();      Dummy-routine                                    */
-/*  editcopy();    Interpret %ASCII-code                            */
-/*  igstmu();      Stores menu im allocated memory                  */
-/*  igsini();      Inits signals                                    */
+/*  notimpl();     Dummy-routine                                    */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -35,8 +37,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -51,39 +51,36 @@
 #undef VSTART
 #include "fcntl.h"
 #include <unistd.h>
+#include "/usr/include/sys/utsname.h"
 #endif
 
+/*
+***Menus and texts are stored here.
+*/
 char   txtmem[CHRMAX]; /* "ragged" array  of t-strings */
 char  *txtind[TXTMAX]; /* t-string ptrs */
 char  *fstmem;         /* ptr to first empty element in txtmem */
 MNUDAT mnutab[MNUMAX]; /* Menus */
 MNUALT smbind[SMBMAX]; /* Shortcuts */
 
-short igtrty;
-
-/* igtrty håller reda på vilken skärm som används. */
-
-
-extern short  v3mode,menlev,stalev;
-extern short  astack[],mant;
+extern short  v3mode;
+extern short  mant;
 extern pm_ptr pmstkp;
 extern bool   igbflg;
+extern char   speed[];
+extern char   pltyp[];
+extern char   port[];
+extern short  actfun;
+extern bool   intrup;
+extern V3MDAT sydata;
 
-extern char    speed[];
-extern char    pltyp[];
-extern char    port[];
-extern short   actfun;
-extern bool    intrup;
-
-/* Plott-variabler */
-
-
-#define W_REC 1            /* mode = vänta på record */
-#define L_REC 2            /* mode = ladda record */
+/*
+***scanf() defines for menufile processing.
+*/
+#define W_REC 1            /* mode = wait for record */
+#define L_REC 2            /* mode = load record */
 #define E_FIL 3            /* mode = end of file */
-
-#define CDUMMY '+'         /* dummykonstant */
-
+#define CDUMMY '+'         /* dummy constant */
 #define SK_SP "%*[\n\t ]"  /* skip whitespace */
 #define SK_CT "%*[\136\n]" /* skip comment (to <CR>) */
 #define SK_EQ "%*[=\n\t ]" /* skip w.spaces och '=' */
@@ -93,13 +90,11 @@ extern bool    intrup;
 /* get t-record text-string*/
 #define GT_TXT "%*[\042]%[\136\042]%*[\042]"
 
-
-/* Get Menu Header fält, 27/2/91 JK */
+/* Get Menu Header field, 27/2/91 JK */
 #define GT_MH "%*[\042]%[\136\042]%*[\042]%*[\136\n]"
 
 /* get menu alternativ field */
 #define GT_MA "%[\136\042]%*[\042%*[ ,]%c%hd"
-
 
 /* get s-record */
 #define GT_SMB "%*[\42]%[\136\42]%*[\42]%*[ ,]%c%hd"
@@ -111,20 +106,14 @@ static void sigtrp(int sigval);
 
 /*!******************************************************/
 
-        short iginit(char *fnam)
+        short IGinit(char *fnam)
 
-/*      Initieringsrutin för menyhanteraren.
+/*      Init IG. Loads menus and texts.
  *
- *      In: fnam => Pekare till MDF-filnamn.
- *
- *      Ut: Inget.
- *
- *      Felkoder: IG0282 = Kan ej initiera digitizer %s
- *                IG0292 = Okänd terminaltyp %s
+ *      In: fnam => Ptr to name of MDF-file including
+ *                  path.
  *
  *      (C)microform ab 19/1/85 M. Nelson
- *
- *      REVIDERAD:
  *
  *      6/9-85   J. Kjellander, Felhantering
  *      3/10-85  Ulf Johansson, Numerisk ASCII-ekvivalent
@@ -150,10 +139,6 @@ static void sigtrp(int sigval);
    short i,status;
 
 /*
-***Initiera skärmkonfigurationen.
-*/
-   menlev = stalev = 1;
-/*
 ***Initiering av t-sträng-pekar arrayen.
 */
    fstmem = txtmem;
@@ -172,31 +157,17 @@ static void sigtrp(int sigval);
 ***default-meny dvs. 2 för BAS_2MOD, 3 för BAS3_MOD och
 ***4 för RIT_MOD.
 */
-   igsmmu((short)0);
+   IGsmmu((short)0);
 /*
-***Ladda MDF-filen.
+***Load the MDF-file.
 */
-   if ( (status=iglmdf(fnam)) < 0 ) return(status);
-/*
-***Initiera skärm-parametrar.
-*/
-#ifdef UNIX
-   igtrty = X11;
-#endif
-
-#ifdef WIN32
-   igtrty = MSWIN;
-#endif
-/*
-***In batch mode, force igtrty to BATCH.
-*/
-   if ( igbflg ) igtrty = BATCH;
+   if ( (status=IGlmdf(fnam)) < 0 ) return(status);
 /*
 *** Defaultvärden för plottning.
 */
-   strcpy(speed,iggtts(334));
-   strcpy(pltyp,iggtts(348));
-   strcpy(port,iggtts(346));
+   strcpy(speed,IGgtts(334));
+   strcpy(pltyp,IGgtts(348));
+   strcpy(port,IGgtts(346));
 /*
 ***Kör vi WIN32 kan vi nu bygga huvudfönstrets menyträd.
 */
@@ -210,63 +181,60 @@ static void sigtrp(int sigval);
 /********************************************************/
 /*!******************************************************/
 
-        short iglmdf(char *fnam)
+        short IGlmdf(char *fnam)
 
-/*      Laddar MDF-fil.
+/*      Loads an MDF-file.
  *
- *      In: fnam => Pekare till MDF-filnamn.
+ *      In: fnam => Ptr to path.
  *
- *      Ut: Inget.
- *
- *      FV:  0 => Ok.
- *          -1 => Fel vid laddning.
- *
- *      Felkoder: IG0392 = Menyfilen %s finns ej.
- *                IG0522 = Kan ej inkludera menyfilen %s 
- *                IG0532 = Felaktigt recordnummer
- *                IG0542 = Ej include efter #
+ *      Error exits: IG0392 = Menyfilen %s finns ej.
+ *                   IG0522 = Kan ej inkludera menyfilen %s 
+ *                   IG0532 = Felaktigt recordnummer
+ *                   IG0542 = Ej include efter #
+ *                   IG0552 = Many other errors
  *
  *      (C)microform ab 18/4/87 J. Kjellander
  *
  *      19/4/87 #include, J. Kjellander
  *      7/10/87 Redefine på s- och t-str. J. Kjellander
  *      18/2/92 MACRO, J. Kjellander
- *      23/3/95 v3trfp(), J. Kjellander
+ *      23/3/95 IGtrfp(), J. Kjellander
  *      1996-02-26 Mer erpush(), J. Kjellander
  *      1996-02-26 main_menu, J. Kjellander
+ *      2007-01-07 Removed GP, J.Kjellaner
  *
  ******************************************************!*/
 
   {
-    FILE *menufil;         /* menyfilen, pekare till */
-    short mode;            /* inläsningsmode W_REC, L_REC eller E_FIL */
-    char rectyp;           /* recordtyp t,s,i eller m */
-    int recnum;            /* recordnummer */
-    char fldtyp;           /* fälttyp */
-    short num1;            /* nummer */
-    char teck1;            /* tecken */
-    short mnum,nalt;       /* Menynummer och antal alternativ */
-    char tbuf[V3STRLEN+1]; /* temp. buffert för textsträngar */
-    char rubr[V3STRLEN+1]; /* Menyrubrik */
-    char altstr[20][V3STRLEN+1]; /* Alternativtexter, max 20 st */
-    char alttyp[20];       /* Alternativtyper */
-    short altnum[20];      /* Alternativnummer */
-    char  trfnam[V3PTHLEN+1]; /* Filnamn processat för $env */
+    FILE *menufil;                /* menyfilen, pekare till */
+    short mode;                   /* inläsningsmode W_REC, L_REC eller E_FIL */
+    char  rectyp;                 /* recordtyp t,s,i eller m */
+    int   recnum;                 /* recordnummer */
+    char  fldtyp;                 /* fälttyp */
+    short num1;                   /* nummer */
+    char  teck1;                  /* tecken */
+    short mnum,nalt;              /* Menynummer och antal alternativ */
+    char  tbuf[V3STRLEN+1];       /* temp. buffert för textsträngar */
+    char  rubr[V3STRLEN+1];       /* Menyrubrik */
+    char  altstr[20][V3STRLEN+1]; /* Alternativtexter, max 20 st */
+    char  alttyp[20];             /* Alternativtyper */
+    short altnum[20];             /* Alternativnummer */
+    char  trfnam[V3PTHLEN+1];     /* Filnamn processat för $env */
+    char  errbuf[V3STRLEN];       /* Buffer for error mesage */
 
 /*
-***Processa filnamnet map. $ENVIRONMENT-parameter.
+***Process path for $ENVIRONMENT names.
 */
-    v3trfp(fnam,trfnam);
+    IGtrfp(fnam,trfnam);
 /*
-***Öppna MDF-filen.
+***Open MDF-file.
 */
     if ( (menufil=fopen(trfnam,"r")) == NULL )
       {
-      erpush("IG0392",trfnam);
-      return(-1);
+      return(erpush("IG0392",trfnam));
       }
 /*
-***Läs kommentarer etc. till nästa t-sträng eller meny.
+***Read comments etc. to next t-string or menu.
 */
     mode = W_REC;
 
@@ -281,27 +249,27 @@ static void sigtrp(int sigval);
 
         switch ( rectyp ) 
           {
-          case SCOM:                    /* är det en kommentar ? */
-          fscanf(menufil,SK_CT);  /* Ja, skippa kommentar */
+          case SCOM:                    /* Skip comments */
+          fscanf(menufil,SK_CT);
           break;
 
-          case INCL:
-          fscanf(menufil,SK_SP);               /* Skippa whitespaces */
+          case INCL:                    /* Include another file */
+          fscanf(menufil,SK_SP);
           fscanf(menufil,"%7s",tbuf);
           if ( strcmp(tbuf,"include") == 0 )
             {
-            fscanf(menufil,SK_SP);             /* Skippa whitespaces */
-            fscanf(menufil,GT_TXT,tbuf);       /* Läs filnamn */
-            if ( iglmdf(tbuf) < 0 )
+            fscanf(menufil,SK_SP);
+            fscanf(menufil,GT_TXT,tbuf);       /* Read filnamne */
+            if ( IGlmdf(tbuf) < 0 )            /* Load recursively */
               {
-              erpush("IG0522",tbuf);
-              goto errend;
+              fclose(menufil);
+              return(erpush("IG0522",tbuf));
               }
             }
           else
             {
-            erpush("IG0542",tbuf);
-            goto errend;
+            fclose(menufil);
+            return(erpush("IG0542",tbuf));
             }
           break;
 
@@ -334,8 +302,8 @@ static void sigtrp(int sigval);
             }
           else
             {
-            erpush("IG0532","");
-            goto errend;
+            fclose(menufil);
+            return(erpush("IG0532",""));
             }
           }
         else fscanf(menufil,SK_EQ);
@@ -345,25 +313,18 @@ static void sigtrp(int sigval);
         switch ( rectyp )
           {
 /*
-***Huvudmenyn.
+***Main menu.
 */
           case MAIN_MENU:
-          igsmmu((short)recnum);
+          IGsmmu((short)recnum);
           mode = W_REC;
           break;
 /*
-***t-sträng.
+***t-string.
 */
           case TSTR:
           if ( recnum < 0 || recnum >= TXTMAX ) goto error3;
-          fscanf(menufil,GT_TXT,tbuf);   /* Läs t-strängen */
-
-/*          if(txtindÄrecnumÅ != NULL) goto error6;              JK */
-/*          if ( fstmem > txtmem+CHRMAX-81 ) goto error2;           */
-/*          txtind[recnum] = fstmem;                                */
-/*          editcopy(fstmem,tbuf);                                  */
-/*          fstmem += strlen(fstmem) + 1;                           */
-
+          fscanf(menufil,GT_TXT,tbuf);
           EXcrts((short)recnum,tbuf);
           mode = W_REC;
           break;  
@@ -375,19 +336,19 @@ static void sigtrp(int sigval);
           if ( fscanf(menufil,GT_SMB,tbuf,&teck1,&num1) != 3 ) goto error12; 
           if ( fstmem > (txtmem+CHRMAX-81) ) goto error2;       
           if ( teck1 != MENU && teck1 != ALT && teck1 != PART  &&
-               teck1 != RUN && teck1 != FUNC && teck1 != MFUNC &&
+               teck1 != RUN && teck1 != CFUNC && teck1 != MFUNC &&
                teck1 != OLDMF ) goto error13;
           if ( num1 < 0 ) goto error14;
           if ( teck1 == OLDMF ) teck1 = MFUNC;
           smbind[ recnum ].str = fstmem;         /* string pointer */
           smbind[ recnum ].acttyp = teck1;       /* action type */
           smbind[ recnum ].actnum = num1;        /* action number */
-          editcopy(fstmem,tbuf);                         /* store string */
+          IGatoc(fstmem,tbuf);                         /* store string */
           fstmem += strlen(fstmem) + 1;
           mode = W_REC;
           break;  
 /*
-***Meny.
+***Menu.
 */ 
           case MENU:
           if ( recnum < 0 || recnum >= MNUMAX ) goto error4;
@@ -398,9 +359,9 @@ static void sigtrp(int sigval);
 ***Header.
 */
           fscanf(menufil,GT_MH,tbuf);
-          editcopy(rubr,tbuf);
+          IGatoc(rubr,tbuf);
 /*
-***Alternativ.
+***Menu alternative.
 */
           while ( fldtyp != EOR )
              {
@@ -410,7 +371,7 @@ static void sigtrp(int sigval);
                 {
                 case STRING:
                 fscanf(menufil,GT_MA,tbuf,&alttyp[nalt],&altnum[nalt]);
-                editcopy(altstr[nalt],tbuf);
+                IGatoc(altstr[nalt],tbuf);
                 if ( alttyp[nalt] == OLDMF ) alttyp[nalt] = MFUNC;
                 nalt++;
                 break;
@@ -420,7 +381,7 @@ static void sigtrp(int sigval);
                 break;
 
                 case EOR:                       /* slut på meny */
-                if ( igstmu(mnum,rubr,nalt,altstr,alttyp,altnum) < 0 )
+                if ( IGstmu(mnum,rubr,nalt,altstr,alttyp,altnum) < 0 )
                   goto error5;
                 mode=W_REC;                         /* vänta på ny record */
                 break;             
@@ -437,105 +398,80 @@ static void sigtrp(int sigval);
          }
        }
 /*
-***Stäng MDF-filen.
+***Close MDF-file.
 */
     if ( fclose(menufil) == EOF ) goto error9;
 
     return(0);
 /*
-***Felutgångar.
+***Error exit's.
 */
 error2:
-    printf("V3: Too many characters in MDF-file : %s\n",trfnam);
+    sprintf(errbuf,"Too many characters in MDF-file : %s",trfnam);
     goto errend;
 
 error3:
-    printf("V3: Illegal t-string number %d in MDF-file : %s\n",recnum,trfnam);
+    sprintf(errbuf,"Illegal t-string number %d in MDF-file : %s",recnum,trfnam);
     goto errend;
 
 error4:
-    printf("V3: Illegal menu-number %d in MDF-file : %s\n",recnum,trfnam);
+    sprintf(errbuf,"Illegal menu-number %d in MDF-file : %s",recnum,trfnam);
     goto errend;
 
 error5:
-    printf("V3: Can't malloc() for menu %d in MDF-file : %s\n",recnum,trfnam);
+    sprintf(errbuf,"Can't malloc() for menu %d in MDF-file : %s",recnum,trfnam);
     goto errend;
 
 error7:
-    printf("V3: Illegal recordtype %c in MDF-file : %s\n",rectyp,trfnam);
+    sprintf(errbuf,"Illegal recordtype %c in MDF-file : %s",rectyp,trfnam);
     goto errend;
 
 error8:
-    printf("V3: Illegal menu-field in menu m%d in MDF-file : %s\n",
+    sprintf(errbuf,"Illegal menu-field in menu m%d in MDF-file : %s",
            recnum,trfnam);
     goto errend;
 
 error9:
-    printf("V3: Can't close MDF-file : %s\n",trfnam);
-    return(-1);
+    sprintf(errbuf,"Can't close MDF-file : %s",trfnam);
+    goto errend;
 
 error10:
-    printf("V3: Illegal s-number %d. Must be >= 0 and < %d. MDF-file : %s\n",
+    sprintf(errbuf,"Illegal s-number %d. Must be >= 0 and < %d. MDF-file : %s",
             recnum,SMBMAX,trfnam);
     goto errend;
 
 error12:
-    printf("V3: Please check syntax in s%d. MDF-file: %s\n",recnum,trfnam);
+    sprintf(errbuf,"Please check syntax in s%d. MDF-file: %s",recnum,trfnam);
     goto errend;
 
 error13:
-    printf(
-    "V3: Illegal action type %c in s%d. Use %c,%c,%c,%c or %c. MDF-file: %s\n",
-            teck1,recnum,MENU,ALT,RUN,PART,FUNC,trfnam);
+    sprintf(errbuf,"Illegal action type %c in s%d. Use %c,%c,%c,%c or %c. MDF-file: %s",
+            teck1,recnum,MENU,ALT,RUN,PART,CFUNC,trfnam);
     goto errend;
 
 error14:
-    printf("V3: Illegal action number %d in s%d. Must be >= 0. MDF-file: %s\n",
+    sprintf(errbuf,"Illegal action number %d in s%d. Must be >= 0. MDF-file: %s",
             num1,recnum,trfnam);
     goto errend;
 
 errend:
     fclose(menufil);
-    return(-1);
+    return(erpush("IG0552",errbuf));
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igexit()
-
-/*      Avslutningsrutin för V3:s toppnivå. Denna
- *      rutin anropas bara då man vill återvända till
- *      OS och terminalen skall återställas till det
- *      skick den var innan man startade V3. När
- *      igexit() anropas förutsätts terminalen vara
- *      i VT100-mode.
- *
- *      FV: 0
- *
- *      (C)microform ab 8/9/85 J. Kjellander
- *
- *      9/11/88  CGI, J. Kjellander
- *
- ******************************************************!*/
-
- {
-   return(0);
- }
-
-/********************************************************/
-/*!******************************************************/
-
-       short igexfu(
+       short IGexfu(
        short mnum,
        short *palt)
 
-/*      Skriver ut menyn mnum, läser in svar från 
- *      operatören och utför genom att antingen
- *      skriva ut en ny meny eller anropa igdofu().
+/*      Pushes a menu, wats for user action and reacts
+ *      by either pushing a new menu or making an action
+ *      by calling IGdofu().
  *
- *      In: mnum   => Menynummer.
- *          palt   => Pekare till alternativ.
+ *      In: mnum   => Menu number.
+ *          palt   => User action.
  *
  *      Ut: *palt   => alternativnummer
  *
@@ -551,6 +487,7 @@ errend:
  *      9/10/86  GOMAIN, J. Kjellander
  *      25/4/87  MFUNC, J. Kjellander
  *      1/3/94   Snabbval, J. Kjellander
+ *      2007-04-03 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -565,17 +502,17 @@ errend:
     if ( mnum != 0  &&  mnutab[mnum].rubr == NULL )
       {
       sprintf(numstr,"%d",mnum);
-      erpush("IG0024",numstr);
+      erpush("IG0022",numstr);
       errmes();
       *palt = REJECT;
       return(0);
       }
 /*
-***Skriv ut menyn, pip om nestnivån för stor.
+***Push menu, pip om nestnivån för stor.
 */
-    if (!igaamu(mnum))
+    if (!IGaamu(mnum))
       {
-      igbell();
+      WPbell();
       *palt = REJECT;
       return(0);
       }
@@ -584,7 +521,7 @@ errend:
 */
 loop:
     if ( v3mode == RIT_MOD  &&  mnum == 4 ) pmsstp(pmstkp);
-    iggalt(&altptr,&alttyp);
+    IGgalt(&altptr,&alttyp);
 /*
 ***altptr == NULL => backa 1 meny eller alla.
 */
@@ -593,7 +530,7 @@ loop:
       switch( alttyp )
         {
         case SMBRETURN:
-        igsamu();
+        IGsamu();
         *palt = REJECT;
         return(0);
         break;
@@ -613,25 +550,21 @@ loop:
         {
         case ALT:
         *palt = altptr->actnum;
-        igsamu();
+        IGsamu();
         return(0);
         break;
 /*
-***Meny, part eller funktion.
+***Menu, part eller function.
 */ 
         case MENU:
         case PART:
         case RUN:
-        case FUNC:
+        case CFUNC:
         case MFUNC:
-        status = igdofu(altptr->acttyp,altptr->actnum);
+        status = IGdofu(altptr->acttyp,altptr->actnum);
         if ( status == GOMAIN ) return(GOMAIN);
         else if ( status == EXIT ) return(EXIT);
         else if ( status == EREXIT ) return(EREXIT);
-/*
-***Inget alternativ aktivt längre.
-*/
-        astack[mant] = -1;
         break;
         }
      }
@@ -641,12 +574,11 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-       short igdofu(
+       short IGdofu(
        short atyp,
        short anum)
 
-/*     
- *      Skriver ut en ny meny eller anropar en Varkon-
+/*      Skriver ut en ny meny eller anropar en Varkon-
  *      funktion eller eller skapa en part-sats.
  *
  *      In: atyp   => Typ av aktion.
@@ -676,12 +608,16 @@ loop:
 */
     status = 0;
 /*
+***Clear possible tooltip.
+*/
+    WPclear_tooltip();
+/*
 ***Vilken aktionskod är det ?
 */
     switch (atyp)
       {
       case MENU:
-      return(igexfu(anum,&dummy));
+      return(IGexfu(anum,&dummy));
       break;
 /*
 ***En modul skall anropas. Då får inte en annan vara aktiv
@@ -692,21 +628,24 @@ loop:
       case MFUNC:
       if ( actfun  !=  -1 )
         {
-        igbell();
+        WPbell();
         return(0);
         }
 /*
 ***Ett part- eller macro-anrop kan avslutas med GOMAIN eller
 ***REJECT, annars är det fel.
 */
-      if ( (status=igcpts(iggtts(anum),atyp)) == GOMAIN ) return(GOMAIN);
+      if ( atyp == MFUNC ) status = IGcall_macro(IGgtts(anum));
+      else                 status = IGcall_part(IGgtts(anum),atyp);
+
+      if      ( status == GOMAIN ) return(GOMAIN);
       else if ( status == REJECT ) return(0);
       else if ( status < 0 ) errmes();
       break;
 /*
 ***Funktion, kolla att funktionsnumret är rimligt stort.
 */
-      case FUNC:
+      case CFUNC:
       if ( anum < 1  ||  anum > FTABSIZ )
         {
         sprintf(errbuf,"%d",anum);
@@ -721,7 +660,7 @@ loop:
 */
       if ( actfun != -1  &&  futab[anum-1].snabb == FALSE )
         {
-        igbell();
+        WPbell();
         return(0);
         }
 /*
@@ -731,7 +670,7 @@ loop:
 */
       if ( anum == actfun )
         {
-        igbell();
+        WPbell();
         return(0);
         }
 /*
@@ -739,7 +678,7 @@ loop:
 ***funktionen anum har anropats. Om anum = actfun försöker
 ***vi anropa samma funktion 2 ggr. efter varandra utan att
 ***göra klart. Detta skall väl inte vara möjligt. Funktionen
-***Hjälp (ighelp()=f153) skall inte vis hjälp om sig själv
+***Hjälp (IGhelp()=f153) skall inte vis hjälp om sig själv
 ***ifall den anropas utan om den situation som gällde när
 ***den anropades.
 */
@@ -836,12 +775,12 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        short editcopy(
+        short IGatoc(
         char *p1,
         char *p2)
 
-/*      Kopierar p2 till p1 och konverterar numeriskt
- *      angivna ASCII-tecken.
+/*      Copies p2 to p1 and converts numerically specified
+ *      %ASCII-codes to single byte char.
  *
  *      In: p1 = Pekare till sträng ev. med %ASCII-kod.
  *
@@ -889,7 +828,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        short igstmu(
+        short IGstmu(
         short mnum,
         char *rubr,
         short nalt,
@@ -916,7 +855,7 @@ loop:
  ******************************************************!*/
 
 {
-   int     siz,i,maxwdt;
+   int     siz,i;
    char   *pstr;
    MNUALT *palt;
 
@@ -960,13 +899,6 @@ loop:
      ++palt;
      }
 /*
-***Maxbredd.
-*/
-   maxwdt = strlen(rubr);
-   for ( i=0; i<nalt; ++ i )
-     if ( strlen(altstr[i]) > maxwdt ) maxwdt = strlen(altstr[i]);
-   mnutab[mnum].wdth = maxwdt;
-/*
 ***Antal alternativ.
 */
    mnutab[mnum].nalt = nalt;
@@ -977,7 +909,7 @@ loop:
 /********************************************************/
 /*!******************************************************/
 
-        short igsini()
+        short IGsini()
 
 /*      Sätter upp vilka signaler som skall fångas.
  *
@@ -1031,7 +963,7 @@ static void sigtrp(int sigval)
  *
  *      9/5/86   SIGFPE, J. Kjellander
  *      23/10/86 Ny hantering av SIGFPE, J. Kjellander
- *      16/3/88  v3exit(), J. Kjellander
+ *      16/3/88  IGexit(), J. Kjellander
  *      4/3/92   Hangup, J. Kjellander
  *      3/4/92   SIGTERM, J. Kjellander
  *      1998-02-22 void, J.Kjellander
@@ -1053,27 +985,133 @@ static void sigtrp(int sigval)
      case SIGTERM:
      signal(SIGHUP,SIG_IGN);
      signal(SIGTERM,SIG_IGN);
-     if ( v3mode & (BAS_MOD+RIT_MOD) ) igexsa();
-     v3exit();
+     if ( v3mode & (BAS_MOD+RIT_MOD) ) IGexsa();
+     IGexit();
      break;
 /*
 ***Interrupt, normalt <CTL>c.
 */
      case SIGINT:
-     igsini();
+     IGsini();
      intrup = TRUE;
      break;
 /*
 ***Quit, normalt <DEL>.
 */
      case SIGQUIT:
-     if ( v3mode & (BAS_MOD+RIT_MOD) ) igexsa();
-     v3exit();
+     if ( v3mode & (BAS_MOD+RIT_MOD) ) IGexsa();
+     IGexit();
      break;
      }
 #endif
 
    return;
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+       char *IGgtts(int tnr)
+
+/*      Returnerar en c-pekare till den med tnr angivna
+ *      t-strängen.
+ *
+ *      In: tnr = T-strängpekarens index i txtind.
+ *
+ *      FV: C-pekare till sträng.
+ *
+ *      (C)microform ab 1996-05-30 J.Kjellander
+ *
+ ******************************************************!*/
+
+
+  {
+    char  *tp; 
+    static char notdef[80];
+
+/*
+***Har tnr ett rimligt värde ?
+*/
+    if ( tnr < 0  ||  tnr >= TXTMAX )
+      {
+      sprintf(notdef,"<invalid t%d>",tnr);
+      return(notdef);
+      }
+/*
+***Fixa fram motsvarande pekare.
+*/
+    tp = txtind[tnr];
+/*
+***Är den definierad ?
+*/
+    if ( tp == NULL )
+      {
+      sprintf(notdef,"<no t%d>",tnr);
+      return(notdef);
+      }
+
+    return(tp);
+  }
+
+/*!******************************************************/
+/*!******************************************************/
+
+        short IGckhw()
+
+/*      Initierar sydata och kollar att rätt hårdvara
+ *      används. Krypterar serienumret.
+ *
+ *      (C)microform ab 3/3/88 J. Kjellander
+ *
+ *      1996-01-25 Tagit bort sysserial, J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+
+/*
+***Unix.
+*/
+
+#ifdef UNIX
+    struct utsname name;
+
+    uname(&name);
+    strncpy(sydata.sysname,name.sysname,8);
+    sydata.sysname[8] = '\0';
+    strncpy(sydata.release,name.release,8);
+    sydata.release[8] = '\0';
+    strncpy(sydata.version,name.version,8);
+    sydata.version[8] = '\0';
+#endif
+
+/*
+***Microsoft Windows.
+*/
+
+#ifdef WIN32
+    char  buf[9];
+    int   major,minor;
+    DWORD version;
+
+    strcpy(sydata.sysname,"Win32");
+    version = GetVersion();
+    major = (int)(version&0x00FF);
+    minor = (int)((version&0xFF00)>>8);
+    sprintf(buf,"%d",major);
+    buf[8] = '\0';
+    strcpy(sydata.release,buf);
+    sprintf(buf,"%d",minor);
+    buf[8] = '\0';
+    strcpy(sydata.version,buf);
+#endif
+
+/*
+***Encrypted serial number is not used any longer.
+*/
+   sydata.ser_crypt = 0;
+
+   return(0);
   }
 
 /********************************************************/

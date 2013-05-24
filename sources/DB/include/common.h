@@ -135,6 +135,8 @@ typedef struct                  /* Graphical attribute block */
  v2float width;                 /* Linewidth */
  v2int   tpmode;                /* Text position mode */
  v2int   mfont;                 /* Mesh font */
+ v2int   pfont;                 /* Point font */
+ v2float psize;                 /* Point size */
  } V2NAPA;
 
 typedef struct                  /* System memory sizes */

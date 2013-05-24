@@ -2,15 +2,11 @@
 #
 #   Makefile for various macros
 #
-#   Note that this makefile depends on the environment
-#   variable VARKON_ROOT to be set up properly in your
-#   login-file, shell rc-file or elswhere. 
-#   VARKON_ROOT is the top directory of your
-#   Varkon-installation.
-#
 #  (C)Microform AB 1999-11-05 J.Kjellander
+#
 #  2006-09-21 , Sören Larsson, Örebro university
 #               Changed, now not dependent of VARKON_ROOT
+#  2007-02-11 ma_crecol added, 8 views removed, J.Kjellander
 #
 ##########################################################
 
@@ -34,7 +30,7 @@ OBJECTS = $(LIBDIR)/ma_posw.MBO   \
           $(LIBDIR)/ma_text2.MBO  \
           $(LIBDIR)/ma_textc.MBO  \
           $(LIBDIR)/ma_texth.MBO  \
-          $(LIBDIR)/ma_view8.MBO
+          $(LIBDIR)/ma_crecol.MBO
 
 # The rule for compiling MBS sources and moving
 # the MBO-module to the Varkon library

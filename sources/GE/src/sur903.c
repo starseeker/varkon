@@ -121,13 +121,14 @@ static DBfloat  uv_t_len;         /* Length of UV tangent           */
 static DBfloat  tan_len;          /* Length of UV tangent           */
 
 
-#ifdef  NOT_YET_USED
+#ifdef  DEBUG
 static DBfloat  obj_1;            /* Objective function value 1     */
 static DBfloat  obj_2;            /* Objective function value 2     */
 static DBfloat  obj_3;            /* Objective function value 3     */
 static DBfloat  dmdu,dmdv;        /* Search direction               */
 static DBfloat  u_pat,v_pat;      /* Current U,V point on surface   */
 static DBfloat  hstep;            /* Step for one-dimen. search     */
+static char     errbuf[132];      /* Error message, JK 20070104     */
 #endif  /*  NOT_YET_USED */
 #ifdef  DEBUG
 static DBint    icase;            /* Case for varkon_sur_eval       */

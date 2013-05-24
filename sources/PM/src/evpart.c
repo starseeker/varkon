@@ -68,8 +68,6 @@ extern short modtyp;
  *      In:   *ident  =>    Geometric id
  *            *partp  =>    C-pointer to part statement node
  *
- *      Out: 
- *
  *      FV:   return - error severity code
  *
  *      (C)microform ab 1985-10-23 Per-Ove Agne'
@@ -81,6 +79,7 @@ extern short modtyp;
  *      1996-03-02  Felhantering RTS, J. Kjellander
  *      1999-11-15  Rewritten, R. Svedin
  *      2001-05-02  Fixed inponp(void), J.Kjellander
+ *      2007-04-22 Recursion test, J.Kjellander
  *
  ******************************************************!*/
 
@@ -202,8 +201,12 @@ extern short modtyp;
 /*
 ***Get name of current module.
 */
-   pmgmod( (pm_ptr)0, &np );
-   strcpy( curmna, pmgadr(np->mona_) );
+   pmgmod((pm_ptr)0,&np);
+   strcpy(curmna,pmgadr(np->mona_));
+/*
+***Check that the current module is not calling itself recursively.
+*/
+   if ( strcmp(prtmna,curmna) == 0 ) return(erpush("IN3442",prtmna));
 /*
 ***Get base address for Parted module.
 */

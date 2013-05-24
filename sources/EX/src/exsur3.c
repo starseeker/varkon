@@ -1,7 +1,7 @@
 /*!******************************************************************
-*            
-*    exsur3.c     
-*    ========      
+*
+*    exsur3.c
+*    ========
 *
 *    EXscon();     Create SUR_CONIC
 *    EXsoff();     Create SUR_OFFS  
@@ -103,16 +103,12 @@ extern DBptr   lsysla;     /*                                       */
     DBPatch  *ptpat;
 
 /*
-***Et meddelande.
-*/
-   igptma(197,IG_MESS);
-/*
 ***H{mta geometri-data f|r spine.
 */
    if ( DBget_pointer('I',spine,&la,&typ) < 0 ) return(erpush("EX1402",""));
    if ( typ != CURTYP )
      {
-     igidst(spine,errbuf);
+     IGidst(spine,errbuf);
      return(erpush("EX1412",errbuf));
      }
    DBread_curve(&spicur,NULL,&spiseg,la);
@@ -124,7 +120,7 @@ extern DBptr   lsysla;     /*                                       */
      if ( DBget_pointer('I',limarr[i],&la,&typ) < 0 ) return(erpush("EX1402",""));
      if ( typ != CURTYP )
        {
-       igidst(limarr[i],errbuf);
+       IGidst(limarr[i],errbuf);
        return(erpush("EX1412",errbuf));
        }
      DBread_curve(&limcur[i],NULL,&limseg[i],la);
@@ -137,7 +133,7 @@ extern DBptr   lsysla;     /*                                       */
       if ( DBget_pointer('I',tanarr[i],&la,&typ) < 0 ) return(erpush("EX1402",""));
       if ( typ != CURTYP )
         {
-        igidst(tanarr[i],errbuf);
+        IGidst(tanarr[i],errbuf);
         return(erpush("EX1412",errbuf));
         }
       DBread_curve(&tancur[i],NULL,&tanseg[i],la);
@@ -150,7 +146,7 @@ extern DBptr   lsysla;     /*                                       */
       if ( DBget_pointer('I',midarr[i],&la,&typ) < 0 ) return(erpush("EX1402",""));
       if ( typ != CURTYP )
         {
-        igidst(midarr[i],errbuf);
+        IGidst(midarr[i],errbuf);
         return(erpush("EX1412",errbuf));
         }
       DBread_curve(&midcur[i],NULL,&midseg[i],la);
@@ -182,8 +178,7 @@ extern DBptr   lsysla;     /*                                       */
 /*
 ***Lagra i DB och rita.
 */
-    igrsma();
-    status = EXesur(id,&sur,ptpat,pnp);
+    status = EXesur(id,&sur,ptpat,NULL,NULL,pnp);
     if ( status < 0 ) goto error2;
 /*
 ***Allt verkar ha g}tt bra !
@@ -242,16 +237,12 @@ error3:
     DBPatch  *oldpat,*dummy;
 
 /*
-***Et meddelande.
-*/
-   igptma(199,IG_MESS);
-/*
 ***H{mta geometri-data f|r refererad yta.
 */
     if ( DBget_pointer('I',rid,&la,&typ) < 0 ) return(erpush("EX1402",""));
     if ( typ != SURTYP )
       {
-      igidst(rid,errbuf);
+      IGidst(rid,errbuf);
       return(erpush("EX1412",errbuf));
       }
     if ( (status=DBread_surface(&oldsur,la)) < 0 ) return(status);
@@ -264,8 +255,7 @@ error3:
 /*
 ***Lagra i DB och rita.
 */
-    igrsma();
-    status = EXesur(id,&oldsur,oldpat,pnp);
+    status = EXesur(id,&oldsur,oldpat,NULL,NULL,pnp);
 /*
 ***L{mna tillbaks dynamiskt allokerat minne.
 */
@@ -340,28 +330,6 @@ error:
    DBint    nbpl;         /* Number of B-planes                      */
    DBint    i_bpl;        /* Loop index B-plane                      */
 
-
-
-#ifdef DEBUG
-if ( dbglev(EXEPAC) == 1 )
-{
-fprintf(dbgfil(EXEPAC),
-"exe24*EXsapp tol_1 %20.10g tol_2 %20.10g \n",
-      tol_1 , tol_2  );
-fprintf(dbgfil(EXEPAC),
-"exe24*EXsapp metod %d yttyp %s\n",
-      (int)metod, yttyp  );
-fflush(dbgfil(EXEPAC)); /* To file from buffer      */
-}
-#endif
-
-
-/*
-***Ett meddelande.
-*/
-   igptma(452,IG_MESS);
-
-
 /*
 ***Initialisera lokala variabler
 */
@@ -376,14 +344,13 @@ fflush(dbgfil(EXEPAC)); /* To file from buffer      */
    rtol   = F_UNDEF;
    offset = F_UNDEF;
    thick  = F_UNDEF;
-
 /*
 ***H{mta geometri-data f|r refererad yta.
 */
    if ( DBget_pointer('I',rid,&la,&typ) < 0 ) return(erpush("EX1402",""));
    if ( typ != SURTYP )
      {
-     igidst(rid,errbuf);
+     IGidst(rid,errbuf);
      return(erpush("EX1412",errbuf));
      }
    if ( (status=DBread_surface(&oldsur,la)) < 0 ) return(status);
@@ -401,38 +368,6 @@ fflush(dbgfil(EXEPAC)); /* To file from buffer      */
      status = erpush("EX4142",yttyp);
      goto err2;  
      }
-
-#ifdef DEBUG
-if ( dbglev(EXEPAC) == 1 &&  stype ==  CUB_SUR  )
-{
-fprintf(dbgfil(EXEPAC), "exe24*EXsapp Approximate to a CUB_SUR surface\n");
-}
-if ( dbglev(EXEPAC) == 1 &&  stype ==  FAC_SUR  )
-{
-fprintf(dbgfil(EXEPAC), "exe24*EXsapp Approximate to a FAC_SUR surface\n");
-}
-if ( dbglev(EXEPAC) == 1 &&  stype ==  BOX_SUR  )
-{
-fprintf(dbgfil(EXEPAC), "exe24*EXsapp Create a BOX_SUR surface  \n");
-}
-if ( dbglev(EXEPAC) == 1 &&  stype == NURB_SUR  )
-{
-fprintf(dbgfil(EXEPAC), "exe24*EXsapp Create a NURB_SUR surface \n");
-}
-if ( dbglev(EXEPAC) == 1 &&  stype ==       99  )
-{
-fprintf(dbgfil(EXEPAC), "EXe24*EXsapp Approximate to BOX_PAT (BBOX'es)\n");
-}
-
-if ( dbglev(EXEPAC) == 1 )
-{
-fprintf(dbgfil(EXEPAC),
-"EXe24*EXsapp pnp->blank %d pnp->pen %d pnp->level %d\n",
-      (int)pnp->blank,(int)pnp->pen,(int)pnp->level );
-fflush(dbgfil(EXEPAC)); /* To file from buffer      */
-}
-#endif
-
 /*
 ***Kolla metod.
 */
@@ -548,65 +483,10 @@ fflush(dbgfil(EXEPAC)); /* To file from buffer      */
        }
      goto err2;      
      }
-
-
-/*
-* Tillfalligt för test av NURB_SUR evalueringsrutinen Start .......
-*/
-
-#ifdef  TILLFALLIG
-
-  EVALS  r00;  /* Tillfalligtorner point U=0 V=0                    */
-
-if  ( stype == NURB_SUR )
-{
-#ifdef DEBUG
-if ( dbglev(EXEPAC) == 1 )
-{
-fprintf(dbgfil(EXEPAC),
-"exe24*EXsapp &newsur %d newpat %d \n",
-      (int)(&newsur),(int)newpat);
-fflush(dbgfil(EXEPAC)); /* To file from buffer      */
-}
-#endif
-
-   status= varkon_sur_eval (&newsur,newpat, 3   ,1.4 ,1.2 ,&r00);
-    if(status<0)
-    {
-#ifdef DEBUG
-if ( dbglev(EXEPAC) == 1 )
-  fprintf(dbgfil(EXEPAC),
-  "ex24   varkon_sur_eval (sur210) failed for us 1.4 vs 1.2\n" ); 
-#endif
-    sprintf(errbuf,"exe24");
-    return(varkon_erpush("SU2943",errbuf));
-    }
-
-#ifdef DEBUG
-if ( dbglev(EXEPAC) == 1 )
-  {
-  fprintf(dbgfil(EXEPAC),
-  "ex24   us 2.4   vs 3.8   X %10.2f Y %10.2f Z %10.2f \n",
-     r00.r_x, r00.r_y, r00.r_z ); 
-fflush(dbgfil(EXEPAC));
-  }
-#endif
-
-}
-
-/*
-* Tillfalligt för test av NURB_SUR evalueringsrutinen Slut  .......
-*/
-
-#endif /*  TILLFALLIG  */
-
-
-
-
 /*
 ***Lagra i DB och rita.
 */
-   status = EXesur(id,&newsur,newpat,pnp);
+   status = EXesur(id,&newsur,newpat,NULL,NULL,pnp);
 /*
 ***L{mna tillbaks dynamiskt allokerat minne.
 */
@@ -614,8 +494,6 @@ err1:
    DBfree_patches(&newsur,newpat);
 err2: 
    DBfree_patches(&oldsur,oldpat);
-
-   igrsma();
 
    return(status);
   }
@@ -684,7 +562,7 @@ fflush(dbgfil(EXEPAC));
      return(erpush("SU4013",errbuf));
      }
 
-igplma("Skapar SUR_COMP !",IG_MESS);
+IGplma("Skapar SUR_COMP !",IG_MESS);
 
    status  = 0;
    no_surf = (DBint)nref;  /* Number of input surfaces             */
@@ -758,7 +636,7 @@ for ( i_sur=1; i_sur <= no_surf; ++i_sur ) /* Start loop surfaces   */
 
    if ( typ_surf != SURTYP )
      {
-     igidst(rid_surf,errbuf);
+     IGidst(rid_surf,errbuf);
      return(erpush("EX1412",errbuf));
      }
 
@@ -824,7 +702,7 @@ for ( i_sur=1; i_sur <= no_surf; ++i_sur ) /* Start loop surfaces   */
 /*
 ***Lagra i DB och rita.
 */
-    status = EXesur(id,&sur_out,p_pat_out,pnp);
+    status = EXesur(id,&sur_out,p_pat_out,NULL,NULL,pnp);
     if ( status < 0 ) goto err1;
 
 
@@ -843,8 +721,6 @@ fflush(dbgfil(EXEPAC)); /* To file from buffer      */
 
 
 err2:;
-
-   igrsma();
 
 return(status);
   }
@@ -890,16 +766,12 @@ return(status);
    DBPatch  *oldpat,*newpat;
 
 /*
-***Et meddelande.
-*/
-   igptma(453,IG_MESS);
-/*
 ***H{mta geometri-data f|r refererad yta.
 */
    if ( DBget_pointer('I',rid,&la,&typ) < 0 ) return(erpush("EX1402",""));
    if ( typ != SURTYP )
      {
-     igidst(rid,errbuf);
+     IGidst(rid,errbuf);
      return(erpush("EX1412",errbuf));
      }
    if ( (status=DBread_surface(&oldsur,la)) < 0 ) return(status);
@@ -966,8 +838,7 @@ fflush(dbgfil(EXEPAC)); /* To file from buffer      */
 /*
 ***Lagra i DB och rita.
 */
-   igrsma();
-   status = EXesur(id,&newsur,newpat,pnp);
+   status = EXesur(id,&newsur,newpat,NULL,NULL,pnp);
 /*
 ***L{mna tillbaks dynamiskt allokerat minne.
 */

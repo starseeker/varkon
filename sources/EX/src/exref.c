@@ -58,7 +58,7 @@
  ******************************************************!*/
 
   {
-    igidst(id,idstr);
+    IGidst(id,idstr);
 
     return(0);
   }
@@ -87,7 +87,7 @@
  ******************************************************!*/
 
   {
-    if ( igstid(idstr,id) < 0 ) return(erpush("EX1782",idstr));
+    if ( IGstid(idstr,id) < 0 ) return(erpush("EX1782",idstr));
     else return(0);
   }
 

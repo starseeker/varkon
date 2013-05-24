@@ -4,27 +4,27 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*   igcpen();   Edit pen                                           */
-/*   igcniv();   Edit level                                         */
-/*   igcwdt();   Edit linewidth                                     */
-/*   igcdal();   Edit dashlength                                    */
-/*   igcfs();    Set font to solid                                  */
-/*   igcfd();    Set font to dashed                                 */
-/*   igcfc();    Set font to centreline                             */
-/*   igcff();    Set font to filled                                 */
-/*   igctsz();   Edit text size                                     */
-/*   igctwd();   Edit text width                                    */
-/*   igctsl();   Edit text slant                                    */
-/*   igctfn();   Edit text font                                     */
-/*   igctpm();   Edit text planemode                                */
-/*   igcdts();   Edit dimension digitsize                           */
-/*   igcdas();   Edit dimension arrowsize                           */
-/*   igcdnd();   Edit dimension number of digits                    */
-/*   igcda0();   Edit dimension auto = off                          */
-/*   igcda1();   Edit dimension auto = on                           */
+/*   IGcpen();   Edit pen                                           */
+/*   IGcniv();   Edit level                                         */
+/*   IGcwdt();   Edit linewidth                                     */
+/*   IGcdal();   Edit dashlength                                    */
+/*   IGcfs();    Set font to solid                                  */
+/*   IGcfd();    Set font to dashed                                 */
+/*   IGcfc();    Set font to centreline                             */
+/*   IGcff();    Set font to filled                                 */
+/*   IGctsz();   Edit text size                                     */
+/*   IGctwd();   Edit text width                                    */
+/*   IGctsl();   Edit text slant                                    */
+/*   IGctfn();   Edit text font                                     */
+/*   IGctpm();   Edit text planemode                                */
+/*   IGcdts();   Edit dimension digitsize                           */
+/*   IGcdas();   Edit dimension arrowsize                           */
+/*   IGcdnd();   Edit dimension number of digits                    */
+/*   IGcda0();   Edit dimension auto = off                          */
+/*   IGcda1();   Edit dimension auto = on                           */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -43,8 +43,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -56,59 +54,55 @@
 extern short   v3mode;
 extern DBptr   lsysla;
 
-static short igcfnt(short font);
-static short igcdau(short dauto);
+static short igcfnt(int font);
+static short igcdau(int dauto);
 
 /*!******************************************************/
 
-        short igcpen()
+        short IGcpen()
 
-/*      Varkonfunktion för att ändra en storhets penn-
- *      nummer.
+/*      Interactive function "Edit pen".
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3562 = Storheten ingår i en part
- *              IG3702 = Otillåtet pennummer
+ *      Errors: IG3562 = Entity belongs to a part
+ *              IG3702 = Illegal pen number
  *
  *      (C)microform ab 12/4/86 J. Kjellander
  *
  *      6/10/86  GOMAIN, B. Doverud
- *      11/11/86 Test om storhet ingår i part, J. Kjellander
+ *      11/11/86 Test om storhet ingï¿½r i part, J. Kjellander
  *      15/3/88  Ritpaketet, J. Kjellander
- *      18/11/88 getmid(), J. Kjellander
+ *      18/11/88 IGgmid(), J. Kjellander
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short   status,i,nid;
-    DBetype   typ,typvek[IGMAXID];
-    DBptr   la;
-    pm_ptr  exnpt,retla,valtyp;
-    char    istr[V3STRLEN+1];
-    PMREFVA idmat[IGMAXID][MXINIV];
-    DBHeader  hed;
-    PMLITVA val;
+    short    status;
+    int      i,nid;
+    DBetype  typ,typvek[IGMAXID];
+    DBptr    la;
+    pm_ptr   exnpt,retla,valtyp;
+    char     istr[V3STRLEN+1],mesbuf[V3STRLEN];
+    PMREFVA  idmat[IGMAXID][MXINIV];
+    DBHeader hed;
+    PMLITVA  val;
 
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på storheternas:s ID.
+***Select one or more entities.
 */
 loop:
-    igptma(150,IG_MESS);
+    WPaddmess_mcwin(IGgtts(150),WP_PROMPT);
     typvek[0] = ALLTYP;
-    nid = IGMAXID;
-    if ( (status=getmid(idmat,typvek,&nid)) < 0 ) goto exit;
-    igrsma();
+    nid       = IGMAXID;
+    if ( (status=IGgmid(idmat,typvek,&nid)) < 0 ) goto exit;
 /*
-***Om basmodul, kolla att ingen av storheterna ingår i en part.
+***In generic mode entities may not belong to a part.
 */
     if ( v3mode & BAS_MOD )
       {
@@ -122,22 +116,21 @@ loop:
          }
       }
 /*
-***Fråga efter nytt pennummer.
+***Ask for new pen number.
 */
     pmmark();
-    if ( (status=genint(16,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcint(16,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 /*
-***Kolla att värdet är tillåtet.
+***Check for illegal value.
 */
     if ( val.lit.int_va < 0 || val.lit.int_va > 32767 )
       {
@@ -147,16 +140,16 @@ loop:
       goto loop;
       }
 /*
-***Ändra alla storheterna.
+***Update all entities.
 */
     for ( i=0; i<nid; ++i )
       {
 /*
-***Om basmodul, ändra pennummer i PM.
+***In generic mode update PM.
 */
       if ( v3mode & BAS_MOD ) pmchnp(idmat[i],PMPEN,exnpt,&retla);
 /*
-***Under alla omständigheter, ändra pennummer i GM och GP.
+***Always update DB and WPGWIN's.
 */
       DBget_pointer('I',idmat[i],&la,&typ);
       DBread_header(&hed,la);
@@ -169,66 +162,72 @@ loop:
         }
       }
 /*
-***Avslutning.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    if ( nid == 1 ) strcpy(mesbuf,IGgtts(63));
+    else           sprintf(mesbuf,"%hd %s",nid,IGgtts(64));
+    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcniv()
+        short IGcniv()
 
-/*      Varkonfunktion för att ändra en storhets nivå.
+/*      Interactive function "Edit level".
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3212 = Otillåtet nivånummer
- *              IG3562 = Någon av storh. ingår ipart
+ *      Errors: IG3212 = Inavlid level number
+ *              IG3562 = An entity belongs to a part
  *
  *      (C)microform ab 12/4/86 J. Kjellander
  *
- *      30/9/86  Ny nivåhantering, J. Kjellander
+ *      30/9/86  Ny nivï¿½hantering, J. Kjellander
  *      6/10/86  GOMAIN, B. Doverud
- *      11/11/86 Test om storhet ingår i part, J. Kjellander
+ *      11/11/86 Test om storhet ingï¿½r i part, J. Kjellander
  *      15/3/88  Ritpaketet, J. Kjellander
- *      18/11/88 getmid(), J. Kjellander
+ *      18/11/88 IGgmid(), J. Kjellander
  *      1998-01-12 Aktivt csys, J.Kjellander
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short   status,i,nid;
-    DBetype   typ,typvek[IGMAXID];
-    DBptr   la;
-    char    istr[V3STRLEN+1];
-    pm_ptr  exnpt,retla,valtyp;
-    PMREFVA idmat[IGMAXID][MXINIV];
-    DBHeader  hed;
-    PMLITVA val;
+    short    status;
+    int      i,nid;
+    DBetype  typ,typvek[IGMAXID];
+    DBptr    la;
+    char     istr[V3STRLEN+1],mesbuf[V3STRLEN];
+    pm_ptr   exnpt,retla,valtyp;
+    PMREFVA  idmat[IGMAXID][MXINIV];
+    DBHeader hed;
+    PMLITVA  val;
 
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på storhetens:s ID.
+***Select entities.
 */
 loop:
-    igptma(151,IG_MESS);
+    WPaddmess_mcwin(IGgtts(151),WP_PROMPT);
     typvek[0] = ALLTYP;
-    nid = IGMAXID;
-    if ( (status=getmid(idmat,typvek,&nid)) < 0 ) goto exit;
-    igrsma();
+    nid       = IGMAXID;
+    if ( (status=IGgmid(idmat,typvek,&nid)) < 0 ) goto exit;
 /*
-***Om basmodul, kolla att ingen av storheterna ingår i en part.
+***In generic mode entities may not belong to a part.
 */
     if ( v3mode & BAS_MOD )
       {
@@ -242,24 +241,23 @@ loop:
          }
       }
 /*
-***Fråga efter nytt nivånummer.
+***Ask for new level number.
 */
     pmmark();
-    if ( (status=genint(227,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcint(227,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 /*
-***Kolla att värdet är tillåtet.
+***Check that the value is valid.
 */
-    if ( val.lit.int_va < 0 || val.lit.int_va > NT1SIZ-1 )
+    if ( val.lit.int_va < 0 || val.lit.int_va > WP_NIVANT-1 )
       {
       erpush("IG3212","");
       errmes();
@@ -267,16 +265,16 @@ loop:
       goto loop;
       }
 /*
-***Ändra alla storheterna.
+***Update.
 */
     for ( i=0; i<nid; ++i )
       {
 /*
-***Om basmodul, ändra nivånummer i PM.
+***In generic mode update PM.
 */
       if ( v3mode & BAS_MOD ) pmchnp(idmat[i],PMLEVEL,exnpt,&retla);
 /*
-***Ändra nivånummer i GM och GP.
+***Update DB and WPGWIN's.
 */
       DBget_pointer('I',idmat[i],&la,&typ);
       DBread_header(&hed,la);
@@ -286,77 +284,80 @@ loop:
         hed.level = (short)val.lit.int_va;
         DBupdate_header(&hed,la);
         EXdren(la,typ,TRUE,GWIN_ALL);
-        if ( la == lsysla ) igupcs(lsysla,V3_CS_ACTIVE);
+        if ( la == lsysla ) IGupcs(lsysla,V3_CS_ACTIVE);
         }
       }
 /*
-***Om igen.
+***Update WPRWIN's.
 */
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
 /*
-***Avslutning.
+***Confirmational message.
+*/
+    if ( nid == 1 ) strcpy(mesbuf,IGgtts(63));
+    else           sprintf(mesbuf,"%hd %s",nid,IGgtts(64));
+    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcwdt()
+        short IGcwdt()
 
-/*      Varkonfunktion för att ändra en storhets 
- *      linjebredd.
+/*      Interactive function "Edit linewidth".
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3562 = Storheten ingår i en part
- *              IG3702 = Otillåtet pennummer
+ *      Errors: IG3562 = Entity belongs to part
+ *              IG3702 = Invalid linewidth
  *
  *      (C)microform ab 1998-11-25 J. Kjellander
  *
  *      1999-03-09, Bugfix pen, J.Kjellander
- *      2004-07-27 B_plane, J.Kjellander, Örebro university
+ *      2004-07-27 B_plane, J.Kjellander, ï¿½rebro university
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    short    status,i,nid;
+    short    status;
+    int      i,nid;
     DBetype  typ,typvek[IGMAXID];
     DBptr    la;
-    DBfloat    width;
+    DBfloat  width;
     pm_ptr   exnpt,retla,valtyp;
-    char     istr[V3STRLEN+1];
-    DBPoint    poi;
-    DBLine    lin;
+    char     istr[V3STRLEN+1],mesbuf[V3STRLEN];
+    DBPoint  poi;
+    DBLine   lin;
     DBArc    arc;
-    DBCurve    cur;
-    DBText    txt;
+    DBCurve  cur;
+    DBSurf   sur;
+    DBText   txt;
     DBBplane bpl;
     PMREFVA  idmat[IGMAXID][MXINIV];
-    DBHeader   hed;
+    DBHeader hed;
     PMLITVA  val;
 
     static char dstr[V3STRLEN+1] = "0";
 
 /*
-***Ta reda på storheternas:s ID.
+***Make multiple selection.
 */
 loop:
-    igptma(1633,IG_MESS);
-    typvek[0] = POITYP+LINTYP+ARCTYP+CURTYP+TXTTYP+BPLTYP;
+    WPaddmess_mcwin(IGgtts(1633),WP_PROMPT);
+    typvek[0] = POITYP+LINTYP+ARCTYP+CURTYP+SURTYP+TXTTYP+BPLTYP;
     nid = IGMAXID;
-    if ( (status=getmid(idmat,typvek,&nid)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgmid(idmat,typvek,&nid)) < 0 ) goto exit;
 /*
-***Om basmodul, kolla att ingen av storheterna ingår i en part.
+***In generic mode entities may not belong to a part.
 */
     if ( v3mode & BAS_MOD )
       {
@@ -370,26 +371,25 @@ loop:
          }
       }
 /*
-***Fråga efter ny linjebredd.
+***Ask for new linewidth.
 */
 askwdt:
     pmmark();
-    if ( (status=genflt(1632,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcflt(1632,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 
     if ( val.lit_type == C_INT_VA ) width = (DBfloat)val.lit.int_va;
     else width = val.lit.float_va;
 /*
-***Kolla att värdet är tillåtet.
+***Check for validity.
 */
     if ( width < 0.0 )
       {
@@ -399,16 +399,16 @@ askwdt:
       goto askwdt;
       }
 /*
-***Ändra alla storheterna.
+***Update.
 */
     for ( i=0; i<nid; ++i )
       {
 /*
-***Om basmodul, ändra pennummer i PM.
+***In generic mode update PM.
 */
       if ( v3mode & BAS_MOD ) pmchnp(idmat[i],PMWIDTH,exnpt,&retla);
 /*
-***Under alla omständigheter, ändra pennummer i GM och GP.
+***Update DB and graphical windows.
 */
       DBget_pointer('I',idmat[i],&la,&typ);
       DBread_header(&hed,la);
@@ -438,6 +438,12 @@ askwdt:
         cur.wdt_cu = width;
         DBupdate_curve(&cur,NULL,la);
         }
+      else if ( typ == SURTYP )
+        {
+        DBread_surface(&sur,la);
+        sur.wdt_su = width;
+        DBupdate_surface(&sur,la);
+        }
       else if ( typ == TXTTYP )
         {
         DBread_text(&txt,NULL,la);
@@ -451,37 +457,40 @@ askwdt:
         DBupdate_bplane(&bpl,la);
         }
 
-
       EXdren(la,typ,TRUE,GWIN_ALL);
       }
 /*
-***Avslutning.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    if ( nid == 1 ) strcpy(mesbuf,IGgtts(63));
+    else           sprintf(mesbuf,"%hd %s",nid,IGgtts(64));
+    WPaddmess_mcwin(mesbuf,WP_MESSAGE);
+/*
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcdal()
+        short IGcdal()
 
-/*      Varkonfunktion för att ändra en linjes,
- *      cirkels, kurvas eller snitts strecklängd.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Interactive function to edit dashlength.
  *
  *      FV: 0      = OK
  *          REJECT = avsluta
  *          GOMAIN = huvudmenyn
  *
- *      Felkod: IG3502 = Storheten ingår i en part.
- *              IG3802 = Storheten är heldragen.
- *              IG3862 = Otillåten strecklängd.
+ *      Felkod: IG3502 = Storheten ingï¿½r i en part.
+ *              IG3802 = Storheten ï¿½r heldragen.
+ *              IG3862 = Otillï¿½ten strecklï¿½ngd.
  *
  *      (C)microform ab 25/8/87 J. Kjellander
  *
@@ -493,32 +502,31 @@ exit:
   {
     short   status;
     short   font;
-    DBetype   typ;
+    DBetype typ;
     DBptr   la;
-    DBfloat   dashl;
+    DBfloat dashl;
     bool    end,right;
     char    istr[V3STRLEN+1];
     char    strbuf[V3STRLEN+1];
     pm_ptr  exnpt,retla,valtyp;
     PMREFVA idvek[MXINIV];
-    DBLine   lin;
+    DBLine  lin;
     DBArc   arc;
-    DBCurve   cur;
-    DBHatch   xht;
+    DBCurve cur;
+    DBHatch xht;
     PMLITVA val;
 
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på storhetens:s ID.
+***Get entity ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = LINTYP+ARCTYP+CURTYP+XHTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att storheten inte ingår i en part.
+***In generic mode the entity may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -527,7 +535,7 @@ loop:
       goto loop;
       }
 /*
-***Kolla att storheten inte är heldragen.
+***Check that entity is not solid.
 */
     DBget_pointer('I',idvek,&la,&typ);
 
@@ -560,32 +568,32 @@ loop:
       {
       erpush("IG3802","");
       errmes();
+      WPerhg();
       goto loop;
       }
 /*
-***Fråga efter ny strecklängd.
+***Ask for new dashlength.
 */
 askdsh:
-    sprintf(strbuf,"%s%g  %s",iggtts(12),dashl,iggtts(248));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%g  %s",IGgtts(12),dashl,IGgtts(248));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genflt(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcflt(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny strecklängd.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 
     if ( val.lit_type == C_INT_VA ) dashl = (DBfloat)val.lit.int_va;
     else dashl = val.lit.float_va;
 /*
-***Kolla att det är ett rimligt värde.
+***Check validity.
 */
     if ( dashl < 2*TOL2 )
       {
@@ -595,7 +603,7 @@ askdsh:
       goto askdsh;
       }
 /*
-***Ändra strecklängd i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
@@ -626,29 +634,32 @@ askdsh:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
+    WPclear_mcwin();
     WPerhg();
-    igrsma();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcfs()
+        short IGcfs()
 
-/*      Varkonfunktion för att ändra en storhets
- *      font till heldraget.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Interactive edit entity font to 0 = solid.
  *
  *      (C)microform ab 25/8/87 J. Kjellander
  *
@@ -657,20 +668,15 @@ exit:
  ******************************************************!*/
 
    {
-   return(igcfnt((short)0));
+   return(igcfnt(0));
    }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcfd()
+        short IGcfd()
 
-/*      Varkonfunktion för att ändra en storhets
- *      font till streckat.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Interactive edit entity font to 1 = dashed.
  *
  *      (C)microform ab 25/8/87 J. Kjellander
  *
@@ -679,20 +685,15 @@ exit:
  ******************************************************!*/
 
    {
-   return(igcfnt((short)1));
+   return(igcfnt(1));
    }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcfc()
+        short IGcfc()
 
-/*      Varkonfunktion för att ändra en storhets
- *      font till streckprickat.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Interactive edit entity font to 2 = centerline.
  *
  *      (C)microform ab 25/8/87 J. Kjellander
  *
@@ -701,13 +702,13 @@ exit:
  ******************************************************!*/
 
    {
-   return(igcfnt((short)2));
+   return(igcfnt(2));
    }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcff()
+        short IGcff()
 
 /*      Interactive edit entity font to 3 = filled.
  *
@@ -716,56 +717,55 @@ exit:
  ******************************************************!*/
 
    {
-   return(igcfnt((short)3));
+   return(igcfnt(3));
    }
 
 /********************************************************/
 /*!******************************************************/
 
-static short igcfnt(short font)
+static short igcfnt(int font)
 
-/*      Ändrar en linjes, cirkels, kurvas eller snitts font.
+/*      Edit the font of a point, line, arc, curve or hatch.
  *
- *      In: font = 0,1 eller 2.
+ *      In: font = 0,1 or 2.
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
+ *      Return: 0  = OK
  *          REJECT = avsluta
  *          GOMAIN = huvudmenyn
  *
- *      Felkod: IG3502 = Storheten ingår i en part.
+ *      Felkod: IG3502 = Entity belongs to a part.
  *
  *      (C)microform ab 25/8/87 J. Kjellander
  *
  *      17/3/88  Snitt, J. Kjellander
  *      12/1/92  Kurvor, J. Kjellander
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
     short   status;
-    DBetype   typ;
+    DBetype typ;
     DBptr   la;
     bool    end,right;
     pm_ptr  exnpt,retla;
     PMREFVA idvek[MXINIV];
-    DBLine   lin;
+    DBPoint poi;
+    DBLine  lin;
     DBArc   arc;
-    DBCurve   cur;
-    DBHatch   xht;
+    DBCurve cur;
+    DBHatch xht;
     PMLITVA val;
 
 /*
-***Ta reda på storhetens:s ID.
+***Get entity ID.
 */
 loop:
-    igptma(268,IG_MESS);
-    typ = LINTYP+ARCTYP+CURTYP+XHTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
+    typ = POITYP+LINTYP+ARCTYP+CURTYP+XHTTYP;
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att storheten inte ingår i en part.
+***In generic mode the entity may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -774,7 +774,7 @@ loop:
       goto loop;
       }
 /*
-***Ändra font i PM, GM och GP.
+***Update.
 */
     DBget_pointer('I',idvek,&la,&typ);
 
@@ -784,7 +784,14 @@ loop:
     val.lit.int_va = font;
     pmclie(&val,&exnpt);
 
-    if ( typ == LINTYP )
+    if       ( typ == POITYP )
+      {
+      if ( v3mode & BAS_MOD ) pmchnp(idvek,PMPFONT,exnpt,&retla);
+      DBread_point(&poi,la);
+      poi.fnt_p = font;
+      DBupdate_point(&poi,la);
+      }
+    else if ( typ == LINTYP )
       {
       if ( v3mode & BAS_MOD ) pmchnp(idvek,PMLFONT,exnpt,&retla);
       DBread_line(&lin,la);
@@ -815,36 +822,42 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igctsz()
+        short IGctsz()
 
-/*      Varkonfunktion för att ändra en texthöjd.
+/*      Interactive function to edit text size.
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3502 = Texten ingår i en part.
+ *      Error: IG3502 = Text belongs to part
  *
  *      (C)microform ab 25/8/87 J. Kjellander
+ *
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -864,15 +877,14 @@ exit:
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på textens:s ID.
+***Select text.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = TXTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att texten inte ingår i en part.
+***In generic mode it may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -881,32 +893,30 @@ loop:
       goto loop;
       }
 /*
-***Läs GM-data.
+***Get text from DB.
 */
     DBget_pointer('I',idvek,&la,&typ);
-
     DBread_text(&txt,str,la);
 /*
-***Fråga efter ny texthöjd.
+***Ask for new size
 */
-    sprintf(strbuf,"%s%g  %s",iggtts(11),txt.h_tx,iggtts(248));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%g  %s",IGgtts(11),txt.h_tx,IGgtts(248));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genflt(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcflt(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
 
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny texthöjd.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 /*
-***Ändra texthöjd i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
@@ -917,64 +927,71 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igctwd()
+        short IGctwd()
 
-/*      Varkonfunktion för att ändra en textbredd.
+/*      Interactive function to edit text width.
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3502 = Texten ingår i en part.
+ *      Error: IG3502 = Text belongs to a part
  *
  *      (C)microform ab 25/8/87 J. Kjellander
+ *
+ *      2007-08-10, 1.19 J.Kjellander
  *
  ******************************************************!*/
 
   {
     short   status;
-    DBetype   typ;
+    DBetype typ;
     DBptr   la;
     bool    end,right;
     char    istr[V3STRLEN+1];
     char    strbuf[V3STRLEN+1];
     pm_ptr  exnpt,retla,valtyp;
     PMREFVA idvek[MXINIV];
-    DBText   txt;
+    DBText  txt;
     char    str[V3STRLEN+1];
     PMLITVA val;
 
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på textens:s ID.
+***Get text ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
+    IGptma(268,IG_MESS);
     typ = TXTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
+    IGrsma();
 /*
-***Kolla att texten inte ingår i en part.
+***In generic mode the text may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -983,31 +1000,29 @@ loop:
       goto loop;
       }
 /*
-***Läs GM-data.
+***Get text from DB.
 */
     DBget_pointer('I',idvek,&la,&typ);
-
     DBread_text(&txt,str,la);
 /*
-***Fråga efter ny textbredd.
+***Ask for new width.
 */
-    sprintf(strbuf,"%s%g  %s",iggtts(13),txt.b_tx,iggtts(248));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%g  %s",IGgtts(13),txt.b_tx,IGgtts(248));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genflt(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcflt(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny textbredd.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 /*
-***Ändra textbredd i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
@@ -1018,64 +1033,69 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igctsl()
+        short IGctsl()
 
-/*      Varkonfunktion för att ändra en text-slant.
+/*      Interactive function to edit text slant.
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3502 = Texten ingår i en part.
+ *      Error: IG3502 = The text belongs to a part
  *
  *      (C)microform ab 25/8/87 J. Kjellander
+ *
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
     short   status;
-    DBetype   typ;
+    DBetype typ;
     DBptr   la;
     bool    end,right;
     char    istr[V3STRLEN+1];
     char    strbuf[V3STRLEN+1];
     pm_ptr  exnpt,retla,valtyp;
     PMREFVA idvek[MXINIV];
-    DBText   txt;
+    DBText  txt;
     char    str[V3STRLEN+1];
     PMLITVA val;
 
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på textens:s ID.
+***Get text ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = TXTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att texten inte ingår i en part.
+***In generic mode the text may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -1084,31 +1104,29 @@ loop:
       goto loop;
       }
 /*
-***Läs GM-data.
+***Get text from DB.
 */
     DBget_pointer('I',idvek,&la,&typ);
-
     DBread_text(&txt,str,la);
 /*
-***Fråga efter ny textslant.
+***Ask for new text slant.
 */
-    sprintf(strbuf,"%s%g  %s",iggtts(15),txt.l_tx,iggtts(248));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%g  %s",IGgtts(15),txt.l_tx,IGgtts(248));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genflt(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcflt(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny textslant.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 /*
-***Ändra textslant i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
@@ -1119,42 +1137,48 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igctfn()
+        short IGctfn()
 
-/*      Varkon-funktion för att ändra en texts font.
+/*      Interactive function to edit text font.
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3502 = Storheten ingår i en part.
+ *      Error: IG3502 = The text belongs to a part
  *
  *      (C)microform ab 28/12/92 J. Kjellander
+ *
+ *      2007-08-10, 1.19 J.Kjellander
  *
  ******************************************************!*/
 
   {
     short   status;
-    DBetype   typ;
+    DBetype typ;
     DBptr   la;
     bool    end,right;
     pm_ptr  exnpt,retla,valtyp;
@@ -1162,21 +1186,20 @@ exit:
     char    istr[V3STRLEN+1];
     char    strbuf[V3STRLEN+1];
     PMREFVA idvek[MXINIV];
-    DBText   txt;
+    DBText  txt;
     PMLITVA val;
 
     static char dstr[V3STRLEN+1] = "1";
 
 /*
-***Ta reda på storhetens:s ID.
+***Get text ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = TXTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att storheten inte ingår i en part.
+***In generic mode the text may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -1185,32 +1208,31 @@ loop:
       goto loop;
       }
 /*
-***Läs text-posten och ta reda på nuvarande font.
+***Get text from DB.
 */
     DBget_pointer('I',idvek,&la,&typ);
     DBread_text(&txt,NULL,la);
     font = txt.fnt_tx;
 /*
-***Fråga efter ny font.
+***Ask for new font.
 */
-    sprintf(strbuf,"%s%d  %s",iggtts(43),font,iggtts(109));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%d  %s",IGgtts(43),font,IGgtts(109));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genint(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcint(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny font.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
     font = val.lit.int_va;
 /*
-***Ändra font i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
@@ -1224,42 +1246,48 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igctpm()
+        short IGctpm()
 
-/*      Varkon-funktion för att ändra en texts planmode.
+/*      Interactive function to edit text position mode.
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3502 = Storheten ingår i en part.
+ *      Error: IG3502 = The text belongs to a part
  *
  *      (C)microform ab 1998-10-01, J. Kjellander
+ *
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
     short   status;
-    DBetype   typ;
+    DBetype typ;
     DBptr   la;
     bool    end,right;
     pm_ptr  exnpt,retla,valtyp;
@@ -1267,21 +1295,20 @@ exit:
     char    istr[V3STRLEN+1];
     char    strbuf[V3STRLEN+1];
     PMREFVA idvek[MXINIV];
-    DBText   txt;
+    DBText  txt;
     PMLITVA val;
 
     static char dstr[V3STRLEN+1] = "1";
 
 /*
-***Ta reda på storhetens:s ID.
+***Get text ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = TXTTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att storheten inte ingår i en part.
+***In generic mode the text may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -1290,32 +1317,31 @@ loop:
       goto loop;
       }
 /*
-***Läs text-posten och ta reda på nuvarande pmode.
+***Get text from DB.
 */
     DBget_pointer('I',idvek,&la,&typ);
     DBread_text(&txt,NULL,la);
     pmode = txt.pmod_tx;
 /*
-***Fråga efter ny pmode.
+***Ask for new pmode.
 */
-    sprintf(strbuf,"%s%d  %s",iggtts(43),pmode,iggtts(1631));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%d  %s",IGgtts(43),pmode,IGgtts(1631));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genint(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcint(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny pmode.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
     pmode = val.lit.int_va;
 /*
-***Ändra font i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
@@ -1329,38 +1355,43 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcdts()
+        short IGcdts()
 
-/*      Varkonfunktion för att ändra ett måtts siffer-
- *      storlek.
+/*      Interactive function to edit dim text size.
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3502 = Storheten ingår i en part.
- *              IG3812 = Måttet har inga siffror.
+ *      Errors: IG3502 = The dim belongs to a part
+ *              IG3812 = The dim has no digits
  *
  *      (C)microform ab 17/3/88 J. Kjellander
+ *
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1368,31 +1399,30 @@ exit:
     short   status;
     tbool   dauto;
     DBptr   la;
-    DBetype   typ;
-    DBfloat   tsiz;
+    DBetype typ;
+    DBfloat tsiz;
     bool    end,right;
     char    istr[V3STRLEN+1];
     char    strbuf[V3STRLEN+1];
     pm_ptr  exnpt,retla,valtyp;
     PMREFVA idvek[MXINIV];
-    DBLdim   ldm;
-    DBCdim   cdm;
-    DBRdim   rdm;
-    DBAdim   adm;
+    DBLdim  ldm;
+    DBCdim  cdm;
+    DBRdim  rdm;
+    DBAdim  adm;
     PMLITVA val;
 
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på storhetens:s ID.
+***Get dim ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = LDMTYP+CDMTYP+ADMTYP+RDMTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att storheten inte ingår i en part.
+***In generic mode the dim may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -1401,7 +1431,7 @@ loop:
       goto loop;
       }
 /*
-***Kolla att måttet har siffror (auto on).
+***Check that dim has digits (auto on).
 */
     DBget_pointer('I',idvek,&la,&typ);
 
@@ -1437,28 +1467,27 @@ loop:
       goto loop;
       }
 /*
-***Fråga efter ny sifferstorlek.
+***Ask for new digit size.
 */
-    sprintf(strbuf,"%s%g  %s",iggtts(43),tsiz,iggtts(129));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%g  %s",IGgtts(43),tsiz,IGgtts(129));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genflt(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcflt(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny strecklängd.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 
     if ( val.lit_type == C_INT_VA ) tsiz = val.lit.int_va;
     else tsiz = val.lit.float_va;
 /*
-***Ändra strecklängd i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
     if ( v3mode & BAS_MOD ) pmchnp(idvek,PMDTSIZE,exnpt,&retla);
@@ -1486,68 +1515,72 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcdas()
+        short IGcdas()
 
-/*      Varkonfunktion för att ändra ett måtts pil-
- *      storlek.
+/*      Interactive function to edit dim arrow size.
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3502 = Storheten ingår i en part.
+ *      Error: IG3502 = The dim belongs to a part
  *
  *      (C)microform ab 17/3/88 J. Kjellander
+ *
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
     short   status;
     DBptr   la;
-    DBetype   typ;
-    DBfloat   asiz;
+    DBetype typ;
+    DBfloat asiz;
     bool    end,right;
     char    istr[V3STRLEN+1];
     char    strbuf[V3STRLEN+1];
     pm_ptr  exnpt,retla,valtyp;
     PMREFVA idvek[MXINIV];
-    DBLdim   ldm;
-    DBCdim   cdm;
-    DBRdim   rdm;
-    DBAdim   adm;
+    DBLdim  ldm;
+    DBCdim  cdm;
+    DBRdim  rdm;
+    DBAdim  adm;
     PMLITVA val;
 
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på storhetens:s ID.
+***Get dim ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = LDMTYP+CDMTYP+ADMTYP+RDMTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att storheten inte ingår i en part.
+***In generic mode the dim may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -1556,7 +1589,7 @@ loop:
       goto loop;
       }
 /*
-***Läs gammal pilstorlek.
+***Get current arrow size.
 */
     DBget_pointer('I',idvek,&la,&typ);
 
@@ -1581,28 +1614,27 @@ loop:
       asiz = adm.asiz_ad;
       }
 /*
-***Fråga efter ny pilstorlek.
+***Ask for new arrow size.
 */
-    sprintf(strbuf,"%s%g  %s",iggtts(43),asiz,iggtts(128));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%g  %s",IGgtts(43),asiz,IGgtts(128));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genflt(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcflt(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny strecklängd.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 
     if ( val.lit_type == C_INT_VA ) asiz = val.lit.int_va;
     else asiz = val.lit.float_va;
 /*
-***Ändra strecklängd i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
     if ( v3mode & BAS_MOD ) pmchnp(idvek,PMDASIZE,exnpt,&retla);
@@ -1630,38 +1662,43 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcdnd()
+        short IGcdnd()
 
-/*      Varkonfunktion för att ändra ett måtts antal
- *      decimaler.
+/*      Interactive function to edit dim ndigs.
  *
- *      In: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      Ut: Inget.
- *
- *      FV: 0      = OK
- *          REJECT = avsluta
- *          GOMAIN = huvudmenyn
- *
- *      Felkod: IG3502 = Storheten ingår i en part.
- *              IG3822 = Måttet har inga siffror.
+ *      Errors: IG3502 = Dim belongs to a part
+ *              IG3822 = Dim has no digits
  *
  *      (C)microform ab 17/3/88 J. Kjellander
+ *
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -1669,31 +1706,30 @@ exit:
     short   status;
     tbool   dauto;
     DBptr   la;
-    DBetype   typ;
+    DBetype typ;
     short   ndig;
     bool    end,right;
     char    istr[V3STRLEN+1];
     char    strbuf[V3STRLEN+1];
     pm_ptr  exnpt,retla,valtyp;
     PMREFVA idvek[MXINIV];
-    DBLdim   ldm;
-    DBCdim   cdm;
-    DBRdim   rdm;
-    DBAdim   adm;
+    DBLdim  ldm;
+    DBCdim  cdm;
+    DBRdim  rdm;
+    DBAdim  adm;
     PMLITVA val;
 
     static char dstr[V3STRLEN+1] = "";
 
 /*
-***Ta reda på storhetens:s ID.
+***Get dim ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = LDMTYP+CDMTYP+ADMTYP+RDMTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att storheten inte ingår i en part.
+***In generic mode the dim may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -1702,7 +1738,7 @@ loop:
       goto loop;
       }
 /*
-***Kolla att måttet har siffror (auto on).
+***Check that dim has digits (auto on).
 */
     DBget_pointer('I',idvek,&la,&typ);
 
@@ -1738,27 +1774,26 @@ loop:
       goto loop;
       }
 /*
-***Fråga efter ny sifferstorlek.
+***Ask for new digit size.
 */
-    sprintf(strbuf,"%s%d  %s",iggtts(43),ndig,iggtts(130));
-    igplma(strbuf,IG_INP);
+    sprintf(strbuf,"%s%d  %s",IGgtts(43),ndig,IGgtts(130));
+    IGplma(strbuf,IG_INP);
 
     pmmark();
-    if ( (status=genint(0,dstr,istr,&exnpt)) < 0 )
+    if ( (status=IGcint(0,dstr,istr,&exnpt)) < 0 )
       {
       pmrele();
       goto exit;
       }
     strcpy(dstr,istr);
-    igrsma();
 /*
-***Interpretera uttrycket och beräkna ny strecklängd.
+***Interpret.
 */
     inevev(exnpt,&val,&valtyp);
 
     ndig = val.lit.int_va;
 /*
-***Ändra strecklängd i PM, GM och GP.
+***Update.
 */
     EXdren(la,typ,FALSE,GWIN_ALL);
 
@@ -1787,102 +1822,99 @@ loop:
 
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcda0()
+        short IGcda0()
 
-/*      Varkonfunktion för att ändra ett mått till
- *      auto av.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Interactive function to set Auto off.
  *
  *      (C)microform ab 18/3/88 J. Kjellander
  *
  ******************************************************!*/
 
    {
-   return(igcdau((short)0));
+   return(igcdau(0));
    }
 
 /********************************************************/
 /*!******************************************************/
 
-        short igcda1()
+        short IGcda1()
 
-/*      Varkonfunktion för att ändra ett mått till
- *      auto på.
- *
- *      In: Inget.
- *
- *      Ut: Inget.
+/*      Interactive function to set auto on.
  *
  *      (C)microform ab 18/3/88 J. Kjellander
  *
  ******************************************************!*/
 
    {
-   return(igcdau((short)1));
+   return(igcdau(1));
    }
 
 /********************************************************/
 /*!******************************************************/
 
-static short igcdau(short dauto)
+static short igcdau(int dauto)
 
-/*      Ändrar auto på ett mått.
+/*      Edits a dim auto on/off.
  *
- *      In: auto = 0 eller 1.
+ *      In: auto = 0 or 1.
  *
- *      Ut: Inget.
+ *      Return: 0  = OK
+ *          REJECT = Exit
+ *          GOMAIN = Main menu
  *
- *      FV: 0      = OK
- *          REJECT = Avsluta
- *          GOMAIN = Huvudmenyn
- *
- *      Felkod: IG3502 = Storheten ingår i en part.
+ *      Error: IG3502 = The dim belongs to a part.
  *
  *      (C)microform ab 25/8/87 J. Kjellander
+ *
+ *      2007-08-10 1.19, J.Kjellander
  *
  ******************************************************!*/
 
   {
     short   status;
-    DBetype   typ;
+    DBetype typ;
     DBptr   la;
     bool    end,right;
     pm_ptr  exnpt,retla;
     PMREFVA idvek[MXINIV];
-    DBLdim   ldm;
-    DBCdim   cdm;
-    DBRdim   rdm;
-    DBAdim   adm;
+    DBLdim  ldm;
+    DBCdim  cdm;
+    DBRdim  rdm;
+    DBAdim  adm;
     PMLITVA val;
 
 /*
-***Ta reda på storhetens:s ID.
+***Get dim ID.
 */
 loop:
-    igptma(268,IG_MESS);
+    WPaddmess_mcwin(IGgtts(268),WP_PROMPT);
     typ = LDMTYP+CDMTYP+RDMTYP+ADMTYP;
-    if ( (status=getidt(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
-    igrsma();
+    if ( (status=IGgsid(idvek,&typ,&end,&right,(short)0)) < 0 ) goto exit;
 /*
-***Kolla att storheten inte ingår i en part.
+***In generic mode the dim may not belong to a part.
 */
     if ( v3mode & BAS_MOD  &&  idvek[0].p_nextre != NULL )
       {
@@ -1891,7 +1923,7 @@ loop:
       goto loop;
       }
 /*
-***Ändra font i PM, GM och GP.
+***Update.
 */
     DBget_pointer('I',idvek,&la,&typ);
 
@@ -1930,18 +1962,25 @@ loop:
       DBupdate_adim(&adm,la);
       }
 
-
     EXdren(la,typ,TRUE,GWIN_ALL);
 /*
-***Om igen.
+***Update WPRWIN's.
+*/
+    WPrepaint_RWIN(RWIN_ALL,FALSE);
+/*
+***Confirmational message.
+*/
+    WPaddmess_mcwin(IGgtts(63),WP_MESSAGE);
+/*
+***Again.
 */
     goto loop;
 /*
-***Avslutning.
+***The end.
 */
 exit:
     WPerhg();
-    igrsma();
+    WPclear_mcwin();
     return(status);
   }
 

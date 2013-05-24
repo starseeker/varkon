@@ -33,7 +33,7 @@
 #include "../include/WP.h"
 #include <math.h>
 
-extern short  actpen;  /* Currently active pen number */
+extern int actpen;  /* Currently active pen number */
 
 static short drawar(WPGWIN *gwinpt, DBArc *arcpek, DBSeg *segpek,
                     DBptr la, bool draw);
@@ -46,9 +46,9 @@ static short drawar(WPGWIN *gwinpt, DBArc *arcpek, DBSeg *segpek,
         DBptr   la,
         DBint   win_id)
 
-/*      Ritar en arc.
+/*      Display an arc.
  *
- *      In: arcpek => Pekare till arc-post.
+ *      In: arcpek => C-ptr to DBArc.
  *          segpek => Pekare till DBSeg.
  *          la     => GM-adress.
  *          win_id => Fönster att rita i.
@@ -90,7 +90,7 @@ static short drawar(WPGWIN *gwinpt, DBArc *arcpek, DBSeg *segpek,
 /*
 ***Ja, ligger cirkel på en nivå som är tänd i detta fönster ?
 */
-         if ( WPnivt(gwinpt,arcpek->hed_a.level) )
+         if ( WPnivt(gwinpt->nivtab,arcpek->hed_a.level) )
            {
 /*
 ***Ja. Kolla att rätt färg och bredd är inställd.
@@ -165,7 +165,7 @@ static short drawar(WPGWIN *gwinpt, DBArc *arcpek, DBSeg *segpek,
 ***Om den nu ligger på en släckt nivå eller är blankad gör vi
 ***inget mer. Annars får vi återskapa polylinjen och sudda från skärm.
 */
-         if ( !WPnivt(gwinpt,arcpek->hed_a.level)  ||
+         if ( !WPnivt(gwinpt->nivtab,arcpek->hed_a.level)  ||
                              arcpek->hed_a.blank) return(0);
            
          if ( arcpek->wdt_a != 0.0 ) WPswdt(gwinpt->id.w_id,arcpek->wdt_a);
@@ -231,7 +231,7 @@ static short drawar(WPGWIN *gwinpt, DBArc *arcpek, DBSeg *segpek,
 ***Clip the polyline to the window borders.
 ***Display or erase visible parts.
 */
-   if ( WPcply(gwinpt,(short)-1,&k,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,(short)-1,&k,x,y,a) )
      {
      if ( draw  &&  arcpek->hed_a.hit )
        {

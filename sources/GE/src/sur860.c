@@ -49,6 +49,7 @@
 /*  1998-10-10   Developable surface added                          */
 /*  1999-12-03   Free source code modifications                     */
 /*  2001-04-06   Bug: Did not return with error forn err1           */
+/*  2007-01-08   Call to varkon_ini_gmsur , Sören L                 */
 /*                                                                  */
 /******************************************************************!*/
 
@@ -187,6 +188,21 @@ static DBfloat  comptol;     /* Computer tolerance                  */
 /*!                                                                 */
 /* 1. Check of input data and initializations                       */
 /*                                                                 !*/
+
+/*!                                                                 */
+/* Initialize surface data in sur.                                  */
+/* Call of varkon_ini_gmsur (sur769).                               */
+/*                                                                 !*/
+
+    varkon_ini_gmsur ( p_surout ); 
+
+/*!                                                                 */
+/* Initialize surface data in sur.                                  */
+/* Call of varkon_ini_gmsur (sur769).                               */
+/*                                                                 !*/
+
+    varkon_ini_gmsur ( p_surout ); 
+
 
 #ifdef DEBUG
 if ( dbglev(SURPAC) == 1 )

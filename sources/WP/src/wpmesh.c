@@ -32,7 +32,7 @@
 #include "../../IG/include/IG.h"
 #include "../include/WP.h"
 
-extern short    actpen;
+extern int actpen;
 
 static short drawms(WPGWIN *gwinpt, DBMesh *mshptr, DBptr la, bool draw);
 
@@ -79,7 +79,7 @@ static short drawms(WPGWIN *gwinpt, DBMesh *mshptr, DBptr la, bool draw);
 /*
 ***Is the mesh level on in this window`?
 */
-         if ( WPnivt(gwinpt,mshptr->hed_m.level) )
+         if ( WPnivt(gwinpt->nivtab,mshptr->hed_m.level) )
            {
 /*
 ***Yes, activate the right color.
@@ -150,7 +150,7 @@ static short drawms(WPGWIN *gwinpt, DBMesh *mshptr, DBptr la, bool draw);
 */
          else
            {
-           if ( !WPnivt(gwinpt,mshptr->hed_m.level)  ||
+           if ( !WPnivt(gwinpt->nivtab,mshptr->hed_m.level)  ||
                                mshptr->hed_m.blank) return(0);
            drawms(gwinpt,mshptr,la,FALSE);
            }
@@ -210,7 +210,7 @@ static short drawms(WPGWIN *gwinpt, DBMesh *mshptr, DBptr la, bool draw);
 /*
 ***Clip and draw if visible.
 */
-   if ( WPcply(gwinpt,-1,&k,x,y,a) )
+   if ( WPcply(&gwinpt->vy.modwin,-1,&k,x,y,a) )
      {
      if ( draw  &&  mshptr->hed_m.hit )
        {

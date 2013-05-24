@@ -17,6 +17,5 @@ distr :
 	@make -C fonts  -C fedit  -f Makefile
 	@make -C iges   -f Makefile
 	@make -C macro   -f Makefile
-	@make -C plott   -f Makefile
 	@make -C stl   -f Makefile
 

@@ -25,17 +25,12 @@
 *    License along with this library; if not, write to the Free
 *    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *
-*
-*
 *********************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
 #include "../../GE/include/GE.h"
-
-#ifdef UNIX
 #include "../../WP/include/WP.h"
-#endif
 #include "../include/EX.h"
 
 extern DBTmat *lsyspk;
@@ -78,6 +73,8 @@ extern short   modtyp;
     poipek->hed_p.blank = (char)pnp->blank;
     poipek->hed_p.pen   = (short)pnp->pen;
     poipek->hed_p.level = (short)pnp->level;
+    poipek->fnt_p       = pnp->pfont;
+    poipek->size_p      = pnp->psize;
     poipek->wdt_p       = pnp->width;
     poipek->pcsy_p      = lsysla;
 /*

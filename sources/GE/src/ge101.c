@@ -905,6 +905,7 @@ static short fix_tol2(
        if ( status < 0 ) return(erpush("GE1273","fix_tol2"));
        }
      }
+
 /*
 ***Illegal entity type.
 */

@@ -68,3 +68,9 @@ VARKON Error messages for WINPAC
 164  3  Can't create rendering context !
 165  3  Surface BBOX-flag = -99
 166  3  Visual mismatch, Win=%s, GL=%s
+167  3  Undefined vertex type for graph. surface representation
+168  2  GET_COLOR(), %s is an invalid pen number
+169  2  Cant open plotter configuration file: %s
+170  2  Error while reading plotter configuration file: %s
+171  2  XPM-error code = %s
+172  3  Can't find icon file %s

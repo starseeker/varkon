@@ -1,4 +1,0 @@
-! a5 = SWEETPEE plottrar. Spooler = sweet
- nice -19 /usr/v3/bin/sweetp <
- | lp -dsweet -s &
- /usr/v3/job/test.PLT

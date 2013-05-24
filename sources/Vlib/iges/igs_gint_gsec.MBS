@@ -1,0 +1,63 @@
+!************************************************************************
+!                                                                       
+ MACRO MODULE igs_gint_gsec(                                            
+   VAR FILE   infil;                                                      
+   VAR STRING row*80;                                                   
+   VAR INT    i;                                                          
+   VAR INT    status);                                                   
+!*                                                                      
+!*      Reads and removes integer from row in global section           
+!*      the row in question. If not possible a new row is read.        
+!*                                                                     
+!*      In: infil   = File to read from.                                     
+!*          row     = Row to read from.                                
+!*                                                                     
+!*      Out: i      = The read number.                                 
+!*           status = 0 => Ok                                           
+!*                   -1 => Error                                       
+!*                                                                     
+!*      (C)Örebro University - Sören Larsson 2006-10-10
+!*
+!*      2007-02-18, Default ",,", J.Kjellander
+!*                                                                     
+!***********************************************************************
+
+   INT n_chars;
+   
+string s*1;
+
+ BEGINMODULE
+
+!*
+!***Read the input row until next field.
+!***If the reading operation failed (status<0) 
+!***this could be beacuse EOL or no value ",,"
+!*
+loop:
+   i:=ival(row,status,n_chars);
+ 
+   if status < 0 then
+!s:=inpmt("rowA=",row);
+     if finds(row,",") = 0 then
+       row:=inlin(infil);
+       goto loop;
+     else
+!s:=inpmt("rowB=",row);
+       i:=0;
+       status:=0;
+       n_chars:=finds(row,",");
+!s:=inpmt("n_chars=",str(n_chars,-1,0));
+       row:=substr(row,n_chars+1);
+       exit();
+     endif;
+   endif;   
+
+   row:=substr(row,n_chars+2);
+!s:=inpmt("rowC=",row);
+!*
+!**END
+!*
+
+ ENDMODULE
+
+!***********************************************************************

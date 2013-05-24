@@ -12,8 +12,7 @@ CC = cc
 
 CFLAGS =                    \
          -O                 \
-         -DUNIX             \
-         -DWRK_STAT
+         -DUNIX
 
 COMPILE = $(CC) $(CFLAGS)
 

@@ -19,8 +19,7 @@ CFLAGS =                             \
          -ffloat-store               \
          -fsigned-char               \
          -O                          \
-         -DUNIX                      \
-         -DWRK_STAT
+         -DUNIX
 
 COMPILE = $(CC) $(CFLAGS)
 

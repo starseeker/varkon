@@ -11,7 +11,7 @@
 /*  v3msta();     Writes allocation table to disc                   */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -30,8 +30,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -47,7 +45,7 @@
 typedef struct alarea
 {
 void *adress;
-char  name[7];
+char  name[31];
 int   size;
 } ALAREA;
 
@@ -422,7 +420,7 @@ static int     altsiz;
       {
       if ( altptr->size > 0 )
         {
-        fprintf(dbgfil(IGEPAC),"alltab(%d) = %d, %s, %d\n",i,altptr->adress,
+        fprintf(dbgfil(IGEPAC),"alltab(%d) = %d, %s, %d\n",i,(int)altptr->adress,
                                                    altptr->name,altptr->size);
 
         totsiz += altptr->size;

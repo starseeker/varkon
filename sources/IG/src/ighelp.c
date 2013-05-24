@@ -4,10 +4,10 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  ighelp();    Interactiv help system                             */
+/*  IGhelp();    Interactiv help system                             */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -26,12 +26,11 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
 #include "../include/IG.h"
+#include "../../WP/include/WP.h"
 #include "../../EX/include/EX.h"
 #include <string.h>
 
@@ -48,14 +47,14 @@ static short iglhlp(char *hlpnam);
 
 /*!******************************************************/
 
-        short ighelp()
+        short IGhelp()
 
-/*      Skriver ut hjälp om aktiv funktion, meny eller modul.
- *      Den globala variabeln actfun = -1 => meny
- *                                     -2 => modul
- *                                     >0 => funktion
+/*      Displays help on currently active function,
+ *      menu eller module.
  *
- *      FV: 0
+ *      Global variable actfun = -1 => menu
+ *                               -2 => module
+ *                               >0 => function
  *
  *      (C)microform ab 13/10/86 J. Kjellander
  *
@@ -68,23 +67,23 @@ static short iglhlp(char *hlpnam);
     short mnum;
 
 /*
-***Modul.
+***Module, use module name.
 */
     if ( actfun == -2 )
       {
       strcpy(filnam,actpnm);
       }
 /*
-***Meny.
+***Menu, make name from menu number.
 */
     else if ( actfun == -1 )
       {
-      if ( (mnum=mstack[mant-1]) == 0 ) mnum = iggmmu();
+      if ( (mnum=mstack[mant-1]) == 0 ) mnum = IGgmmu();
       filnam[0] = 'm';
       sprintf(&filnam[1],"%d",mnum);
       }
 /*
-***Funktion, skapa filnamn av funktionsnummer.
+***Function, make name from function number.
 */
     else
       {
@@ -93,7 +92,7 @@ static short iglhlp(char *hlpnam);
       else                     sprintf(filnam,"f%d",actfun);
       }
 /*
-***Lista hjälp-filen.
+***Display.
 */
     return(iglhlp(filnam));
   }
@@ -103,14 +102,10 @@ static short iglhlp(char *hlpnam);
 
 static short iglhlp(char *hlpnam)
 
-/*      Listar hjälpfil.
+/*      Display's help text.
  *
- *      In: hlpnam = Pekare till filnamn.
- *                   partnamn, m+heltal eller f+heltal
- *
- *      Ut: Inget.
- *
- *      FV: 0
+ *      In: hlpnam = File name.
+ *                   partnamn, m+number or f+number
  *
  *      Felkoder: IG0202 = Kan ej hitta hjälpfilen %s
  *
@@ -135,41 +130,41 @@ static short iglhlp(char *hlpnam)
 ***Var finns filen. Prova först på hlpdir, dvs. det
 ***aktuella projektets hjälpkatalog.
 */
-    if ( iggrst("html_viewer",htmcmd) )
+    if ( IGgrst("html_viewer",htmcmd) )
       {
       strcpy(filnam,hlpdir);
       strcat(filnam,hlpnam);
       strcat(filnam,".htm");
-      if ( v3facc(filnam,'R') ) goto show;
+      if ( IGfacc(filnam,'R') ) goto show;
       erpush("IG0202",filnam);
       }
 
     strcpy(filnam,hlpdir);
     strcat(filnam,hlpnam);
     strcat(filnam,".txt");
-    if ( v3facc(filnam,'R') ) goto show;
+    if ( IGfacc(filnam,'R') ) goto show;
     erpush("IG0202",filnam);
 /*
 ***Om det inte gick, prova istället VARKON_DOC-katalogen.
 */
-    if ( iggrst("html_viewer",htmcmd) )
+    if ( IGgrst("html_viewer",htmcmd) )
       {
 #ifdef UNIX
-      sprintf(filnam,"%sv_man/%s.htm",v3genv(VARKON_DOC),hlpnam);
+      sprintf(filnam,"%sv_man/%s.htm",IGgenv(VARKON_DOC),hlpnam);
 #endif
 #ifdef WIN32
-      sprintf(filnam,"%sv_man\\%s.htm",v3genv(VARKON_DOC),hlpnam);
+      sprintf(filnam,"%sv_man\\%s.htm",IGgenv(VARKON_DOC),hlpnam);
 #endif
-      if ( v3facc(filnam,'R') ) goto show;
+      if ( IGfacc(filnam,'R') ) goto show;
       erpush("IG0202",filnam);
       }
 #ifdef UNIX
-    sprintf(filnam,"%sv_man/%s.txt",v3genv(VARKON_DOC),hlpnam);
+    sprintf(filnam,"%sv_man/%s.txt",IGgenv(VARKON_DOC),hlpnam);
 #endif
 #ifdef WIN32
-    sprintf(filnam,"%sv_man\\%s.txt",v3genv(VARKON_DOC),hlpnam);
+    sprintf(filnam,"%sv_man\\%s.txt",IGgenv(VARKON_DOC),hlpnam);
 #endif
-    if ( v3facc(filnam,'R') ) goto show;
+    if ( IGfacc(filnam,'R') ) goto show;
     erpush("IG0202",filnam);
 /*
 ***Om det inte gick, prova default hjälpfil för menyer och parter.
@@ -179,24 +174,24 @@ static short iglhlp(char *hlpnam)
       if      ( actfun == -1 ) strcpy(hlpnam,"menydoc");
       else if ( actfun == -2 ) strcpy(hlpnam,"partdoc");
 
-      if ( iggrst("html_viewer",htmcmd) )
+      if ( IGgrst("html_viewer",htmcmd) )
         {
 #ifdef UNIX
-        sprintf(filnam,"%sv_man/%s.htm",v3genv(VARKON_DOC),hlpnam);
+        sprintf(filnam,"%sv_man/%s.htm",IGgenv(VARKON_DOC),hlpnam);
 #endif
 #ifdef WIN32
-        sprintf(filnam,"%sv_man\\%s.htm",v3genv(VARKON_DOC),hlpnam);
+        sprintf(filnam,"%sv_man\\%s.htm",IGgenv(VARKON_DOC),hlpnam);
 #endif
-        if ( v3facc(filnam,'R') ) goto show;
+        if ( IGfacc(filnam,'R') ) goto show;
         erpush("IG0202",filnam);
         }
 #ifdef UNIX
-      sprintf(filnam,"%sv_man/%s.txt",v3genv(VARKON_DOC),hlpnam);
+      sprintf(filnam,"%sv_man/%s.txt",IGgenv(VARKON_DOC),hlpnam);
 #endif
 #ifdef WIN32
-      sprintf(filnam,"%sv_man\\%s.txt",v3genv(VARKON_DOC),hlpnam);
+      sprintf(filnam,"%sv_man\\%s.txt",IGgenv(VARKON_DOC),hlpnam);
 #endif
-      if ( v3facc(filnam,'R') ) goto show;
+      if ( IGfacc(filnam,'R') ) goto show;
       erpush("IG0202",filnam);
       }
 /*
@@ -211,17 +206,17 @@ static short iglhlp(char *hlpnam)
 show:
      erinit();
 
-     if ( iggrst("html_viewer",htmcmd) )
+     if ( IGgrst("html_viewer",htmcmd) )
        {
-       sprintf(oscmd,"%s %s",htmcmd,filnam);
+       sprintf(oscmd,"(%s %s)&",htmcmd,filnam);
        EXos(oscmd,2);
        return(0);
        }
 /*
 ***Om inte använder vi listarean.
 */
-    igplma(" ",IG_MESS);
-    strcpy(linbuf,iggtts(358));
+    IGplma(" ",IG_MESS);
+    strcpy(linbuf,IGgtts(358));
     strcat(linbuf,filnam);
     WPinla(linbuf);
 /*
@@ -242,7 +237,7 @@ show:
 */
 end:
     fclose(hlpfil);
-    igrsma();
+    IGrsma();
     return(status);
   }
 /********************************************************/

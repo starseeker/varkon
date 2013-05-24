@@ -14,12 +14,9 @@ distr :     CFLAGS =                    \
             -I/usr/openwin/include      \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
             -O                          \
             -DUNIX                      \
-            -DV3_X11                    \
-            -DVARKON                    \
-            -DWRK_STAT
+            -DVARKON
 
 COMPILE = $(CC) -c $(CFLAGS)
 

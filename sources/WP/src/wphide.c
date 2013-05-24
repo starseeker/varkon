@@ -174,7 +174,7 @@ static double  x[PLYMXV],y[PLYMXV],z[PLYMXV];  /* Polyline coordinates */
 static char    a[PLYMXV];                      /* and status */
 static int     ncrdxy;                         /* Antal vektorer i polylinje */
 static WPGWIN *actwin;                         /* Output window */
-static VY      pltvy;                          /* Plot window */
+static WPVIEW  pltvy;                          /* Plot window */
 
 /*!******************************************************/
 
@@ -214,16 +214,16 @@ static VY      pltvy;                          /* Plot window */
    screen = flag1; gksfil = flag2;
    gksfp  = pfil;
    actwin = gwinpt;
-   pltvy.vywin[0] = gwinpt->vy.modwin.xmin;
-   pltvy.vywin[1] = gwinpt->vy.modwin.ymin;
-   pltvy.vywin[2] = gwinpt->vy.modwin.xmax;
-   pltvy.vywin[3] = gwinpt->vy.modwin.ymax;
+   pltvy.modwin.xmin = gwinpt->vy.modwin.xmin;
+   pltvy.modwin.ymin = gwinpt->vy.modwin.ymin;
+   pltvy.modwin.xmax = gwinpt->vy.modwin.xmax;
+   pltvy.modwin.ymax = gwinpt->vy.modwin.ymax;
 /*
 ***Börja med att skapa Plan-data.
 */
-   igptma(155,IG_MESS); status = gpgnpd(); igrsma();
+   IGptma(155,IG_MESS); status = gpgnpd(); IGrsma();
    if ( status < 0 ) return(status);
-   sprintf(buf,"%s%d",iggtts(156),np); igplma(buf,IG_MESS);
+   sprintf(buf,"%s%d",IGgtts(156),np); IGplma(buf,IG_MESS);
 /*
 ***Allokera minne för SPLMAX split-delar. 2 koordinater per del.
 */
@@ -284,20 +284,22 @@ end:
  *      10/1/92    Streckade linjer, J. Kjellander
  *      14/3/92    GPBPL.pen, J. Kjellander
  *      1999-11-24 Text, J.Kjellander
+ *      2007-01-09 pborder, piso,   Sören L
  *
  ******************************************************!*/
 
  {
-   short   curpen;
-   int     i,k,nbl;
-   char    str[V3STRLEN+1],metarec[MAXMETA];
-   double  size,scale;
-   DBetype type;
-   DBptr   la;
-   DBfloat xhcrds[4*GMXMXL];
-   DBAny   gmpost;
-   DBTmat  pmat;
-   DBSeg  *segptr,arcseg[4],*sptarr[6];
+   short     curpen;
+   int       i,k,nbl;
+   char      str[V3STRLEN+1],metarec[MAXMETA];
+   double    size,scale;
+   DBetype   type;
+   DBptr     la;
+   DBfloat   xhcrds[4*GMXMXL];
+   DBAny     gmpost;
+   DBTmat    pmat;
+   DBSeg    *segptr,arcseg[4];
+   DBSegarr *pborder, *piso;
 
 /*
 ***Div. initiering.
@@ -321,9 +323,9 @@ loop:
 */
        case POITYP:
        DBread_point(&gmpost.poi_un,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         size  = (double)0.015*(pltvy.vywin[2] - pltvy.vywin[0]);
+         size  = (double)0.015*(pltvy.modwin.xmax - pltvy.modwin.xmin);
          WPplpt(&gmpost.poi_un,size,&k,x,y,z,a);
          }
        break;
@@ -332,7 +334,7 @@ loop:
 */
        case LINTYP:
        DBread_line(&gmpost.lin_un,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPplli(&gmpost.lin_un,&k,x,y,z,a);
          }
@@ -342,7 +344,7 @@ loop:
 */
        case ARCTYP:
        DBread_arc(&gmpost.arc_un,arcseg,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPplar(&gmpost.arc_un,arcseg,scale,&k,x,y,z,a);
          }
@@ -352,7 +354,7 @@ loop:
 */
        case CURTYP:
        DBread_curve(&gmpost.cur_un,&segptr,NULL,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPplcu(&gmpost.cur_un,segptr,scale,&k,x,y,z,a);
          }
@@ -363,13 +365,13 @@ loop:
 */
        case SURTYP:
        DBread_surface(&gmpost.sur_un,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          if ( gmpost.sur_un.typ_su != FAC_SUR )
            {
-           DBread_sur_grwire(&gmpost.sur_un,sptarr);
-           WPplsu(&gmpost.sur_un,sptarr,scale,&k,x,y,z,a);
-           DBfree_sur_grwire(sptarr);
+           DBread_sur_grwire(&gmpost.sur_un,&pborder,&piso);
+           WPplsu(&gmpost.sur_un,pborder,piso,scale,&k,x,y,z,a);
+           DBfree_sur_grwire(&gmpost.sur_un,pborder,piso);
            }
          }
        break;
@@ -378,9 +380,9 @@ loop:
 */
        case CSYTYP:
        DBread_csys(&gmpost.csy_un,&pmat,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         size = (double)0.1*(pltvy.vywin[2] - pltvy.vywin[0]);
+         size = (double)0.1*(pltvy.modwin.xmax - pltvy.modwin.xmin);
          WPplcs(&gmpost.csy_un,size,V3_CS_NORMAL,&k,x,y,z,a);
          }
        break;
@@ -394,9 +396,9 @@ loop:
 */
        case MSHTYP:
        DBread_mesh(&gmpost.msh_un,la,MESH_HEADER+MESH_VERTEX+MESH_HEDGE);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
-         size  = (double)0.0075*(pltvy.vywin[2] - pltvy.vywin[0]);
+         size  = (double)0.0075*(pltvy.modwin.xmax - pltvy.modwin.xmin);
          WPplms(&gmpost.msh_un,size,&k,x,y,z,a);
          }
        break;
@@ -405,7 +407,7 @@ loop:
 */
        case TXTTYP:
        DBread_text(&gmpost.txt_un,str,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPpltx(&gmpost.txt_un,str,&k,x,y,z,a);
          }
@@ -415,7 +417,7 @@ loop:
 */
        case LDMTYP:
        DBread_ldim(&gmpost.ldm_un,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPplld(&gmpost.ldm_un,&k,x,y,z,a);
          }
@@ -425,7 +427,7 @@ loop:
 */
        case CDMTYP:
        DBread_cdim(&gmpost.cdm_un,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPplcd(&gmpost.cdm_un,&k,x,y,z,a);
          }
@@ -435,7 +437,7 @@ loop:
 */
        case RDMTYP:
        DBread_rdim(&gmpost.rdm_un,la);    
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPplrd(&gmpost.rdm_un,&k,x,y,z,a);
          }
@@ -445,7 +447,7 @@ loop:
 */
        case ADMTYP:
        DBread_adim(&gmpost.adm_un,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPplad(&gmpost.adm_un,scale,&k,x,y,z,a);
          }
@@ -455,7 +457,7 @@ loop:
 */
        case XHTTYP:
        DBread_xhatch(&gmpost.xht_un,xhcrds,la);
-       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin,gmpost.hed_un.level) )
+       if ( !gmpost.hed_un.blank  &&  WPnivt(actwin->nivtab,gmpost.hed_un.level) )
          {
          WPplxh(&gmpost.xht_un,xhcrds,&k,x,y,z,a);
          }
@@ -1231,7 +1233,7 @@ start:
    v[0] = x[iv]; v[1] = y[iv];
    v[2] = x[iv+1]; v[3] = y[iv+1];
 
-   switch ( klptst(v,pltvy.vywin,&t1,&t2) )
+   switch ( klptst(v,&pltvy.modwin.xmin,&t1,&t2) )
      {
      case -1:
      return(FALSE);
@@ -1329,7 +1331,7 @@ start:
        DBread_bplane(&bpl,la);
        if ( !bpl.hed_bp.blank )
          {
-         niv_status = WPnivt(actwin,(short)sur.hed_su.level);
+         niv_status = WPnivt(actwin->nivtab,(short)sur.hed_su.level);
          plan.blank = !niv_status;
          plan.pen   = bpl.hed_bp.pen;
          if ( (status=mk_gpbpl(&bpl,&plan)) < 0 ) return(status);
@@ -1343,7 +1345,7 @@ start:
        DBread_surface(&sur,la);
        if ( sur.typ_su == FAC_SUR  &&  !sur.hed_su.blank )
          {
-         niv_status = WPnivt(actwin,(short)sur.hed_su.level);
+         niv_status = WPnivt(actwin->nivtab,(short)sur.hed_su.level);
          DBread_patches(&sur,&patpek);
          toppat = patpek;
          for ( i=0; i<sur.nu_su; ++i )
@@ -1396,7 +1398,7 @@ start:
        DBread_mesh(&mesh,la,MESH_ALL);
        if ( !mesh.hed_m.blank  &&  (mesh.font_m == 0 || mesh.font_m == 4) )
          {
-         niv_status = WPnivt(actwin,(short)sur.hed_su.level);
+         niv_status = WPnivt(actwin->nivtab,(short)sur.hed_su.level);
          plan.blank = !niv_status;
          plan.pen   = mesh.hed_m.pen;
 /*

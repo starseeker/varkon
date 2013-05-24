@@ -2,39 +2,46 @@
 #
 #   Makefile for IGES import.
 #
-#   Note that this makefile depends on the environment
-#   variable VARKON_ROOT to be set up properly in your
-#   login-file, shell rc-file or elswhere.
-#   VARKON_ROOT is the top directory of your
-#   Varkon-installation.
-#
-#  (C)Microform AB 1999-11-05 J.Kjellander
-#  2006-09-21 , Sören Larsson, Örebro university
-#               Changed, now not dependent of VARKON_ROOT
+#  (C)2007-03-03 J.Kjellander
 #
 ##########################################################
 
 RM = rm -f
 
-#COMPILE = $(VARKON_ROOT)/bin/mbsc
 COMPILE = ../../../bin/mbsc
 
-#LIBDIR = $(VARKON_ROOT)/lib
 LIBDIR = ../../../lib
 
 # MBO-files
 
-OBJECTS = $(LIBDIR)/igs_106.MBO    \
-          $(LIBDIR)/igs_110.MBO    \
-          $(LIBDIR)/igs_126.MBO    \
-          $(LIBDIR)/igs_128.MBO    \
-          $(LIBDIR)/igs_dsec.MBO   \
-          $(LIBDIR)/igs_ents.MBO   \
-          $(LIBDIR)/igs_fnam.MBO   \
-          $(LIBDIR)/igs_gflt.MBO   \
-          $(LIBDIR)/igs_gint.MBO   \
-          $(LIBDIR)/igs_gsec.MBO   \
-          $(LIBDIR)/igs_in.MBO     \
+OBJECTS = $(LIBDIR)/igs_0.MBO         \
+          $(LIBDIR)/igs_100.MBO       \
+          $(LIBDIR)/igs_102.MBO       \
+          $(LIBDIR)/igs_104.MBO       \
+          $(LIBDIR)/igs_106.MBO       \
+          $(LIBDIR)/igs_108.MBO       \
+          $(LIBDIR)/igs_110.MBO       \
+          $(LIBDIR)/igs_112.MBO       \
+          $(LIBDIR)/igs_116.MBO       \
+          $(LIBDIR)/igs_120.MBO       \
+          $(LIBDIR)/igs_122.MBO       \
+          $(LIBDIR)/igs_124.MBO       \
+          $(LIBDIR)/igs_126.MBO       \
+          $(LIBDIR)/igs_128.MBO       \
+          $(LIBDIR)/igs_142.MBO       \
+          $(LIBDIR)/igs_144.MBO       \
+          $(LIBDIR)/igs_curve.MBO     \
+          $(LIBDIR)/igs_dsec.MBO      \
+          $(LIBDIR)/igs_ell.MBO       \
+          $(LIBDIR)/igs_ents.MBO      \
+          $(LIBDIR)/igs_fnam.MBO      \
+          $(LIBDIR)/igs_gflt_gsec.MBO \
+          $(LIBDIR)/igs_gflt.MBO      \
+          $(LIBDIR)/igs_gint_gsec.MBO \
+          $(LIBDIR)/igs_gint.MBO      \
+          $(LIBDIR)/igs_gsec.MBO      \
+          $(LIBDIR)/igs_gstr.MBO      \
+          $(LIBDIR)/igs_in.MBO        \
           $(LIBDIR)/igs_ssec.MBO
 
 # The rule for compiling MBS sources and moving

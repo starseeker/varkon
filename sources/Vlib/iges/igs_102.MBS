@@ -91,7 +91,7 @@
         ELSE
            j:=j+1;          
            part(#3,igs_curve(infile,logfile,row1,row2,ds_ptr,ps_ptr,rowlgt,comp_ref(j),
-                   status),tr_csysid:SAVE=1,BLANK=1);   
+                   status),tr_csysid:SAVE=1,BLANK=0);   
         ENDIF;        
         if status = -1  then  
           outstr(logfile,"igs_102, Error some compsite entities not implemented yet");

@@ -4,16 +4,16 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  lifrpm();     Genererate lin_free.. statement                   */
-/*  liprpm();     Genererate lin_proj.. statement                   */
-/*  liofpm();     Genererate lin_offs.. statement                   */
-/*  lipvpm();     Genererate lin_ang... statement                   */
-/*  liptpm();     Genererate lin_tan1... statement                  */
-/*  li2tpm();     Genererate lin_tan2... statement                  */
-/*  lipepm();     Genererate lin_perp...statement                   */
+/*  IGlifr();     Genererate lin_free.. statement                   */
+/*  IGlipr();     Genererate lin_proj.. statement                   */
+/*  IGliof();     Genererate lin_offs.. statement                   */
+/*  IGlipv();     Genererate lin_ang... statement                   */
+/*  IGlipt();     Genererate lin_tan1... statement                  */
+/*  IGli2t();     Genererate lin_tan2... statement                  */
+/*  IGlipe();     Genererate lin_perp...statement                   */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -32,8 +32,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -44,9 +42,9 @@ static short linpm(char *typ);
 
 /*!******************************************************/
 
-       short lifrpm()
+       short IGlifr()
 
-/*      Huvudrutin för lin_free...
+/*      Huvudrutin fÃ¶r lin_free...
  *
  *      In: Inget.
  *
@@ -69,9 +67,9 @@ static short linpm(char *typ);
 /********************************************************/
 /*!******************************************************/
 
-       short liprpm()
+       short IGlipr()
 
-/*      Huvudrutin för lin_proj...
+/*      Huvudrutin fï¿½r lin_proj...
  *
  *      In: Inget.
  *
@@ -96,7 +94,7 @@ static short linpm(char *typ);
 
  static short linpm(char *typ)
 
-/*      Används av lifrpm och liprpm för att skapa
+/*      Anvï¿½nds av IGlifr och IGlipr fï¿½r att skapa
  *      linje-sats.
  *
  *      In: typ = Typ av linje.
@@ -109,8 +107,8 @@ static short linpm(char *typ);
  *
  *      (C)microform ab 19/3/86 J. Kjellander
  *
- *      23/3/86  genpos(pnr,  B. Doverud
- *      25/3/86  Felutgång, B. Doverud
+ *      23/3/86  IGcpos(pnr,  B. Doverud
+ *      25/3/86  Felutgï¿½ng, B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
  ******************************************************!*/
@@ -120,20 +118,20 @@ static short linpm(char *typ);
     pm_ptr  valparam,dummy;
     pm_ptr  exnpt1,exnpt2,retla;
 /*
-***Skapa två positioner.
+***Skapa tvï¿½ positioner.
 */
 start:
-    if ( (status=genpos(258,&exnpt1)) < 0 ) goto end;
-    if ( (status=genpos(259,&exnpt2)) < 0 ) goto end;
+    if ( (status=IGcpos(258,&exnpt1)) < 0 ) goto end;
+    if ( (status=IGcpos(259,&exnpt2)) < 0 ) goto end;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
     pmtcon(exnpt1,(pm_ptr)NULL,&retla,&dummy);
     pmtcon(exnpt2,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges(typ,valparam) < 0 ) goto error;
+    if ( IGcges(typ,valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -144,7 +142,7 @@ end:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */
 error:
     erpush("IG5023",typ);
@@ -156,9 +154,9 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short liofpm()
+       short IGliof()
 
-/*      Huvudrutin för lin_offs....
+/*      Huvudrutin fï¿½r lin_offs....
  *
  *      In: Inget.
  *
@@ -166,17 +164,17 @@ error:
  *
  *      FV: 0 = OK, REJECT = avsluta, GOMAIN = huvudmenyn
  *
- *      Felkod: IG5063 = Kan ej skapa offset, fel i liofpm
+ *      Felkod: IG5063 = Kan ej skapa offset, fel i IGliof
  *              IG5023 = Kan ej skapa LIN_OFFS sats
  *
  *      (C)microform ab 14/1/85 J. Kjellander
  *
  *      19/6/85  Felhantering, B. Doverud
- *      4/9/85   Anrop till igcges(), R. Svedin
- *      1/11/85  Ände och sida, J. Kjellander
- *      14/3/86  Defaultsträngar B. Doverud
+ *      4/9/85   Anrop till IGcges(), R. Svedin
+ *      1/11/85  ï¿½nde och sida, J. Kjellander
+ *      14/3/86  Defaultstrï¿½ngar B. Doverud
  *      20/3/86  Anrop till pmtcon, B. Doverud
- *      24/3/86  Felutgång, B. Doverud
+ *      24/3/86  Felutgï¿½ng, B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
  ******************************************************!*/
@@ -195,14 +193,14 @@ error:
 */
 start:
     typ = LINTYP;
-    if ( (status=genref(260,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(260,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Offset.
 */
-    if ( (status=genflt(261,ofstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcflt(261,ofstr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(ofstr,istr);
 /*
-***Gör offset negativt om pekningen skedde på vänster sida.
+***Gï¿½r offset negativt om pekningen skedde pï¿½ vï¿½nster sida.
 */
     if ( !right )
       {
@@ -214,9 +212,9 @@ start:
     pmtcon(exnpt1,(pm_ptr)NULL,&retla,&dummy);
     pmtcon(exnpt2,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("LIN_OFFS",valparam) < 0 ) goto error2;
+    if ( IGcges("LIN_OFFS",valparam) < 0 ) goto error2;
 
     WPerhg();
     goto start;
@@ -225,7 +223,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */ 
 error1:
     erpush("IG5063","");
@@ -243,9 +241,9 @@ errend:
 /********************************************************/
 /*!******************************************************/
 
-       short lipvpm()
+       short IGlipv()
 
-/*      Huvudrutin för lin_ang...
+/*      Huvudrutin fï¿½r lin_ang...
  *
  *      In: Inget.
  *
@@ -259,10 +257,10 @@ errend:
  *
  *      15/7/85  Felrutiner B. Doverud    
  *      4/9/85   Anrop till skapa sats R. Svedin     
- *      16/3/86  Defaultsträngar B. Doverud
+ *      16/3/86  Defaultstrï¿½ngar B. Doverud
  *      20/3/86  Anrop till pmtcon, B. Doverud
- *      23/3/86  genpos(pnr,  B. Doverud
- *      25/3/86  Felutgång, B. Doverud
+ *      23/3/86  IGcpos(pnr,  B. Doverud
+ *      25/3/86  Felutgï¿½ng, B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
  ******************************************************!*/
@@ -280,16 +278,16 @@ errend:
 ***Skapa position.
 */
 start:
-    if ( (status=genpos(258,&exnpt1)) < 0 ) goto exit;
+    if ( (status=IGcpos(258,&exnpt1)) < 0 ) goto exit;
 /*
 ***Vinkel.
 */
-    if ( (status=genflt(274,vstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcflt(274,vstr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(vstr,istr);
 /*
-***Längd.
+***Lï¿½ngd.
 */
-    if ( (status=genflt(275,lstr,istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcflt(275,lstr,istr,&exnpt3)) < 0 ) goto exit;
     strcpy(lstr,istr);
 /*
 ***Skapa listan med obligatoriska parametrar.
@@ -298,9 +296,9 @@ start:
     pmtcon(exnpt2,retla,&retla,&dummy);
     pmtcon(exnpt3,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("LIN_ANG",valparam) < 0 ) goto error;
+    if ( IGcges("LIN_ANG",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -309,7 +307,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */
 error:
     erpush("IG5023","");
@@ -321,9 +319,9 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short liptpm()
+       short IGlipt()
 
-/*      Huvudrutin för lin_tan1...
+/*      Huvudrutin fï¿½r lin_tan1...
  *
  *      In: Inget.
  *
@@ -336,12 +334,12 @@ error:
  *      (C)microform ab 12/7/85 J. Kjellander
  *
  *      15/7/85  Felhantering, B. Doverud
- *      4/9/85   Anrop till igcges(), R. Svedin
- *      31/10/85 Ände och sida, J. Kjellander
- *      6/3/86   Defaultsträng, J. Kjellander
+ *      4/9/85   Anrop till IGcges(), R. Svedin
+ *      31/10/85 ï¿½nde och sida, J. Kjellander
+ *      6/3/86   Defaultstrï¿½ng, J. Kjellander
  *      20/3/86  Anrop till pmtcon, B. Doverud
- *      23/3/86  genpos(pnr,  B. Doverud
- *      25/3/86  Felutgång, B. Doverud
+ *      23/3/86  IGcpos(pnr,  B. Doverud
+ *      25/3/86  Felutgï¿½ng, B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
  ******************************************************!*/
@@ -358,16 +356,16 @@ error:
 ***Skapa position.
 */
 start:
-    if ( (status=genpos(258,&exnpt1)) < 0 ) goto exit;
+    if ( (status=IGcpos(258,&exnpt1)) < 0 ) goto exit;
 /*
 ***Skapa referens till arc eller curve eller composite.
 */
     typ = ARCTYP+CURTYP;
-    if ( (status=genref(268,&typ,&exnpt2,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(268,&typ,&exnpt2,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa alternativ.
 */
-    if ( (status=genint(276,"1",istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcint(276,"1",istr,&exnpt3)) < 0 ) goto exit;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
@@ -375,9 +373,9 @@ start:
     pmtcon(exnpt2,retla,&retla,&dummy);
     pmtcon(exnpt3,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("LIN_TAN1",valparam) < 0 ) goto error;
+    if ( IGcges("LIN_TAN1",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -386,7 +384,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */
 error:
     erpush("IG5023","");
@@ -398,9 +396,9 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short li2tpm()
+       short IGli2t()
 
-/*      Huvudrutin för lin_tan2...
+/*      Huvudrutin fï¿½r lin_tan2...
  *
  *      In: Inget.
  *
@@ -413,11 +411,11 @@ error:
  *      (C)microform ab 12/7/85 J. Kjellander
  *
  *      15/7/85  Felhantering, B. Doverud
- *      4/9/85   Anrop till igcges(), R. Svedin
- *      31/10/85 Ände och sida, J. Kjellander
- *      6/3/86   Defaultsträng, J. Kjellander
+ *      4/9/85   Anrop till IGcges(), R. Svedin
+ *      31/10/85 ï¿½nde och sida, J. Kjellander
+ *      6/3/86   Defaultstrï¿½ng, J. Kjellander
  *      20/3/86  Anrop till pmtcon, B. Doverud
- *      25/3/86  Felutgång, B. Doverud
+ *      25/3/86  Felutgï¿½ng, B. Doverud
  *      5/10/86  GOMAIN, B. Doverud
  *
  ******************************************************!*/
@@ -435,16 +433,16 @@ error:
 */
 start:
     typ = ARCTYP;
-    if ( (status=genref(268,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(268,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa 2:a referens till arc.
 */
     typ = ARCTYP;
-    if ( (status=genref(268,&typ,&exnpt2,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(268,&typ,&exnpt2,&end,&right)) < 0 ) goto exit;
 /*
 ***Skapa alternativ.
 */
-    if ( (status=genint(276,"1",istr,&exnpt3)) < 0 ) goto exit;
+    if ( (status=IGcint(276,"1",istr,&exnpt3)) < 0 ) goto exit;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
@@ -452,9 +450,9 @@ start:
     pmtcon(exnpt2,retla,&retla,&dummy);
     pmtcon(exnpt3,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("LIN_TAN2",valparam) < 0 ) goto error;
+    if ( IGcges("LIN_TAN2",valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;
@@ -463,7 +461,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */
 error:
     erpush("IG5023","");
@@ -475,9 +473,9 @@ error:
 /********************************************************/
 /*!******************************************************/
 
-       short lipepm()
+       short IGlipe()
 
-/*      Huvudrutin för lin_perp....
+/*      Huvudrutin fï¿½r lin_perp....
  *
  *      In: Inget.
  *
@@ -485,7 +483,7 @@ error:
  *
  *      FV: 0 = OK, REJECT = avsluta, GOMAIN = huvudmenyn
  *
- *      Felkod: IG5143 = Kan ej skapa längd
+ *      Felkod: IG5143 = Kan ej skapa lï¿½ngd
  *              IG5023 = Kan ej skapa LIN_PERP sats
  *
  *      (C)microform ab 25/4/87 J. Kjellander
@@ -506,19 +504,19 @@ error:
 ***Startposition.
 */
 start:
-    if ( (status=genpos(258,&exnpt0)) < 0 ) goto exit;
+    if ( (status=IGcpos(258,&exnpt0)) < 0 ) goto exit;
 /*
 ***Referens till en annan linje.
 */
     typ = LINTYP;
-    if ( (status=genref(377,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
+    if ( (status=IGcref(377,&typ,&exnpt1,&end,&right)) < 0 ) goto exit;
 /*
-***Längd.
+***Lï¿½ngd.
 */
-    if ( (status=genflt(275,lstr,istr,&exnpt2)) < 0 ) goto exit;
+    if ( (status=IGcflt(275,lstr,istr,&exnpt2)) < 0 ) goto exit;
     strcpy(lstr,istr);
 /*
-***Gör längd negativ om pekningen skedde på vänster sida.
+***Gï¿½r lï¿½ngd negativ om pekningen skedde pï¿½ vï¿½nster sida.
 */
     if ( !right )
       {
@@ -531,9 +529,9 @@ start:
     pmtcon(exnpt1,retla,&retla,&dummy);
     pmtcon(exnpt2,retla,&valparam,&dummy);
 /*
-***Skapa, interpretera och länka in satsen i modulen.
+***Skapa, interpretera och lï¿½nka in satsen i modulen.
 */
-    if ( igcges("LIN_PERP",valparam) < 0 ) goto error2;
+    if ( IGcges("LIN_PERP",valparam) < 0 ) goto error2;
 
     WPerhg();
     goto start;
@@ -542,7 +540,7 @@ exit:
     WPerhg();
     return(status);
 /*
-***Felutgångar.
+***Felutgï¿½ngar.
 */ 
 error1:
     erpush("IG5143","LIN_PERP");

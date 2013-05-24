@@ -8,45 +8,88 @@
     VAR INT    status);
 
 !*      Reads and removes next string constant from
-!*      a row in question global section. 
-!*      If the row is at end a new 
-!*      row is read.
+!*      the global section.
 !*
 !*      In: infile  = File to read from.
-!*          row     = Row to read from.
+!*          row     = First row to read from.
 !*
-!*      Ut: f       = The read number.
+!*      Ut: n_chars = The number of characters read.
+!*          s       = The string read.
 !*          status  = 0 => Ok
 !*                   -1 => Error
 !*
 !*      (C)Sören Larsson, Örebro university
 !*
+!*       2007-02-17 n_left och ",,", J.Kjellander
+!*
 !*******************************************************
 
-   INT    p,pd,n_readch;
+   INT    p,pd,n_readch,n_left;
    STRING fs*80;
-  
+!string jk*1;
  BEGINMODULE
  
 !* 
-!**strip blanks
+!**Strip blanks
 !*
+!jk:=inpmt("igs_gstr0",row);
 loop:
+!jk:=inpmt("igs_gstr1",row);
    IF substr(row,1,1)=" " THEN
       row:=substr(row,2);
       GOTO loop;
    ENDIF;
+!*
+!***End of line, get next line.
+!*
    IF substr(row,1,1) = "G"  THEN
      row := inlin(infile);
+!jk:=inpmt("igs_gstr2",row);
      goto loop;
    ENDIF; 
-   n_chars:=ival(row,status,n_readch);
-   IF status = -1 THEN
+!*
+!***Now we have a line with no blanks.
+!***A default string is just ",," and then
+!***there is no character count, just one ",".
+!*
+   if substr(row,1,1) = "," then
+     n_chars:=0;
+     s:="";
+     row:=substr(row,2);
      exit();
+   endif;
+!*
+!***How many chars ?
+!*
+   n_chars:=ival(row,status,n_readch);
+!jk:=inpmt("n_chars=",str(n_chars,-1,0));
+   IF status = -1 THEN
+     exit("Error in igs_gstr() !");
    ENDIF;   
-   row:=substr(row,n_readch+2); 
-   s:= substr(row, 1, n_chars);
-   row:=substr(row,n_chars+2);
+!*
+!***Strip "," + 1 or 2 digits + "H"
+!*
+   row:=substr(row,n_readch+2);
+!jk:=inpmt("igs_gstr3",row);
+!*
+!***How long is the rest of the line ?
+!***Do we need more characters from next line ?
+!*
+   n_left:=length(row) - 8;
+   
+   if n_chars < n_left then
+     s:=substr(row,1,n_chars);
+     row:=substr(row,n_chars+2);
+!jk:=inpmt("igs_gstr4",row);
+   else
+     s:=substr(row,1,n_left);
+!jk:=inpmt("igs_gstr5",s);
+     row:=inlin(infile);
+     s:=s+substr(row,1,n_chars - n_left);
+!jk:=inpmt("igs_gstr6",s);
+     row:=substr(row,n_chars - n_left + 2);
+!jk:=inpmt("igs_gstr7",row);
+   endif;
 !*
 !**END.
 !*

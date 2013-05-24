@@ -44,7 +44,7 @@ OBJS = ../lib/mbsclib.a(anascan.o)    \
        ../lib/mbsclib.a(evstr.o)      \
        ../lib/mbsclib.a(stacc.o)      \
        ../lib/mbsclib.a(stac10.o)     \
-       ../lib/mbsclib.a(ig29.o)       \
+       ../lib/mbsclib.a(igenvpath.o)  \
        ../lib/mbsclib.a(igmalloc.o)
 
 # The actual executable, mbsc. VARKON_ROOT should be set
@@ -196,10 +196,10 @@ test:
 	ar r ../lib/mbsclib.a stac10.o
 	$(RM) stac10.o
 
-../lib/mbsclib.a(ig29.o): ../../IG/src/ig29.c $(INCFILES)
-	$(COMPILE) ../../IG/src/ig29.c
-	ar r ../lib/mbsclib.a ig29.o
-	$(RM) ig29.o
+../lib/mbsclib.a(igenvpath.o): ../../IG/src/igenvpath.c $(INCFILES)
+	$(COMPILE) ../../IG/src/igenvpath.c
+	ar r ../lib/mbsclib.a igenvpath.o
+	$(RM) igenvpath.o
 
 ../lib/mbsclib.a(igmalloc.o): ../../IG/src/igmalloc.c $(INCFILES)
 	$(COMPILE) ../../IG/src/igmalloc.c

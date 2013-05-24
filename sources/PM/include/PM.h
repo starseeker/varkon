@@ -213,6 +213,8 @@ typedef char pmmdid;  /* type for named parameters */
 #define PMWIDTH  26   /*    - " -      WIDTH   */
 #define PMTPMODE 27   /*    - " -      TPMODE  */
 #define PMMFONT  28   /*    - " -      MFONT   */
+#define PMPFONT  29   /*    - " -      PFONT   */
+#define PMPSIZE  30   /*    - " -      PSIZE   */
 
 /*
 ***Definitions for PM internal structs.
@@ -249,9 +251,11 @@ short evamtp(void);
 short evamat(void);
 short evajbd(void);
 short evalft(void);
+short evapft(void);
 short evaaft(void);
 short evacft(void);
 short evaxft(void);
+short evapsi(void);
 short evaldl(void);
 short evaadl(void);
 short evacdl(void);
@@ -486,6 +490,7 @@ short evgrp(void);
 short evbllv(void);
 short evublv(void);
 short evgtlv(void);
+short evnmlv(void);
 
 /*
 ***evlin.c
@@ -628,8 +633,8 @@ short evrpifa(void);
 short evltvi(void);
 short evlton(void);
 short evltof(void);
-short evshvi(void);
-short evmtvi(void);
+short evgtco(void);
+short evcrmt(void);
 short evcrco(void);
 
 /*
@@ -770,6 +775,7 @@ short evcrfb(void);
 short evcric(void);
 short evcrfi(void);
 short evgted(void);
+short evuped(void);
 short evgtbu(void);
 short evgtwi(void);
 short evshwi(void);
@@ -813,7 +819,6 @@ short inevnl(pm_ptr nplist, V2NAPA *npblockp);
 short insetb(pm_ptr nplist);
 short inpunp(V2NAPA *newdefnp);
 short inponp(void);
-short incdnp(V2NAPA *nppek, short kod);
 
 /*
 ***inac17.c
@@ -858,6 +863,7 @@ short inevco(pm_ptr condla);
 short inev(pm_ptr a);
 short ineqty(pm_ptr tyla1, pm_ptr tyla2);
 short incoty(PMLITVA *avalp, pm_ptr *atylap, pm_ptr ctyla);
+short inmiss(void);
 
 /*
 ***infunc.c

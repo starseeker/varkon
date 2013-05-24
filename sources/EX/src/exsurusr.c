@@ -384,7 +384,7 @@ fflush(dbgfil(EXEPAC));
 /*                                                                 !*/
 
 
-   status = EXesur(sur_id,&sur,p_pat,pnp);
+   status = EXesur(sur_id,&sur,p_pat,NULL,NULL,pnp);
    if (status<0) 
      {
      sprintf(errbuf,"EXesur%%EXsusr");
@@ -548,7 +548,7 @@ fflush(dbgfil(EXEPAC));
 /*                                                                 !*/
 
 #ifdef DEBUG
-   igidst(geo_id,s_geo_id);
+   IGidst(geo_id,s_geo_id);
 if ( dbglev(EXEPAC) == 1 )
 {
 fprintf(dbgfil(EXEPAC),
@@ -650,7 +650,7 @@ nextprt:;  /*! Label: Next part                                    !*/
 
 
 #ifdef DEBUG
-   igidst(h_id,s_h_id);
+   IGidst(h_id,s_h_id);
 if ( dbglev(EXEPAC) == 1 )
 {
 fprintf(dbgfil(EXEPAC),
@@ -836,7 +836,7 @@ fflush(dbgfil(EXEPAC));
 /*                                                                 !*/
 
 #ifdef DEBUG
-   igidst(geo_id,s_geo_id);
+   IGidst(geo_id,s_geo_id);
 if ( dbglev(EXEPAC) == 1 )
 {
 fprintf(dbgfil(EXEPAC),
@@ -920,7 +920,7 @@ nextprt:;  /*! Label: Next part                                    !*/
 
 
 #ifdef DEBUG
-   igidst(t_id,s_t_id);
+   IGidst(t_id,s_t_id);
 if ( dbglev(EXEPAC) == 2 )
 {
 fprintf(dbgfil(EXEPAC),
@@ -1241,7 +1241,7 @@ fflush(dbgfil(EXEPAC));
 /*                                                                 !*/
 
 #ifdef DEBUG
-   igidst(geo_id,s_geo_id);
+   IGidst(geo_id,s_geo_id);
 if ( dbglev(EXEPAC) == 1 )
 {
 fprintf(dbgfil(EXEPAC),
@@ -1325,7 +1325,7 @@ nextprt:;  /*! Label: Next part                                    !*/
 
 
 #ifdef DEBUG
-   igidst(g_id,s_g_id);
+   IGidst(g_id,s_g_id);
 if ( dbglev(EXEPAC) == 2 )
 {
 fprintf(dbgfil(EXEPAC),

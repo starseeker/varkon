@@ -17,8 +17,6 @@ distr :     CFLAGS =                    \
             -ffloat-store               \
             -fsigned-char               \
             -O                          \
-            -DWRK_STAT                  \
-            -DV3_X11                    \
             -DUNIX                      \
             -DVARKON
             
@@ -28,8 +26,6 @@ debug :      CFLAGS =                   \
             -ffloat-store               \
             -fsigned-char               \
             -g3                         \
-            -DWRK_STAT                  \
-            -DV3_X11                    \
             -DDEBUG                     \
             -DUNIX                      \
             -DVARKON

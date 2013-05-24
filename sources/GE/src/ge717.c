@@ -45,7 +45,7 @@ static DBfloat comptol;    /* Computer tolerance (accuracy)          */
 static DBfloat om_comptol; /* 1.0 - comptol (for speed)              */
 static DBfloat ctol;       /* Coordinate end calculation criterion   */
 
-static void parab();      
+static void parab();
 
 /********************************************************************/
 
@@ -74,6 +74,7 @@ static void parab();
  *                 TOL2->ctol TOL1->100*comptol  G Liden
  *      1999-05-25 Rewritten, J.Kjellander
  *      1999-12-18 sur753->varkon_comptol sur751->.._ctol G Liden
+ *      2007-01-22 Added restart with linear method, Sören L
  *
  *****************************************************************!*/
 
@@ -89,6 +90,7 @@ static void parab();
    short    iseg;        /* Loop index segment number              */
    DBfloat  delta_leng;  /* Delta length= abs_leng-sum_leng        */
    EVALC    evldat;      /* For evaluation in GE110()              */
+   short    restart;     /* 1 will trig restart with linear method */
 
 /*
 ***Surface computer accuracy and end calulation criterion
@@ -178,7 +180,15 @@ static void parab();
       dl = (pseg+iseg)->sl;
       sum_leng += dl;
       if (sum_leng > abs_leng ) break;
-      } 
+      }
+/*
+***Normaly the function will not restart, but if it fails
+***it will try once also with linear method, not using parab()
+*/
+restart=-1;
+restart:
+restart++;
+
 /*
 ***The relative arclength is in segment iseg
 ***Delta arclength in the segment delta_leng= dl-(sum_leng-abs_leng)
@@ -210,7 +220,11 @@ static void parab();
 */
 loop: ++no_iter;
 
-   if ( no_iter > 20 ) return(erpush("GE7993","GE717 (no_iter)"));
+   if ( no_iter > 10 )
+     {
+     if (restart==0) goto restart;
+     else if ( no_iter > 20 ) return(erpush("GE7993","GE717 (no_iter)"));
+     }
 /*
 ***Calculation of function value f and derivative dfdu
 */
@@ -249,7 +263,13 @@ loop: ++no_iter;
 ***but in this case (hyperbola p=0.95) will Newton-Rhapson fail
 ***Parabola (second degree) interpolation.
 */
-   parab();
+   if (restart) /* use linear method */
+     {
+     ulocal_pre = ulocal;
+     f_pre      = f;
+     ulocal= ulocal-f/dfdu;
+     }
+   else parab();
    goto loop;
 /*
 ***Label end: Optimal point

@@ -563,7 +563,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
  ******************************************************!*/
 
  {
-   return(v3fapp(proc_pv[1].par_va.lit.str_va,
+   return(IGfapp(proc_pv[1].par_va.lit.str_va,
 	             proc_pv[2].par_va.lit.str_va));
  }
 
@@ -585,7 +585,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
  ******************************************************!*/
 
  {
-   return(v3fdel(proc_pv[1].par_va.lit.str_va));
+   return(IGfdel(proc_pv[1].par_va.lit.str_va));
  }
 
 /********************************************************/
@@ -606,7 +606,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
  ******************************************************!*/
 
  {
-   return(v3fmov(proc_pv[1].par_va.lit.str_va,
+   return(IGfmov(proc_pv[1].par_va.lit.str_va,
 	             proc_pv[2].par_va.lit.str_va));
  }
 
@@ -628,7 +628,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
  ******************************************************!*/
 
  {
-   return(v3fcpy(proc_pv[1].par_va.lit.str_va,
+   return(IGfcpy(proc_pv[1].par_va.lit.str_va,
 	             proc_pv[2].par_va.lit.str_va));
  }
 
@@ -660,7 +660,7 @@ static short rfield(V2FILE *f, int fieldlen, char *fieldstr);
    path = func_pv[1].par_va.lit.str_va;
    mode = func_pv[2].par_va.lit.str_va[0];
 
-   if ( v3facc(path,mode) ) status = 1;
+   if ( IGfacc(path,mode) ) status = 1;
    else                     status = 0;
 
    func_vp->lit.int_va = status;
@@ -1723,7 +1723,7 @@ else
      if ( fieldlen == 0 ) ntkn = V3STRLEN;
      else ntkn = fieldlen;
 #ifdef VARKON
-     igglin("","",&ntkn,fieldstr);
+     /* igglin("","",&ntkn,fieldstr); */
 #else
      return(-1);
 #endif

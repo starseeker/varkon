@@ -63,84 +63,86 @@ static short (*functab[])() =
 ***When building xvarkon all routines are included.
 */
 #else
-     NULL,    evpofr,    evpopr,    evlifr,    evlipr, /* 04 */
-   evlian,    evliof,    evlit1,    evlit2,    evarfr, /* 09 */
-   evar2p,    evar3p,    evarof,    evarfl,    evcufr, /* 14 */
-   evcupr,    evcuro,    evcomp,    evxht,     NULL,   /* 19 */
-   evions,    evtext,    evpinc,    evcs3p,    evgrp,  /* 24 */
-   evldim,    evcdim,    evrdim,    evadim,    evacos, /* 29 */
+     NULL,    evpofr,    evpopr,    evlifr,    evlipr,  /* 04 */
+   evlian,    evliof,    evlit1,    evlit2,    evarfr,  /* 09 */
+   evar2p,    evar3p,    evarof,    evarfl,    evcufr,  /* 14 */
+   evcupr,    evcuro,    evcomp,    evxht,     NULL,    /* 19 */
+   evions,    evtext,    evpinc,    evcs3p,    evgrp,   /* 24 */
+   evldim,    evcdim,    evrdim,    evadim,    evacos,  /* 29 */
    evasin,    evatan,
    evcos,     evsin,     evtan,     evnlog,    evlogn,
    evsqrt,    evabs,     evfrac,    evroud,    evtrnc,
    evgref,    evldgm,    evsvgm,
-   evbllv,    evublv,    evgtlv,    evalev,    evncui, /* 49 */
+   inmiss,    inmiss,    inmiss,    inmiss,    evncui,  /* 49 */
    eveval,    evfins,    evarcl,    evtang,    evcen,
-   evsect,    evon,      evvecp,    evidnt,    evpos,  /* 59 */
+   evsect,    evon,      evvecp,    evidnt,    evpos,   /* 59 */
    evscr,     evbpln,    evmolo,    evmogl,    evvec,
-   evset,     evos,      evvecl,    evvecn,    evangl, /* 69 */
+   evset,     evos,      evvecl,    evvecn,    evangl,  /* 69 */
    evasci,    evstr,     evchr,     evval,     evleng,
-   evsubs,    evopen,    evseek,    evouti,    evoutf, /* 79 */
+   evsubs,    evopen,    evseek,    evouti,    evoutf,  /* 79 */
    evouts,    evoutl,    evoutb,    evinii,    evinif,
-   evinis,    evinl,     evinb,     evfpos,    evclos, /* 89 */
+   evinis,    evinl,     evinb,     evfpos,    evclos,  /* 89 */
    eviost,    evgtid,    evghdr,    evgpoi,    evglin,
-   evgarc,    evgcur,    evgtrf,    evgtxt,    evgxht, /* 99 */
+   evgarc,    evgcur,    evgtrf,    evgtxt,    evgxht,  /* 99 */
    evgldm,    evgcdm,    evgrdm,    evgadm,    evggrp, 
-   evgcsy,    NULL,      evgprt,    evgtyp,    evgint, /* 109 */
+   evgcsy,    NULL,      evgprt,    evgtyp,    evgint,  /* 109 */
    evgflt,    evgstr,    evgvec,    evsymb,    evtrim,
-   evdel,     evclgm,    evblk,     evublk,    evcrvi, /* 119 */
+   evdel,     evclgm,    evblk,     evublk,    evcrvi,  /* 119 */
    evacvi,    evscvi,    evcevi,    evervi,    evrpvi,
-   evcavi,    evplvi,    evtime,    evrstr,    evrval, /* 129 */
+   evcavi,    inmiss,    evtime,    evrstr,    evrval,  /* 129 */
    evrefc,    evlsin,    evlsex,    evlsln,    evablk,
-   evavin,    evapen,    evascl,    evadsc,    evacac, /* 139 */
+   evavin,    evapen,    evascl,    evadsc,    evacac,  /* 139 */
    evagrx,    evagry,    evagdx,    evagdy,    evagrd,
-   evajbn,    evamtp,    evamat,    evajbd,    evalft, /* 149 */
+   evajbn,    evamtp,    evamat,    evajbd,    evalft,  /* 149 */
    evaaft,    evaxft,    evaldl,    evaadl,    evaxdl,
-   evatsi,    evatwi,    evatsl,    evadts,    evadas, /* 159 */
+   evatsi,    evatwi,    evatsl,    evadts,    evadas,  /* 159 */
    evadnd,    evadau,    evglor,    evpspt,    evpopt,
-   evcrts,    evgtts,    evcrmy,    evpsmy,    evpomy, /* 169 */
+   evcrts,    evgtts,    evcrmy,    evpsmy,    evpomy,  /* 169 */
    evgtal,    evgtmy,    evcrpr,    evlipe,      NULL,
-     NULL,      NULL,      NULL,      NULL,      NULL, /* 179 */
+     NULL,      NULL,      NULL,      NULL,      NULL,  /* 179 */
      NULL,      NULL,      NULL,      NULL,      NULL,
-     NULL,      NULL,    evgbpl,    evcs1p,    evplwi, /* 189 */
+     NULL,      NULL,    evgbpl,    evcs1p,    evplwi,  /* 189 */
    evuhdr,    evldjb,    evsvjb,    evinpt,    evhdvi,
-   evprvi,    evtxtl,    evexit,    evexst,    evarea, /* 199 */
+   evprvi,    evtxtl,    evexit,    evexst,    evarea,  /* 199 */
    evcgra,    evsetb,    evcurc,    evitan,    evcurs,
-   evion,     evcurt,    evcuru,    evcurv,    evicur, /* 209 */
+   evion,     evcurt,    evcuru,    evcurv,    evicur,  /* 209 */
    eviarc,    evacft,    evacdl,    evaddm,    evnsec,
-   evgpm,     evupm,     evsexd,    evcsil,    evcint, /* 219 */
+   evgpm,     evupm,     evsexd,    evcsil,    evcint,  /* 219 */
    evciso,    evnorm,    evtrmv,    evtrrp,    evtrrl,
-   evtrmi,    evtrco,    evtrus,    evtcop,    evcugl, /* 229 */
+   evtrmi,    evtrco,    evtrus,    evtcop,    evcugl,  /* 229 */
    evmsiz,    evcrwi,    evcred,    evcric,    evcrbu,
-   evshwi,    evwtwi,    evgted,    NULL,      evgtbu, /* 239 */
+   evshwi,    evwtwi,    evgted,    evuped,    evgtbu,  /* 239 */
    evdlwi,    evgcuh,    evgseg,    evgsuh,    evuppm,
-   evscon,    evsoff,    evgtvi,    evdelm,    evacsy, /* 249 */
+   evscon,    evsoff,    evgtvi,    evdelm,    evacsy,  /* 249 */
    evmoba,    evssar,    evscar,    evsapp,    evscom,
-   evstrm,    evgtop,    evgcub,    evgrat,    evcusa, /* 259 */
+   evstrm,    evgtop,    evgcub,    evgrat,    evcusa,  /* 259 */
    evcuca,    evcfan,    evcged,    evcapp,    evrunm,
-   evapid,    evavvr,    evavsr,    evaost,    evahst, /* 269 */
+   evapid,    evavvr,    evavsr,    evaost,    evahst,  /* 269 */
    evufnm,    evrand,    evails,    evaios,    evappf,
-   evdelf,    evmovf,    evcopf,    evtstf,    evgenv, /* 279 */
+   evdelf,    evmovf,    evcopf,    evtstf,    evgenv,  /* 279 */
    evgrid,    evgrix,    evgriy,    evgrdx,    evgrdy,
-   evsrgm,    evgngm,    evcrfb,    evcrfi,    evgtwi, /* 289 */
+   evsrgm,    evgngm,    evcrfb,    evcrfi,    evgtwi,  /* 289 */
    evgttl,    evgtth,    evlmdf,    NULL,      NULL,  
-   evsrot,    evcrdb,    evend,     evstrt,    evlddl, /* 299 */
-   evcldl,    evuldl,    evmtvi,    evltvi,    evshvi,
-   evcrco,    evlton,    evltof,    evsusr,    evscyl, /* 309 */
+   evsrot,    evcrdb,    evend,     evstrt,    evlddl,  /* 299 */
+   evcldl,    evuldl,    evcrmt,    evltvi,    evgtco,
+   evcrco,    evlton,    evltof,    evsusr,    evscyl,  /* 309 */
    evclpm,    evsswp,    evsrul,    evposm,    evgfac,
-   evsnar,    evsuar,    evsear,    evgwdt,    evawdt, /* 319 */
+   evsnar,    evsuar,    evsear,    evgwdt,    evawdt,  /* 319 */
    evscr2,    evpos2,    evidn2,    evhigh,    evgptr,
-   evinfn,    evldpm,    evailm,    evcaxt,    evival, /* 329 */
+   evinfn,    evldpm,    evailm,    evcaxt,    evival,  /* 329 */
    evfval,    evodco,    evoded,    evodfe,    evodgs,
-   evoddc,    evoder,    evpdat,    evgdat,    evddat, /* 339 */
+   evoddc,    evoder,    evpdat,    evgdat,    evddat,  /* 339 */
    evcrnp,    evcrmp,    evsecg,    evscur,    evcuna,
-   evtcco,    evtcli,    evtccl,    evtcoi,    evtcii, /* 349 */
+   evtcco,    evtcli,    evtccl,    evtcoi,    evtcii,  /* 349 */
    evtcof,    evtcif,    evtcoc,    evtcic,    evtcgl,
-   evtcgr,    evtcov,    evtciv,    evrpcc,    evrpcd, /* 359 */
+   evtcgr,    evtcov,    evtciv,    evrpcc,    evrpcd,  /* 359 */
    evrpof,    evrpif,    evrpoi,    evrpii,    evrport,
-   evrpirt,   evrpos,    evrpis,    evrpora,   evrpira,/* 369 */
+   evrpirt,   evrpos,    evrpis,    evrpora,   evrpira, /* 369 */
    evorrstd,  evrpofa,   evrpifa,   evmsar,    evgmsh,
-   evgvrt,    evghdg,    evgface,   evsrms,    evgxflt,/* 379 */
-   evtmult,   evtinv,    evccmparr, evstusr,
+   evgvrt,    evghdg,    evgface,   evsrms,    evgxflt, /* 379 */
+   evtmult,   evtinv,    evccmparr, evstusr,   evapft,
+   evapsi,    evbllv,    evublv,    evgtlv,    evalev,  /* 389 */
+   evnmlv
 #endif
 };
 

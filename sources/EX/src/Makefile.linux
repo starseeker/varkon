@@ -2,7 +2,7 @@
 #
 #   Makefile for EXlib on GNU/Linux
 #
-#  (c) Sören Larsson, örebro university 2004-09-02
+#  (c)2007-02-01 J.Kjellander
 #
 ##########################################################
 
@@ -18,8 +18,6 @@ distr :     CFLAGS =                    \
             -fsigned-char               \
             -O                          \
             -DUNIX                      \
-            -DV3_X11                    \
-            -DWRK_STAT                  \
             -DVARKON
             
 debug :     CFLAGS =                    \
@@ -30,8 +28,6 @@ debug :     CFLAGS =                    \
             -g3                         \
             -DDEBUG                     \
             -DUNIX                      \
-            -DV3_X11                    \
-            -DWRK_STAT                  \
             -DVARKON
 
 
@@ -40,15 +36,15 @@ distr :     RAPCFLAGS =                 \
             -Wall                       \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
+            -DUNIX                      \
             -O
 
-debug :     RAPCFLAGS =                \
+debug :     RAPCFLAGS =                 \
             -pedantic                   \
             -Wall                       \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
+            -DUNIX                      \
             -g3
 
 ifeq ($(DV3ODBC),TRUE) 

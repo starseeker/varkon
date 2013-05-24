@@ -9,7 +9,7 @@
 *    This file includes:
 *
 *    WPwini();   Init WP internals (wpw)
-*   
+*
 *    WPwexp();   Expose routine for wpw-window
 *    WPwbut();   Button routine for wpw-window
 *    WPwcro();   Crossing routine for wpw-window
@@ -18,16 +18,17 @@
 *    WPwrep();   Reparent routine for wpw-window
 *    WPwcon();   Configure routine for wpw-window
 *    WPwfoc();   FocusIn routine for wpw-window
-*   
+*
 *    WPwshw();   Maps window, SHOW_WIN in MBS
 *    WPwwtw();   Event-loop, WAIT_WIN in MBS
 *    WPwdel();   Kill main window, DEL_WIN in MBS
 *    WPwdls();   Kill subwindow, DEL_WIN in MBS
 *    WPwexi();   Exit WP
-*   
+*
 *    WPwffi();   Returns free index in wpwtab
 *    WPwfpx();   Returns WP-ID for parent window by child X-ID
 *   *WPwgwp();   Returnc C-pointer to index in wpwtab
+*    WPbell();   Rings a bell
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -51,15 +52,15 @@
 
 WPWIN wpwtab[WTABSIZ];
 
-/* wpwtab är en tabell med typ och pekare till fönster.
-   Typ är en kod som anger vilken typ av fönster det rör
-   sig om tex. TYP_IWIN för ett input-fönster från MBS.
-   Pekaren är en C-pekare som pekar på en structure av
-   den aktuella typen tex. WPIWIN för ett input-fönster.
+/* wpwtab ï¿½r en tabell med typ och pekare till fï¿½nster.
+   Typ ï¿½r en kod som anger vilken typ av fï¿½nster det rï¿½r
+   sig om tex. TYP_IWIN fï¿½r ett input-fï¿½nster frï¿½n MBS.
+   Pekaren ï¿½r en C-pekare som pekar pï¿½ en structure av
+   den aktuella typen tex. WPIWIN fï¿½r ett input-fï¿½nster.
 
    Alla element i wpwtab initieras av WPwini() till NULL.
-   När ett nytt fönster skapas får det som ID lägsta lediga
-   plats i wpwtab och när det deletas nollställs platsen
+   Nï¿½r ett nytt fï¿½nster skapas fï¿½r det som ID lï¿½gsta lediga
+   plats i wpwtab och nï¿½r det deletas nollstï¿½lls platsen
    igen.
 */
 
@@ -84,10 +85,6 @@ WPWIN wpwtab[WTABSIZ];
      wpwtab[i].typ = TYP_UNDEF;
      wpwtab[i].ptr = NULL;
      }
-/*
-***Create text-cursor.
-*/
-   xtcur = XCreateFontCursor(xdisp,152);
 
    return(0);
   }
@@ -95,16 +92,15 @@ WPWIN wpwtab[WTABSIZ];
 /********************************************************/
 /*!******************************************************/
 
-        bool WPwexp(
-        XExposeEvent *expev)
+        bool WPwexp(XExposeEvent *expev)
 
-/*      Expose-rutinen för wpw-fönstren. Letar upp 
- *      rätt fönster och anropar dess expose-rutin.
+/*      Expose-rutinen fï¿½r wpw-fï¿½nstren. Letar upp 
+ *      rï¿½tt fï¿½nster och anropar dess expose-rutin.
  *
  *      In: expev = Pekare till Expose-event.
  *
  *      Ut: TRUE  = Eventet servat.   
- *          FALSE = Eventet ej i något wpw-fönster.
+ *          FALSE = Eventet ej i nï¿½got wpw-fï¿½nster.
  *
  *      Felkod: .
  *
@@ -115,21 +111,21 @@ WPWIN wpwtab[WTABSIZ];
  ******************************************************!*/
 
   {
-    int     i;
-    bool    status;
-    WPWIN  *winptr;
-    WPIWIN *iwinpt;
-    WPLWIN *lwinpt;
-    WPGWIN *gwinpt;
-    WPRWIN *rwinpt;
+    int      i;
+    bool     status;
+    WPWIN   *winptr;
+    WPIWIN  *iwinpt;
+    WPLWIN  *lwinpt;
+    WPGWIN  *gwinpt;
+    WPRWIN  *rwinpt;
 
 /*
-***Sök igenom wpwtab och kolla om något av fönstren
-***har rätt x_id. Expose-events kan bara inträffa på
-***hela huvudfönster, ej enskilda sub-fönster så vi
-***kan redan här avgöra vilket fönster det rör sig om.
-***För ett Button-event tex. måste vi göra den testen
-***på varje sub-fönster individuellt !
+***Sï¿½k igenom wpwtab och kolla om nï¿½got av fï¿½nstren
+***har rï¿½tt x_id. Expose-events kan bara intrï¿½ffa pï¿½
+***hela huvudfï¿½nster, ej enskilda sub-fï¿½nster sï¿½ vi
+***kan redan hï¿½r avgï¿½ra vilket fï¿½nster det rï¿½r sig om.
+***Fï¿½r ett Button-event tex. mï¿½ste vi gï¿½ra den testen
+***pï¿½ varje sub-fï¿½nster individuellt !
 */
     status = FALSE;
 
@@ -178,7 +174,7 @@ WPWIN wpwtab[WTABSIZ];
         }
       }
 /*
-***Flush efter expose görs bara här.
+***Flush efter expose gï¿½rs bara hï¿½r.
 */
     if ( status == TRUE ) XFlush(xdisp);
 
@@ -188,21 +184,21 @@ WPWIN wpwtab[WTABSIZ];
 /********************************************************/
 /*!******************************************************/
 
-        bool WPwbut(
+        bool           WPwbut(
         XButtonEvent  *butev,
         wpw_id        *serv_id)
 
-/*      Button-rutinen för wpw-fönstren. Kollar
- *      vilken typ av fönster det är och anropar
- *      rätt rutin för jobbet.
+/*      Button-rutinen fï¿½r wpw-fï¿½nstren. Kollar
+ *      vilken typ av fï¿½nster det ï¿½r och anropar
+ *      rï¿½tt rutin fï¿½r jobbet.
  *
  *      In: butev    = Pekare till Button-event.
  *          serv_id  = Pekare till utdata.
  *
- *      Ut: *serv_id = ID för subfönster som servat eventet.
+ *      Ut: *serv_id = ID fï¿½r subfï¿½nster som servat eventet.
  *
  *      FV. TRUE  = Eventet har servats.
- *          FALSE = Eventet gällde inga av dessa fönster.
+ *          FALSE = Eventet gï¿½llde inga av dessa fï¿½nster.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -219,8 +215,8 @@ WPWIN wpwtab[WTABSIZ];
     WPRWIN *rwinpt;
 
 /*
-***Sök igenom wpwtab och anropa alla fönstrens
-***respektive butt-hanterare. Den som vill kännas vid
+***Sï¿½k igenom wpwtab och anropa alla fï¿½nstrens
+***respektive butt-hanterare. Den som vill kï¿½nnas vid
 ***eventet tar hand om det.
 */
     for ( i=0; i<WTABSIZ; ++i )
@@ -261,12 +257,12 @@ WPWIN wpwtab[WTABSIZ];
         bool WPwcro(
         XCrossingEvent *croev)
 
-/*      Crossing-rutinen för wpw-fönstren.
+/*      Crossing-rutinen fï¿½r wpw-fï¿½nstren.
  *
  *      In: croev = Pekare till Crossing-event.
  *
  *      Ut: TRUE  = Eventet servat.   
- *          FALSE = Eventet ej i något av dessa fönster.
+ *          FALSE = Eventet ej i nï¿½got av dessa fï¿½nster.
  *
  *      Felkod: .
  *
@@ -285,8 +281,8 @@ WPWIN wpwtab[WTABSIZ];
     WPRWIN *rwinpt;
 
 /*
-***Sök igenom wpwtab och anropa alla fönstrens
-***respektive cro-hanterare. Den som vill kännas vid
+***Sï¿½k igenom wpwtab och anropa alla fï¿½nstrens
+***respektive cro-hanterare. Den som vill kï¿½nnas vid
 ***eventet tar hand om det.
 */
     for ( i=0; i<WTABSIZ; ++i )
@@ -324,7 +320,7 @@ WPWIN wpwtab[WTABSIZ];
 /********************************************************/
 /*!******************************************************/
 
-        bool WPwkey(
+        bool       WPwkey(
         XKeyEvent *keyev,
         int        slevel,
         wpw_id    *serv_id)
@@ -332,13 +328,13 @@ WPWIN wpwtab[WTABSIZ];
 /*      Key handler for wpw windows.
  *
  *      In: keyev   = Pekare till Key-event.
- *          slevel  = Önskad service-nivå.
+ *          slevel  = ï¿½nskad service-nivï¿½.
  *          serv_id = Pekare till utdata.
  *
- *      Ut: *serv_id = ID för fönster som servat eventet.
+ *      Ut: *serv_id = ID fï¿½r fï¿½nster som servat eventet.
  *
  *      FV: TRUE  = Eventet servat.   
- *          FALSE = Eventet ej i något av dessa fönster.
+ *          FALSE = Eventet ej i nï¿½got av dessa fï¿½nster.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -350,15 +346,15 @@ WPWIN wpwtab[WTABSIZ];
     WPIWIN *iwinpt;
 
 /*
-***Till att börja med skall vi avgöra om det är en funktions-
-***tangent, dvs. ett snabbval eller om det bara är en vanlig
+***Till att bï¿½rja med skall vi avgï¿½ra om det ï¿½r en funktions-
+***tangent, dvs. ett snabbval eller om det bara ï¿½r en vanlig
 ***tangenttryckning.
 */
    status = WPkepf(keyev);
    if ( status == SMBESCAPE ) return(FALSE);
 /*
-***Sök igenom wpwtab och leta upp alla WPIWIN-fönster.
-***Om key-eventet har uppstått i något av dessa, anropa
+***Sï¿½k igenom wpwtab och leta upp alla WPIWIN-fï¿½nster.
+***Om key-eventet har uppstï¿½tt i nï¿½got av dessa, anropa
 ***dess key-hanterare.
 */
     for ( i=0; i<WTABSIZ; ++i )
@@ -387,13 +383,13 @@ WPWIN wpwtab[WTABSIZ];
         bool WPwclm(
         XClientMessageEvent *clmev)
 
-/*      ClientMessage-rutinen för wpw-fönstren. Letar upp 
- *      rätt fönster och anropar dess clm-rutin.
+/*      ClientMessage-rutinen fï¿½r wpw-fï¿½nstren. Letar upp 
+ *      rï¿½tt fï¿½nster och anropar dess clm-rutin.
  *
  *      In: expev = Pekare till ClientMessage-event.
  *
  *      Ut: TRUE  = Eventet servat.   
- *          FALSE = Eventet ej i något wpw-fönster.
+ *          FALSE = Eventet ej i nï¿½got wpw-fï¿½nster.
  *
  *      Felkod: .
  *
@@ -412,9 +408,9 @@ WPWIN wpwtab[WTABSIZ];
     WPRWIN *rwinpt;
 
 /*
-***Sök igenom wpwtab och kolla om något av fönstren
-***har rätt x_id. ClientMessage-event kan bara uppträda
-***på huvudfönster, ej subfönster.
+***Sï¿½k igenom wpwtab och kolla om nï¿½got av fï¿½nstren
+***har rï¿½tt x_id. ClientMessage-event kan bara upptrï¿½da
+***pï¿½ huvudfï¿½nster, ej subfï¿½nster.
 */
     for ( i=0; i<WTABSIZ; ++i )
       {
@@ -470,13 +466,13 @@ WPWIN wpwtab[WTABSIZ];
         bool WPwcon(
         XConfigureEvent *conev)
 
-/*      Configure Notify-rutinen för wpw-fönstren. Letar upp 
- *      rätt fönster och anropar dess configure-rutin.
+/*      Configure Notify-rutinen fï¿½r wpw-fï¿½nstren. Letar upp 
+ *      rï¿½tt fï¿½nster och anropar dess configure-rutin.
  *
  *      In: conev = Pekare till configure-event.
  *
  *      Ut: TRUE  = Eventet servat.   
- *          FALSE = Eventet ej i något wpw-fönster.
+ *          FALSE = Eventet ej i nï¿½got wpw-fï¿½nster.
  *
  *      Felkod: .
  *
@@ -494,9 +490,9 @@ WPWIN wpwtab[WTABSIZ];
     WPRWIN *rwinpt;
 
 /*
-***Sök igenom wpwtab och kolla om något av fönstren
-***har rätt x_id. Configure-events kan bara inträffa på
-***WPGWIN-fönster.
+***Sï¿½k igenom wpwtab och kolla om nï¿½got av fï¿½nstren
+***har rï¿½tt x_id. Configure-events kan bara intrï¿½ffa pï¿½
+***WPGWIN-fï¿½nster.
 */
     status = FALSE;
 
@@ -536,7 +532,7 @@ WPWIN wpwtab[WTABSIZ];
         bool WPwfoc(
         XFocusInEvent *focev)
 
-/*      FocusIn-rutinen för wpw-fönster. 
+/*      FocusIn-rutinen fï¿½r wpw-fï¿½nster. 
  *
  *      In: focev = Pekare till FocusIn-event.
  *
@@ -549,16 +545,16 @@ WPWIN wpwtab[WTABSIZ];
   {
 
 /*
-***Focus-events kan bara genereras av WPGWIN-fönster.
-***Detta sker tex. om V3 varit täckt av andra applikationer
-***och man klickar i ett grafiskt fönster tillhörande V3.
-***V3 skall då ha keybord focus och bli aktivt. För att 
-***säkerställa att även menyfönstret blir aktivt gör vi
-***då raise på det här. Detta innebär att det grafiska
-***man clickat i samt menyfönstret kommer upp till toppen.
-***Övriga grafiska fönster kommer inte upp.
+***Focus-events kan bara genereras av WPGWIN-fï¿½nster.
+***Detta sker tex. om V3 varit tï¿½ckt av andra applikationer
+***och man klickar i ett grafiskt fï¿½nster tillhï¿½rande V3.
+***V3 skall dï¿½ ha keybord focus och bli aktivt. Fï¿½r att 
+***sï¿½kerstï¿½lla att ï¿½ven menyfï¿½nstret blir aktivt gï¿½r vi
+***dï¿½ raise pï¿½ det hï¿½r. Detta innebï¿½r att det grafiska
+***man clickat i samt menyfï¿½nstret kommer upp till toppen.
+***ï¿½vriga grafiska fï¿½nster kommer inte upp.
 */
-    WPfomw();
+    WPfocus_menu();
 
     return(TRUE);
   }
@@ -569,13 +565,13 @@ WPWIN wpwtab[WTABSIZ];
         bool WPwrep(
         XReparentEvent *repev)
 
-/*      ReparentNotify-rutinen för wpw-fönstren. Letar upp 
- *      rätt fönster och anropar dess reparent-rutin.
+/*      ReparentNotify-rutinen fï¿½r wpw-fï¿½nstren. Letar upp 
+ *      rï¿½tt fï¿½nster och anropar dess reparent-rutin.
  *
  *      In: repev = Pekare till configure-event.
  *
  *      Ut: TRUE  = Eventet servat.   
- *          FALSE = Eventet ej i något wpw-fönster.
+ *          FALSE = Eventet ej i nï¿½got wpw-fï¿½nster.
  *
  *      Felkod: .
  *
@@ -590,9 +586,9 @@ WPWIN wpwtab[WTABSIZ];
     WPGWIN *gwinpt;
 
 /*
-***Sök igenom wpwtab och kolla om något av fönstren
-***har rätt x_id. Reparent-events kan bara inträffa på
-***WPGWIN-fönster.
+***Sï¿½k igenom wpwtab och kolla om nï¿½got av fï¿½nstren
+***har rï¿½tt x_id. Reparent-events kan bara intrï¿½ffa pï¿½
+***WPGWIN-fï¿½nster.
 */
     status = FALSE;
 
@@ -623,7 +619,7 @@ WPWIN wpwtab[WTABSIZ];
         short WPwshw(
         DBint w_id)
 
-/*      Visar ett fönster.
+/*      Visar ett fï¿½nster.
  *
  *      In: w_id  = Entry i wpwtab.
  *
@@ -647,31 +643,31 @@ WPWIN wpwtab[WTABSIZ];
     WPRWIN  *rwinpt;
 
 /*
-***Fixa en C-pekare till fönstrets entry i wpwtab.
+***Fixa en C-pekare till fï¿½nstrets entry i wpwtab.
 */
     if ( (winptr=WPwgwp(w_id)) == NULL ) return(-2);
 /*
-***Vilken typ av fönster är det ?
+***Vilken typ av fï¿½nster ï¿½r det ?
 */
     switch ( winptr->typ )
       {
 /*
-***WPIWIN-fönster. Mappa fönster och subfönster. Om
-***fönstret innehåller WPEDIT:s sätter vi input-focus
-***på det första. Sätt mapped = TRUE så att subfönster
-***som skapas från och med nu mappas direkt när dom skapas.
+***WPIWIN-fï¿½nster. Mappa fï¿½nster och subfï¿½nster. Om
+***fï¿½nstret innehï¿½ller WPEDIT:s sï¿½tter vi input-focus
+***pï¿½ det fï¿½rsta. Sï¿½tt mapped = TRUE sï¿½ att subfï¿½nster
+***som skapas frï¿½n och med nu mappas direkt nï¿½r dom skapas.
 */
       case TYP_IWIN:
       iwinpt = (WPIWIN *)winptr->ptr;
       xwin_id = iwinpt->id.x_id;
       XMapSubwindows(xdisp,xwin_id);
-      XMapWindow(xdisp,xwin_id);
+      XMapRaised(xdisp,xwin_id);
       edtptr = WPffoc(iwinpt,FIRST_EDIT);
       if ( edtptr != NULL ) WPfoed(edtptr,TRUE);
       iwinpt->mapped = TRUE;
       break;
 /*
-***WPLWIN-fönster. Mappa fönster och subfönster.
+***WPLWIN-fï¿½nster. Mappa fï¿½nster och subfï¿½nster.
 */
       case TYP_LWIN:
       lwinpt = (WPLWIN *)winptr->ptr;
@@ -680,7 +676,7 @@ WPWIN wpwtab[WTABSIZ];
       XMapWindow(xdisp,xwin_id);
       break;
 /*
-***WPGWIN-fönster. Mappa fönster och subfönster.
+***WPGWIN-fï¿½nster. Mappa fï¿½nster och subfï¿½nster.
 */
       case TYP_GWIN:
       gwinpt = (WPGWIN *)winptr->ptr;
@@ -689,7 +685,7 @@ WPWIN wpwtab[WTABSIZ];
       XMapWindow(xdisp,xwin_id);
       break;
 /*
-***WPRWIN-fönster. Mappa fönster och subfönster.
+***WPRWIN-fï¿½nster. Mappa fï¿½nster och subfï¿½nster.
 */
       case TYP_RWIN:
       rwinpt = (WPRWIN *)winptr->ptr;
@@ -702,7 +698,7 @@ WPWIN wpwtab[WTABSIZ];
       return(-2);
       }
 /*
-***Flusha så att de säkert syns på skärmen.
+***Flusha sï¿½ att de sï¿½kert syns pï¿½ skï¿½rmen.
 */
     XFlush(xdisp);
 
@@ -717,22 +713,24 @@ WPWIN wpwtab[WTABSIZ];
      DBint  slevel,
      DBint *subw_id)
 
-/*   Event-loop för MBS-rutinen WAIT_WIN. Lägger sig
- *   och väntar på events i det WPIWIN-fönster som angetts.
+/*   Event-loop fï¿½r MBS-rutinen WAIT_WIN. Lï¿½gger sig
+ *   och vï¿½ntar pï¿½ events i det WPIWIN-fï¿½nster som angetts.
  *
- *   Denna rutin används dels av MBS (WAIT_WIN) och dessutom
- *   av WPialt() samt WPmsip(). Kännetecknande är att den i
- *   princip bara servar events som kan hänföras till det WPIWIN-
- *   fönster som angetts som indata. Undantaget är att den också
- *   servar expose-events på andra fönster.
+ *   Denna rutin anvï¿½nds dels av MBS (WAIT_WIN) och dessutom
+ *   av WPialt() samt WPmsip(). Kï¿½nnetecknande ï¿½r att den i
+ *   princip bara servar events som kan hï¿½nfï¿½ras till det WPIWIN-
+ *   fï¿½nster som angetts som indata. Undantaget ï¿½r att den ocksï¿½
+ *   servar expose-events pï¿½ andra fï¿½nster.
  *
- *   In: iwin_id = ID för huvudfönstret.
- *       slevel  = Service-nivå för key-event.
+ *   In: iwin_id = ID fï¿½r huvudfï¿½nstret.
+ *       slevel  = Service-nivï¿½ fï¿½r key-event.
  *       subw_id = Pekare till utdata.
  *
- *   Ut: *subw_id = ID för det subfönster där ett event inträffat.
+ *   Ut: *subw_id = ID fï¿½r det subfï¿½nster dï¿½r ett event intrï¿½ffat.
  *
- *   Felkoder : WP1202 = iwin_id %s är ej ett fönster
+ *   Return:       0 = Ok.
+ *           SMBPOSM = Pos-button pressed.
+ *           WP1202  = iwin_id %s is not a window.
  *
  *   (C)microform ab 8/12/93 J. Kjellander
  *
@@ -749,9 +747,10 @@ WPWIN wpwtab[WTABSIZ];
     XKeyEvent           *keyev = (XKeyEvent *) &event;
     XClientMessageEvent *clmev = (XClientMessageEvent *) &event;
     WPWIN               *winptr;
+    MNUALT              *altptr;
 
 /*
-***Kolla att fönstret finns.
+***Kolla att fï¿½nstret finns.
 */
     if ( (winptr=WPwgwp((wpw_id)iwin_id)) == NULL )
       {
@@ -760,7 +759,7 @@ WPWIN wpwtab[WTABSIZ];
       }
 /*
 ***Om events finns, serva dom. Om inga events finns
-***lägger vi oss och väntar.
+***lï¿½gger vi oss och vï¿½ntar.
 */
 evloop:
     XNextEvent(xdisp,&event);
@@ -768,31 +767,31 @@ evloop:
     switch ( event.type )
       {
 /*
-***Expose är tillåtet i alla fönster.
+***Expose ï¿½r tillï¿½tet i alla fï¿½nster.
 */
       case Expose:
       WPwexp((XExposeEvent *)&event);
       goto evloop;
       break;
 /*
-***KeyPress-events uppstår i WPIWIN-fönstret självt
-***men länkas vidare till det WPEDIT-fönster som har
-***fokus. WPwkey() returnerar det WPEDIT-fönster
+***KeyPress-events uppstï¿½r i WPIWIN-fï¿½nstret sjï¿½lvt
+***men lï¿½nkas vidare till det WPEDIT-fï¿½nster som har
+***fokus. WPwkey() returnerar det WPEDIT-fï¿½nster
 ***som servat eventet om FV=TRUE. Vissa events kan (beroende 
-***på slevel) ibland servas lokalt och WPwkey returnerar då FALSE.
+***pï¿½ slevel) ibland servas lokalt och WPwkey returnerar dï¿½ FALSE.
 */
       case KeyPress:
       par_id = WPwfpx(keyev->window);
       if ( par_id >= 0  &&  WPwkey(keyev,slevel,&serv_id) == TRUE )
         {
        *subw_id = (DBint)serv_id;
-        return(TRUE);
+        return(0);
         }
       else goto evloop;
 /*
-***Leave/Enter uppstår bara i WPBUTT-fönster. Kolla att
-***det gäller vårt WPIWIN eller ett WPLWIN. Andra fönster
-***är inte aktiva nu.
+***Leave/Enter uppstï¿½r bara i WPBUTT-fï¿½nster. Kolla att
+***det gï¿½ller vï¿½rt WPIWIN eller ett WPLWIN. Andra fï¿½nster
+***ï¿½r inte aktiva nu.
 */
       case EnterNotify:
       case LeaveNotify:
@@ -804,34 +803,51 @@ evloop:
         }
       goto evloop;
 /*
-***Musknapp-events uppstår i WPBUTT-, WPEDIT-,WPICON- eller WPLWIN.
-***Vi skall dock bara serva sådana vars förälder är vårt
-***WPIWIN-fönster. Detta kollas genom att jämföra click-fönstrets
-***föräldra-ID med WPIWIN-fönstrets. Om de är olika beror det
-***antingen på att vi har flera WPIWIN-fönster på skärmen
-***samtidigt eller att clickningen skedde i ett fönster som
-***inte är WPIWIN. Sådana clickningar är i princip förbjudna
-***bortsett från clickningar i WPLWIN-fönster.
+***ButtonPress is always associated with a WPRWIN.
+***Use WPwfpx() to get the WP-id of the window that
+***created the event. WPwfpx() returns the parent
+***of the window if it has one or the window itself
+***if it has no parent, ie. WPRWIN.
 */
       case ButtonPress:
+      par_id = WPwfpx(butev->window);
+      if ( par_id < 0 ) goto evloop;
+      if ( wpwtab[par_id].typ == TYP_RWIN )
+        WPbtrw((WPRWIN *)wpwtab[par_id].ptr,butev,&serv_id);
       goto evloop;
-      
+/*
+***If it is a ButtonRelease, it may come from a WPLWIN...
+*/
       case ButtonRelease:
       par_id = WPwfpx(butev->window);
       if ( par_id < 0 ) goto evloop;
 
       if ( par_id != iwin_id )
         {
-        if ( wpwtab[par_id].typ == TYP_LWIN ) WPwbut(butev,&serv_id);
-        goto evloop;
+        if ( wpwtab[par_id].typ == TYP_LWIN )
+          {
+          WPwbut(butev,&serv_id);
+          goto evloop;
+          }
+/*
+***...or from a pos-button in the menu window...
+*/
+        else if ( WPmenu_button(&event,&altptr) && altptr == NULL ) return(SMBPOSM);
+/*
+***...or some other window where it should not be...
+*/
+        else
+          {
+          WPbell();
+          goto evloop;
+          }
         }
 /*
-***Clickningen har skett i vårt WPIWIN-fönster eller något
-***av dess subfönster. Om WPwbut() returnerar TRUE är detta
-***en händelse som skall bryta event-loopen och föras tillbaks
-***till anropande rutin (MBS-program). Om WPwbut() returnerar 
-***FALSE har eventet servats men ansetts som "lokalt", tex.
-***cursor-positionering i WPEDIT-fönster.
+***...but may also come from the WPIWIN we are waiting
+***for (or one of it's children). In that case, let WPwbut() take
+***care of it. If WPwbut() returns TRUE the event should break
+***the loop, otherwise the event was "local" and we go on
+***waiting.
 */
       switch ( butev->button )
         {
@@ -839,7 +855,7 @@ evloop:
         if ( WPwbut(butev,&serv_id) == TRUE )
           {
          *subw_id = (DBint)serv_id;
-          return(TRUE);
+          return(0);
           }
         else goto evloop;
 
@@ -855,7 +871,7 @@ evloop:
       WPwclm(clmev);
       goto evloop;
 /*
-***Okänd typ av event.
+***Okï¿½nd typ av event.
 */
       default:
       goto evloop;
@@ -872,13 +888,13 @@ evloop:
         short WPwdel(
         DBint w_id)
 
-/*      Dödar ett huvudfönster med alla subfönster.
+/*      Dï¿½dar ett huvudfï¿½nster med alla subfï¿½nster.
  *
- *      In: w_id   = Huvudfönstrets entry i wpwtab.
+ *      In: w_id   = Huvudfï¿½nstrets entry i wpwtab.
  *
  *      Ut: Inget.   
  *
- *      Felkod: WP1222 = Huvudfönstret finns ej.
+ *      Felkod: WP1222 = Huvudfï¿½nstret finns ej.
  *
  *      (C)microform ab 6/12/93 J. Kjellander
  *
@@ -896,7 +912,7 @@ evloop:
     WPRWIN  *rwinpt;
 
 /*
-***Fixa en C-pekare till huvud-fönstrets entry i wpwtab.
+***Fixa en C-pekare till huvud-fï¿½nstrets entry i wpwtab.
 */
     if ( (winptr=WPwgwp(w_id)) == NULL )
       {
@@ -904,7 +920,7 @@ evloop:
       return(erpush("WP1222",errbuf));
       }
 /*
-***Vilken typ av fönster är det ?
+***Vilken typ av fï¿½nster ï¿½r det ?
 */
     switch ( winptr->typ )
       {
@@ -933,17 +949,11 @@ evloop:
       break;
       }
 /*
-***Döda fönstret ur X.
+***Dï¿½da fï¿½nstret ur X.
 */
     XDestroyWindow(xdisp,xwin_id);
 /*
-***Stryk fönstret ur fönstertabellen.
-*/
-/* Följande rad skall inte finnas !!! BUG. Borttagen 23/11/95 JK 
-   Det minne som winptr->ptr pekar på är visserligen dynamiskt
-   allokerat men deallokeras av respektive destruktor-rutin med
-   v3free() !!!  free() får inte användas överhuvudtaget.
-    free(winptr->ptr);
+***Stryk fï¿½nstret ur fï¿½nstertabellen.
 */
     winptr->typ = TYP_UNDEF;
     winptr->ptr = NULL;
@@ -958,16 +968,16 @@ evloop:
         DBint w_id,
         DBint sub_id)
 
-/*      Dödar ett subfönster. Klara fn. bara subfönster
- *      i huvudfönster av typen WPIWIN och WPGWIN.
+/*      Dï¿½dar ett subfï¿½nster. Klara fn. bara subfï¿½nster
+ *      i huvudfï¿½nster av typen WPIWIN och WPGWIN.
  *
- *      In: w_id   = Huvudfönstrets entry i wpwtab.
- *          sub_id = Subfönstrets id.
+ *      In: w_id   = Huvudfï¿½nstrets entry i wpwtab.
+ *          sub_id = Subfï¿½nstrets id.
  *
  *      Ut: Inget.   
  *
- *      Felkod: WP1222 = Huvudfönstret finns ej.
- *              WP1232 = Subfönstret finns ej.
+ *      Felkod: WP1222 = Huvudfï¿½nstret finns ej.
+ *              WP1232 = Subfï¿½nstret finns ej.
  *
  *      (C)microform ab 17/1/94 J. Kjellander
  *
@@ -987,7 +997,7 @@ evloop:
     WPICON  *icoptr;
 
 /*
-***Fixa en C-pekare till huvud-fönstrets entry i wpwtab.
+***Fixa en C-pekare till huvud-fï¿½nstrets entry i wpwtab.
 */
     if ( (winptr=WPwgwp(w_id)) == NULL )
       {
@@ -995,12 +1005,12 @@ evloop:
       return(erpush("WP1222",errbuf));
       }
 /*
-***Vilken typ av fönster är det ?
+***Vilken typ av fï¿½nster ï¿½r det ?
 */
     switch ( winptr->typ )
       {
 /*
-***WPIWIN, kolla att subfönstret finns.
+***WPIWIN, kolla att subfï¿½nstret finns.
 */
       case TYP_IWIN:
       if ( sub_id < 0  ||  sub_id > WP_IWSMAX-1 )
@@ -1016,7 +1026,7 @@ evloop:
         return(erpush("WP1232",errbuf));
         }
 /*
-***Döda fönstret ur wpw och ta reda på X-id.
+***Dï¿½da fï¿½nstret ur wpw och ta reda pï¿½ X-id.
 */
       switch ( iwinpt->wintab[(wpw_id)sub_id].typ )
         {
@@ -1039,11 +1049,11 @@ evloop:
         break;
         }
 /*
-***Döda fönstret ur X.
+***Dï¿½da fï¿½nstret ur X.
 */
       XDestroyWindow(xdisp,xwin_id);
 /*
-***Länka bort subfönstret från WPIWIN-fönstret.
+***Lï¿½nka bort subfï¿½nstret frï¿½n WPIWIN-fï¿½nstret.
 */
       iwinpt->wintab[(wpw_id)sub_id].ptr = NULL;
       iwinpt->wintab[(wpw_id)sub_id].typ = TYP_UNDEF;
@@ -1065,7 +1075,7 @@ evloop:
         return(erpush("WP1232",errbuf));
         }
 /*
-***Döda fönstret ur wpw och ta reda på X-id.
+***Dï¿½da fï¿½nstret ur wpw och ta reda pï¿½ X-id.
 */
       switch ( gwinpt->wintab[(wpw_id)sub_id].typ )
         {
@@ -1088,11 +1098,11 @@ evloop:
         break;
         }
 /*
-***Döda fönstret ur X.
+***Dï¿½da fï¿½nstret ur X.
 */
       XDestroyWindow(xdisp,xwin_id);
 /*
-***Länka bort subfönstret från WPIWIN-fönstret.
+***Lï¿½nka bort subfï¿½nstret frï¿½n WPIWIN-fï¿½nstret.
 */
       gwinpt->wintab[(wpw_id)sub_id].ptr = NULL;
       gwinpt->wintab[(wpw_id)sub_id].typ = TYP_UNDEF;
@@ -1123,7 +1133,7 @@ evloop:
     short i;
 
 /*
-***Döda alla fönster i fönster-tabellen.
+***Dï¿½da alla fï¿½nster i fï¿½nster-tabellen.
 */
    for ( i=0; i<WTABSIZ; ++i)
      if ( wpwtab[i].ptr != NULL ) WPwdel((DBint)i);
@@ -1136,7 +1146,7 @@ evloop:
 
         wpw_id WPwffi()
 
-/*      Letar upp lägsta lediga entry i wpwtab.
+/*      Letar upp lï¿½gsta lediga entry i wpwtab.
  *
  *      In: Inget.
  *
@@ -1151,15 +1161,15 @@ evloop:
   {
     int i;
 /*
-***Leta upp ledig plats i fönstertabellen. Lämna ID = 0
-***ledigt eftersom detta ID är reserverat för V3:s grafiska
-***huvudfönster.
+***Leta upp ledig plats i fï¿½nstertabellen. Lï¿½mna ID = 0
+***ledigt eftersom detta ID ï¿½r reserverat fï¿½r V3:s grafiska
+***huvudfï¿½nster.
 */
     i = 1;
 
     while ( i < WTABSIZ  &&  wpwtab[i].ptr != NULL ) ++i;
 /*
-***Finns det någon ?
+***Finns det nï¿½gon ?
 */
     if ( i == WTABSIZ ) return(-2);
 /*
@@ -1174,20 +1184,18 @@ evloop:
         wpw_id WPwfpx(
         Window   x_id)
 
-/*      Letar upp id för föräldern till ett sub-
- *      fönster med visst X-id. Om fönstret med
- *      det angivna X-id:t är en förälder returneras
- *      ID för fönstret (föräldern) självt.
+/*      Letar upp id fï¿½r fï¿½rï¿½ldern till ett sub-
+ *      fï¿½nster med visst X-id. Om fï¿½nstret med
+ *      det angivna X-id:t ï¿½r en fï¿½rï¿½lder returneras
+ *      ID fï¿½r fï¿½nstret (fï¿½rï¿½ldern) sjï¿½lvt.
  *
- *      Denna rutin används av WPwwtw() för att avgöra
- *      om ett X-event har skett i det fönster som vi
- *      väntar på.
+ *      Denna rutin anvï¿½nds av WPwwtw() fï¿½r att avgï¿½ra
+ *      om ett X-event har skett i det fï¿½nster som vi
+ *      vï¿½ntar pï¿½.
  *
- *      In: x_id  = Subfönstrets X-id.
+ *      In: x_id  = Subwindow X-id.
  *
- *      Ut: Inget.   
- *
- *      FV: id för fönster eller -1.
+ *      Return: Window wpw_id or -1.
  *
  *      (C)microform ab 15/12/93 J. Kjellander
  *
@@ -1206,20 +1214,20 @@ evloop:
     WPICON  *icoptr;
 
 /*
-***Sök igenom hela wpwtab efter fönster.
+***Sï¿½k igenom hela wpwtab efter fï¿½nster.
 */
     for ( i=0; i<WTABSIZ; ++i)
       {
       if ( wpwtab[i].ptr != NULL )
         {
 /*
-***Vilken typ av fönster är det ?
+***Vilken typ av fï¿½nster ï¿½r det ?
 */
         switch ( wpwtab[i].typ )
           {
 /*
-***WPIWIN-fönster. Kolla fönstret självt och 
-***sök igenom alla sub-fönster.
+***WPIWIN-fï¿½nster. Kolla fï¿½nstret sjï¿½lvt och 
+***sï¿½k igenom alla sub-fï¿½nster.
 */
           case TYP_IWIN:
           iwinpt = (WPIWIN *)wpwtab[i].ptr;
@@ -1250,8 +1258,8 @@ evloop:
             }
           break;
 /*
-***WPLWIN-fönster. Kolla fönstret självt och 
-***sök igenom alla sub-fönster.
+***WPLWIN-fï¿½nster. Kolla fï¿½nstret sjï¿½lvt och 
+***sï¿½k igenom alla sub-fï¿½nster.
 */
           case TYP_LWIN:
           lwinpt = (WPLWIN *)wpwtab[i].ptr;
@@ -1272,14 +1280,16 @@ evloop:
             }
           break;
 /*
-***Grafiskt fönster.
+***Grafiskt fï¿½nster.
 */
           case TYP_GWIN:
           gwinpt = (WPGWIN *)wpwtab[i].ptr;
-          if ( gwinpt->id.x_id == x_id ) return((wpw_id)i);
+          if ( x_id == gwinpt->id.x_id ) return((wpw_id)i);
+          else if ( x_id == gwinpt->mcw_ptr->messcom_xid ) return((wpw_id)i);
+          else if ( x_id == gwinpt->mcw_ptr->resize_xid ) return((wpw_id)i);
           break;
 /*
-***OpenGL fönster.
+***OpenGL fï¿½nster.
 */
           case TYP_RWIN:
           rwinpt = (WPRWIN *)wpwtab[i].ptr;
@@ -1289,7 +1299,7 @@ evloop:
         }
      }
 /*
-***Ingen träff.
+***Ingen trï¿½ff.
 */
     return((wpw_id)-1);
   }
@@ -1300,10 +1310,10 @@ evloop:
         WPWIN *WPwgwp(
         wpw_id id)
 
-/*      Översätter id till C-pekare för motsvarande entry
+/*      ï¿½versï¿½tter id till C-pekare fï¿½r motsvarande entry
  *      i wpwtab.
  *
- *      In: id = Fönstrets entry i wpwtab.
+ *      In: id = Fï¿½nstrets entry i wpwtab.
  *
  *      Ut: Inget.
  *
@@ -1316,17 +1326,34 @@ evloop:
   {
 
 /*
-***Är det ett giltigt ID ?
+***ï¿½r det ett giltigt ID ?
 */
     if ( id < 0  ||  id >= WTABSIZ ) return(NULL);
 /*
-***Ja, returnera pekare om det finns någon.
+***Ja, returnera pekare om det finns nï¿½gon.
 */
     else
       {
       if ( wpwtab[id].ptr != NULL ) return(&wpwtab[id]);
       else return(NULL);
       }
+  }
+
+/********************************************************/
+/*!******************************************************/
+
+        void WPbell()
+
+/*      Rings a bell.
+ *
+ *      (C)2007-01-06 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+#ifdef UNIX
+    XBell(xdisp,100);
+#endif
   }
 
 /********************************************************/

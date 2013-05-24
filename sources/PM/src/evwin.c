@@ -14,6 +14,7 @@
 *    evcric();     Evaluerar CRE_ICON
 *    evcrfi();     Evaluerar CRE_FICON
 *    evgted();     Evaluerar GET_EDIT
+*    evuped();     Evaluerar UPD_EDIT
 *    evgtbu();     Evaluerar GET_BUT
 *    evgtwi();     Evaluerar GET_WIN
 *    evshwi();     Evaluerar SHOW_WIN
@@ -51,11 +52,11 @@ extern PMPARVA *func_pv;  /* Access structure for MBS routines */
 extern short    func_pc;  /* Number of actual parameters */
 extern PMLITVA *func_vp;  /* Pekare till resultat. */
 
-#ifdef V3_X11
+#ifdef UNIX
 #include <X11/Xlib.h>
 #endif
 
-#ifdef V3_X11
+#ifdef UNIX
 
 /*!******************************************************/
 
@@ -168,7 +169,7 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
 ***Om inte skicka 6.
 */
    if ( func_pc > 8 ) cb = (short)func_pv[9].par_va.lit.int_va;
-   else            cb = WP_BGND;
+   else            cb = WP_BGND2;
 /*
 ***Förgrundsfärg ? Parameter nummer 10.
 ***Om inte skicka 1.
@@ -391,6 +392,30 @@ extern PMLITVA *func_vp;  /* Pekare till resultat. */
    return(WPgted(func_pv[1].par_va.lit.int_va,
                  func_pv[2].par_va.lit.int_va,
                  func_vp->lit.str_va));
+}
+
+/********************************************************/
+/*!******************************************************/
+
+        short evuped()
+
+/*      Evaluerar UPD_EDIT.
+ *
+ *      In: Global  func_pv  => Parameter value array
+ *          Global *func_vp  => Pointer to result value.
+ *
+ *      Ut: Global *func_vp  =  Pointer to result value.
+ *
+ *      FV: FV: Returnerar anropade rutiners status. 
+ *
+ *      (C)2007-02-02 J.Kjellander
+ *
+ ******************************************************!*/
+
+{
+   return(WPuped(proc_pv[1].par_va.lit.int_va,
+                 proc_pv[2].par_va.lit.int_va,
+                 proc_pv[3].par_va.lit.str_va));
 }
 
 /********************************************************/

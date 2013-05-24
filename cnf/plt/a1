@@ -1,4 +1,0 @@
-! a1 = OCE och BENSON plottrar. Spooler = oce
- nice -19 /usr/v3/bin/be16 <
- | lp -doce -s &
- /usr/v3/job/test.PLT

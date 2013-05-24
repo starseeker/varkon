@@ -1,74 +1,69 @@
 
 ! Varkons standardmenyer
-! Senast uppdaterade för version 1.18B
-! Sören Larsson, Örebro universitet
+! Senast uppdaterade för version 1.19A
+! J.Kjellander
 !
 m2  = "HUVUDMENY-2D"
+      "arkiv",m5
       "skapa",m13
       "ändra",m15
-      "ta bort",m22
-      "variera",m34
+      "visa",m67
       "analys",m75
-      "grafik",m66
-      "nivåer",m65
-      "attribut",m14
-      "mbs",m58
-      "arkiv",m5;
+      "inställningar",m9
+      "hjälp",m22;
 
 m3  = "HUVUDMENY-3D"
+      "arkiv",m5
       "skapa",m11
       "ändra",m15
-      "ta bort",m22
-      "variera",m34
-      "analys",m75  
-      "grafik",m66 
-      "nivåer",m65
-      "attribut",m14
-      "mbs",m58
-      "arkiv",m5;
+      "visa",m67
+      "analys",m75
+      "inställningar",m9
+      "hjälp",m22;
 
 m4  = "RITMODUL"
+      "arkiv",m6
       "skapa",m13
       "redigera",m49
       "ta bort",m80
+      "visa",m67 
       "analys",m75  
-      "grafik",m66 
-      "nivåer",m65
-      "attribut",m14
-      "arkiv",m6;
+      "inställningar",m9
+      "hjälp",m22;
 
 m5  = "ARKIV"
       "öppna",m47
       "spara",f175
       "spara som",m45
-      "ta bort",f184
-      "projekt",m7
-      "skriv ut",m71
-      "inställningar",m8
+      "exportera",m24
+      "ta bort jobb",f184
       "macro",f152
       "kom till OS",f125
-      "sluta",m46;
+      "sluta",f123
+      "spara/sluta",f122;
 
 m6  = "ARKIV"
       "öppna",m47
       "spara",f175
       "spara som",m48
-      "ta bort",f184
-      "projekt",m7
-      "skriv ut",m71
+      "exportera",m24
+      "ta bort jobb",f184
       "macro",f152
       "kom till OS",f125
-      "sluta",m46;
+      "sluta",f123
+      "spara/sluta",f122;
 
 m7  = "PROJEKT"
       "byt projekt",f176
       "inställningar",f178
       "ta bort projekt",f179;
 
-m8  = "INSTÄLLNINGAR"
-      "attribut",f127
-      "skyddskod",f128;
-
+m9  = "INSTÄLLNINGAR"
+      "kurv-noggr",f98
+      "attribut",f16
+      "modul",f127
+      "projekt",m7;
+      
 m10 = "TCOPY"
       "translation",f239
       "rotation",f240
@@ -85,7 +80,8 @@ m11 = "SKAPA"
       "text",f50
       "tcopy",m10
       "grupp",f55
-      "parter",m43;
+      "part",f25
+      "importera",m43;
 
 m12 = "YTOR"
       "bplan",f26
@@ -109,7 +105,8 @@ m13 = "SKAPA"
       "måttsättning",m50
       "koordsystem",m25
       "grupp",f55
-      "parter",m39;
+      "part",f25
+      "importera",m39;
 
 m14 = "ATTRIBUT"
       "penna",f96
@@ -128,6 +125,10 @@ m15 = "ÄNDRA"
       "linjebredd",f185
       "attribut",m16
       "storhet",M117
+      "MBS-sats",f168
+      "MBS-part",f217
+      "kompilera alla",f220
+      "uppdatera part",f109
       "trimma",f6;
 
 m16 = "ATTRIBUT"
@@ -168,10 +169,9 @@ m21 = "KURVOR"
       "centrum",f166
       "strecklängd",f167;
 
-m22 = "TA BORT"
-      "en storhet",f10
-      "grupp",f13
-      "sista sats",f15;
+m22 = "HJÄLP"
+      "om Varkon",M184
+      "hjälp",f153;
 
 m23 = "TEXT"
       "vänster",f50
@@ -180,20 +180,19 @@ m23 = "TEXT"
       "2 positioner",M115;
 !      "font-editor",m93;
 
+m24 = "EXPORTERA"
+      "DXF-2D",f92
+      "DXF-3D",M398
+      "STL",M1625
+      "PLT",f151;
+
 m25 = "KOORDSYSTEM"
       "3 pos",f105
-      "pos/vinkel",f9
-      "aktivera",m27;
+      "pos/vinkel",f9;
 
 m26 = "KOORDSYSTEM"
       "3 pos",f104
-      "pos/vinklar",f14
-      "aktivera",m27;
-
-m27 = "AKTIVERA"
-      "lokalt",f106
-      "globala",f107
-      "basic",f177;
+      "pos/vinklar",f14;
 
 m30 = "LÄNGDMÅTT"
       "horisontellt",f30
@@ -218,35 +217,10 @@ m33 = "DIAMETERMÅTT"
       "vertikalt",f34
       "parallellt",f35;
 
-m34 = "VARIERA"
-      "part",m35
-      "aktiv modul",m36;
-
-m35 = "PART"
-      "ändra",f170
-      "uppdatera",f109;
-
-m36 = "AKTIV MODUL"
-      "parametrar",m37
-      "lista",m38
-      "editera",f168
-      "kör",f5;
-
-m37 = "PARAMETRAR"
-      "skapa",f2
-      "ändra",f3
-      "lista",f4;
-
-m38 = "LISTA MODUL"
-      "skärm",f146
-      "fil",f144;
-
-m39 = "PARTER"
-      "lägg till",f25
-      "temporär",f8
+m39 = "IMPORT-2D"
       "iges",p1624
-      "dxf",m44
-      "plotfil",m52;
+      "dxf",p388
+      "plotfile",f145;
 
 m40 = "LINJE"
       "2f två pos",f22
@@ -271,16 +245,10 @@ m42 = "LINJER"
       "centrum",f48
       "strecklängd",f49;
 
-m43 = "PARTER"
-      "lägg till",f25
-      "temporär",f8
+m43 = "IMPORT-3D"
       "iges",p1624
-      "dxf",m53
-      "stl",m87;
-
-m44 = "DXF-2D"
-      "läs in",p388
-      "skriv ut",f92;
+      "dxf",p389
+      "stl",p1623;
 
 m45 = "SPARA SOM"
       "alla filer",f201
@@ -288,10 +256,6 @@ m45 = "SPARA SOM"
       "MBO-fil",f126
       "MBS-fil",f144
       "RES-fil",f121;
-
-m46 = "SLUTA"
-      "allt lagras",f122
-      "inget lagras",f123;
 
 m47 = "ÖPPNA"
       "lagra först",f124
@@ -325,15 +289,6 @@ m51 = "TEXTER"
       "typsnitt",f172
       "tpmode",f227;
 
-m52 = "PLOTFIL"
-      "läs in",f145
-      "skriv ut",f151;
-
-m53 = "DXF-3D"
-      "läs in",p389
-      "2D-skriv ut",f92
-      "3D-skriv ut",M398;
-
 m55 = "CIRKELBÅGE"
       "1 pos/vinklar",f56
       "2 pos/radie",f57
@@ -353,15 +308,6 @@ m57 = "CIRKLAR"
       "streckade",f67
       "centrum",f68
       "strecklängd",f69;
-
-m58 = "MBS"
-      "aktiv modul",f216
-      "part",m59;
-
-m59 = "PART"
-      "editera",f217
-      "uppdatera",f109
-      "kompilera alla",f220;
 
 m60 = "KURVOR"
       "spline",m89
@@ -395,58 +341,18 @@ m64 = "CHORD LENGTH"
       "med tang.",f71
       "utan tang.",f156;
 
-m65 = "NIVÅER"
-      "byt aktiv",f90
-      "nivånamn",m88;
-
-m66 = "GRAFIK"
-      "vyer",m67 
-      "raster",m69 
-      "plottning",m71
-      "diverse",m72;
-
-m67 = "VYER"
-      "skapa vy",m70
-      "ta bort vy",f112
-      "lista vyer",f113
-      "nytt fönster",f196
-      "skuggning",m85
-      "dolda kont",m62;
-
-m68 = "SKÄRMLAYOUT"
-      "pos-menyn",m73;
-
-m69 = "RASTER"
-      "läge",f16
-      "x-delning",f17
-      "y-delning",f18
-      "tänd raster",f114
-      "släck raster",f115;
-
-m70 = "SKAPA VY"
-      "betr. pos.",f111
-      "koord.sys.",f99
-      "8 vyer",M112;
-
-m71 = "PLOTTNING"
-      "skapa plotfil",f151
-      "plotta",f150;
-
-m72 = "DIV"
-      "kurv-noggr",f98
-      "skärmlayout",m68 
+m67 = "VISA"
+      "skapa färg",M1658
       "allt pekbart",f215
-      "ritningsskala",f108;
-
-m73 = "POS-MENYN"
-      "på",f118
-      "av",f117;
+      "X11-fönster",f196
+      "OpenGL-fönster",f200
+      "dolda kont",m62;
 
 m75 = "ANALYS"
       "formel",M393
       "geometri",m76 
       "part/grupp",m79
-      "status",m78 
+      "jobbstatus",M368
       "systemdata",m77;
 
 m76 = "GEOMETRI"
@@ -462,13 +368,7 @@ m76 = "GEOMETRI"
 m77 = "SYSTEMDATA"
       "gm-data",f140
       "pm-data",f139
-      "systemdata",M184
       "övrigt",m95;
-
-m78 = "STATUS"
-      "jobb",M368
-      "grafik",M369
-      "attribut",M370;
 
 m79 = "PART/GRUPP"
       "en part",M379
@@ -510,25 +410,10 @@ m84 = "KÄGELSNITT"
       "fri",f161
       "projicerad",f162;
 
-m85 = "SKUGGNING"
-      "snabb",f198
-      "mjuk",f199
-      "dynamisk",f200
-      "kurv-noggr",f98;
-
 m86 = "YTA"
       "2D-area",M416
       "kurva",M1591
       "yta",M1589;
-
-m87 = "STL"
-      "läs in",p1623
-      "skriv ut",M1625;
-
-m88 = "NIVÅNAMN"
-      "skapa",f93
-      "ta bort",f95
-      "lista",f94;
 
 m89 = "SPLINE"
       "ferguson",m63

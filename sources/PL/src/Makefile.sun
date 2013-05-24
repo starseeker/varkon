@@ -13,10 +13,8 @@ CC = gcc
 distr :     CFLAGS =                    \
             -ffloat-store               \
             -fsigned-char               \
-            -fwritable-strings          \
             -O                          \
-            -DUNIX                      \
-            -DWRK_STAT
+            -DUNIX
 
 COMPILE = $(CC) $(CFLAGS)
 

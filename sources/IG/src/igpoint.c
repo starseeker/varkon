@@ -4,11 +4,11 @@
 /*                                                                  */
 /*  This file includes:                                             */
 /*                                                                  */
-/*  pofrpm();     Generate poi_free.. statement                     */
-/*  poprpm();     Generate poi_proj.. statement                     */
+/*  IGpofr();     Generate poi_free.. statement                     */
+/*  IGpopr();     Generate poi_proj.. statement                     */
 /*                                                                  */
 /*  This file is part of the VARKON IG Library.                     */
-/*  URL:  http://www.varkon.com                                     */
+/*  URL:  http://www.tech.oru.se/cad/varkon                         */
 /*                                                                  */
 /*  This library is free software; you can redistribute it and/or   */
 /*  modify it under the terms of the GNU Library General Public     */
@@ -27,8 +27,6 @@
 /*  Free Software Foundation, Inc., 675 Mass Ave, Cambridge,        */
 /*  MA 02139, USA.                                                  */
 /*                                                                  */
-/*  (C)Microform AB 1984-1999, Johan Kjellander, johan@microform.se */
-/*                                                                  */
 /********************************************************************/
 
 #include "../../DB/include/DB.h"
@@ -39,7 +37,7 @@ static short poipm(char *typ);
 
 /*!******************************************************/
 
-       short pofrpm()
+       short IGpofr()
 
 /*      Genererar poi_free... sats
  *
@@ -64,7 +62,7 @@ static short poipm(char *typ);
 /********************************************************/
 /*!******************************************************/
 
-       short poprpm()
+       short IGpopr()
 
 /*      Genererar poi_proj... sats
  *
@@ -104,10 +102,10 @@ static short poipm(char *typ);
  *      (C)microform ab 10/1/85 J. Kjellander
  *
  *      2/7/85   Felhantering, B. Doverud
- *      4/9/85   Anrop till igcges(), B. Doverud
+ *      4/9/85   Anrop till IGcges(), B. Doverud
  *      19/11/85 Slagit ihop free och proj, J. Kjellander
  *      20/3/86  Anrop pmtcon, B. Doverud
- *      23/3/86  genpos(pnr, B. Doverud
+ *      23/3/86  IGcpos(pnr, B. Doverud
  *      24/3/86  Felutgång, B. Doverud
  *      3/10/86  GOMAIN, J. Kjellander
  *
@@ -122,7 +120,7 @@ static short poipm(char *typ);
 ***Skapa position.
 */
 start:
-    if ( (status=genpos(264,&exnpt)) < 0 ) goto end;
+    if ( (status=IGcpos(264,&exnpt)) < 0 ) goto end;
 /*
 ***Skapa listan med obligatoriska parametrar.
 */
@@ -130,7 +128,7 @@ start:
 /*
 ***Skapa, interpretera och länka in satsen i modulen.
 */
-    if ( igcges(typ,valparam) < 0 ) goto error;
+    if ( IGcges(typ,valparam) < 0 ) goto error;
 
     WPerhg();
     goto start;

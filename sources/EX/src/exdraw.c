@@ -391,7 +391,7 @@ extern DBTmat *lsyspk;
 /********************************************************/
 /*!******************************************************/
 
-        short EXdren(
+        short   EXdren(
         DBptr   la,
         DBetype typ,
         bool    draw,
@@ -421,21 +421,23 @@ extern DBTmat *lsyspk;
  *      1996-12-17 WIN32, J.Kjellander
  *      2004-07-09 Mesh, J.Kjellander
  *      2006-12-09 Removed gpxxxx() calls, J.Kjellander
+ *      2007-01-08 piso, pborder,  Sören L
  *
  ******************************************************!*/
 
   {
-    DBptr    la_tmp;
-    short    i;
-    char     str[V3STRLEN+1];
-    DBfloat  crdvek[4*GMXMXL];
-    DBAny    gmpost;
-    DBSeg    arcseg[4];
-    DBSeg   *graseg;
-    DBSeg   *sptarr[6];
-    DBTmat   pmat;
-    DBHeader hed;
-    DBPart   part;
+    DBptr     la_tmp;
+    short     i;
+    char      str[V3STRLEN+1];
+    DBfloat   crdvek[4*GMXMXL];
+    DBAny     gmpost;
+    DBSeg     arcseg[4];
+    DBSeg    *graseg;
+/*    DBTmat    pmat;  */
+    DBHeader  hed;
+    DBPart    part;
+    DBSegarr *pborder;
+    DBSegarr *piso; 
 
 /*
 ***Read entity data from DB and draw or delete.
@@ -476,14 +478,18 @@ extern DBTmat *lsyspk;
       DBfree_segments(graseg);
       break;
 /*
-***Surface.
+***Surface. If the surface is blanked, it has no graphical
+***representation that can be read from DB or free'd.
 */
       case SURTYP:
       DBread_surface((DBSurf *)&gmpost.sur_un,la);
-      DBread_sur_grwire((DBSurf *)&gmpost,sptarr);
-      if ( draw ) WPdrsu(&gmpost.sur_un,sptarr,la,win_id);
-      else        WPdlsu(&gmpost.sur_un,sptarr,la,win_id);
-      DBfree_sur_grwire(sptarr);
+      if ( !gmpost.hed_un.blank )
+        {
+        DBread_sur_grwire((DBSurf *)&gmpost.sur_un,&pborder,&piso);
+        if ( draw ) WPdrsu(&gmpost.sur_un,pborder,piso,la,win_id);
+        else        WPdlsu(&gmpost.sur_un,pborder,piso,la,win_id);
+        DBfree_sur_grwire((DBSurf *)&gmpost,pborder,piso);
+        }
       break;
 /*
 ***Text.
@@ -607,7 +613,7 @@ extern DBTmat *lsyspk;
  {
     DBId    dummy;
     DBptr   la;
-    DBetype   typ;
+    DBetype typ;
 
 /*
 ***Hämta LA och typ för huvud-parten.
@@ -618,12 +624,6 @@ extern DBTmat *lsyspk;
 */
     while ( DBget_pointer('N',&dummy,&la,&typ) == 0 )
       {
-      if ( intrup ) return(igwtma(168));
-
-#ifdef UNIX
-      if ( WPintr() ) return(igwtma(168));
-#endif
-
       switch(typ)
         {
         case PRTTYP:

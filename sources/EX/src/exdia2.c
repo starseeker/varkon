@@ -30,7 +30,7 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#ifdef V3_X11
+#ifdef UNIX
 #include "../../WP/include/WP.h"
 #endif
 #include "../include/EX.h"
@@ -69,15 +69,28 @@ extern int msilse();
  *
  *      (C)microform ab 10/11/88 J. Kjellander
  *
+ *      2007-01-05 Removed GP, J.Kjellander
+ *
  ******************************************************!*/
 
   {
-    short fwdth;
+    short ml[1],as;
+    int   typarr[1];
+    char *pmtarr[1];
+    char *dstarr[1];
+    char *istarr[1];
 
-    if ( ntkn == 0 ) fwdth = V3STRLEN;
-    else fwdth = ntkn;
+    if ( ntkn == 0 ) ml[0] = V3STRLEN;
+    else ml[0] = ntkn;
 
-    igglin(pmt,dstr,&fwdth,istr);
+    /*igglin(pmt,dstr,&fwdth,istr);*/
+
+    pmtarr[0] = pmt;
+    dstarr[0] = dstr;
+    istarr[0] = istr;
+    typarr[0] = C_STR_VA;
+    as = 1;
+    WPmsip("",pmtarr,dstarr,istarr,ml,typarr,as);
 
     return(0);
   }
@@ -120,8 +133,8 @@ extern int msilse();
 /*
 ***Dialogbox.
 */
-#ifdef V3_X11
-   status = WPilse(20,20,pmt,dstr,pekarr,-1,nfiles,name);
+#ifdef UNIX
+   status = WPilse(pmt,dstr,pekarr,-1,nfiles,name);
 #endif
 #ifdef WIN32
    status = (short)msilse(20,20,pmt,dstr,pekarr,-1,nfiles,name);

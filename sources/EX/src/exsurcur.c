@@ -170,10 +170,10 @@ fflush(dbgfil(EXEPAC));
      {
      if ( DBget_pointer('I',(pVlines+i),&la,&typ) < 0 ) 
              return(erpush("EX1402",""));
-     igidst((pVlines+i),errbuf); /* Temporary for Debug */
+     IGidst((pVlines+i),errbuf); /* Temporary for Debug */
      if ( typ != CURTYP )
        {
-       igidst((pVlines+i),errbuf);
+       IGidst((pVlines+i),errbuf);
        return(erpush("EX1412",errbuf));
        }
      DBread_curve(&cur[i],NULL,&seg[i],la);
@@ -202,7 +202,7 @@ fflush(dbgfil(EXEPAC));
 /*                                                                 !*/
 
 
-   status = EXesur(sur_id,&sur,p_pat,pnp);
+   status = EXesur(sur_id,&sur,p_pat,NULL,NULL,pnp);
    if (status<0) 
      {
      sprintf(errbuf,"EXesur%%EXscur");
@@ -243,8 +243,6 @@ error2:
 /* Call of function DBfree_segments.                                */
 /*                                                                  */
    for ( i=0; i<nv_cur; ++i ) DBfree_segments(seg[i]);
-
-
 
 
 #ifdef DEBUG

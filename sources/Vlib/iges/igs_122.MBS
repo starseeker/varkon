@@ -25,18 +25,21 @@
 !*          status = 0 => Ok
 !*                  -1 => Error
 !*
-!*      (c)2006-09-13, Sï¿½en Larsson, Örebro university
+!*      (c)2006-09-13, Sören Larsson, Örebro university
+!*
 !*         2006-09-22, Mohamed Rahayem, Örebro university
+!*         2007-02-18, NURBS, J.Kjellander
+!*
 !***************************************************************
 
-   INT    i,rownumber,pd;
+   INT    i,rownumber,pd,enttyp,dummy;
    STRING row*132,row1*132,row2*132;
-   FLOAT  f;
-   FLOAT  x(6);
+   FLOAT  f,offset;
+   FLOAT  x(6),segdata(4,4);
    INT    DE;                       ! pointer to DE section.
    VECTOR L;                        ! position of terminate point of the generatix.
-   INT    curtyp;
-   REF    DE_ref,csysid; 
+   INT    curtyp,segtyp;
+   REF    DE_ref,csysid,groups(3); 
    
  BEGINMODULE
  
@@ -69,17 +72,29 @@
 !*    
    csys_1p(#14,"LOCAL",vec(0,0,0),0,0,0:BLANK=1);    
    csysid:=#14;        
-   part(#7,igs_curve(infile,logfile,row1,row2,ds_ptr,ps_ptr,rowlgt,DE_ref,status),csysid:SAVE=1,BLANK=1); 
+   part(#7,igs_curve(infile,logfile,row1,row2,ds_ptr,ps_ptr,rowlgt,DE_ref,status),csysid:SAVE=1,BLANK=1);
+!*
+!***If the curve is NURBS, approximate with cubic.
+!*
+   gethdr(DE_ref, enttyp, dummy, dummy, dummy, dummy, groups);
+   
+   IF enttyp = 8 then
+     getseg(DE_ref,1,0,segdata,offset,segtyp);
+     IF segtyp = 3 then
+       cur_approx(#13,DE_ref, "CUBIC", 1, 4:SAVE=1);
+       DE_ref:=#13;
+     ENDIF;   
+   ENDIF;
 !*
 !***Copy the curve along the generatrix. 
 !*    
    tform_move(#11, on(DE_ref,0), L:SAVE=1);
-   tcopy(#12, DE_ref, #11:SAVE=1,BLANK=1);
+   tcopy(#15, DE_ref, #11:SAVE=1,BLANK=1);
 !*
 !***Create the surface.
-!*    
-   sur_ruled(#13, DE_ref, #12);
-   id_ent:=global_ref(#13);   
+!*
+   sur_ruled(#16, DE_ref, #15);
+   id_ent:=global_ref(#16);   
 !*
 !***End.
 !*

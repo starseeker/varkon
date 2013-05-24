@@ -47,6 +47,7 @@
 /*  1997-05-12   Debug                                              */
 /*  1997-12-19   Center of gravity sur680                           */
 /*  1999-12-18   Free source code modifications                     */
+/*  2007-01-10   call to varkon_ini_gmsur(), Sören L                */
 /*                                                                  */
 /******************************************************************!*/
 
@@ -195,6 +196,13 @@ fflush(dbgfil(SURPAC));
 #endif
       return(status);
       }
+
+/*!                                                                 */
+/* Initialize surface data in p_sur.                                */
+/* Call of varkon_ini_gmsur (sur769).                               */
+/*                                                                 !*/
+    varkon_ini_gmsur (p_surout);
+
 
 /*!                                                                 */
 /* 2. Sweeping direction                                            */

@@ -27,9 +27,7 @@
 */
 #ifdef UNIX
 #include <X11/Xresource.h>
-#ifdef V3_OPENGL
 #include <GL/gl.h>
-#endif
 #include "wpdef.h"
 #endif
 
@@ -59,11 +57,11 @@
 /*
 ***Common globals for X.
 */
-#ifdef V3_X11
+#ifdef UNIX
 extern Display     *xdisp;
 extern GC           xgc;
 extern int          xscr;
-extern Cursor       xgcur1,xgcur2,xwcur,xtcur;
+extern Cursor       xgcur1,xgcur2,xgcur3,xwcur;
 extern XrmDatabase  xresDB;
 #endif
 
@@ -86,10 +84,10 @@ extern WPWIN    *mswgwp(wpw_id);
 
 #define MAXMETA  1000        /* Max ant tecken i en metafilpost */
 
-#define TYPLEN   4           /* Typfältets längd */
-#define DATLEN   6           /* Datafältets längd */
-#define INTLEN   6           /* Ett heltalsfälts längd */
-#define FLTLEN   10          /* Ett flyttalsfälts längd */
+#define TYPLEN   4           /* Typfï¿½ltets lï¿½ngd */
+#define DATLEN   6           /* Datafï¿½ltets lï¿½ngd */
+#define INTLEN   6           /* Ett heltalsfï¿½lts lï¿½ngd */
+#define FLTLEN   10          /* Ett flyttalsfï¿½lts lï¿½ngd */
 
 #define ENDITEM      0       /* End of metafile */
 #define CLEARITEM    1       /* Clear workstation */
@@ -102,14 +100,14 @@ extern WPWIN    *mswgwp(wpw_id);
 typedef struct metadef
 {
     int pennr;               /* Aktuell penna */   
-    int datlen;              /* Datafältets längd */
-    int typlen;              /* Typfältets längd */
-    int fltlen;              /* Ett flyttalsfälts längd */
-    int intlen;              /* Ett heltalsfälts längd */
-    char formtyp[ 16 ];      /* Formatsträng för typfält */
-    char formdat[ 16 ];      /* Formatsträng för datafält */
-    char formint[ 16 ];      /* Formatsträng för heltalsfält */
-    char formflt[ 16 ];      /* Formatsträng för flyttalsfält */
+    int datlen;              /* Datafï¿½ltets lï¿½ngd */
+    int typlen;              /* Typfï¿½ltets lï¿½ngd */
+    int fltlen;              /* Ett flyttalsfï¿½lts lï¿½ngd */
+    int intlen;              /* Ett heltalsfï¿½lts lï¿½ngd */
+    char formtyp[ 16 ];      /* Formatstrï¿½ng fï¿½r typfï¿½lt */
+    char formdat[ 16 ];      /* Formatstrï¿½ng fï¿½r datafï¿½lt */
+    char formint[ 16 ];      /* Formatstrï¿½ng fï¿½r heltalsfï¿½lt */
+    char formflt[ 16 ];      /* Formatstrï¿½ng fï¿½r flyttalsfï¿½lt */
 } METADEF;
 
 /*
@@ -118,17 +116,15 @@ typedef struct metadef
 ***but some are used also in the WIN32 version. A few
 ***of routines are only used with OpenGL.
 */
-#ifdef V3_X11
+#ifdef UNIX
 /*
-***WPinit.c
+***wpinit.c
 */
 short WPinit(char *if1, char *if2);
 short WPexit();
 short WPclrg();
-short WPsvjb(FILE *jf);
-short WPldjb(FILE *jf);
 int   WPngws();
-short WPcgws(bool create);
+short WPcgws();
 short WPmrdb(int *ac, char *av[]);
 short WPgtwi(DBint id, int *x, int *y, int *dx, int *dy, int *typ, char *r);
 short WPgtwp(Window w, int *x, int *y);
@@ -136,6 +132,13 @@ short WPgwsz(Window w, int *px, int *py, int *dx, int *dy,
              double *xm, double *ym);
 short WPsdpr(Window w);
 bool  WPgrst(char *resnam, char *resval);
+
+/*
+***wpjob.c
+*/
+short WPsave_job(FILE *jf);
+short WPload_WPGWIN(FILE *jf);
+short WPload_WPRWIN(FILE *jf);
 
 /*
 ***wpLWIN.c
@@ -150,29 +153,24 @@ bool  WPcmlw(WPLWIN *lwinpt, XClientMessageEvent *clmev);
 short WPdllw(WPLWIN *lwinpt);
 
 /*
-***wpfontcol.c
+***wpfont.c
 */
 short         WPfini();
 short         WPgfnr(char *fntnam);
 XFontStruct  *WPgfnt(short fntnum);
 short         WPsfnt(short fntnum);
-short         WPcini();
-short         WPccol(int pen, int red, int green, int blue);
-unsigned long WPgcol(short colnum);
-short         WPgrgb(short colnum, XColor *rgb);
 int           WPstrl(char *fstring);
 short         WPgtsl(char *str, char *font, int *plen);
 int           WPstrh();
 short         WPgtsh(char *font, int *phgt);
 int           WPftpy(int dy);
 short         WPwstr(Window wid, int x, int y, char *s);
-short         WPmaps(char *s);
 short         WPdivs(char text[], int  maxpix, int *tdx, int *tdy,
                      char str1[], char str2[]);
 short         WPd3db(char *winptr, int wintyp);
 
 /*
-***WPwait.c
+***wpwait.c
 */
 bool  WPintr();
 short WPlset(bool set);
@@ -194,12 +192,11 @@ short WPkepf(XKeyEvent *keyev);
 /*
 ***wpmenu.c
 */
-short WPmini();
-short WPpamu(MNUDAT *meny);
-short WPwcmw(short x, short y, short dx, short dy, char *label, DBint *id);
-short WPrcmw();
-bool  WPifae(XEvent *event, MNUALT **altptr);
-void  WPfomw();
+short WPinit_menu();
+short WPactivate_menu(MNUDAT *meny);
+short WPupdate_menu();
+bool  WPmenu_button(XEvent *event, MNUALT **altptr);
+void  WPfocus_menu();
 
 /*
 ***wpgetstr.c
@@ -211,23 +208,21 @@ short WPmsip(char *dps, char *ips[], char *ds[], char *is[], short maxtkn[],
 ***wpgetalt.c
 */
 bool  WPialt(char *ps, char *ts, char *fs, bool pip);
-short WPilst(int x, int y, char *rubrik, char *strlst[], int actalt,
-             int nstr, int *palt);
-short WPilse(int x, int y, char *rubrik, char *defstr, char *strlst[],
+short WPilse(char *rubrik, char *defstr, char *strlst[],
              int actalt, int nstr, char *altstr);
+short WPselect_partname(int source, char *namlst[], int nstr, char *name);
 
 /*
-***wpRWIN.c
+***wpgetpos.c
 */
-short WPrenw();
-short WPwcrw(short x, short y, short dx, short dy, char *label, DBint *id);
-bool  WPbtrw(WPRWIN *rwinpt, XButtonEvent *butev, wpw_id *serv_id);
-bool  WPxprw(WPRWIN *rwinpt, XExposeEvent *expev);
-bool  WPcrrw(WPRWIN *rwinpt, XCrossingEvent *croev);
-bool  WPcorw(WPRWIN *rwinpt, XConfigureEvent *conev);
-bool  WPcmrw(WPRWIN *rwinpt, XClientMessageEvent *clmev);
-short WPdlrw(WPRWIN *rwinpt);
-short WPuact(WPRWIN *rwinpt, GLfloat active_view_matrix[]);
+short WPgtmp(int *px, int *py);
+short WPgmc2(bool mark, char *pektkn, double *px, double *py, wpw_id *grw_id);
+short WPgmc3(bool mark, char *pektkn, DBVector *pout, wpw_id *grw_id);
+short WPgtsc(bool mark, char *pektkn, short *pix, short *piy,
+             wpw_id *win_id);
+short WPgtsw(wpw_id  *grw_id, int *pix1, int *piy1, int *pix2,
+             int *piy2, int mode, bool prompt);
+short WPneww();
 
 /*
 ***wpw.c
@@ -249,6 +244,7 @@ short   WPwexi();
 wpw_id  WPwffi();
 wpw_id  WPwfpx(Window x_id);
 WPWIN  *WPwgwp(wpw_id id);
+void    WPbell();
 
 /*
 ***wpIWIN.c
@@ -273,6 +269,7 @@ short WPwcbu(Window px_id, short x, short y, short dx, short dy, short bw,
              char *str1, char *str2, char *fstr, short cb, short cf,
              WPBUTT **outptr);
 bool  WPxpbu(WPBUTT *butptr);
+void  WPscbu(WPBUTT *butptr, int color);
 bool  WPbtbu(WPBUTT *butptr);
 bool  WPcrbu(WPBUTT *butptr, bool enter);
 short WPgtbu(DBint iwin_id, DBint butt_id, DBint *status);
@@ -283,19 +280,20 @@ unsigned long WPgcbu(wpw_id p_id, int colnum);
 /*
 ***wpEDIT.c
 */
-short WPmced(wpw_id pid, short x, short y, short dx, short dy,
-             short bw, char *str, short ntkn, DBint *eid);
-short WPwced(Window px_id, short x, short y, short dx, short dy,
-             short bw, char *str, short ntkn, WPEDIT **outptr);
-bool  WPxped(WPEDIT *edtptr);
-bool  WPbted(WPEDIT *edtptr, XButtonEvent *butev);
-bool  WPcred(WPEDIT *edtptr, XCrossingEvent *croev);
-bool  WPkeed(WPEDIT *edtptr, XKeyEvent *keyev, int slevel);
-short WPgted(DBint iwin_id, DBint edit_id, char *str);
-short WPuped(WPEDIT *edtptr, char *newstr);
-short WPdled(WPEDIT *edtptr);
+short   WPmced(wpw_id pid, short x, short y, short dx, short dy,
+               short bw, char *str, short ntkn, DBint *eid);
+short   WPwced(Window px_id, short x, short y, short dx, short dy,
+               short bw, char *str, short ntkn, WPEDIT **outptr);
+bool    WPxped(WPEDIT *edtptr);
+bool    WPbted(WPEDIT *edtptr, XButtonEvent *butev);
+bool    WPcred(WPEDIT *edtptr, bool enter);
+bool    WPkeed(WPEDIT *edtptr, XKeyEvent *keyev, int slevel);
+short   WPgted(DBint iwin_id, DBint edit_id, char *str);
+short   WPuped(DBint iwin_id, DBint edit_id, char *newstr);
+short   WPdled(WPEDIT *edtptr);
 WPEDIT *WPffoc(WPIWIN *iwinptr, int code);
-short WPfoed(WPEDIT *edtptr, bool mode);
+short   WPfoed(WPEDIT *edtptr, bool mode);
+void    WPmap_key(XKeyEvent *keyev,  short *sym, char *t);
 
 /*
 ***wpICON.c
@@ -315,53 +313,68 @@ short WPdlic(WPICON *icoptr);
 /*
 ***wpGWIN.c
 */
-short WPwcgw(short x, short y, short dx, short dy, char *label,
-             bool main, DBint *id);
-short WPnrgw(WPGWIN *gwinpt);
-bool  WPxpgw(WPGWIN *gwinpt, XExposeEvent *expev);
-bool  WPcrgw(WPGWIN *gwinpt, XCrossingEvent *croev);
-bool  WPbtgw(WPGWIN *gwinpt, XButtonEvent *butev, wpw_id *serv_id);
-bool  WPrpgw(WPGWIN *gwinpt, XReparentEvent *repev);
-bool  WPcogw(WPGWIN *gwinpt, XConfigureEvent *conev);
-bool  WPcmgw(WPGWIN *gwinpt, XClientMessageEvent *clmev);
-short WPergw(DBint win_id);
-short WPrepa(DBint win_id);
-short WPdlgw(WPGWIN *gwinpt);
+short   WPwcgw(short x, short y, short dx, short dy, char *label,
+               bool main, DBint *id);
+short   WPnrgw(WPGWIN *gwinpt);
+bool    WPxpgw(WPGWIN *gwinpt, XExposeEvent *expev);
+bool    WPcrgw(WPGWIN *gwinpt, XCrossingEvent *croev);
+bool    WPbtgw(WPGWIN *gwinpt, XButtonEvent *butev, wpw_id *serv_id);
+bool    WPrpgw(WPGWIN *gwinpt, XReparentEvent *repev);
+bool    WPcogw(WPGWIN *gwinpt, XConfigureEvent *conev);
+bool    WPcmgw(WPGWIN *gwinpt, XClientMessageEvent *clmev);
+short   WPergw(DBint win_id);
+short   WPrepaint_GWIN(DBint win_id);
+short   WPdlgw(WPGWIN *gwinpt);
 WPGWIN *WPggwp(Window x_id);
 
 /*
-***wpview1.c
+***wpRWIN.c
 */
-short WPgtmp(int *px, int *py);
-short WPgtmc(char *pektkn, double *px, double *py, bool mark);
-short WPgmc3(char *pektkn, DBVector *pout, bool mark);
-short WPgtsc(bool mark, char *pektkn, short *pix, short *piy,
-             wpw_id *win_id);
-short WPgtsw(WPGWIN **gwinptp, int *pix1, int *piy1, int *pix2,
-             int *piy2, int mode, bool prompt);
-short WPneww();
-short WPzoom(WPGWIN *gwinpt1);
-short WPiaut(WPGWIN *gwinpt);
-short WPmaut(DBint win_id);
-short WPchvi(WPGWIN *gwinpt, int x, int y);
-short WPnivs(WPGWIN *gwinpt, int x, int y);
-short WPitsl(WPGWIN *gwinpt, int x, int y, int mode);
-short WPmtsl(DBint win_id, int first, int last, int mode);
+short   WPrenw();
+short   WPwcrw(int x, int y, int dx, int dy, char *label, DBint *id);
+bool    WPbtrw(WPRWIN *rwinpt, XButtonEvent *butev, wpw_id *serv_id);
+bool    WPxprw(WPRWIN *rwinpt, XExposeEvent *expev);
+bool    WPcrrw(WPRWIN *rwinpt, XCrossingEvent *croev);
+bool    WPcorw(WPRWIN *rwinpt, XConfigureEvent *conev);
+bool    WPcmrw(WPRWIN *rwinpt, XClientMessageEvent *clmev);
+void    WPrepaint_RWIN(DBint win_id, bool resize);
+short   WPerrw(DBint win_id);
+short   WPdlrw(WPRWIN *rwinpt);
+WPRWIN *WPgrwp(Window x_id);
+
+/*
+***wpviews.c
+*/
+short WPinit_views();
+short WPview_dialogue(DBint grw_id);
+short WPcreate_view(WPVIEW *view, int status);
+short WPcampos_to_matrix(DBVector *campos, VYTRF *matrix);
+short WPreload_view(DBint win_id);
+short WPactivate_view(char name[], WPGWIN *gwinpt, WPRWIN *rwinpt, int wintype);
+short WPdelete_view(char name[]);
 short WPgtvi(DBint win_id, char *vynamn, double *skala, double *xmin,
              double *ymin, double *xmax, double *ymax, DBTmat *vymat,
              double *persp);
-void WPset_cacc(double newcacc);
-void WPget_cacc(double *caccpt);
 
 /*
-***wpview2.c
+***wplevels.c
 */
+short WPlevels_dialogue(DBint grw_id);
+short WPmtsl(DBint win_id, int first, int last, int mode);
+bool  WPnivt(unsigned char *lvltab, int level);
+
+/*
+***wpzoom.c
+*/
+short WPzoom();
+short WPiaut(WPGWIN *gwinpt, WPRWIN *rwinpt, int wintype);
+short WPmaut(DBint win_id);
+short WPauto_modwin(WPGWIN *gwinpt, VYWIN *minwin);
 short WPlstv(WPGWIN *gwinpt);
 short WPperp(WPGWIN *gwinpt, int x, int y);
 short WPcent(WPGWIN *gwinpt);
 short WPscle(WPGWIN *gwinpt, int x, int y);
-short WPacvi(char name[], DBint win_id);
-short WPupvi(char *name, VY *newwin);
+short WPupvi(char *name, WPVIEW *newwin);
 short WPuppr(char *name, double dist);
 
 #endif
@@ -369,12 +382,10 @@ short WPuppr(char *name, double dist);
 /*
 ***wpplylin.c
 */
-bool  WPnivt(WPGWIN *gwinpt, short level);
-short WPspen(short pen);
 short WPswdt(wpw_id win_id, double width);
-short WPmsiz(WPGWIN *gwinpt, VY *pminvy);
-short WPclin(WPGWIN *gwinpt, WPGRPT *pt1, WPGRPT *pt2);
-bool  WPcply(WPGWIN  *gwinpt, int kmin, int *kmax, double x[],
+short WPmsiz(WPGWIN *gwinpt, WPVIEW *pminvy);
+short WPclin(VYWIN *clipwin, WPGRPT *pt1, WPGRPT *pt2);
+bool  WPcply(VYWIN *clipwin, int kmin, int *kmax, double x[],
              double y[], char a[]);
 short WPpply(WPGWIN *gwinpt, int k, double x[], double y[], double z[]);
 short WPdply(WPGWIN *gwinpt, int k, double x[], double y[],
@@ -385,26 +396,31 @@ short WPepmk(DBint win_id);
 short WPdpmk(WPGWIN *gwinpt, int ix, int iy, bool draw);
 bool  WPppos(WPGWIN *gwinpt, DBVector *po, WPGRPT *pt);
 bool  WPcpos(WPGWIN *gwinpt, WPGRPT *pt);
+void  WPset_cacc(double newcacc);
+void  WPget_cacc(double *caccpt);
 
-#ifdef V3_X11
+#ifdef UNIX
 short WPscur(int win_id, bool set, Cursor cursor);
 #endif
 
 /*
 ***wpDF.c
 */
+DBptr WPgtlarw(WPRWIN *rwinpt, DBetype typmsk, int ix, int iy);
 DBptr WPgtla(DBint win_id, DBetype typmsk, short ix, short iy, DBetype *typ,
              bool *ends, bool *right);
 short WPgmla(DBint win_id, short ix1, short iy1, short ix2, short iy2,
              short mode, bool hl, short *nla, DBetype typvek[], DBptr lavek[]);
-short WPgmlw(DBptr lavek[], short *idant, DBetype typvek[], short hitmod);
+short WPgmlw(DBptr lavek[], int *idant, DBetype typvek[], short hitmod);
 bool  WPsply(WPGWIN *gwinpt, int k, double x[], double y[], char a[],
             DBptr la, DBetype typ);
 bool  WPfobj(WPGWIN *gwinpt, DBptr la, DBetype typmsk, DBetype *typ);
 bool  WPdobj(WPGWIN *gwinpt, bool s);
 bool  WProbj(WPGWIN *gwinpt);
-short WPhgen(DBint win_id, DBptr la, bool draw);
-short WPerhg();
+void  WPhgen(DBint win_id, DBptr la, bool draw);
+void  WPerhg();
+short WPrwms(WPRWIN *rwinpt, DBptr lavek[], int *idant, DBetype typvek[],
+             int xc, int yc, int xwidth, int yheight);
 
 /*
 ***wppoint.c
@@ -440,10 +456,11 @@ short WPplcu(DBCurve *gmpost, DBSeg *segmnt, double scale, int *npts, double x[]
 /*
 ***wpsurf.c
 */
-short WPdrsu(DBSurf *surpek, DBSeg *sptarr[], DBptr la, DBint win_id);
-short WPdlsu(DBSurf *surpek, DBSeg *sptarr[], DBptr la, DBint win_id);
-short WPplsu(DBSurf *surpek, DBSeg *sptarr[], double scale, int *n,
+short WPdrsu(DBSurf *surpek, DBSegarr *pborder, DBSegarr *piso, DBptr la, DBint win_id);
+short WPdlsu(DBSurf *surpek, DBSegarr *pborder, DBSegarr *piso, DBptr la, DBint win_id);
+short WPplsu(DBSurf *surpek, DBSegarr *pborder, DBSegarr *piso, double scale, int *n,
              double x[], double y[], double z[], char a[]);
+short WPuvstepsu(DBSurf *surpek, DBPatch *patpek, DBfloat uscale, DBfloat vscale);
 
 /*
 ***wptext.c
@@ -503,25 +520,29 @@ short WPplms(DBMesh *mshptr, double size, int *n, double x[], double y[],
 /*
 ***wpedmbs.c
 */
-#ifdef V3_X11
+#ifdef UNIX
 
 short WPamod();
 short WPomod();
 short WPcoal();
 
 /*
-***WPshade.c
+***wppen.c
 */
-short WPinsh(int wid, double zmin, double zmax, bool smooth);
-short WPexsh();
-short WPshad(int wid, bool smooth);
-short WPdrsh(WPGWIN *gwinpt);
-short WPscsh(int pen);
+short         WPcini();
+short         WPccol(int pen, int red, int green, int blue);
+unsigned long WPgcol(int colnum);
+short         WPspen(int pen);
+short         WPgpen(int pen, int *red, int *green, int *blue);
+short         WPspenGL(WPRWIN *rwinpt, int pen);
+short         WPcmat(int mtnum, DBfloat ar, gmflt ag, gmflt ab, gmflt dr, gmflt dg,
+                     DBfloat db, gmflt sr, gmflt sg, gmflt sb, gmflt er, gmflt eg,
+                     DBfloat eb, gmflt sh);
+/*
+***wplight.c
+*/
 short WPltvi(DBint ltnum, DBVector *pos1, DBVector *pos2,
              DBfloat ang, DBfloat focus);
-short WPmtvi(int mtnum, DBfloat ar, gmflt ag, gmflt ab, gmflt dr, gmflt dg,
-             DBfloat db, gmflt sr, gmflt sg, gmflt sb, gmflt er, gmflt eg,
-             DBfloat eb, gmflt sh);
 short WPlton(int ltnum, DBfloat intensity, bool state);
 short WPconl(WPGWIN *gwinpt);
 #endif
@@ -530,24 +551,22 @@ short WPconl(WPGWIN *gwinpt);
 ***wpGLlist.c
 */
 short WPmmod(WPRWIN *rwinpt);
-short WPmodl(WPRWIN *rwinpt);
-#ifdef V3_OPENGL
-short WPsodl(WPRWIN *rwinpt,GLuint list);
-#else
-short WPsodl(WPRWIN *rwinpt,int list);
-#endif
-short WPscog(WPRWIN *rwinpt, short pen);
+short WPmodl_all(WPRWIN *rwinpt);
+short WPmodl_highlight(WPRWIN *rwinpt, int n_ents, DBptr * la_arr);
+void  WPdodl_highlight(WPRWIN *rwinpt);
+short WPsodl_all(WPRWIN *rwinpt);
+short WPeodls(WPRWIN *rwinpt, int ix, int iy, int dix, int diy);
 short WPnrrw(WPRWIN *rwinpt);
 
 /*
 ***wpplot.c
 */
-short WPmkpf(WPGWIN *gwinpt, FILE *filpek, VY *plotvy, DBVector *origo);
+short WPmkpf(WPGWIN *gwinpt, FILE *filpek, VYWIN *plotwin, DBVector *origo);
 short WPgksm_header(METADEF *mdp, FILE *filpek, char metarec[]);
-short WPgksm_window(METADEF *mdp, FILE *filpek, char metarec[], VY *plotvy, DBVector *origo);
+short WPgksm_window(METADEF *mdp, FILE *filpek, char metarec[], VYWIN *plotwin, DBVector *origo);
 short WPgksm_polyline(METADEF *mdp, FILE *filpek, int k, double x[], double y[], char a[],
-                      VY *plotvy, char metarec[]);
-short WPgksm_fill(METADEF *mdp, FILE *fp, int k, double x[], double y[], VY *plotvy);
+                      VYWIN *plotwin, char metarec[]);
+short WPgksm_fill(METADEF *mdp, FILE *fp, int k, double x[], double y[], VYWIN *plotwin);
 short WPgksm_clear(METADEF *mdp, FILE *filpek, char metarec[]);
 short WPgksm_pen(METADEF *mdp, FILE *filpek, short pen, char metarec[]);
 short WPgksm_width(METADEF *mdp, FILE *filpek, double wdt, char metarec[]);
@@ -561,9 +580,45 @@ short WPhide(WPGWIN *gwinpt, bool flag1, bool flag2, FILE *pfil, DBVector *origo
 /*
 ***wpdxf.c
 */
-short WPdxf_out(WPGWIN *gwinpt, FILE *filpek, VY *plotvy, DBVector *origo);
+short WPdxf_out(WPGWIN *gwinpt, FILE *filpek, WPVIEW *plotvy, DBVector *origo);
+
 /*
 ***wpgrid.c
 */
-short WPdrrs(double ox, double oy, double dx, double dy);
-short WPdlrs(double ox, double oy, double dx, double dy);
+short WPgrid_dialogue(DBint grw_id);
+short WPdraw_grid(wpw_id grw_id);
+short WPdelete_grid(wpw_id grw_id);
+short WPget_grid(double *ox,double *oy,double *dx, double *dy,bool *on);
+short WPset_grid(double ox,double oy,double dx, double dy);
+void  WPgrid_on(wpw_id grw_id);
+void  WPgrid_off(wpw_id grw_id);
+
+/*
+***wptooltip.c
+*/
+void WPorder_tooltip(int ix, int iy, char *tip);
+void WPclear_tooltip();
+void WPshow_tooltip();
+void WPexpose_tooltip();
+
+/*
+***wpattributes.c
+*/
+short WPatdi();
+
+/*
+***wpprint.c
+*/
+short WPprint_dialogue(DBint grw_id);
+
+/*
+***wpMCWIN.c
+*/
+short WPcreate_mcwin(wpw_id grw_id, int dy);
+short WPaddmess_mcwin(char *str,int type);
+void  WPclear_mcwin();
+bool  WPexpose_mcwin(WPMCWIN *mcwptr);
+bool  WPbutton_mcwin(WPMCWIN *mcwptr, XButtonEvent *butev);
+bool  WPkey_mcwin(XKeyEvent *keyev);
+void  WPunfocus_mcwin();
+short WPdelete_mcwin(WPMCWIN *mcwptr);

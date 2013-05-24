@@ -395,7 +395,7 @@ extern DBTmat *lsyspk;
     status = EXtcla(id,refla,reftyp,&trf.mat_tf,mode,pnp);
     if ( status < 0 )
       {
-      igidst(ref,errbuf);
+      IGidst(ref,errbuf);
       return(erpush("EX2082",errbuf));
       }
     else return(0);
@@ -518,7 +518,7 @@ extern DBTmat *lsyspk;
         DBread_surface(&ngmpst.sur_un,la);
         DBread_patches(&ngmpst.sur_un,&patpek);
         status = GEtfSurf_to_local(&ngmpst.sur_un,patpek,ptr);
-        if ( status == 0 ) status = EXesur(id,&ngmpst.sur_un,patpek,att);
+        if ( status == 0 ) status = EXesur(id,&ngmpst.sur_un,patpek,NULL,NULL,att);
         DBfree_patches(&ngmpst.sur_un,patpek);
         break;
 

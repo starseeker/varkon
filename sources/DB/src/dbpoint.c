@@ -60,6 +60,7 @@
  *      14/10/85 Headerdata, J. Kjellander
  *      22/3/92  GMPOSTV1, J. Kjellander
  *      1998-04-03 GMPOSTV2, J.Kjellander
+ *      2007-03-22 GMPOSTV3, J.Kjellander
  *
  ******************************************************!*/
 
@@ -69,7 +70,7 @@
 ***Typ-specifika data.
 */
     poipek->hed_p.type = POITYP;     /* Typ = punkt */
-    poipek->hed_p.vers = GMPOSTV2;   /* Version */
+    poipek->hed_p.vers = GMPOSTV3;   /* Version */
 /*
 ***Lagra.
 */
@@ -93,6 +94,7 @@
  *
  *      22/3/92  GMPOSTV1, J. Kjellander
  *      1998-04-03 GMPOSTV2, J.Kjellander
+ *      2007-03-22 GMPOSTV3, J.Kjellander
  *
  ******************************************************!*/
 
@@ -103,19 +105,29 @@
 
     switch ( GMVERS(hedpek) )
       {
-      case GMPOSTV2:
+      case GMPOSTV3:
       V3MOME(hedpek,poipek,sizeof(GMPOI));
+      break;
+
+      case GMPOSTV2:
+      V3MOME(hedpek,poipek,sizeof(GMPOI2));
+      poipek->fnt_p = 0;
+      poipek->size_p = 2;
       break;
 
       case GMPOSTV1:
       V3MOME(hedpek,poipek,sizeof(GMPOI1));
       poipek->wdt_p = 0.0;
+      poipek->fnt_p = 0;
+      poipek->size_p = 2;
       break;
  
       default:
       V3MOME(hedpek,poipek,sizeof(GMPOI0));
       poipek->pcsy_p = DBNULL;
       poipek->wdt_p = 0.0;
+      poipek->fnt_p = 0;
+      poipek->size_p = 2;
       break;
       }
 
@@ -139,6 +151,7 @@
  *
  *      22/3/92  GMPOSTV1, J. Kjellander
  *      1998-04-03 GMPOSTV2, J.Kjellander
+ *      2007-03-22 GMPOSTV3, J.Kjellander
  *
  ******************************************************!*/
 
@@ -149,8 +162,12 @@
 
     switch ( GMVERS(hedpek) )
       {
-      case GMPOSTV2:
+      case GMPOSTV3:
       updata( (char *)poipek, la, sizeof(GMPOI));
+      break;
+
+      case GMPOSTV2:
+      updata( (char *)poipek, la, sizeof(GMPOI2));
       break;
  
       case GMPOSTV1:
@@ -181,6 +198,7 @@
  *      21/10/58 Läs endast headern, J. Kjellander
  *      22/3/92  GMPOSTV1, J. Kjellander
  *      1998-04-03 GMPOSTV2, J.Kjellander
+ *      2007-03-22 GMPOSTV3, J.Kjellander
  *
  ******************************************************!*/
 
@@ -191,8 +209,12 @@
 
     switch ( GMVERS(hedpek) )
       {
-      case GMPOSTV2:
+      case GMPOSTV3:
       rldat1(la,sizeof(GMPOI));
+      break;
+
+      case GMPOSTV2:
+      rldat1(la,sizeof(GMPOI2));
       break;
  
       case GMPOSTV1:

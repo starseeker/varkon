@@ -1,0 +1,170 @@
+!*******************************************************
+
+ MACRO DRAWING MODULE ma_crecol();
+
+!*      Interactive creation of pen color.
+!*
+!*
+!*      (C)2007-02-02 J. Kjellander
+!*
+!*******************************************************
+
+  STRING rubrik*40,ls*40,ps*3,rs*3,gs*3,bs*3,ok*40,avbryt*40;
+  INT    ol,al,el,th,dxm,dym,dxb,dyb,lx,ly,label,pen,red,green,
+         blue,status,wid,bid_ok,bid_avbryt,bidx,edp,edr,edg,edb;
+
+ BEGINMODULE
+
+ !*
+ !***Promts.
+ !*
+   rubrik:="Pen color";
+   ok:=get_tstr(458);
+   avbryt:=get_tstr(1586);
+!*
+!***Pen and RGB default input strings.
+!*
+   ps:=" ";
+   rs:="0";
+   gs:="0";
+   bs:="0";
+!*
+!***Text sizes.
+!*
+   ol:=textl_win(ok);
+   al:=textl_win(avbryt);
+   el:=textl_win("0123456789");
+   th:=texth_win();
+!*
+!***Ok and reject buttons, which one is longest ?
+!*
+   dxb:=ol;
+   if al > dxb then dxb:=al; endif;
+
+   dxb:=trunc(1.4*dxb);
+   dyb:=2*th;
+!*
+!***Air between windows.
+!*
+   lx:=th;
+   ly:=th;
+!*
+!***Total window width.
+!*
+   dxm:=3*el + 4*lx;
+!*
+!**Total window height.
+!*
+   dym:=5*dyb + 6*ly;
+!*
+!***Microsoft correction.
+!*
+   if act_ostype() = "WIN32" then
+     dxm:=dxm+6;
+     dym:=dym+6;
+   endif;
+!*
+!***Create main window.
+!*
+   wid:=cre_win(vec(100,100),dxm,dym,rubrik);
+!*
+!***Pen number edit.
+!*
+   ls:="Pen number (0-255)";
+   label:=cre_button(wid,vec(lx,ly),textl_win(ls),dyb,0,ls,ls);
+   edp:=cre_edit(wid,vec(lx+textl_win(ls)+lx,0*dyb+1*ly),el,dyb,1,ps,3);
+!*
+!***Text.
+!*
+   ls:="RGB color values (0-255)";
+   label:=cre_button(wid,vec(lx,1*dyb+3*ly),textl_win(ls),dyb,0,ls,ls);
+!*
+!***Red.
+!*
+   ls:="Red";
+   label:=cre_button(wid,vec(lx,2*dyb+3*ly),textl_win(ls),dyb,0,ls,ls);
+   edr:=cre_edit(wid,vec(lx,3*dyb+3*ly),el,dyb,1,rs,3);
+!*
+!***Green.
+!*
+   ls:="Green";
+   label:=cre_button(wid,vec(el+2*lx,2*dyb+3*ly),textl_win(ls),dyb,0,ls,ls);
+   edg:=cre_edit(wid,vec(el+2*lx,3*dyb+3*ly),el,dyb,1,gs,3);
+!*
+!***Blue.
+!*
+   ls:="Blue";
+   label:=cre_button(wid,vec(2*el+3*lx,2*dyb+3*ly),textl_win(ls),dyb,0,ls,ls);
+   edb:=cre_edit(wid,vec(2*el+3*lx,3*dyb+3*ly),el,dyb,1,bs,3);
+!*
+!***Ok and Reject.
+!*
+   bid_ok:=cre_button(wid,vec(lx,4*dyb+5*ly),dxb,dyb,2,ok,ok);
+   bid_avbryt:=cre_button(wid,vec(dxb+2*lx,4*dyb+5*ly),dxb,dyb,2,
+                                                          avbryt,avbryt);
+!*
+!***Display window.
+!*
+   show_win(wid);
+!*
+!***Wait for user action.
+!*
+loop:
+   bidx:=wait_win(wid);
+!*
+!***Ok.
+!*
+   if bidx = bid_ok then
+     ps:=get_edit(wid,edp);
+     pen:=ival(ps,status);
+     if status < 0 then goto loop; endif;
+     if pen < 0  or  pen > 255 then goto loop; endif;
+     
+     rs:=get_edit(wid,edr);
+     red:=ival(rs,status);
+     if status < 0 then goto loop; endif;
+     if red < 0  or  red > 255 then goto loop; endif;
+     
+     gs:=get_edit(wid,edg);
+     green:=ival(gs,status);
+     if status < 0 then goto loop; endif;
+     if green < 0  or  green > 255 then goto loop; endif;
+     
+     bs:=get_edit(wid,edb);
+     blue:=ival(bs,status);
+     if status < 0 then goto loop; endif;
+     if blue < 0  or  blue > 255 then goto loop; endif;
+     
+     cre_color(pen,red,green,blue);
+     
+     del_win(wid);
+     exit();
+!*
+!***Reject.
+!*
+   elif bidx = bid_avbryt then
+     del_win(wid);
+     exit();
+!*
+!***Pen number.
+!*
+   elif bidx = edp then
+     ps:=get_edit(wid,edp);
+     pen:=ival(ps,status);
+     if status < 0 then goto loop; endif;
+     if pen < 0  or  pen > 255 then goto loop; endif;
+     get_color(pen,red,green,blue);
+     upd_edit(wid,edr,str(red,-1,0));
+     upd_edit(wid,edg,str(green,-1,0));
+     upd_edit(wid,edb,str(blue,-1,0));
+     goto loop;
+!*
+!***Unknown event (should not happen ?).
+!*
+   else
+     goto loop;
+   endif;
+
+ ENDMODULE
+
+!*******************************************************

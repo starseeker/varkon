@@ -101,6 +101,7 @@ extern V2NAPA defnap;
  *      4/11/94  Lagt till CSYTYP, J. Kjellander
  *      1998-01-08 WIDTH, J.Kjellander
  *      2004-07-18 Mesh, J.Kjellander, Örebro university
+ *      2007-03-04 1.19, J.Kjellander
  *
  ******************************************************!*/
 
@@ -114,6 +115,9 @@ extern V2NAPA defnap;
       {
       case POITYP:
       DBread_point(&gmpost.poi_un,la);
+      pnp->width  = gmpost.poi_un.wdt_p;
+      pnp->pfont  = gmpost.poi_un.fnt_p;
+      pnp->psize  = gmpost.poi_un.size_p;
       *pcsypk     = gmpost.poi_un.pcsy_p;
       break;
 
@@ -147,12 +151,19 @@ extern V2NAPA defnap;
       pnp->sdashl  = gmpost.sur_un.lgt_su;
       pnp->nulines = gmpost.sur_un.ngu_su;
       pnp->nvlines = gmpost.sur_un.ngv_su;
+      pnp->width   = gmpost.sur_un.wdt_su;
       *pcsypk      = gmpost.sur_un.pcsy_su;
       break;
 
       case CSYTYP:
       DBread_csys(&gmpost.csy_un,NULL,la);
       *pcsypk     = gmpost.csy_un.pcsy_pl;
+      break;
+
+      case BPLTYP:
+      DBread_bplane(&gmpost.bpl_un,la);
+      pnp->width  = gmpost.bpl_un.wdt_bp;
+      *pcsypk     = gmpost.bpl_un.pcsy_bp;
       break;
 
       case MSHTYP:

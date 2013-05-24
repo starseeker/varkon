@@ -1,5 +1,0 @@
-! a13 = IBM-PROPRINTER skrivare. Spooler = ibmpr
- nice -19 /usr/v3/bin/ibmpro <
- | lp -doki8 -s &
- act_job
- -s0.500 -x-8 -h0 -p24 -l86

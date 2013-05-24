@@ -14,7 +14,10 @@
 INCFILES =                              \
            ../include/geotol.h          \
            ../include/surcre.h          \
-           ../include/surint.h
+           ../include/surint.h          \
+           ../include/geotol.h          \
+           ../include/surinc.h          \
+           ../include/GE.h
 
 # The files used by Varkon
 
@@ -267,7 +270,7 @@ VARKON_OBJS = ../lib/GElib.a(suinit.o)      \
               ../lib/GElib.a(sur951.o)      \
               ../lib/GElib.a(sur952.o)      \
               ../lib/GElib.a(sur960.o)      \
-              ../lib/GElib.a(sur962.o)      \
+              ../lib/GElib.a(sumkgrw.o)     \
               ../lib/GElib.a(sur963.o)      \
               ../lib/GElib.a(sur970.o)      \
               ../lib/GElib.a(sur980.o)      \
@@ -342,7 +345,8 @@ VARKON_OBJS = ../lib/GElib.a(suinit.o)      \
               ../lib/GElib.a(gelinint.o)    \
               ../lib/GElib.a(gecurint.o)    \
               ../lib/GElib.a(geintpos.o)    \
-              ../lib/GElib.a(gepinc.o)      
+              ../lib/GElib.a(gepinc.o)      \
+              ../lib/GElib.a(gesurtrim.o)
 
 # GElib.a depends on the objects. 
 

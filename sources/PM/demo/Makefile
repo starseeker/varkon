@@ -2,7 +2,7 @@
 #
 #   Makefile for the PM demo program
 #
-#  (C)2006-11-23 J.Kjellander
+#  (C)2007-01-18 J.Kjellander
 #
 ##########################################################
 
@@ -12,7 +12,6 @@
 CFLAGS   = -ansi                          \
            -ffloat-store                  \
            -fsigned-char                  \
-           -fwritable-strings             \
            -DUNIX
 
 # Libraries that the linker needs to know
@@ -29,7 +28,7 @@ INCFILES = ../include/my_evfuncs.h ../include/my_formpar.h \
 OBJS    = pmac1.o pmac2.o pmallo.o stacc.o inacc.o \
           inac10.o inrts.o innpar.o inproc.o evpart.o \
           inac13.o ingeop.o inac17.o infunc.o ingpar.o \
-          inac20.o stac10.o ig29.o ex2.o anlog.o \
+          inac20.o stac10.o ex2.o anlog.o igenvpath.o \
           anascan.o anpar31.o anpar51.o anpar52.o \
           annaml.o anpar12.o anpar11.o evset.o
 
@@ -46,7 +45,7 @@ PMdemos: $(PROGRAMS)
 PMdemo : PMdemo.c pmac1.o pmac2.o pmallo.o stacc.o inacc.o \
           inac10.o inrts.o innpar.o infunc.o ingeop.o inproc.o \
           evpart.o inac13.o inac17.o ingpar.o inac20.o stac10.o \
-          ig29.o ex2.o anlog.o anascan.o anpar31.o anpar51.o \
+          ex2.o anlog.o anascan.o anpar31.o anpar51.o igenvpath.o  \
           anpar52.o annaml.o anpar12.o anpar11.o evset.o
 	$(CC) $(CFLAGS) $< $(OBJS) $(LIBS) -lm -o $@
 
@@ -104,9 +103,6 @@ inproc.o : ../src/inproc.c $(INCFILES)
 ingpar.o : ../src/ingpar.c $(INCFILES)
 	$(CC) -c $(CFLAGS) ../src/ingpar.c
 
-ig29.o : ../../IG/src/ig29.c $(INCFILES)
-	$(CC) -c $(CFLAGS) ../../IG/src/ig29.c
-
 ex2.o  : ex2.c
 	$(CC) -c $(CFLAGS) ex2.c
 
@@ -134,6 +130,8 @@ anpar52.o : ../../AN/src/anpar52.c
 annaml.o : ../../AN/src/annaml.c
 	$(CC) -c $(CFLAGS) ../../AN/src/annaml.c
 
+igenvpath.o : ../../IG/src/igenvpath.c
+	$(CC) -c $(CFLAGS) ../../IG/src/igenvpath.c
 
 clean:
-	rm $(PROGRAMS)
+	rm $(PROGRAMS) *.o

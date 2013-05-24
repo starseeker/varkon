@@ -23,12 +23,10 @@ CFLAGS += -ansi \
          -Wall \
          -ffloat-store \
          -fsigned-char \
-         -fwritable-strings \
          -O \
          -D_POSIX_SOURCE \
          -DUNIX \
-         -DANALYZER \
-         -DWRK_STAT -I/usr/X11R6/include
+         -DANALYZER -I/usr/X11R6/include
 
 LDFLAGS = -L/usr/X11R6/lib
 

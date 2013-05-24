@@ -8,9 +8,10 @@
 *
 *    This file includes the following routines:
 *
-*    evbllv();     Evaluerar BLANK_LEV
-*    evublv();     Evaluerar UNBLANK_LEV
-*    evgtlv();     Evaluerar GET_LEV
+*    evbllv();     Evaluates BLANK_LEVEL
+*    evublv();     Evaluates UNBLANK_LEVEL
+*    evgtlv();     Evaluates GET_LEVEL
+*    evnmlv();     Evaluates NAME_LEVEL
 *
 *    This library is free software; you can redistribute it and/or
 *    modify it under the terms of the GNU Library General Public
@@ -32,7 +33,7 @@
 
 #include "../../DB/include/DB.h"
 #include "../../IG/include/IG.h"
-#ifdef V3_X11
+#ifdef UNIX
 #include "../../WP/include/WP.h"
 #endif
 #include "../../EX/include/EX.h"
@@ -46,24 +47,24 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evbllv()
 
-/*      Evaluerar proceduren BLANK_LEV.
+/*      Evaluates procedure BLANK_LEVEL.
  *
- *      In:  extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
+ *      Error: IN5792 = Error when executing procedure %s
  *
  *      (C)microform ab 1/6/86 J. Kjellander
  *
  *      17/1-95  Multifönster, J. Kjellander
  *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      2007-04-01 1,19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    return(EXbllv(proc_pv[1].par_va.lit.int_va,
-                  proc_pv[2].par_va.lit.int_va));
+    if ( EXblank_level(proc_pv[1].par_va.lit.int_va,
+                       proc_pv[2].par_va.lit.int_va) < 0 )
+      return(erpush("IN5792","BLANK_LEVEL"));
+    else
+      return(0);
   }
 
 /********************************************************/
@@ -71,24 +72,24 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evublv()
 
-/*      Evaluerar proceduren UNBLANK_LEV.
+/*      Evaluates procedure UNBLANK_LEVEL().
  *
- *      In: extern proc_pv => Pekare till array med parametervärden
- *
- *      Ut: Inget.
- *
- *      FV: Returnerar ex-rutinens status.
+ *      Error: IN5792 = Error when executing procedure %s
  *
  *      (C)microform ab 1/6/86 J. Kjellander
  *
  *      17/1-95  Multifönster, J. Kjellander
  *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      2007-04-01 1,19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    return(EXublv(proc_pv[1].par_va.lit.int_va,
-                  proc_pv[2].par_va.lit.int_va));
+    if ( EXunblank_level(proc_pv[1].par_va.lit.int_va,
+                         proc_pv[2].par_va.lit.int_va) < 0 )
+      return(erpush("IN5792","UNBLANK_LEVEL"));
+    else
+      return(0);
   }
 
 /********************************************************/
@@ -96,7 +97,7 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
 
         short evgtlv()
 
-/*      Evaluerar proceduren GET_LEV.
+/*      Evaluates procedure GET_LEVEL().
  *
  *      In: extern proc_pv => Pekare till array med parametervärden
  *
@@ -107,36 +108,62 @@ extern PMLITVA *func_vp;   /* Pekare till resultat. */
  *      (C)microform ab 1/6/86 J. Kjellander
  *
  *      2001-02-14 In-Param changed to Global variables, R Svedin
+ *      2007-04-01 1,19, J.Kjellander
  *
  ******************************************************!*/
 
   {
-    bool    blank;
-    char    name[NIVNLN+1];
-    short   status;
-    PMLITVA litval[2];
+   bool    blank;
+   char    name[V3STRLEN+1];
+   short   status;
+   PMLITVA litval;
 
 /*
-***Hämta nivå-info.
+***Get level information.
 */
-    if ( (status=EXgtlv((short)proc_pv[1].par_va.lit.int_va,
-		                      &blank,name)) < 0 )
-          return(status);;
+   if ( (status=EXget_level(proc_pv[1].par_va.lit.int_va,
+                            proc_pv[2].par_va.lit.int_va,
+                           &blank,name)) < 0 ) return(status);;
 /*
-***Kopiera till PMLITVA.
+***Level data to MBS variable.
 */
-    if ( blank ) litval[0].lit.int_va = 1;
-    else         litval[0].lit.int_va = 0;
-    strcpy(litval[1].lit.str_va,name);
+   if ( blank ) litval.lit.int_va = 1;
+   else         litval.lit.int_va = 0;
+
+   inwvar(proc_pv[3].par_ty,proc_pv[3].par_va.lit.adr_va,0,NULL,&litval);
 /*
-***Skriv parametervärden till motsvarande MBS-variabler.
+***Optional name to MBS variable.
 */
-    evwval(litval,2,proc_pv);
+   if ( proc_pc == 4 )
+     {
+     strcpy(litval.lit.str_va,name);
+     inwvar(proc_pv[4].par_ty,proc_pv[4].par_va.lit.adr_va,0,NULL,&litval);
+     }
 /*
 ***Slut.
 */
-    return(0);
+   return(0);
+  }
 
+/********************************************************/
+/*!******************************************************/
+
+        short evnmlv()
+
+/*      Evaluates procedure NAME_LEVEL().
+ *
+ *      Error: IN5792 = Error when executing procedure %s
+ *
+ *      (C)2007-03-31 J. Kjellander
+ *
+ ******************************************************!*/
+
+  {
+    if ( EXname_level(proc_pv[1].par_va.lit.int_va,
+                      proc_pv[2].par_va.lit.str_va) < 0 )
+      return(erpush("IN5792","NAME_LEVEL"));
+    else
+      return(0);
   }
 
 /********************************************************/
