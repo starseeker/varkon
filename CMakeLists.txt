@@ -9,6 +9,8 @@ PROJECT(VARKON)
 
 #set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 find_package(X11)
+find_package(OpenGL)
+find_package(BLAS)
 
 # Handle Math Library
 find_library(HAVE_M_LIBRARY NAMES m)
