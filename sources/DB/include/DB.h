@@ -77,6 +77,16 @@ typedef DBint   DBpagnum;     /* A page number, changed to 32 bit 020222, JK */
 */
 #include "common.h"
 
+/*   ipgnum är sidnumret för huvidm, dvs huvudmodulens
+ *   id-tabell:s storlek i sidor. ipgnum initieras till
+ *    -1 för att sidor säkert skall allokeras för 1:a id
+ *   som lagras. 
+ *   
+ *   huvidm is used by both DB and IG
+ */
+DBseqnum huvidm;
+DBptr    huvprt;
+
 /*
 ***Surface graphical NURBS representations are based on datatypes
 ***defined in OpenGL. On unix systems gl.h is included explicitly.
