@@ -44,7 +44,7 @@ set(IG_SRCS
 
 # Build IG library
 add_library(ig SHARED ${IG_SRCS})
-target_link_libraries(ig ${M_LIBRARY})
+target_link_libraries(ig db ${M_LIBRARY})
 
 # Local Variables:
 # tab-width: 8

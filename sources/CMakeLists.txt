@@ -1,7 +1,3 @@
-
-# Build IG
-add_subdirectory(IG)
-
 # Build PM
 add_subdirectory(PM)
 
@@ -10,6 +6,9 @@ add_subdirectory(EX)
 
 # Build DB
 add_subdirectory(DB)
+
+# Build IG
+add_subdirectory(IG)
 
 # Build GE
 add_subdirectory(GE)
