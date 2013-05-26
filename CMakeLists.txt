@@ -118,6 +118,15 @@ else(NOT CMAKE_CONFIGURATION_TYPES)
 endif(NOT CMAKE_CONFIGURATION_TYPES)
 
 #---------------------------------------------------------------------
+# Generate start-up script. TODO - need to handle this properly for 
+# multi-config setups
+file(MAKE_DIRECTORY ${VARKON_BINARY_DIR}/tmp)
+file(MAKE_DIRECTORY ${VARKON_BINARY_DIR}/bin)
+set(VARKON_BIN_ROOT ${VARKON_BINARY_DIR})
+set(VARKON_DATA_ROOT ${VARKON_SOURCE_DIR})
+configure_file(com/english/varkon.in ${VARKON_BINARY_DIR}/bin/varkon @ONLY)
+
+#---------------------------------------------------------------------
 if(NOT DEFINED ENABLE_TIFF_SUPPORT)
   set(ENABLE_TIFF_SUPPORT OFF CACHE BOOL "Support for TIFF image format")
 else(NOT DEFINED ENABLE_TIFF_SUPPORT)
