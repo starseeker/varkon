@@ -107,6 +107,15 @@ DBshort  datofs;
 
 DBpagnum ipgnum;
 
+/*   ipgnum är sidnumret för huvidm, dvs huvudmodulens
+     id-tabell:s storlek i sidor. ipgnum initieras till
+      -1 för att sidor säkert skall allokeras för 1:a id
+     som lagras. */
+
+
+DBseqnum huvidm;
+DBptr    huvprt;
+
 /*   huvidm är huvudmodulens största id. huvidm initieras
      till -1 så att första storhet som lagras säkert upp-
      daterar huvidm,ipgnum och annat på rätt sätt. huvprt
